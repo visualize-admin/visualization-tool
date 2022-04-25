@@ -1,6 +1,5 @@
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
-import { Loading } from "@/components/hint";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -10,6 +9,7 @@ import {
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
@@ -518,7 +518,12 @@ export const ChartConfigurator = ({
       </>
     );
   } else {
-    return <Loading />;
+    return (
+      <>
+        <ControlSectionSkeleton />
+        <ControlSectionSkeleton />
+      </>
+    );
   }
 };
 
@@ -538,6 +543,7 @@ const ChartFields = ({
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
         return isMapConfig(chartConfig) && encoding.field === "baseLayer" ? (
           <OnOffControlTabField
+            key={encoding.field}
             value={encoding.field}
             icon="baseLayer"
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}

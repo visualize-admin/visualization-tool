@@ -1,6 +1,6 @@
 import { markdown } from "catalog";
 
-export default () => markdown`
+const Doc =  () => markdown`
 > The components used in the User Interface are built upon [rebass](https://rebassjs.org/), a library of React primitive UI components.
 
 > All styles are defined in a \`theme\` file [that can be customized to a specific brand](/theming).
@@ -17,3 +17,5 @@ import { Button } from "@mui/material"
 </Button>
 ~~~
 `;
+
+export default Doc

@@ -8,10 +8,10 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
-  useConfiguratorState,
   useMetaField,
   useSingleFilterField,
-} from "@/configurator";
+} from "@/configurator/config-form";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import {
   Checkbox,
   DayPickerField,

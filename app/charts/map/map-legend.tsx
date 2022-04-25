@@ -224,6 +224,7 @@ const CircleLegend = () => {
 
             return (
               <Circle
+                key={i}
                 value={formatNumber(d)}
                 label={label}
                 fill="none"

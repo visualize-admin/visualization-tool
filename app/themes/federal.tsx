@@ -77,7 +77,7 @@ export const theme = createTheme({
     },
     warning: {
       main: "#8a6d3b",
-      light: "#fffab2",
+      light: "#FCF0B4",
     },
     info: {
       main: "#31708f",
@@ -110,17 +110,7 @@ export const theme = createTheme({
   breakpoints: {
     values: { xs: 0, sm: 768, md: 992, lg: 1280, xl: 1360 },
   },
-  spacing: [
-    "0",
-    "0.25rem",
-    "0.5rem",
-    "0.75rem",
-    "1rem",
-    "1.5rem",
-    "2rem",
-    "4rem",
-    "4.5rem",
-  ],
+  spacing: [0, 4, 8, 12, 16, 24, 32, 64, 72],
   shape: {
     borderRadius: 2,
   },

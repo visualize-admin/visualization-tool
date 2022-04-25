@@ -1,7 +1,27 @@
 import { keyBy } from "lodash";
 import merge from "lodash/merge";
+import { MapOptions, StyleSpecification } from "maplibre-gl";
 import { BASE_VECTOR_TILE_URL } from "../../domain/env";
 import { Locale } from "../../locales/locales";
+
+export const emptyStyle = {
+  version: 8,
+  name: "Empty",
+  metadata: {
+    "mapbox:autocomposite": true,
+  },
+  sources: {},
+  glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: {
+        "background-color": "rgba(0,0,0,0)",
+      },
+    },
+  ],
+} as MapOptions["style"];
 
 const baseStyle = {
   version: 8,
@@ -9708,10 +9728,11 @@ const mergeLayers = (layers: Layer[], overrides: Layer[]) => {
 
 interface Props {
   locale: Locale;
+  showLabels: boolean;
 }
 
 export const getBaseLayerStyle = (props: Props) => {
-  const { locale } = props;
+  const { locale, showLabels } = props;
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
   const borderColor = {
     lowZoom: "hsl(0, 0%, 80%)",
@@ -9719,8 +9740,8 @@ export const getBaseLayerStyle = (props: Props) => {
     highZoom: "hsl(0, 0%, 40%)",
   };
   const countryTextColor = "rgba(0, 0, 0, 0.9)";
-  const textOpacity = 1;
-  const textLayersVisibility = "none";
+  const textOpacity = showLabels ? 1 : 0;
+  const textLayersVisibility = showLabels ? "visible" : "none";
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [
@@ -10094,6 +10115,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_hamlet_isolated_dwelling",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10104,6 +10127,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_place_village",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10114,6 +10139,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_village",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10124,6 +10151,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_aerodrome_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10134,6 +10163,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "aerodrome_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10144,6 +10175,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_water_name_line_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10154,6 +10187,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "water_name_line_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10164,6 +10199,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_place_town",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10174,6 +10211,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_town",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10191,6 +10230,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "park_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10201,6 +10242,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "area_name_massif_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10219,6 +10262,8 @@ export const getBaseLayerStyle = (props: Props) => {
         paint: {
           "text-opacity": textOpacity,
           "icon-opacity": 0,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10244,13 +10289,15 @@ export const getBaseLayerStyle = (props: Props) => {
         paint: {
           "text-color": countryTextColor,
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
-          visibility: textLayersVisibility,
+          visibility: "none",
         },
       },
     ]),
   };
-  return style;
+  return style as StyleSpecification;
 };

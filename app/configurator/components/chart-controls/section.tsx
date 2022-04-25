@@ -1,4 +1,10 @@
-import { Box, BoxProps, Typography, TypographyProps } from "@mui/material";
+import {
+  Box,
+  BoxProps,
+  Skeleton,
+  Typography,
+  TypographyProps,
+} from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "@/icons";
@@ -104,3 +110,23 @@ export const SectionTitle = ({
     </Typography>
   );
 };
+
+export const ControlSectionSkeleton = ({
+  sx,
+}: {
+  sx?: React.ComponentProps<typeof ControlSection>["sx"];
+}) => (
+  <ControlSection sx={{ mt: 2, px: 2, ...sx }}>
+    <ControlSectionContent side="left">
+      <Typography variant="h1">
+        <Skeleton sx={{ bgcolor: "grey.300" }} />
+      </Typography>{" "}
+      <Skeleton
+        sx={{ bgcolor: "grey.300" }}
+        variant="rectangular"
+        width="100%"
+        height={118}
+      />
+    </ControlSectionContent>
+  </ControlSection>
+);

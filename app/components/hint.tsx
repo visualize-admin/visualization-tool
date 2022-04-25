@@ -2,7 +2,15 @@ import Flex from "@/components/flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Alert, AlertTitle, Box, BoxProps, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertProps,
+  AlertTitle,
+  Box,
+  BoxProps,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -139,16 +147,29 @@ export const LoadingGeoDimensionsError = () => (
   </Alert>
 );
 
-export const ChartUnexpectedError = () => (
-  <Alert severity="info" icon={<Icon name="hintWarning" size={64} />}>
-    <AlertTitle>
-      <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
-    </AlertTitle>
-    <Trans id="hint.chartunexpected.message">
-      An unexpected error occurred while displaying this chart.
-    </Trans>
-  </Alert>
-);
+export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
+  const theme = useTheme();
+  return (
+    <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+      <AlertTitle>
+        <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
+      </AlertTitle>
+      <Trans id="hint.chartunexpected.message">
+        An unexpected error occurred while displaying this chart.
+      </Trans>
+      {error ? (
+        <Box
+          component="pre"
+          my={2}
+          mx={2}
+          fontSize={theme.typography.body2.fontSize}
+        >
+          {error.message}
+        </Box>
+      ) : null}
+    </Alert>
+  );
+};
 
 export const OnlyNegativeDataHint = () => (
   <Alert severity="warning" icon={<Icon name="datasetError" size={64} />}>
@@ -169,29 +190,25 @@ export const Success = () => (
     </Trans>
   </Alert>
 );
-export const HintBlue = ({
-  iconName,
-  children,
-  iconSize = 24,
-}: {
-  iconName: IconName;
-  children: ReactNode;
-  iconSize?: number;
-}) => (
-  <Alert severity="info" icon={<Icon name={iconName} />}>
-    {children}
-  </Alert>
-);
-export const HintRed = ({
-  iconName,
-  children,
-  iconSize = 24,
-}: {
-  iconName: IconName;
-  children: ReactNode;
-  iconSize?: number;
-}) => (
-  <Alert severity="error" icon={<Icon name={iconName} size={iconSize} />}>
-    {children}
-  </Alert>
-);
+
+const mkHint = (severity: AlertProps["severity"], displayName: string) => {
+  const Component = ({
+    iconName,
+    children,
+    iconSize = 24,
+  }: {
+    iconName: IconName;
+    children: ReactNode;
+    iconSize?: number;
+  }) => (
+    <Alert severity={severity} icon={<Icon name={iconName} size={iconSize} />}>
+      {children}
+    </Alert>
+  );
+  Component.displayName = displayName;
+  return Component;
+};
+
+export const HintRed = mkHint("error", "HintRed");
+export const HintYellow = mkHint("warning", "HintYellow");
+export const HintBlue = mkHint("info", "HintBlue");
