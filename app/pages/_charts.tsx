@@ -2,7 +2,7 @@ import { Box, Link } from "@mui/material";
 import { NextPage } from "next";
 import NextLink from "next/link";
 
-import { ChartPanel } from "@/components/chart-panel";
+import { ChartPanelPublished } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
@@ -39,7 +39,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   id={`chart-${key}`}
                   sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
                 >
-                  <ChartPanel>
+                  <ChartPanelPublished chartType={chartConfig.chartType}>
                     <ChartPublished
                       dataSet={dataSet}
                       chartConfig={chartConfig}
@@ -69,7 +69,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                         →
                       </Link>
                     </NextLink>
-                  </ChartPanel>
+                  </ChartPanelPublished>
                 </Box>
               );
             })}

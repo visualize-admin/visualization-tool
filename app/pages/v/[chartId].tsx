@@ -7,7 +7,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { ChartPanel } from "@/components/chart-panel";
+import { ChartPanelPublished } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
@@ -89,14 +89,14 @@ const VisualizationPage = (props: PageProps) => {
               </Box>
             )}
 
-            <ChartPanel>
+            <ChartPanelPublished chartType={chartConfig.chartType}>
               <ChartPublished
                 dataSet={dataSet}
                 chartConfig={chartConfig}
                 meta={meta}
                 configKey={key}
               />
-            </ChartPanel>
+            </ChartPanelPublished>
 
             <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
 
