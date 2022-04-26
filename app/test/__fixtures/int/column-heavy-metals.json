@@ -1,0 +1,64 @@
+{
+  "key": "rOAYJqoZQKlU",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "",
+        "en": "Heavy Metal Concentration in St Martin",
+        "fr": "Concentration en métaux lourds à St Martin",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/ubd0066/5/",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "sorting": {
+            "sortingType": "byDimensionLabel",
+            "sortingOrder": "asc"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd0066/messparameter"
+        },
+        "y": {
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd0066/wert"
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/ubd0066/station": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/ubd0066/Station/100_1"
+        },
+        "https://environment.ld.admin.ch/foen/ubd0066/samplingperiod": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/ubd0066/samplingperiod/1"
+        }
+      },
+      "chartType": "column",
+      "interactiveFiltersConfig": {
+        "time": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": false,
+          "componentIris": []
+        }
+      }
+    }
+  }
+}

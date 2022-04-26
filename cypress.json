@@ -1,10 +1,6 @@
 {
   "baseUrl": "http://localhost:3333",
-  "ignoreTestFiles": [
-    "**/__snapshots__/*",
-    "**/__image_snapshots__/*",
-    "**/chart-snapshots.spec.ts"
-  ],
+  "ignoreTestFiles": ["**/__snapshots__/*", "**/__image_snapshots__/*"],
   "env": {
     "cypress-plugin-snapshots": {
       "autoCleanUp": true,
