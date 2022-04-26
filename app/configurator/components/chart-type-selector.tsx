@@ -26,6 +26,7 @@ import { useLocale } from "@/locales/use-locale";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
+  ConfiguratorStatePublishing,
 } from "../config-types";
 
 export const ChartTypeSelectionButton = ({
@@ -119,7 +120,10 @@ const ChartTypeSelectorField = ({
 export const ChartTypeSelector = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateDescribingChart
+    | ConfiguratorStatePublishing;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
