@@ -9,12 +9,7 @@ import {
   scaleOrdinal,
 } from "d3";
 import React, { ReactNode, useMemo } from "react";
-import { PieFields, SortingOrder, SortingType } from "@/configurator";
-import {
-  getPalette,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
+
 import {
   useOptionalNumericVariable,
   usePreparedData,
@@ -25,6 +20,12 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { PieFields, SortingOrder, SortingType } from "@/configurator";
+import {
+  getPalette,
+  useFormatNumber,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 
 const sortData = ({
   data,

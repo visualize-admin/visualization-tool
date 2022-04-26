@@ -1,14 +1,15 @@
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
-import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
   toggleInteractiveTimeFilter,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
 export const useInteractiveFiltersToggle = ({
   path,

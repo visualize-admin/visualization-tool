@@ -1,5 +1,15 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
+import {
+  Box,
+  Button,
+  ButtonBase,
+  Link as MUILink,
+  LinkProps as MUILinkProps,
+  Typography,
+} from "@mui/material";
+import { Stack } from "@mui/material";
+import { Reorder } from "framer-motion";
 import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
@@ -11,18 +21,21 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Box,
-  Button,
-  ButtonBase,
-  Link as MUILink,
-  LinkProps as MUILinkProps,
-  Typography,
-} from "@mui/material";
+import { UseQueryState } from "urql";
+
+import { BrowseParams } from "@/browser/dataset-browser";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MiniSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
-import { Stack } from "@mui/material";
+import Tag from "@/configurator/components/Tag";
+import {
+  smoothPresenceProps,
+  MotionBox,
+  MotionCard,
+  accordionPresenceProps,
+} from "@/configurator/components/presence";
+import { useFormatDate } from "@/configurator/components/ui-helpers";
+import useDatasetCount from "@/configurator/components/use-dataset-count";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -39,21 +52,10 @@ import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import { useLocale } from "@/locales/use-locale";
-import { BrowseParams } from "@/browser/dataset-browser";
 import isAttrEqual from "@/utils/is-attr-equal";
 import truthy from "@/utils/truthy";
-import Tag from "@/configurator/components/Tag";
-import { useFormatDate } from "@/configurator/components/ui-helpers";
-import useDatasetCount from "@/configurator/components/use-dataset-count";
-import {
-  smoothPresenceProps,
-  MotionBox,
-  MotionCard,
-  accordionPresenceProps,
-} from "@/configurator/components/presence";
-import { UseQueryState } from "urql";
+
 import useDisclosure from "./use-disclosure";
-import { Reorder } from "framer-motion";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";

@@ -1,5 +1,6 @@
 import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
+
 import { loadFixtureConfigIds } from "@/test/utils";
 
 type PageProps = {

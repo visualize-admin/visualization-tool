@@ -1,3 +1,4 @@
+import { Box, Typography } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import {
@@ -8,15 +9,15 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Box, Typography } from "@mui/material";
+
+import { MapState } from "@/charts/map/map-state";
+import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
 import {
   formatNumberWithUnit,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
-import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
-import { MapState } from "@/charts/map/map-state";
 
 type HoverObjectType = "area" | "symbol";
 

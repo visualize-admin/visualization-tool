@@ -23,16 +23,13 @@ import {
 } from "d3";
 import { keyBy, sortBy } from "lodash";
 import React, { ReactNode, useCallback, useMemo } from "react";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+
 import {
-  getPalette,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { sortByIndex } from "@/lib/array";
-import { useLocale } from "@/locales/use-locale";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "@/charts/column/constants";
 import {
   getLabelWithUnit,
   getWideData,
@@ -48,12 +45,16 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  PADDING_INNER,
-  PADDING_OUTER,
-} from "@/charts/column/constants";
+  getPalette,
+  useFormatNumber,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { sortByIndex } from "@/lib/array";
+import { useLocale } from "@/locales/use-locale";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface StackedColumnsState {
   chartType: "column";

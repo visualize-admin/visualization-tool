@@ -1,6 +1,8 @@
 import { ComponentType } from "react";
+
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
+
 import { ChartConfig, SortingOrder } from "./config-types";
 
 type ChartComponentProps = {

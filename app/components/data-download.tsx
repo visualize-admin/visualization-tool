@@ -1,5 +1,3 @@
-import { QueryFilters } from "@/charts/shared/chart-helpers";
-import { useLocale } from "@/src";
 import { Trans } from "@lingui/macro";
 import {
   Button,
@@ -10,12 +8,12 @@ import {
 } from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
+import HoverMenu from "material-ui-popup-state/HoverMenu";
 import {
   bindHover,
   bindMenu,
   usePopupState,
 } from "material-ui-popup-state/hooks";
-import HoverMenu from "material-ui-popup-state/HoverMenu";
 import React, {
   createContext,
   Dispatch,
@@ -27,6 +25,10 @@ import React, {
   useState,
 } from "react";
 import { OperationResult, useClient } from "urql";
+
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { useLocale } from "@/src";
+
 import { Observation } from "../domain/data";
 import {
   DataCubeObservationsDocument,
@@ -34,6 +36,7 @@ import {
   DimensionMetaDataFragment,
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
+
 import Flex from "./flex";
 
 type DataDownloadState = {

@@ -1,10 +1,11 @@
 import { Trans } from "@lingui/macro";
-import { color as d3Color } from "d3";
-import { styled } from "@mui/styles";
-import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 import { Box, Button, Input, Popover } from "@mui/material";
-import useDisclosure from "@/configurator/components/use-disclosure";
+import { styled } from "@mui/styles";
+import { color as d3Color } from "d3";
+import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
+
 import VisuallyHidden from "@/components/visually-hidden";
+import useDisclosure from "@/configurator/components/use-disclosure";
 
 const Swatch = ({
   color,

@@ -43,8 +43,7 @@ const chartBuilderMockups = [
   },
   {
     group: "Customize Chart",
-    src:
-      "static/docs/design/mockups/1.4.3_l_chart-maker_step-3.3_filter-interactive.png",
+    src: "static/docs/design/mockups/1.4.3_l_chart-maker_step-3.3_filter-interactive.png",
   },
   {
     group: "Annotate Chart",
@@ -79,7 +78,7 @@ const chartBuilderMockups = [
   return all;
 }, {} as Record<string, { group: string; src: string }[]>);
 
-const Doc =  () =>
+const Doc = () =>
   markdown`
 > The design mockups illustrate an exemplary user flow through the _Visualization Tool_.
 
@@ -184,4 +183,4 @@ description: "[Open full-size image](./${mockup.src})"
   .join("\n")}
   `;
 
-export default Doc
+export default Doc;

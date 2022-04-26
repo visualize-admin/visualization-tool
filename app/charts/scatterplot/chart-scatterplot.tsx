@@ -1,5 +1,24 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
+
+import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import {
+  AxisHeightLinear,
+  AxisHeightLinearDomain,
+} from "@/charts/shared/axis-height-linear";
+import {
+  AxisWidthLinear,
+  AxisWidthLinearDomain,
+} from "@/charts/shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import {
+  InteractiveLegendColor,
+  LegendColor,
+} from "@/charts/shared/legend-color";
+import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
   Loading,
   LoadingDataError,
@@ -20,21 +39,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { A11yTable } from "@/charts/shared/a11y-table";
-import {
-  AxisHeightLinear,
-  AxisHeightLinearDomain,
-} from "@/charts/shared/axis-height-linear";
-import {
-  AxisWidthLinear,
-  AxisWidthLinearDomain,
-} from "@/charts/shared/axis-width-linear";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
-import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
-import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
-import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,

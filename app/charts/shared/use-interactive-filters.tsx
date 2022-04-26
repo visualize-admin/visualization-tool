@@ -1,5 +1,6 @@
-import { useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
+import { useImmerReducer } from "use-immer";
+
 import { FilterValueSingle } from "@/configurator";
 
 export type InteractiveFiltersState = {

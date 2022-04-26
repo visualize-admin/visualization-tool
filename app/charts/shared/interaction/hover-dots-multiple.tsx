@@ -1,9 +1,10 @@
-import { Fragment } from "react";
 import { Box } from "@mui/material";
-import { Observation } from "@/domain/data";
+import { Fragment } from "react";
+
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { Observation } from "@/domain/data";
 
 export const HoverDotMultiple = () => {
   const [state] = useInteraction();

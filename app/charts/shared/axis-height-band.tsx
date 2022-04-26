@@ -1,7 +1,7 @@
 import { axisLeft } from "d3";
 import { select, Selection } from "d3";
-
 import { useEffect, useRef } from "react";
+
 import { BarsState } from "@/charts/bar/bars-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";

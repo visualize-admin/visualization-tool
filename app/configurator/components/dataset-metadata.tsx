@@ -1,8 +1,15 @@
 import { Trans } from "@lingui/macro";
+import { Box, BoxProps, Link, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
+import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, BoxProps, Link, Typography } from "@mui/material";
-import { Stack } from '@mui/material'
+
+import Tag from "@/configurator/components/Tag";
+import {
+  MotionBox,
+  smoothPresenceProps,
+} from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import {
   DataCubeMetadataQuery,
@@ -10,9 +17,6 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import truthy from "@/utils/truthy";
-import Tag from "@/configurator/components/Tag";
-import { MotionBox, smoothPresenceProps } from "@/configurator/components/presence";
-import { Link as MUILink } from "@mui/material";
 
 export const DataSetMetadata = ({
   dataSetIri,

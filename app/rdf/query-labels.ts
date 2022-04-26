@@ -4,9 +4,10 @@ import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+
+import batchLoad from "./batch-load";
 import { getQueryLocales } from "./parse";
 import { sparqlClient } from "./sparql-client";
-import batchLoad from "./batch-load";
 
 interface ResourceLabel {
   iri: NamedNode;

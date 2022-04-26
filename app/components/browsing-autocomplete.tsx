@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
+
 import SearchAutocomplete, {
   SearchAutocompleteItem,
 } from "@/components/search-autocomplete";

@@ -1,14 +1,15 @@
-import * as React from "react";
+import { Trans } from "@lingui/macro";
+import { Box, BoxProps, Input } from "@mui/material";
 import {
   useCombobox,
   UseComboboxState,
   UseComboboxStateChangeOptions,
   UseComboboxStateChange,
 } from "downshift";
+import * as React from "react";
 import { useState } from "react";
-import { Box, BoxProps, Input } from "@mui/material";
+
 import Flex, { FlexProps } from "@/components/flex";
-import { Trans } from "@lingui/macro";
 
 const menuStyles = {
   listStyleType: "none",

@@ -1,17 +1,10 @@
+import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { LinesState } from "@/charts/line/lines-state";
 
 export const HoverLineValues = () => {
-  const {
-    getX,
-    xScale,
-    getY,
-    yScale,
-    grouped,
-    colors,
-    bounds,
-  } = useChartState() as LinesState;
+  const { getX, xScale, getY, yScale, grouped, colors, bounds } =
+    useChartState() as LinesState;
   const [state] = useInteraction();
 
   // const { x, visible, segment } = state.tooltip;

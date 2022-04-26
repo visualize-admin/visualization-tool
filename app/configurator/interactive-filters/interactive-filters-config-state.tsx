@@ -1,7 +1,8 @@
 import produce from "immer";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+
 import { InteractiveFiltersConfig } from "@/configurator/config-types";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
 export const toggleInteractiveFilter = produce(
   (

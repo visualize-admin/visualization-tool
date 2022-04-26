@@ -1,5 +1,5 @@
-import React from "react";
 import { Box, BoxProps } from "@mui/material";
+import React from "react";
 
 const commonPanelStyles = {};
 

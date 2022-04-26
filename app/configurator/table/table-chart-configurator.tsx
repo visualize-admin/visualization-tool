@@ -5,10 +5,9 @@ import {
   OnDragEndResponder,
   OnDragStartResponder,
 } from "react-beautiful-dnd";
-import { ConfiguratorStateConfiguringChart } from "@/configurator";
+
 import { Loading } from "@/components/hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
+import { ConfiguratorStateConfiguringChart } from "@/configurator";
 import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
@@ -20,6 +19,8 @@ import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { TableFields } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
 
 export const ChartConfiguratorTable = ({
   state,

@@ -1,18 +1,7 @@
 import { group, InternMap, sum } from "d3";
 import { omitBy, overEvery } from "lodash";
 import { useCallback, useMemo } from "react";
-import {
-  ChartConfig,
-  Filters,
-  FilterValueSingle,
-  ImputationType,
-  isAreaConfig,
-} from "@/configurator/config-types";
-import { parseDate } from "@/configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import truthy from "@/utils/truthy";
+
 import {
   imputeTemporalLinearSeries,
   interpolateZerosValue,
@@ -21,6 +10,18 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
+import { parseDate } from "@/configurator/components/ui-helpers";
+import {
+  ChartConfig,
+  Filters,
+  FilterValueSingle,
+  ImputationType,
+  isAreaConfig,
+} from "@/configurator/config-types";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import truthy from "@/utils/truthy";
 
 export type QueryFilters = Filters | FilterValueSingle;
 

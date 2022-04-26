@@ -2,6 +2,7 @@ import { SparqlQueryExecutable } from "@tpluscode/sparql-builder/lib";
 import { groups } from "d3";
 import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+
 import { sparqlClient } from "./sparql-client";
 
 const BATCH_SIZE = 500;

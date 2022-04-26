@@ -1,4 +1,5 @@
 import { ComponentProps } from "react";
+
 import { ChartType } from "@/configurator";
 import { IconName, Icons } from "@/icons/components";
 

@@ -1,10 +1,10 @@
-import { useChartState } from "@/charts/shared/use-chart-state";
 import { line } from "d3";
-import { Observation } from "@/domain/data";
-import { LinesState } from "@/charts/line/lines-state";
-
-import { useInteraction } from "@/charts/shared/use-interaction";
 import { memo } from "react";
+
+import { LinesState } from "@/charts/line/lines-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { Observation } from "@/domain/data";
 
 export const HoverLine = () => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =

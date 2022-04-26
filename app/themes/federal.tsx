@@ -6,11 +6,12 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { Icon } from "@/icons";
-import shadows from "@/themes/shadows";
 import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { merge, omit } from "lodash";
+
+import { Icon } from "@/icons";
+import shadows from "@/themes/shadows";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0

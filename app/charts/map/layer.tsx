@@ -8,11 +8,13 @@
  * - Use for .. of on Object.entries instead of for in for Typescript
  */
 
-import isEqual from "lodash/isEqual";
 import assert from "assert";
-import { LayerProps, useMap } from "react-map-gl";
-import { useRef, useState, useMemo, useEffect } from "react";
+
+import isEqual from "lodash/isEqual";
 import { Map } from "maplibre-gl";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { LayerProps, useMap } from "react-map-gl";
+
 import useChange from "@/utils/use-change";
 
 const MIN_ZOOM = 0;

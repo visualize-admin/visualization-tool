@@ -1,5 +1,21 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
+
+import { Lines } from "@/charts/line/lines";
+import { LineChart } from "@/charts/line/lines-state";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
+import { BrushTime } from "@/charts/shared/brush";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
+import { Ruler } from "@/charts/shared/interaction/ruler";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import {
+  InteractiveLegendColor,
+  LegendColor,
+} from "@/charts/shared/legend-color";
+import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   Loading,
   LoadingDataError,
@@ -20,18 +36,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { A11yTable } from "@/charts/shared/a11y-table";
-import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
-import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
-import { BrushTime } from "@/charts/shared/brush";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
-import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
-import { Ruler } from "@/charts/shared/interaction/ruler";
-import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
-import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { Lines } from "@/charts/line/lines";
-import { LineChart } from "@/charts/line/lines-state";
 
 export const ChartLinesVisualization = ({
   dataSetIri,

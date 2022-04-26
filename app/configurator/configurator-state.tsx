@@ -1,3 +1,17 @@
+import { current, produce } from "immer";
+import { get, mapValues, pickBy } from "lodash";
+import setWith from "lodash/setWith";
+import { useRouter } from "next/router";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
+import { Client, useClient } from "urql";
+import { Reducer, useImmerReducer } from "use-immer";
+
 import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
   getChartConfigAdjustedToChartType,
@@ -7,6 +21,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
+import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
@@ -15,7 +30,6 @@ import {
   isMapConfig,
   isSegmentInConfig,
 } from "@/configurator/config-types";
-import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
@@ -38,19 +52,6 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
-import { current, produce } from "immer";
-import { get, mapValues, pickBy } from "lodash";
-import setWith from "lodash/setWith";
-import { useRouter } from "next/router";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useEffect,
-} from "react";
-import { Client, useClient } from "urql";
-import { Reducer, useImmerReducer } from "use-immer";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }

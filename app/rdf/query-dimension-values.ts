@@ -1,13 +1,16 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
-import { Literal, NamedNode, Term } from "rdf-js";
-import { Filters } from "../configurator";
-import { cube as cubeNs } from "./namespace";
-import { sparqlClient } from "./sparql-client";
+import { keyBy, mapValues } from "lodash";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
-import { dimensionIsVersioned } from "./queries";
+import { Literal, NamedNode, Term } from "rdf-js";
+
+import { Filters } from "../configurator";
+
+import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
-import { keyBy, mapValues } from "lodash";
+import { dimensionIsVersioned } from "./queries";
+import { sparqlClient } from "./sparql-client";
+
 
 interface DimensionValue {
   value: Literal | NamedNode<string>;

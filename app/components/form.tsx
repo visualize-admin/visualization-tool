@@ -1,7 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { useId } from "@reach/auto-id";
-import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
-
+import { DatePicker, DatePickerProps } from "@mui/lab";
 import {
   Box,
   BoxProps,
@@ -16,14 +14,16 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
+import { useId } from "@reach/auto-id";
+import { timeFormat } from "d3-time-format";
+import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
+
 import Flex from "@/components/flex";
 import VisuallyHidden from "@/components/visually-hidden";
 import { FieldProps, Option } from "@/configurator";
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { DatePicker, DatePickerProps } from "@mui/lab";
-import { timeFormat } from "d3-time-format";
 
 export const Label = ({
   label,

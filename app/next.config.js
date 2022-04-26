@@ -1,10 +1,12 @@
-const { IgnorePlugin } = require("webpack");
-const pkg = require("../package.json");
-const withMDX = require("@next/mdx")();
+
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
+const withMDX = require("@next/mdx")();
 const withPreconstruct = require("@preconstruct/next");
+const { IgnorePlugin } = require("webpack");
+
+const pkg = require("../package.json");
 
 const { locales, defaultLocale } = require("./locales/locales.json");
 

@@ -1,13 +1,13 @@
 import { t, Trans } from "@lingui/macro";
+import { Box, Button, Typography } from "@mui/material";
+import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Button, Typography } from "@mui/material";
 import { useDebounce } from "use-debounce";
-import { AnimatePresence } from "framer-motion";
-import { useDataCubesQuery } from "@/graphql/query-hooks";
-import { useConfiguratorState, useLocale } from "@/src";
+
+import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
@@ -28,8 +28,9 @@ import {
   MotionBox,
   navPresenceProps,
 } from "@/configurator/components/presence";
+import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
-import { Footer } from "@/components/footer";
+import { useConfiguratorState, useLocale } from "@/src";
 
 const softJSONParse = (v: string) => {
   try {

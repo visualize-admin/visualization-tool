@@ -1,6 +1,7 @@
-import Flex, { FlexProps } from "@/components/flex";
-import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Box, BoxProps } from "@mui/material";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+
+import Flex, { FlexProps } from "@/components/flex";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 
 const AccordionArrow = ({

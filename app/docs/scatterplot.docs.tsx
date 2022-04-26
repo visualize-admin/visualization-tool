@@ -1,5 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
+
 import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
@@ -12,9 +13,7 @@ import {
 } from "@/charts/shared/axis-width-linear";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-} from "@/charts/shared/legend-color";
+import { InteractiveLegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
@@ -53,9 +52,7 @@ ${(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {scatterplotFields.segment && (
-          <InteractiveLegendColor />
-        )}
+        {scatterplotFields.segment && <InteractiveLegendColor />}
       </ScatterplotChart>
     </InteractiveFiltersProvider>
   </ReactSpecimen>

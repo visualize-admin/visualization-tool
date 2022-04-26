@@ -1,8 +1,10 @@
-import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
-import * as React from "react";
 import { Box, Button, SelectChangeEvent } from "@mui/material";
+import * as React from "react";
+
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { ChartFiltersList } from "@/components/chart-filters-list";
+import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { ChartConfig, InteractiveFiltersDataConfig } from "@/configurator";
@@ -16,7 +18,6 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 
 export const ChartDataFilters = ({
   dataSet,

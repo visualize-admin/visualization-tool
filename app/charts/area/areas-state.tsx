@@ -20,17 +20,8 @@ import {
 } from "d3";
 import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
-import { AreaFields } from "@/configurator";
-import {
-  getPalette,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
-import { useLocale } from "@/locales/use-locale";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+
+import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
 import {
   getLabelWithUnit,
@@ -47,7 +38,17 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
+import { AreaFields } from "@/configurator";
+import {
+  getPalette,
+  useFormatNumber,
+  useTimeFormatUnit,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { sortByIndex } from "@/lib/array";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { useLocale } from "@/locales/use-locale";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface AreasState {
   chartType: "area";

@@ -1,6 +1,7 @@
+import { Box } from "@mui/material";
 import { markdown } from "catalog";
 import { interpolateBrBG, interpolateOranges } from "d3";
-import { Box } from "@mui/material";
+
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 
 export default () =>

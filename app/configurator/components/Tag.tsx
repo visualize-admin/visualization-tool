@@ -1,9 +1,7 @@
-import React, { ReactNode } from "react";
 import { Typography, TypographyProps, styled, BoxProps } from "@mui/material";
-import {
-  DataCubeOrganization,
-  DataCubeTheme,
-} from "@/graphql/resolver-types";
+import React, { ReactNode } from "react";
+
+import { DataCubeOrganization, DataCubeTheme } from "@/graphql/resolver-types";
 
 type TagType =
   | "draft"

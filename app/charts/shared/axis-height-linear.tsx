@@ -1,12 +1,12 @@
 import { axisLeft } from "d3";
 import { select, Selection } from "d3";
-
 import { useEffect, useRef } from "react";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { useChartTheme } from "@/charts/shared/use-chart-theme";
+
+import { AreasState } from "@/charts/area/areas-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
-import { AreasState } from "@/charts/area/areas-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
 
 export const TICK_MIN_HEIGHT = 50;

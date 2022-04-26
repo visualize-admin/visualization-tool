@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 import { Box } from "@mui/material";
+import React, { useState } from "react";
+
 import { Icon } from "@/icons";
 
 const ATTRIBUTION = "© Data: MapTiler, OpenStreetMap contributors, Swisstopo";

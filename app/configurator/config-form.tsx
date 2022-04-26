@@ -1,13 +1,3 @@
-import { getFieldComponentIri } from "@/charts";
-import { ChartConfig, ChartType } from "@/configurator/config-types";
-import {
-  getChartOptionBooleanField,
-  getFilterValue,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DimensionValuesQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
 import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { some } from "lodash";
 import get from "lodash/get";
@@ -19,6 +9,17 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+
+import { getFieldComponentIri } from "@/charts";
+import { ChartConfig, ChartType } from "@/configurator/config-types";
+import {
+  getChartOptionBooleanField,
+  getFilterValue,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { DimensionValuesQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]

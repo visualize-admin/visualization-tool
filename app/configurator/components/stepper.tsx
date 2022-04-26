@@ -1,3 +1,7 @@
+import { Trans } from "@lingui/macro";
+import { Button, Typography } from "@mui/material";
+import React, { ReactNode, useCallback, useEffect } from "react";
+
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
 import {
@@ -9,9 +13,6 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { Trans } from "@lingui/macro";
-import { Button, Typography } from "@mui/material";
-import React, { ReactNode, useCallback, useEffect } from "react";
 
 export type StepStatus = "past" | "current" | "future";
 

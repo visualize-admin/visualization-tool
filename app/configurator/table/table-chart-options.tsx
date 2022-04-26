@@ -1,11 +1,9 @@
 import { t, Trans } from "@lingui/macro";
+import { Stack } from "@mui/material";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
+
 import { Checkbox } from "@/components/form";
-import { Stack } from '@mui/material'
-import { canDimensionBeMultiFiltered } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
@@ -38,7 +36,13 @@ import {
 } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableSortingOptions } from "@/configurator/table/table-chart-sorting-options";
-import { updateIsGroup, updateIsHidden } from "@/configurator/table/table-config-state";
+import {
+  updateIsGroup,
+  updateIsHidden,
+} from "@/configurator/table/table-config-state";
+import { canDimensionBeMultiFiltered } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
 
 const useTableColumnGroupHiddenField = ({
   path,

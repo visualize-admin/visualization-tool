@@ -1,7 +1,5 @@
-import Flex from "@/components/flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
-import { ReactNode } from "react";
 import {
   Alert,
   AlertProps,
@@ -11,6 +9,9 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { ReactNode } from "react";
+
+import Flex from "@/components/flex";
 import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (

@@ -1,3 +1,8 @@
+import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
+import * as React from "react";
+import { useEffect } from "react";
+
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import {
@@ -20,10 +25,6 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
-import * as React from "react";
-import { useEffect } from "react";
 
 export const ChartPublished = ({
   dataSet,

@@ -1,8 +1,10 @@
 import { Box, TableSortLabel } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
+
 import Flex from "../../components/flex";
 import { Observation } from "../../domain/data";
+
 import { SORTING_ARROW_WIDTH } from "./constants";
 import { ColumnMeta } from "./table-state";
 

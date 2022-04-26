@@ -1,9 +1,10 @@
 import { SELECT } from "@tpluscode/sparql-builder";
 import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
-import { sparqlClient } from "./sparql-client";
-import * as ns from "./namespace";
+
 import batchLoad from "./batch-load";
+import * as ns from "./namespace";
+import { sparqlClient } from "./sparql-client";
 
 interface ResourceLabel {
   iri: Term;

@@ -1,8 +1,8 @@
-import { useTheme } from "@/themes";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { VerticalWhisker } from "@/charts/whiskers";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { Column } from "@/charts/column/rendering-utils";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { VerticalWhisker } from "@/charts/whiskers";
+import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const state = useChartState() as ColumnsState;

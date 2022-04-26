@@ -1,17 +1,13 @@
-import { Observation } from "@/domain/data";
+import { ColumnsState } from "@/charts/column/columns-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { ColumnsState } from "@/charts/column/columns-state";
+import { Observation } from "@/domain/data";
 
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
 
-  const {
-    preparedData,
-    bounds,
-    getX,
-    xScaleInteraction,
-  } = useChartState() as ColumnsState;
+  const { preparedData, bounds, getX, xScaleInteraction } =
+    useChartState() as ColumnsState;
   const { margins, chartHeight } = bounds;
 
   const showTooltip = (d: Observation) => {

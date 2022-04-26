@@ -1,8 +1,8 @@
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { Bar } from "@/charts/bar/bars-simple";
 import { BAR_AXIS_OFFSET, BAR_SPACE_ON_TOP } from "@/charts/bar/constants";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
-import { Bar } from "@/charts/bar/bars-simple";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 
 export const BarsGrouped = () => {
@@ -72,14 +72,8 @@ export const BarsGrouped = () => {
 };
 
 export const BarsGroupedLabels = () => {
-  const {
-    bounds,
-    yScaleIn,
-    getX,
-    yScale,
-    getSegment,
-    grouped,
-  } = useChartState() as GroupedBarsState;
+  const { bounds, yScaleIn, getX, yScale, getSegment, grouped } =
+    useChartState() as GroupedBarsState;
   const { margins } = bounds;
   const { axisLabelColor, labelFontSize, fontFamily } = useChartTheme();
 

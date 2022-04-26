@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import DateAdapter from "@mui/lab/AdapterDateFns";
 import { LocalizationProvider } from "@mui/lab";
+import DateAdapter from "@mui/lab/AdapterDateFns";
+import React, { useEffect, useState } from "react";
 
 const AsyncLocalizationProvider = ({
   locale,

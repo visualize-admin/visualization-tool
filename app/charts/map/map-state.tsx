@@ -16,6 +16,15 @@ import {
 } from "d3";
 import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
+
+import { MapTooltipProvider } from "@/charts/map/map-tooltip";
+import {
+  useOptionalNumericVariable,
+  useStringVariable,
+} from "@/charts/shared/chart-helpers";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import {
   formatNumberWithUnit,
   getColorInterpolator,
@@ -39,14 +48,6 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import {
-  useOptionalNumericVariable,
-  useStringVariable,
-} from "@/charts/shared/chart-helpers";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
-import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { MapTooltipProvider } from "@/charts/map/map-tooltip";
 
 export interface MapState {
   chartType: "map";

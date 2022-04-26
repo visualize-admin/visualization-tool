@@ -2,6 +2,7 @@ import { schema } from "@tpluscode/rdf-ns-builders";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+
 import batchLoad from "./batch-load";
 import { sparqlClient } from "./sparql-client";
 

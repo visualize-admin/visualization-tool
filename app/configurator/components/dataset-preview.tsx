@@ -1,3 +1,9 @@
+import { Trans } from "@lingui/macro";
+import { Box, Button, Paper, Typography } from "@mui/material";
+import Head from "next/head";
+import Link from "next/link";
+import * as React from "react";
+
 import { DataDownloadMenu } from "@/components/data-download";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
@@ -6,11 +12,6 @@ import { DataSetPreviewTable } from "@/configurator/components/datatable";
 import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { Trans } from "@lingui/macro";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import Head from "next/head";
-import Link from "next/link";
-import * as React from "react";
 
 export interface Preview {
   iri: string;

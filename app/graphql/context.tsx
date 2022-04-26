@@ -1,9 +1,10 @@
 import { ReactNode, useCallback } from "react";
 import { createClient, defaultExchanges, Provider } from "urql";
+
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
-import { useLocale } from "@/src";
 // @ts-ignore - dynamic package import based on NODE_ENV
 import { devtoolsExchange } from "@/graphql/devtools";
+import { useLocale } from "@/src";
 
 const client = createClient({
   url: GRAPHQL_ENDPOINT,

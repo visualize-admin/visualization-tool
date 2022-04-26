@@ -1,11 +1,12 @@
+import * as RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import { keyBy } from "lodash";
 
-import { sparqlClient } from "./sparql-client";
 import { schema, dcat, dcterms } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
-import { keyBy } from "lodash";
+
 import { makeLocalesFilter } from "./query-labels";
-import * as RDF from "@rdfjs/data-model";
+import { sparqlClient } from "./sparql-client";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;

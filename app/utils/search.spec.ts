@@ -1,7 +1,9 @@
-import { makeCubeIndex, searchCubes, wrap } from "./search";
-import cubesListRaw from "../test/__fixtures/api/cubes-list.json";
-import { ResolvedDataCube } from "../graphql/shared-types";
 import keyBy from "lodash/keyBy";
+
+import { ResolvedDataCube } from "../graphql/shared-types";
+import cubesListRaw from "../test/__fixtures/api/cubes-list.json";
+
+import { makeCubeIndex, searchCubes, wrap } from "./search";
 
 const cubesList = cubesListRaw as ResolvedDataCube["data"][];
 

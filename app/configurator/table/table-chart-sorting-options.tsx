@@ -1,5 +1,5 @@
-import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
+import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import React, { useCallback } from "react";
 import {
   DragDropContext,
@@ -7,11 +7,10 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
-import VisuallyHidden from "@/components/visually-hidden";
+
+import Flex from "@/components/flex";
 import { Radio, Select } from "@/components/form";
-import { DataCubeMetadata } from "@/graphql/types";
-import { Icon } from "@/icons";
+import VisuallyHidden from "@/components/visually-hidden";
 import {
   ControlSection,
   SectionTitle,
@@ -33,6 +32,8 @@ import {
   moveSortingOptions,
   removeSortingOption,
 } from "@/configurator/table/table-config-state";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
 
 const TableSortingOptionItem = ({
   componentIri,

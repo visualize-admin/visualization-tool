@@ -46,6 +46,7 @@ import {
 } from "d3";
 import { memoize } from "lodash";
 import { useMemo } from "react";
+
 import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";

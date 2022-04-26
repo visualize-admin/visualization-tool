@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+
 import { staticPages } from "@/static-pages";
 
 /**

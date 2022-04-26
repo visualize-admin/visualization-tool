@@ -1,17 +1,9 @@
-import Flex from "@/components/flex";
 import { t } from "@lingui/macro";
 import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import {
-  Option,
-  useActiveFieldField,
-  useChartFieldField,
-  useChartOptionRadioField,
-  useMetaField,
-  useSingleFilterField,
-} from "@/configurator/config-form";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+
+import Flex from "@/components/flex";
 import {
   Checkbox,
   DayPickerField,
@@ -20,19 +12,6 @@ import {
   Radio,
   Select,
 } from "@/components/form";
-import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { IconName } from "@/icons";
-import truthy from "@/utils/truthy";
-import {
-  isMultiFilterFieldChecked,
-  useChartOptionBooleanField,
-  useChartOptionSelectField,
-  useMultiFilterCheckboxes,
-  useMultiFilterContext,
-  useSingleFilterSelect,
-} from "@/configurator/config-form";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -45,6 +24,28 @@ import {
   getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "@/configurator/components/ui-helpers";
+import {
+  Option,
+  useActiveFieldField,
+  useChartFieldField,
+  useChartOptionRadioField,
+  useMetaField,
+  useSingleFilterField,
+} from "@/configurator/config-form";
+import {
+  isMultiFilterFieldChecked,
+  useChartOptionBooleanField,
+  useChartOptionSelectField,
+  useMultiFilterCheckboxes,
+  useMultiFilterContext,
+  useSingleFilterSelect,
+} from "@/configurator/config-form";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { IconName } from "@/icons";
+import truthy from "@/utils/truthy";
 
 export const ControlTabField = ({
   component,

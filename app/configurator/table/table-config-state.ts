@@ -1,5 +1,6 @@
 import produce from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
+
 import { getOrderedTableColumns } from "../components/ui-helpers";
 import { SortingOrder, TableConfig, TableSortingOption } from "../config-types";
 
