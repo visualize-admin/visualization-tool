@@ -1,11 +1,12 @@
 import { TestConfig } from "../types";
 
 const configs: TestConfig[] = [
-  {
-    chartId: "nQckT-nFEQe4",
-    name: "Column - Red list",
-    slug: "column-red-list",
-  },
+  // Deactivate the test since the query timeouts right now 26.04.2022
+  // {
+  //   chartId: "nQckT-nFEQe4",
+  //   name: "Column - Red list",
+  //   slug: "column-red-list",
+  // },
   {
     chartId: "rOAYJqoZQKlU",
     name: "Column - Heavy metals",
