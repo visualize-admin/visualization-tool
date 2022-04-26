@@ -5,8 +5,8 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
-
 import { ElementType, forwardRef, ReactNode } from "react";
+
 import { Icon, IconName } from "@/icons";
 import { useTheme } from "@/themes";
 

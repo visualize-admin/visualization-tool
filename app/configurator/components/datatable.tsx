@@ -1,3 +1,15 @@
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+} from "@mui/material";
+import { ascending, descending } from "d3";
+import { useMemo, useState } from "react";
+
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import {
@@ -12,17 +24,6 @@ import {
   useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-} from "@mui/material";
-import { ascending, descending } from "d3";
-import { useMemo, useState } from "react";
 
 type Header = DimensionMetaDataFragment;
 

@@ -1,13 +1,4 @@
-import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
-import * as clipboard from "clipboard-polyfill/text";
-import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
-import {
-  MouseEvent as ReactMouseEvent,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
 import {
   Box,
   BoxProps,
@@ -17,11 +8,21 @@ import {
   Link,
   Typography,
 } from "@mui/material";
+import { Stack } from "@mui/material";
+import * as clipboard from "clipboard-polyfill/text";
+import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
+import {
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
+
+import Flex from "@/components/flex";
+import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import { useI18n } from "@/lib/use-i18n";
 import { useLocale } from "@/locales/use-locale";
-import { IconLink } from "@/components/links";
-import { Stack } from '@mui/material'
 
 export const PublishActions = ({
   configKey,

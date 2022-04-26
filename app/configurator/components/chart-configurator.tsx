@@ -1,3 +1,22 @@
+import { t, Trans } from "@lingui/macro";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import { isEmpty, isEqual, sortBy } from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
+import { CombinedError, useClient } from "urql";
+
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import {
@@ -37,24 +56,6 @@ import {
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { t, Trans } from "@lingui/macro";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import { isEmpty, isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  OnDragEndResponder,
-} from "react-beautiful-dnd";
-import { CombinedError, useClient } from "urql";
 
 const DataFilterSelectGeneric = ({
   dimension,

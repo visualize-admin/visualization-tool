@@ -1,3 +1,5 @@
+import { markdown, ReactSpecimen } from "catalog";
+
 import { HeaderBorder, HeaderProgressProvider } from "@/components/header";
 import {
   ConfiguratorStateConfiguringChart,
@@ -5,7 +7,6 @@ import {
 } from "@/configurator";
 import { StepperDumb } from "@/configurator/components/stepper";
 import { DataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { markdown, ReactSpecimen } from "catalog";
 
 const mockData = {
   __typename: "Query",

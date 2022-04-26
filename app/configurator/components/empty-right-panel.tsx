@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import { ReactNode } from "react";
+
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,

@@ -1,7 +1,7 @@
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { VerticalWhisker } from "@/charts/whiskers";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { Column } from "@/charts/column/rendering-utils";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { VerticalWhisker } from "@/charts/whiskers";
 
 export const ErrorWhiskers = () => {
   const {

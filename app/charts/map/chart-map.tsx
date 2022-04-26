@@ -1,10 +1,17 @@
+import { Box } from "@mui/material";
 import { geoCentroid } from "d3";
 import React, { memo, useMemo } from "react";
-import { Box } from "@mui/material";
 import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
 } from "topojson-client";
+
+import { MapComponent } from "@/charts/map/map";
+import { MapLegend } from "@/charts/map/map-legend";
+import { MapChart } from "@/charts/map/map-state";
+import { MapTooltip } from "@/charts/map/map-tooltip";
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { ChartContainer } from "@/charts/shared/containers";
 import {
   Loading,
   LoadingDataError,
@@ -30,12 +37,6 @@ import {
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { QueryFilters } from "@/charts/shared/chart-helpers";
-import { ChartContainer } from "@/charts/shared/containers";
-import { MapComponent } from "@/charts/map/map";
-import { MapLegend } from "@/charts/map/map-legend";
-import { MapChart } from "@/charts/map/map-state";
-import { MapTooltip } from "@/charts/map/map-tooltip";
 
 export const ChartMapVisualization = ({
   dataSetIri,

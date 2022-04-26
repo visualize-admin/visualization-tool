@@ -1,7 +1,8 @@
 import { GetServerSideProps } from "next";
+
+import { DatasetBrowser } from "@/browser";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { defaultLocale } from "@/src";
-import { DatasetBrowser } from "@/browser";
 export default DatasetBrowser;
 /**
  * Heuristic to check if a dataset IRI is versioned.

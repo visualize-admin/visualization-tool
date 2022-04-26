@@ -18,18 +18,14 @@ import {
 } from "d3";
 import { get, sortBy } from "lodash";
 import React, { ReactNode, useMemo } from "react";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+
 import {
-  getPalette,
-  mkNumber,
-  useErrorMeasure,
-  useErrorRange,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
-import { useLocale } from "@/locales/use-locale";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+  PADDING_INNER,
+  PADDING_OUTER,
+  PADDING_WITHIN,
+} from "@/charts/column/constants";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -44,13 +40,18 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  PADDING_INNER,
-  PADDING_OUTER,
-  PADDING_WITHIN,
-} from "@/charts/column/constants";
+  getPalette,
+  mkNumber,
+  useErrorMeasure,
+  useErrorRange,
+  useFormatNumber,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { sortByIndex } from "@/lib/array";
+import { useLocale } from "@/locales/use-locale";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface GroupedColumnsState {
   chartType: "column";

@@ -10,6 +10,14 @@ import {
 } from "d3";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
+
+import {
+  getLabelWithUnit,
+  getSlugifiedIri,
+} from "@/charts/shared/chart-helpers";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -26,10 +34,6 @@ import { Observation } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
-import { getLabelWithUnit, getSlugifiedIri } from "@/charts/shared/chart-helpers";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 
 export interface ColumnMeta {
   iri: string;
@@ -255,7 +259,8 @@ const useTableState = ({
 
               return {
                 label: dvLabel,
-                color: colorMapping![colorMappingIri] || theme.palette.primary.main,
+                color:
+                  colorMapping![colorMappingIri] || theme.palette.primary.main,
               };
             }
           );

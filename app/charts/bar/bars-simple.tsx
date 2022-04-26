@@ -1,25 +1,21 @@
-import { useTheme } from "@/themes";
-import { BAR_AXIS_OFFSET, BAR_HEIGHT, BAR_SPACE_ON_TOP } from "@/charts/bar/constants";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { BarsState } from "@/charts/bar/bars-state";
 import { memo } from "react";
 
+import { BarsState } from "@/charts/bar/bars-state";
+import {
+  BAR_AXIS_OFFSET,
+  BAR_HEIGHT,
+  BAR_SPACE_ON_TOP,
+} from "@/charts/bar/constants";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { useTheme } from "@/themes";
+
 export const Bars = () => {
-  const {
-    sortedData,
-    bounds,
-    getX,
-    xScale,
-    getY,
-    yScale,
-  } = useChartState() as BarsState;
+  const { sortedData, bounds, getX, xScale, getY, yScale } =
+    useChartState() as BarsState;
   const theme = useTheme();
-  const {
-    axisLabelFontSize,
-    axisLabelFontWeight,
-    axisLabelColor,
-  } = useChartTheme();
+  const { axisLabelFontSize, axisLabelFontWeight, axisLabelColor } =
+    useChartTheme();
   const { margins } = bounds;
 
   return (
@@ -44,7 +40,9 @@ export const Bars = () => {
               y={BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET}
               height={BAR_HEIGHT}
               color={
-                getX(d) <= 0 ? theme.palette.secondary.main : theme.palette.primary.main
+                getX(d) <= 0
+                  ? theme.palette.secondary.main
+                  : theme.palette.primary.main
               }
             />
           </g>
@@ -55,13 +53,8 @@ export const Bars = () => {
 };
 
 export const BarLabels = () => {
-  const {
-    sortedData,
-    bounds,
-    getX,
-    getY,
-    yScale,
-  } = useChartState() as BarsState;
+  const { sortedData, bounds, getX, getY, yScale } =
+    useChartState() as BarsState;
   const { labelColor, labelFontSize, fontFamily } = useChartTheme();
   const { margins } = bounds;
 

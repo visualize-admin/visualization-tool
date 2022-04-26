@@ -1,6 +1,8 @@
 import { isEqual } from "lodash";
-import { ChartConfig, FilterValue } from ".";
+
 import useChanges from "../utils/use-changes";
+
+import { ChartConfig, FilterValue } from ".";
 
 const isEqualFilter = (fa?: FilterValue, fb?: FilterValue) => {
   if (fa?.type === "single" && fb?.type === "single") {

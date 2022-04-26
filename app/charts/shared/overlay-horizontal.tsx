@@ -1,11 +1,12 @@
 import { bisector } from "d3";
 import { pointer } from "d3";
 import { memo, useRef, MouseEvent } from "react";
-import { Observation } from "@/domain/data";
+
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { Observation } from "@/domain/data";
 
 export const InteractionHorizontal = memo(function InteractionHorizontal({
   debug,

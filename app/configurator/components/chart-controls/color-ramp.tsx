@@ -1,16 +1,17 @@
 import { Trans } from "@lingui/macro";
+import { Box, Button, Typography } from "@mui/material";
 import { useSelect } from "downshift";
 import { get } from "lodash";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Button, Typography } from "@mui/material";
+
+import { Label } from "@/components/form";
 import {
   DivergingPaletteType,
   SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
-import { Label } from "@/components/form";
-import { Icon } from "@/icons";
 import { sequentialPalettes } from "@/configurator/components/ui-helpers";
+import { Icon } from "@/icons";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 

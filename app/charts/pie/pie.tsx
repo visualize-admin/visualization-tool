@@ -1,18 +1,13 @@
 import { arc, PieArcDatum } from "d3";
 
-import { Observation } from "@/domain/data";
+import { PieState } from "@/charts/pie/pie-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { PieState } from "@/charts/pie/pie-state";
+import { Observation } from "@/domain/data";
 
 export const Pie = () => {
-  const {
-    data,
-    getPieData,
-    getX,
-    colors,
-    bounds,
-  } = useChartState() as PieState;
+  const { data, getPieData, getX, colors, bounds } =
+    useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
 
   const arcs = getPieData(data);
@@ -64,7 +59,7 @@ const Arc = ({
       value: {
         interaction: {
           visible: true,
-          d: (d as unknown) as Observation, // FIXME
+          d: d as unknown as Observation, // FIXME
         },
       },
     });

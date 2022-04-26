@@ -1,11 +1,3 @@
-import { ChartPanel } from "@/components/chart-panel";
-import { ChartPublished } from "@/components/chart-published";
-import { Success } from "@/components/hint";
-import { ContentLayout } from "@/components/layout";
-import { PublishActions } from "@/components/publish-actions";
-import { Config } from "@/configurator";
-import { getConfig } from "@/db/config";
-import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
@@ -14,6 +6,15 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import { ChartPanel } from "@/components/chart-panel";
+import { ChartPublished } from "@/components/chart-published";
+import { Success } from "@/components/hint";
+import { ContentLayout } from "@/components/layout";
+import { PublishActions } from "@/components/publish-actions";
+import { Config } from "@/configurator";
+import { getConfig } from "@/db/config";
+import { useLocale } from "@/locales/use-locale";
 
 type PageProps =
   | {

@@ -1,5 +1,6 @@
 import { flatten } from "lodash";
 import lunr from "lunr";
+
 import { ResolvedDataCube } from "../graphql/shared-types";
 
 export const wrap = (

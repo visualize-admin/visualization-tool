@@ -8,14 +8,8 @@ import {
   scaleOrdinal,
 } from "d3";
 import React, { ReactNode } from "react";
-import { ScatterPlotFields } from "@/configurator";
-import {
-  getPalette,
-  mkNumber,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
+
+import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -28,7 +22,14 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
+import { ScatterPlotFields } from "@/configurator";
+import {
+  getPalette,
+  mkNumber,
+  useFormatNumber,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
 
 export interface ScatterplotState {
   chartType: string;

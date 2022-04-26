@@ -1,5 +1,23 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
+
+import { BarsGrouped } from "@/charts/bar/bars-grouped";
+import { GroupedBarsChart } from "@/charts/bar/bars-grouped-state";
+import { Bars } from "@/charts/bar/bars-simple";
+import { BarChart } from "@/charts/bar/bars-state";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  InteractiveLegendColor,
+  LegendColor,
+} from "@/charts/shared/legend-color";
+import {
+  Loading,
+  LoadingDataError,
+  LoadingOverlay,
+  NoDataHint,
+} from "@/components/hint";
 import {
   Filters,
   BarConfig,
@@ -7,27 +25,13 @@ import {
   InteractiveFiltersConfig,
   FilterValueSingle,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
 import { isNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { A11yTable } from "@/charts/shared/a11y-table";
-import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
-import { BarsGrouped } from "@/charts/bar/bars-grouped";
-import { GroupedBarsChart } from "@/charts/bar/bars-grouped-state";
-import { Bars } from "@/charts/bar/bars-simple";
-import { BarChart } from "@/charts/bar/bars-state";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
-import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "@/components/hint";
 
 export const ChartBarsVisualization = ({
   dataSetIri,

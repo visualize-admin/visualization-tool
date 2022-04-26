@@ -1,5 +1,6 @@
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+
 import { PUBLIC_URL } from "@/domain/env";
 
 type Props = {

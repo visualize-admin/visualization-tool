@@ -1,5 +1,8 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
+
+import { Table } from "@/charts/table/table";
+import { TableChart } from "@/charts/table/table-state";
 import {
   Loading,
   LoadingDataError,
@@ -14,8 +17,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { Table } from "@/charts/table/table";
-import { TableChart } from "@/charts/table/table-state";
 
 export const ChartTableVisualization = ({
   dataSetIri,

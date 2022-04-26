@@ -5,9 +5,9 @@ import { ChartLinesVisualization } from "@/charts/line/chart-lines";
 import { ChartMapVisualization } from "@/charts/map/chart-map";
 import { ChartPieVisualization } from "@/charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatterplot";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartTableVisualization } from "@/charts/table/chart-table";
 import { ChartConfig } from "@/configurator";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
 
 const GenericChart = ({
   dataSet,

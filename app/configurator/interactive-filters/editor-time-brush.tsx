@@ -1,3 +1,8 @@
+import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
+import { bisector, brushX, scaleTime, select, Selection } from "d3";
+import React, { useCallback, useEffect, useRef } from "react";
+
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import {
@@ -9,10 +14,6 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
-import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
-import { bisector, brushX, scaleTime, select, Selection } from "d3";
-import React, { useCallback, useEffect, useRef } from "react";
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
 const MARGINS = {

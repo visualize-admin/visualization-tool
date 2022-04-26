@@ -1,4 +1,5 @@
 import { Literal, NamedNode } from "rdf-js";
+
 import { DimensionType } from "../charts/chart-config-ui-options";
 import {
   DimensionMetaDataFragment,

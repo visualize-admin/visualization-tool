@@ -1,8 +1,9 @@
 /* eslint-disable no-redeclare */
-import { DataCubeMetadata } from "@/graphql/types";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
+
+import { DataCubeMetadata } from "@/graphql/types";
 
 const ComponentType = t.union([
   t.literal("Attribute"),

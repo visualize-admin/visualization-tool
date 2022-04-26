@@ -1,6 +1,8 @@
 import { SELECT } from "@tpluscode/sparql-builder";
 import { groupBy } from "lodash";
+
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
+
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
 

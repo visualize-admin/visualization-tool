@@ -1,8 +1,5 @@
 import { createContext, useContext } from "react";
-import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { Has } from "@/lib/has";
+
 import { AreasState } from "@/charts/area/areas-state";
 import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
 import { BarsState } from "@/charts/bar/bars-state";
@@ -14,6 +11,10 @@ import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { TableChartState } from "@/charts/table/table-state";
+import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { Has } from "@/lib/has";
 
 export interface ChartProps {
   data: Observation[];

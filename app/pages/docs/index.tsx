@@ -17,9 +17,10 @@ import {
   TableSpecimen,
   TypeSpecimen,
 } from "catalog";
-import { useEffect, useMemo, useState } from "react";
-import { i18n, I18nProvider, parseLocaleString } from "@/src";
 import Slugger from "github-slugger";
+import { useEffect, useMemo, useState } from "react";
+
+import { i18n, I18nProvider, parseLocaleString } from "@/src";
 
 const slugger = new Slugger();
 

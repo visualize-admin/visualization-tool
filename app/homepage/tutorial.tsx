@@ -1,11 +1,12 @@
-import Flex from "@/components/flex";
 import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
-import { Icon } from "@/icons";
+
+import Flex from "@/components/flex";
 import { HomepageSection } from "@/homepage/generic";
 import { Step1 } from "@/homepage/step1";
 import { Step2 } from "@/homepage/step2";
 import { Step3 } from "@/homepage/step3";
+import { Icon } from "@/icons";
 
 export const Tutorial = ({
   headline,
@@ -19,9 +20,7 @@ export const Tutorial = ({
   step3: string;
 }) => {
   return (
-    <Box
-      sx={{ maxWidth: 1024, m: "0 auto", color: "grey.800", px: 4, pb: 7 }}
-    >
+    <Box sx={{ maxWidth: 1024, m: "0 auto", color: "grey.800", px: 4, pb: 7 }}>
       <HomepageSection>{headline}</HomepageSection>
       <Flex
         sx={{

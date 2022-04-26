@@ -1,3 +1,6 @@
+import { Stack } from "@mui/material";
+import { markdown, ReactSpecimen } from "catalog";
+
 import {
   Loading,
   Error,
@@ -7,8 +10,6 @@ import {
   LoadingGeoDimensionsError,
   LoadingDataError,
 } from "@/components/hint";
-import { markdown, ReactSpecimen } from "catalog";
-import { Stack } from '@mui/material'
 
 export default () => markdown`
 

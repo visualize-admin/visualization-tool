@@ -1,5 +1,5 @@
-import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
 import {
@@ -10,17 +10,21 @@ import {
   useTable,
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
-import { Box, Typography } from "@mui/material";
-import { Input, Switch } from "@/components/form";
-import { Observation } from "@/domain/data";
+
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { CellDesktop } from "@/charts/table/cell-desktop";
 import { DDContent } from "@/charts/table/cell-mobile";
 import { TABLE_HEIGHT } from "@/charts/table/constants";
 import { GroupHeader } from "@/charts/table/group-header";
-import { TableContent, TableContentProvider } from "@/charts/table/table-content";
+import {
+  TableContent,
+  TableContentProvider,
+} from "@/charts/table/table-content";
 import { scrollbarWidth } from "@/charts/table/table-helpers";
 import { TableChartState } from "@/charts/table/table-state";
+import Flex from "@/components/flex";
+import { Input, Switch } from "@/components/form";
+import { Observation } from "@/domain/data";
 
 const MOBILE_VIEW_THRESHOLD = 384;
 

@@ -1,8 +1,5 @@
-import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
-
 import { Box, Typography } from "@mui/material";
-import { LanguageMenu } from "@/components/language-menu";
 import NextLink from "next/link";
 import React, {
   Dispatch,
@@ -11,6 +8,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
+
+import Flex from "@/components/flex";
+import { LanguageMenu } from "@/components/language-menu";
 
 const DEFAULT_HEADER_PROGRESS = 100;
 

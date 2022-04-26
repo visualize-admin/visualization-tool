@@ -1,7 +1,10 @@
 import { WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
-
 import { MapboxLayer } from "@deck.gl/mapbox";
+import { Box, Button } from "@mui/material";
+import { geoArea } from "d3";
+import { orderBy } from "lodash";
+import maplibregl, { LngLatLike, StyleSpecification } from "maplibre-gl";
 import React, {
   useMemo,
   useEffect,
@@ -9,14 +12,8 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import maplibregl, { LngLatLike, StyleSpecification } from "maplibre-gl";
+import ReactMap, { MapRef, ViewState } from "react-map-gl";
 
-import { Box, Button } from "@mui/material";
-import { GeoFeature, GeoPoint } from "@/domain/data";
-import { useLocale } from "@/src";
-import { convertHexToRgbArray } from "@/charts/shared/colors";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
 import {
   emptyStyle,
   getBaseLayerStyle,
@@ -24,12 +21,15 @@ import {
 import { BBox, getBBox } from "@/charts/map/helpers";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
+import { convertHexToRgbArray } from "@/charts/shared/colors";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { GeoFeature, GeoPoint } from "@/domain/data";
+import { Icon, IconName } from "@/icons";
+import { useLocale } from "@/src";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 import Layer from "./layer";
-import ReactMap, { MapRef, ViewState } from "react-map-gl";
-import { Icon, IconName } from "@/icons";
-import { orderBy } from "lodash";
-import { geoArea } from "d3";
 
 function getFirstLabelLayerId(style: StyleSpecification) {
   const layers = style.layers;

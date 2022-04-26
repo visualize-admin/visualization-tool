@@ -1,8 +1,10 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { keyBy } from "lodash";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
+
 import { Filters } from "../configurator";
 import {
   DimensionValue,
@@ -10,8 +12,6 @@ import {
   GeoProperties,
   GeoShapes,
 } from "../domain/data";
-
-import { keyBy } from "lodash";
 import { defaultLocale, parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
@@ -33,7 +33,13 @@ import {
 } from "../rdf/query-cube-metadata";
 import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
+import cachedWithTTL from "../utils/cached-with-ttl";
+import {
+  makeCubeIndex as makeCubeIndexRaw,
+  searchCubes,
+} from "../utils/search";
 import truthy from "../utils/truthy";
+
 import { ObservationFilter } from "./query-hooks";
 import {
   DataCubeResolvers,
@@ -42,11 +48,6 @@ import {
   Resolvers,
 } from "./resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
-import cachedWithTTL from "../utils/cached-with-ttl";
-import {
-  makeCubeIndex as makeCubeIndexRaw,
-  searchCubes,
-} from "../utils/search";
 
 const CUBES_CACHE_TTL = 60 * 1000;
 

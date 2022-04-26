@@ -1,3 +1,5 @@
+import { Box } from "@mui/material";
+import { throttle } from "lodash";
 import React, {
   ReactNode,
   useCallback,
@@ -5,8 +7,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Box } from "@mui/material";
-import { Margins } from "@/charts/shared/use-width";
+import ReactDOM from "react-dom";
+
 import {
   TRIANGLE_SIZE,
   TOOLTIP_OFFSET,
@@ -14,9 +16,8 @@ import {
   Xplacement,
   Yplacement,
 } from "@/charts/shared/interaction/tooltip";
+import { Margins } from "@/charts/shared/use-width";
 import { useTheme } from "@/themes";
-import ReactDOM from "react-dom";
-import { throttle } from "lodash";
 
 export interface TooltipBoxProps {
   x: number | undefined;

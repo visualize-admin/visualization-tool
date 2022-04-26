@@ -1,6 +1,5 @@
-import Flex from "@/components/flex";
 import React, { memo } from "react";
-import { Checkbox } from "@/components/form";
+
 import { AreasState } from "@/charts/area/areas-state";
 import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
 import { BarsState } from "@/charts/bar/bars-state";
@@ -10,8 +9,13 @@ import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { ColorsChartState, useChartState } from "@/charts/shared/use-chart-state";
+import {
+  ColorsChartState,
+  useChartState,
+} from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import Flex from "@/components/flex";
+import { Checkbox } from "@/components/form";
 
 type LegendSymbol = "square" | "line" | "circle";
 

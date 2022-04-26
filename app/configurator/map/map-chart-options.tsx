@@ -1,17 +1,11 @@
-import Flex from "@/components/flex";;
+
 import { t, Trans } from "@lingui/macro";
-import React, { memo, useMemo } from "react";
 import { Box } from "@mui/material";
-import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
+import React, { memo, useMemo } from "react";
+
+import Flex from "@/components/flex";
 import { FieldSetLegend } from "@/components/form";
-import {
-  GeoFeature,
-  getGeoDimensions,
-  getGeoShapesDimensions,
-} from "@/domain/data";
-import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { useLocale } from "@/src";
+import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
 import { ColorRampField } from "@/configurator/components/chart-controls/color-ramp";
 import {
   ControlSection,
@@ -25,6 +19,14 @@ import {
   ColorPickerField,
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
+import {
+  GeoFeature,
+  getGeoDimensions,
+  getGeoShapesDimensions,
+} from "@/domain/data";
+import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { useLocale } from "@/src";
 
 export const MapColumnOptions = ({
   state,

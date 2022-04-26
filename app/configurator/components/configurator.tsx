@@ -1,3 +1,5 @@
+import React from "react";
+
 import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { useConfiguratorState } from "@/configurator";
@@ -16,7 +18,6 @@ import {
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { Stepper } from "@/configurator/components/stepper";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
-import React from "react";
 
 const ConfigureChartStep = () => {
   const [state] = useConfiguratorState();

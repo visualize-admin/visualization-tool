@@ -1,8 +1,9 @@
 import { MDXProvider } from "@mdx-js/react";
-import { ContentLayout, StaticContentLayout } from "@/components/layout";
-import { Intro, Tutorial, Examples, Contribute } from "@/homepage";
 import { Box } from "@mui/material";
 import { ReactNode } from "react";
+
+import { ContentLayout, StaticContentLayout } from "@/components/layout";
+import { Intro, Tutorial, Examples, Contribute } from "@/homepage";
 
 const Wrapper = ({
   contentId,

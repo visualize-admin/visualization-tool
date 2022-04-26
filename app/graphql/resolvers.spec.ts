@@ -1,10 +1,13 @@
-import { Query } from "./resolvers";
+import { GraphQLResolveInfo } from "graphql";
+
 import {
   getCubeObservations as getCubeObservations_,
   createSource as createSource_,
 } from "../rdf/queries";
 import { unversionObservation as unversionObservation_ } from "../rdf/query-dimension-values";
-import { GraphQLResolveInfo } from "graphql";
+
+import { Query } from "./resolvers";
+
 
 const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
   typeof getCubeObservations_

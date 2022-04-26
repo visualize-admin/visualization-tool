@@ -1,3 +1,7 @@
+import { Trans } from "@lingui/macro";
+import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
+import React, { SyntheticEvent } from "react";
+
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import { Hint, Loading } from "@/components/hint";
 import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
@@ -18,9 +22,7 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { Trans } from "@lingui/macro";
-import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
-import React, { SyntheticEvent } from "react";
+
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,

@@ -15,20 +15,13 @@ import {
 } from "d3";
 import { get, sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+
 import {
-  formatNumberWithUnit,
-  getPalette,
-  mkNumber,
-  useErrorMeasure,
-  useErrorRange,
-  useErrorVariable,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { TimeUnit } from "@/graphql/query-hooks";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "@/charts/column/constants";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -43,12 +36,20 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  PADDING_INNER,
-  PADDING_OUTER,
-} from "@/charts/column/constants";
+  formatNumberWithUnit,
+  getPalette,
+  mkNumber,
+  useErrorMeasure,
+  useErrorRange,
+  useErrorVariable,
+  useFormatNumber,
+  useTimeFormatUnit,
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { TimeUnit } from "@/graphql/query-hooks";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface ColumnsState {
   chartType: "column";

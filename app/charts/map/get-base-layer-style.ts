@@ -1,6 +1,7 @@
 import { keyBy } from "lodash";
 import merge from "lodash/merge";
 import { MapOptions, StyleSpecification } from "maplibre-gl";
+
 import { BASE_VECTOR_TILE_URL } from "../../domain/env";
 import { Locale } from "../../locales/locales";
 

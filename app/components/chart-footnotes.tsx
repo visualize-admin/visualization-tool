@@ -1,3 +1,7 @@
+import { Trans } from "@lingui/macro";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig } from "@/configurator";
@@ -7,9 +11,7 @@ import {
 } from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({

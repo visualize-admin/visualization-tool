@@ -1,9 +1,10 @@
 import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
+
 import { ChartPublished } from "@/components/chart-published";
-import { getConfig } from "@/db/config";
 import { Config } from "@/configurator";
+import { getConfig } from "@/db/config";
 
 type PageProps =
   | {

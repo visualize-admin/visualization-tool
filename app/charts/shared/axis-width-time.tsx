@@ -1,12 +1,12 @@
 import { axisBottom } from "d3";
 import { select, Selection } from "d3";
-
 import { useEffect, useRef } from "react";
-import { useFormatShortDateAuto } from "@/configurator/components/ui-helpers";
+
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { useFormatShortDateAuto } from "@/configurator/components/ui-helpers";
 
 // Approximate the longest date format we're using for
 // Roughly equivalent to estimateTextWidth("99.99.9999", 12);
@@ -18,13 +18,8 @@ export const AxisTime = () => {
 
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
 
-  const {
-    labelColor,
-    gridColor,
-    domainColor,
-    labelFontSize,
-    fontFamily,
-  } = useChartTheme();
+  const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
+    useChartTheme();
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 

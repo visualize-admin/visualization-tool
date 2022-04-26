@@ -1,3 +1,9 @@
+import { t, Trans } from "@lingui/macro";
+import { Box } from "@mui/material";
+import { keyBy } from "lodash";
+import get from "lodash/get";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+
 import { getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
@@ -52,11 +58,6 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
-import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
-import { keyBy } from "lodash";
-import get from "lodash/get";
-import { useCallback, useEffect, useMemo, useRef } from "react";
 
 export const ChartOptionsSelector = ({
   state,

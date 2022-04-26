@@ -1,10 +1,12 @@
 import { ascending } from "d3";
 import flowRight from "lodash/flowRight";
 import { useMemo } from "react";
+
 import {
   DataCubeObservationsQuery,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
+
 import { defaultSorter, makeOrdinalDimensionSorter } from "./sorting-values";
 
 export type DimensionHierarchy = {

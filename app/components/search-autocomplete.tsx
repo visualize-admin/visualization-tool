@@ -1,18 +1,19 @@
+import { t } from "@lingui/macro";
+import { Box } from "@mui/material";
 import React, { useMemo } from "react";
+
+import Autocomplete, { AutocompleteProps } from "@/components/autocomplete";
 import {
   BrowseFilter,
   DataCubeAbout,
   useBrowseContext,
 } from "@/configurator/components/dataset-browse";
+import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { useOrganizationsQuery, useThemesQuery } from "@/graphql/query-hooks";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { useLocale } from "@/src";
-import Autocomplete, { AutocompleteProps } from "@/components/autocomplete";
-import { Box } from "@mui/material";
-import useDatasetCount from "@/configurator/components/use-dataset-count";
-import { t } from "@lingui/macro";
 import SvgIcText from "@/icons/components/IcText";
+import { useLocale } from "@/src";
 
 const getItemIcon = (item: SearchAutocompleteItem) => {
   if (item.__typename === "DataCubeTheme") {

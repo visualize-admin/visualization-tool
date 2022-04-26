@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import { LegendItem } from "@/charts/shared/legend-color";
+
 import { TooltipValue } from "@/charts/shared/interaction/tooltip";
+import { LegendItem } from "@/charts/shared/legend-color";
 
 // Generic
 export const TooltipSingle = ({
@@ -17,7 +18,11 @@ export const TooltipSingle = ({
   return (
     <Box>
       {xValue && (
-        <Typography component="div" variant="caption" sx={{ fontWeight: "bold" }}>
+        <Typography
+          component="div"
+          variant="caption"
+          sx={{ fontWeight: "bold" }}
+        >
           {xValue}
         </Typography>
       )}
@@ -46,7 +51,11 @@ export const TooltipMultiple = ({
   return (
     <Box>
       {xValue && (
-        <Typography component="div" variant="caption" sx={{ fontWeight: "bold" }}>
+        <Typography
+          component="div"
+          variant="caption"
+          sx={{ fontWeight: "bold" }}
+        >
           {xValue}
         </Typography>
       )}
@@ -75,7 +84,11 @@ export const TooltipScatterplot = ({
   return (
     <Box>
       {firstLine && (
-        <Typography component="div" variant="caption" sx={{ fontWeight: "bold" }}>
+        <Typography
+          component="div"
+          variant="caption"
+          sx={{ fontWeight: "bold" }}
+        >
           {firstLine}
         </Typography>
       )}

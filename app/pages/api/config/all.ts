@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+
 import { getAllConfigs } from "../../../db/config";
 
 /**

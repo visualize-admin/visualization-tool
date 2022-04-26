@@ -1,13 +1,16 @@
-import Flex from "@/components/flex";
+import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
-import { Box } from "@mui/material";
+
+import { ColumnChart } from "@/charts/column/columns-state";
+import { RulerContent } from "@/charts/shared/interaction/ruler";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import {
   TooltipMultiple,
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
-import { ColumnChart } from "@/charts/column/columns-state";
+import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import Flex from "@/components/flex";
 import {
   fields,
   margins,
@@ -15,8 +18,6 @@ import {
   dimensions,
   observations,
 } from "@/docs/fixtures";
-import { RulerContent } from "@/charts/shared/interaction/ruler";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 
 export default () => markdown`
 

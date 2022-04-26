@@ -1,9 +1,7 @@
-import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
+import { useEffect, useRef } from "react";
+
 import { ConfiguratorStateDescribingChart } from "@/configurator";
-import { locales } from "@/locales/locales";
-import { useLocale } from "@/locales/use-locale";
-import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
 import {
   ControlSection,
   ControlSectionContent,
@@ -15,6 +13,9 @@ import {
   getFieldLabel,
   getIconName,
 } from "@/configurator/components/ui-helpers";
+import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
+import { locales } from "@/locales/locales";
+import { useLocale } from "@/locales/use-locale";
 
 export const ChartAnnotationsSelector = ({
   state,

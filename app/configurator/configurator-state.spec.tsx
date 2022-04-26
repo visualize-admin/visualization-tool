@@ -1,3 +1,7 @@
+import { Client } from "@urql/core";
+import { createDraft, current } from "immer";
+import { get } from "lodash";
+
 import * as api from "@/api";
 import { getChartConfigAdjustedToChartType } from "@/charts";
 import { ChartConfig } from "@/configurator";
@@ -17,9 +21,7 @@ import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComp
 import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
 import covid19ChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
-import { Client } from "@urql/core";
-import { createDraft, current } from "immer";
-import { get } from "lodash";
+
 import { ChartType, ColumnConfig } from "./config-types";
 
 const mockedApi = api as jest.Mocked<typeof api>;

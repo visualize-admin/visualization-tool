@@ -1,4 +1,4 @@
-import Flex from "@/components/flex";
+import { Box, Typography } from "@mui/material";
 import {
   axisBottom,
   NumberValue,
@@ -13,7 +13,13 @@ import {
 } from "d3";
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
-import { Box, Typography } from "@mui/material";
+
+import { MapState } from "@/charts/map/map-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { useWidth } from "@/charts/shared/use-width";
+import Flex from "@/components/flex";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,
@@ -21,11 +27,6 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useChartState } from "@/charts/shared/use-chart-state";
-import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { useInteraction } from "@/charts/shared/use-interaction";
-import { useWidth } from "@/charts/shared/use-width";
-import { MapState } from "@/charts/map/map-state";
 
 const MAX_WIDTH = 204;
 const HEIGHT = 80;

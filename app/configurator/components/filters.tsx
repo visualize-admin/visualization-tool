@@ -1,7 +1,10 @@
-import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
-import React, { useCallback, useMemo } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
+import React, { useCallback, useMemo } from "react";
+
+import Flex from "@/components/flex";
+import { Loading } from "@/components/hint";
 import {
   getFilterValue,
   MultiFilterContextProvider,
@@ -9,19 +12,6 @@ import {
   useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
-import { Loading } from "@/components/hint";
-import { Stack } from "@mui/material";
-import {
-  useDimensionValuesQuery,
-  useTemporalDimensionValuesQuery,
-} from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
-import {
-  HierarchyValue,
-  useHierarchicalDimensionValuesQuery,
-} from "@/utils/dimension-hierarchy";
-import { valueComparator } from "@/utils/sorting-values";
-import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import {
   Accordion,
   AccordionContent,
@@ -37,6 +27,18 @@ import {
   useTimeFormatLocale,
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
+import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
+import {
+  useDimensionValuesQuery,
+  useTemporalDimensionValuesQuery,
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import {
+  HierarchyValue,
+  useHierarchicalDimensionValuesQuery,
+} from "@/utils/dimension-hierarchy";
+import { valueComparator } from "@/utils/sorting-values";
+
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {

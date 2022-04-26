@@ -1,5 +1,6 @@
-import * as fs from "fs-extra";
 import * as path from "path";
+
+import * as fs from "fs-extra";
 
 // Needs to be relative to CWD because webpack will replace __dirname with "/"
 const FIXTURES_DIR = path.join("app", "test", "__fixtures", "prod");

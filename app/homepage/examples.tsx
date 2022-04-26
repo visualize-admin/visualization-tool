@@ -1,7 +1,8 @@
-import Flex from "@/components/flex";
-import { ReactNode } from "react";
 import { Box, Typography } from "@mui/material";
+import { ReactNode } from "react";
+
 import { ChartPublished } from "@/components/chart-published";
+import Flex from "@/components/flex";
 import { HomepageSection } from "@/homepage/generic";
 
 export const Examples = ({

@@ -1,22 +1,20 @@
 import { t, Trans } from "@lingui/macro";
+import { Box } from "@mui/material";
 import { extent } from "d3";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
-import { Box } from "@mui/material";
+
 import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
 import { Checkbox } from "@/components/form";
 import { Loading } from "@/components/hint";
-import {
-  DimensionMetaDataFragment,
-  TimeUnit,
-  useDataCubeMetadataWithComponentValuesQuery,
-} from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { parseDate, useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
+import {
+  parseDate,
+  useFormatFullDateAuto,
+} from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
@@ -27,6 +25,12 @@ import {
 } from "@/configurator/interactive-filters/interactive-filters-config-actions";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import {
+  DimensionMetaDataFragment,
+  TimeUnit,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
 
 export const InteractiveFiltersOptions = ({
   state,

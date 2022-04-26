@@ -1,6 +1,7 @@
+import { Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, Button, Typography } from "@mui/material";
+
 import { HintRed } from "@/components/hint";
 
 export const Intro = ({

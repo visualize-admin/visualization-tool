@@ -14,11 +14,12 @@ import {
   sum,
 } from "d3";
 import React, { ReactNode, useMemo } from "react";
-import { BarFields, SortingOrder, SortingType } from "@/configurator";
-import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
-import { useLocale } from "@/locales/use-locale";
+
+import {
+  BAR_HEIGHT,
+  BAR_SPACE_ON_TOP,
+  BOTTOM_MARGIN_OFFSET,
+} from "@/charts/bar/constants";
 import {
   useNumericVariable,
   useSegment,
@@ -28,11 +29,11 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import {
-  BAR_HEIGHT,
-  BAR_SPACE_ON_TOP,
-  BOTTOM_MARGIN_OFFSET,
-} from "@/charts/bar/constants";
+import { BarFields, SortingOrder, SortingType } from "@/configurator";
+import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { sortByIndex } from "@/lib/array";
+import { useLocale } from "@/locales/use-locale";
 
 export interface GroupedBarsState {
   chartType: string;

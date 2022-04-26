@@ -1,8 +1,9 @@
-import Flex from "@/components/flex";
+import { Box } from "@mui/material";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { Box } from "@mui/material";
+
+import Flex from "@/components/flex";
 import contentRoutes from "@/content-routes.json";
 import localeConfig from "@/locales/locales.json";
 import { useLocale } from "@/locales/use-locale";

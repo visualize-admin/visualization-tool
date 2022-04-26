@@ -1,5 +1,6 @@
-import Flex from "@/components/flex";;
+
 import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
 import {
   brushX,
   CountableTimeInterval,
@@ -8,11 +9,12 @@ import {
   Selection,
 } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Typography } from "@mui/material";
+
+import Flex from "@/components/flex";
 import { Label } from "@/components/form";
+import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
-import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;

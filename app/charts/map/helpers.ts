@@ -1,4 +1,5 @@
 import { extent, geoBounds } from "d3";
+
 import { AreaLayer, SymbolLayer } from "../../domain/data";
 
 export type BBox = [[number, number], [number, number]];

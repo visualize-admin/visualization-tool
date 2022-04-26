@@ -1,5 +1,6 @@
-import { Fragment } from "react";
 import { Box, Typography } from "@mui/material";
+import { Fragment } from "react";
+
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartConfig } from "@/configurator";
 import { useTimeFormatUnit } from "@/configurator/components/ui-helpers";
@@ -57,7 +58,11 @@ export const ChartFiltersList = ({
     return (
       <>
         {namedFilters.length > 0 && (
-          <Typography component="div" variant="body2" sx={{ color: "grey.800" }}>
+          <Typography
+            component="div"
+            variant="body2"
+            sx={{ color: "grey.800" }}
+          >
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
                 <Box component="span">

@@ -1,5 +1,7 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
+
 import { ResolvedDimension } from "../graphql/shared-types";
+
 import * as ns from "./namespace";
 import { dimensionIsVersioned } from "./queries";
 import { sparqlClient } from "./sparql-client";

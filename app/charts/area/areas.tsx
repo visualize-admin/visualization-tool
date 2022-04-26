@@ -1,8 +1,9 @@
 import { area } from "d3";
 import { memo } from "react";
-import { useTheme } from "@/themes";
-import { useChartState } from "@/charts/shared/use-chart-state";
+
 import { AreasState } from "@/charts/area/areas-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useTheme } from "@/themes";
 
 export const Areas = () => {
   const { bounds, getX, xScale, yScale, colors, series, segments } =

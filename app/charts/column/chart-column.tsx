@@ -1,5 +1,29 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
+
+import {
+  ColumnsGrouped,
+  ErrorWhiskers as ErrorWhiskersGrouped,
+} from "@/charts/column/columns-grouped";
+import { GroupedColumnChart } from "@/charts/column/columns-grouped-state";
+import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
+import { ColumnsStacked } from "@/charts/column/columns-stacked";
+import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
+import { ColumnChart } from "@/charts/column/columns-state";
+import { InteractionColumns } from "@/charts/column/overlay-columns";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import {
+  AxisWidthBand,
+  AxisWidthBandDomain,
+} from "@/charts/shared/axis-width-band";
+import { BrushTime } from "@/charts/shared/brush";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import {
+  InteractiveLegendColor,
+  LegendColor,
+} from "@/charts/shared/legend-color";
 import {
   Loading,
   LoadingDataError,
@@ -20,23 +44,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { A11yTable } from "@/charts/shared/a11y-table";
-import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
-import { AxisWidthBand, AxisWidthBandDomain } from "@/charts/shared/axis-width-band";
-import { BrushTime } from "@/charts/shared/brush";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
-import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
-import {
-  ColumnsGrouped,
-  ErrorWhiskers as ErrorWhiskersGrouped,
-} from "@/charts/column/columns-grouped";
-import { GroupedColumnChart } from "@/charts/column/columns-grouped-state";
-import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
-import { ColumnsStacked } from "@/charts/column/columns-stacked";
-import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
-import { ColumnChart } from "@/charts/column/columns-state";
-import { InteractionColumns } from "@/charts/column/overlay-columns";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,

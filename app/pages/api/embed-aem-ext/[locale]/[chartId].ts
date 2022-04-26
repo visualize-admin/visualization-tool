@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+
 import { renderEmbedMarkup } from "../../../../embed-templates/embed-aem-ext";
 import { parseLocaleString } from "../../../../locales/locales";
 

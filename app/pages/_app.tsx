@@ -1,12 +1,12 @@
 import { I18nProvider } from "@lingui/react";
-
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "core-js/features/array/flat-map";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
 import { GraphqlProvider } from "@/graphql/context";

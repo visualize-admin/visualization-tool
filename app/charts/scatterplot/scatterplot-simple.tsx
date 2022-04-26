@@ -1,7 +1,8 @@
 import { memo } from "react";
-import { useTheme } from "@/themes";
-import { useChartState } from "@/charts/shared/use-chart-state";
+
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useTheme } from "@/themes";
 
 export const Scatterplot = () => {
   const {
@@ -27,7 +28,9 @@ export const Scatterplot = () => {
             key={index}
             cx={xScale(getX(d) ?? NaN)}
             cy={yScale(getY(d) ?? NaN)}
-            color={hasSegment ? colors(getSegment(d)) : theme.palette.primary.main}
+            color={
+              hasSegment ? colors(getSegment(d)) : theme.palette.primary.main
+            }
           />
         );
       })}
