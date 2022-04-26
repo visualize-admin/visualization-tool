@@ -11,6 +11,8 @@ import {
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 
+import { PromiseValue } from "@/utils/promise";
+
 import { Filters } from "../configurator";
 import {
   DimensionValue,
@@ -502,7 +504,18 @@ export const getCubeObservations = async ({
   const query = observationsView
     .observationsQuery(queryOptions)
     .query.toString();
-  const observationsRaw = await observationsView.observations(queryOptions);
+
+  let observationsRaw:
+    | PromiseValue<ReturnType<typeof observationsView.observations>>
+    | undefined;
+  try {
+    observationsRaw = await observationsView.observations(queryOptions);
+  } catch (e) {
+    console.warn("Query failed", query);
+    throw new Error(
+      `Could not retrieve data: ${e instanceof Error ? e.message : e}`
+    );
+  }
   const observations = observationsRaw.map((obs, i) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {

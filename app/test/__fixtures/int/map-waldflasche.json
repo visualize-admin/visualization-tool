@@ -1,0 +1,82 @@
+{
+  "key": "jky5IEw6poT3",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "",
+        "en": "Forest area per region",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "How much wood is produced in Switzerland",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/nfi/49-19-None-None/cube/1",
+    "chartConfig": {
+      "fields": {
+        "areaLayer": {
+          "show": true,
+          "nbClass": 5,
+          "palette": "oranges",
+          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "colorScaleType": "continuous",
+          "hierarchyLevel": 1,
+          "colorScaleInterpolationType": "linear"
+        },
+        "symbolLayer": {
+          "show": false,
+          "color": "#1f77b4",
+          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "hierarchyLevel": 1
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/nfi/grid": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/Grid/N4"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/struk": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Struk/-1"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/inventory": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/Inventory/150"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfEvaluation/Zgwald1234"
+        }
+      },
+      "baseLayer": {
+        "show": true
+      },
+      "chartType": "map",
+      "interactiveFiltersConfig": {
+        "time": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": false,
+          "componentIris": []
+        }
+      }
+    }
+  }
+}

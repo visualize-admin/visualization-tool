@@ -1,7 +1,6 @@
 .next
 .yarn
 node_modules
-__fixtures
-fixtures
+__fixtures/**/*.json
 build
 dist

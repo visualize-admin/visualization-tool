@@ -1,0 +1,73 @@
+{
+  "key": "clQmsblRxpK7",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/nfi/49-19-None-None/cube/1",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "sorting": {
+            "sortingType": "byDimensionLabel",
+            "sortingOrder": "asc"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation"
+        },
+        "y": {
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "showStandardError": true
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/nfi/grid": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/Grid/N4"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/struk": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Struk/-1"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/prodreg": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/1"
+        },
+        "https://environment.ld.admin.ch/foen/nfi/inventory": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/nfi/Inventory/150"
+        }
+      },
+      "chartType": "column",
+      "interactiveFiltersConfig": {
+        "time": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": false,
+          "componentIris": []
+        }
+      }
+    }
+  }
+}

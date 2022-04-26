@@ -1,8 +1,11 @@
-import configIds from "../fixtures/prod/config-keys.json";
+import intConfigs from "../../app/test/__fixtures/int/configs";
+
+// Right now the CI app server runs connected to int.lindas.admin.ch
+const configs = intConfigs.map((x) => ({ env: "int", ...x }));
 
 describe("Chart Snapshots", () => {
-  configIds.forEach((id: string) => {
-    it(`snapshot ${id} matches`, () => {
+  configs.forEach(({ slug, env }) => {
+    it(`snapshot ${slug} matches`, () => {
       cy.on("uncaught:exception", (err, runnable) => {
         // return false to prevent the error from
         // failing this test
@@ -10,10 +13,13 @@ describe("Chart Snapshots", () => {
       });
 
       cy.viewport("ipad-mini", "portrait");
-      cy.visit(`/en/__test/${id}`);
+      cy.visit(`/en/__test/${env}/${slug}`);
       cy.get(`[data-chart-loaded="true"]`, { timeout: 20000 });
       cy.wait(100);
-      cy.document().toMatchImageSnapshot({ name: `snapshot-${id}` });
+      cy.document().toMatchImageSnapshot({
+        capture: "fullPage",
+        name: `chart-${env}-${slug}`,
+      });
     });
   });
 });

@@ -10,11 +10,12 @@ import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
-import { Hint, Loading } from "@/components/hint";
+import { Hint } from "@/components/hint";
 import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
 } from "@/configurator/components/chart-controls/section";
 import {
   getFieldLabel,
@@ -200,6 +201,6 @@ export const ChartTypeSelector = ({
       </ControlSection>
     );
   } else {
-    return <Loading />;
+    return <ControlSectionSkeleton />;
   }
 };
