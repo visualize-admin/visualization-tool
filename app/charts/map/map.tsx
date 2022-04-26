@@ -230,7 +230,7 @@ export const MapComponent = () => {
           hierarchyLevel === areaLayer.hierarchyLevel
       ),
       geoArea,
-      "desc"
+      "asc"
     );
     const shapes = {
       ...features.areaLayer?.shapes,
@@ -314,7 +314,7 @@ export const MapComponent = () => {
         : 0;
     // Sort for smaller points to be over larger ones, to be able to use tooltip
     const sortedPoints = features.symbolLayer?.points
-      ? orderBy([...features.symbolLayer?.points], getRadius, "desc")
+      ? orderBy([...features.symbolLayer?.points], getRadius, "asc")
       : [];
     return new MapboxLayer({
       type: ScatterplotLayer,
