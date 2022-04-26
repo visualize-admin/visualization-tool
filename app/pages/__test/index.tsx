@@ -3,8 +3,8 @@ import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 
 import { loadFixtureConfigs } from "@/test/utils";
+import { PromiseValue } from "@/utils/promise";
 
-type PromiseValue<T> = T extends Promise<infer S> ? S : T;
 type PageProps = {
   configs: PromiseValue<ReturnType<typeof loadFixtureConfigs>>;
 };
