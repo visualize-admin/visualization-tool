@@ -3,11 +3,12 @@ import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
-import { Hint, Loading } from "@/components/hint";
+import { Hint } from "@/components/hint";
 import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
@@ -181,6 +182,6 @@ export const ChartTypeSelector = ({
       </ControlSection>
     );
   } else {
-    return <Loading />;
+    return <ControlSectionSkeleton />;
   }
 };
