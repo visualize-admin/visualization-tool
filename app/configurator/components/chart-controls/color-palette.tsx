@@ -228,21 +228,19 @@ const ColorPaletteReset = ({
       (pc, i) => pc === colorMappingColors[i]
     );
 
-    return (
+    return same ? (
+      <Box mt={2} />
+    ) : (
       <Button
         disabled={same}
         onClick={resetColorPalette}
         variant="text"
-        sx={{ mt: 0, mb: 3, px: 1 }}
+        sx={{ mt: 2, px: 1 }}
       >
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
       </Button>
     );
   } else {
-    return (
-      <Button disabled={true} variant="text" sx={{ mt: 2, mb: 3 }}>
-        <Trans id="controls.color.palette.reset">Reset color palette</Trans>
-      </Button>
-    );
+    return <Box mt={2} />;
   }
 };
