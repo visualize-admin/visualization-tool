@@ -147,7 +147,10 @@ export const ChartTypeSelector = ({
         </legend>
         <Box sx={{ m: 4, textAlign: "center" }}>
           <Typography variant="body2">
-            Switch to another chart type while maintaining most filter settings.
+            <Trans id="controls.switch.chart.type">
+              Switch to another chart type while maintaining most filter
+              settings.
+            </Trans>
           </Typography>
           {possibleFiltersFetching ? (
             <CircularProgress
@@ -187,7 +190,9 @@ export const ChartTypeSelector = ({
               </Box>
               {/* TODO: Handle properly when chart composition is implemented */}
               <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
-                Remove this visualization
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
               </Button>
             </Flex>
           )}
