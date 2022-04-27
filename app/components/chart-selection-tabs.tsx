@@ -3,7 +3,9 @@ import React, {
   createContext,
   Dispatch,
   ReactNode,
+  useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -78,6 +80,14 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] =
     useState<HTMLButtonElement | null>(null);
+  const handleClose = useCallback(() => {
+    setPopoverAnchorEl(null);
+    setTabsState({ isPopoverOpen: false });
+  }, [setTabsState]);
+
+  useEffect(() => {
+    handleClose();
+  }, [handleClose, configuratorState.chartConfig.chartType]);
 
   return (
     <>
@@ -97,10 +107,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
           horizontal: "left",
           vertical: "bottom",
         }}
-        onClose={() => {
-          setPopoverAnchorEl(null);
-          setTabsState({ isPopoverOpen: false });
-        }}
+        onClose={handleClose}
       >
         <ChartTypeSelector state={configuratorState} />
       </Popover>
