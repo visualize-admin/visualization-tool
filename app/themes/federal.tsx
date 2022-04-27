@@ -666,6 +666,13 @@ theme.components = {
       },
     },
   },
+  MuiPaper: {
+    styleOverrides: {
+      root: {
+        borderRadius: 8,
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         svg {
