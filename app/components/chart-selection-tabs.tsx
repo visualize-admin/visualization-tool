@@ -1,4 +1,4 @@
-import { ButtonBase, IconButton, Popover, Tab, Tabs } from "@mui/material";
+import { IconButton, Popover, Tab, Tabs } from "@mui/material";
 import React, {
   createContext,
   Dispatch,
@@ -148,16 +148,20 @@ const TabContent = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   return (
-    <ButtonBase disabled={disabled}>
       <Flex sx={{ gap: 1 }}>
         <Icon name={iconName} />
 
         {editable && (
-          <IconButton size="small" onClick={onActionButtonClick}>
+        // @ts-ignore
+        <IconButton
+          component="div"
+          disabled={disabled}
+          size="small"
+          onClick={onActionButtonClick}
+        >
             <Icon name="chevronDown" size={16} />
           </IconButton>
         )}
       </Flex>
-    </ButtonBase>
   );
 };
