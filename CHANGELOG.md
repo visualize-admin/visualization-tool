@@ -13,7 +13,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Fixed scrolling of table preview & other smaller UI things in published charts
 - Only the top 7 nav items are shown in the search nav bar (design alignment), a button is there to display more
 - Added the footer in the search page
-- Maps now have labels and the visualization layers (scatterplot and areas) are shown under map labels. When zooming via the buttons, we now have a smooth transition.
+- Maps now have labels and the visualization layers (scatterplot and areas) are shown under map labels. When zooming via the buttons, we now have a smooth transition
+- Removed chart selection step; selection of a chart type can now be done at any point when creating a chart (added a new chart selection tabs UI)
+- Implemented a logic to keep as much chart cofiguration as possible when switching a chart type
 
 ## [3.4.10] - 2022-04-11
 
