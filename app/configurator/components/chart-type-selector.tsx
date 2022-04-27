@@ -1,17 +1,10 @@
 import { Trans } from "@lingui/macro";
-import {
-  Box,
-  Button,
-  ButtonBase,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Box, ButtonBase, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
-import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -56,7 +49,7 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "64px",
-        borderRadius: 8,
+        borderRadius: 4,
 
         backgroundColor: checked ? "muted.dark" : "grey.100",
         color: checked ? "primary.main" : disabled ? "grey.500" : "grey.700",
@@ -133,16 +126,12 @@ export const ChartTypeSelector = ({
     variables: { iri: state.dataSet, locale },
   });
 
-  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
-    state,
-  });
-
   if (data?.dataCubeByIri) {
     const metaData = data.dataCubeByIri;
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <ControlSection sx={{ width: "320px" }}>
+      <ControlSection sx={{ position: "relative", width: "320px" }}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
@@ -153,13 +142,6 @@ export const ChartTypeSelector = ({
               settings.
             </Trans>
           </Typography>
-          {possibleFiltersFetching ? (
-            <CircularProgress
-              color="primary"
-              size={12}
-              sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
-            />
-          ) : null}
         </Box>
 
         <ControlSectionContent side="left">
@@ -190,11 +172,11 @@ export const ChartTypeSelector = ({
                 ))}
               </Box>
               {/* TODO: Handle properly when chart composition is implemented */}
-              <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
+              {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
                 <Trans id="controls.remove.visualization">
                   Remove this visualization
                 </Trans>
-              </Button>
+              </Button> */}
             </Flex>
           )}
         </ControlSectionContent>
