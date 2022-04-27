@@ -56,7 +56,7 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "64px",
-        borderRadius: 8,
+        borderRadius: 4,
 
         backgroundColor: checked ? "muted.dark" : "grey.100",
         color: checked ? "primary.main" : disabled ? "grey.500" : "grey.700",
