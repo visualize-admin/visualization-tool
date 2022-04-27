@@ -134,6 +134,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("@/docs/button.docs"),
       },
       {
+        path: "/components/chart-selection-tabs",
+        title: "Chart Selection Tabs",
+        content: require("@/docs/chart-selection-tabs.docs"),
+      },
+      {
         path: "/components/color-ramp",
         title: "Color Ramp",
         content: require("@/docs/color-ramp.docs"),
