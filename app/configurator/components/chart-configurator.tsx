@@ -545,25 +545,32 @@ const ChartFields = ({
 
   return (
     <>
-      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        return isMapConfig(chartConfig) && encoding.field === "baseLayer" ? (
+      {chartConfigOptionsUISpec[chartType].encodings.map(({ field }) => {
+        const isMapChart = isMapConfig(chartConfig);
+        const component = components.find(
+          (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
+        );
+
+        return isMapChart && field === "baseLayer" ? (
           <OnOffControlTabField
-            key={encoding.field}
-            value={encoding.field}
+            key={field}
+            value={field}
             icon="baseLayer"
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
             active={chartConfig.baseLayer.show}
           />
         ) : (
           <ControlTabField
-            key={encoding.field}
-            component={components.find(
-              (d) =>
-                d.iri ===
-                (chartConfig.fields as any)[encoding.field]?.componentIri
-            )}
-            value={encoding.field}
-            labelId={`${chartConfig.chartType}.${encoding.field}`}
+            key={field}
+            component={
+              isMapChart && field === "symbolLayer"
+                ? chartConfig.fields.symbolLayer.show
+                  ? component
+                  : undefined
+                : component
+            }
+            value={field}
+            labelId={`${chartConfig.chartType}.${field}`}
           />
         );
       })}
