@@ -55,6 +55,7 @@ export const ChartSelectionTabs = ({
   editable,
 }: {
   chartType: ChartType;
+  /** Tabs are not editable when they are published. */
   editable: boolean;
 }) => {
   return (
@@ -148,10 +149,10 @@ const TabContent = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   return (
-      <Flex sx={{ gap: 1 }}>
-        <Icon name={iconName} />
+    <Flex sx={{ gap: 1 }}>
+      <Icon name={iconName} />
 
-        {editable && (
+      {editable && (
         // @ts-ignore
         <IconButton
           component="div"
@@ -159,9 +160,9 @@ const TabContent = ({
           size="small"
           onClick={onActionButtonClick}
         >
-            <Icon name="chevronDown" size={16} />
-          </IconButton>
-        )}
-      </Flex>
+          <Icon name="chevronDown" size={16} />
+        </IconButton>
+      )}
+    </Flex>
   );
 };
