@@ -634,6 +634,8 @@ theme.components = {
   MuiTabs: {
     styleOverrides: {
       root: {
+        boxShadow: shadows[6],
+
         "& .MuiTabs-flexContainer": {
           gap: 4,
         },
@@ -670,6 +672,7 @@ theme.components = {
     styleOverrides: {
       root: {
         borderRadius: 8,
+        boxShadow: "0px 10px 30px 0px rgba(0, 0, 0, 0.34)",
       },
     },
   },
