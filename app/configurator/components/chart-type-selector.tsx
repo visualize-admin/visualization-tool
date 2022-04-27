@@ -1,11 +1,5 @@
 import { Trans } from "@lingui/macro";
-import {
-  Box,
-  Button,
-  ButtonBase,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
@@ -190,11 +184,11 @@ export const ChartTypeSelector = ({
                 ))}
               </Box>
               {/* TODO: Handle properly when chart composition is implemented */}
-              <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
+              {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
                 <Trans id="controls.remove.visualization">
                   Remove this visualization
                 </Trans>
-              </Button>
+              </Button> */}
             </Flex>
           )}
         </ControlSectionContent>
