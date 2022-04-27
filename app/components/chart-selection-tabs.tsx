@@ -122,7 +122,7 @@ const TabsInner = ({
 }) => {
   return (
     <Tabs value={0}>
-      {/* TODO: Generate dynamically when chart composition is implemeneted */}
+      {/* TODO: Generate dynamically when chart composition is implemented */}
       <Tab
         label={
           <TabContent
