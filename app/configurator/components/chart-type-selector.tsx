@@ -1,11 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
+import { Box, ButtonBase, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
-import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -127,10 +126,6 @@ export const ChartTypeSelector = ({
     variables: { iri: state.dataSet, locale },
   });
 
-  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
-    state,
-  });
-
   if (data?.dataCubeByIri) {
     const metaData = data.dataCubeByIri;
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
@@ -185,21 +180,6 @@ export const ChartTypeSelector = ({
             </Flex>
           )}
         </ControlSectionContent>
-
-        {possibleFiltersFetching ? (
-          <CircularProgress
-            color="primary"
-            size={12}
-            sx={{
-              position: "absolute",
-              bottom: 48,
-              right: 48,
-              color: "hint.main",
-              display: "inline-block",
-              ml: 1,
-            }}
-          />
-        ) : null}
       </ControlSection>
     );
   } else {
