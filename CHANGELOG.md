@@ -15,7 +15,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Added the footer in the search page
 - Maps now have labels and the visualization layers (scatterplot and areas) are shown under map labels. When zooming via the buttons, we now have a smooth transition
 - Removed chart selection step; selection of a chart type can now be done at any point when creating a chart (added a new chart selection tabs UI)
-- Implemented a logic to keep as much chart cofiguration as possible when switching a chart type
+- Implemented logic to keep as much chart configuration as possible when switching chart type
 
 ## [3.4.10] - 2022-04-11
 
