@@ -630,6 +630,14 @@ theme.components = {
     defaultProps: {
       TransitionComponent: isSafari15 ? Fade : Grow,
     },
+    styleOverrides: {
+      root: {
+        "& .MuiPaper-root": {
+          borderRadius: 8,
+          boxShadow: "0px 10px 30px 0px rgba(0, 0, 0, 0.34)",
+        },
+      },
+    },
   },
   MuiTabs: {
     styleOverrides: {
@@ -665,14 +673,6 @@ theme.components = {
           height: 50,
           color: theme.palette.primary.main,
         },
-      },
-    },
-  },
-  MuiPaper: {
-    styleOverrides: {
-      root: {
-        borderRadius: 8,
-        boxShadow: "0px 10px 30px 0px rgba(0, 0, 0, 0.34)",
       },
     },
   },
