@@ -546,12 +546,11 @@ const ChartFields = ({
   return (
     <>
       {chartConfigOptionsUISpec[chartType].encodings.map(({ field }) => {
-        const isMapChart = isMapConfig(chartConfig);
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
 
-        return isMapChart && field === "baseLayer" ? (
+        return isMapConfig(chartConfig) && field === "baseLayer" ? (
           <OnOffControlTabField
             key={field}
             value={field}
@@ -563,7 +562,7 @@ const ChartFields = ({
           <ControlTabField
             key={field}
             component={
-              isMapChart && field === "symbolLayer"
+              isMapConfig(chartConfig) && field === "symbolLayer"
                 ? chartConfig.fields.symbolLayer.show
                   ? component
                   : undefined
