@@ -23,6 +23,7 @@ import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
+  ConfiguratorStatePublishing,
   isMapConfig,
 } from "@/configurator";
 import {
@@ -140,7 +141,10 @@ const orderedIsEqual = (
 export const useEnsurePossibleFilters = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateDescribingChart
+    | ConfiguratorStatePublishing;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);

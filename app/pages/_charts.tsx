@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
-import { ChartPanel } from "@/components/chart-panel";
+import { ChartPanelPublished } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
@@ -94,7 +94,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   id={`chart-${key}`}
                   sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
                 >
-                  <ChartPanel>
+                  <ChartPanelPublished chartType={chartConfig.chartType}>
                     <div>
                       <HiddenUntilScrolledTo
                         initialVisible={i < 5}
@@ -120,7 +120,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                         </NextLink>{" "}
                       </Box>
                     </div>
-                  </ChartPanel>
+                  </ChartPanelPublished>
                 </Box>
               );
             })}

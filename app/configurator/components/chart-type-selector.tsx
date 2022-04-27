@@ -1,15 +1,21 @@
 import { Trans } from "@lingui/macro";
-import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonBase,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
+import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
   ControlSectionContent,
   ControlSectionSkeleton,
-  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   getFieldLabel,
@@ -27,6 +33,7 @@ import { useLocale } from "@/locales/use-locale";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
+  ConfiguratorStatePublishing,
 } from "../config-types";
 
 export const ChartTypeSelectionButton = ({
@@ -48,15 +55,11 @@ export const ChartTypeSelectionButton = ({
       disabled={disabled}
       sx={{
         width: "86px",
-        height: "86px",
-        borderRadius: 1.5,
+        height: "64px",
+        borderRadius: 8,
 
-        backgroundColor: checked ? "primary.main" : "grey.100",
-        color: checked
-          ? "muted.colored"
-          : disabled
-          ? "grey.500"
-          : "primary.main",
+        backgroundColor: checked ? "muted.dark" : "grey.100",
+        color: checked ? "primary.main" : disabled ? "grey.500" : "grey.700",
 
         display: "flex",
         flexDirection: "column",
@@ -77,11 +80,11 @@ export const ChartTypeSelectionButton = ({
         },
       }}
     >
-      <Icon size={48} name={getIconName(label)} />
+      <Icon size={24} name={getIconName(label)} />
       <Typography
         variant="body2"
         sx={{
-          color: disabled ? "grey.600" : checked ? "grey.100" : "grey.700",
+          color: disabled ? "grey.600" : "grey.700",
           fontSize: ["0.75rem", "0.75rem", "0.75rem"],
         }}
       >
@@ -120,7 +123,10 @@ const ChartTypeSelectorField = ({
 export const ChartTypeSelector = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateDescribingChart
+    | ConfiguratorStatePublishing;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -136,12 +142,17 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <ControlSection>
+      <ControlSection sx={{ width: "320px" }}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
-        <SectionTitle sx={{ mb: 1 }}>
-          <Trans id="controls.select.chart.type">Chart Type</Trans>
+        <Box sx={{ m: 4, textAlign: "center" }}>
+          <Typography variant="body2">
+            <Trans id="controls.switch.chart.type">
+              Switch to another chart type while maintaining most filter
+              settings.
+            </Trans>
+          </Typography>
           {possibleFiltersFetching ? (
             <CircularProgress
               color="primary"
@@ -149,7 +160,7 @@ export const ChartTypeSelector = ({
               sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
             />
           ) : null}
-        </SectionTitle>
+        </Box>
 
         <ControlSectionContent side="left">
           {!possibleChartTypes ? (
@@ -159,24 +170,32 @@ export const ChartTypeSelector = ({
               </Trans>
             </Hint>
           ) : (
-            <Box
-              display="grid"
-              sx={{
-                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-                gridGap: "0.75rem",
-                mx: 4,
-              }}
-            >
-              {enabledChartTypes.map((d) => (
-                <ChartTypeSelectorField
-                  key={d}
-                  label={d}
-                  value={d}
-                  metaData={metaData}
-                  disabled={!possibleChartTypes.includes(d)}
-                />
-              ))}
-            </Box>
+            <Flex sx={{ flexDirection: "column", gap: 5 }}>
+              <Box
+                display="grid"
+                sx={{
+                  gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+                  gridGap: "0.75rem",
+                  mx: 4,
+                }}
+              >
+                {enabledChartTypes.map((d) => (
+                  <ChartTypeSelectorField
+                    key={d}
+                    label={d}
+                    value={d}
+                    metaData={metaData}
+                    disabled={!possibleChartTypes.includes(d)}
+                  />
+                ))}
+              </Box>
+              {/* TODO: Handle properly when chart composition is implemented */}
+              <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
+              </Button>
+            </Flex>
           )}
         </ControlSectionContent>
       </ControlSection>

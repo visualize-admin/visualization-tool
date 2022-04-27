@@ -1,13 +1,12 @@
 import React from "react";
 
-import { ChartPanel } from "@/components/chart-panel";
+import { ChartPanelConfigurator } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
-import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
   PanelHeader,
   PanelLayout,
@@ -34,7 +33,6 @@ const ConfigureChartStep = () => {
           flexDirection: "column",
         }}
       >
-        <ChartTypeSelector state={state} />
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
@@ -42,9 +40,9 @@ const ConfigureChartStep = () => {
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
-        <ChartPanel>
+        <ChartPanelConfigurator>
           <ChartPreview dataSetIri={state.dataSet} />
-        </ChartPanel>
+        </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
         <ChartOptionsSelector state={state} />
@@ -61,13 +59,12 @@ const DescribeChartStep = () => {
   return (
     <>
       <PanelLeftWrapper>
-        <ChartTypeSelector state={state} />
         <ChartAnnotator state={state} />
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
-        <ChartPanel>
+        <ChartPanelConfigurator>
           <ChartPreview dataSetIri={state.dataSet} />
-        </ChartPanel>
+        </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
         <ChartAnnotationsSelector state={state} />
@@ -83,9 +80,9 @@ const PublishStep = () => {
   return (
     <>
       <PanelMiddleWrapper>
-        <ChartPanel>
+        <ChartPanelConfigurator>
           <ChartPreview dataSetIri={state.dataSet} />
-        </ChartPanel>
+        </ChartPanelConfigurator>
       </PanelMiddleWrapper>
     </>
   );

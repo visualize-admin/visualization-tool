@@ -631,6 +631,41 @@ theme.components = {
       TransitionComponent: isSafari15 ? Fade : Grow,
     },
   },
+  MuiTabs: {
+    styleOverrides: {
+      root: {
+        "& .MuiTabs-flexContainer": {
+          gap: 4,
+        },
+        "& .MuiTabs-indicator": {
+          display: "none",
+        },
+      },
+    },
+  },
+  MuiTab: {
+    styleOverrides: {
+      root: {
+        justifyContent: "center",
+        alignItems: "center",
+        height: 49,
+        paddingTop: 0,
+        paddingRight: 24,
+        paddingBottom: 0,
+        paddingLeft: 24,
+        backgroundColor: theme.palette.grey[100],
+        color: theme.palette.grey[900],
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        boxShadow: shadows[6],
+
+        "&.Mui-selected": {
+          height: 50,
+          color: theme.palette.primary.main,
+        },
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         svg {
