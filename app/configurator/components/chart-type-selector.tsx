@@ -136,7 +136,7 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <ControlSection sx={{ width: "320px" }}>
+      <ControlSection sx={{ position: "relative", width: "320px" }}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
@@ -147,13 +147,6 @@ export const ChartTypeSelector = ({
               settings.
             </Trans>
           </Typography>
-          {possibleFiltersFetching ? (
-            <CircularProgress
-              color="primary"
-              size={12}
-              sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
-            />
-          ) : null}
         </Box>
 
         <ControlSectionContent side="left">
@@ -192,6 +185,21 @@ export const ChartTypeSelector = ({
             </Flex>
           )}
         </ControlSectionContent>
+
+        {possibleFiltersFetching ? (
+          <CircularProgress
+            color="primary"
+            size={12}
+            sx={{
+              position: "absolute",
+              bottom: 48,
+              right: 48,
+              color: "hint.main",
+              display: "inline-block",
+              ml: 1,
+            }}
+          />
+        ) : null}
       </ControlSection>
     );
   } else {
