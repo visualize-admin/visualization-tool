@@ -1,4 +1,4 @@
-import { ButtonBase, IconButton, Popover } from "@mui/material";
+import { ButtonBase, IconButton, Popover, Tab, Tabs } from "@mui/material";
 import React, {
   createContext,
   Dispatch,
@@ -121,81 +121,43 @@ const TabsInner = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   return (
-    <Flex sx={{ width: "100%", overflowX: "auto" }}>
-      <Flex sx={{ gap: 1 }}>
-        {/* TODO: Generate dynamically when chart composition is implemeneted */}
-        <Tab
-          iconName={getIconName(chartType)}
-          selected
-          editable={editable}
-          onActionButtonClick={onActionButtonClick}
-        />
-        <Tab iconName="add" disabled narrow />
-      </Flex>
-    </Flex>
+    <Tabs value={0}>
+      {/* TODO: Generate dynamically when chart composition is implemeneted */}
+      <Tab
+        label={
+          <TabContent
+            iconName={getIconName(chartType)}
+            editable={editable}
+            onActionButtonClick={onActionButtonClick}
+          />
+        }
+      />
+    </Tabs>
   );
 };
 
-const Tab = ({
+const TabContent = ({
   iconName,
-  selected = false,
   disabled = false,
   editable = false,
   onActionButtonClick,
-  narrow = false,
 }: {
   iconName: IconName;
-  selected?: boolean;
   disabled?: boolean;
   editable?: boolean;
-  narrow?: boolean;
   onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   return (
-    <TabButton selected={selected} disabled={disabled} narrow={narrow}>
+    <ButtonBase disabled={disabled}>
       <Flex sx={{ gap: 1 }}>
         <Icon name={iconName} />
 
-        {selected && editable && (
+        {editable && (
           <IconButton size="small" onClick={onActionButtonClick}>
             <Icon name="chevronDown" size={16} />
           </IconButton>
         )}
       </Flex>
-    </TabButton>
-  );
-};
-
-const TabButton = ({
-  children,
-  selected,
-  disabled,
-  narrow,
-}: {
-  children: ReactNode;
-  selected: boolean;
-  disabled: boolean;
-  narrow: boolean;
-}) => {
-  return (
-    <ButtonBase
-      disabled={disabled}
-      sx={{
-        justifyContent: "center",
-        alignItems: "center",
-
-        width: narrow ? 50 : 100,
-        height: selected ? 50 : 49,
-
-        color: selected ? "primary.main" : "grey.900",
-        bgcolor: "grey.100",
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-
-        boxShadow: 6,
-      }}
-    >
-      {children}
     </ButtonBase>
   );
 };
