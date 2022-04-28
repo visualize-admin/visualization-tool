@@ -81,7 +81,14 @@ const VisualizationPage = (props: PageProps) => {
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
-        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
+        <Box
+          px={[2, 4]}
+          sx={{ backgroundColor: "muted.main" }}
+          mb="auto"
+          mx="auto"
+          width="100%"
+          overflow="hidden"
+        >
           <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
             {publishSuccess && (
               <Box mt={2} mb={5}>
