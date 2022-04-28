@@ -81,8 +81,15 @@ const VisualizationPage = (props: PageProps) => {
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
-        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
-          <Box sx={{ pt: 4, width: "50rem", margin: "auto" }}>
+        <Box
+          px={[2, 4]}
+          sx={{ backgroundColor: "muted.main" }}
+          mb="auto"
+          mx="auto"
+          width="100%"
+          overflow="hidden"
+        >
+          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <Success />
@@ -127,7 +134,14 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Typography>
 
-            <Stack direction="row" spacing={2} sx={{ mb: 5 }}>
+            <Stack
+              alignItems="flex-start"
+              direction={{ xs: "column", sm: "row" }}
+              // We need to use responsive syntax for spacing when using responsive
+              // syntax for direction, otherwise it does not work
+              spacing={{ xs: 2, sm: 2 }}
+              sx={{ mb: 5 }}
+            >
               <NextLink href="/create/new" passHref>
                 <Button
                   component="a"
