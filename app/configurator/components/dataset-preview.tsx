@@ -101,6 +101,10 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             />
           </Box>
           <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
+            <DataDownloadMenu
+              title={dataCubeByIri.title}
+              dataSetIri={dataSetIri}
+            />
             <Typography
               variant="body2"
               sx={{ color: "grey.600", fontWeight: "light" }}
@@ -109,10 +113,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 Showing first 10 rows
               </Trans>
             </Typography>
-            <DataDownloadMenu
-              title={dataCubeByIri.title}
-              dataSetIri={dataSetIri}
-            />
           </Flex>
           <DebugPanel configurator={true} />
         </Paper>
