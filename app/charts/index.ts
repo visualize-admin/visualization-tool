@@ -325,7 +325,9 @@ const getAdjustedChartConfig = ({
           const getChartConfigWithAdjustedField: FieldAdjuster<
             ChartConfig,
             unknown
-          > = get(adjusters, newPath) || get(adjusters, pathOverrides[newPath]);
+          > =
+            (pathOverrides && get(adjusters, pathOverrides[newPath])) ||
+            get(adjusters, newPath);
 
           if (getChartConfigWithAdjustedField) {
             newChartConfig = getChartConfigWithAdjustedField({
