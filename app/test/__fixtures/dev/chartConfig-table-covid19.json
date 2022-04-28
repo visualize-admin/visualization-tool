@@ -37,7 +37,7 @@
       "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/pop",
       "componentType": "NominalDimension",
       "index": 2,
-      "isGroup": false,
+      "isGroup": true,
       "isHidden": false,
       "columnStyle": {
         "textStyle": "regular",

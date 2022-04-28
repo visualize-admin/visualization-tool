@@ -949,7 +949,8 @@ const convertTableFieldsToSegmentField = ({
         d.componentType !== "Attribute" &&
         d.componentType !== "Measure" &&
         d.componentType !== "TemporalDimension"
-    );
+    )
+    .sort((a, b) => a.index - b.index);
   const component = groupedColumns?.[0];
 
   if (component) {
