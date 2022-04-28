@@ -1,17 +1,26 @@
+import { group } from "d3";
 import produce from "immer";
 import { get, groupBy } from "lodash";
 
 import {
+  AreaSegmentField,
   ChartConfig,
   ChartConfigsAdjusters,
   ChartType,
+  ColumnSegmentField,
   FieldAdjuster,
   GenericFields,
+  GenericSegmentField,
   InteractiveFiltersAdjusters,
   InteractiveFiltersConfig,
+  isSegmentInConfig,
+  LineSegmentField,
+  PieSegmentField,
+  ScatterPlotSegmentField,
   SortingOrder,
   SortingType,
   TableColumn,
+  TableFields,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import {
@@ -319,7 +328,7 @@ const getAdjustedChartConfig = ({
           return (
             oldChartConfig.chartType === "table" &&
             isSegmentInConfig(newChartConfig)
-    );
+          );
         case "filters":
         case "fields.segment":
         case "interactiveFiltersConfig.legend":
@@ -461,14 +470,37 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, newChartConfig }) => {
-        return produce(newChartConfig, (draft) => {
-          draft.fields.segment = {
-            ...oldValue,
+      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        let newSegment: ColumnSegmentField | undefined;
+
+        // When switching from a table chart, a whole fields object is passed as oldValue.
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+          });
+
+          if (tableSegment) {
+            newSegment = {
+              ...tableSegment,
+              sorting: DEFAULT_SORTING,
+              type: "stacked",
+            };
+          }
+          // Otherwise we are dealing with a segment field.
+        } else {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            ...oldSegment,
+            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
             type: "stacked",
-            // Line & ScatterPlot do not have sorting field.
-            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
           };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
         });
       },
     },
@@ -503,13 +535,31 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, newChartConfig }) => {
-        return produce(newChartConfig, (draft) => {
-          draft.fields.segment = {
-            componentIri: oldValue.componentIri,
-            palette: oldValue.palette,
-            colorMapping: oldValue.colorMapping,
+      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        let newSegment: LineSegmentField | undefined;
+
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+          });
+
+          if (tableSegment) {
+            newSegment = tableSegment;
+          }
+        } else {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            componentIri: oldSegment.componentIri,
+            palette: oldSegment.palette,
+            colorMapping: oldSegment.colorMapping,
           };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
         });
       },
     },
@@ -544,15 +594,36 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, newChartConfig }) => {
-        return produce(newChartConfig, (draft) => {
-          draft.fields.segment = {
-            componentIri: oldValue.componentIri,
-            palette: oldValue.palette,
-            colorMapping: oldValue.colorMapping,
+      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        let newSegment: AreaSegmentField | undefined;
+
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+          });
+
+          if (tableSegment) {
+            newSegment = {
+              ...tableSegment,
+              sorting: DEFAULT_SORTING,
+            };
+          }
+        } else {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            componentIri: oldSegment.componentIri,
+            palette: oldSegment.palette,
+            colorMapping: oldSegment.colorMapping,
             // Line & ScatterPlot do not have sorting field.
-            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
+            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
           };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
         });
       },
     },
@@ -580,13 +651,31 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
-      segment: ({ oldValue, newChartConfig }) => {
-        return produce(newChartConfig, (draft) => {
-          draft.fields.segment = {
-            componentIri: oldValue.componentIri,
-            palette: oldValue.palette,
-            colorMapping: oldValue.colorMapping,
+      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        let newSegment: ScatterPlotSegmentField | undefined;
+
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+          });
+
+          if (tableSegment) {
+            newSegment = tableSegment;
+          }
+        } else {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            componentIri: oldSegment.componentIri,
+            palette: oldSegment.palette,
+            colorMapping: oldSegment.colorMapping,
           };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
         });
       },
     },
@@ -606,21 +695,53 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, newChartConfig }) => {
-        return produce(newChartConfig, (draft) => {
-          draft.fields.segment = {
-            componentIri: oldValue.componentIri,
-            palette: oldValue.palette,
-            colorMapping: oldValue.colorMapping,
+      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        let newSegment: PieSegmentField | undefined;
+
+        if (oldChartConfig.chartType === "table") {
+          const tableSegment = convertTableFieldsToSegmentField({
+            fields: oldValue as TableFields,
+            dimensions,
+          });
+
+          if (tableSegment) {
+            newSegment = {
+              ...tableSegment,
+              sorting: DEFAULT_SORTING,
+            };
+          }
+        } else {
+          const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          newSegment = {
+            componentIri: oldSegment.componentIri,
+            palette: oldSegment.palette,
+            colorMapping: oldSegment.colorMapping,
             // Line & ScatterPlot do not have sorting field.
-            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
+            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
           };
+        }
+
+        return produce(newChartConfig, (draft) => {
+          if (newSegment) {
+            draft.fields.segment = newSegment;
+          }
         });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
-  table: {},
+  table: {
+    fields: ({ oldValue, newChartConfig }) => {
+      for (const [componentIri, v] of Object.entries(newChartConfig.fields)) {
+        if (componentIri === oldValue.componentIri) {
+          v.isGroup = true;
+          break;
+        }
+      }
+
+      return newChartConfig;
+    },
+  },
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
@@ -666,8 +787,8 @@ const chartConfigsPathOverrides: {
   bar: {},
   column: {
     map: {
-    "fields.areaLayer.componentIri": "fields.x.componentIri",
-    "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.componentIri": "fields.x.componentIri",
+      "fields.areaLayer.measureIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -675,7 +796,7 @@ const chartConfigsPathOverrides: {
   },
   line: {
     map: {
-    "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.measureIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -683,7 +804,7 @@ const chartConfigsPathOverrides: {
   },
   area: {
     map: {
-    "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.measureIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -691,7 +812,7 @@ const chartConfigsPathOverrides: {
   },
   scatterplot: {
     map: {
-    "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.measureIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -699,8 +820,8 @@ const chartConfigsPathOverrides: {
   },
   pie: {
     map: {
-    "fields.areaLayer.componentIri": "fields.x.componentIri",
-    "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.componentIri": "fields.x.componentIri",
+      "fields.areaLayer.measureIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -725,8 +846,8 @@ const chartConfigsPathOverrides: {
   },
   map: {
     column: {
-    "fields.x.componentIri": "fields.areaLayer.componentIri",
-    "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.x.componentIri": "fields.areaLayer.componentIri",
+      "fields.y.componentIri": "fields.areaLayer.measureIri",
     },
     line: {
       "fields.y.componentIri": "fields.areaLayer.measureIri",
@@ -810,4 +931,38 @@ export const getHiddenFieldIris = (fields: GenericFields) => {
 
 export const getFieldComponentIri = (fields: GenericFields, field: string) => {
   return fields[field]?.componentIri;
+};
+
+const convertTableFieldsToSegmentField = ({
+  fields,
+  dimensions,
+}: {
+  fields: TableFields;
+  dimensions: DataCubeMetadata["dimensions"];
+}): GenericSegmentField | undefined => {
+  const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
+    .get(true)
+    // All the other dimension types can be used as a segment field.
+    ?.filter(
+      (d) =>
+        d.componentType !== "Attribute" &&
+        d.componentType !== "Measure" &&
+        d.componentType !== "TemporalDimension"
+    );
+  const component = groupedColumns?.[0];
+
+  if (component) {
+    const { componentIri } = component;
+
+    return {
+      componentIri,
+      palette: "category10",
+      colorMapping: mapColorsToComponentValuesIris({
+        palette: "category10",
+        component: dimensions.find(
+          (d) => d.iri === componentIri
+        ) as DimensionMetaDataFragment,
+      }),
+    };
+  }
 };

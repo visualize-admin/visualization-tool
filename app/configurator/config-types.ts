@@ -641,6 +641,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | AreaSegmentField
       | ScatterPlotSegmentField
       | PieSegmentField
+      | TableFields
     >;
   };
 };
@@ -655,6 +656,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
       | AreaSegmentField
       | ScatterPlotSegmentField
       | PieSegmentField
+      | TableFields
     >;
   };
 };
@@ -669,6 +671,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
       | LineSegmentField
       | ScatterPlotSegmentField
       | PieSegmentField
+      | TableFields
     >;
   };
 };
@@ -678,7 +681,11 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
     y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
     segment: FieldAdjuster<
       ScatterPlotConfig,
-      ColumnSegmentField | LineSegmentField | AreaSegmentField | PieSegmentField
+      | ColumnSegmentField
+      | LineSegmentField
+      | AreaSegmentField
+      | PieSegmentField
+      | TableFields
     >;
   };
 };
@@ -692,8 +699,20 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       | LineSegmentField
       | AreaSegmentField
       | ScatterPlotSegmentField
+      | TableFields
     >;
   };
+};
+
+type TableAdjusters = {
+  fields: FieldAdjuster<
+    TableConfig,
+    | ColumnSegmentField
+    | LineSegmentField
+    | AreaSegmentField
+    | ScatterPlotSegmentField
+    | PieSegmentField
+  >;
 };
 
 type MapAdjusters = BaseAdjusters<MapConfig> & {
@@ -712,7 +731,7 @@ export type ChartConfigsAdjusters = {
   area: AreaAdjusters;
   scatterplot: ScatterPlotAdjusters;
   pie: PieAdjusters;
-  table: {};
+  table: TableAdjusters;
   map: MapAdjusters;
 };
 
