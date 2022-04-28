@@ -607,7 +607,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         draft.chartConfig = getChartConfigAdjustedToChartType({
           chartConfig: current(draft.chartConfig),
-          chartType,
+          newChartType: chartType,
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
         });

@@ -259,26 +259,26 @@ export const getInitialConfig = ({
 
 export const getChartConfigAdjustedToChartType = ({
   chartConfig,
-  chartType,
+  newChartType,
   dimensions,
   measures,
 }: {
   chartConfig: ChartConfig;
-  chartType: ChartType;
+  newChartType: ChartType;
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
+  const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
-    chartType,
+    chartType: newChartType,
     dimensions,
     measures,
   });
-
   const newChartConfig = getAdjustedChartConfig({
     path: "",
     field: chartConfig,
-    adjusters: chartConfigsAdjusters[chartType],
-    pathOverrides: chartConfigsPathOverrides[chartType],
+    adjusters: chartConfigsAdjusters[newChartType],
+    pathOverrides: chartConfigsPathOverrides[newChartType],
     oldChartConfig: chartConfig,
     newChartConfig: initialConfig,
     dimensions,

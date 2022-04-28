@@ -386,7 +386,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     const newConfig = createDraft(
       getChartConfigAdjustedToChartType({
         chartConfig: oldConfig,
-        chartType: newChartType,
+        newChartType,
         dimensions: dataSetMetadata.dimensions,
         measures: dataSetMetadata.measures,
       })
