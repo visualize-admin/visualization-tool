@@ -21,7 +21,8 @@ import {
   SortingType,
   TableColumn,
   TableFields,
-} from "../configurator";
+} from "@/configurator/config-types";
+
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
