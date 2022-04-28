@@ -4,7 +4,12 @@ import { get } from "lodash";
 
 import * as api from "@/api";
 import { getChartConfigAdjustedToChartType } from "@/charts";
-import { ChartConfig } from "@/configurator";
+import {
+  ChartConfig,
+  ChartType,
+  ColumnConfig,
+  TableConfig,
+} from "@/configurator/config-types";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
@@ -19,10 +24,9 @@ import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
-import covid19ChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
+import covid19ColumnChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
+import covid19TableChartConfig from "@/test/__fixtures/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
-
-import { ChartType, ColumnConfig } from "./config-types";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -376,8 +380,6 @@ describe("moveField", () => {
 describe("retainChartConfigWhenSwitchingChartType", () => {
   const dataSetMetadata = covid19Metadata.data
     .dataCubeByIri as DataCubeMetadata;
-  let oldConfig: ChartConfig;
-  let newConfig: ChartConfig;
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,
@@ -396,49 +398,167 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     return current(newConfig);
   };
 
-  const testChecks: {
+  type CheckType = {
     newChartType: ChartType;
-    // Old field getter path, new field getter path, expected equality state.
-    checks: [string, string, boolean][];
-  }[] = [
+    checks: {
+      comparisonChecks: {
+        oldFieldGetterPath: string | string[];
+        newFieldGetterPath: string | string[];
+        equal: boolean;
+      }[];
+      oldConfigChecks?: {
+        fieldGetterPath: string | string[];
+        expectedValue: any;
+      }[];
+      newConfigChecks?: {
+        fieldGetterPath: string | string[];
+        expectedValue: any;
+      }[];
+    };
+  };
+
+  const xyChecks: CheckType[] = [
     {
       newChartType: "pie",
-      checks: [["fields.y.componentIri", "fields.y.componentIri", true]],
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.y.componentIri",
+            newFieldGetterPath: "fields.y.componentIri",
+            equal: true,
+          },
+        ],
+      },
     },
     {
       newChartType: "column",
-      checks: [
-        ["fields.segment.componentIri", "fields.segment.componentIri", true],
-      ],
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.segment.componentIri",
+            newFieldGetterPath: "fields.segment.componentIri",
+            equal: true,
+          },
+        ],
+      },
     },
     {
       newChartType: "map",
-      checks: [
-        ["fields.x.componentIri", "fields.areaLayer.componentIri", false],
-      ],
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.x.componentIri",
+            newFieldGetterPath: "fields.areaLayer.componentIri",
+            equal: false,
+          },
+        ],
+      },
     },
     {
       newChartType: "column",
-      checks: [
-        ["fields.areaLayer.componentIri", "fields.x.componentIri", true],
-      ],
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.areaLayer.componentIri",
+            newFieldGetterPath: "fields.x.componentIri",
+            equal: true,
+          },
+        ],
+      },
     },
     {
       newChartType: "line",
-      checks: [["fields.x.componentIri", "fields.x.componentIri", false]],
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.x.componentIri",
+            newFieldGetterPath: "fields.x.componentIri",
+            equal: false,
+          },
+        ],
+      },
     },
   ];
 
-  it("should retain appropriate chart config fields and discard the others", () => {
-    oldConfig = covid19ChartConfig as ColumnConfig;
+  const segmentChecks: CheckType[] = [
+    {
+      newChartType: "column",
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: [
+              "fields",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "componentIri",
+            ],
+            newFieldGetterPath: "fields.segment.componentIri",
+            equal: true,
+          },
+        ],
+        // Fixture is initially grouped by TemporalDimension and GeoShapesDimension.
+        oldConfigChecks: [
+          {
+            fieldGetterPath: [
+              "fields",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+              "isGroup",
+            ],
+            expectedValue: true,
+          },
+          {
+            fieldGetterPath: [
+              "fields",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "isGroup",
+            ],
+            expectedValue: true,
+          },
+        ],
+      },
+    },
+    {
+      newChartType: "table",
+      checks: {
+        comparisonChecks: [
+          {
+            oldFieldGetterPath: "fields.segment.componentIri",
+            newFieldGetterPath: [
+              "fields",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "componentIri",
+            ],
+            equal: true,
+          },
+        ],
+        newConfigChecks: [
+          // Table should be grouped by a segment from previous chart.
+          {
+            fieldGetterPath: [
+              "fields",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+              "isGroup",
+            ],
+            expectedValue: true,
+          },
+        ],
+      },
+    },
+  ];
 
-    for (const { newChartType, checks } of testChecks) {
+  const runChecks = (config: ChartConfig, checks: CheckType[]) => {
+    let oldConfig = config;
+    let newConfig: ChartConfig;
+
+    for (const {
+      newChartType,
+      checks: { comparisonChecks, oldConfigChecks, newConfigChecks },
+    } of checks) {
       newConfig = deriveNewChartConfig(oldConfig, newChartType);
 
-      for (const check of checks) {
-        const [firstField, secondField, equal] = check;
-        const oldField = get(oldConfig, firstField);
-        const newField = get(newConfig, secondField);
+      for (const check of comparisonChecks) {
+        const { oldFieldGetterPath, newFieldGetterPath, equal } = check;
+        const oldField = get(oldConfig, oldFieldGetterPath);
+        const newField = get(newConfig, newFieldGetterPath);
 
         if (equal) {
           expect(oldField).toEqual(newField);
@@ -447,7 +567,33 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
         }
       }
 
+      if (oldConfigChecks) {
+        for (const check of oldConfigChecks) {
+          const { fieldGetterPath, expectedValue } = check;
+
+          const field = get(oldConfig, fieldGetterPath);
+          expect(field).toEqual(expectedValue);
+        }
+      }
+
+      if (newConfigChecks) {
+        for (const check of newConfigChecks) {
+          const { fieldGetterPath, expectedValue } = check;
+
+          const field = get(newConfig, fieldGetterPath);
+          expect(field).toEqual(expectedValue);
+        }
+      }
+
       oldConfig = newConfig;
     }
+  };
+
+  it("should retain appropriate x & y fields and discard the others", () => {
+    runChecks(covid19ColumnChartConfig as ColumnConfig, xyChecks);
+  });
+
+  it("should retain appropriate segment fields and discard the others", () => {
+    runChecks(covid19TableChartConfig as unknown as TableConfig, segmentChecks);
   });
 });
