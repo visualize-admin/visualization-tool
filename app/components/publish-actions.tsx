@@ -3,14 +3,14 @@ import {
   Box,
   BoxProps,
   Button,
-  ButtonProps,
+  Divider,
   Input,
   Link,
+  Popover,
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/material";
 import * as clipboard from "clipboard-polyfill/text";
-import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import {
   MouseEvent as ReactMouseEvent,
   ReactNode,
@@ -46,55 +46,31 @@ const PopUp = ({
   renderTrigger,
 }: {
   children: ReactNode;
-  renderTrigger: (toggleProps: ButtonProps) => React.ReactNode;
+  renderTrigger: (
+    setAnchorEl: (el: HTMLElement | undefined) => void
+  ) => React.ReactNode;
 }) => {
-  const [menuIsOpen, toggle] = useState(false);
-  const handleOuterClick = () => {
-    toggle(false);
-  };
-  const stateReducer = (
-    state: DownshiftState<$FixMe>,
-    changes: StateChangeOptions<$FixMe>
-  ) => {
-    switch (changes.type) {
-      case Downshift.stateChangeTypes.clickButton:
-        toggle(!menuIsOpen);
-        return {
-          ...changes,
-          isOpen: menuIsOpen,
-        };
-      case Downshift.stateChangeTypes.keyDownEnter:
-      case Downshift.stateChangeTypes.clickItem:
-        toggle(true);
-        return {
-          ...changes,
-          isOpen: menuIsOpen,
-        };
-      case Downshift.stateChangeTypes.blurInput:
-      case Downshift.stateChangeTypes.keyDownEscape:
-        toggle(false);
-        return {
-          ...changes,
-          isOpen: false,
-        };
-      default:
-        return changes;
-    }
-  };
+  const [anchorEl, setAnchorEl] = useState<Element | undefined>();
 
   return (
-    <Downshift
-      stateReducer={stateReducer}
-      onOuterClick={handleOuterClick}
-      isOpen={menuIsOpen}
-    >
-      {({ getToggleButtonProps, getMenuProps, isOpen }) => (
-        <span style={{ position: "relative" }}>
-          {renderTrigger(getToggleButtonProps())}
-          <span {...getMenuProps()}>{isOpen ? children : null}</span>
-        </span>
-      )}
-    </Downshift>
+    <>
+      {renderTrigger(setAnchorEl)}
+      <Popover
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 48,
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={() => setAnchorEl(undefined)}
+      >
+        <Box m={4}>{children}</Box>
+      </Popover>
+    </>
   );
 };
 
@@ -106,10 +82,12 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
   }, [configKey, locale]);
   return (
     <PopUp
-      renderTrigger={(props) => {
+      renderTrigger={(setAnchorEl) => {
         return (
           <Button
-            {...props}
+            onClick={(ev) => {
+              setAnchorEl(ev.target as HTMLElement);
+            }}
             size="large"
             startIcon={<Icon name="linkExternal" />}
           >
@@ -119,84 +97,80 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
       }}
     >
       <>
-        <PublishActionOverlay />
-        <PublishActionModal>
-          <Flex
-            sx={{
-              height: 48,
-              borderBottomWidth: "1px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "grey.500",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography component="div" variant="body1" color="grey.700">
-              <Trans id="publication.popup.share">Share</Trans>:
-            </Typography>
-            <Flex color="primary">
-              <IconLink
-                iconName="facebook"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.facebook",
-                    message: `Share on Facebook`,
-                  })
-                )}
-                href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-              ></IconLink>
-              <IconLink
-                iconName="twitter"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.twitter",
-                    message: `Share on Twitter`,
-                  })
-                )}
-                href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
-              ></IconLink>
-              <IconLink
-                iconName="mail"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.mail",
-                    message: `Share via email`,
-                  })
-                )}
-                href={`mailto:?subject=${i18n._(
-                  t({
-                    id: "publication.share.mail.subject",
-                    message: `visualize.admin.ch`,
-                  })
-                )}&body=${i18n._(
-                  t({
-                    id: "publication.share.mail.body",
-                    message: `Here is a link to a visualization I created on visualize.admin.ch`,
-                  })
-                )}: ${shareUrl}`}
-              ></IconLink>
-            </Flex>
+        <Flex
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+
+            mb: 4,
+          }}
+        >
+          <Typography component="div" variant="body1" color="grey.700">
+            <Trans id="publication.popup.share">Share</Trans>:
+          </Typography>
+          <Flex color="primary">
+            <IconLink
+              iconName="facebook"
+              title={i18n._(
+                t({
+                  id: "publication.share.linktitle.facebook",
+                  message: `Share on Facebook`,
+                })
+              )}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+            ></IconLink>
+            <IconLink
+              iconName="twitter"
+              title={i18n._(
+                t({
+                  id: "publication.share.linktitle.twitter",
+                  message: `Share on Twitter`,
+                })
+              )}
+              href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
+            ></IconLink>
+            <IconLink
+              iconName="mail"
+              title={i18n._(
+                t({
+                  id: "publication.share.linktitle.mail",
+                  message: `Share via email`,
+                })
+              )}
+              href={`mailto:?subject=${i18n._(
+                t({
+                  id: "publication.share.mail.subject",
+                  message: `visualize.admin.ch`,
+                })
+              )}&body=${i18n._(
+                t({
+                  id: "publication.share.mail.body",
+                  message: `Here is a link to a visualization I created on visualize.admin.ch`,
+                })
+              )}: ${shareUrl}`}
+            ></IconLink>
           </Flex>
-          <Box mt={2}>
-            <Typography component="div" variant="body1" color="grey.700">
-              <Trans id="publication.share.chart.url">Chart URL: </Trans>
-            </Typography>
-            <Box my={1} sx={{ color: "primary" }}>
-              <Link
-                href={shareUrl}
-                sx={{
-                  color: "primary",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  mr: 4,
-                }}
-              >
-                {shareUrl}
-              </Link>
-              {/* <Icon name="share"></Icon> */}
-            </Box>
+        </Flex>
+        <Divider />
+        <Box mt={2}>
+          <Typography component="div" variant="body1" color="grey.700">
+            <Trans id="publication.share.chart.url">Chart URL: </Trans>
+          </Typography>
+          <Box my={1} sx={{ color: "primary" }}>
+            <Link
+              href={shareUrl}
+              sx={{
+                color: "primary",
+                textDecoration: "underline",
+                cursor: "pointer",
+                mr: 4,
+              }}
+            >
+              {shareUrl}
+            </Link>
+            {/* <Icon name="share"></Icon> */}
           </Box>
-        </PublishActionModal>
+        </Box>
       </>
     </PopUp>
   );
@@ -219,37 +193,32 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
 
   return (
     <PopUp
-      renderTrigger={(toggleProps) => (
+      renderTrigger={(setAnchorEl) => (
         <Button
           startIcon={<Icon name="embed" />}
           size="large"
           variant="contained"
           color="primary"
-          {...toggleProps}
+          onClick={(ev) => setAnchorEl(ev.currentTarget)}
         >
           <Trans id="button.embed">Embed</Trans>
         </Button>
       )}
     >
-      <>
-        <PublishActionOverlay />
-        <PublishActionModal>
-          <Typography component="div" variant="body1" color="grey.700" mt={2}>
-            <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
-          </Typography>
+      <Typography component="div" variant="body1" color="grey.700" mt={2}>
+        <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
+      </Typography>
 
-          <CopyToClipboardTextInput
-            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
-          />
-          <Typography component="div" variant="body1" color="grey.700" mt={2}>
-            <Trans id="publication.embed.AEM">
-              Embed Code for AEM &quot;External Application&quot;:{" "}
-            </Trans>
-          </Typography>
+      <CopyToClipboardTextInput
+        iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
+      />
+      <Typography component="div" variant="body1" color="grey.700" mt={2}>
+        <Trans id="publication.embed.AEM">
+          Embed Code for AEM &quot;External Application&quot;:{" "}
+        </Trans>
+      </Typography>
 
-          <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
-        </PublishActionModal>
-      </>
+      <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
     </PopUp>
   );
 };
@@ -279,7 +248,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         sx={{
           color: "grey.700",
           px: 2,
-
+          flexGrow: 1,
           fontSize: "1rem",
           minWidth: 160,
           overflowX: "auto",
@@ -313,6 +282,8 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomRightRadius: "default",
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
+          width: 48,
+          minWidth: 48,
 
           borderWidth: "1px",
           borderStyle: "solid",
@@ -342,54 +313,6 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
     </Flex>
   );
 };
-
-const PublishActionModal = ({ children }: { children: ReactNode }) => (
-  <Box
-    sx={{
-      position: "fixed",
-      bottom: 4,
-      left: 4,
-      right: 4,
-      zIndex: 12,
-      py: 2,
-      px: 4,
-      backgroundColor: "grey.100",
-      boxShadow: "primary",
-      borderRadius: 1.5,
-
-      "@media screen and (min-width: 62em)": {
-        mt: 2,
-        bottom: "unset",
-        left: "unset",
-        right: "unset",
-        position: "absolute",
-        minWidth: 340,
-        // maxWidth: 340,
-        borderWidth: "1px",
-        borderStyle: "solid",
-        borderColor: "grey.500",
-      },
-    }}
-  >
-    {children}
-  </Box>
-);
-const PublishActionOverlay = () => (
-  <Box
-    sx={{
-      zIndex: 10,
-      display: ["block", "none"],
-      backgroundColor: "grey.900",
-      opacity: 0.25,
-      width: "100vw",
-      height: "100vh",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      pointerEvents: "none",
-    }}
-  />
-);
 
 // Form
 const ActionTooltip = ({ children }: { children: ReactNode }) => (
