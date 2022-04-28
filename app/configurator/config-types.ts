@@ -705,6 +705,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
 };
 
 type TableAdjusters = {
+  filters: FieldAdjuster<TableConfig, Filters>;
   fields: FieldAdjuster<
     TableConfig,
     | ColumnSegmentField

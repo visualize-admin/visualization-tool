@@ -732,6 +732,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   table: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
     fields: ({ oldValue, newChartConfig }) => {
       for (const [componentIri, v] of Object.entries(newChartConfig.fields)) {
         if (componentIri === oldValue.componentIri) {
