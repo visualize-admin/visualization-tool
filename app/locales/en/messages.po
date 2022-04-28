@@ -611,7 +611,7 @@ msgstr "Largest last"
 
 #: app/configurator/components/ui-helpers.ts:517
 msgid "controls.sorting.byTotalSize.largestBottom"
-msgstr "Largest bottom"
+msgstr "Ascending"
 
 #: app/configurator/components/ui-helpers.ts:509
 msgid "controls.sorting.byTotalSize.largestFirst"
@@ -619,7 +619,7 @@ msgstr "Largest first"
 
 #: app/configurator/components/ui-helpers.ts:513
 msgid "controls.sorting.byTotalSize.largestTop"
-msgstr "Largest top"
+msgstr "Descending"
 
 #: app/configurator/table/table-chart-sorting-options.tsx:143
 msgid "controls.sorting.removeOption"
