@@ -19,4 +19,27 @@ jobs:
       - run: yarn lint
       - run: yarn typecheck
       - run: yarn test
-      - run: yarn build:npm
+      - run: yarn build
+      - name: Upload the build folder (necessary for Cypress)
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: app/.next
+  cypress-run:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: app/.next
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: "env PORT=3333 npm run start"
+          wait-on: "http://localhost:3333"
