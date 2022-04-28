@@ -9,19 +9,44 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 12.x
       - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn typecheck
       - run: yarn test
-      - run: yarn build:npm
+      - run: yarn build
+      - name: Upload the build folder (necessary for Cypress)
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: app/.next
+  cypress-run:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: app/.next
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: "env PORT=3333 npm run start"
+          wait-on: "http://localhost:3333"
+          record: false
+      - name: Upload screenshots
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: |
+          export BRANCH=$([ "$GITHUB_HEAD_REF" == "main" ] && echo "master" || echo "$GITHUB_HEAD_REF")
+          yarn run argos upload --commit $GITHUB_SHA --branch $BRANCH cypress/screenshots
