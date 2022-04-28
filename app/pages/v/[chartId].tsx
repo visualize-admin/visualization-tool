@@ -134,7 +134,14 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Typography>
 
-            <Stack direction="row" spacing={2} sx={{ mb: 5 }}>
+            <Stack
+              alignItems="flex-start"
+              direction={{ xs: "column", sm: "row" }}
+              // We need to use responsive syntax for spacing when using responsive
+              // syntax for direction, otherwise it does not work
+              spacing={{ xs: 2, sm: 2 }}
+              sx={{ mb: 5 }}
+            >
               <NextLink href="/create/new" passHref>
                 <Button
                   component="a"
