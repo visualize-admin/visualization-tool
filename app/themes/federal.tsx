@@ -679,7 +679,7 @@ theme.components = {
   MuiCssBaseline: {
     styleOverrides: `
         svg {
-          display: block"
+          display: block
         }
   
         *:focus: {
