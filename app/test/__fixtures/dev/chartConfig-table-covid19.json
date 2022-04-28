@@ -1,0 +1,102 @@
+{
+  "chartType": "table",
+  "filters": {},
+  "settings": {
+    "showSearch": true,
+    "showAllRows": false
+  },
+  "sorting": [],
+  "fields": {
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
+      "componentType": "TemporalDimension",
+      "index": 0,
+      "isGroup": true,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion",
+      "componentType": "GeoShapesDimension",
+      "index": 1,
+      "isGroup": true,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/pop": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/pop",
+      "componentType": "NominalDimension",
+      "index": 2,
+      "isGroup": true,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+      "componentType": "NominalDimension",
+      "index": 3,
+      "isGroup": false,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries",
+      "componentType": "Measure",
+      "index": 4,
+      "isGroup": false,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal",
+      "componentType": "Measure",
+      "index": 5,
+      "isGroup": false,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    },
+    "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d": {
+      "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d",
+      "componentType": "Measure",
+      "index": 6,
+      "isGroup": false,
+      "isHidden": false,
+      "columnStyle": {
+        "textStyle": "regular",
+        "type": "text",
+        "textColor": "#000",
+        "columnColor": "#fff"
+      }
+    }
+  }
+}
