@@ -43,3 +43,8 @@ jobs:
         with:
           start: "env PORT=3333 npm run start"
           wait-on: "http://localhost:3333"
+          record: false
+      - name: Upload screenshots
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        run: yarn run argos upload --commit $GITHUB_SHA --branch $GITHUB_HEAD_REF cypress/screenshots
