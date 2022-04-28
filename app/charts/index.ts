@@ -278,7 +278,7 @@ export const getChartConfigAdjustedToChartType = ({
     path: "",
     field: chartConfig,
     adjusters: chartConfigsAdjusters[newChartType],
-    pathOverrides: chartConfigsPathOverrides[newChartType],
+    pathOverrides: chartConfigsPathOverrides[newChartType][oldChartType],
     oldChartConfig: chartConfig,
     newChartConfig: initialConfig,
     dimensions,
@@ -639,37 +639,96 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 };
 type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
 
-// Needed to correctly retain chart options when switching to maps (and tables?).
+// Needed to correctly retain chart options when switching to maps and tables.
 const chartConfigsPathOverrides: {
-  [chartType in ChartType]: {
-    [fieldToOverride: string]: string;
+  [newChartType in ChartType]: {
+    [oldChartType in ChartType]?: {
+      [oldFieldToOverride: string]: string;
+    };
   };
 } = {
   bar: {},
   column: {
+    map: {
     "fields.areaLayer.componentIri": "fields.x.componentIri",
     "fields.areaLayer.measureIri": "fields.y.componentIri",
+    },
+    table: {
+      fields: "fields.segment",
+    },
   },
   line: {
+    map: {
     "fields.areaLayer.measureIri": "fields.y.componentIri",
+    },
+    table: {
+      fields: "fields.segment",
+    },
   },
   area: {
+    map: {
     "fields.areaLayer.measureIri": "fields.y.componentIri",
+    },
+    table: {
+      fields: "fields.segment",
+    },
   },
   scatterplot: {
+    map: {
     "fields.areaLayer.measureIri": "fields.y.componentIri",
+    },
+    table: {
+      fields: "fields.segment",
+    },
   },
   pie: {
+    map: {
     "fields.areaLayer.componentIri": "fields.x.componentIri",
     "fields.areaLayer.measureIri": "fields.y.componentIri",
+    },
+    table: {
+      fields: "fields.segment",
+    },
   },
-  table: {},
+  table: {
+    column: {
+      "fields.segment": "fields",
+    },
+    line: {
+      "fields.segment": "fields",
+    },
+    area: {
+      "fields.segment": "fields",
+    },
+    scatterplot: {
+      "fields.segment": "fields",
+    },
+    pie: {
+      "fields.segment": "fields",
+    },
+  },
   map: {
+    column: {
     "fields.x.componentIri": "fields.areaLayer.componentIri",
     "fields.y.componentIri": "fields.areaLayer.measureIri",
+    },
+    line: {
+      "fields.y.componentIri": "fields.areaLayer.measureIri",
+    },
+    area: {
+      "fields.y.componentIri": "fields.areaLayer.measureIri",
+    },
+    scatterplot: {
+      "fields.y.componentIri": "fields.areaLayer.measureIri",
+    },
+    pie: {
+      "fields.x.componentIri": "fields.areaLayer.componentIri",
+      "fields.y.componentIri": "fields.areaLayer.measureIri",
+    },
   },
 };
-type ChartConfigPathOverrides = typeof chartConfigsPathOverrides[ChartType];
+type ChartConfigPathOverrides =
+  typeof chartConfigsPathOverrides[ChartType][ChartType];
 
 // Helpers
 export const getPossibleChartType = ({
