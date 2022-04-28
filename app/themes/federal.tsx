@@ -684,7 +684,7 @@ theme.components = {
           outline: 3px solid #333333;
         }
 
-        [tabindex="-1"]:focus { outline: 0; }.
+        [tabindex="-1"]:focus { outline: 0; }
     
         fieldset {
           border: 0;
