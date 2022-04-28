@@ -738,10 +738,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       });
     },
     fields: ({ oldValue, newChartConfig }) => {
-      for (const [componentIri, v] of Object.entries(newChartConfig.fields)) {
+      for (const componentIri of Object.keys(newChartConfig.fields)) {
         if (componentIri === oldValue.componentIri) {
-          v.isGroup = true;
-          break;
+          return produce(newChartConfig, (draft) => {
+            draft.fields[componentIri].isGroup = true;
+          });
         }
       }
 
