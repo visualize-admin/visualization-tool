@@ -47,4 +47,6 @@ jobs:
       - name: Upload screenshots
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: yarn run argos upload --commit $GITHUB_SHA --branch $GITHUB_HEAD_REF cypress/screenshots
+        run: |
+          export BRANCH=$([ "$GITHUB_HEAD_REF" == "main" ] && echo "master" || echo "$GITHUB_HEAD_REF")
+          yarn run argos upload --commit $GITHUB_SHA --branch $BRANCH cypress/screenshots
