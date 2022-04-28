@@ -44,9 +44,9 @@ jobs:
           start: "env PORT=3333 npm run start"
           wait-on: "http://localhost:3333"
           record: false
+      - name: Set branch for screenshot upload
+        run: $([ "$GITHUB_HEAD_REF" == "main" ] && echo "BRANCH=master" || echo "BRANCH=$GITHUB_HEAD_REF") >> $GITHUB_ENV
       - name: Upload screenshots
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: |
-          export BRANCH=$([ "$GITHUB_HEAD_REF" == "main" ] && echo "master" || echo "$GITHUB_HEAD_REF")
-          yarn run argos upload --commit $GITHUB_SHA --branch $BRANCH cypress/screenshots
+        run: yarn run argos upload --commit $BRANCH --branch  cypress/screenshots
