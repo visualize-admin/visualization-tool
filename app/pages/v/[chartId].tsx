@@ -82,7 +82,7 @@ const VisualizationPage = (props: PageProps) => {
       </Head>
       <ContentLayout>
         <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
-          <Box sx={{ pt: 4, width: "50rem", margin: "auto" }}>
+          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <Success />
