@@ -308,13 +308,27 @@ const getAdjustedChartConfig = ({
   measures: DataCubeMetadata["measures"];
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
-  // pass the whole object.
-  const isConfigLeaf = (path: string, configValue: any) =>
-    typeof configValue !== "object" ||
-    Array.isArray(configValue) ||
-    ["filters", "fields.segment", "interactiveFiltersConfig.legend"].includes(
-      path
+  // pass the whole object. Table fields have an [iri: Config] structure,
+  // so we also pass a whole field in such case (used in segments).
+  const isConfigLeaf = (path: string, configValue: any) => {
+    if (typeof configValue !== "object" || Array.isArray(configValue)) {
+      return true;
+    } else {
+      switch (path) {
+        case "fields":
+          return (
+            oldChartConfig.chartType === "table" &&
+            isSegmentInConfig(newChartConfig)
     );
+        case "filters":
+        case "fields.segment":
+        case "interactiveFiltersConfig.legend":
+          return true;
+        default:
+          return false;
+      }
+    }
+  };
 
   const go = ({ path, field }: { path: string; field: Object }) => {
     for (const [k, v] of Object.entries(field)) {
