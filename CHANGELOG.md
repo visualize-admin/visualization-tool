@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+## [3.6.2] - 2022-04-26
 
 - Polished data download UI
 - Fixed scrolling of table preview & other smaller UI things in published charts
