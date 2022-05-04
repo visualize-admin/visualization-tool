@@ -35,8 +35,9 @@ function getFirstLabelLayerId(style: StyleSpecification) {
   const layers = style.layers;
   // Find the index of the first symbol (i.e. label) layer in the map style
   for (let i = 0; i < layers.length; i++) {
-    if (layers[i].type === "symbol") {
-      return layers[i].id;
+    const layer = layers[i];
+    if (layer.type === "symbol" && layer["source-layer"]?.includes("label")) {
+      return layer.id;
     }
   }
   return undefined;
