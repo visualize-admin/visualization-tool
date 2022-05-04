@@ -200,10 +200,6 @@ export const MapComponent = () => {
       }),
     [locale, areaLayer.show]
   );
-  const firstLayerLabelId = useMemo(
-    () => getFirstLabelLayerId(baseLayerStyle),
-    [baseLayerStyle]
-  );
   const mapStyle = showBaseLayer ? baseLayerStyle : emptyStyle;
 
   const featuresLoaded =
@@ -413,13 +409,7 @@ export const MapComponent = () => {
               />
             ) : null}
             {symbolLayer.show ? (
-              <Layer
-                key={scatterplotLayer.id}
-                layer={scatterplotLayer}
-                beforeId={
-                  mapStyle === emptyStyle ? undefined : firstLayerLabelId
-                }
-              />
+              <Layer key={scatterplotLayer.id} layer={scatterplotLayer} />
             ) : null}
           </ReactMap>
         </>
