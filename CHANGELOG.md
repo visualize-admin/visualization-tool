@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+## [3.6.3] - 2022-05-05
+
+- Maps symbols are shown over all layers
+
 ## [3.6.2] - 2022-04-26
 
 - Polished data download UI
+- Ability to switch to table view on any chart
 - Fixed scrolling of table preview & other smaller UI things in published charts
 - Only the top 7 nav items are shown in the search nav bar (design alignment), a button is there to display more
 - Added the footer in the search page
-- Maps now have labels and the visualization layers (scatterplot and areas) are shown under map labels. When zooming via the buttons, we now have a smooth transition
+- Maps chloropleth are shown under map labels. Maps symbols are shown over most map features. When zooming via the buttons, we now have a smooth transition
 - Removed chart selection step; selection of a chart type can now be done at any point when creating a chart (added a new chart selection tabs UI)
 - Implemented logic to keep as much chart configuration as possible when switching chart type
 
