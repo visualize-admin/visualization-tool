@@ -150,7 +150,7 @@ const ChartWithInteractiveFilters = ({
       }}
     >
       {/* Filters list & Interactive filters */}
-      {chartConfig.interactiveFiltersConfig ? (
+      {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
         <ChartDataFilters
           dataSet={dataSet}
           dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}

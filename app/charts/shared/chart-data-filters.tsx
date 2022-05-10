@@ -28,12 +28,18 @@ export const ChartDataFilters = ({
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
-  const [filtersAreHidden, toggleFilters] = React.useState(true);
+  const [filtersVisible, setFiltersVisible] = React.useState(false);
   const { componentIris } = dataFiltersConfig;
+
+  React.useEffect(() => {
+    if (componentIris.length === 0) {
+      setFiltersVisible(false);
+    }
+  }, [componentIris.length]);
 
   return (
     <>
-      {dataSet && componentIris.length > 0 && (
+      {dataSet && (
         <Flex sx={{ flexDirection: "column", my: 4 }}>
           <Flex
             sx={{
@@ -42,8 +48,7 @@ export const ChartDataFilters = ({
               minHeight: 20,
             }}
           >
-            {(dataFiltersConfig.active && filtersAreHidden) ||
-            !dataFiltersConfig.active ? (
+            {!filtersVisible ? (
               <ChartFiltersList
                 dataSetIri={dataSet}
                 chartConfig={chartConfig}
@@ -52,11 +57,11 @@ export const ChartDataFilters = ({
               <Box></Box>
             )}
 
-            {dataFiltersConfig.active && (
+            {componentIris.length > 0 && (
               <Button
                 variant="text"
                 endIcon={
-                  <Icon name={filtersAreHidden ? "add" : "close"} size={15} />
+                  <Icon name={filtersVisible ? "close" : "add"} size={15} />
                 }
                 sx={{
                   display: "flex",
@@ -64,21 +69,21 @@ export const ChartDataFilters = ({
                   alignItems: "center",
                   minWidth: "fit-content",
                 }}
-                onClick={() => toggleFilters(!filtersAreHidden)}
+                onClick={() => setFiltersVisible(!filtersVisible)}
               >
-                {filtersAreHidden ? (
-                  <Trans id="interactive.data.filters.show">Show Filters</Trans>
-                ) : (
+                {filtersVisible ? (
                   <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
+                ) : (
+                  <Trans id="interactive.data.filters.show">Show Filters</Trans>
                 )}
               </Button>
             )}
           </Flex>
 
-          {dataFiltersConfig.active && (
+          {componentIris.length > 0 && (
             <Box
               sx={{
-                display: filtersAreHidden ? "none" : "grid",
+                display: filtersVisible ? "grid" : "none",
                 columnGap: 3,
                 rowGap: 2,
                 gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
