@@ -10,6 +10,7 @@ import {
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
+import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
@@ -189,12 +190,16 @@ const ChartWithInteractiveFilters = ({
       }}
     >
       {/* Filters list & Interactive filters */}
-      {chartConfig.interactiveFiltersConfig && (
+      {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
         <ChartDataFilters
           dataSet={dataSet}
           dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
           chartConfig={chartConfig}
         />
+      ) : (
+        <Flex sx={{ flexDirection: "column", my: 4 }}>
+          <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
+        </Flex>
       )}
       <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
