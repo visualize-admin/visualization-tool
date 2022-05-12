@@ -95,31 +95,29 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
                 >
                   <ChartPanelPublished chartType={chartConfig.chartType}>
-                    <div>
-                      <HiddenUntilScrolledTo
-                        initialVisible={i < 5}
-                        fallback={<div>Loading...</div>}
-                      >
-                        <ChartPublished
-                          dataSet={dataSet}
-                          chartConfig={chartConfig}
-                          meta={meta}
-                          configKey={key}
-                        />
-                      </HiddenUntilScrolledTo>
-                      <Box
-                        mb={2}
-                        mx={4}
-                        mr={6}
-                        textAlign="right"
-                        typography="caption"
-                      >
-                        Id: {key} -{" "}
-                        <NextLink href={`/v/${key}`} passHref>
-                          <Link color="primary">Open</Link>
-                        </NextLink>{" "}
-                      </Box>
-                    </div>
+                    <HiddenUntilScrolledTo
+                      initialVisible={i < 5}
+                      fallback={<div>Loading...</div>}
+                    >
+                      <ChartPublished
+                        dataSet={dataSet}
+                        chartConfig={chartConfig}
+                        meta={meta}
+                        configKey={key}
+                      />
+                    </HiddenUntilScrolledTo>
+                    <Box
+                      mb={2}
+                      mx={4}
+                      mr={6}
+                      textAlign="right"
+                      typography="caption"
+                    >
+                      Id: {key} -{" "}
+                      <NextLink href={`/v/${key}`} passHref>
+                        <Link color="primary">Open</Link>
+                      </NextLink>{" "}
+                    </Box>
                   </ChartPanelPublished>
                 </Box>
               );

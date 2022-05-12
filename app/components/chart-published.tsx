@@ -10,7 +10,6 @@ import {
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
@@ -21,10 +20,10 @@ import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import { ChartConfig, Meta } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
-import { MotionBox } from "@/configurator/components/presence";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartPublished = ({
@@ -66,10 +65,17 @@ export const ChartPublishedInner = ({
     variables: { iri: dataSet, locale },
   });
   const [isTablePreview] = useChartTablePreview();
+  const [resizeRef, _, height] = useResizeObserver<HTMLDivElement>();
+  const lastHeight = React.useRef(height);
+
+  React.useEffect(() => {
+    if (height !== 0) {
+      lastHeight.current = height;
+    }
+  }, [height]);
 
   return (
-    <MotionBox
-      layout
+    <Box
       sx={{
         display: "flex",
         flexGrow: 1,
@@ -126,9 +132,17 @@ export const ChartPublishedInner = ({
         )}
         <InteractiveFiltersProvider>
           {isTablePreview ? (
-            <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
+            <DataSetTable
+              sx={{
+                height: lastHeight.current,
+                width: "100%",
+              }}
+              dataSetIri={dataSet}
+              chartConfig={chartConfig}
+            />
           ) : (
             <ChartWithInteractiveFilters
+              ref={resizeRef}
               dataSet={dataSet}
               chartConfig={chartConfig}
             />
@@ -142,66 +156,68 @@ export const ChartPublishedInner = ({
           )}
         </InteractiveFiltersProvider>
       </ChartErrorBoundary>
-    </MotionBox>
+    </Box>
   );
 };
 
-const ChartWithInteractiveFilters = ({
-  dataSet,
-  chartConfig,
-}: {
-  dataSet: string;
-  chartConfig: ChartConfig;
-}) => {
-  const [IFstate, dispatch] = useInteractiveFilters();
-  const { interactiveFiltersConfig } = chartConfig;
+const ChartWithInteractiveFilters = React.forwardRef(
+  (
+    {
+      dataSet,
+      chartConfig,
+    }: {
+      dataSet: string;
+      chartConfig: ChartConfig;
+    },
+    ref
+  ) => {
+    const [IFstate, dispatch] = useInteractiveFilters();
+    const { interactiveFiltersConfig } = chartConfig;
 
-  const presetFrom =
-    interactiveFiltersConfig?.time.presets.from &&
-    parseDate(interactiveFiltersConfig?.time.presets.from.toString());
-  const presetTo =
-    interactiveFiltersConfig?.time.presets.to &&
-    parseDate(interactiveFiltersConfig?.time.presets.to.toString());
+    const presetFrom =
+      interactiveFiltersConfig?.time.presets.from &&
+      parseDate(interactiveFiltersConfig?.time.presets.from.toString());
+    const presetTo =
+      interactiveFiltersConfig?.time.presets.to &&
+      parseDate(interactiveFiltersConfig?.time.presets.to.toString());
 
-  // Reset data filters if chart type changes
-  useEffect(() => {
-    dispatch({
-      type: "RESET_DATA_FILTER",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartConfig.chartType]);
+    // Reset data filters if chart type changes
+    useEffect(() => {
+      dispatch({
+        type: "RESET_DATA_FILTER",
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chartConfig.chartType]);
 
-  // Editor time presets supersede interactive state
-  const presetFromStr = presetFrom?.toString();
-  const presetToStr = presetTo?.toString();
-  useEffect(() => {
-    if (presetFrom && presetTo) {
-      dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, presetFromStr, presetToStr]);
+    // Editor time presets supersede interactive state
+    const presetFromStr = presetFrom?.toString();
+    const presetToStr = presetTo?.toString();
+    useEffect(() => {
+      if (presetFrom && presetTo) {
+        dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, presetFromStr, presetToStr]);
 
-  return (
-    <Flex
-      sx={{
-        flexDirection: "column",
-        justifyContent: "space-between",
-        flexGrow: 1,
-      }}
-    >
-      {/* Filters list & Interactive filters */}
-      {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-        <ChartDataFilters
-          dataSet={dataSet}
-          dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-          chartConfig={chartConfig}
-        />
-      ) : (
-        <Flex sx={{ flexDirection: "column", my: 4 }}>
-          <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
-        </Flex>
-      )}
-      <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
-    </Flex>
-  );
-};
+    return (
+      <Flex
+        ref={ref}
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1,
+        }}
+      >
+        {/* Filters list & Interactive filters */}
+        {chartConfig.interactiveFiltersConfig && (
+          <ChartDataFilters
+            dataSet={dataSet}
+            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+            chartConfig={chartConfig}
+          />
+        )}
+        <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
+      </Flex>
+    );
+  }
+);

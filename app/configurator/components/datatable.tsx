@@ -1,11 +1,13 @@
 import {
   Box,
+  SxProps,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
+  Theme,
 } from "@mui/material";
 import { ascending, descending } from "d3";
 import { useMemo, useState } from "react";
@@ -173,9 +175,11 @@ export const DataSetPreviewTable = ({
 export const DataSetTable = ({
   dataSetIri,
   chartConfig,
+  sx,
 }: {
   dataSetIri: string;
   chartConfig: ChartConfig;
+  sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
@@ -195,7 +199,7 @@ export const DataSetTable = ({
     ];
 
     return (
-      <Box sx={{ maxHeight: "600px", overflow: "auto" }}>
+      <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
         <PreviewTable
           title={data.dataCubeByIri.title}
           headers={headers}
