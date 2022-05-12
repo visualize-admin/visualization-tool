@@ -65,7 +65,8 @@ export const ChartPublishedInner = ({
     variables: { iri: dataSet, locale },
   });
   const [isTablePreview] = useChartTablePreview();
-  const [resizeRef, _, height] = useResizeObserver<HTMLDivElement>();
+
+  const [chartRef, _, height] = useResizeObserver<HTMLDivElement>();
   const lastHeight = React.useRef(height);
 
   React.useEffect(() => {
@@ -135,14 +136,13 @@ export const ChartPublishedInner = ({
             <DataSetTable
               sx={{
                 height: lastHeight.current,
-                width: "100%",
               }}
               dataSetIri={dataSet}
               chartConfig={chartConfig}
             />
           ) : (
             <ChartWithInteractiveFilters
-              ref={resizeRef}
+              ref={chartRef}
               dataSet={dataSet}
               chartConfig={chartConfig}
             />

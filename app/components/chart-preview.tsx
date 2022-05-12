@@ -22,6 +22,7 @@ import { ChartConfig, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
@@ -39,6 +40,15 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
     variables: { iri: dataSetIri, locale },
   });
   const [isTablePreview] = useChartTablePreview();
+
+  const [chartRef, _, height] = useResizeObserver<HTMLDivElement>();
+  const lastHeight = React.useRef(height);
+
+  React.useEffect(() => {
+    if (height !== 0) {
+      lastHeight.current = height;
+    }
+  }, [height]);
 
   return (
     <Flex
@@ -108,11 +118,16 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
             <InteractiveFiltersProvider>
               {isTablePreview ? (
                 <DataSetTable
+                  sx={{
+                    height: lastHeight.current,
+                    width: "100%",
+                  }}
                   dataSetIri={dataSetIri}
                   chartConfig={state.chartConfig}
                 />
               ) : (
                 <ChartWithInteractiveFilters
+                  ref={chartRef}
                   dataSet={dataSetIri}
                   chartConfig={state.chartConfig}
                 />
@@ -132,39 +147,45 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
   );
 };
 
-const ChartWithInteractiveFilters = ({
-  dataSet,
-  chartConfig,
-}: {
-  dataSet: string;
-  chartConfig: ChartConfig;
-}) => {
-  useSyncInteractiveFilters(chartConfig);
+const ChartWithInteractiveFilters = React.forwardRef(
+  (
+    {
+      dataSet,
+      chartConfig,
+    }: {
+      dataSet: string;
+      chartConfig: ChartConfig;
+    },
+    ref
+  ) => {
+    useSyncInteractiveFilters(chartConfig);
 
-  return (
-    <Flex
-      sx={{
-        flexDirection: "column",
-        justifyContent: "space-between",
-        flexGrow: 1,
-      }}
-    >
-      {/* Filters list & Interactive filters */}
-      {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-        <ChartDataFilters
-          dataSet={dataSet}
-          dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-          chartConfig={chartConfig}
-        />
-      ) : (
-        <Flex sx={{ flexDirection: "column", my: 4 }}>
-          <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
-        </Flex>
-      )}
-      <Chart dataSet={dataSet} chartConfig={chartConfig} />
-    </Flex>
-  );
-};
+    return (
+      <Flex
+        ref={ref}
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1,
+        }}
+      >
+        {/* Filters list & Interactive filters */}
+        {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+          <ChartDataFilters
+            dataSet={dataSet}
+            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+            chartConfig={chartConfig}
+          />
+        ) : (
+          <Flex sx={{ flexDirection: "column", my: 4 }}>
+            <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
+          </Flex>
+        )}
+        <Chart dataSet={dataSet} chartConfig={chartConfig} />
+      </Flex>
+    );
+  }
+);
 
 const Chart = ({
   dataSet,
