@@ -74,7 +74,7 @@ const INITIAL_VIEW_STATE: MinMaxZoomViewState = {
 const constrainZoom = (
   viewState: MinMaxZoomViewState,
   bbox: BBox,
-  { padding = 24 }: { padding?: number } = {}
+  { padding = 0 }: { padding?: number } = {}
 ) => {
   const vp = new WebMercatorViewport(viewState);
 
@@ -149,7 +149,7 @@ export const MapComponent = () => {
       symbolLayer.show ? features.symbolLayer?.points : undefined
     );
     if (bbox) {
-      setViewState(constrainZoom(viewState, bbox, { padding: 48 }));
+      setViewState(constrainZoom(viewState, bbox));
     }
 
     hasSetInitialZoom.current = true;
