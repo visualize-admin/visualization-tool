@@ -119,7 +119,7 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
               {isTablePreview ? (
                 <DataSetTable
                   sx={{
-                    height: lastHeight.current,
+                    height: height || lastHeight.current,
                     width: "100%",
                   }}
                   dataSetIri={dataSetIri}

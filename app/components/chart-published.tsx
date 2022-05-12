@@ -135,7 +135,7 @@ export const ChartPublishedInner = ({
           {isTablePreview ? (
             <DataSetTable
               sx={{
-                height: lastHeight.current,
+                height: height || lastHeight.current,
               }}
               dataSetIri={dataSet}
               chartConfig={chartConfig}
