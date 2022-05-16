@@ -79,6 +79,9 @@ export const DataDownloadStateProvider = ({
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
 
+const makeColumnLabel = (dim: DimensionMetaDataFragment) => {
+  return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
+};
 const prepareData = ({
   dimensions,
   measures,
@@ -95,12 +98,13 @@ const prepareData = ({
       return col
         ? {
             ...acc,
-            ...{ [col.label]: obs[key] },
+            ...{ [makeColumnLabel(col)]: obs[key] },
           }
         : acc;
     }, {})
   );
-  const columnKeys = Object.keys(columns).map((d) => columns[d].label);
+
+  const columnKeys = Object.values(columns).map(makeColumnLabel);
 
   return { data, columnKeys };
 };
