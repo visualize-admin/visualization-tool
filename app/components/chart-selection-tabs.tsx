@@ -1,4 +1,4 @@
-import { IconButton, Popover, Tab, Tabs } from "@mui/material";
+import { Box, Popover, Tab, Tabs } from "@mui/material";
 import React, {
   createContext,
   Dispatch,
@@ -78,8 +78,9 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
     | ConfiguratorStatePublishing
   ];
   const [tabsState, setTabsState] = useTabsState();
-  const [popoverAnchorEl, setPopoverAnchorEl] =
-    useState<HTMLButtonElement | null>(null);
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
   const handleClose = useCallback(() => {
     setPopoverAnchorEl(null);
     setTabsState({ isPopoverOpen: false });
@@ -94,7 +95,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
       <TabsInner
         chartType={chartType}
         editable={true}
-        onActionButtonClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+        onActionButtonClick={(e: React.MouseEvent<HTMLElement>) => {
           setPopoverAnchorEl(e.currentTarget);
           setTabsState({ isPopoverOpen: true });
         }}
@@ -126,18 +127,16 @@ const TabsInner = ({
 }: {
   chartType: ChartType;
   editable: boolean;
-  onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
     <Tabs value={0}>
       {/* TODO: Generate dynamically when chart composition is implemented */}
       <Tab
+        sx={{ p: 0 }}
+        onClick={onActionButtonClick}
         label={
-          <TabContent
-            iconName={getIconName(chartType)}
-            editable={editable}
-            onActionButtonClick={onActionButtonClick}
-          />
+          <TabContent iconName={getIconName(chartType)} editable={editable} />
         }
       />
     </Tabs>
@@ -148,27 +147,31 @@ const TabContent = ({
   iconName,
   disabled = false,
   editable = false,
-  onActionButtonClick,
 }: {
   iconName: IconName;
   disabled?: boolean;
   editable?: boolean;
-  onActionButtonClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   return (
-    <Flex sx={{ gap: 1 }}>
+    <Flex
+      sx={{
+        gap: 2,
+        alignItems: "center",
+        py: 1,
+        px: 3,
+        borderRadius: 3,
+        transition: "0.125s ease background-color",
+        "&:hover": {
+          backgroundColor: "grey.200",
+        },
+      }}
+    >
       <Icon name={iconName} />
 
       {editable && (
-        // @ts-ignore
-        <IconButton
-          component="div"
-          disabled={disabled}
-          size="small"
-          onClick={onActionButtonClick}
-        >
+        <Box component="span" sx={{ color: "grey.700" }}>
           <Icon name="chevronDown" size={16} />
-        </IconButton>
+        </Box>
       )}
     </Flex>
   );

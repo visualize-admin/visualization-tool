@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
@@ -67,75 +67,88 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
-        <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
+        <Box
+          sx={{
+            mt: 2,
+            "--column-gap": "16px",
+            columnGap: "var(--column-gap)",
+            rowGap: 1,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            flexWrap: "wrap",
+            overflow: "hidden",
+
+            // Separator between flex elements, the trick to have them not displayed
+            // for each line leftmost element is to have them negatively positioned
+            // cut by the overflow hidden
+            "& > *:before": {
+              content: '" "',
+              display: "block",
+              height: "3px",
+              width: "3px ",
+              borderRadius: "3px",
+              position: "relative",
+              left: "calc(-1 * var(--column-gap) / 2)",
+              backgroundColor: "grey.600",
+            },
+          }}
+        >
           <DataDownloadMenu
             title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
             filters={filters}
           />
           {chartConfig.chartType !== "table" && (
-            <>
-              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-              <Button
-                component="a"
-                color="primary"
-                variant="text"
-                size="small"
-                startIcon={
-                  <Icon
-                    name={
-                      isChartTablePreview
-                        ? getChartIcon(chartConfig.chartType)
-                        : "table"
-                    }
-                    size={16}
-                  />
-                }
-                onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-                sx={{ p: 0 }}
-              >
-                <Typography variant="caption">
-                  {isChartTablePreview ? (
-                    <Trans id="metadata.switch.chart">
-                      Switch to chart view
-                    </Trans>
-                  ) : (
-                    <Trans id="metadata.switch.table">
-                      Switch to table view
-                    </Trans>
-                  )}
-                </Typography>
-              </Button>
-            </>
+            <Button
+              component="a"
+              color="primary"
+              variant="text"
+              size="small"
+              startIcon={
+                <Icon
+                  name={
+                    isChartTablePreview
+                      ? getChartIcon(chartConfig.chartType)
+                      : "table"
+                  }
+                  size={16}
+                />
+              }
+              onClick={() => setIsChartTablePreview(!isChartTablePreview)}
+              sx={{ p: 0 }}
+            >
+              <Typography variant="caption">
+                {isChartTablePreview ? (
+                  <Trans id="metadata.switch.chart">Switch to chart view</Trans>
+                ) : (
+                  <Trans id="metadata.switch.table">Switch to table view</Trans>
+                )}
+              </Typography>
+            </Button>
           )}
           {sparqlEditorUrl !== undefined && (
-            <>
-              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-              <RunSparqlQuery url={sparqlEditorUrl as string} />
-            </>
+            <RunSparqlQuery url={sparqlEditorUrl as string} />
           )}
           {configKey && shareUrl && (
-            <>
-              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-              <Button
-                component="a"
-                variant="text"
-                color="primary"
-                size="small"
-                sx={{ p: 0 }}
-                href={shareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Typography variant="caption">
-                  <Trans id="metadata.link.created.with.visualize">
-                    Created with visualize.admin.ch
-                  </Trans>
-                </Typography>
-              </Button>
-            </>
+            <Button
+              component="a"
+              variant="text"
+              color="primary"
+              size="small"
+              sx={{ p: 0 }}
+              href={shareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Typography variant="caption">
+                <Trans id="metadata.link.created.with.visualize">
+                  Created with visualize.admin.ch
+                </Trans>
+              </Typography>
+            </Button>
           )}
-        </Stack>
+        </Box>
       </Box>
     );
   } else {

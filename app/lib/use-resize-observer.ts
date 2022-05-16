@@ -3,14 +3,15 @@ import { useEffect, useState, useRef } from "react";
 
 export const useResizeObserver = <T extends Element>() => {
   const roRef = useRef<ResizeObserver>();
-  const elRef = useRef<T>(null);
+  const elRef = useRef<T>();
   const [width, changeWidth] = useState(1);
   const [height, changeHeight] = useState(1);
 
-  useEffect(() => {
-    if (!elRef.current) {
+  const handleRef = (node: T) => {
+    if (!node) {
       return;
     }
+    elRef.current = node;
 
     if (!roRef.current) {
       roRef.current = new ResizeObserver((entries) => {
@@ -37,12 +38,14 @@ export const useResizeObserver = <T extends Element>() => {
     }
 
     roRef.current.observe(elRef.current);
+  };
 
+  useEffect(() => {
     return () => {
       roRef.current?.disconnect();
       roRef.current = undefined;
     };
   }, []);
 
-  return [elRef, width, height] as const;
+  return [handleRef, width, height] as const;
 };

@@ -1,11 +1,3 @@
-/**
- * IMPORTANT: just export JSON-serializable data from this file!
- *
- * It will be loaded in _app.tsx's `getInitialProps()`, which will serialize to JSON.
- * So references to other modules, functions etc. won't work here.
- *
- * - `theme` should be a plain object, conforming to the `Theme` type.
- */
 import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { merge, omit } from "lodash";

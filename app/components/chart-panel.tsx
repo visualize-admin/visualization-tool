@@ -52,6 +52,7 @@ const ChartPanelInner = ({
   <Flex
     {...boxProps}
     sx={{
+      flexDirection: "column",
       backgroundColor: "grey.100",
       boxShadow: 6,
       borderRadius: 12,

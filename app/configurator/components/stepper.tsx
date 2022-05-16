@@ -148,10 +148,14 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   }, [data, dispatch]);
 
   const goPrevious = useCallback(() => {
-    dispatch({
-      type: "STEP_PREVIOUS",
-    });
-  }, [dispatch]);
+    if (state.state === "CONFIGURING_CHART") {
+      history.back();
+    } else {
+      dispatch({
+        type: "STEP_PREVIOUS",
+      });
+    }
+  }, [dispatch, state.state]);
 
   return (
     <StepperDumb
