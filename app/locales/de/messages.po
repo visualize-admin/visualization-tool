@@ -748,9 +748,9 @@ msgstr "Bundesamt für Umwelt BAFU"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
 
-#: app/components/footer.tsx:124
-#~ msgid "footer.status"
-#~ msgstr "Status"
+#: app/components/footer.tsx:125
+msgid "footer.status"
+msgstr "Status"
 
 #: app/components/hint.tsx:158
 msgid "hint.chartunexpected.message"
@@ -775,6 +775,10 @@ msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisi
 #: app/components/hint.tsx:128
 msgid "hint.dataloadingerror.message"
 msgstr "Die Daten konnten nicht geladen werden."
+
+#: app/components/hint.tsx:137
+msgid "hint.dataloadingerror.status"
+msgstr "Weitere Informationen finden Sie auf der Statusseite"
 
 #: app/components/hint.tsx:126
 msgid "hint.dataloadingerror.title"

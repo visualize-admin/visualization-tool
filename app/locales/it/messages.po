@@ -765,6 +765,11 @@ msgid "hint.coordinatesloadingerror.message"
 msgstr "C'è stato un problema con il caricamento delle coordinate dalle dimensioni geografiche. Per favore riprova più tardi."
 
 #: app/components/hint.tsx:140
+
+#: app/components/footer.tsx:125
+msgid "footer.status"
+msgstr "Stato"
+
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Errore di caricamento delle coordinate"
 
@@ -775,6 +780,10 @@ msgstr "Copia questa visualizzazione o crea una nuova visualizzazione usando «d
 #: app/components/hint.tsx:128
 msgid "hint.dataloadingerror.message"
 msgstr "I dati non possono essere caricati."
+
+#: app/components/hint.tsx:137
+msgid "hint.dataloadingerror.status"
+msgstr "Controlla la pagina di stato per ulteriori informazioni”"
 
 #: app/components/hint.tsx:126
 msgid "hint.dataloadingerror.title"
