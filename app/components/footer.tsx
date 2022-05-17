@@ -122,9 +122,9 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           >
             <Version />
           </Typography>
-          {/*<FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
+          <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
             <Trans id="footer.status">Status</Trans>
-          </FooterLinkBottom>*/}
+          </FooterLinkBottom>
           <NextLink
             href={contentRoutes.legal[locale].path}
             passHref

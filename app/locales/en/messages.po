@@ -780,6 +780,10 @@ msgstr "Copy this visualization or make a new visualization using Swiss Open Gov
 msgid "hint.dataloadingerror.message"
 msgstr "The data could not be loaded."
 
+#: app/components/hint.tsx:137
+msgid "hint.dataloadingerror.status"
+msgstr "Check the status page for more information"
+
 #: app/components/hint.tsx:126
 msgid "hint.dataloadingerror.title"
 msgstr "Data loading error"

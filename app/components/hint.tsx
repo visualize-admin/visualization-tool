@@ -3,11 +3,12 @@ import { Trans } from "@lingui/macro";
 import {
   Alert,
   AlertProps,
+  useTheme,
   AlertTitle,
   Box,
   BoxProps,
   Typography,
-  useTheme,
+  Link,
 } from "@mui/material";
 import { ReactNode } from "react";
 
@@ -120,6 +121,7 @@ export const NoDataHint = () => (
     </Trans>
   </Alert>
 );
+
 export const LoadingDataError = ({ message }: { message?: string }) => (
   <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
     <AlertTitle>
@@ -128,9 +130,23 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     <Trans id="hint.dataloadingerror.message">
       The data could not be loaded.
     </Trans>
-    <pre style={{ marginTop: "0.5rem", marginLeft: "1rem", marginBottom: 0 }}>
-      {message ? message : null}
-    </pre>
+    <Link
+      typography="body2"
+      target="_blank"
+      href="https://visualization-tool.status.interactivethings.io/"
+      sx={{ mt: "0.5em" }}
+    >
+      <Trans id="hint.dataloadingerror.status">
+        Check our status page for more information.
+        <Icon name="linkExternal" size={14} />
+      </Trans>
+    </Link>
+
+    {message ? (
+      <pre style={{ marginTop: "0.5rem", marginLeft: "1rem", marginBottom: 0 }}>
+        {message}
+      </pre>
+    ) : null}
   </Alert>
 );
 
