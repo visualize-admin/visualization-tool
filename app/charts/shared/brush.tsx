@@ -136,19 +136,26 @@ export const BrushTime = () => {
     ])
     .on("start brush", brushed)
     .on("end", function (event) {
+      // Happens when snapping to actual values.
       if (!event.sourceEvent) {
         updateBrushEndedStatus(false);
       } else {
-        updateBrushEndedStatus(true);
-      }
+        if (event.selection) {
+          setSelectionExtent(event.selection[1] - event.selection[0]);
+        } else {
+          // End event fires twice on touchend (MouseEvent and TouchEvent),
+          // we want to compute mx basing on MouseEvent.
+          if (event.sourceEvent instanceof MouseEvent) {
+            const g = select(ref.current);
+            const [mx] = pointer(event, this);
+            const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;
+            g.call(brush.move as any, [x, x]);
+          }
 
-      if (event.selection) {
-        setSelectionExtent(event.selection[1] - event.selection[0]);
-      } else {
-        const g = select(ref.current);
-        const [mx] = pointer(event, this);
-        g.call(brush.move as any, [mx, mx]);
-        setSelectionExtent(0);
+          setSelectionExtent(0);
+        }
+
+        updateBrushEndedStatus(true);
       }
     });
 
