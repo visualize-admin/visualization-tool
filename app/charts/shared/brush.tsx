@@ -28,14 +28,19 @@ export const BRUSH_HEIGHT = 3;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
+  const [state, dispatch] = useInteractiveFilters();
+  const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
-  const formatDateAuto = useFormatFullDateAuto();
-
-  const [state, dispatch] = useInteractiveFilters();
+  const updateSelectionExtent = (selection: [number, number] | undefined) => {
+    if (selection) {
+      setSelectionExtent(selection[1] - selection[0]);
+    } else {
+      setSelectionExtent(0);
+    }
+  };
 
   const { from, to } = state.time;
-
   const {
     brushOverlayColor,
     brushSelectionColor,
@@ -43,14 +48,12 @@ export const BrushTime = () => {
     brushHandleFillColor,
     labelFontSize,
   } = useChartTheme();
-
   const { chartType, xEntireScale, bounds } = useChartState() as
     | LinesState
     | AreasState
     | ColumnsState;
   const { getX, allDataWide } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
-
   const getDate = chartType === "column" ? getXAsDate : getX;
   const fullData = chartType === "column" ? allData : allDataWide;
 
@@ -136,13 +139,13 @@ export const BrushTime = () => {
     ])
     .on("start brush", brushed)
     .on("end", function (event) {
+      updateSelectionExtent(event.selection);
+
       // Happens when snapping to actual values.
       if (!event.sourceEvent) {
         updateBrushEndedStatus(false);
       } else {
-        if (event.selection) {
-          setSelectionExtent(event.selection[1] - event.selection[0]);
-        } else {
+        if (!event.selection) {
           // End event fires twice on touchend (MouseEvent and TouchEvent),
           // we want to compute mx basing on MouseEvent.
           if (event.sourceEvent instanceof MouseEvent) {
@@ -151,8 +154,6 @@ export const BrushTime = () => {
             const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;
             g.call(brush.move as any, [x, x]);
           }
-
-          setSelectionExtent(0);
         }
 
         updateBrushEndedStatus(true);
