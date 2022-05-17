@@ -1,4 +1,4 @@
-import { bisector, brushX, select, Selection, Transition } from "d3";
+import { bisector, brushX, pointers, select, Selection, Transition } from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
@@ -21,6 +21,7 @@ export const BRUSH_HEIGHT = 3;
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
+  const [selectionExtent, setSelectionExtent] = useState(0);
   const formatDateAuto = useFormatFullDateAuto();
 
   const [state, dispatch] = useInteractiveFilters();
@@ -63,6 +64,8 @@ export const BrushTime = () => {
 
   const updateBrushStatus = (event: $FixMe) => {
     const selection = event.selection;
+    setSelectionExtent(selection ? selection[1] - selection[0] : 0);
+
     if (!event.sourceEvent || !selection) {
       updateBrushEndedStatus(false);
     } else {
@@ -227,10 +230,32 @@ export const BrushTime = () => {
   useEffect(() => {
     const g = select(ref.current);
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+      g.call(brush);
       g.select(".overlay")
+        .datum({ type: "selection" })
         .attr("fill-opacity", 0)
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
-        .style("height", HANDLE_HEIGHT);
+        .style("height", HANDLE_HEIGHT)
+        .on(
+          "mousedown touchstart",
+          (e) => {
+            const [[cx]] = pointers(e);
+            const x0 = cx - selectionExtent / 2;
+            const x1 = cx + selectionExtent / 2;
+            const overflowingLeft = x0 < 0;
+            const overflowingRight = x1 > brushWidth;
+
+            g.call(
+              brush.move,
+              overflowingLeft
+                ? [0, selectionExtent]
+                : overflowingRight
+                ? [brushWidth - selectionExtent, brushWidth]
+                : [x0, x1]
+            );
+          },
+          { passive: true }
+        );
       g.select(".selection")
         .attr("fill", brushSelectionColor)
         .attr("fill-opacity", 1)
@@ -240,7 +265,6 @@ export const BrushTime = () => {
         .attr("stroke", brushHandleStrokeColor)
         .attr("stroke-width", 2)
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
-        // .style("transform", `translateX(-${0}px)`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
@@ -251,18 +275,17 @@ export const BrushTime = () => {
       g.select(".handle--e")
         .attr("tabindex", 0)
         .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
-
-      // Apply brush to selected group
-      g.call(brush);
     };
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
   }, [
     brush,
+    brushWidth,
     brushHandleFillColor,
     brushHandleStrokeColor,
     brushOverlayColor,
     brushSelectionColor,
     moveBrushOnKeyPress,
+    selectionExtent,
   ]);
 
   // This effect allows "snapping" to actual data points
