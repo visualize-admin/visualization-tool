@@ -1,4 +1,12 @@
-import { bisector, brushX, pointers, select, Selection, Transition } from "d3";
+import {
+  bisector,
+  brushX,
+  pointer,
+  pointers,
+  select,
+  Selection,
+  Transition,
+} from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
@@ -61,17 +69,6 @@ export const BrushTime = () => {
     () => brushWidthScale.domain().map((d) => d.getTime()),
     [brushWidthScale]
   );
-
-  const updateBrushStatus = (event: $FixMe) => {
-    const selection = event.selection;
-    setSelectionExtent(selection ? selection[1] - selection[0] : 0);
-
-    if (!event.sourceEvent || !selection) {
-      updateBrushEndedStatus(false);
-    } else {
-      updateBrushEndedStatus(true);
-    }
-  };
 
   const getClosestObservationFromRangeDates = useCallback(
     (rangeDates: [Date, Date]): [Date, Date] => {
@@ -138,7 +135,22 @@ export const BrushTime = () => {
       [brushWidth, BRUSH_HEIGHT],
     ])
     .on("start brush", brushed)
-    .on("end", updateBrushStatus);
+    .on("end", function (event) {
+      if (!event.sourceEvent) {
+        updateBrushEndedStatus(false);
+      } else {
+        updateBrushEndedStatus(true);
+      }
+
+      if (event.selection) {
+        setSelectionExtent(event.selection[1] - event.selection[0]);
+      } else {
+        const g = select(ref.current);
+        const [mx] = pointer(event, this);
+        g.call(brush.move as any, [mx, mx]);
+        setSelectionExtent(0);
+      }
+    });
 
   /** Keyboard support */
   const moveBrushOnKeyPress = useCallback(
