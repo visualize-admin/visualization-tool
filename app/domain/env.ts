@@ -54,7 +54,4 @@ export const BUILD_COMMIT = process.env.NEXT_PUBLIC_COMMIT;
 export const BUILD_GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
 
 export const BASE_VECTOR_TILE_URL =
-  process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL || "";
-
-export const MAPTILER_STYLE_KEY =
-  process.env.NEXT_PUBLIC_MAPTILER_STYLE_KEY || "";
+  process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL;
