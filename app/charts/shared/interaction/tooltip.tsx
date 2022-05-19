@@ -15,10 +15,8 @@ export const TOOLTIP_OFFSET = 4;
 
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
-  const { visible, mouse, d } = state.interaction;
-  return (
-    <>{visible && d && <TooltipInner d={d} mouse={mouse} type={type} />}</>
-  );
+  const { visible, d } = state.interaction;
+  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
 };
 
 export type Xplacement = "left" | "center" | "right";
