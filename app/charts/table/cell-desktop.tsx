@@ -93,7 +93,7 @@ export const CellDesktop = ({
             justifyContent: "center",
             // Padding is a constant accounted for in the
             // widthScale domain (see table state).
-            px: BAR_CELL_PADDING,
+            px: `${BAR_CELL_PADDING}px`,
           }}
           {...cell.getCellProps()}
         >
