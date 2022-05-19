@@ -17,7 +17,6 @@ import {
   Yplacement,
 } from "@/charts/shared/interaction/tooltip";
 import { Margins } from "@/charts/shared/use-width";
-import { useTheme } from "@/themes";
 
 export interface TooltipBoxProps {
   x: number | undefined;
@@ -74,8 +73,6 @@ export const TooltipBox = ({
   children,
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
-  const theme = useTheme();
-
   const [pos, posRef] = usePosition();
   return (
     <>

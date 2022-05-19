@@ -44,15 +44,7 @@ export interface TooltipInfo {
   values: TooltipValue[] | undefined;
 }
 
-const TooltipInner = ({
-  d,
-  mouse,
-  type,
-}: {
-  d: Observation;
-  mouse?: { x: number; y: number };
-  type: TooltipType;
-}) => {
+const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { bounds, getAnnotationInfo } = useChartState() as LinesState;
   const { margins } = bounds;
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
