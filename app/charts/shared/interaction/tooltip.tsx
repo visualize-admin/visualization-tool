@@ -15,10 +15,8 @@ export const TOOLTIP_OFFSET = 4;
 
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
-  const { visible, mouse, d } = state.interaction;
-  return (
-    <>{visible && d && <TooltipInner d={d} mouse={mouse} type={type} />}</>
-  );
+  const { visible, d } = state.interaction;
+  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
 };
 
 export type Xplacement = "left" | "center" | "right";
@@ -44,15 +42,7 @@ export interface TooltipInfo {
   values: TooltipValue[] | undefined;
 }
 
-const TooltipInner = ({
-  d,
-  mouse,
-  type,
-}: {
-  d: Observation;
-  mouse?: { x: number; y: number };
-  type: TooltipType;
-}) => {
+const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { bounds, getAnnotationInfo } = useChartState() as LinesState;
   const { margins } = bounds;
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
