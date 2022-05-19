@@ -241,7 +241,7 @@ const useTableState = ({
           };
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimensionValues = dimensions.find(
+          const dimension = dimensions.find(
             (d) => d.iri === iri
           ) as DimensionMetaDataFragment;
 
@@ -252,7 +252,7 @@ const useTableState = ({
           const labelsAndColor = Object.keys(colorMapping).map(
             (colorMappingIri) => {
               const dvLabel = (
-                dimensionValues.values.find((s) => {
+                dimension.values.find((s) => {
                   return s.value === colorMappingIri;
                 }) || { label: "unknown" }
               ).label;
