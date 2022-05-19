@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import {
   brushX,
   CountableTimeInterval,
+  pointer,
   scaleTime,
   select,
   Selection,
@@ -48,15 +49,23 @@ export const EditorIntervalBrush = ({
     [timeInterval]
   );
 
-  const brushed = ({ selection }: { selection: [number, number] }) => {
+  function brushed(e: $FixMe) {
+    const selection = e.selection as [number, number] | undefined;
+
     if (selection) {
       const [xStart, xEnd] = selection.map((s) =>
         getClosestDimensionValue(timeScale.invert(s))
       );
 
       onChange([xStart, xEnd]);
+    } else {
+      const g = select(brushRef.current);
+      //@ts-ignore
+      const [mx] = pointer(e, this);
+      const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;
+      g.call(brush.move as any, [x, x]);
     }
-  };
+  }
   const brush = brushX()
     .extent([
       [0, 0],
