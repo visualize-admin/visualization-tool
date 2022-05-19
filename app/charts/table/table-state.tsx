@@ -281,8 +281,7 @@ const useTableState = ({
               slugifiedIri,
               columnComponentType,
               colorScale,
-              formatter: (cell: Cell<Observation>) =>
-                formatters[dimension.iri](cell.value),
+              formatter: cellFormatter,
               ...columnStyle,
             },
           };
@@ -305,6 +304,7 @@ const useTableState = ({
               slugifiedIri,
               columnComponentType,
               colorScale,
+              formatter: cellFormatter,
               ...columnStyle,
             },
           };
@@ -337,6 +337,7 @@ const useTableState = ({
               slugifiedIri,
               columnComponentType,
               widthScale,
+              formatter: cellFormatter,
               ...columnStyle,
             },
           };
@@ -346,19 +347,14 @@ const useTableState = ({
             [slugifiedIri]: {
               slugifiedIri,
               columnComponentType,
+              formatter: cellFormatter,
+              // @ts-ignore
               ...columnStyle,
             },
           };
         }
       }, {}),
-    [
-      data,
-      dimensions,
-      fields,
-      formatNumber,
-      formatters,
-      theme.palette.primary.main,
-    ]
+    [data, dimensions, fields, formatters, theme.palette.primary.main]
   );
 
   return {
