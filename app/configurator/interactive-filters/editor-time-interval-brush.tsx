@@ -1,4 +1,3 @@
-
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import {
@@ -16,14 +15,10 @@ import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
 
-const HANDLE_HEIGHT = 20;
+const HANDLE_SIZE = 20;
+const HANDLE_OFFSET = HANDLE_SIZE / 8;
 const BRUSH_HEIGHT = 3;
-const MARGINS = {
-  top: HANDLE_HEIGHT / 2,
-  right: 8,
-  bottom: HANDLE_HEIGHT / 2,
-  left: 8,
-};
+const MARGIN = HANDLE_SIZE / 2;
 
 export const EditorIntervalBrush = ({
   timeExtent,
@@ -43,9 +38,7 @@ export const EditorIntervalBrush = ({
   const theme = useTheme();
   const formatDateAuto = useFormatFullDateAuto();
 
-  // FIXME: make component responsive (currently triggers infinite loop)
-  const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
-
+  const brushWidth = width - (MARGIN + HANDLE_OFFSET) * 2;
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
 
   const getClosestDimensionValue = useCallback(
@@ -92,34 +85,18 @@ export const EditorIntervalBrush = ({
           "fill",
           disabled ? theme.palette.grey[500] : theme.palette.primary.main
         )
-        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
-        .style("width", `${HANDLE_HEIGHT}px`)
-        .style("height", `${HANDLE_HEIGHT}px`)
-        .attr("rx", `${HANDLE_HEIGHT}px`);
-
-      // g.select(".handle--w")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
-      // g.select(".handle--e")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
-
-      // Apply brush to selected group
+        .style("y", `-${HANDLE_SIZE / 2 - 1}px`)
+        .style("width", `${HANDLE_SIZE}px`)
+        .style("height", `${HANDLE_SIZE}px`)
+        .attr("rx", `${HANDLE_SIZE}px`);
 
       g.call(brush);
     };
 
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [
-    brush,
-    disabled,
-    theme.palette.grey[300],
-    theme.palette.grey[500],
-    theme.palette.primary.main,
-  ]);
+  }, [brush, disabled, theme.palette.grey, theme.palette.primary.main]);
 
   // Set default selection to full extent
-
   const [fromPx, toPx] = timeRange.map(timeScale);
 
   // FIXME: fix dependency array but don't include brush.move!
@@ -138,18 +115,21 @@ export const EditorIntervalBrush = ({
       </Label>
       <Box ref={resizeRef} id="editor-brush">
         {width > 0 && (
-          <svg
-            width={width + MARGINS.left + MARGINS.right}
-            height={BRUSH_HEIGHT + MARGINS.top + MARGINS.bottom}
-          >
+          <svg width={width} height={BRUSH_HEIGHT + MARGIN * 2}>
             <g
               ref={brushRef}
-              transform={`translate(${MARGINS.left}, ${MARGINS.top})`}
+              transform={`translate(${HANDLE_OFFSET * 2}, ${MARGIN})`}
             />
           </svg>
         )}
       </Box>
-      <Flex sx={{ justifyContent: "space-between" }}>
+      <Flex
+        sx={{
+          mt: 1,
+          justifyContent: "space-between",
+          px: `${HANDLE_OFFSET}px`,
+        }}
+      >
         <Typography component="div" variant="caption">
           {formatDateAuto(timeExtent[0])}
         </Typography>
