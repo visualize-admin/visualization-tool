@@ -1,4 +1,3 @@
-
 import { Box } from "@mui/material";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
@@ -8,10 +7,6 @@ import { BAR_CELL_PADDING } from "@/charts/table/constants";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import Flex from "@/components/flex";
-import {
-  useFormatFullDateAuto,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 
 export const CellDesktop = ({
@@ -21,9 +16,6 @@ export const CellDesktop = ({
   cell: Cell<Observation>;
   columnMeta: ColumnMeta;
 }) => {
-  const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
-
   const {
     columnComponentType,
     type,
@@ -53,11 +45,7 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {columnComponentType === "Measure"
-            ? formatNumber(cell.value)
-            : columnComponentType === "TemporalDimension"
-            ? formatDateAuto(cell.value)
-            : cell.render("Cell")}
+          {columnMeta.formatter(cell)}
         </Flex>
       );
     case "category":
@@ -67,9 +55,7 @@ export const CellDesktop = ({
           {...cell.getCellProps()}
         >
           <Tag tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}>
-            {columnComponentType === "TemporalDimension"
-              ? formatDateAuto(cell.value)
-              : cell.render("Cell")}
+            {columnMeta.formatter(cell)}
           </Tag>
         </Flex>
       );
@@ -96,7 +82,7 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {formatNumber(cell.value)}
+          {columnMeta.formatter(cell)}
         </Flex>
       );
     case "bar":
@@ -111,7 +97,7 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          <Box>{formatNumber(cell.value)}</Box>
+          <Box>{columnMeta.formatter(cell)}</Box>
           {cell.value !== null && widthScale && (
             <Box
               sx={{
@@ -172,11 +158,7 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {columnComponentType === "Measure"
-            ? formatNumber(cell.value)
-            : columnComponentType === "TemporalDimension"
-            ? formatDateAuto(cell.value)
-            : cell.render("Cell")}
+          {columnMeta.formatter(cell)}
         </Flex>
       );
   }

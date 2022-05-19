@@ -14,10 +14,6 @@ import { useMemo, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
-import {
-  useFormatFullDateAuto,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
 import { ChartConfig } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
@@ -27,7 +23,7 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-type Header = DimensionMetaDataFragment;
+import { useDimensionFormatters } from "./ui-helpers";
 
 export const PreviewTable = ({
   title,
@@ -35,15 +31,12 @@ export const PreviewTable = ({
   observations,
 }: {
   title: string;
-  headers: Header[];
+  headers: DimensionMetaDataFragment[];
   observations: Observation[];
 }) => {
-  const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
-
-  const [sortBy, setSortBy] = useState<Header>();
+  const [sortBy, setSortBy] = useState<DimensionMetaDataFragment>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
-
+  const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
@@ -104,21 +97,21 @@ export const PreviewTable = ({
         {sortedObservations.map((obs, i) => {
           return (
             <TableRow key={i}>
-              {headers.map(({ iri, __typename }) => (
-                <TableCell
-                  key={iri}
-                  component="td"
-                  sx={{
-                    textAlign: __typename === "Measure" ? "right" : "left",
-                  }}
-                >
-                  {__typename === "Measure"
-                    ? formatNumber(obs[iri] as number | null)
-                    : __typename === "TemporalDimension"
-                    ? formatDateAuto(obs[iri] as string)
-                    : obs[iri]}
-                </TableCell>
-              ))}
+              {headers.map(({ iri, __typename }) => {
+                const formatter = formatters[iri];
+                return (
+                  <TableCell
+                    key={iri}
+                    component="td"
+                    sx={{
+                      textAlign: __typename === "Measure" ? "right" : "left",
+                    }}
+                  >
+                    {/** @ts-ignore */}
+                    {formatter(obs[iri])}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           );
         })}
@@ -146,8 +139,8 @@ export const DataSetPreviewTable = ({
 }: {
   title: string;
   dataSetIri: string;
-  dimensions: Header[];
-  measures: Header[];
+  dimensions: DimensionMetaDataFragment[];
+  measures: DimensionMetaDataFragment[];
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({

@@ -1,10 +1,11 @@
 import { renderHook } from "@testing-library/react-hooks";
 
-import { TimeUnit } from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
+  useDimensionFormatters,
   useFormatFullDateAuto,
   useTimeFormatLocale,
 } from "./ui-helpers";
@@ -25,6 +26,54 @@ describe("useFormatFullDateAuto", () => {
   it("should work with null dates", () => {
     const { formatFullDateAuto } = setup();
     expect(formatFullDateAuto(null)).toEqual("-");
+  });
+});
+
+describe("useDimensionFormatters", () => {
+  const setup = () => {
+    const {
+      result: { current: formatters },
+    } = renderHook(() =>
+      useDimensionFormatters([
+        {
+          iri: "iri-monthly",
+          timeFormat: "%Y-%m",
+          timeUnit: TimeUnit.Month,
+          isNumerical: false,
+          isKeyDimension: false,
+          __typename: "TemporalDimension",
+        } as DimensionMetaDataFragment,
+        {
+          iri: "iri-yearly",
+          timeFormat: "%Y",
+          timeUnit: TimeUnit.Year,
+          isNumerical: false,
+          isKeyDimension: false,
+          __typename: "TemporalDimension",
+        } as DimensionMetaDataFragment,
+        {
+          iri: "iri-number",
+          isNumerical: true,
+          isKeyDimension: false,
+        } as DimensionMetaDataFragment,
+      ])
+    );
+    return { formatters };
+  };
+
+  it("should work with monthly dates", () => {
+    const { formatters } = setup();
+    expect(formatters["iri-monthly"]("2021-05")).toEqual("05.2021");
+  });
+
+  it("should work with yearly dates", () => {
+    const { formatters } = setup();
+    expect(formatters["iri-yearly"]("2021")).toEqual("2021");
+  });
+
+  it("should work with numbers", () => {
+    const { formatters } = setup();
+    expect(formatters["iri-number"]("2.33333")).toEqual("2,33");
   });
 });
 

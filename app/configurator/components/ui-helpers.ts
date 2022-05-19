@@ -49,7 +49,11 @@ import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  TemporalDimension,
+  TimeUnit,
+} from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
   getD3FormatLocale,
@@ -62,6 +66,8 @@ import {
   TableColumn,
   TableFields,
 } from "../config-types";
+
+export type DateFormatter = (d: string | Date | null) => string;
 
 // FIXME: We should cover more time format
 const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -91,15 +97,72 @@ const getFormattersForLocale = memoize((locale) => {
     minute: format("%d.%m.%Y %H:%M"),
     hour: format("%d.%m.%Y %H:%M"),
     day: format("%d.%m.%Y"),
-    month: format("%d.%m.%Y"),
+    month: format("%m.%Y"),
     year: format("%Y"),
   };
 });
 
-const useLocalFormatters = () => {
+export const useLocalFormatters = () => {
   const locale = useLocale();
   return getFormattersForLocale(locale);
 };
+
+const dateFormatterFromDimension = (
+  dim: TemporalDimension,
+  localFormatters: LocalDateFormatters,
+  formatDateAuto: (d: Date | string | null) => string
+) => {
+  if (
+    dim.timeFormat &&
+    dim.timeUnit &&
+    localFormatters[dim.timeUnit.toLowerCase() as keyof typeof localFormatters]
+  ) {
+    const formatter =
+      localFormatters[
+        dim.timeUnit.toLowerCase() as keyof typeof localFormatters
+      ];
+    const parser = timeParse(dim.timeFormat);
+    return (d: string | null) => {
+      if (!d) {
+        return localFormatters.empty();
+      }
+      const parsed = parser(d);
+      return parsed ? formatter(parsed) : localFormatters.empty();
+    };
+  }
+  return formatDateAuto;
+};
+
+const formatIdentity = (x: string | Date | null) => {
+  return `${x}`;
+};
+
+export const useDimensionFormatters = (
+  dimensions: DimensionMetaDataFragment[]
+) => {
+  const formatNumber = useFormatNumber() as unknown as (
+    d: number | string
+  ) => string;
+  const formatDateAuto = useFormatFullDateAuto();
+  const dateFormatters = useLocalFormatters();
+
+  return useMemo(() => {
+    return Object.fromEntries(
+      dimensions.map((d) => {
+        return [
+          d.iri,
+          d.__typename === "Measure" || d.isNumerical
+            ? formatNumber
+            : d.__typename === "TemporalDimension"
+            ? dateFormatterFromDimension(d, dateFormatters, formatDateAuto)
+            : formatIdentity,
+        ];
+      })
+    );
+  }, [dimensions, formatNumber, dateFormatters, formatDateAuto]);
+};
+
+export type LocalDateFormatters = ReturnType<typeof getFormattersForLocale>;
 
 /**
  * Formats dates automatically based on their precision in LONG form.

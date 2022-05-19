@@ -9,7 +9,7 @@ import {
   ScaleSequential,
 } from "d3";
 import { ReactNode, useMemo } from "react";
-import { Column } from "react-table";
+import { Cell, Column } from "react-table";
 
 import {
   getLabelWithUnit,
@@ -27,6 +27,7 @@ import {
 import {
   getColorInterpolator,
   mkNumber,
+  useDimensionFormatters,
   useFormatNumber,
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
@@ -49,6 +50,7 @@ export interface ColumnMeta {
   barColorNegative: string;
   barColorBackground: string;
   barShowBackground: boolean;
+  formatter: (cell: Cell<Observation, any>) => string;
 }
 
 export interface TableChartState {
@@ -208,6 +210,8 @@ const useTableState = ({
     ];
   }, [sorting, orderedTableColumns]);
 
+  const formatters = useDimensionFormatters([...dimensions, ...measures]);
+
   const hiddenIris = useMemo(
     () =>
       orderedTableColumns
@@ -229,6 +233,8 @@ const useTableState = ({
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         const columnComponentType = columnMeta.componentType;
+        const formatter = formatters[iri];
+        const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
 
         if (columnStyleType === "text") {
           return {
@@ -236,6 +242,7 @@ const useTableState = ({
             [slugifiedIri]: {
               slugifiedIri,
               columnComponentType,
+              formatter: cellFormatter,
               ...columnStyle,
             },
           };
@@ -274,6 +281,8 @@ const useTableState = ({
               slugifiedIri,
               columnComponentType,
               colorScale,
+              formatter: (cell: Cell<Observation>) =>
+                formatters[dimension.iri](cell.value),
               ...columnStyle,
             },
           };
@@ -310,10 +319,8 @@ const useTableState = ({
             ),
           ];
           const columnItemSizes = columnItems.map((item) => {
-            const itemAsString =
-              columnComponentType === "Measure"
-                ? formatNumber(item as number)
-                : item;
+            // @ts-ignore
+            const itemAsString = formatter(item);
             return estimateTextWidth(`${itemAsString}`, 16) + 80;
           });
           const width =
@@ -344,7 +351,14 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, dimensions, fields, formatNumber, theme.palette.primary.main]
+    [
+      data,
+      dimensions,
+      fields,
+      formatNumber,
+      formatters,
+      theme.palette.primary.main,
+    ]
   );
 
   return {
