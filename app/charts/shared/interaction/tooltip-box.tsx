@@ -36,12 +36,14 @@ const useScroll = () => {
     const handleScroll = throttle(() => {
       setState([window.scrollX, window.scrollY]);
     }, 16);
+
     document.scrollingElement?.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => {
       document.scrollingElement?.removeEventListener("scroll", handleScroll);
     };
-  });
+  }, []);
+
   return state;
 };
 
@@ -53,6 +55,7 @@ const usePosition = () => {
       if (bcr || !node) {
         return;
       }
+
       const nbcr = node.getBoundingClientRect();
       setBcr([nbcr.left, nbcr.top]);
     },
@@ -62,6 +65,7 @@ const usePosition = () => {
   const box = useMemo(() => {
     return { left: bcrX + scrollX, top: bcrY + scrollY };
   }, [bcrX, bcrY, scrollX, scrollY]);
+
   return [box, handleRef] as const;
 };
 
