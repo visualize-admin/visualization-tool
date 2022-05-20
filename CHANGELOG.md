@@ -13,6 +13,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Interactive filters: time brush is more stable
 - Tables: Column names contain unit if its there by @ptbrowne in #552
 - Tables: Support for monthtly period formatting
+- Tables: Bar chart in cells are fixed
 - Navigation: Back button in editor 1st screen brings back to dataset preview
 - Add status page link in the footer
 
