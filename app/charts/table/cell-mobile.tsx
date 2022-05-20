@@ -195,8 +195,8 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: getBarLeftOffset(cell.value, widthScale),
-                  width: getBarWidth(cell.value, widthScale),
+                  left: `${getBarLeftOffset(cell.value, widthScale)}px`,
+                  width: `${getBarWidth(cell.value, widthScale)}px`,
                   height: 14,
                   backgroundColor:
                     cell.value > 0 ? barColorPositive : barColorNegative,
@@ -206,10 +206,11 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: "-2px",
-                  left:
+                  left: `${
                     cell.value < 0
                       ? widthScale(0)
-                      : getBarLeftOffset(cell.value, widthScale),
+                      : getBarLeftOffset(cell.value, widthScale)
+                  }px`,
                   width: "1px",
                   height: 18,
                   backgroundColor: "grey.700",
