@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+## [3.7.0] - 2022-05-05
+
+- Maps: Use neutral map style
+- Interactive filters: time brush is more stable
+- Tables: Column names contain unit if its there by @ptbrowne in #552
+- Tables: Support for monthtly period formatting
+- Navigation: Back button in editor 1st screen brings back to dataset preview
+- Add status page link in the footer
+
 ## [3.6.3] - 2022-05-05
 
 - Maps symbols are shown over all layers
