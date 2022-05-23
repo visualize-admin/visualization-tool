@@ -132,21 +132,17 @@ export const ChartPublishedInner = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          {isTablePreview ? (
-            <DataSetTable
-              sx={{
-                height: height || lastHeight.current,
-              }}
-              dataSetIri={dataSet}
-              chartConfig={chartConfig}
-            />
-          ) : (
-            <ChartWithInteractiveFilters
-              ref={chartRef}
-              dataSet={dataSet}
-              chartConfig={chartConfig}
-            />
-          )}
+          <Box height={height || lastHeight.current}>
+            {isTablePreview ? (
+              <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
+            ) : (
+              <ChartWithInteractiveFilters
+                ref={chartRef}
+                dataSet={dataSet}
+                chartConfig={chartConfig}
+              />
+            )}
+          </Box>
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
