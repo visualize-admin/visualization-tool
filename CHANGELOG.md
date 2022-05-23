@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+## Unpublished
+
+Nothing yet
+
+## [3.7.1] - 2022-05-23
+
+- Fix page jump when switching from chart to table (published and editing mode)
+
 ## [3.7.0] - 2022-05-05
 
 - Maps: Use neutral map style
