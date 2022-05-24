@@ -82,46 +82,35 @@ const DataFilterSelectGeneric = ({
       </IconButton>
     </Box>
   );
+
+  const sharedProps = {
+    dimensionIri: dimension.iri,
+    label: `${index + 1}. ${dimension.label}`,
+    controls: controls,
+    id: `select-single-filter-${index}`,
+    disabled: disabled,
+    isOptional: !dimension.isKeyDimension,
+  };
+
   return (
     <Box sx={{ pl: 2, flexGrow: 1 }}>
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
-          dimensionIri={dimension.iri}
-          label={`${index + 1}. ${dimension.label}`}
-          controls={controls}
+          {...sharedProps}
           from={dimension.values[0].value}
           to={dimension.values[1].value}
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
-          disabled={disabled}
-          id={`select-single-filter-${index}`}
-          isOptional={!dimension.isKeyDimension}
         />
       ) : null}
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit === "Day" &&
       dimension.values ? (
-        <DataFilterSelectDay
-          dimensionIri={dimension.iri}
-          label={`${index + 1}. ${dimension.label}`}
-          controls={controls}
-          options={dimension.values}
-          disabled={disabled}
-          id={`select-single-filter-${index}`}
-          isOptional={!dimension.isKeyDimension}
-        />
+        <DataFilterSelectDay {...sharedProps} options={dimension.values} />
       ) : null}
       {dimension.__typename !== "TemporalDimension" ? (
-        <DataFilterSelect
-          dimensionIri={dimension.iri}
-          label={`${index + 1}. ${dimension.label}`}
-          controls={controls}
-          options={dimension.values}
-          disabled={disabled}
-          id={`select-single-filter-${index}`}
-          isOptional={!dimension.isKeyDimension}
-        />
+        <DataFilterSelect {...sharedProps} options={dimension.values} />
       ) : null}
     </Box>
   );
