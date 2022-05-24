@@ -92,10 +92,18 @@ const DataFilterSelectGeneric = ({
     isOptional: !dimension.isKeyDimension,
   };
 
-  return (
-    <Box sx={{ pl: 2, flexGrow: 1 }}>
-      {dimension.__typename === "TemporalDimension" &&
-      dimension.timeUnit !== "Day" ? (
+  let component: React.ReactElement;
+  if (dimension.__typename === "TemporalDimension") {
+    if (dimension.timeUnit === "Day") {
+      component = (
+        <DataFilterSelectDay {...sharedProps} options={dimension.values} />
+      );
+    } else if (dimension.timeUnit === "Month") {
+      component = (
+        <DataFilterSelect {...sharedProps} options={dimension.values} />
+      );
+    } else {
+      component = (
         <DataFilterSelectTime
           {...sharedProps}
           from={dimension.values[0].value}
@@ -103,17 +111,15 @@ const DataFilterSelectGeneric = ({
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
         />
-      ) : null}
-      {dimension.__typename === "TemporalDimension" &&
-      dimension.timeUnit === "Day" &&
-      dimension.values ? (
-        <DataFilterSelectDay {...sharedProps} options={dimension.values} />
-      ) : null}
-      {dimension.__typename !== "TemporalDimension" ? (
-        <DataFilterSelect {...sharedProps} options={dimension.values} />
-      ) : null}
-    </Box>
-  );
+      );
+    }
+  } else {
+    component = (
+      <DataFilterSelect {...sharedProps} options={dimension.values} />
+    );
+  }
+
+  return <Box sx={{ pl: 2, flexGrow: 1 }}>{component}</Box>;
 };
 
 const orderedIsEqual = (
