@@ -11,6 +11,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet
 
+## [3.7.2] - 2022-05-24
+
+- Support for filtering values from a dimension with monthly data (fix #564)
+
 ## [3.7.1] - 2022-05-23
 
 - Fix page jump when switching from chart to table (published and editing mode)
