@@ -127,7 +127,7 @@ export const ChartFootnotes = ({
               </Typography>
             </Button>
           )}
-          {sparqlEditorUrl !== undefined && (
+          {sparqlEditorUrl && (
             <RunSparqlQuery url={sparqlEditorUrl as string} />
           )}
           {configKey && shareUrl && (
