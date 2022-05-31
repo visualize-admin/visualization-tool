@@ -9,7 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unpublished
 
-Nothing yet
+Nothing yet.
+
+## [3.7.4] - 2022-05-31
+
+- Do not show "Run SPARQL query" button if SPARL_EDITOR variable not set
+- Add link top opendata.swiss when the cube is published there (chart footnotes + chart preview info panel)
+- Repair homepage examples on test
 
 ## [3.7.2] - 2022-05-24
 
