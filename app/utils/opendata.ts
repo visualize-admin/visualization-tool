@@ -11,7 +11,10 @@ const makeOpenDataLink = (
 ) => {
   const identifier = cube?.identifier;
   const creatorIri = cube?.creator?.iri;
-  if (!identifier || !creatorIri) {
+  const isPublished = cube?.workExamples?.includes(
+    "https://ld.admin.ch/application/opendataswiss"
+  );
+  if (!identifier || !creatorIri || !isPublished) {
     return;
   }
   return `https://opendata.swiss/${lang}/perma/${encodeURIComponent(

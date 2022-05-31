@@ -227,6 +227,7 @@ const DataCube: DataCubeResolvers = {
   title: ({ data: { title } }) => title,
   version: ({ data: { version } }) => version ?? null,
   identifier: ({ data: { identifier } }) => identifier ?? null,
+  workExamples: ({ data: { workExamples } }) => workExamples ?? null,
   publisher: ({ data: { publisher } }) => publisher ?? null,
   contactName: ({ data: { contactPoint } }) => contactPoint?.name ?? null,
   contactEmail: ({ data: { contactPoint } }) => contactPoint?.email ?? null,

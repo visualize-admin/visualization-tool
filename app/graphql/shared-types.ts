@@ -35,6 +35,7 @@ export type ResolvedDataCube = {
     landingPage?: string;
     expires?: string;
     keywords?: string[];
+    workExamples?: string[];
   };
 };
 
