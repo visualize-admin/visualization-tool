@@ -87,6 +87,9 @@ const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
   return (
     <>
       {tree.map((tv) => {
+        if (!tv.label) {
+          return null;
+        }
         return (
           <Accordion key={tv.value} initialExpanded>
             <Stack spacing={0.5}>

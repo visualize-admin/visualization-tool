@@ -62,7 +62,7 @@ export const Radio = ({
 }: { label: string; disabled?: boolean } & FieldProps) => {
   return (
     <FormControlLabel
-      label={label}
+      label={label || "-"}
       htmlFor={`${name}-${value}`}
       componentsProps={{
         typography: {
@@ -117,7 +117,7 @@ export const Checkbox = ({
   smaller?: boolean;
 } & FieldProps) => (
   <FormControlLabel
-    label={label}
+    label={label || "-"}
     htmlFor={`${name}-${label}`}
     disabled={disabled}
     sx={{ display: "flex" }}
