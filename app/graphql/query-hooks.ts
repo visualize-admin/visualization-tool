@@ -30,6 +30,7 @@ export type DataCube = {
   contactEmail?: Maybe<Scalars['String']>;
   creator?: Maybe<DataCubeOrganization>;
   landingPage?: Maybe<Scalars['String']>;
+  workExamples?: Maybe<Array<Maybe<Scalars['String']>>>;
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
@@ -334,7 +335,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, workExamples?: Maybe<Array<Maybe<string>>>, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionMetaData_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
@@ -398,7 +399,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -408,7 +409,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, identifier?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetaData_GeoCoordinatesDimension_Fragment
     ) | (
@@ -599,6 +600,7 @@ export const DataCubesDocument = gql`
     dataCube {
       iri
       title
+      workExamples
       creator {
         iri
         label
@@ -661,6 +663,7 @@ export const DataCubeMetadataDocument = gql`
     description
     publisher
     version
+    workExamples
     contactName
     contactEmail
     landingPage
@@ -689,6 +692,7 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     title
     publisher
     identifier
+    workExamples
     creator {
       iri
     }

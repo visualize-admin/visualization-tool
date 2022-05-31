@@ -17,6 +17,7 @@ query DataCubes(
     dataCube {
       iri
       title
+      workExamples
       creator {
         iri
         label
@@ -91,6 +92,7 @@ query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
     description
     publisher
     version
+    workExamples
     contactName
     contactEmail
     landingPage
@@ -119,6 +121,7 @@ query DataCubeMetadataWithComponentValues(
     title
     publisher
     identifier
+    workExamples
     creator {
       iri
     }

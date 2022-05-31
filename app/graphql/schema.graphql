@@ -30,6 +30,7 @@ type DataCube {
   contactEmail: String
   creator: DataCubeOrganization
   landingPage: String
+  workExamples: [String]
   publisher: String
   description: String
   datePublished: String
