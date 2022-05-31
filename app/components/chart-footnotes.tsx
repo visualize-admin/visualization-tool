@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Button, Link, Typography } from "@mui/material";
+import { useEffect, useState, useMemo } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
@@ -11,6 +11,7 @@ import {
 } from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { makeOpenDataLink } from "@/utils/opendata";
 
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 
@@ -47,13 +48,29 @@ export const ChartFootnotes = ({
   const sparqlEditorUrl =
     visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
 
+  const cubeLink = useMemo(() => {
+    return makeOpenDataLink(locale, data?.dataCubeByIri);
+  }, [locale, data?.dataCubeByIri]);
+
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
     return (
       <Box sx={{ mt: 2 }}>
         <Typography component="div" variant="caption" color="grey.600">
-          <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
+          <Trans id="metadata.dataset">Dataset</Trans>:{" "}
+          {cubeLink ? (
+            <Link target="_blank" href={cubeLink} rel="noreferrer">
+              {dataCubeByIri.title}{" "}
+              <Icon
+                name="linkExternal"
+                size={12}
+                style={{ display: "inline" }}
+              />
+            </Link>
+          ) : (
+            dataCubeByIri.title
+          )}
         </Typography>
 
         <Typography component="div" variant="caption" color="grey.600">

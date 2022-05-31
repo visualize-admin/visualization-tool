@@ -86,6 +86,7 @@ query DataCubePreviewObservations(
 query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
+    identifier
     title
     description
     publisher
@@ -117,6 +118,10 @@ query DataCubeMetadataWithComponentValues(
     iri
     title
     publisher
+    identifier
+    creator {
+      iri
+    }
     dimensions {
       ...dimensionMetaData
     }

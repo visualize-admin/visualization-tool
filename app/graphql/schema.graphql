@@ -23,6 +23,7 @@ enum DataCubePublicationStatus {
 
 type DataCube {
   iri: String!
+  identifier: String
   title: String!
   version: String
   contactName: String

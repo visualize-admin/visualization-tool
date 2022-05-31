@@ -28,6 +28,7 @@ export type Scalars = {
 export type DataCube = {
   __typename?: 'DataCube';
   iri: Scalars['String'];
+  identifier?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   version?: Maybe<Scalars['String']>;
   contactName?: Maybe<Scalars['String']>;
@@ -462,6 +463,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type DataCubeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  identifier?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contactName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

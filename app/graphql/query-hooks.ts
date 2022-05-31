@@ -23,6 +23,7 @@ export type Scalars = {
 export type DataCube = {
   __typename: 'DataCube';
   iri: Scalars['String'];
+  identifier?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   version?: Maybe<Scalars['String']>;
   contactName?: Maybe<Scalars['String']>;
@@ -397,7 +398,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -407,7 +408,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, dimensions: Array<(
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, identifier?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetaData_GeoCoordinatesDimension_Fragment
     ) | (
@@ -655,6 +656,7 @@ export const DataCubeMetadataDocument = gql`
     query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
+    identifier
     title
     description
     publisher
@@ -686,6 +688,10 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     iri
     title
     publisher
+    identifier
+    creator {
+      iri
+    }
     dimensions {
       ...dimensionMetaData
     }
