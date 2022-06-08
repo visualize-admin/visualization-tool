@@ -708,7 +708,7 @@ const NavSection = ({
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
-        <Box component="span" color="category.main" mr={2}>
+        <Box component="span" color={navItemTheme.countColor} mr={2}>
           {icon}
         </Box>
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
