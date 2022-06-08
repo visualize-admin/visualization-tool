@@ -10,7 +10,6 @@ import Flex from "@/components/flex";
 import { Observation } from "@/domain/data";
 import { Icon } from "@/icons";
 
-
 export const GroupHeader = ({
   row,
   groupingLevels,
@@ -25,7 +24,8 @@ export const GroupHeader = ({
     <>
       {/* Here we use `allCells` so that group headers are shown even if the column is hidden */}
       {row.allCells.map((cell, i) => {
-        const { type, colorScale } = tableColumnsMeta[cell.column.id];
+        const { type, colorScale, formatter } =
+          tableColumnsMeta[cell.column.id];
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
           <React.Fragment key={i}>
@@ -53,7 +53,7 @@ export const GroupHeader = ({
                       colorScale ? colorScale(cell.value) : "primaryLight"
                     }
                   >
-                    {cell.render("Cell")}
+                    {formatter(cell)}
                   </Tag>
                 ) : (
                   <Box
@@ -64,7 +64,7 @@ export const GroupHeader = ({
                       textAlign: "left",
                     }}
                   >
-                    {cell.render("Cell")}
+                    {formatter(cell)}
                   </Box>
                 )}
               </Flex>

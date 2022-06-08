@@ -255,6 +255,30 @@ query Subthemes($locale: String!, $parentIri: String!) {
   }
 }
 
+fragment hierarchyValueFields on HierarchyValue {
+  value
+  dimensionIri
+  depth
+  label
+}
+
+query DimensionHierarchy(
+  $locale: String!
+  $cubeIri: String!
+  $dimensionIri: String!
+) {
+  dataCubeByIri(iri: $cubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      hierarchy {
+        ...hierarchyValueFields
+        children {
+          ...hierarchyValueFields
+        }
+      }
+    }
+  }
+}
+
 query DatasetCount(
   $theme: String
   $organization: String

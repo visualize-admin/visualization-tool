@@ -13,11 +13,6 @@ import {
   useMultiFilterContext,
 } from "@/configurator";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionSummary,
-} from "@/configurator/components/Accordion";
-import {
   MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
   SingleFilterField,
@@ -32,13 +27,12 @@ import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import {
-  HierarchyValue,
-  useHierarchicalDimensionValuesQuery,
-} from "@/utils/dimension-hierarchy";
+import { useHierarchicalDimensionValuesQuery } from "@/utils/dimension-hierarchy";
 import { valueComparator } from "@/utils/sorting-values";
 
+import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
@@ -92,39 +86,34 @@ const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
         }
         return (
           <Accordion key={tv.value} initialExpanded>
-            <Stack spacing={0.5}>
-              {tv.children && tv.children.length > 0 ? (
-                <AccordionSummary>
-                  <MultiFilterFieldCheckbox
-                    label={tv.label}
-                    value={tv.children.map((c) => c.value)}
-                  />
+            {tv.children && tv.children.length > 0 ? (
+              <AccordionSummary>
+                <MultiFilterFieldCheckbox
+                  label={tv.label}
+                  value={tv.children.map((c) => c.value)}
+                />
+                <MultiFilterFieldColorPicker value={tv.value} />
+              </AccordionSummary>
+            ) : (
+              <Flex
+                key={tv.value}
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box sx={{ flexGrow: 1 }}>
+                  <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
+                </Box>
+                <Box sx={{ flexShrink: 0 }}>
                   <MultiFilterFieldColorPicker value={tv.value} />
-                </AccordionSummary>
-              ) : (
-                <Flex
-                  key={tv.value}
-                  sx={{
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Box sx={{ flexGrow: 1 }}>
-                    <MultiFilterFieldCheckbox
-                      label={tv.label}
-                      value={tv.value}
-                    />
-                  </Box>
-                  <Box sx={{ flexShrink: 0 }}>
-                    <MultiFilterFieldColorPicker value={tv.value} />
-                  </Box>
-                </Flex>
-              )}
-            </Stack>
+                </Box>
+              </Flex>
+            )}
             <AccordionContent>
-              <Stack spacing={0.5} ml={5}>
-                {tv.children.map((dv) => {
-                  if (dv.children.length > 0) {
+              <Stack spacing={1} ml={6}>
+                {(tv?.children || []).map((dv) => {
+                  if (dv.children && dv.children?.length > 0) {
                     // Render tree recursively
                     return renderDimensionTree(dv.children, depth + 1);
                   }

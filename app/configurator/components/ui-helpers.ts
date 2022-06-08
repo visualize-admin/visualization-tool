@@ -44,7 +44,7 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { memoize } from "lodash";
+import { keyBy, memoize } from "lodash";
 import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
@@ -137,6 +137,18 @@ const formatIdentity = (x: string | Date | null) => {
   return `${x}`;
 };
 
+const isNamedNodeDimension = (d: DimensionMetaDataFragment) => {
+  const first = d.values?.[0];
+  return first && first.label !== first.value;
+};
+
+const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
+  const valuesByIri = keyBy(d.values, (x) => x.value);
+  return (v: string) => {
+    return valuesByIri[v]?.label || v;
+  };
+};
+
 export const useDimensionFormatters = (
   dimensions: DimensionMetaDataFragment[]
 ) => {
@@ -155,6 +167,8 @@ export const useDimensionFormatters = (
             ? formatNumber
             : d.__typename === "TemporalDimension"
             ? dateFormatterFromDimension(d, dateFormatters, formatDateAuto)
+            : isNamedNodeDimension(d)
+            ? namedNodeFormatter(d)
             : formatIdentity,
         ];
       })

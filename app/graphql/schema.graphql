@@ -52,6 +52,14 @@ type RelatedDimension {
   iri: String!
 }
 
+type HierarchyValue {
+  value: String!
+  label: String!
+  dimensionIri: String!
+  depth: Int!
+  children: [HierarchyValue!]
+}
+
 interface Dimension {
   iri: String!
   label: String!
@@ -61,6 +69,7 @@ interface Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type GeoCoordinates {
@@ -80,6 +89,7 @@ type GeoCoordinatesDimension implements Dimension {
   values(filters: Filters): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type ObservationFilter {
@@ -98,6 +108,7 @@ type GeoShapesDimension implements Dimension {
   values(filters: Filters): [DimensionValue!]!
   geoShapes: GeoShapes
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type NominalDimension implements Dimension {
@@ -109,6 +120,7 @@ type NominalDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type OrdinalDimension implements Dimension {
@@ -120,6 +132,7 @@ type OrdinalDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 enum TimeUnit {
@@ -143,6 +156,7 @@ type TemporalDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type Measure implements Dimension {
@@ -154,6 +168,7 @@ type Measure implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
+  hierarchy: [HierarchyValue!]
 }
 
 type DataCubeResult {

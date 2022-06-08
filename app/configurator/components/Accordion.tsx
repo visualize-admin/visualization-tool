@@ -9,7 +9,7 @@ const AccordionArrow = ({
   ...boxProps
 }: { expanded?: boolean } & BoxProps) => {
   return (
-    <Box component="span" mr={2} sx={{}} {...boxProps}>
+    <Box component="span" mr={4} {...boxProps}>
       <SvgIcChevronLeft
         sx={{
           transition: "transform 0.5s ease",
@@ -102,8 +102,6 @@ export const AccordionSummary = ({
         alignItems: "center",
         justifyContent: "stretch",
         cursor: "pointer",
-        // border: "1px solid",
-        // borderColor: theme.borderColor,
         backgroundColor: theme.backgroundColor,
         borderRadius: 2,
         height: "2.5rem",

@@ -106,6 +106,7 @@ export type Dimension = {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -135,6 +136,7 @@ export type GeoCoordinatesDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
   geoCoordinates?: Maybe<Array<GeoCoordinates>>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -154,11 +156,21 @@ export type GeoShapesDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
   geoShapes?: Maybe<Scalars['GeoShapes']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
 export type GeoShapesDimensionValuesArgs = {
   filters?: Maybe<Scalars['Filters']>;
+};
+
+export type HierarchyValue = {
+  __typename: 'HierarchyValue';
+  value: Scalars['String'];
+  label: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  depth: Scalars['Int'];
+  children?: Maybe<Array<HierarchyValue>>;
 };
 
 export type Measure = Dimension & {
@@ -171,6 +183,7 @@ export type Measure = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -188,6 +201,7 @@ export type NominalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -225,6 +239,7 @@ export type OrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -309,6 +324,7 @@ export type TemporalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
 };
 
 
@@ -558,6 +574,53 @@ export type SubthemesQueryVariables = Exact<{
 
 export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
 
+export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string };
+
+export type DimensionHierarchyQueryVariables = Exact<{
+  locale: Scalars['String'];
+  cubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+}>;
+
+
+export type DimensionHierarchyQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> } | { __typename: 'GeoShapesDimension', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> } | { __typename: 'Measure', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> } | { __typename: 'NominalDimension', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> } | { __typename: 'OrdinalDimension', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> } | { __typename: 'TemporalDimension', hierarchy?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue' }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> }> }> };
+
 export type DatasetCountQueryVariables = Exact<{
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
@@ -584,6 +647,14 @@ export const DimensionMetaDataFragmentDoc = gql`
     timeUnit
     timeFormat
   }
+}
+    `;
+export const HierarchyValueFieldsFragmentDoc = gql`
+    fragment hierarchyValueFields on HierarchyValue {
+  value
+  dimensionIri
+  depth
+  label
 }
     `;
 export const DataCubesDocument = gql`
@@ -845,6 +916,24 @@ export const SubthemesDocument = gql`
 
 export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
+};
+export const DimensionHierarchyDocument = gql`
+    query DimensionHierarchy($locale: String!, $cubeIri: String!, $dimensionIri: String!) {
+  dataCubeByIri(iri: $cubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      hierarchy {
+        ...hierarchyValueFields
+        children {
+          ...hierarchyValueFields
+        }
+      }
+    }
+  }
+}
+    ${HierarchyValueFieldsFragmentDoc}`;
+
+export function useDimensionHierarchyQuery(options: Omit<Urql.UseQueryArgs<DimensionHierarchyQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DimensionHierarchyQuery>({ query: DimensionHierarchyDocument, ...options });
 };
 export const DatasetCountDocument = gql`
     query DatasetCount($theme: String, $organization: String, $subtheme: String, $includeDrafts: Boolean) {

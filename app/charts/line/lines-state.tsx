@@ -11,8 +11,8 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import { sortBy } from "lodash";
-import { ReactNode, useMemo } from "react";
+import { keyBy, sortBy } from "lodash";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
@@ -37,6 +37,7 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { sortByIndex } from "@/lib/array";
 import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
@@ -54,6 +55,7 @@ export interface LinesState {
   getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
+  getSegmentLabel: (s: string) => string;
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
@@ -175,6 +177,32 @@ const useLinesState = ({
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
+  const segmentDimension = useMemo(() => {
+    return dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+  }, [dimensions, fields.segment?.componentIri]);
+
+  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
+    if (!segmentDimension) {
+      return {
+        segmentValuesByLabel: {},
+        segmentValuesByValue: {},
+      };
+    }
+    return {
+      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
+      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
+    };
+  }, [segmentDimension]);
+
+  const getSegmentLabel = useCallback(
+    (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    },
+    [segmentValuesByValue]
+  );
+
   // segments
   const segments = useMemo(() => {
     const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
@@ -192,15 +220,12 @@ const useLinesState = ({
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
-      ).value;
+      const dvIri =
+        segmentValuesByLabel[segment]?.value ||
+        segmentValuesByValue[segment]?.value;
 
       return {
         label: segment,
@@ -299,6 +324,7 @@ const useLinesState = ({
     getY,
     yScale,
     getSegment,
+    getSegmentLabel,
     xAxisLabel,
     yAxisLabel,
     segments,

@@ -77,7 +77,8 @@ export const LegendColor = memo(function LegendColor({
 }: {
   symbol: LegendSymbol;
 }) {
-  const { colors } = useChartState() as ColorsChartState;
+  // @ts-ignore
+  const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
 
   return (
     <Flex
@@ -90,7 +91,12 @@ export const LegendColor = memo(function LegendColor({
       }}
     >
       {colors.domain().map((item, i) => (
-        <LegendItem key={i} item={item} color={colors(item)} symbol={symbol} />
+        <LegendItem
+          key={i}
+          item={getSegmentLabel(item)}
+          color={colors(item)}
+          symbol={symbol}
+        />
       ))}
     </Flex>
   );
