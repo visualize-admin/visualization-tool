@@ -34,7 +34,7 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd0037/6"
+          dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
@@ -57,11 +57,11 @@ export const Examples = ({
                   sortingOrder: "desc",
                 },
                 componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/verkehrsart",
+                  "https://environment.ld.admin.ch/foen/ubd003701/verkehrsart",
               },
               y: {
                 componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/wert",
+                  "https://environment.ld.admin.ch/foen/ubd003701/wert",
               },
               segment: {
                 type: "grouped",
@@ -71,31 +71,31 @@ export const Examples = ({
                   sortingOrder: "asc",
                 },
                 colorMapping: {
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode/D":
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/D":
                     "#ff7f0e",
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode/N":
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/N":
                     "#1f77b4",
                 },
                 componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode",
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode",
               },
             },
             filters: {
-              "https://environment.ld.admin.ch/foen/ubd0037/beurteilung": {
+              "https://environment.ld.admin.ch/foen/ubd003701/beurteilung": {
                 type: "single",
                 value:
-                  "https://environment.ld.admin.ch/foen/ubd0037/beurteilung/%3EIGWLSV",
+                  "https://environment.ld.admin.ch/foen/ubd003701/beurteilung/%3EIGWLSV",
               },
-              "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype": {
+              "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype": {
                 type: "single",
                 value:
-                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindeTyp/CH",
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindeTyp/CH",
               },
-              "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit":
+              "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit":
                 {
                   type: "single",
                   value:
-                    "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteEinheit/Pers",
+                    "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteEinheit/Pers",
                 },
             },
             chartType: "column",
@@ -116,8 +116,8 @@ export const Examples = ({
               dataFilters: {
                 active: true,
                 componentIris: [
-                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype",
-                  "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit",
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
+                  "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",
                 ],
               },
             },
@@ -131,7 +131,7 @@ export const Examples = ({
         reverse
       >
         <ChartPublished
-          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/1"
+          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
           meta={{
             title: {
               de: "Verteilung der Ausgaben und Einnahmen nach Ämtern",
