@@ -5,8 +5,6 @@ import { keyBy } from "lodash";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
-import { queryHierarchy } from "@/rdf/query-hierarchies";
-
 import { Filters } from "../configurator";
 import {
   DimensionValue,
@@ -35,6 +33,7 @@ import {
 } from "../rdf/query-cube-metadata";
 import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
+import { queryHierarchy } from "../rdf/query-hierarchies";
 import cachedWithTTL from "../utils/cached-with-ttl";
 import {
   makeCubeIndex as makeCubeIndexRaw,
