@@ -173,13 +173,7 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
       >
         <SelectionControls dimensionIri={dimensionIri} />
-        {tree
-          ? renderDimensionTree(tree, 0, classes)
-          : renderDimensionTree(
-              data.dataCubeByIri.dimensionByIri.values,
-              0,
-              classes
-            )}
+        {tree ? renderDimensionTree(tree, 0, classes) : null}
       </MultiFilterContextProvider>
     );
   } else {
