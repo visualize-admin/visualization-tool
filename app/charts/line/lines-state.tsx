@@ -37,7 +37,6 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { sortByIndex } from "@/lib/array";
 import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
@@ -178,18 +177,14 @@ const useLinesState = ({
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   const segmentDimension = useMemo(() => {
-    return dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    return (
+      dimensions.find((d) => d.iri === fields.segment?.componentIri) || {
+        values: [],
+      }
+    );
   }, [dimensions, fields.segment?.componentIri]);
 
   const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
-    if (!segmentDimension) {
-      return {
-        segmentValuesByLabel: {},
-        segmentValuesByValue: {},
-      };
-    }
     return {
       segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
       segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),

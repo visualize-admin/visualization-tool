@@ -48,7 +48,7 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface ColumnsState {
@@ -119,10 +119,10 @@ const useColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
+  const { segmentValuesByValue } = useMemo(() => {
     const segmentDimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
-    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    ) || { values: [] };
     return {
       segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
       segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),

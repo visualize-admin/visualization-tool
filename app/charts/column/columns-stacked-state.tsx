@@ -51,7 +51,6 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { sortByIndex } from "@/lib/array";
 import { useLocale } from "@/locales/use-locale";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
@@ -236,7 +235,7 @@ const useColumnsStackedState = ({
   const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
     const segmentDimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
-    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    ) || { values: [] };
     return {
       segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
       segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
