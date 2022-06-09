@@ -1,4 +1,5 @@
 import { Box, BoxProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
@@ -83,6 +84,21 @@ type AccordionTheme = {
   backgroundColor: string;
 };
 
+const useStyles = makeStyles((theme) => {
+  return {
+    root: {
+      alignItems: "center",
+      justifyContent: "stretch",
+      cursor: "pointer",
+      borderRadius: 2,
+      height: "2.5rem",
+    },
+    children: {
+      flexGrow: 1,
+    },
+  };
+});
+
 export const AccordionSummary = ({
   children,
   hasArrow = true,
@@ -95,25 +111,16 @@ export const AccordionSummary = ({
     expandedState: [expanded, setExpanded],
     theme,
   } = useContext(AccordionContext);
+  const classes = useStyles();
   return (
-    <Flex
-      {...flexProps}
-      sx={{
-        alignItems: "center",
-        justifyContent: "stretch",
-        cursor: "pointer",
-        backgroundColor: theme.backgroundColor,
-        borderRadius: 2,
-        height: "2.5rem",
-      }}
-    >
+    <Flex {...flexProps} className={classes.root}>
       {hasArrow && (
         <AccordionArrow
           expanded={expanded}
           onClick={() => setExpanded((expanded) => !expanded)}
         />
       )}
-      <Flex sx={{ flexGrow: 1 }}>{children}</Flex>
+      <Flex className={classes.children}>{children}</Flex>
     </Flex>
   );
 };

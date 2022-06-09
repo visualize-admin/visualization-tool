@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
 import {
@@ -45,6 +46,23 @@ const TableContentWrapper = forwardRef<HTMLDivElement, $FixMe>(
   }
 );
 
+const useStyles = makeStyles(() => {
+  return {
+    desktopRow: {
+      borderBottom: "1px solid",
+      borderBottomColor: "grey.400",
+    },
+    mobileRow: {
+      borderBottom: "1px solid",
+      borderBottomColor: "grey.400",
+      "&:first-of-type": {
+        borderTop: "1px solid",
+        borderTopColor: "grey.400",
+      },
+    },
+  };
+});
+
 export const Table = () => {
   const {
     bounds,
@@ -57,6 +75,7 @@ export const Table = () => {
     hiddenIris,
     sortingIris,
   } = useChartState() as TableChartState;
+  const classes = useStyles();
 
   const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
 
@@ -136,7 +155,7 @@ export const Table = () => {
           {...row.getRowProps({
             style: { ...style, minWidth: "100%" },
           })}
-          sx={{ borderBottom: "1px solid", borderBottomColor: "grey.400" }}
+          className={classes.desktopRow}
         >
           {row.subRows.length === 0 ? (
             row.cells.map((cell, i) => {
@@ -154,7 +173,13 @@ export const Table = () => {
         </Box>
       );
     },
-    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
+    [
+      classes.desktopRow,
+      groupingIris.length,
+      prepareRow,
+      rows,
+      tableColumnsMeta,
+    ]
   );
 
   // Mobile row
@@ -176,14 +201,7 @@ export const Table = () => {
       return (
         <>
           <Box
-            sx={{
-              borderBottom: "1px solid",
-              borderBottomColor: "grey.400",
-              "&:first-of-type": {
-                borderTop: "1px solid",
-                borderTopColor: "grey.400",
-              },
-            }}
+            className={classes.mobileRow}
             {...row.getRowProps({
               style: { ...style, flexDirection: "column" },
             })}
@@ -226,9 +244,7 @@ export const Table = () => {
               <Flex
                 sx={{
                   height: rowHeight,
-
                   color: "grey.600",
-                  // py: 2,
                   ml: `${row.depth * 12}px`,
                 }}
               >
