@@ -216,12 +216,13 @@ const useGroupedColumnsState = (
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
+  );
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
       const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
+        (s: { label: string; value: string }) =>
+          s.label === segment || s.value === segment
       ).value;
 
       return {

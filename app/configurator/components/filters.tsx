@@ -1,9 +1,9 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Typography } from "@mui/material";
 import { Stack } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, { useCallback, useMemo } from "react";
 
-import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -12,11 +12,6 @@ import {
   useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionSummary,
-} from "@/configurator/components/Accordion";
 import {
   MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
@@ -32,13 +27,12 @@ import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import {
-  HierarchyValue,
-  useHierarchicalDimensionValuesQuery,
-} from "@/utils/dimension-hierarchy";
+import { useHierarchicalDimensionValuesQuery } from "@/utils/dimension-hierarchy";
 import { valueComparator } from "@/utils/sorting-values";
 
+import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
@@ -83,7 +77,21 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   );
 };
 
-const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
+const useStyles = makeStyles(() => {
+  return {
+    listItem: {
+      display: "grid",
+      // checkbox content, color picker
+      gridTemplateColumns: "1fr min-content",
+    },
+  };
+});
+
+const renderDimensionTree = (
+  tree: HierarchyValue[],
+  depth = 0,
+  classes: ReturnType<typeof useStyles>
+) => {
   return (
     <>
       {tree.map((tv) => {
@@ -92,60 +100,35 @@ const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
         }
         return (
           <Accordion key={tv.value} initialExpanded>
-            <Stack spacing={0.5}>
-              {tv.children && tv.children.length > 0 ? (
-                <AccordionSummary>
-                  <MultiFilterFieldCheckbox
-                    label={tv.label}
-                    value={tv.children.map((c) => c.value)}
-                  />
-                  <MultiFilterFieldColorPicker value={tv.value} />
-                </AccordionSummary>
-              ) : (
-                <Flex
-                  key={tv.value}
-                  sx={{
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Box sx={{ flexGrow: 1 }}>
-                    <MultiFilterFieldCheckbox
-                      label={tv.label}
-                      value={tv.value}
-                    />
-                  </Box>
-                  <Box sx={{ flexShrink: 0 }}>
-                    <MultiFilterFieldColorPicker value={tv.value} />
-                  </Box>
-                </Flex>
-              )}
-            </Stack>
+            {tv.children && tv.children.length > 0 ? (
+              <AccordionSummary>
+                <MultiFilterFieldCheckbox
+                  label={tv.label}
+                  value={tv.children.map((c) => c.value)}
+                />
+                <MultiFilterFieldColorPicker value={tv.value} />
+              </AccordionSummary>
+            ) : (
+              <div className={classes.listItem} key={tv.value}>
+                <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
+                <MultiFilterFieldColorPicker value={tv.value} />
+              </div>
+            )}
             <AccordionContent>
-              <Stack spacing={0.5} ml={5}>
-                {tv.children.map((dv) => {
-                  if (dv.children.length > 0) {
+              <Stack spacing={1} ml={6}>
+                {(tv?.children || []).map((dv) => {
+                  if (dv.children && dv.children?.length > 0) {
                     // Render tree recursively
-                    return renderDimensionTree(dv.children, depth + 1);
+                    return renderDimensionTree(dv.children, depth + 1, classes);
                   }
                   return (
-                    <Flex
-                      key={dv.value}
-                      sx={{
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box sx={{ flexGrow: 1 }}>
-                        <MultiFilterFieldCheckbox
-                          label={dv.label}
-                          value={dv.value}
-                        />
-                      </Box>
-                      <Box sx={{ flexShrink: 0 }}>
-                        <MultiFilterFieldColorPicker value={dv.value} />
-                      </Box>
-                    </Flex>
+                    <div key={dv.value} className={classes.listItem}>
+                      <MultiFilterFieldCheckbox
+                        label={dv.label}
+                        value={dv.value}
+                      />
+                      <MultiFilterFieldColorPicker value={dv.value} />
+                    </div>
                   );
                 })}
               </Stack>
@@ -167,6 +150,7 @@ export const DimensionValuesMultiFilter = ({
   colorConfigPath?: string;
 }) => {
   const locale = useLocale();
+  const classes = useStyles();
 
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
@@ -189,7 +173,7 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
       >
         <SelectionControls dimensionIri={dimensionIri} />
-        {tree ? renderDimensionTree(tree) : null}
+        {tree ? renderDimensionTree(tree, 0, classes) : null}
       </MultiFilterContextProvider>
     );
   } else {

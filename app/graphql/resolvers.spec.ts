@@ -8,7 +8,6 @@ import { unversionObservation as unversionObservation_ } from "../rdf/query-dime
 
 import { Query } from "./resolvers";
 
-
 const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
   typeof getCubeObservations_
 >;
@@ -29,6 +28,7 @@ jest.mock("../rdf/queries", () => ({
 }));
 
 jest.mock("../rdf/query-cube-metadata", () => ({}));
+jest.mock("../rdf/query-hierarchies", () => ({}));
 
 describe("possible filters", () => {
   beforeEach(() => {

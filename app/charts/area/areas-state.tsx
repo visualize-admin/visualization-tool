@@ -18,8 +18,8 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import { sortBy } from "lodash";
-import { ReactNode, useMemo } from "react";
+import { keyBy, sortBy } from "lodash";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
@@ -45,6 +45,7 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { sortByIndex } from "@/lib/array";
 import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useLocale } from "@/locales/use-locale";
@@ -60,6 +61,7 @@ export interface AreasState {
   getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
+  getSegmentLabel: (s: string) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
@@ -102,6 +104,23 @@ const useAreasState = ({
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getGroups = useStringVariable(fields.x.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
+
+  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    return {
+      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
+      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
+    };
+  }, [dimensions, fields.segment?.componentIri]);
+
+  const getSegmentLabel = useCallback(
+    (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    },
+    [segmentValuesByValue]
+  );
 
   const hasSegment = fields.segment;
   const allSegments = useMemo(
@@ -283,9 +302,9 @@ const useAreasState = ({
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
-      ).value;
+      const dvIri =
+        segmentValuesByLabel[segment]?.value ||
+        segmentValuesByValue[segment]?.value;
 
       return {
         label: segment,
@@ -396,6 +415,7 @@ const useAreasState = ({
     allDataWide,
     series,
     getAnnotationInfo,
+    getSegmentLabel,
   };
 };
 

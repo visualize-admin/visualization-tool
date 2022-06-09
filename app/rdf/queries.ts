@@ -602,8 +602,10 @@ const buildFilters = ({
       );
     }
 
+    const hasHierarchy =
+      cubeDimension.out(ns.cubeMeta.hasHierarchy).values.length > 0;
     const toRDFValue = (value: string): NamedNode | Literal => {
-      return dataType
+      return dataType && !hasHierarchy
         ? parsedCubeDimension.data.hasUndefinedValues &&
           value === DIMENSION_VALUE_UNDEFINED
           ? rdf.literal("", ns.cube.Undefined)

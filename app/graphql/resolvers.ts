@@ -33,6 +33,7 @@ import {
 } from "../rdf/query-cube-metadata";
 import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
+import { queryHierarchy } from "../rdf/query-hierarchies";
 import cachedWithTTL from "../utils/cached-with-ttl";
 import {
   makeCubeIndex as makeCubeIndexRaw,
@@ -342,6 +343,7 @@ const mkDimensionResolvers = (debugName: string) => ({
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
+  hierarchy: ({ data: { iri } }: ResolvedDimension) => queryHierarchy(iri),
   values: async (
     parent: ResolvedDimension,
     { filters }: { filters?: Filters | null },
