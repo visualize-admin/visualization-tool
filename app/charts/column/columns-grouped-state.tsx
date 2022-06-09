@@ -16,8 +16,8 @@ import {
   ScaleTime,
   sum,
 } from "d3";
-import { get, sortBy } from "lodash";
-import React, { ReactNode, useMemo } from "react";
+import { get, keyBy, sortBy } from "lodash";
+import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -49,6 +49,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { sortByIndex } from "@/lib/array";
 import { useLocale } from "@/locales/use-locale";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
@@ -69,6 +70,7 @@ export interface GroupedColumnsState {
   getYErrorRange: ((d: Observation) => [number, number]) | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
+  getSegmentLabel: (s: string) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
@@ -116,6 +118,24 @@ const useGroupedColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const showStandardError = get(fields, ["y", "showStandardError"], true);
+
+  const { segmentValuesByValue } = useMemo(() => {
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    return {
+      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
+      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
+    };
+  }, [dimensions, fields.segment?.componentIri]);
+
+  /** When segment values are IRIs, we need to find show the label */
+  const getSegmentLabel = useCallback(
+    (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    },
+    [segmentValuesByValue]
+  );
 
   // Sort
   const xSortingType = fields.x.sorting?.sortingType;
@@ -408,6 +428,7 @@ const useGroupedColumnsState = (
     getYErrorRange,
     yScale,
     getSegment,
+    getSegmentLabel,
     yAxisLabel,
     segments,
     colors,

@@ -13,8 +13,8 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import { get, sortBy } from "lodash";
-import { ReactNode, useMemo } from "react";
+import { get, keyBy, sortBy } from "lodash";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -48,7 +48,7 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface ColumnsState {
@@ -67,6 +67,7 @@ export interface ColumnsState {
   getYErrorRange: null | ((d: Observation) => [number, number]);
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
+  getSegmentLabel: (segment: string) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
@@ -117,6 +118,24 @@ const useColumnsState = (
   const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
+
+  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    return {
+      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
+      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
+    };
+  }, [dimensions, fields.segment?.componentIri]);
+
+  /** When segment values are IRIs, we need to find show the label */
+  const getSegmentLabel = useCallback(
+    (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    },
+    [segmentValuesByValue]
+  );
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
@@ -293,6 +312,7 @@ const useColumnsState = (
     getYErrorRange,
     yScale,
     getSegment,
+    getSegmentLabel,
     yAxisLabel,
     segments,
     colors,
@@ -325,6 +345,7 @@ const ColumnChartProvider = ({
     interactiveFiltersConfig,
     aspectRatio,
   });
+  console.log({ state });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
