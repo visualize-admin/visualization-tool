@@ -173,7 +173,7 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
       >
         <SelectionControls dimensionIri={dimensionIri} />
-        {tree
+        {tree && tree.length > 0
           ? renderDimensionTree(tree, 0, classes)
           : renderDimensionTree(
               data.dataCubeByIri.dimensionByIri.values,
