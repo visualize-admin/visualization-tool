@@ -1,4 +1,4 @@
-import { DESCRIBE } from "@tpluscode/sparql-builder";
+import { DESCRIBE, SELECT } from "@tpluscode/sparql-builder";
 import clownface from "clownface";
 import { ascending } from "d3";
 import { uniqBy } from "lodash";
@@ -8,7 +8,7 @@ import { DatasetCore, NamedNode, Quad, Stream } from "rdf-js";
 import { HierarchyValue } from "@/graphql/resolver-types";
 
 import * as ns from "./namespace";
-import { sparqlClientStream } from "./sparql-client";
+import { sparqlClient, sparqlClientStream } from "./sparql-client";
 
 const fromStream = (
   dataset: DatasetCore<Quad, Quad>,
@@ -24,6 +24,16 @@ const hasValueAndLabel = (
   o: Record<string, any>
 ): o is Record<string, string> & { label: string; value: string } => {
   return o.label && o.value ? true : false;
+};
+
+const queryDimensionValues = async (dimension: string) => {
+  const query = SELECT.DISTINCT`?value`.WHERE`    
+      ?cube <https://cube.link/observationSet> ?observationSet .
+      ?observationSet <https://cube.link/observation> ?observation .
+      ?observation <${dimension}> ?value .
+    `;
+  const rows = await query.execute(sparqlClient.query);
+  return rows.map((r) => r.value.value);
 };
 
 export const queryHierarchy = async (
@@ -46,11 +56,14 @@ export const queryHierarchy = async (
         OPTIONAL { ?this ${ns.schema.name} ?order0 } 
       }
     `;
+
+  const dimensionValues = new Set(await queryDimensionValues(dimension));
   const stream = await query.execute(sparqlClientStream.query);
   const dataset = await fromStream(rdf.dataset(), stream);
   const cf = clownface({ dataset });
 
   const schemaName = ns.schema.name as unknown as NamedNode<string>;
+  console.log(dimensionValues);
 
   // TODO find why we need to use uniqBy here
   const res = uniqBy(
@@ -76,13 +89,14 @@ export const queryHierarchy = async (
               };
             })
             .filter(hasValueAndLabel)
+            .filter((x) => dimensionValues.has(x.value))
             .sort((a, b) => ascending(a.label, b.label)),
         };
       })
       .filter(hasValueAndLabel)
       .sort((a, b) => ascending(a.label, b.label)),
     (x) => x.iri
-  ) as HierarchyValue[];
+  ).filter((x) => x.children.length > 0) as HierarchyValue[];
 
   return res;
 };
