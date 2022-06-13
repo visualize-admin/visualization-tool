@@ -31,6 +31,8 @@ const getServerSideProps: GetServerSideProps = async function (ctx) {
           destination: "/",
         },
       };
+    } else if (params.iri === resp.iri) {
+      return { props: {} };
     }
     return {
       redirect: {

@@ -2,7 +2,7 @@ import * as RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { keyBy } from "lodash";
 
-import { schema, dcat, dcterms } from "../../app/rdf/namespace";
+import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 
 import { makeLocalesFilter } from "./query-labels";
@@ -191,6 +191,7 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
   unversionedIri: string
 ) => {
   const iri = RDF.variable("iri");
+  // Check if it is a versioned cube
   const query = SELECT`${iri}`.WHERE`
     <${unversionedIri}> ${schema.hasPart} ${iri}.
     ${makeVisualizeDatasetFilter()}
@@ -201,7 +202,20 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
     operation: "postUrlencoded",
   });
   if (results.length !== 1) {
-    return;
+    // Check if it is an unversioned cube
+    const query = SELECT`*`.WHERE`
+      <${unversionedIri}> ${cube.observationConstraint} ?shape.
+      ${makeVisualizeDatasetFilter()}
+    `;
+    const results = await sparqlClient.query.select(query.build(), {
+      operation: "postUrlencoded",
+    });
+    if (results.length === 0) {
+      return;
+    }
+    return {
+      iri: unversionedIri,
+    };
   }
   return {
     iri: results[0].iri.value,
