@@ -24,12 +24,12 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import {
+  useDimensionHierarchyQuery,
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useHierarchicalDimensionValuesQuery } from "@/utils/dimension-hierarchy";
 import { valueComparator } from "@/utils/sorting-values";
 
 import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
@@ -156,13 +156,15 @@ export const DimensionValuesMultiFilter = ({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const { data: tree, fetching: fetchingHierarchy } =
-    useHierarchicalDimensionValuesQuery({
-      dimensionIri,
-      locale,
-      dataSetIri,
+  const [{ fetching: fetchingHierarchy, data: hierarchyData }] =
+    useDimensionHierarchyQuery({
+      variables: {
+        cubeIri: dataSetIri,
+        locale,
+        dimensionIri,
+      },
     });
-
+  const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
   if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
@@ -173,8 +175,8 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
       >
         <SelectionControls dimensionIri={dimensionIri} />
-        {tree && tree.length > 0
-          ? renderDimensionTree(tree, 0, classes)
+        {hierarchyTree && hierarchyTree.length > 0
+          ? renderDimensionTree(hierarchyTree, 0, classes)
           : renderDimensionTree(
               data.dataCubeByIri.dimensionByIri.values,
               0,
