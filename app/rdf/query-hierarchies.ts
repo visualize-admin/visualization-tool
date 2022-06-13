@@ -23,7 +23,7 @@ const fromStream = (
 const hasValueAndLabel = (
   o: Record<string, any>
 ): o is Record<string, string> & { label: string; value: string } => {
-  return o.label && o.value ? true : false;
+  return !!(o.label && o.value);
 };
 
 const queryDimensionValues = async (dimension: string) => {
@@ -63,7 +63,6 @@ export const queryHierarchy = async (
   const cf = clownface({ dataset });
 
   const schemaName = ns.schema.name as unknown as NamedNode<string>;
-  console.log(dimensionValues);
 
   // TODO find why we need to use uniqBy here
   const res = uniqBy(
