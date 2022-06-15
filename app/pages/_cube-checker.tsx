@@ -1,10 +1,10 @@
+import { t, Trans } from "@lingui/macro";
 import { Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { DESCRIBE } from "@tpluscode/sparql-builder";
 import clownface, { AnyPointer } from "clownface";
 import DataLoader from "dataloader";
 import { omit } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
-import { parseBody } from "next/dist/server/api-utils";
 import rdf from "rdf-ext";
 import React from "react";
 
@@ -40,7 +40,6 @@ type PageProps = {
 const describeCubes = async (cubeIris: readonly string[]) => {
   return Promise.all(
     cubeIris.map(async (cubeIri) => {
-      console.log("DESCRIBING CUBE");
       const query = DESCRIBE`<${cubeIri}>`;
       const stream = await query.execute(sparqlClientStream.query);
       const dataset = await fromStream(rdf.dataset(), stream);
@@ -112,17 +111,32 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
     <>
       <ContentLayout>
         <Stack maxWidth={1024} mx="auto" mt={8} spacing={4}>
-          <Stack spacing={1}>
-            <Typography variant="h1">Cube checker</Typography>
-            <form method="post">
+          <Stack spacing={2}>
+            <Typography variant="h1">
+              <Trans id="cube-checker.cube-checker">Cube checker</Trans>
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <Trans id="cube-checker.description">
+                Cube checker helps you understand if a cube has all the
+                necessary attributes and properties to be viewable in
+                visualize.admin.ch.
+              </Trans>
+            </Typography>
+            <form>
               <Stack spacing={1} alignItems="start">
                 <TextField
                   type="text"
                   name="cubeIri"
                   defaultValue={cubeIri}
-                  inputProps={{ size: 50 }}
+                  inputProps={{
+                    size: 50,
+                    placeholder: t({
+                      id: "cube-checker.field-placeholder",
+                      message: "Cube IRI",
+                    }),
+                  }}
                 />
-                <Button type="submit" variant="contained">
+                <Button type="submit" variant="contained" size="large">
                   Check
                 </Button>
               </Stack>
@@ -157,14 +171,12 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  if (req.method === "POST") {
-    // @ts-ignore TODO
-    const { cubeIri } = await parseBody(req, "1mb");
-    if (!cubeIri) {
-      throw new Error("Form data should have cubeIri");
-    }
-
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  if (query.cubeIri) {
+    const cubeIri = query.cubeIri as string;
     const context = {
       cubeIri,
       loaders: {
@@ -186,6 +198,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   }
   return {
     props: {
+      cubeIri: "",
       checks: [],
     },
   };

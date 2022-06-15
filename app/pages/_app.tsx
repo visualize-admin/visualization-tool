@@ -16,6 +16,7 @@ import { useNProgress } from "@/lib/use-nprogress";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/federal";
+import Flashes from "@/utils/flashes";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -74,6 +75,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <GraphqlProvider>
             <ThemeProvider theme={federalTheme.theme}>
               <CssBaseline />
+              <Flashes />
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
                   <Component {...pageProps} />
