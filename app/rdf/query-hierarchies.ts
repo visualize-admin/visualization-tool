@@ -3,22 +3,12 @@ import clownface from "clownface";
 import { ascending } from "d3";
 import { uniqBy } from "lodash";
 import rdf from "rdf-ext";
-import { DatasetCore, NamedNode, Quad, Stream } from "rdf-js";
+import { NamedNode } from "rdf-js";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
 
 import * as ns from "./namespace";
-import { sparqlClient, sparqlClientStream } from "./sparql-client";
-
-const fromStream = (
-  dataset: DatasetCore<Quad, Quad>,
-  stream: Stream<Quad>
-): Promise<DatasetCore<Quad, Quad>> => {
-  return new Promise((resolve) => {
-    stream.on("data", (quad: Quad) => dataset.add(quad));
-    stream.on("end", () => resolve(dataset));
-  });
-};
+import { fromStream, sparqlClient, sparqlClientStream } from "./sparql-client";
 
 const hasValueAndLabel = (
   o: Record<string, any>
