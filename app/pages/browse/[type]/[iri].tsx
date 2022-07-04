@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { DatasetBrowser } from "@/browser";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { defaultLocale } from "@/src";
+import { getQueryParams } from "@/utils/flashes";
 export default DatasetBrowser;
 /**
  * Heuristic to check if a dataset IRI is versioned.
@@ -28,7 +29,9 @@ const getServerSideProps: GetServerSideProps = async function (ctx) {
       return {
         redirect: {
           permanent: false,
-          destination: "/",
+          destination: `/?${getQueryParams("CANNOT_FIND_CUBE", {
+            iri: params.iri,
+          })}`,
         },
       };
     } else if (params.iri === resp.iri) {

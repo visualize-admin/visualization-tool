@@ -136,7 +136,7 @@ msgstr "Diese Visualisierung veröffentlichen"
 msgid "button.share"
 msgstr "Teilen"
 
-#: app/configurator/components/ui-helpers.ts:548
+#: app/configurator/components/ui-helpers.ts:562
 #: app/configurator/map/map-chart-options.tsx:163
 msgid "chart.map.layers.area"
 msgstr "Flächen"
@@ -162,7 +162,7 @@ msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Quantisierung (gleiche Wertebereiche)"
 
 #: app/configurator/components/chart-configurator.tsx:553
-#: app/configurator/components/ui-helpers.ts:544
+#: app/configurator/components/ui-helpers.ts:558
 #: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base"
 msgstr "Basis-Ebene"
@@ -176,7 +176,7 @@ msgstr "Anzeigen"
 msgid "chart.map.layers.show"
 msgstr "Ebene anzeigen"
 
-#: app/configurator/components/ui-helpers.ts:552
+#: app/configurator/components/ui-helpers.ts:566
 #: app/configurator/map/map-chart-options.tsx:387
 msgid "chart.map.layers.symbol"
 msgstr "Symbole"
@@ -185,11 +185,11 @@ msgstr "Symbole"
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "In diesem Datenset können keine geografischen Dimensionen angezeigt werden."
 
-#: app/charts/table/table.tsx:265
+#: app/charts/table/table.tsx:281
 msgid "chart.published.toggle.mobile.view"
 msgstr "Kompakte Ansicht"
 
-#: app/charts/table/table.tsx:340
+#: app/charts/table/table.tsx:356
 msgid "chart.table.number.of.lines"
 msgstr "Anzahl Zeilen"
 
@@ -222,47 +222,47 @@ msgstr "Normal"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Standardeinstellung"
 
-#: app/configurator/components/ui-helpers.ts:518
+#: app/configurator/components/ui-helpers.ts:532
 msgid "controls.axis.horizontal"
 msgstr "Horizontale Achse"
 
-#: app/configurator/components/ui-helpers.ts:526
+#: app/configurator/components/ui-helpers.ts:540
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
-#: app/configurator/components/ui-helpers.ts:620
+#: app/configurator/components/ui-helpers.ts:634
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/configurator/components/ui-helpers.ts:612
+#: app/configurator/components/ui-helpers.ts:626
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/configurator/components/ui-helpers.ts:608
+#: app/configurator/components/ui-helpers.ts:622
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/configurator/components/ui-helpers.ts:616
+#: app/configurator/components/ui-helpers.ts:630
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/configurator/components/ui-helpers.ts:636
+#: app/configurator/components/ui-helpers.ts:650
 msgid "controls.chart.type.map"
 msgstr "Karte"
 
-#: app/configurator/components/ui-helpers.ts:628
+#: app/configurator/components/ui-helpers.ts:642
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
-#: app/configurator/components/ui-helpers.ts:624
+#: app/configurator/components/ui-helpers.ts:638
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.ts:632
+#: app/configurator/components/ui-helpers.ts:646
 msgid "controls.chart.type.table"
 msgstr "Tabelle"
 
-#: app/configurator/components/ui-helpers.ts:530
+#: app/configurator/components/ui-helpers.ts:544
 #: app/configurator/map/map-chart-options.tsx:236
 #: app/configurator/map/map-chart-options.tsx:441
 msgid "controls.color"
@@ -293,15 +293,15 @@ msgstr "Farbe auswählen"
 msgid "controls.colorpicker.open"
 msgstr "Farbauswahl öffnen"
 
-#: app/configurator/components/ui-helpers.ts:540
+#: app/configurator/components/ui-helpers.ts:554
 msgid "controls.column.grouped"
 msgstr "Gruppiert"
 
-#: app/configurator/components/ui-helpers.ts:536
+#: app/configurator/components/ui-helpers.ts:550
 msgid "controls.column.stacked"
 msgstr "Gestapelt"
 
-#: app/configurator/components/ui-helpers.ts:532
+#: app/configurator/components/ui-helpers.ts:546
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
@@ -321,15 +321,15 @@ msgstr "Keine"
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
-#: app/configurator/components/filters.tsx:78
+#: app/configurator/components/filters.tsx:72
 msgid "controls.filter.nb-elements"
 msgstr "{0} von {1}"
 
-#: app/configurator/components/filters.tsx:57
+#: app/configurator/components/filters.tsx:51
 msgid "controls.filter.select.all"
 msgstr "Alle auswählen"
 
-#: app/configurator/components/filters.tsx:69
+#: app/configurator/components/filters.tsx:63
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
@@ -353,23 +353,23 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte ein Beschreibungsfeld auswählen, um dieses zu bearbeiten."
 
-#: app/configurator/components/ui-helpers.ts:592
+#: app/configurator/components/ui-helpers.ts:606
 msgid "controls.imputation"
 msgstr "Imputationstyp"
 
 #: app/configurator/components/chart-options-selector.tsx:528
-#: app/configurator/components/ui-helpers.ts:604
+#: app/configurator/components/ui-helpers.ts:618
 msgid "controls.imputation.type.linear"
 msgstr "Lineare Interpolation"
 
 #: app/configurator/components/chart-options-selector.tsx:521
 #: app/configurator/components/chart-options-selector.tsx:533
-#: app/configurator/components/ui-helpers.ts:596
+#: app/configurator/components/ui-helpers.ts:610
 msgid "controls.imputation.type.none"
 msgstr "-"
 
 #: app/configurator/components/chart-options-selector.tsx:523
-#: app/configurator/components/ui-helpers.ts:600
+#: app/configurator/components/ui-helpers.ts:614
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
@@ -393,23 +393,23 @@ msgstr "Keine Zeitdimension verfügbar!"
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Zeitfilter anzeigen"
 
-#: app/configurator/components/ui-helpers.ts:640
+#: app/configurator/components/ui-helpers.ts:654
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/configurator/components/ui-helpers.ts:648
+#: app/configurator/components/ui-helpers.ts:662
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/configurator/components/ui-helpers.ts:644
+#: app/configurator/components/ui-helpers.ts:658
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/configurator/components/ui-helpers.ts:652
+#: app/configurator/components/ui-helpers.ts:666
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
-#: app/configurator/components/ui-helpers.ts:522
+#: app/configurator/components/ui-helpers.ts:536
 #: app/configurator/map/map-chart-options.tsx:218
 #: app/configurator/map/map-chart-options.tsx:423
 msgid "controls.measure"
@@ -576,11 +576,11 @@ msgstr "Dimension hinzufügen"
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/configurator/components/ui-helpers.ts:560
+#: app/configurator/components/ui-helpers.ts:574
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.ts:564
+#: app/configurator/components/ui-helpers.ts:578
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -588,11 +588,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
-#: app/configurator/components/ui-helpers.ts:584
+#: app/configurator/components/ui-helpers.ts:598
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.ts:588
+#: app/configurator/components/ui-helpers.ts:602
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -600,19 +600,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
-#: app/configurator/components/ui-helpers.ts:568
+#: app/configurator/components/ui-helpers.ts:582
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Kleinste zuerst"
 
-#: app/configurator/components/ui-helpers.ts:580
+#: app/configurator/components/ui-helpers.ts:594
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Grösste unten"
 
-#: app/configurator/components/ui-helpers.ts:572
+#: app/configurator/components/ui-helpers.ts:586
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Grösste zuerst"
 
-#: app/configurator/components/ui-helpers.ts:576
+#: app/configurator/components/ui-helpers.ts:590
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Kleinste unten"
 
@@ -624,7 +624,7 @@ msgstr "Sortierung entfernen"
 msgid "controls.sorting.selectDimension"
 msgstr "Wählen Sie eine Dimension aus …"
 
-#: app/configurator/components/ui-helpers.ts:556
+#: app/configurator/components/ui-helpers.ts:570
 #: app/configurator/table/table-chart-sorting-options.tsx:307
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
@@ -653,9 +653,21 @@ msgstr "Sortierung"
 msgid "controls.tableSettings.showSearch"
 msgstr "Suche anzeigen"
 
-#: app/configurator/components/ui-helpers.ts:531
+#: app/configurator/components/ui-helpers.ts:545
 msgid "controls.title"
 msgstr "Titel hinzufügen"
+
+#: app/pages/_cube-checker.tsx:116
+msgid "cube-checker.cube-checker"
+msgstr "Cube Prüfer"
+
+#: app/pages/_cube-checker.tsx:119
+msgid "cube-checker.description"
+msgstr "Cube Checker hilft Ihnen zu verstehen, ob ein Cube alle hat notwendige Attribute und Eigenschaften, um angezeigt zu werden visualize.admin.ch."
+
+#: app/pages/_cube-checker.tsx:133
+msgid "cube-checker.field-placeholder"
+msgstr "Cube IRI"
 
 #: app/configurator/components/select-dataset-step.tsx:118
 msgid "dataset-preview.back-to-results"
@@ -673,27 +685,27 @@ msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die 
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschließen"
 
-#: app/configurator/components/dataset-metadata.tsx:71
+#: app/configurator/components/dataset-metadata.tsx:73
 msgid "dataset.metadata.date.created"
 msgstr "Erstellungsdatum"
 
-#: app/configurator/components/dataset-metadata.tsx:83
+#: app/configurator/components/dataset-metadata.tsx:85
 msgid "dataset.metadata.email"
 msgstr "Kontaktstellen"
 
-#: app/configurator/components/dataset-metadata.tsx:97
+#: app/configurator/components/dataset-metadata.tsx:99
 msgid "dataset.metadata.furtherinformation"
 msgstr "Weitere Informationen"
 
-#: app/configurator/components/dataset-metadata.tsx:104
+#: app/configurator/components/dataset-metadata.tsx:109
 msgid "dataset.metadata.landingpage"
 msgstr "Zielseite"
 
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:59
 msgid "dataset.metadata.source"
 msgstr "Quelle"
 
-#: app/configurator/components/dataset-metadata.tsx:78
+#: app/configurator/components/dataset-metadata.tsx:80
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -742,6 +754,14 @@ msgstr "Entwurf"
 #: app/configurator/components/dataset-preview.tsx:112
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
+
+#: app/utils/flashes.tsx:31
+msgid "flashes.couldnt-load-cube.title"
+msgstr "Der Cube konnte nicht geladen werden"
+
+#: app/utils/flashes.tsx:37
+msgid "flashes.couldnt-load-cube.view-cube-checker"
+msgstr "Ansicht im Cube Checker"
 
 #: app/components/footer.tsx:69
 msgid "footer.institution.name"
