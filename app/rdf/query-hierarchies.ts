@@ -1,20 +1,18 @@
-import { DESCRIBE, SELECT } from "@tpluscode/sparql-builder";
-import clownface from "clownface";
-import { ascending } from "d3";
-import { uniqBy } from "lodash";
+import { SELECT } from "@tpluscode/sparql-builder";
+import {
+  getHierarchy,
+  HierarchyNode,
+} from "@zazuko/cube-hierarchy-query/index";
+import { AnyPointer } from "clownface";
+import { isGraphPointer } from "is-graph-pointer";
 import rdf from "rdf-ext";
-import { NamedNode } from "rdf-js";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
 
 import * as ns from "./namespace";
-import { fromStream, sparqlClient, sparqlClientStream } from "./sparql-client";
-
-const hasValueAndLabel = (
-  o: Record<string, any>
-): o is Record<string, string> & { label: string; value: string } => {
-  return !!(o.label && o.value);
-};
+import { createSource } from "./queries";
+import { sparqlClient, sparqlClientStream } from "./sparql-client";
+import { trimTree } from "./tree-utils";
 
 const queryDimensionValues = async (dimension: string) => {
   const query = SELECT.DISTINCT`?value`.WHERE`    
@@ -26,66 +24,80 @@ const queryDimensionValues = async (dimension: string) => {
   return rows.map((r) => r.value.value);
 };
 
+const getName = (pointer: AnyPointer, language: string) => {
+  let name = pointer.out(ns.schema.name, { language })?.value;
+  if (name) {
+    return name;
+  }
+  return pointer.out(ns.schema.name)?.value;
+};
+
+const toTree = (
+  results: HierarchyNode[],
+  dimensionIri: string,
+  locale: string
+): HierarchyValue[] => {
+  const serializeNode = (
+    node: HierarchyNode,
+    depth: number
+  ): HierarchyValue => {
+    const res: HierarchyValue = {
+      label: getName(node.resource, locale) || "-",
+      value: node.resource.value,
+      children: node.nextInHierarchy.map((childNode) =>
+        serializeNode(childNode, depth + 1)
+      ),
+      depth,
+      dimensionIri: dimensionIri,
+    };
+    return res;
+  };
+  return results.map((r) => serializeNode(r, 0));
+};
+
 export const queryHierarchy = async (
-  dimension: string
+  dimensionIri: string,
+  locale: string
 ): Promise<HierarchyValue[]> => {
-  const query = DESCRIBE`?hierarchy ?level1 ?level2`.WHERE`    
-      SELECT DISTINCT ?hierarchy ?level1 ?level2
+  const source = createSource();
+
+  const cubeQuery = SELECT`?cube`.WHERE`
+  ?cube ${ns.cube.observationConstraint} ?shape.
+  ?shape ?prop ?dimension.
+  ?dimension ${ns.sh.path} <${dimensionIri}>.
   
-      WHERE {
-    
-        ?cube ${ns.cube.observationConstraint} ?shape.
-        ?shape ?prop ?blankNode.
-        ?blankNode ${ns.sh.path} <${dimension}>.
-        ?blankNode ${ns.cubeMeta.hasHierarchy} ?hierarchy.
-        ?hierarchy ${ns.cubeMeta.hierarchyRoot} ?level1.
-        ?level1 ${ns.schema.hasPart} ?level2 .
-    
-        filter(isiri(?level2))
-    
-        OPTIONAL { ?this ${ns.schema.name} ?order0 } 
-      }
-    `;
+  FILTER NOT EXISTS { ?cube ${ns.schema.expires} ?any . }
+  `;
+  const cubeResults = await cubeQuery.execute(sparqlClient.query);
+  if (cubeResults.length === 0) {
+    throw new Error("Could not find cube");
+  }
+  const cubeIri = cubeResults[0].cube.value;
+  const cube = await source.cube(cubeIri);
+  if (!cube) {
+    throw new Error("Could not find cube");
+  }
+  const hierarchy = cube.ptr
+    .any()
+    .has(ns.sh.path, rdf.namedNode(dimensionIri))
+    .has(ns.cubeMeta.inHierarchy)
+    .out(ns.cubeMeta.inHierarchy)
+    .toArray()
+    .shift();
 
-  const dimensionValues = new Set(await queryDimensionValues(dimension));
-  const stream = await query.execute(sparqlClientStream.query);
-  const dataset = await fromStream(rdf.dataset(), stream);
-  const cf = clownface({ dataset });
+  // @ts-ignore
+  if (!isGraphPointer(hierarchy)) {
+    throw new Error(`Hierarchy not found ${dimensionIri}`);
+  }
 
-  const schemaName = ns.schema.name as unknown as NamedNode<string>;
+  const dimensionValuesProm = queryDimensionValues(dimensionIri);
+  const results = await getHierarchy(hierarchy).execute(
+    // @ts-ignore
+    sparqlClientStream,
+    rdf
+  );
 
-  // TODO find why we need to use uniqBy here
-  const res = uniqBy(
-    cf
-      .out(ns.cubeMeta.hierarchyRoot)
-      .map((root) => {
-        return {
-          label: root.out(schemaName).value,
-          value: root.out(ns.schema.identifier).value,
-          iri: root.value,
-          depth: 0,
-          dimensionIri: "",
-          children: root
-            .out(ns.schema.hasPart)
-            .map((c) => {
-              return {
-                iri: c.value,
-                label: c.out(schemaName).value,
-                value: c.value,
-                dimensionIri: "",
-                depth: 1,
-                children: [],
-              };
-            })
-            .filter(hasValueAndLabel)
-            .filter((x) => dimensionValues.has(x.value))
-            .sort((a, b) => ascending(a.label, b.label)),
-        };
-      })
-      .filter(hasValueAndLabel)
-      .sort((a, b) => ascending(a.label, b.label)),
-    (x) => x.iri
-  ).filter((x) => x.children.length > 0) as HierarchyValue[];
-
-  return res;
+  const tree = toTree(results, dimensionIri, locale);
+  const dimensionValues = await dimensionValuesProm;
+  return trimTree(tree, dimensionValues);
 };
