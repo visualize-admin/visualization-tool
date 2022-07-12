@@ -1,5 +1,9 @@
 # Visualization Tool
 
+## Documentation
+
+A public documentation is available at https://visualize.admin.ch/docs/.
+
 ## Development Environment
 
 To start the development environment, you need a Docker runtime, e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop) and [Nix](https://nixos.org).
