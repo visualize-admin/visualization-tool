@@ -8,7 +8,8 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useMemo } from "react";
+import { keyBy } from "lodash";
+import React, { ReactNode, useMemo, useCallback } from "react";
 
 import {
   useOptionalNumericVariable,
@@ -61,6 +62,7 @@ export interface PieState {
   getY: (d: Observation) => number | null;
   getX: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
+  getSegmentLabel: (s: string) => string;
   getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
 }
 
@@ -116,6 +118,13 @@ const usePieState = ({
     (d) => d.iri === fields.segment?.componentIri
   ) as $FixMe;
 
+  const { segmentValuesByValue } = useMemo(() => {
+    return {
+      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
+      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
+    };
+  }, [segmentDimension.values]);
+
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
       const dvIri = segmentDimension.values.find(
@@ -134,6 +143,13 @@ const usePieState = ({
     colors.domain(segments);
     colors.range(getPalette(fields.segment?.palette));
   }
+
+  const getSegmentLabel = useCallback(
+    (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    },
+    [segmentValuesByValue]
+  );
 
   // Dimensions
   const margins = {
@@ -224,6 +240,7 @@ const usePieState = ({
     getX,
     colors,
     getAnnotationInfo,
+    getSegmentLabel,
   };
 };
 

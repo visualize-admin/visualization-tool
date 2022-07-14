@@ -7,7 +7,8 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode } from "react";
+import { keyBy } from "lodash";
+import React, { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
@@ -44,6 +45,7 @@ export interface ScatterplotState {
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
+  getSegmentLabel: (s: string) => string;
   getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
 }
 
@@ -116,6 +118,13 @@ const useScatterplotState = ({
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
   ) as $FixMe;
+
+  const getSegmentLabel = useMemo(() => {
+    const segmentValuesByValue = keyBy(segmentDimension.values, (x) => x.value);
+    return (segment: string): string => {
+      return segmentValuesByValue[segment]?.label || segment;
+    };
+  }, [segmentDimension.values]);
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
@@ -226,6 +235,7 @@ const useScatterplotState = ({
     xAxisLabel,
     yAxisLabel,
     getAnnotationInfo,
+    getSegmentLabel,
   };
 };
 
