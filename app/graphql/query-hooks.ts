@@ -585,37 +585,73 @@ export type DimensionHierarchyQueryVariables = Exact<{
 
 export type DimensionHierarchyQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
       )>> } | { __typename: 'GeoShapesDimension', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
       )>> } | { __typename: 'Measure', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
       )>> } | { __typename: 'NominalDimension', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
       )>> } | { __typename: 'OrdinalDimension', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
       )>> } | { __typename: 'TemporalDimension', hierarchy?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -925,6 +961,12 @@ export const DimensionHierarchyDocument = gql`
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
         }
       }
     }

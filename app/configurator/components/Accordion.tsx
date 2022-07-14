@@ -54,11 +54,13 @@ export const Accordion = ({
   expanded,
   initialExpanded = false,
   theme = defaultTheme,
+  className,
 }: {
   children: React.ReactNode;
   initialExpanded?: boolean;
   expanded?: boolean;
   theme?: AccordionTheme;
+  className?: string;
 }) => {
   const expandedState = useControlledState(
     initialExpanded as boolean,
@@ -70,7 +72,7 @@ export const Accordion = ({
   );
   return (
     <AccordionContext.Provider value={context}>
-      <div>{children}</div>
+      <div className={className}>{children}</div>
     </AccordionContext.Provider>
   );
 };

@@ -273,6 +273,12 @@ query DimensionHierarchy(
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
         }
       }
     }

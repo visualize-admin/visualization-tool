@@ -83,15 +83,23 @@ const useStyles = makeStyles(() => {
       display: "grid",
       // checkbox content, color picker
       gridTemplateColumns: "1fr min-content",
+      marginLeft: "2rem",
+    },
+    accordionContent: {
+      marginLeft: "0.5rem",
     },
   };
 });
 
-const renderDimensionTree = (
-  tree: HierarchyValue[],
+const DimensionValueTree = ({
+  tree,
   depth = 0,
-  classes: ReturnType<typeof useStyles>
-) => {
+  classes,
+}: {
+  tree: HierarchyValue[];
+  depth: number;
+  classes: ReturnType<typeof useStyles>;
+}) => {
   return (
     <>
       {tree.map((tv) => {
@@ -106,7 +114,6 @@ const renderDimensionTree = (
                   label={tv.label}
                   value={tv.children.map((c) => c.value)}
                 />
-                <MultiFilterFieldColorPicker value={tv.value} />
               </AccordionSummary>
             ) : (
               <div className={classes.listItem} key={tv.value}>
@@ -114,25 +121,19 @@ const renderDimensionTree = (
                 <MultiFilterFieldColorPicker value={tv.value} />
               </div>
             )}
-            <AccordionContent>
-              <Stack spacing={1} ml={6}>
-                {(tv?.children || []).map((dv) => {
-                  if (dv.children && dv.children?.length > 0) {
-                    // Render tree recursively
-                    return renderDimensionTree(dv.children, depth + 1, classes);
+            {tv.children && tv.children.length > 0 ? (
+              <AccordionContent className={classes.accordionContent}>
+                <Stack spacing={1}>
+                  {
+                    <DimensionValueTree
+                      tree={tv.children}
+                      depth={depth + 1}
+                      classes={classes}
+                    />
                   }
-                  return (
-                    <div key={dv.value} className={classes.listItem}>
-                      <MultiFilterFieldCheckbox
-                        label={dv.label}
-                        value={dv.value}
-                      />
-                      <MultiFilterFieldColorPicker value={dv.value} />
-                    </div>
-                  );
-                })}
-              </Stack>
-            </AccordionContent>
+                </Stack>
+              </AccordionContent>
+            ) : null}
           </Accordion>
         );
       })}
@@ -175,13 +176,19 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
       >
         <SelectionControls dimensionIri={dimensionIri} />
-        {hierarchyTree && hierarchyTree.length > 0
-          ? renderDimensionTree(hierarchyTree, 0, classes)
-          : renderDimensionTree(
-              data.dataCubeByIri.dimensionByIri.values,
-              0,
-              classes
-            )}
+        {hierarchyTree && hierarchyTree.length > 0 ? (
+          <DimensionValueTree
+            tree={hierarchyTree}
+            depth={0}
+            classes={classes}
+          />
+        ) : (
+          <DimensionValueTree
+            tree={data.dataCubeByIri.dimensionByIri.values}
+            depth={0}
+            classes={classes}
+          />
+        )}
       </MultiFilterContextProvider>
     );
   } else {
