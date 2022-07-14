@@ -24,8 +24,8 @@ const configs: TestConfig[] = [
   },
   {
     chartId: "I0KucujlOLgb",
-    name: "Line - Waldfläsche (segmented)",
-    slug: "line-waldflasche",
+    name: "Line - State accounts (segmented)",
+    slug: "line-state-accounts",
   },
   { chartId: "Z6Re21LHbOoP", name: "Pie - Red list", slug: "pie-red-list" },
   {
