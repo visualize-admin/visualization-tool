@@ -1,6 +1,8 @@
 {
   "key": "jky5IEw6poT3",
   "data": {
+    "state": "CONFIGURING_CHART",
+    "dataSet": "https://environment.ld.admin.ch/foen/nfi/49-19-None-None/cube/1",
     "meta": {
       "title": {
         "de": "",
@@ -10,73 +12,60 @@
       },
       "description": {
         "de": "",
-        "en": "How much wood is produced in Switzerland",
+        "en": "",
         "fr": "",
         "it": ""
       }
     },
-    "dataSet": "https://environment.ld.admin.ch/foen/nfi/49-19-None-None/cube/1",
     "chartConfig": {
-      "fields": {
-        "areaLayer": {
-          "show": true,
-          "nbClass": 5,
-          "palette": "oranges",
-          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
-          "colorScaleType": "continuous",
-          "hierarchyLevel": 1,
-          "colorScaleInterpolationType": "linear"
-        },
-        "symbolLayer": {
-          "show": false,
-          "color": "#1f77b4",
-          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
-          "hierarchyLevel": 1
-        }
-      },
+      "chartType": "map",
       "filters": {
-        "https://environment.ld.admin.ch/foen/nfi/grid": {
+        "https://environment.ld.admin.ch/foen/nfi/inventory": {
           "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/nfi/Grid/N4"
+          "value": "https://environment.ld.admin.ch/foen/nfi/Inventory/150"
         },
         "https://environment.ld.admin.ch/foen/nfi/struk": {
           "type": "single",
           "value": "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Struk/-1"
         },
-        "https://environment.ld.admin.ch/foen/nfi/inventory": {
+        "https://environment.ld.admin.ch/foen/nfi/grid": {
           "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/nfi/Inventory/150"
+          "value": "https://environment.ld.admin.ch/foen/nfi/Grid/N4"
         },
         "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation": {
           "type": "single",
           "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfEvaluation/Zgwald1234"
         }
       },
-      "baseLayer": {
-        "show": true
-      },
-      "chartType": "map",
       "interactiveFiltersConfig": {
+        "legend": { "active": false, "componentIri": "" },
         "time": {
           "active": false,
-          "presets": {
-            "to": "",
-            "from": "",
-            "type": "range"
-          },
-          "componentIri": ""
+          "componentIri": "",
+          "presets": { "type": "range", "from": "", "to": "" }
         },
-        "legend": {
-          "active": false,
-          "componentIri": ""
+        "dataFilters": { "active": false, "componentIris": [] }
+      },
+      "fields": {
+        "areaLayer": {
+          "show": true,
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "hierarchyLevel": 1,
+          "colorScaleType": "continuous",
+          "colorScaleInterpolationType": "linear",
+          "palette": "oranges",
+          "nbClass": 5
         },
-        "dataFilters": {
-          "active": false,
-          "componentIris": []
+        "symbolLayer": {
+          "show": false,
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "hierarchyLevel": 1,
+          "color": "#1f77b4"
         }
-      }
+      },
+      "baseLayer": { "show": true }
     }
   }
 }
