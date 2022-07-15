@@ -1,4 +1,4 @@
-import * as RDF from "@rdfjs/data-model";
+import RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { keyBy } from "lodash";
 
@@ -194,7 +194,7 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
   // Check if it is a versioned cube
   const query = SELECT`${iri}`.WHERE`
     <${unversionedIri}> ${schema.hasPart} ${iri}.
-    ${makeVisualizeDatasetFilter()}
+    ${makeVisualizeDatasetFilter({ includeDrafts: true })}
   `
     .ORDER()
     .BY(iri, true);
@@ -205,7 +205,7 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
     // Check if it is an unversioned cube
     const query = SELECT`*`.WHERE`
       <${unversionedIri}> ${cube.observationConstraint} ?shape.
-      ${makeVisualizeDatasetFilter()}
+      ${makeVisualizeDatasetFilter({ includeDrafts: true })}
     `;
     const results = await sparqlClient.query.select(query.build(), {
       operation: "postUrlencoded",
