@@ -1,5 +1,4 @@
 import { SelectChangeEvent, SelectProps } from "@mui/material";
-import { some } from "lodash";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -18,8 +17,13 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DimensionValuesQuery } from "@/graphql/query-hooks";
+import {
+  DimensionHierarchyQuery,
+  DimensionValuesQuery,
+} from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
+import useEvent from "@/lib/use-event";
+import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -380,19 +384,29 @@ const MultiFilterContext = React.createContext({
   allValues: [] as string[],
   dimensionIri: undefined as string | undefined,
   colorConfigPath: undefined as string | undefined,
+  checkboxController: new CheckboxStateController([], []),
 });
 
 export const useMultiFilterContext = () => {
   return useContext(MultiFilterContext);
 };
 
+type NN<T> = NonNullable<T>;
+type GQLHierarchyValue = NN<
+  NN<
+    NN<DimensionHierarchyQuery["dataCubeByIri"]>["dimensionByIri"]
+  >["hierarchy"]
+>[number];
+
 export const MultiFilterContextProvider = ({
   dimensionIri,
   colorConfigPath,
   dimensionData,
+  hierarchyData,
   children,
 }: {
   dimensionIri: string;
+  hierarchyData: GQLHierarchyValue[] | undefined;
   dimensionData: NonNullable<
     DimensionValuesQuery["dataCubeByIri"]
   >["dimensionByIri"];
@@ -423,15 +437,20 @@ export const MultiFilterContextProvider = ({
     return new Set(activeKeys);
   }, [dimensionData, activeFilter, allValues]);
 
-  const ctx = useMemo(
-    () => ({
+  const ctx = useMemo(() => {
+    const tree =
+      hierarchyData && hierarchyData.length > 0
+        ? hierarchyData
+        : makeTreeFromValues(allValues, dimensionIri, { depth: 0 });
+
+    return {
       allValues,
       activeKeys,
       dimensionIri,
       colorConfigPath,
-    }),
-    [allValues, activeKeys, dimensionIri, colorConfigPath]
-  );
+      checkboxController: new CheckboxStateController(tree, [...activeKeys]),
+    };
+  }, [hierarchyData, allValues, activeKeys, dimensionIri, colorConfigPath]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>
@@ -441,51 +460,32 @@ export const MultiFilterContextProvider = ({
 };
 
 export const useMultiFilterCheckboxes = (
-  values: string[],
+  value: string,
   onChangeProp?: () => void
 ) => {
-  const [state, dispatch] = useConfiguratorState();
-  const { allValues, dimensionIri } = useMultiFilterContext();
+  const [, dispatch] = useConfiguratorState();
+  const { dimensionIri, checkboxController } = useMultiFilterContext();
 
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (!dimensionIri) {
-        return;
-      }
-      if (e.currentTarget.checked) {
-        dispatch({
-          type: "CHART_CONFIG_FILTER_ADD_MULTI",
-          value: {
-            dimensionIri,
-            values,
-            allValues,
-          },
-        });
-      } else {
-        dispatch({
-          type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
-          value: {
-            dimensionIri,
-            values,
-            allValues,
-          },
-        });
-      }
-      onChangeProp?.();
-    },
-    [dispatch, dimensionIri, allValues, values, onChangeProp]
-  );
+  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+    if (!dimensionIri) {
+      return;
+    }
+    checkboxController.toggle(value);
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_MULTI",
+      value: {
+        dimensionIri,
+        values: checkboxController.getValues(),
+      },
+    });
+    onChangeProp?.();
+  });
 
-  const isChecked =
-    state.state === "CONFIGURING_CHART" && dimensionIri
-      ? some(values, (value) =>
-          isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
-        )
-      : false;
-
+  const checkboxState = checkboxController.checkboxStates.get(value);
   return {
     onChange,
-    checked: isChecked,
+    checked: checkboxState === "checked",
+    indeterminate: checkboxState === "indeterminate",
     dimensionIri,
   };
 };
