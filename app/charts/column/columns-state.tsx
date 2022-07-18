@@ -345,7 +345,6 @@ const ColumnChartProvider = ({
     interactiveFiltersConfig,
     aspectRatio,
   });
-  console.log({ state });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
