@@ -24,6 +24,7 @@ import { default as ChartScatterplot } from "@/icons/components/IcChartScatterpl
 import { default as Check } from "@/icons/components/IcCheck";
 import { default as CheckboxActive } from "@/icons/components/IcCheckboxActive";
 import { default as CheckboxDefault } from "@/icons/components/IcCheckboxDefault";
+import { default as CheckboxIndeterminate } from "@/icons/components/IcCheckboxIndeterminate";
 import { default as ChevronDown } from "@/icons/components/IcChevronDown";
 import { default as ChevronLeft } from "@/icons/components/IcChevronLeft";
 import { default as ChevronRight } from "@/icons/components/IcChevronRight";
@@ -154,6 +155,7 @@ export const Icons = {
   check: Check,
   checkboxActive: CheckboxActive,
   checkboxDefault: CheckboxDefault,
+  checkboxIndeterminate: CheckboxIndeterminate,
   chevronDown: ChevronDown,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,

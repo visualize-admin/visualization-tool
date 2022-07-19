@@ -25,3 +25,5 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 import "cypress-plugin-snapshots/commands";
+import "@testing-library/cypress/add-commands";
+import "cypress-network-idle";

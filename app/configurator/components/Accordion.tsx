@@ -1,5 +1,6 @@
 import { Box, BoxProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import cx from "clsx";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import Flex, { FlexProps } from "@/components/flex";
@@ -10,7 +11,7 @@ const AccordionArrow = ({
   ...boxProps
 }: { expanded?: boolean } & BoxProps) => {
   return (
-    <Box component="span" mr={4} {...boxProps}>
+    <Box component="span" mr={1} {...boxProps}>
       <SvgIcChevronLeft
         sx={{
           transition: "transform 0.5s ease",
@@ -93,7 +94,6 @@ const useStyles = makeStyles((theme) => {
       justifyContent: "stretch",
       cursor: "pointer",
       borderRadius: 2,
-      height: "2.5rem",
     },
     children: {
       flexGrow: 1,
@@ -103,6 +103,7 @@ const useStyles = makeStyles((theme) => {
 
 export const AccordionSummary = ({
   children,
+  className,
   hasArrow = true,
   ...flexProps
 }: {
@@ -115,7 +116,7 @@ export const AccordionSummary = ({
   } = useContext(AccordionContext);
   const classes = useStyles();
   return (
-    <Flex {...flexProps} className={classes.root}>
+    <Flex {...flexProps} className={cx(classes.root, className)}>
       {hasArrow && (
         <AccordionArrow
           expanded={expanded}

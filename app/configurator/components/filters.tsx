@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
-import { Stack } from "@mui/material";
+import { Box, BoxProps, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
 
 import { Loading } from "@/components/hint";
@@ -35,12 +35,15 @@ import { valueComparator } from "@/utils/sorting-values";
 import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
-const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
+const SelectionControls = ({
+  dimensionIri,
+  ...props
+}: { dimensionIri: string } & BoxProps) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
   const { activeKeys, allValues } = useMultiFilterContext();
 
   return (
-    <Box color="grey.500" mb={4}>
+    <Box color="grey.500" mb={4} {...props}>
       <Button
         onClick={selectAll}
         variant="inline"
@@ -79,11 +82,19 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
 
 const useStyles = makeStyles(() => {
   return {
-    listItem: {
+    listItems: {
       display: "grid",
       // checkbox content, color picker
       gridTemplateColumns: "1fr min-content",
-      marginLeft: "2rem",
+    },
+    withChildren: {
+      marginLeft: "1.25rem",
+    },
+    accordionSummary: {
+      display: "grid",
+      // checkbox content, color picker
+      gridTemplateColumns: "1fr min-content",
+      flexGrow: 1,
     },
     accordionContent: {
       marginLeft: "0.5rem",
@@ -110,28 +121,32 @@ const DimensionValueTree = ({
           <Accordion key={tv.value} initialExpanded>
             {tv.children && tv.children.length > 0 ? (
               <AccordionSummary>
-                <MultiFilterFieldCheckbox
-                  label={tv.label}
-                  value={tv.children.map((c) => c.value)}
-                />
+                <div className={classes.accordionSummary}>
+                  <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
+                  <MultiFilterFieldColorPicker value={tv.value} />
+                </div>
               </AccordionSummary>
             ) : (
-              <div className={classes.listItem} key={tv.value}>
+              <div
+                className={clsx(
+                  classes.listItems,
+                  tv.children && tv.children.length === 0
+                    ? classes.withChildren
+                    : null
+                )}
+                key={tv.value}
+              >
                 <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
                 <MultiFilterFieldColorPicker value={tv.value} />
               </div>
             )}
             {tv.children && tv.children.length > 0 ? (
               <AccordionContent className={classes.accordionContent}>
-                <Stack spacing={1}>
-                  {
-                    <DimensionValueTree
-                      tree={tv.children}
-                      depth={depth + 1}
-                      classes={classes}
-                    />
-                  }
-                </Stack>
+                <DimensionValueTree
+                  tree={tv.children}
+                  depth={depth + 1}
+                  classes={classes}
+                />
               </AccordionContent>
             ) : null}
           </Accordion>
@@ -173,22 +188,23 @@ export const DimensionValuesMultiFilter = ({
       <MultiFilterContextProvider
         dimensionData={dimensionData}
         dimensionIri={dimensionIri}
+        hierarchyData={hierarchyTree || []}
         colorConfigPath={colorConfigPath}
       >
-        <SelectionControls dimensionIri={dimensionIri} />
-        {hierarchyTree && hierarchyTree.length > 0 ? (
-          <DimensionValueTree
-            tree={hierarchyTree}
-            depth={0}
-            classes={classes}
-          />
-        ) : (
-          <DimensionValueTree
-            tree={data.dataCubeByIri.dimensionByIri.values}
-            depth={0}
-            classes={classes}
-          />
-        )}
+        <SelectionControls
+          data-testid="selection-controls-tree-filters"
+          dimensionIri={dimensionIri}
+        />
+
+        <DimensionValueTree
+          tree={
+            hierarchyTree && hierarchyTree.length > 0
+              ? hierarchyTree
+              : data.dataCubeByIri.dimensionByIri.values
+          }
+          depth={0}
+          classes={classes}
+        />
       </MultiFilterContextProvider>
     );
   } else {

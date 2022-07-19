@@ -110,17 +110,19 @@ export const Checkbox = ({
   onChange,
   color,
   smaller,
+  indeterminate,
 }: {
   label: string;
   disabled?: boolean;
   color?: string;
   smaller?: boolean;
+  indeterminate?: boolean;
 } & FieldProps) => (
   <FormControlLabel
     label={label || "-"}
     htmlFor={`${name}-${label}`}
     disabled={disabled}
-    sx={{ display: "flex" }}
+    sx={{ display: "flex", ml: 0 }}
     componentsProps={{
       typography: {
         variant: smaller ? "caption" : "body2",
@@ -137,6 +139,7 @@ export const Checkbox = ({
         checked={checked}
         disabled={disabled}
         onChange={onChange}
+        indeterminate={indeterminate}
         sx={{
           alignSelf: "start",
           mr: smaller ? 0 : 1,

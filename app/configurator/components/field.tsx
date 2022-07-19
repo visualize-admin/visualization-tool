@@ -513,6 +513,7 @@ const useMultiFilterColorPicker = (value: string) => {
       color,
       palette,
       onChange,
+
       checked: checkedState,
     }),
     [color, palette, onChange, checkedState]
@@ -539,7 +540,7 @@ export const MultiFilterFieldCheckbox = ({
   onChange: onChangeProp,
 }: {
   label: string;
-  value: string | string[];
+  value: string;
   disabled?: boolean;
   onChange?: () => void;
 }) => {
@@ -547,11 +548,9 @@ export const MultiFilterFieldCheckbox = ({
   const {
     onChange: onFieldChange,
     checked,
+    indeterminate,
     dimensionIri,
-  } = useMultiFilterCheckboxes(
-    Array.isArray(value) ? value : [value],
-    onChangeProp
-  );
+  } = useMultiFilterCheckboxes(value, onChangeProp);
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;
@@ -565,6 +564,7 @@ export const MultiFilterFieldCheckbox = ({
       disabled={disabled}
       onChange={onFieldChange}
       checked={checked}
+      indeterminate={indeterminate}
     />
   );
 };

@@ -125,6 +125,7 @@
     "@lingui/macro": "^3.2.3",
     "@mdx-js/loader": "^1.6.22",
     "@svgr/cli": "^5.5.0",
+    "@testing-library/cypress": "^8.0.3",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/clownface": "^1.0.3",

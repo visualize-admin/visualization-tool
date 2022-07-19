@@ -5,7 +5,7 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
-import { ElementType, forwardRef, ReactNode } from "react";
+import { ElementType, forwardRef, HTMLProps, ReactNode } from "react";
 
 import { Icon, IconName } from "@/icons";
 import { useTheme } from "@/themes";
@@ -13,12 +13,11 @@ import { useTheme } from "@/themes";
 export const ControlSection = forwardRef<
   HTMLDivElement,
   {
-    role?: string;
     children: ReactNode;
     isHighlighted?: boolean;
     sx?: BoxProps["sx"];
-  }
->(({ role, children, isHighlighted, sx }, ref) => {
+  } & Omit<HTMLProps<HTMLDivElement>, "ref">
+>(({ role, children, isHighlighted, sx, ...props }, ref) => {
   return (
     <Box
       ref={ref}
@@ -36,6 +35,7 @@ export const ControlSection = forwardRef<
         },
         ...sx,
       }}
+      {...props}
     >
       {children}
     </Box>

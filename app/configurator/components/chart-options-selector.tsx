@@ -308,7 +308,7 @@ const EncodingOptionsPanel = ({
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
       {encoding.filters && component && (
-        <ControlSection>
+        <ControlSection data-testid="chart-edition-right-filters">
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>

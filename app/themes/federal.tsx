@@ -456,6 +456,7 @@ theme.components = {
   MuiCheckbox: {
     defaultProps: {
       checkedIcon: <Icon name="checkboxActive" size={20} />,
+      indeterminateIcon: <Icon name="checkboxIndeterminate" size={20} />,
       icon: <Icon name="checkboxDefault" size={20} />,
     },
     styleOverrides: {

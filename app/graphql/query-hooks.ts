@@ -171,6 +171,7 @@ export type HierarchyValue = {
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;
+  hasValue?: Maybe<Scalars['Boolean']>;
 };
 
 export type Measure = Dimension & {
@@ -574,7 +575,7 @@ export type SubthemesQueryVariables = Exact<{
 
 export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
 
-export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string };
+export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, hasValue?: Maybe<boolean> };
 
 export type DimensionHierarchyQueryVariables = Exact<{
   locale: Scalars['String'];
@@ -691,6 +692,7 @@ export const HierarchyValueFieldsFragmentDoc = gql`
   dimensionIri
   depth
   label
+  hasValue
 }
     `;
 export const DataCubesDocument = gql`
