@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, BoxProps, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
@@ -35,12 +35,15 @@ import { valueComparator } from "@/utils/sorting-values";
 import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
-const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
+const SelectionControls = ({
+  dimensionIri,
+  ...props
+}: { dimensionIri: string } & BoxProps) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
   const { activeKeys, allValues } = useMultiFilterContext();
 
   return (
-    <Box color="grey.500" mb={4}>
+    <Box color="grey.500" mb={4} {...props}>
       <Button
         onClick={selectAll}
         variant="inline"
@@ -188,7 +191,10 @@ export const DimensionValuesMultiFilter = ({
         hierarchyData={hierarchyTree || []}
         colorConfigPath={colorConfigPath}
       >
-        <SelectionControls dimensionIri={dimensionIri} />
+        <SelectionControls
+          data-testid="selection-controls-tree-filters"
+          dimensionIri={dimensionIri}
+        />
 
         <DimensionValueTree
           tree={

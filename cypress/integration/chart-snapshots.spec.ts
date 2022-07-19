@@ -1,5 +1,4 @@
 import intConfigs from "../../app/test/__fixtures/int/configs";
-import "cypress-network-idle";
 
 // Right now the CI app server runs connected to int.lindas.admin.ch
 const configs = intConfigs.map((x) => ({ env: "int", ...x }));

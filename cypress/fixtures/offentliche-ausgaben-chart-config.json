@@ -1,0 +1,124 @@
+{
+  "state": "CONFIGURING_CHART",
+  "dataSet": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/7",
+  "meta": {
+    "title": { "de": "", "fr": "", "it": "", "en": "" },
+    "description": { "de": "", "fr": "", "it": "", "en": "" }
+  },
+  "chartConfig": {
+    "chartType": "column",
+    "filters": {
+      "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel": {
+        "type": "single",
+        "value": "Bd"
+      }
+    },
+    "interactiveFiltersConfig": {
+      "legend": { "active": false, "componentIri": "" },
+      "time": {
+        "active": false,
+        "componentIri": "",
+        "presets": { "type": "range", "from": "", "to": "" }
+      },
+      "dataFilters": { "active": false, "componentIris": [] }
+    },
+    "fields": {
+      "x": {
+        "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/jahr",
+        "sorting": { "sortingType": "byDimensionLabel", "sortingOrder": "asc" }
+      },
+      "y": {
+        "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/in-pct"
+      },
+      "segment": {
+        "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/code",
+        "palette": "category10",
+        "type": "stacked",
+        "sorting": { "sortingType": "byDimensionLabel", "sortingOrder": "asc" },
+        "colorMapping": {
+          "https://ld.admin.ch/cube/dimension/cofog/gf01": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0101": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0102": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0103": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0104": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0105": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0106": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0107": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0108": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf02": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0201": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0202": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0203": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0204": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0205": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf03": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0301": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0302": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0303": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0304": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0305": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0306": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf04": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0401": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0402": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0403": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0404": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0405": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0406": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0407": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0408": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0409": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf05": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0501": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0502": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0503": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0504": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0505": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0506": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf06": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0601": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0602": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0603": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0604": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0605": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0606": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf07": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0701": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0702": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0703": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0704": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0705": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0706": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf08": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0801": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0802": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0803": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0804": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0805": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0806": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf09": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0901": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0902": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0903": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0904": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0905": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0906": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0907": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf0908": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gf10": "#17becf",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1001": "#1f77b4",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1002": "#ff7f0e",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1003": "#2ca02c",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1004": "#d62728",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1005": "#9467bd",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1006": "#8c564b",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1007": "#e377c2",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1008": "#7f7f7f",
+          "https://ld.admin.ch/cube/dimension/cofog/gf1009": "#bcbd22",
+          "https://ld.admin.ch/cube/dimension/cofog/gftot": "#17becf"
+        }
+      }
+    }
+  },
+  "activeField": "segment"
+}
