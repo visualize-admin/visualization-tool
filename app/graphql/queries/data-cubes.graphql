@@ -260,6 +260,7 @@ fragment hierarchyValueFields on HierarchyValue {
   dimensionIri
   depth
   label
+  hasValue
 }
 
 query DimensionHierarchy(

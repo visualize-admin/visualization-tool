@@ -1,5 +1,17 @@
 import { HierarchyValue } from "@/graphql/resolver-types";
 
+export const mapTree = (
+  tree: HierarchyValue[],
+  cb: (h: HierarchyValue) => HierarchyValue
+) => {
+  return tree.map((t): HierarchyValue => {
+    return {
+      ...t,
+      children: t.children ? t.children.map(cb) : undefined,
+    };
+  });
+};
+
 const filterTreeHelper = (
   tree: HierarchyValue[],
   predicate: (h: HierarchyValue) => boolean
@@ -101,12 +113,14 @@ const visitTree = (
 export const toggleCheckbox = (
   checkboxStateMap: CheckboxStateMap,
   checkedValues: Set<Value>,
-  childrenIndex: Map<string, HierarchyValue[]>,
+  index: Map<string, HierarchyValue>,
   value: Value
 ): Set<Value> => {
   const state = checkboxStateMap.get(value);
   const newSet = new Set([...checkedValues]);
-  const children = childrenIndex.get(value) || [];
+  const node = index.get(value);
+  const children = node?.children || [];
+  const hasValue = node?.hasValue;
   const act = (child: HierarchyValue, action: "add" | "delete") => {
     if (action === "add" && (!child.children || child.children.length === 0)) {
       newSet.add(child.value);
@@ -117,7 +131,9 @@ export const toggleCheckbox = (
 
   if (children.length > 0) {
     if (state === "indeterminate") {
-      newSet.add(value);
+      if (hasValue) {
+        newSet.add(value);
+      }
     } else if (state === "checked") {
       newSet.delete(value);
     } else if (state === "unchecked") {
@@ -134,16 +150,18 @@ export const toggleCheckbox = (
   visitTree(children, (child) => {
     act(
       child,
-      state === "indeterminate" || state === "unchecked" ? "add" : "delete"
+      (state === "indeterminate" && hasValue) || state === "unchecked"
+        ? "add"
+        : "delete"
     );
   });
   return newSet;
 };
 
-const buildChildrenIndex = (tree: HierarchyValue[]) => {
-  const childrenIndex = new Map<string, HierarchyValue[]>();
-  visitTree(tree, (x) => childrenIndex.set(x.value, x.children || []));
-  return childrenIndex;
+const buildIndex = (tree: HierarchyValue[]) => {
+  const index = new Map<string, HierarchyValue>();
+  visitTree(tree, (x) => index.set(x.value, x));
+  return index;
 };
 
 export const makeTreeFromValues = (
@@ -171,12 +189,12 @@ export class CheckboxStateController {
   // @ts-ignore
   checkboxStates: CheckboxStateMap;
   private checkedValues: Set<Value>;
-  private childrenIndex: Map<string, HierarchyValue[]>;
+  private index: Map<string, HierarchyValue>;
 
   constructor(tree: HierarchyValue[], checkedValues: Value[]) {
     this.tree = tree;
     this.checkedValues = new Set([...checkedValues]);
-    this.childrenIndex = buildChildrenIndex(tree);
+    this.index = buildIndex(tree);
     this.updateState();
   }
 
@@ -188,7 +206,7 @@ export class CheckboxStateController {
     this.checkedValues = toggleCheckbox(
       this.checkboxStates,
       this.checkedValues,
-      this.childrenIndex,
+      this.index,
       value
     );
     this.updateState();

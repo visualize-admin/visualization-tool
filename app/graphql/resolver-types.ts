@@ -176,6 +176,7 @@ export type HierarchyValue = {
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;
+  hasValue?: Maybe<Scalars['Boolean']>;
 };
 
 export type Measure = Dimension & {
@@ -600,6 +601,7 @@ export type HierarchyValueResolvers<ContextType = any, ParentType extends Resolv
   dimensionIri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   children?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hasValue?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

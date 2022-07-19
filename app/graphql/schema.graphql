@@ -58,6 +58,7 @@ type HierarchyValue {
   dimensionIri: String!
   depth: Int!
   children: [HierarchyValue!]
+  hasValue: Boolean
 }
 
 interface Dimension {

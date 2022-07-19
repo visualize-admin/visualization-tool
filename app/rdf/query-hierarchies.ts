@@ -12,7 +12,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import * as ns from "./namespace";
 import { createSource } from "./queries";
 import { sparqlClient, sparqlClientStream } from "./sparql-client";
-import { filterTree } from "./tree-utils";
+import { filterTree, mapTree } from "./tree-utils";
 
 const queryDimensionValues = async (dimension: string) => {
   const query = SELECT.DISTINCT`?value`.WHERE`    
@@ -99,5 +99,8 @@ export const queryHierarchy = async (
 
   const tree = toTree(results, dimensionIri, locale);
   const dimensionValues = new Set(await dimensionValuesProm);
-  return filterTree(tree, (node) => dimensionValues.has(node.value));
+  return mapTree(
+    filterTree(tree, (node) => dimensionValues.has(node.value)),
+    (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
+  );
 };
