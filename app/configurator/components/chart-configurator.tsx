@@ -8,7 +8,13 @@ import {
   MenuItem,
 } from "@mui/material";
 import { isEmpty, isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  ReactElement,
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -43,6 +49,7 @@ import MoveDragButtons from "@/configurator/components/move-drag-buttons";
 import useDisclosure from "@/configurator/components/use-disclosure";
 import {
   getFiltersByMappingStatus,
+  isConfiguring,
   moveFilterField,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
@@ -56,6 +63,7 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 
 const DataFilterSelectGeneric = ({
@@ -92,7 +100,7 @@ const DataFilterSelectGeneric = ({
     isOptional: !dimension.isKeyDimension,
   };
 
-  let component: React.ReactElement;
+  let component: ReactElement;
   if (dimension.__typename === "TemporalDimension") {
     if (dimension.timeUnit === "Day") {
       component = (
@@ -213,19 +221,27 @@ export const useEnsurePossibleFilters = ({
   return { error, fetching };
 };
 
-export const ChartConfigurator = ({
-  state,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
-  const locale = useLocale();
-  const [, dispatch] = useConfiguratorState();
-  const { fields, filters } = state.chartConfig;
-  const unmappedFilters = React.useMemo(() => {
-    return getFiltersByMappingStatus(fields, filters).unmapped;
-  }, [fields, filters]);
+type Dimension = NonNullable<
+  NonNullable<
+    DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+  >["dimensions"]
+>[number];
 
-  const variables = React.useMemo(
+const useFilterReorder = ({
+  onAddDimensionFilter,
+}: {
+  onAddDimensionFilter?: () => void;
+}) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const locale = useLocale();
+
+  const { fields, filters } = state.chartConfig;
+  const { unmapped: unmappedFilters } = useMemo(
+    () => getFiltersByMappingStatus(fields, filters),
+    [fields, filters]
+  );
+
+  const variables = useMemo(
     () => ({
       iri: state.dataSet,
       locale,
@@ -238,37 +254,11 @@ export const ChartConfigurator = ({
     }),
     [state.dataSet, locale, unmappedFilters]
   );
+
   const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({
       variables: variables,
     });
-  const metaData = data?.dataCubeByIri;
-
-  const handleMove = useCallback(
-    (dimensionIri: string, delta: number) => {
-      if (!metaData) {
-        return;
-      }
-
-      const dimension = data?.dataCubeByIri?.dimensions.find(
-        (d) => d.iri === dimensionIri
-      );
-      const chartConfig = moveFilterField(state.chartConfig, {
-        dimensionIri,
-        delta,
-        possibleValues: dimension ? dimension.values : [],
-      });
-
-      dispatch({
-        type: "CHART_CONFIG_REPLACED",
-        value: {
-          chartConfig,
-          dataSetMetadata: metaData,
-        },
-      });
-    },
-    [data?.dataCubeByIri?.dimensions, dispatch, metaData, state.chartConfig]
-  );
 
   useEffect(() => {
     executeQuery({
@@ -276,83 +266,144 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
+  const dimensions = useMemo(() => {
+    const dimensions = data?.dataCubeByIri?.dimensions;
+    type T = Exclude<typeof dimensions, undefined>;
+    if (!data?.dataCubeByIri?.dimensions) {
+      return [] as T;
+    }
+    return dimensions as T;
+  }, [data?.dataCubeByIri?.dimensions]);
+
+  const metaData = data?.dataCubeByIri;
+
+  // Handlers
+  const handleMove = useEvent((dimensionIri: string, delta: number) => {
+    if (!metaData) {
+      return;
+    }
+
+    const dimension = dimensions.find((d) => d.iri === dimensionIri);
+    const chartConfig = moveFilterField(state.chartConfig, {
+      dimensionIri,
+      delta,
+      possibleValues: dimension ? dimension.values : [],
+    });
+
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig,
+        dataSetMetadata: metaData,
+      },
+    });
+  });
+
+  const handleAddDimensionFilter = useEvent((dimension: Dimension) => {
+    onAddDimensionFilter?.();
+    const filterValue = dimension.values[0];
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      value: {
+        dimensionIri: dimension.iri,
+        value: filterValue.value,
+      },
+    });
+  });
+
+  const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      value: {
+        dimensionIri: dimension.iri,
+        value: FIELD_VALUE_NONE,
+      },
+    });
+  });
+
+  const handleDragEnd: OnDragEndResponder = useEvent((result) => {
+    const sourceIndex = result.source?.index;
+    const destinationIndex = result.destination?.index;
+    if (
+      typeof sourceIndex !== "number" ||
+      typeof destinationIndex !== "number" ||
+      result.source === result.destination
+    ) {
+      return;
+    }
+    const delta = destinationIndex - sourceIndex;
+    handleMove(result.draggableId, delta);
+  });
+
   const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
     state,
   });
   const fetching = possibleFiltersFetching || dataFetching;
 
-  const {
-    isOpen: isFilterMenuOpen,
-    open: openFilterMenu,
-    close: closeFilterMenu,
-  } = useDisclosure();
-  const filterMenuButtonRef = useRef(null);
-  if (data?.dataCubeByIri) {
-    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
+  const { filterDimensions, addableDimensions } = useMemo(() => {
+    const mappedIris = getFieldComponentIris(fields);
     const keysOrder = Object.fromEntries(
-      Object.keys(state.chartConfig.filters).map((k, i) => [k, i])
+      Object.keys(filters).map((k, i) => [k, i])
     );
     const filterDimensions = sortBy(
-      data?.dataCubeByIri.dimensions.filter(
+      dimensions.filter(
         (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
-      ),
+      ) || [],
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
-    const addableDimensions = data?.dataCubeByIri.dimensions.filter(
+    const addableDimensions = dimensions.filter(
       (dim) =>
         !mappedIris.has(dim.iri) &&
         keysOrder[dim.iri] === undefined &&
         !isStandardErrorDimension(dim)
     );
-
-    const handleDragEnd: OnDragEndResponder = (result) => {
-      const sourceIndex = result.source?.index;
-      const destinationIndex = result.destination?.index;
-      if (
-        typeof sourceIndex !== "number" ||
-        typeof destinationIndex !== "number" ||
-        result.source === result.destination
-      ) {
-        return;
-      }
-      const delta = destinationIndex - sourceIndex;
-      handleMove(result.draggableId, delta);
+    return {
+      filterDimensions,
+      addableDimensions,
     };
+  }, [dimensions, fields, filters]);
 
-    const handleAddDimensionFilter = (
-      dimension: NonNullable<
-        NonNullable<
-          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-        >["dimensions"]
-      >[number]
-    ) => {
-      closeFilterMenu();
-      const filterValue = dimension.values[0];
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
-        value: {
-          dimensionIri: dimension.iri,
-          value: filterValue.value,
-        },
-      });
-    };
+  return {
+    handleRemoveDimensionFilter,
+    handleAddDimensionFilter,
+    handleMove,
+    handleDragEnd,
+    fetching,
+    data,
+    filterDimensions,
+    addableDimensions,
+  };
+};
 
-    const handleRemoveDimensionFilter = (
-      dimension: NonNullable<
-        NonNullable<
-          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-        >["dimensions"]
-      >[number]
-    ) => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
-        value: {
-          dimensionIri: dimension.iri,
-          value: FIELD_VALUE_NONE,
-        },
-      });
-    };
+export const ChartConfigurator = ({
+  state,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+}) => {
+  const {
+    isOpen: isFilterMenuOpen,
+    open: openFilterMenu,
+    close: closeFilterMenu,
+  } = useDisclosure();
+  const {
+    fetching: dataFetching,
+    handleAddDimensionFilter,
+    handleRemoveDimensionFilter,
+    handleDragEnd,
+    data,
+    filterDimensions,
+    addableDimensions,
+    handleMove,
+  } = useFilterReorder({
+    onAddDimensionFilter: () => closeFilterMenu(),
+  });
+  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
+    state,
+  });
+  const fetching = possibleFiltersFetching || dataFetching;
 
+  const filterMenuButtonRef = useRef(null);
+  if (data?.dataCubeByIri) {
     return (
       <>
         <ControlSection>

@@ -1234,7 +1234,9 @@ export const ConfiguratorStateProvider = ({
   );
 };
 
-export const useConfiguratorState = () => {
+export const useConfiguratorState = <T extends ConfiguratorState>(
+  predicate?: (s: ConfiguratorState) => s is T
+) => {
   const ctx = useContext(ConfiguratorStateContext);
 
   if (ctx === undefined) {
@@ -1243,5 +1245,17 @@ export const useConfiguratorState = () => {
     );
   }
 
-  return ctx;
+  const [state, dispatch] = ctx;
+
+  if (predicate && !predicate(state)) {
+    throw new Error("State does not respect type guard");
+  }
+
+  return [state, dispatch] as [T, typeof dispatch];
+};
+
+export const isConfiguring = (
+  s: ConfiguratorState
+): s is ConfiguratorStateConfiguringChart => {
+  return s.state === "CONFIGURING_CHART";
 };

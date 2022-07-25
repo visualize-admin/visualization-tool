@@ -42,9 +42,14 @@ import {
 } from "@/configurator/config-form";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  TimeUnit,
+  useDimensionHierarchyQuery,
+} from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
+import { useLocale } from "@/src";
 import truthy from "@/utils/truthy";
 
 export const ControlTabField = ({
@@ -100,6 +105,11 @@ export const OnOffControlTabField = ({
   );
 };
 
+const useCubeIRI = () => {
+  const [chartConfig] = useConfiguratorState();
+  return chartConfig.dataSet;
+};
+
 export const DataFilterSelect = ({
   dimensionIri,
   label,
@@ -127,6 +137,17 @@ export const DataFilterSelect = ({
   const optionalLabel = t({
     id: "controls.select.optional",
     message: `optional`,
+  });
+
+  const cubeIri = useCubeIRI();
+  const locale = useLocale();
+
+  const [hierarchy] = useDimensionHierarchyQuery({
+    variables: {
+      cubeIri: cubeIri!,
+      dimensionIri,
+      locale,
+    },
   });
 
   const allOptions = useMemo(() => {
