@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
 
+import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -165,17 +166,19 @@ export const DimensionValuesMultiFilter = ({
   dimensionIri: string;
   colorConfigPath?: string;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const classes = useStyles();
 
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
   });
 
   const [{ fetching: fetchingHierarchy, data: hierarchyData }] =
     useDimensionHierarchyQuery({
       variables: {
         cubeIri: dataSetIri,
+        dataSource,
         locale,
         dimensionIri,
       },
@@ -219,6 +222,7 @@ export const TimeFilter = ({
   dataSetIri: string;
   dimensionIri: string;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
@@ -239,7 +243,7 @@ export const TimeFilter = ({
   );
 
   const [{ data }] = useTemporalDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;
@@ -297,9 +301,10 @@ export const DimensionValuesSingleFilter = ({
   dataSetIri: string;
   dimensionIri: string;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;

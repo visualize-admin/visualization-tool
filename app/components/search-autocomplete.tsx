@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import React, { useMemo } from "react";
 
 import Autocomplete, { AutocompleteProps } from "@/components/autocomplete";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   BrowseFilter,
   DataCubeAbout,
@@ -52,11 +53,16 @@ const SearchAutocomplete = (
     "items" | "getItemSearchText"
   >
 ) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const { includeDrafts } = useBrowseContext();
   const counts = useDatasetCount([], includeDrafts);
-  const [{ data: allThemes }] = useThemesQuery({ variables: { locale } });
-  const [{ data: allOrgs }] = useOrganizationsQuery({ variables: { locale } });
+  const [{ data: allThemes }] = useThemesQuery({
+    variables: { dataSource, locale },
+  });
+  const [{ data: allOrgs }] = useOrganizationsQuery({
+    variables: { dataSource, locale },
+  });
   const allItems = useMemo(
     () =>
       [...(allThemes?.themes || []), ...(allOrgs?.organizations || [])].filter(

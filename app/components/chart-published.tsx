@@ -16,6 +16,7 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import { ChartConfig, Meta } from "@/configurator";
@@ -60,9 +61,10 @@ export const ChartPublishedInner = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
-    variables: { iri: dataSet, locale },
+    variables: { dataSource, iri: dataSet, locale },
   });
   const [isTablePreview] = useChartTablePreview();
 

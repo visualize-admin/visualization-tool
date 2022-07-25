@@ -12,6 +12,7 @@ import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
+import { useDataSource } from "@/components/data-source-menu";
 import Tag from "@/configurator/components/Tag";
 import {
   MotionBox,
@@ -34,10 +35,11 @@ export const DataSetMetadata = ({
   dataSetIri: string;
   sx: BoxProps["sx"];
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data, fetching, error }] = useDataCubeMetadataQuery({
-    variables: { iri: dataSetIri, locale },
+    variables: { dataSource, iri: dataSetIri, locale },
   });
   const cube = data?.dataCubeByIri;
   const openDataLink = makeOpenDataLink(locale, cube);

@@ -19,6 +19,7 @@ import {
   LegendColor,
 } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -49,9 +50,11 @@ export const ChartScatterplotVisualization = ({
   chartConfig: ScatterPlotConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
+      dataSource,
       locale,
       iri: dataSetIri,
       dimensions: null, // FIXME: Other fields may also be measures

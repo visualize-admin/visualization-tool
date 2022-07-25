@@ -21,6 +21,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
+import { DataSource, useDataSource } from "@/components/data-source-menu";
 import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -1037,14 +1038,16 @@ export const initChartStateFromChart = async (
 export const initChartStateFromCube = async (
   client: Client,
   datasetIri: DatasetIri,
+  dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
   const { data } = await client
     .query<DataCubeMetadataWithComponentValuesQuery>(
       DataCubeMetadataWithComponentValuesDocument,
       {
-        iri: datasetIri,
+        dataSource,
         locale,
+        iri: datasetIri,
       }
     )
     .toPromise();
@@ -1101,6 +1104,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
@@ -1121,6 +1125,7 @@ const ConfiguratorStateProviderInternal = ({
             newChartState = await initChartStateFromCube(
               client,
               query.cube,
+              dataSource,
               locale
             );
           }
@@ -1138,6 +1143,7 @@ const ConfiguratorStateProviderInternal = ({
     };
     initialize();
   }, [
+    dataSource,
     dispatch,
     chartId,
     replace,

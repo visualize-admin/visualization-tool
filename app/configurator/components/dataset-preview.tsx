@@ -5,6 +5,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { DataDownloadMenu } from "@/components/data-download";
+import { useDataSource } from "@/components/data-source-menu";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
@@ -19,9 +20,10 @@ export interface Preview {
 }
 
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
-    variables: { iri: dataSetIri, locale },
+    variables: { dataSource, iri: dataSetIri, locale },
   });
 
   if (metaData && metaData.dataCubeByIri) {

@@ -6,6 +6,7 @@ import {
   OnDragStartResponder,
 } from "react-beautiful-dnd";
 
+import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import { ConfiguratorStateConfiguringChart } from "@/configurator";
 import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
@@ -27,9 +28,10 @@ export const ChartConfiguratorTable = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { iri: state.dataSet, dataSource, locale },
   });
 
   const metaData = data?.dataCubeByIri;

@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
+import { useDataSource } from "@/components/data-source-menu";
 import { ChartConfig } from "@/configurator";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
@@ -24,6 +25,7 @@ export const ChartFootnotes = ({
   chartConfig: ChartConfig;
   configKey?: string;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
   const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
@@ -37,13 +39,19 @@ export const ChartFootnotes = ({
   }, [configKey, locale]);
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: dataSetIri, locale },
+    variables: { dataSource, iri: dataSetIri, locale },
   });
 
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
-    variables: { locale, iri: dataSetIri, dimensions: null, filters },
+    variables: {
+      dataSource,
+      locale,
+      iri: dataSetIri,
+      dimensions: null,
+      filters,
+    },
   });
   const sparqlEditorUrl =
     visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;

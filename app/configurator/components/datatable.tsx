@@ -13,6 +13,7 @@ import { ascending, descending } from "d3";
 import { useMemo, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import { ChartConfig } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
@@ -142,9 +143,11 @@ export const DataSetPreviewTable = ({
   dimensions: DimensionMetaDataFragment[];
   measures: DimensionMetaDataFragment[];
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
     variables: {
+      dataSource,
       iri: dataSetIri,
       locale,
       dimensions: null,
@@ -174,11 +177,13 @@ export const DataSetTable = ({
   chartConfig: ChartConfig;
   sx?: SxProps<Theme>;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
+      dataSource,
       locale,
       dimensions: null,
       filters,

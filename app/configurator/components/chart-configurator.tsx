@@ -19,6 +19,7 @@ import { CombinedError, useClient } from "urql";
 
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -133,7 +134,7 @@ const orderedIsEqual = (
  * This runs every time the state changes and it ensures that the selected filters
  * return at least 1 observation. Otherwise filters are reloaded.
  */
-export const useEnsurePossibleFilters = ({
+const useEnsurePossibleFilters = ({
   state,
 }: {
   state:
@@ -141,6 +142,7 @@ export const useEnsurePossibleFilters = ({
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
 }) => {
+  const [dataSource] = useDataSource();
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
@@ -168,6 +170,7 @@ export const useEnsurePossibleFilters = ({
         error,
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
+          dataSource,
           iri: state.dataSet,
           filters: unmappedFilters,
           filterKey: Object.keys(unmappedFilters).join(", "),
@@ -203,6 +206,7 @@ export const useEnsurePossibleFilters = ({
 
     run();
   }, [
+    dataSource,
     client,
     dispatch,
     state,
@@ -218,6 +222,7 @@ export const ChartConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
   const { fields, filters } = state.chartConfig;
@@ -227,6 +232,7 @@ export const ChartConfigurator = ({
 
   const variables = React.useMemo(
     () => ({
+      dataSource,
       iri: state.dataSet,
       locale,
       filters: unmappedFilters,
@@ -236,7 +242,7 @@ export const ChartConfigurator = ({
       // values after we change the filter order
       filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state.dataSet, locale, unmappedFilters]
+    [state.dataSet, dataSource, locale, unmappedFilters]
   );
   const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({

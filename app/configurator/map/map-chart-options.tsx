@@ -1,8 +1,8 @@
-
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import React, { memo, useMemo } from "react";
 
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { FieldSetLegend } from "@/components/form";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
@@ -85,6 +85,7 @@ export const AreaLayerSettings = memo(
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
+    const [dataSource] = useDataSource();
     const locale = useLocale();
     const activeField = "areaLayer";
     const geoShapesDimensions = useMemo(
@@ -102,9 +103,10 @@ export const AreaLayerSettings = memo(
 
     const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
       variables: {
+        dataSource,
+        locale,
         dataCubeIri: metaData.iri,
         dimensionIri: chartConfig.fields.areaLayer.componentIri,
-        locale,
       },
     });
 

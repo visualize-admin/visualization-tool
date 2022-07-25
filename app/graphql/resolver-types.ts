@@ -50,14 +50,26 @@ export type DataCube = {
 
 
 export type DataCubeObservationsArgs = {
+  dataSource: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
   dimensions?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
 
+export type DataCubeDimensionsArgs = {
+  dataSource: Scalars['String'];
+};
+
+
 export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
+  dataSource: Scalars['String'];
+};
+
+
+export type DataCubeMeasuresArgs = {
+  dataSource: Scalars['String'];
 };
 
 export type DataCubeOrganization = {
@@ -116,6 +128,7 @@ export type Dimension = {
 
 
 export type DimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -146,6 +159,7 @@ export type GeoCoordinatesDimension = Dimension & {
 
 
 export type GeoCoordinatesDimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -166,6 +180,7 @@ export type GeoShapesDimension = Dimension & {
 
 
 export type GeoShapesDimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -194,6 +209,7 @@ export type Measure = Dimension & {
 
 
 export type MeasureValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -212,6 +228,7 @@ export type NominalDimension = Dimension & {
 
 
 export type NominalDimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -250,6 +267,7 @@ export type OrdinalDimension = Dimension & {
 
 
 export type OrdinalDimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -266,6 +284,7 @@ export type Query = {
 
 
 export type QueryDataCubeByIriArgs = {
+  dataSource: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
@@ -275,11 +294,13 @@ export type QueryDataCubeByIriArgs = {
 
 export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
+  dataSource: Scalars['String'];
   filters: Scalars['Filters'];
 };
 
 
 export type QueryDataCubesArgs = {
+  dataSource: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
@@ -289,22 +310,26 @@ export type QueryDataCubesArgs = {
 
 
 export type QueryThemesArgs = {
+  dataSource: Scalars['String'];
   locale: Scalars['String'];
 };
 
 
 export type QuerySubthemesArgs = {
+  dataSource: Scalars['String'];
   locale: Scalars['String'];
   parentIri: Scalars['String'];
 };
 
 
 export type QueryOrganizationsArgs = {
+  dataSource: Scalars['String'];
   locale: Scalars['String'];
 };
 
 
 export type QueryDatasetcountArgs = {
+  dataSource: Scalars['String'];
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
@@ -335,6 +360,7 @@ export type TemporalDimension = Dimension & {
 
 
 export type TemporalDimensionValuesArgs = {
+  dataSource: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -496,10 +522,10 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;
-  observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, never>>;
-  dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
-  dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;
-  measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>;
+  observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, 'dataSource'>>;
+  dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionsArgs, 'dataSource'>>;
+  dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri' | 'dataSource'>>;
+  measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType, RequireFields<DataCubeMeasuresArgs, 'dataSource'>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -538,7 +564,7 @@ export type DimensionResolvers<ContextType = any, ParentType extends ResolversPa
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<DimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<DimensionValuesArgs, 'dataSource'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
 }>;
@@ -570,7 +596,7 @@ export type GeoCoordinatesDimensionResolvers<ContextType = any, ParentType exten
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, 'dataSource'>>;
   geoCoordinates?: Resolver<Maybe<Array<ResolversTypes['GeoCoordinates']>>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
@@ -588,7 +614,7 @@ export type GeoShapesDimensionResolvers<ContextType = any, ParentType extends Re
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, 'dataSource'>>;
   geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
@@ -612,7 +638,7 @@ export type MeasureResolvers<ContextType = any, ParentType extends ResolversPare
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, 'dataSource'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -625,7 +651,7 @@ export type NominalDimensionResolvers<ContextType = any, ParentType extends Reso
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, 'dataSource'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -657,20 +683,20 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalDimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalDimensionValuesArgs, 'dataSource'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
-  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'filters'>>;
-  dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
-  themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'locale'>>;
-  subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'locale' | 'parentIri'>>;
-  organizations?: Resolver<Array<ResolversTypes['DataCubeOrganization']>, ParentType, ContextType, RequireFields<QueryOrganizationsArgs, 'locale'>>;
-  datasetcount?: Resolver<Maybe<Array<ResolversTypes['DatasetCount']>>, ParentType, ContextType, RequireFields<QueryDatasetcountArgs, never>>;
+  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'dataSource' | 'iri' | 'latest'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'dataSource' | 'filters'>>;
+  dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, 'dataSource'>>;
+  themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'dataSource' | 'locale'>>;
+  subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'dataSource' | 'locale' | 'parentIri'>>;
+  organizations?: Resolver<Array<ResolversTypes['DataCubeOrganization']>, ParentType, ContextType, RequireFields<QueryOrganizationsArgs, 'dataSource' | 'locale'>>;
+  datasetcount?: Resolver<Maybe<Array<ResolversTypes['DatasetCount']>>, ParentType, ContextType, RequireFields<QueryDatasetcountArgs, 'dataSource'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -692,7 +718,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalDimensionValuesArgs, never>>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalDimensionValuesArgs, 'dataSource'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

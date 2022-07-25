@@ -3,6 +3,7 @@ import React, { memo } from "react";
 
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -25,10 +26,11 @@ export const ChartTableVisualization = ({
   dataSetIri: string;
   chartConfig: TableConfig;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
+      dataSource,
       locale,
       iri: dataSetIri,
       dimensions: null,

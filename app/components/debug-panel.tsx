@@ -4,6 +4,7 @@ import React from "react";
 import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { useDataSource } from "@/components/data-source-menu";
 import { useConfiguratorState } from "@/configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "@/domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
@@ -25,11 +26,13 @@ const DebugInteractiveFilters = () => {
 };
 
 const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      iri: datasetIri,
+      dataSource,
       locale: locale,
+      iri: datasetIri,
     },
   });
   return metadata ? (

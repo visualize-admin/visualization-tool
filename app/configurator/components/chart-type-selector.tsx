@@ -3,6 +3,7 @@ import { Box, ButtonBase, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import {
@@ -121,9 +122,10 @@ export const ChartTypeSelector = ({
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { dataSource, iri: state.dataSet, locale },
   });
 
   if (data?.dataCubeByIri) {

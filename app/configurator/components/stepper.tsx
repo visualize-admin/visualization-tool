@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Button, Typography } from "@mui/material";
 import React, { ReactNode, useCallback, useEffect } from "react";
 
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
 import {
@@ -134,9 +135,10 @@ export const StepperDumb = ({
 
 export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: dataSetIri ?? "", locale },
+    variables: { iri: dataSetIri ?? "", dataSource, locale },
   });
   const goNext = useCallback(() => {
     if (data?.dataCubeByIri) {

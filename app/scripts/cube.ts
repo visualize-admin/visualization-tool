@@ -22,6 +22,7 @@ type Args<T> = { client: Client; report: (x: any) => void } & T;
 
 type CubeQueryOptions = {
   iri: string;
+  dataSource: string;
   locale: string;
   latest?: boolean;
 };
@@ -29,6 +30,7 @@ type CubeQueryOptions = {
 const showCubeInfo = async ({
   client,
   iri,
+  dataSource,
   locale,
   latest,
   report,
@@ -36,6 +38,7 @@ const showCubeInfo = async ({
   const res = await client
     .query(DataCubeMetadataDocument, {
       iri,
+      dataSource,
       locale,
       latest,
     })
@@ -58,6 +61,7 @@ const showCubeInfo = async ({
 const showCubeComponents = async ({
   client,
   iri,
+  dataSource,
   locale,
   latest,
   report,
@@ -65,6 +69,7 @@ const showCubeComponents = async ({
   const res = await client
     .query(DataCubeMetadataWithComponentValuesDocument, {
       iri,
+      dataSource,
       locale,
       latest,
     })
@@ -80,6 +85,7 @@ const showCubeComponents = async ({
 const previewCube = async ({
   client,
   iri,
+  dataSource,
   locale,
   latest,
   report,
@@ -89,6 +95,7 @@ const previewCube = async ({
       DataCubeMetadataWithComponentValuesDocument,
       {
         iri,
+        dataSource,
         locale,
         latest,
       }
@@ -109,6 +116,7 @@ const previewCube = async ({
       DataCubePreviewObservationsDocument,
       {
         iri,
+        dataSource,
         locale,
         latest,
         measures: measures.map((m) => m.iri),
@@ -124,6 +132,12 @@ const previewCube = async ({
 };
 
 const main = async () => {
+  const dataSourceArg = {
+    argument: ["-l", "--dataSource"],
+    defaultValue: "RDF",
+    help: "DataSource",
+  };
+
   const localeArg = {
     argument: ["-l", "--locale"],
     defaultValue: "en",
@@ -153,17 +167,17 @@ const main = async () => {
   const commands = {
     info: {
       description: "Get info on the datacube",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [iriArg, dataSourceArg, localeArg, jsonArg, noLatestArg],
       handler: showCubeInfo,
     },
     preview: {
       description: "Preview observations on the datacube",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [iriArg, dataSourceArg, localeArg, jsonArg, noLatestArg],
       handler: previewCube,
     },
     components: {
       description: "Show cube components",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [iriArg, dataSourceArg, localeArg, jsonArg, noLatestArg],
       handler: showCubeComponents,
     },
   };

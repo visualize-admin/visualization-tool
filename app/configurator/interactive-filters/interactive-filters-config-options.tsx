@@ -4,6 +4,7 @@ import { extent } from "d3";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
 import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
+import { useDataSource } from "@/components/data-source-menu";
 import { Checkbox } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
@@ -38,10 +39,11 @@ export const InteractiveFiltersOptions = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   const { activeField } = state;
+  const [dataSource] = useDataSource();
   const locale = useLocale();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { iri: state.dataSet, dataSource, locale },
   });
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -140,11 +142,12 @@ const InteractiveTimeFilterOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const formatDateAuto = useFormatFullDateAuto();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { iri: state.dataSet, dataSource, locale },
   });
 
   // FIXME: this binds "time" to field "x"
@@ -246,9 +249,10 @@ const InteractiveDataFilterOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { iri: state.dataSet, dataSource, locale },
   });
   const { chartConfig } = state;
   if (data?.dataCubeByIri) {

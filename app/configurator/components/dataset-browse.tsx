@@ -24,6 +24,7 @@ import React, {
 import { UseQueryState } from "urql";
 
 import { BrowseParams } from "@/browser/dataset-browser";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MiniSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
@@ -147,13 +148,14 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
 };
 
 export const useBrowseState = () => {
-  const router = useRouter();
+  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
-    variables: { locale },
+    variables: { dataSource, locale },
   });
   const [{ data: orgData }] = useOrganizationsQuery({
-    variables: { locale },
+    variables: { dataSource, locale },
   });
 
   const setParams = useCallback(
@@ -607,9 +609,11 @@ export const Subthemes = ({
 }) => {
   const { includeDrafts } = useBrowseContext();
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
     variables: {
+      dataSource,
       locale,
       parentIri: termsetIri,
     },
@@ -774,13 +778,14 @@ const NavSection = ({
 };
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
-    variables: { locale },
+    variables: { dataSource, locale },
   });
   const [{ data: allOrgs }] = useOrganizationsQuery({
-    variables: { locale },
+    variables: { dataSource, locale },
   });
 
   const allCounts = useDatasetCount(filters, includeDrafts);

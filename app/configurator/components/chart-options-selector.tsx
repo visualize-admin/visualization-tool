@@ -12,6 +12,7 @@ import {
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
 import { useImputationNeeded } from "@/charts/shared/chart-helpers";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import {
@@ -64,9 +65,11 @@ export const ChartOptionsSelector = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeObservationsQuery({
     variables: {
+      dataSource,
       locale,
       iri: state.dataSet,
       dimensions: null,

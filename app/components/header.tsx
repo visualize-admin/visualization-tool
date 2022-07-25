@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 
+import { DataSourceMenu } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
 
@@ -92,11 +93,33 @@ export const Header = ({
           flexDirection: ["column", "row"],
         }}
       >
-        <LanguageMenu contentId={contentId} />
         <Logo />
+        <MetadataMenu />
       </Flex>
       <HeaderBorder />
     </Box>
+  );
+};
+
+const MetadataMenu = ({ contentId }: { contentId?: string }) => {
+  return (
+    <Flex
+      sx={{
+        flexDirection: ["row", "column"],
+        order: [1, 2],
+        justifyContent: ["flex-end", "flex-start"],
+        alignItems: ["center", "flex-end"],
+        gap: 3,
+        width: ["100%", "auto"],
+        height: ["30px", "auto"],
+        ml: [0, "auto"],
+        pr: [3, 0],
+        backgroundColor: ["grey.300", "transparent"],
+      }}
+    >
+      <LanguageMenu contentId={contentId} />
+      <DataSourceMenu />
+    </Flex>
   );
 };
 

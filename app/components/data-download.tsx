@@ -27,6 +27,7 @@ import React, {
 import { OperationResult, useClient } from "urql";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { useDataSource } from "@/components/data-source-menu";
 import { useLocale } from "@/src";
 
 import { Observation } from "../domain/data";
@@ -260,6 +261,7 @@ const DownloadMenuItem = ({
   dataSetIri: string;
   filters?: QueryFilters;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
@@ -306,6 +308,7 @@ const DownloadMenuItem = ({
           const result: OperationResult<DataCubeObservationsQuery> =
             await urqlClient
               .query(DataCubeObservationsDocument, {
+                dataSource,
                 locale,
                 iri: dataSetIri,
                 dimensions: null,

@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { ChartFiltersList } from "@/components/chart-filters-list";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -117,10 +118,16 @@ const DataFilter = ({
   const [state, dispatch] = useInteractiveFilters();
   const { dataFilters } = state;
 
+  const [dataSource] = useDataSource();
   const locale = useLocale();
 
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dataSource,
+      dimensionIri,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const setDataFilter = (e: SelectChangeEvent<unknown>) => {

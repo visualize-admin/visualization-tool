@@ -16,6 +16,7 @@ import {
   LegendColor,
 } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -44,9 +45,11 @@ export const ChartAreasVisualization = ({
   chartConfig: AreaConfig;
   queryFilters: QueryFilters;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
+      dataSource,
       locale,
       iri: dataSetIri,
       dimensions: null, // FIXME: Try to load less dimensions

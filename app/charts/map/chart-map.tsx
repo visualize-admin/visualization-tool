@@ -12,6 +12,7 @@ import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
+import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -47,13 +48,13 @@ export const ChartMapVisualization = ({
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
-
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
+      dataSource,
       locale,
       iri: dataSetIri,
       dimensions: null, // FIXME: Try to load less dimensions
@@ -70,6 +71,7 @@ export const ChartMapVisualization = ({
   const [{ data: fetchedGeoCoordinates }] =
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
+        dataSource,
         dataCubeIri: dataSetIri,
         dimensionIri: symbolDimensionIri,
         locale,
@@ -84,6 +86,7 @@ export const ChartMapVisualization = ({
 
   const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
     variables: {
+      dataSource,
       dataCubeIri: dataSetIri,
       dimensionIri: areaDimensionIri,
       locale,

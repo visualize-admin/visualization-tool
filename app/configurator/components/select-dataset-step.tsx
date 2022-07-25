@@ -7,6 +7,7 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
+import { useDataSource } from "@/components/data-source-menu";
 import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
@@ -51,6 +52,7 @@ export const formatBackLink = (
 };
 
 export const SelectDatasetStepContent = () => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
 
   const browseState = useBrowseContext();
@@ -67,6 +69,7 @@ export const SelectDatasetStepContent = () => {
   // Use the debounced query value here only!
   const [datacubesQuery] = useDataCubesQuery({
     variables: {
+      dataSource,
       locale,
       query: debouncedQuery,
       order,

@@ -4,6 +4,7 @@ import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
@@ -23,10 +24,10 @@ export const InteractiveFiltersConfigurator = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
-
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: { iri: state.dataSet, dataSource, locale },
   });
   const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
   const segmentDimensionIri = getFieldComponentIri(
