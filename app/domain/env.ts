@@ -33,6 +33,9 @@ export const SPARQL_GEO_ENDPOINT =
 export const SPARQL_EDITOR =
   clientEnv?.SPARQL_EDITOR ?? process.env.SPARQL_EDITOR;
 
+export const SQL_ENDPOINT =
+  clientEnv?.SQL_ENDPOINT ?? process.env.SQL_ENDPOINT ?? "";
+
 export const GRAPHQL_ENDPOINT =
   clientEnv?.GRAPHQL_ENDPOINT ?? process.env.GRAPHQL_ENDPOINT ?? "/api/graphql";
 

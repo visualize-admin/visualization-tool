@@ -17,6 +17,7 @@ export default async function clientEnvApi(
           SPARQL_EDITOR: process.env.SPARQL_EDITOR,
           SPARQL_ENDPOINT: process.env.SPARQL_ENDPOINT,
           SPARQL_GEO_ENDPOINT: process.env.SPARQL_GEO_ENDPOINT,
+          SQL_ENDPOINT: process.env.SQL_ENDPOINT,
           PUBLIC_URL: process.env.PUBLIC_URL,
           GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT,
         })}`;

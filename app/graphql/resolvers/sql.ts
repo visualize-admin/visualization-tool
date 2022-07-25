@@ -2,6 +2,7 @@ import { max, min } from "lodash";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { DimensionValue, Observation } from "@/domain/data";
+import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
   DataCubeResolvers,
@@ -11,7 +12,6 @@ import {
 } from "@/graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "@/graphql/shared-types";
 
-const SQL_ENDPOINT = "http://127.0.0.1:8000/";
 const fetchSQL = ({
   path,
   pathParams,
