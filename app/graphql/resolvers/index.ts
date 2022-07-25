@@ -1,0 +1,233 @@
+import { GraphQLJSONObject } from "graphql-type-json";
+import { topology } from "topojson-server";
+import { parse as parseWKT } from "wellknown";
+
+import { DataSource } from "@/components/data-source-menu";
+import {
+  DimensionValue,
+  GeoFeature,
+  GeoProperties,
+  GeoShapes,
+} from "@/domain/data";
+import {
+  DataCubeResolvers,
+  QueryResolvers,
+  Resolvers,
+} from "@/graphql/resolver-types";
+import * as RDF from "@/graphql/resolvers/rdf";
+import * as SQL from "@/graphql/resolvers/sql";
+import { ResolvedDimension } from "@/graphql/shared-types";
+import { getCubeDimensions, getSparqlEditorUrl } from "@/rdf/queries";
+import { RawGeoShape } from "@/rdf/query-geo-shapes";
+import { queryHierarchy } from "@/rdf/query-hierarchies";
+
+const getSource = (dataSource: DataSource) => {
+  return dataSource === "RDF" ? RDF : SQL;
+};
+
+export const Query: QueryResolvers = {
+  dataCubes: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.dataCubes(parent, args, context, info);
+  },
+  dataCubeByIri: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.dataCubeByIri(parent, args, context, info);
+  },
+  possibleFilters: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.possibleFilters(parent, args, context, info);
+  },
+  themes: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.themes(parent, args, context, info);
+  },
+  subthemes: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.subthemes(parent, args, context, info);
+  },
+  organizations: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.organizations(parent, args, context, info);
+  },
+  datasetcount: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.datasetcount(parent, args, context, info);
+  },
+};
+
+const DataCube: DataCubeResolvers = {
+  iri: ({ data: { iri } }) => iri,
+  title: ({ data: { title } }) => title,
+  publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
+  version: ({ data: { version } }) => version ?? null,
+  identifier: ({ data: { identifier } }) => identifier ?? null,
+  workExamples: ({ data: { workExamples } }) => workExamples ?? null,
+  publisher: ({ data: { publisher } }) => publisher ?? null,
+  contactName: ({ data: { contactPoint } }) => contactPoint?.name ?? null,
+  contactEmail: ({ data: { contactPoint } }) => contactPoint?.email ?? null,
+  landingPage: ({ data: { landingPage } }) => landingPage ?? null,
+  expires: ({ data: { expires } }) => expires ?? null,
+  description: ({ data: { description } }) => description ?? null,
+  datePublished: ({ data: { datePublished } }) => datePublished ?? null,
+  themes: ({ data: { themes } }) => themes || [],
+  creator: ({ data: { creator } }) => creator ?? null,
+  dimensions: async ({ cube, locale }) => {
+    const dimensions = await getCubeDimensions({
+      cube,
+      locale,
+    });
+    return dimensions.filter((d) => !d.data.isMeasureDimension);
+  },
+  measures: (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return source.dataCubeMeasures(parent, args, context, info);
+  },
+  dimensionByIri: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return source.dataCubeDimensionByIri(parent, args, context, info);
+  },
+  observations: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return source.dataCubeObservations(parent, args, context, info);
+  },
+};
+
+const mkDimensionResolvers = (debugName: string): Resolvers["Dimension"] => ({
+  // TODO: how to pass dataSource here? If it's possible, then we also could have
+  // different resolvers for RDF and SQL.
+  __resolveType({ data: { dataKind, scaleType } }) {
+    if (dataKind === "Time") {
+      return "TemporalDimension";
+    } else if (dataKind === "GeoCoordinates") {
+      return "GeoCoordinatesDimension";
+    } else if (dataKind === "GeoShape") {
+      return "GeoShapesDimension";
+    }
+    if (scaleType === "Ordinal") {
+      return "OrdinalDimension";
+    }
+    return "NominalDimension";
+  },
+  iri: ({ data: { iri } }: ResolvedDimension) => iri,
+  label: ({ data: { name } }: ResolvedDimension) => name,
+  related: ({ data: { related } }: ResolvedDimension) => related,
+  isNumerical: ({ data: { isNumerical } }: ResolvedDimension) => isNumerical,
+  isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
+    isKeyDimension,
+  unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
+  scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
+  hierarchy: ({ data: { iri } }: ResolvedDimension, _, _2, ctx) => {
+    return queryHierarchy(iri, ctx.variableValues.locale);
+  },
+  values: async (parent, args, context, info) => {
+    const source = getSource(args.dataSource as DataSource);
+    return await source.dimensionValues(parent, args, context, info);
+  },
+});
+
+export const resolvers: Resolvers = {
+  Filters: GraphQLJSONObject,
+  Observation: GraphQLJSONObject,
+  DimensionValue: GraphQLJSONObject,
+  RawObservation: GraphQLJSONObject,
+  Query,
+  DataCube,
+  DataCubeTheme: {
+    // Loads theme with dataloader if we need the label
+    label: async (parent, _, { loaders }) => {
+      if (!parent.label) {
+        const resolvedTheme = await loaders.themes.load(parent.iri);
+        return resolvedTheme.label;
+      }
+      return parent.label;
+    },
+  },
+  DataCubeOrganization: {
+    label: async (parent, _, { loaders }) => {
+      if (!parent.label) {
+        const resolvedTheme = await loaders.organizations.load(parent.iri);
+        return resolvedTheme.label;
+      }
+      return parent.label;
+    },
+  },
+  ObservationsQuery: {
+    data: async ({ data: { observations } }) => observations,
+    rawData: async ({ data: { observationsRaw } }) => observationsRaw,
+    sparql: async ({ data: { query } }) =>
+      query.replace(/\n+/g, " ").replace(/"/g, "'"),
+    sparqlEditorUrl: async ({ data: { query } }) =>
+      getSparqlEditorUrl({ query }),
+  },
+  Dimension: {
+    __resolveType({ data: { dataKind, scaleType } }) {
+      if (dataKind === "Time") {
+        return "TemporalDimension";
+      } else if (dataKind === "GeoCoordinates") {
+        return "GeoCoordinatesDimension";
+      } else if (dataKind === "GeoShape") {
+        return "GeoShapesDimension";
+      }
+      if (scaleType === "Ordinal") {
+        return "OrdinalDimension";
+      }
+      return "NominalDimension";
+    },
+  },
+  NominalDimension: {
+    ...mkDimensionResolvers("nominal"),
+  },
+  OrdinalDimension: {
+    ...mkDimensionResolvers("ordinal"),
+  },
+  TemporalDimension: {
+    ...mkDimensionResolvers("temporal"),
+    timeUnit: ({ data: { timeUnit } }) => timeUnit!,
+    timeFormat: ({ data: { timeFormat } }) => timeFormat!,
+  },
+  GeoCoordinatesDimension: {
+    ...mkDimensionResolvers("geocoordinates"),
+    geoCoordinates: async (parent, _, { loaders }) => {
+      return await loaders.geoCoordinates.load(parent);
+    },
+  },
+  GeoShapesDimension: {
+    ...mkDimensionResolvers("geoshapes"),
+    geoShapes: async (parent, _, { loaders }) => {
+      const dimValues = (await loaders.dimensionValues.load(
+        parent
+      )) as DimensionValue[];
+      const dimIris = dimValues.map((d) => `${d.value}`) as string[];
+      const shapes = (await loaders.geoShapes.loadMany(
+        dimIris
+      )) as RawGeoShape[];
+      const geoJSONFeatures = shapes
+        .filter(
+          (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+            d.wktString !== undefined
+        )
+        .map((d) => ({
+          type: "Feature",
+          properties: {
+            iri: d.iri,
+            label: d.label,
+            hierarchyLevel: d.level,
+          },
+          geometry: parseWKT(d.wktString),
+        })) as GeoFeature[];
+      const resolved: GeoShapes = {
+        topology: topology({
+          shapes: {
+            type: "FeatureCollection",
+            features: geoJSONFeatures,
+          } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+        }) as GeoShapes["topology"],
+      };
+      return resolved;
+    },
+  },
+  Measure: {
+    ...mkDimensionResolvers("measure"),
+  },
+};

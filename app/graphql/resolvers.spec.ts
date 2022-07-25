@@ -66,6 +66,7 @@ describe("possible filters", () => {
     const res = await Query?.possibleFilters?.(
       {},
       {
+        dataSource: "RDF",
         iri: "https://fake-iri",
         filters: {
           "https://fake-dimension-iri-1": { type: "single", value: 1 },
