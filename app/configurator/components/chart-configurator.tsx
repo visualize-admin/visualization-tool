@@ -6,7 +6,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Theme,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { isEmpty, isEqual, sortBy } from "lodash";
 import React, {
   useEffect,
@@ -375,6 +377,64 @@ const useFilterReorder = ({
   };
 };
 
+const useStyles = makeStyles<
+  Theme,
+  {
+    fetching: boolean;
+  }
+>((theme) => ({
+  filterSection: {
+    flexGrow: 1,
+  },
+  loadingIndicator: {
+    color: "hint.main",
+    display: "inline-block",
+    marginLeft: 1,
+  },
+  filtersContainer: {
+    "& > * + *": { marginTop: theme.spacing(3) },
+    marginBottom: 4,
+  },
+  filterRow: {
+    display: "flex",
+    justifyContent: "stretch",
+    "& .buttons": {
+      transition: "color 0.125s ease, opacity 0.125s ease-out",
+      opacity: 0.25,
+      color: "secondary.active",
+    },
+    ".buttons:hover": (props) =>
+      props.fetching
+        ? {}
+        : {
+            opacity: 1,
+          },
+  },
+  dragButtons: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexGrow: 0,
+    flexShrink: 0,
+    marginBottom: theme.spacing(-1),
+    marginLeft: theme.spacing(2),
+  },
+  addDimensionContainer: {
+    paddingLeft: theme.spacing(2),
+    "& .menu-button": {
+      background: "transparent",
+      border: 0,
+      padding: 0,
+    },
+  },
+  addDimensionButton: {
+    display: "flex",
+    minWidth: "auto",
+    justifyContent: "center",
+  },
+}));
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -403,6 +463,9 @@ export const ChartConfigurator = ({
   const fetching = possibleFiltersFetching || dataFetching;
 
   const filterMenuButtonRef = useRef(null);
+
+  const classes = useStyles({ fetching });
+
   if (data?.dataCubeByIri) {
     return (
       <>
@@ -421,13 +484,13 @@ export const ChartConfigurator = ({
             />
           </ControlSectionContent>
         </ControlSection>
-        <ControlSection sx={{ flexGrow: 1 }}>
+        <ControlSection className={classes.filterSection}>
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
                 size={12}
-                sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
+                className={classes.loadingIndicator}
               />
             ) : null}
           </SectionTitle>
@@ -438,7 +501,7 @@ export const ChartConfigurator = ({
                 {(provided) => (
                   <Box
                     {...provided.droppableProps}
-                    sx={{ "& > * + *": { mt: 3 }, mb: 4 }}
+                    className={classes.filtersContainer}
                     ref={provided.innerRef}
                   >
                     {filterDimensions.map((dimension, i) => (
@@ -454,23 +517,7 @@ export const ChartConfigurator = ({
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
                           >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "stretch",
-                                "& .buttons": {
-                                  transition:
-                                    "color 0.125s ease, opacity 0.125s ease-out",
-                                  opacity: 0.25,
-                                  color: "secondary.active",
-                                },
-                                ".buttons:hover": fetching
-                                  ? {}
-                                  : {
-                                      opacity: 1,
-                                    },
-                              }}
-                            >
+                            <Box className={classes.filterRow}>
                               <DataFilterSelectGeneric
                                 key={dimension.iri}
                                 dimension={dimension}
@@ -480,18 +527,7 @@ export const ChartConfigurator = ({
                                   handleRemoveDimensionFilter(dimension)
                                 }
                               />
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "flex-end",
-                                  flexGrow: 0,
-                                  flexShrink: 0,
-                                  mb: -1,
-                                  ml: 2,
-                                }}
-                              >
+                              <Box className={classes.dragButtons}>
                                 <MoveDragButtons
                                   moveUpButtonProps={{
                                     title: t({ id: "Move filter up" }),
@@ -524,25 +560,12 @@ export const ChartConfigurator = ({
               </Droppable>
             </DragDropContext>
             {addableDimensions.length > 0 ? (
-              <Box
-                sx={{
-                  pl: 2,
-                  "& .menu-button": {
-                    background: "transparent",
-                    border: 0,
-                    padding: 0,
-                  },
-                }}
-              >
+              <Box className={classes.addDimensionContainer}>
                 <Button
                   ref={filterMenuButtonRef}
                   onClick={openFilterMenu}
                   variant="contained"
-                  sx={{
-                    display: "flex",
-                    minWidth: "auto",
-                    justifyContent: "center",
-                  }}
+                  className={classes.addDimensionButton}
                   color="primary"
                 >
                   <Trans>Add filter</Trans>
