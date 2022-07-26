@@ -39,7 +39,12 @@ export const DataSetMetadata = ({
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data, fetching, error }] = useDataCubeMetadataQuery({
-    variables: { dataSource, iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const cube = data?.dataCubeByIri;
   const openDataLink = makeOpenDataLink(locale, cube);

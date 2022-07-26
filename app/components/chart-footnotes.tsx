@@ -39,16 +39,22 @@ export const ChartFootnotes = ({
   }, [configKey, locale]);
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { dataSource, iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
     variables: {
-      dataSource,
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null,
       filters,
     },

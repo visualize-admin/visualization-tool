@@ -14,7 +14,8 @@ const useDatasetCount = (
   const [dataSource] = useDataSource();
   const [{ data: datasetCounts }] = useDatasetCountQuery({
     variables: {
-      dataSource,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       includeDrafts,
       theme: filters.find(isAttrEqual("__typename", "DataCubeTheme"))?.iri,
       organization: filters.find(

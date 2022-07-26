@@ -308,9 +308,10 @@ const DownloadMenuItem = ({
           const result: OperationResult<DataCubeObservationsQuery> =
             await urqlClient
               .query(DataCubeObservationsDocument, {
-                dataSource,
-                locale,
                 iri: dataSetIri,
+                sourceType: dataSource.type,
+                sourceUrl: dataSource.url,
+                locale,
                 dimensions: null,
                 filters,
               })

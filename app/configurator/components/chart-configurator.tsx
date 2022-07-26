@@ -170,8 +170,9 @@ const useEnsurePossibleFilters = ({
         error,
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
-          dataSource,
           iri: state.dataSet,
+          sourceType: dataSource.type,
+          sourceUrl: dataSource.url,
           filters: unmappedFilters,
           filterKey: Object.keys(unmappedFilters).join(", "),
         })
@@ -232,8 +233,9 @@ export const ChartConfigurator = ({
 
   const variables = React.useMemo(
     () => ({
-      dataSource,
       iri: state.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       filters: unmappedFilters,
       // This is important for urql not to think that filters
@@ -245,9 +247,7 @@ export const ChartConfigurator = ({
     [state.dataSet, dataSource, locale, unmappedFilters]
   );
   const [{ data, fetching: dataFetching }, executeQuery] =
-    useDataCubeMetadataWithComponentValuesQuery({
-      variables: variables,
-    });
+    useDataCubeMetadataWithComponentValuesQuery({ variables });
   const metaData = data?.dataCubeByIri;
 
   const handleMove = useCallback(

@@ -69,7 +69,8 @@ export const SelectDatasetStepContent = () => {
   // Use the debounced query value here only!
   const [datacubesQuery] = useDataCubesQuery({
     variables: {
-      dataSource,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       query: debouncedQuery,
       order,

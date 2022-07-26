@@ -123,8 +123,9 @@ const DataFilter = ({
 
   const [{ data }] = useDimensionValuesQuery({
     variables: {
-      dataSource,
       dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       dataCubeIri: dataSetIri,
     },

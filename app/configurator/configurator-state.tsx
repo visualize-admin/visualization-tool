@@ -1045,9 +1045,10 @@ export const initChartStateFromCube = async (
     .query<DataCubeMetadataWithComponentValuesQuery>(
       DataCubeMetadataWithComponentValuesDocument,
       {
-        dataSource,
-        locale,
         iri: datasetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
       }
     )
     .toPromise();

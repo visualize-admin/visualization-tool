@@ -23,7 +23,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
-    variables: { dataSource, iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   if (metaData && metaData.dataCubeByIri) {

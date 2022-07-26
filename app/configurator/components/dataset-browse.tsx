@@ -152,10 +152,18 @@ export const useBrowseState = () => {
   const locale = useLocale();
   const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [{ data: orgData }] = useOrganizationsQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   const setParams = useCallback(
@@ -607,15 +615,15 @@ export const Subthemes = ({
   filters: BrowseFilter[];
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
-  const { includeDrafts } = useBrowseContext();
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
     variables: {
-      dataSource,
-      locale,
       parentIri: termsetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
     },
     pause: !termsetIri,
   });
@@ -782,10 +790,18 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [{ data: allOrgs }] = useOrganizationsQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   const allCounts = useDatasetCount(filters, includeDrafts);

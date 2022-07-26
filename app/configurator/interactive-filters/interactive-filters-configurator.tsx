@@ -27,7 +27,12 @@ export const InteractiveFiltersConfigurator = ({
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, dataSource, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
   const segmentDimensionIri = getFieldComponentIri(

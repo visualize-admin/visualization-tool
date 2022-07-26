@@ -125,7 +125,12 @@ export const ChartTypeSelector = ({
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { dataSource, iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   if (data?.dataCubeByIri) {

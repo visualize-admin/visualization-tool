@@ -54,9 +54,10 @@ export const ChartMapVisualization = ({
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      dataSource,
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },
@@ -71,8 +72,9 @@ export const ChartMapVisualization = ({
   const [{ data: fetchedGeoCoordinates }] =
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
-        dataSource,
         dataCubeIri: dataSetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         dimensionIri: symbolDimensionIri,
         locale,
       },
@@ -86,8 +88,9 @@ export const ChartMapVisualization = ({
 
   const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
     variables: {
-      dataSource,
       dataCubeIri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       dimensionIri: areaDimensionIri,
       locale,
     },

@@ -28,13 +28,16 @@ const DebugInteractiveFilters = () => {
 const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
   const [dataSource] = useDataSource();
   const locale = useLocale();
+
   const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      dataSource,
-      locale: locale,
       iri: datasetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale: locale,
     },
   });
+
   return metadata ? (
     <Stack direction="row" spacing={2}>
       <Icon name="column" display="inline" size={16} />

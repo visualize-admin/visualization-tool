@@ -66,8 +66,9 @@ describe("possible filters", () => {
     const res = await Query?.possibleFilters?.(
       {},
       {
-        dataSource: "RDF",
         iri: "https://fake-iri",
+        sourceType: "sparql",
+        sourceUrl: "https://fake-source.com/query",
         filters: {
           "https://fake-dimension-iri-1": { type: "single", value: 1 },
           "https://fake-dimension-iri-2": { type: "single", value: 2 },

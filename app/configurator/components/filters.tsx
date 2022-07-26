@@ -171,18 +171,26 @@ export const DimensionValuesMultiFilter = ({
   const classes = useStyles();
 
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const [{ fetching: fetchingHierarchy, data: hierarchyData }] =
     useDimensionHierarchyQuery({
       variables: {
         cubeIri: dataSetIri,
-        dataSource,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         locale,
         dimensionIri,
       },
     });
+
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
@@ -243,7 +251,13 @@ export const TimeFilter = ({
   );
 
   const [{ data }] = useTemporalDimensionValuesQuery({
-    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;
@@ -304,7 +318,13 @@ export const DimensionValuesSingleFilter = ({
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, dataSource, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;

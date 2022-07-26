@@ -64,7 +64,12 @@ export const ChartPublishedInner = ({
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
-    variables: { dataSource, iri: dataSet, locale },
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [isTablePreview] = useChartTablePreview();
 

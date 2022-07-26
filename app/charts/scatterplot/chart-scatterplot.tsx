@@ -54,9 +54,10 @@ export const ChartScatterplotVisualization = ({
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      dataSource,
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Other fields may also be measures
       filters: queryFilters,
     },

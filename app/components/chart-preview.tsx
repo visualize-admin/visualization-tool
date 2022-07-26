@@ -38,8 +38,14 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
   const [dataSource] = useDataSource();
   const locale = useLocale();
+
   const [{ data: metaData }] = useDataCubeMetadataQuery({
-    variables: { dataSource, iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [isTablePreview] = useChartTablePreview();
 

@@ -51,9 +51,10 @@ export const ChartLinesVisualization = ({
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      dataSource,
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },

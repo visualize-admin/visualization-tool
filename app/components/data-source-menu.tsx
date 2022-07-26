@@ -1,15 +1,43 @@
-import { Switch, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import {
   createContext,
   Dispatch,
   ReactNode,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
-import Flex from "@/components/flex";
+import { Select } from "@/components/form";
+import { Option } from "@/configurator";
 
-export type DataSource = "RDF" | "SQL";
+const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
+  {
+    value: "sparql+https://lindas.admin.ch/query",
+    label: "LINDAS PROD",
+    position: 2,
+  },
+  {
+    value: "sparql+https://int.lindas.admin.ch/query",
+    label: "LINDAS INT",
+    position: 1,
+  },
+];
+const TRUSTED_ENDPOINTS: string[] = TRUSTED_ENDPOINT_OPTIONS.map(
+  (d) => d.value
+);
+
+export type DataSourceType = "sparql" | "sql";
+
+export type DataSource = {
+  type: DataSourceType;
+  url: string;
+};
+
+const DEFAULT_DATA_SOURCE: DataSource = {
+  type: "sparql",
+  url: "https://lindas.admin.ch/query",
+};
 
 const DataSourceStateContext = createContext<
   [DataSource, Dispatch<DataSource>] | undefined
@@ -27,40 +55,72 @@ export const useDataSource = () => {
   return ctx;
 };
 
+const convertEndpointToSource = (endpoint: string): DataSource => {
+  const [type, url] = endpoint.split("+") as [DataSourceType, string];
+
+  return { type, url };
+};
+
+const convertSourceToEndpoint = (source: DataSource): string => {
+  const { type, url } = source;
+
+  return `${type}+${url}`;
+};
+
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useState<DataSource>("RDF");
+  const [source, setSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
+  const handleSourceChange = (source: DataSource) => {
+    localStorage.setItem("endpoint", convertSourceToEndpoint(source));
+    setSource(source);
+  };
+
+  const router = useRouter();
+  const endpoint = router.query.endpoint;
+
+  useEffect(() => {
+    const endpoint = localStorage.getItem("endpoint");
+
+    if (endpoint !== null && TRUSTED_ENDPOINTS.includes(endpoint)) {
+      setSource(convertEndpointToSource(endpoint));
+    } else {
+      localStorage.setItem(
+        "endpoint",
+        convertSourceToEndpoint(DEFAULT_DATA_SOURCE)
+      );
+    }
+  }, []);
+
+  if (endpoint !== undefined && !Array.isArray(endpoint)) {
+    const query = router.query;
+    delete query.endpoint;
+
+    router.push({ pathname: router.pathname, query }, undefined, {
+      shallow: true,
+    });
+
+    if (TRUSTED_ENDPOINTS.includes(endpoint)) {
+      handleSourceChange(convertEndpointToSource(endpoint));
+    }
+  }
 
   return (
-    <DataSourceStateContext.Provider value={[state, dispatch]}>
+    <DataSourceStateContext.Provider value={[source, handleSourceChange]}>
       {children}
     </DataSourceStateContext.Provider>
   );
 };
 
 export const DataSourceMenu = () => {
-  const [dataSource, setDataSource] = useDataSource();
-  const isRDF = dataSource === "RDF";
+  const [source, setSource] = useDataSource();
 
   return (
-    <Flex
-      sx={{
-        order: 3,
-        alignItems: "center",
-        gap: [1, 2],
-        "& > span": { transition: "opacity 0.5s ease" },
+    <Select
+      id="dataSourceSelect"
+      options={TRUSTED_ENDPOINT_OPTIONS}
+      value={convertSourceToEndpoint(source)}
+      onChange={(e) => {
+        setSource(convertEndpointToSource(e.target.value as string));
       }}
-    >
-      <Typography variant="tag" sx={{ opacity: isRDF ? 1 : 0.6 }}>
-        RDF
-      </Typography>
-      <Switch
-        checked={!isRDF}
-        sx={{ m: 0 }}
-        onChange={() => setDataSource(isRDF ? "SQL" : "RDF")}
-      />
-      <Typography variant="tag" sx={{ opacity: !isRDF ? 1 : 0.6 }}>
-        SQL
-      </Typography>
-    </Flex>
+    />
   );
 };

@@ -103,7 +103,8 @@ export const AreaLayerSettings = memo(
 
     const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
       variables: {
-        dataSource,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         locale,
         dataCubeIri: metaData.iri,
         dimensionIri: chartConfig.fields.areaLayer.componentIri,

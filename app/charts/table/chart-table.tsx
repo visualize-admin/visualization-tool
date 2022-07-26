@@ -28,11 +28,13 @@ export const ChartTableVisualization = ({
 }) => {
   const [dataSource] = useDataSource();
   const locale = useLocale();
+
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      dataSource,
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null,
       filters: chartConfig.filters,
     },

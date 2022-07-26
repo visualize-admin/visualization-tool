@@ -31,7 +31,12 @@ export const ChartConfiguratorTable = ({
   const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, dataSource, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   const metaData = data?.dataCubeByIri;

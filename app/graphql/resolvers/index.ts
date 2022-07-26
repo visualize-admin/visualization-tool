@@ -2,7 +2,7 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
-import { DataSource } from "@/components/data-source-menu";
+import { DataSourceType } from "@/components/data-source-menu";
 import {
   DimensionValue,
   GeoFeature,
@@ -21,37 +21,37 @@ import { getCubeDimensions, getSparqlEditorUrl } from "@/rdf/queries";
 import { RawGeoShape } from "@/rdf/query-geo-shapes";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 
-const getSource = (dataSource: DataSource) => {
-  return dataSource === "RDF" ? RDF : SQL;
+const getSource = (dataSourceType: string) => {
+  return dataSourceType === "sparql" ? RDF : SQL;
 };
 
 export const Query: QueryResolvers = {
   dataCubes: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.dataCubes(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.dataCubeByIri(parent, args, context, info);
   },
   possibleFilters: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.possibleFilters(parent, args, context, info);
   },
   themes: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.themes(parent, args, context, info);
   },
   subthemes: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.subthemes(parent, args, context, info);
   },
   organizations: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.organizations(parent, args, context, info);
   },
   datasetcount: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.datasetcount(parent, args, context, info);
   },
 };
@@ -80,15 +80,15 @@ const DataCube: DataCubeResolvers = {
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   },
   measures: (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return source.dataCubeMeasures(parent, args, context, info);
   },
   dimensionByIri: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return source.dataCubeDimensionByIri(parent, args, context, info);
   },
   observations: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return source.dataCubeObservations(parent, args, context, info);
   },
 };
@@ -121,7 +121,7 @@ const mkDimensionResolvers = (debugName: string): Resolvers["Dimension"] => ({
     return queryHierarchy(iri, ctx.variableValues.locale);
   },
   values: async (parent, args, context, info) => {
-    const source = getSource(args.dataSource as DataSource);
+    const source = getSource(args.sourceType as DataSourceType);
     return await source.dimensionValues(parent, args, context, info);
   },
 });

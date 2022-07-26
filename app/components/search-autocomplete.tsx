@@ -58,10 +58,18 @@ const SearchAutocomplete = (
   const { includeDrafts } = useBrowseContext();
   const counts = useDatasetCount([], includeDrafts);
   const [{ data: allThemes }] = useThemesQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [{ data: allOrgs }] = useOrganizationsQuery({
-    variables: { dataSource, locale },
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const allItems = useMemo(
     () =>

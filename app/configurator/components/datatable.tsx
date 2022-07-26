@@ -147,8 +147,9 @@ export const DataSetPreviewTable = ({
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
     variables: {
-      dataSource,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       dimensions: null,
     },
@@ -183,7 +184,8 @@ export const DataSetTable = ({
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
-      dataSource,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       dimensions: null,
       filters,

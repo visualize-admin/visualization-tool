@@ -20,7 +20,12 @@ export const ChartFiltersList = ({
   const timeFormatUnit = useTimeFormatUnit();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { dataSource, iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   const queryFilters = useQueryFilters({
