@@ -133,6 +133,12 @@ export type DimensionValuesArgs = {
 };
 
 
+export type DimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
 
 
 export type GeoCoordinates = {
@@ -165,6 +171,12 @@ export type GeoCoordinatesDimensionValuesArgs = {
 };
 
 
+export type GeoCoordinatesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
 export type GeoShapesDimension = Dimension & {
   __typename: 'GeoShapesDimension';
   iri: Scalars['String'];
@@ -184,6 +196,12 @@ export type GeoShapesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type GeoShapesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type HierarchyValue = {
@@ -216,6 +234,12 @@ export type MeasureValuesArgs = {
   filters?: Maybe<Scalars['Filters']>;
 };
 
+
+export type MeasureHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
 export type NominalDimension = Dimension & {
   __typename: 'NominalDimension';
   iri: Scalars['String'];
@@ -234,6 +258,12 @@ export type NominalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type NominalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -274,6 +304,12 @@ export type OrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type OrdinalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type Query = {
@@ -375,6 +411,12 @@ export type TemporalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type TemporalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -1137,7 +1179,7 @@ export const DimensionHierarchyDocument = gql`
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      hierarchy {
+      hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields

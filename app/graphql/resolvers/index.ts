@@ -2,7 +2,6 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
-import { DataSourceType } from "@/components/data-source-menu";
 import {
   DimensionValue,
   GeoFeature,
@@ -16,10 +15,8 @@ import {
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
-import { ResolvedDimension } from "@/graphql/shared-types";
-import { getCubeDimensions, getSparqlEditorUrl } from "@/rdf/queries";
+import { getSparqlEditorUrl } from "@/rdf/queries";
 import { RawGeoShape } from "@/rdf/query-geo-shapes";
-import { queryHierarchy } from "@/rdf/query-hierarchies";
 
 const getSource = (dataSourceType: string) => {
   return dataSourceType === "sparql" ? RDF : SQL;
@@ -27,31 +24,31 @@ const getSource = (dataSourceType: string) => {
 
 export const Query: QueryResolvers = {
   dataCubes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.dataCubes(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.dataCubeByIri(parent, args, context, info);
   },
   possibleFilters: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.possibleFilters(parent, args, context, info);
   },
   themes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.themes(parent, args, context, info);
   },
   subthemes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.subthemes(parent, args, context, info);
   },
   organizations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.organizations(parent, args, context, info);
   },
   datasetcount: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.datasetcount(parent, args, context, info);
   },
 };
@@ -72,23 +69,20 @@ const DataCube: DataCubeResolvers = {
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes || [],
   creator: ({ data: { creator } }) => creator ?? null,
-  dimensions: async ({ cube, locale }) => {
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-    });
-    return dimensions.filter((d) => !d.data.isMeasureDimension);
+  dimensions: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return source.dataCubeDimensions(parent, args, context, info);
   },
   measures: (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return source.dataCubeMeasures(parent, args, context, info);
   },
   dimensionByIri: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return source.dataCubeDimensionByIri(parent, args, context, info);
   },
   observations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return source.dataCubeObservations(parent, args, context, info);
   },
 };
@@ -109,19 +103,19 @@ const mkDimensionResolvers = (debugName: string): Resolvers["Dimension"] => ({
     }
     return "NominalDimension";
   },
-  iri: ({ data: { iri } }: ResolvedDimension) => iri,
-  label: ({ data: { name } }: ResolvedDimension) => name,
-  related: ({ data: { related } }: ResolvedDimension) => related,
-  isNumerical: ({ data: { isNumerical } }: ResolvedDimension) => isNumerical,
-  isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
-    isKeyDimension,
-  unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
-  scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
-  hierarchy: ({ data: { iri } }: ResolvedDimension, _, _2, ctx) => {
-    return queryHierarchy(iri, ctx.variableValues.locale);
+  iri: ({ data: { iri } }) => iri,
+  label: ({ data: { name } }) => name,
+  related: ({ data: { related } }) => related,
+  isNumerical: ({ data: { isNumerical } }) => isNumerical,
+  isKeyDimension: ({ data: { isKeyDimension } }) => isKeyDimension,
+  unit: ({ data: { unit } }) => unit ?? null,
+  scaleType: ({ data: { scaleType } }) => scaleType ?? null,
+  hierarchy: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.hierarchy(parent, args, context, info);
   },
   values: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType as DataSourceType);
+    const source = getSource(args.sourceType);
     return await source.dimensionValues(parent, args, context, info);
   },
 });

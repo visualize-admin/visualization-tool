@@ -138,6 +138,12 @@ export type DimensionValuesArgs = {
 };
 
 
+export type DimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
 
 
 export type GeoCoordinates = {
@@ -170,6 +176,12 @@ export type GeoCoordinatesDimensionValuesArgs = {
 };
 
 
+export type GeoCoordinatesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
 export type GeoShapesDimension = Dimension & {
   __typename?: 'GeoShapesDimension';
   iri: Scalars['String'];
@@ -189,6 +201,12 @@ export type GeoShapesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type GeoShapesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type HierarchyValue = {
@@ -221,6 +239,12 @@ export type MeasureValuesArgs = {
   filters?: Maybe<Scalars['Filters']>;
 };
 
+
+export type MeasureHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
 export type NominalDimension = Dimension & {
   __typename?: 'NominalDimension';
   iri: Scalars['String'];
@@ -239,6 +263,12 @@ export type NominalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type NominalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -279,6 +309,12 @@ export type OrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type OrdinalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type Query = {
@@ -380,6 +416,12 @@ export type TemporalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type TemporalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -584,7 +626,7 @@ export type DimensionResolvers<ContextType = any, ParentType extends ResolversPa
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<DimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<DimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
 }>;
 
 export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DimensionValue'], any> {
@@ -617,7 +659,7 @@ export type GeoCoordinatesDimensionResolvers<ContextType = any, ParentType exten
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   geoCoordinates?: Resolver<Maybe<Array<ResolversTypes['GeoCoordinates']>>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -635,7 +677,7 @@ export type GeoShapesDimensionResolvers<ContextType = any, ParentType extends Re
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<GeoShapesDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -658,7 +700,7 @@ export type MeasureResolvers<ContextType = any, ParentType extends ResolversPare
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<MeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -671,7 +713,7 @@ export type NominalDimensionResolvers<ContextType = any, ParentType extends Reso
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<NominalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -703,7 +745,7 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<OrdinalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -738,7 +780,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<TemporalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

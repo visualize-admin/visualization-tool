@@ -45,12 +45,10 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
-export const createSource = () =>
+export const createSource = ({ endpointUrl }: { endpointUrl?: string }) =>
   new Source({
-    endpointUrl: SPARQL_ENDPOINT,
+    endpointUrl: endpointUrl || SPARQL_ENDPOINT,
     queryOperation: "postUrlencoded",
-    // user: '',
-    // password: ''
   });
 
 const getLatestCube = async (cube: Cube): Promise<Cube> => {
@@ -133,14 +131,16 @@ const makeQueryFilter = (
 
 export const getCubes = async ({
   includeDrafts,
+  sourceUrl,
   locale,
   filters,
 }: {
   includeDrafts: boolean;
+  sourceUrl: string;
   locale: string;
   filters?: DataCubeSearchFilter[];
 }): Promise<ResolvedDataCube[]> => {
-  const source = createSource();
+  const source = createSource({ endpointUrl: sourceUrl });
 
   const themeQueryFilter = makeQueryFilter(
     ns.dcat.theme,
@@ -180,14 +180,16 @@ export const getCubes = async ({
 
 export const getCube = async ({
   iri,
+  sourceUrl,
   locale,
   latest = true,
 }: {
   iri: string;
+  sourceUrl: string;
   locale: string;
   latest?: boolean;
 }): Promise<ResolvedDataCube | null> => {
-  const source = createSource();
+  const source = createSource({ endpointUrl: sourceUrl });
 
   const cube = await source.cube(iri);
 

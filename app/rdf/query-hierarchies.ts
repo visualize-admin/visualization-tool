@@ -57,9 +57,10 @@ const toTree = (
 
 export const queryHierarchy = async (
   dimensionIri: string,
+  sourceUrl: string,
   locale: string
 ): Promise<HierarchyValue[]> => {
-  const source = createSource();
+  const source = createSource({ endpointUrl: sourceUrl });
 
   const cubeQuery = SELECT`?cube`.WHERE`
   ?cube ${ns.cube.observationConstraint} ?shape.

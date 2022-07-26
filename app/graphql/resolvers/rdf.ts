@@ -8,6 +8,7 @@ import {
   DataCubeResolvers,
   DataCubeResultOrder,
   ObservationFilter,
+  DimensionResolvers,
   QueryResolvers,
   Resolvers,
 } from "@/graphql/resolver-types";
@@ -31,6 +32,7 @@ import {
   queryDatasetCountByTheme,
 } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
+import { queryHierarchy } from "@/rdf/query-hierarchies";
 import cachedWithTTL from "@/utils/cached-with-ttl";
 import { makeCubeIndex as makeCubeIndexRaw, searchCubes } from "@/utils/search";
 import truthy from "@/utils/truthy";
@@ -39,15 +41,16 @@ const CUBES_CACHE_TTL = 60 * 1000;
 
 const getCubes = cachedWithTTL(
   rawGetCubes,
-  ({ filters, includeDrafts, locale }) =>
-    JSON.stringify({ filters, includeDrafts, locale }),
+  ({ filters, includeDrafts, sourceUrl, locale }) =>
+    JSON.stringify({ filters, includeDrafts, sourceUrl, locale }),
   CUBES_CACHE_TTL
 );
 
 const makeCubeIndex = cachedWithTTL(
-  async ({ filters, includeDrafts, locale }) => {
+  async ({ filters, includeDrafts, sourceUrl, locale }) => {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
+      sourceUrl,
       includeDrafts: includeDrafts ? true : false,
       filters: filters ? filters : undefined,
     });
@@ -81,14 +84,14 @@ const makeCubeIndex = cachedWithTTL(
       cubesByIri,
     };
   },
-  ({ filters, includeDrafts, locale }) =>
-    JSON.stringify({ filters, includeDrafts, locale }),
+  ({ filters, includeDrafts, sourceUrl, locale }) =>
+    JSON.stringify({ filters, includeDrafts, sourceUrl, locale }),
   CUBES_CACHE_TTL
 );
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
-  { locale, query, order, includeDrafts, filters }
+  { sourceUrl, locale, query, order, includeDrafts, filters }
 ) => {
   const sortResults = <T extends unknown[]>(
     results: T,
@@ -108,6 +111,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   if (query) {
     const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
       locale,
+      sourceUrl,
       query,
       order,
       includeDrafts,
@@ -120,6 +124,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   } else {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
+      sourceUrl,
       includeDrafts: includeDrafts ? true : false,
       filters: filters ? filters : undefined,
     });
@@ -136,13 +141,18 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
 };
 
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
-  async (_, { iri, locale, latest }) => {
-    return getCube({ iri, locale: parseLocaleString(locale), latest });
+  async (_, { iri, sourceUrl, locale, latest }) => {
+    return getCube({
+      iri,
+      sourceUrl,
+      locale: parseLocaleString(locale),
+      latest,
+    });
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
-  async (_, { iri, filters }) => {
-    const source = createSource();
+  async (_, { iri, sourceUrl, filters }) => {
+    const source = createSource({ endpointUrl: sourceUrl });
 
     const cube = await source.cube(iri);
     if (!cube) {
@@ -222,21 +232,13 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }) => {
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-    });
-
+    const dimensions = await getCubeDimensions({ cube, locale });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
   async ({ cube, locale }) => {
-    const dimensions = await getCubeDimensions({
-      cube,
-      locale,
-    });
-
+    const dimensions = await getCubeDimensions({ cube, locale });
     return dimensions.filter((d) => d.data.isMeasureDimension);
   };
 
@@ -321,6 +323,15 @@ const getDimensionValuesLoader = (
   } else {
     return loaders.dimensionValues;
   }
+};
+
+export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
+  { data: { iri } },
+  { sourceUrl },
+  context,
+  { variableValues: { locale } }
+) => {
+  return queryHierarchy(iri, sourceUrl, locale);
 };
 
 export const dimensionValues: NonNullable<

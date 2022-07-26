@@ -6,6 +6,7 @@ import { SQL_ENDPOINT } from "@/domain/env";
 import {
   DataCubePublicationStatus,
   DataCubeResolvers,
+  DimensionResolvers,
   QueryResolvers,
   Resolvers,
   TimeUnit,
@@ -197,6 +198,11 @@ export const dataCubeDimensionByIri: NonNullable<
 
   return null;
 };
+
+export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> =
+  async () => {
+    return [];
+  };
 
 // FIXME: should be a call to API (to be able to implement proper filtering)
 export const dimensionValues: NonNullable<

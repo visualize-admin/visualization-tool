@@ -416,7 +416,7 @@ query DimensionHierarchy(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      hierarchy {
+      hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
