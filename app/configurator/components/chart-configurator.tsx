@@ -456,8 +456,13 @@ const useStyles = makeStyles<
     marginBottom: 4,
   },
   filterRow: {
-    display: "flex",
-    justifyContent: "stretch",
+    display: "grid",
+    gridTemplateColumns: "auto min-content",
+    overflow: "hidden",
+    width: "100%",
+    gridColumnGap: theme.spacing(2),
+    gridTemplateRows: "min-content min-content",
+    gridTemplateAreas: '"description drag-button" "select drag-button"',
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
@@ -469,16 +474,19 @@ const useStyles = makeStyles<
         : {
             opacity: 1,
           },
+    "& > *": {
+      overflow: "hidden",
+    },
   },
   dragButtons: {
+    gridArea: "drag-button",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
     flexGrow: 0,
     flexShrink: 0,
-    marginBottom: theme.spacing(-1),
-    marginLeft: theme.spacing(2),
+    paddingBottom: "4px",
   },
   addDimensionContainer: {
     paddingLeft: theme.spacing(2),
