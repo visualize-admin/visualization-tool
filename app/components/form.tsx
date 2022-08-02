@@ -13,9 +13,12 @@ import {
   SelectProps,
   Typography,
   TextField,
+  ListSubheader,
+  MenuItem,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
+import { flatten } from "lodash";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 
 import Flex from "@/components/flex";
@@ -200,23 +203,19 @@ export const Select = ({
 
   const sortedOptions = useMemo(() => {
     if (optionGroups) {
-      return undefined;
+      return flatten(
+        optionGroups.map(
+          ([group, values]) =>
+            [
+              { type: "group", ...group },
+              ...getSelectOptions(values, sortOptions, locale),
+            ] as const
+        )
+      );
     } else {
       return getSelectOptions(options, sortOptions, locale);
     }
   }, [optionGroups, sortOptions, locale, options]);
-
-  const sortedGroups = useMemo(() => {
-    if (optionGroups) {
-      return optionGroups.map(
-        ([group, values]) =>
-          [group, getSelectOptions(values, sortOptions, locale)] as const
-      );
-    } else {
-      return undefined;
-    }
-  }, [optionGroups, sortOptions, locale]);
-
   return (
     <Box sx={{ color: "grey.700" }}>
       {label && (
@@ -226,7 +225,6 @@ export const Select = ({
         </Label>
       )}
       <MUISelect
-        native
         sx={{
           borderColor: "grey.500",
           backgroundColor: "grey.100",
@@ -242,31 +240,19 @@ export const Select = ({
         value={value}
         disabled={disabled}
       >
-        {optionGroups
-          ? sortedGroups!.map(([group, values]) => {
-              return (
-                <optgroup key={group?.value} label={group?.label}>
-                  {values.map((opt) => (
-                    <option
-                      key={opt.value}
-                      disabled={opt.disabled}
-                      value={opt.value ?? undefined}
-                    >
-                      {opt.label}
-                    </option>
-                  ))}
-                </optgroup>
-              );
-            })
-          : sortedOptions!.map((opt) => (
-              <option
-                key={opt.value}
-                disabled={opt.disabled}
-                value={opt.value ?? undefined}
-              >
-                {opt.label}
-              </option>
-            ))}
+        {sortedOptions.map((opt) => {
+          return opt.type === "group" ? (
+            <ListSubheader>{opt.label}</ListSubheader>
+          ) : (
+            <MenuItem
+              key={opt.value}
+              disabled={opt.disabled}
+              value={opt.value ?? undefined}
+            >
+              {opt.label}
+            </MenuItem>
+          );
+        })}
       </MUISelect>
     </Box>
   );
