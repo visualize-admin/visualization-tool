@@ -9,7 +9,8 @@ import {
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { isEmpty, isEqual, sortBy } from "lodash";
+import { groups } from "d3-array";
+import { isEmpty, isEqual, sortBy, uniqBy } from "lodash";
 import React, {
   useEffect,
   useRef,
@@ -33,6 +34,8 @@ import {
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   isMapConfig,
+  OptionGroup,
+  Option,
 } from "@/configurator";
 import {
   ControlSection,
@@ -59,14 +62,26 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
+  HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
+  useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+
+const asGroup = (
+  parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
+) => {
+  return {
+    label: parents.map((p) => p.label).join(" > "),
+    value: parents.map((p) => p.value).join("$"),
+  };
+};
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -80,6 +95,51 @@ const DataFilterSelectGeneric = ({
   disabled?: boolean;
   onRemove: () => void;
 }) => {
+  const [state] = useConfiguratorState(isConfiguring);
+  const cubeIri = state.dataSet;
+  const locale = useLocale();
+
+  const [hierarchyResp] = useDimensionHierarchyQuery({
+    variables: {
+      cubeIri: cubeIri,
+      dimensionIri: dimension.iri,
+      locale: locale,
+    },
+  });
+  const hierarchy =
+    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
+
+  const values = dimension.values;
+
+  const optionGroups = useMemo(() => {
+    const valueSet = new Set(values.map((v) => v.value));
+    console.log({ values });
+    if (hierarchy) {
+      const dimensionValues = uniqBy(
+        [
+          ...dfs(hierarchy, (node, { depth, parents }) => ({
+            node,
+            parents,
+            depth,
+          })),
+        ].filter(({ node }) => {
+          return valueSet.has(node.value);
+        }),
+        (x) => x.node.value
+      );
+      const byParents = groups(dimensionValues, (v) => v.parents);
+      return byParents.map(
+        ([parents, dfsRes]) =>
+          [asGroup(parents), dfsRes.map((d) => d.node)] as [
+            OptionGroup,
+            Option[]
+          ]
+      );
+    } else {
+      return undefined;
+    }
+  }, [hierarchy, values]);
+
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -105,19 +165,15 @@ const DataFilterSelectGeneric = ({
   let component: ReactElement;
   if (dimension.__typename === "TemporalDimension") {
     if (dimension.timeUnit === "Day") {
-      component = (
-        <DataFilterSelectDay {...sharedProps} options={dimension.values} />
-      );
+      component = <DataFilterSelectDay {...sharedProps} options={values} />;
     } else if (dimension.timeUnit === "Month") {
-      component = (
-        <DataFilterSelect {...sharedProps} options={dimension.values} />
-      );
+      component = <DataFilterSelect {...sharedProps} options={values} />;
     } else {
       component = (
         <DataFilterSelectTime
           {...sharedProps}
-          from={dimension.values[0].value}
-          to={dimension.values[1].value}
+          from={values[0].value}
+          to={values[1].value}
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
         />
@@ -125,7 +181,11 @@ const DataFilterSelectGeneric = ({
     }
   } else {
     component = (
-      <DataFilterSelect {...sharedProps} options={dimension.values} />
+      <DataFilterSelect
+        {...sharedProps}
+        options={values}
+        optionGroups={optionGroups}
+      />
     );
   }
 
@@ -387,9 +447,9 @@ const useStyles = makeStyles<
     flexGrow: 1,
   },
   loadingIndicator: {
-    color: "hint.main",
+    color: theme.palette.grey[700],
     display: "inline-block",
-    marginLeft: 1,
+    marginLeft: 8,
   },
   filtersContainer: {
     "& > * + *": { marginTop: theme.spacing(3) },

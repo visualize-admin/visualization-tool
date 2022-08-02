@@ -26,6 +26,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   Option,
+  OptionGroup,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
@@ -42,14 +43,9 @@ import {
 } from "@/configurator/config-form";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  DimensionMetaDataFragment,
-  TimeUnit,
-  useDimensionHierarchyQuery,
-} from "@/graphql/query-hooks";
+import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
-import { useLocale } from "@/src";
 import truthy from "@/utils/truthy";
 
 export const ControlTabField = ({
@@ -105,11 +101,6 @@ export const OnOffControlTabField = ({
   );
 };
 
-const useCubeIRI = () => {
-  const [chartConfig] = useConfiguratorState();
-  return chartConfig.dataSet;
-};
-
 export const DataFilterSelect = ({
   dimensionIri,
   label,
@@ -118,6 +109,7 @@ export const DataFilterSelect = ({
   disabled,
   isOptional,
   controls,
+  optionGroups,
 }: {
   dimensionIri: string;
   label: string;
@@ -126,6 +118,7 @@ export const DataFilterSelect = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
+  optionGroups?: [OptionGroup, Option[]][];
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -138,18 +131,6 @@ export const DataFilterSelect = ({
     id: "controls.select.optional",
     message: `optional`,
   });
-
-  const cubeIri = useCubeIRI();
-  const locale = useLocale();
-
-  const [hierarchy] = useDimensionHierarchyQuery({
-    variables: {
-      cubeIri: cubeIri!,
-      dimensionIri,
-      locale,
-    },
-  });
-
   const allOptions = useMemo(() => {
     return isOptional
       ? [
@@ -170,6 +151,7 @@ export const DataFilterSelect = ({
       disabled={disabled}
       options={allOptions}
       controls={controls}
+      optionGroups={optionGroups}
       {...fieldProps}
     />
   );

@@ -37,6 +37,8 @@ export type Option = {
   disabled?: boolean;
 };
 
+export type OptionGroup = $FixMe;
+
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "id" | "name" | "value" | "checked" | "type"

@@ -20,7 +20,7 @@ import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 
 import Flex from "@/components/flex";
 import VisuallyHidden from "@/components/visually-hidden";
-import { FieldProps, Option } from "@/configurator";
+import { FieldProps, Option, OptionGroup } from "@/configurator";
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -151,6 +151,32 @@ export const Checkbox = ({
   />
 );
 
+const getSelectOptions = (
+  options: Option[],
+  sortOptions: boolean,
+  locale: string
+) => {
+  const noneOptions = options.filter((o) => o.isNoneValue);
+  const restOptions = options.filter((o) => !o.isNoneValue);
+
+  if (sortOptions) {
+    restOptions.sort((a, b) => {
+      if (a.position !== undefined && b.position !== undefined) {
+        return a.position < b.position;
+      } else {
+        return a.label.localeCompare(b.label, locale);
+      }
+    });
+  }
+
+  return [...noneOptions, ...restOptions];
+};
+
+export type Group = {
+  label: string;
+  value: string;
+};
+
 export const Select = ({
   label,
   id,
@@ -160,6 +186,7 @@ export const Select = ({
   onChange,
   sortOptions = true,
   controls,
+  optionGroups,
 }: {
   id: string;
   options: Option[];
@@ -167,24 +194,28 @@ export const Select = ({
   disabled?: boolean;
   sortOptions?: boolean;
   controls?: React.ReactNode;
+  optionGroups?: [OptionGroup, Option[]][];
 } & SelectProps) => {
   const locale = useLocale();
+
   const sortedOptions = useMemo(() => {
-    const noneOptions = options.filter((o) => o.isNoneValue);
-    const restOptions = options.filter((o) => !o.isNoneValue);
-
-    if (sortOptions) {
-      restOptions.sort((a, b) => {
-        if (a.position !== undefined && b.position !== undefined) {
-          return a.position < b.position;
-        } else {
-          return a.label.localeCompare(b.label, locale);
-        }
-      });
+    if (optionGroups) {
+      return undefined;
+    } else {
+      return getSelectOptions(options, sortOptions, locale);
     }
+  }, [optionGroups, sortOptions, locale, options]);
 
-    return [...noneOptions, ...restOptions];
-  }, [options, locale, sortOptions]);
+  const sortedGroups = useMemo(() => {
+    if (optionGroups) {
+      return optionGroups.map(
+        ([group, values]) =>
+          [group, getSelectOptions(values, sortOptions, locale)] as const
+      );
+    } else {
+      return undefined;
+    }
+  }, [optionGroups, sortOptions, locale]);
 
   return (
     <Box sx={{ color: "grey.700" }}>
@@ -211,15 +242,31 @@ export const Select = ({
         value={value}
         disabled={disabled}
       >
-        {sortedOptions.map((opt) => (
-          <option
-            key={opt.value}
-            disabled={opt.disabled}
-            value={opt.value ?? undefined}
-          >
-            {opt.label}
-          </option>
-        ))}
+        {optionGroups
+          ? sortedGroups!.map(([group, values]) => {
+              return (
+                <optgroup key={group?.value} label={group?.label}>
+                  {values.map((opt) => (
+                    <option
+                      key={opt.value}
+                      disabled={opt.disabled}
+                      value={opt.value ?? undefined}
+                    >
+                      {opt.label}
+                    </option>
+                  ))}
+                </optgroup>
+              );
+            })
+          : sortedOptions!.map((opt) => (
+              <option
+                key={opt.value}
+                disabled={opt.disabled}
+                value={opt.value ?? undefined}
+              >
+                {opt.label}
+              </option>
+            ))}
       </MUISelect>
     </Box>
   );
