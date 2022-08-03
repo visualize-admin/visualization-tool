@@ -9,8 +9,7 @@ import {
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { groups } from "d3-array";
-import { isEmpty, isEqual, sortBy, uniqBy } from "lodash";
+import { isEmpty, isEqual, sortBy } from "lodash";
 import React, {
   useEffect,
   useRef,
@@ -66,13 +65,13 @@ import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
-  useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
-import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+
+import useHierarchyParents from "./use-hierarchy-parents";
 
 const asGroup = (
   parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
@@ -98,37 +97,13 @@ const DataFilterSelectGeneric = ({
   const [state] = useConfiguratorState(isConfiguring);
   const cubeIri = state.dataSet;
   const locale = useLocale();
-
-  const [hierarchyResp] = useDimensionHierarchyQuery({
-    variables: {
-      cubeIri: cubeIri,
-      dimensionIri: dimension.iri,
-      locale: locale,
-    },
-  });
-  const hierarchy =
-    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
+  const hierarchyParents = useHierarchyParents(cubeIri, dimension, locale);
 
   const values = dimension.values;
 
   const optionGroups = useMemo(() => {
-    const valueSet = new Set(values.map((v) => v.value));
-    console.log({ values });
-    if (hierarchy) {
-      const dimensionValues = uniqBy(
-        [
-          ...dfs(hierarchy, (node, { depth, parents }) => ({
-            node,
-            parents,
-            depth,
-          })),
-        ].filter(({ node }) => {
-          return valueSet.has(node.value);
-        }),
-        (x) => x.node.value
-      );
-      const byParents = groups(dimensionValues, (v) => v.parents);
-      return byParents.map(
+    if (hierarchyParents) {
+      return hierarchyParents.map(
         ([parents, dfsRes]) =>
           [asGroup(parents), dfsRes.map((d) => d.node)] as [
             OptionGroup,
@@ -138,7 +113,7 @@ const DataFilterSelectGeneric = ({
     } else {
       return undefined;
     }
-  }, [hierarchy, values]);
+  }, [hierarchyParents]);
 
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
