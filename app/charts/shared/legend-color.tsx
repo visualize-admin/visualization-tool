@@ -2,15 +2,6 @@ import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { memo, useMemo } from "react";
 
-import { AreasState } from "@/charts/area/areas-state";
-import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
-import { BarsState } from "@/charts/bar/bars-state";
-import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
-import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
-import { ColumnsState } from "@/charts/column/columns-state";
-import { LinesState } from "@/charts/line/lines-state";
-import { PieState } from "@/charts/pie/pie-state";
-import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import {
   ColorsChartState,
   useChartState,
@@ -66,16 +57,7 @@ export const InteractiveLegendColor = () => {
     return new Set(Object.keys(categories));
   }, [categories]);
 
-  const { colors } = useChartState() as
-    | BarsState
-    | GroupedBarsState
-    | ColumnsState
-    | StackedColumnsState
-    | GroupedColumnsState
-    | LinesState
-    | AreasState
-    | ScatterplotState
-    | PieState;
+  const { colors } = useChartState() as ColorsChartState;
 
   const setFilter = useEvent((item: string) => {
     if (activeInteractiveFilters.has(item)) {
