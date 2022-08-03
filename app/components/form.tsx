@@ -217,7 +217,7 @@ export const Select = ({
     }
   }, [optionGroups, sortOptions, locale, options]);
   return (
-    <Box sx={{ color: "grey.700" }}>
+    <Box>
       {label && (
         <Label htmlFor={id} smaller>
           {label}
@@ -226,11 +226,6 @@ export const Select = ({
       )}
       <MUISelect
         sx={{
-          borderColor: "grey.500",
-          backgroundColor: "grey.100",
-          pl: 0,
-          height: "40px",
-          color: disabled ? "grey.500" : "grey.700",
           textOverflow: "ellipsis",
           width: "100%",
         }}

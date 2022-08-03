@@ -521,6 +521,20 @@ theme.components = {
       },
     },
   },
+  MuiSelect: {
+    styleOverrides: {
+      select: {
+        boxSizing: "border-box",
+        height: "40px",
+        padding: "8px 14px",
+        color: "red",
+        textOverflow: "ellipsis",
+      },
+      disabled: {
+        color: theme.palette.grey[500],
+      },
+    },
+  },
   MuiSwitch: {
     styleOverrides: {
       root: {
