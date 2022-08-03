@@ -527,7 +527,7 @@ theme.components = {
         boxSizing: "border-box",
         height: "40px",
         padding: "8px 14px",
-        color: "red",
+        color: theme.palette.grey[700],
         textOverflow: "ellipsis",
       },
       disabled: {
