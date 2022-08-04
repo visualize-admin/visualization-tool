@@ -32,7 +32,7 @@ const useStyles = makeStyles<Theme>(() => ({
     alignItems: "flex-start",
     flexWrap: "wrap",
     minHeight: "20px",
-    gap: "0 1.5rem",
+    gap: "1rem 1.5rem",
     display: "grid",
     gridTemplateColumns: "repeat(3, 1fr)",
     gridTemplateRows: "repeat(4, auto)",

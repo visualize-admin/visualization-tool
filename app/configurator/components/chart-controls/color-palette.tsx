@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
-import { useSelect } from "downshift";
+import { Box, Button, Typography, Menu } from "@mui/material";
 import get from "lodash/get";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
@@ -18,6 +17,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
+import useEvent from "@/lib/use-event";
 
 type Props = {
   field: string;
@@ -49,43 +49,51 @@ export const ColorPalette = ({
   const currentPalette =
     palettes.find((p) => p.value === currentPaletteName) ?? palettes[0];
 
-  const {
-    isOpen,
-    getToggleButtonProps,
-    getLabelProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect({
-    items: palettes,
-    defaultSelectedItem: palettes[0], // Probably should use `selectedItem` here …
-    onSelectedItemChange: ({ selectedItem }) => {
-      if (selectedItem && component) {
-        dispatch({
-          type: "CHART_PALETTE_CHANGED",
-          value: {
-            field,
-            colorConfigPath,
-            palette: selectedItem.value,
-            colorMapping: mapColorsToComponentValuesIris({
-              palette: selectedItem.value,
-              component,
-            }),
-          },
-        });
-      }
-    },
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>();
+  const handleClickToggle: React.MouseEventHandler<HTMLButtonElement> =
+    useEvent((ev) => {
+      setAnchorEl(ev.currentTarget);
+    });
+
+  const handleCloseMenu = useEvent(() => {
+    setAnchorEl(undefined);
   });
+
+  const handleSelectPalette = useEvent((palette: typeof palettes[number]) => {
+    if (!component) {
+      return;
+    }
+    dispatch({
+      type: "CHART_PALETTE_CHANGED",
+      value: {
+        field,
+        colorConfigPath,
+        palette: palette.value,
+        colorMapping: mapColorsToComponentValuesIris({
+          palette: palette.value,
+          component,
+        }),
+      },
+    });
+  });
+
+  const paletteOpen = !!anchorEl;
 
   return (
     <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label disabled={disabled} smaller {...getLabelProps()}>
+      <Label smaller htmlFor="color-palette-toggle">
         <Trans id="controls.color.palette">Color Palette</Trans>
       </Label>
       <Button
+        id="color-palette-toggle"
         variant="selectColorPicker"
-        {...getToggleButtonProps()}
-        sx={{ cursor: "pointer" }}
+        onClick={handleClickToggle}
+        sx={{
+          cursor: "pointer",
+          width: "100%",
+          pr: 1,
+          "& svg": { color: "grey.600" },
+        }}
       >
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
@@ -96,28 +104,25 @@ export const ColorPalette = ({
         )}
         <Icon name="unfold" />
       </Button>
-      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
-        {isOpen &&
+      <Menu open={paletteOpen} anchorEl={anchorEl} onClose={handleCloseMenu}>
+        {paletteOpen &&
           palettes.map((palette, index) => (
             <Box
               key={`${palette.value}${index}`}
               sx={{
-                p: 1,
+                px: 2,
+                py: 1,
                 cursor: "pointer",
-                backgroundColor:
-                  highlightedIndex === index ? "grey.200" : "grey.100",
+                backgroundColor: "grey.100",
+                "&:hover": {
+                  backgroundColor: "grey.200",
+                },
               }}
             >
               <Typography component="div" variant="caption">
                 {palette.label}
               </Typography>
-              <Box
-                sx={{
-                  backgroundColor:
-                    highlightedIndex === index ? "grey.200" : "grey.100",
-                }}
-                {...getItemProps({ item: palette, index })}
-              >
+              <Box onClick={() => handleSelectPalette(palette)}>
                 {palette.colors.map((color) => (
                   <ColorSquare
                     key={`option-${color}`}
@@ -128,7 +133,7 @@ export const ColorPalette = ({
               </Box>
             </Box>
           ))}
-      </Box>
+      </Menu>
       {component && state.state === "CONFIGURING_CHART" && (
         <ColorPaletteReset
           field={field}
@@ -137,8 +142,6 @@ export const ColorPalette = ({
           colorConfigPath={colorConfigPath}
         />
       )}
-      {/* if you Tab from menu, focus goes on button, and it shouldn't. only happens here. */}
-      <div tabIndex={0} />
     </Box>
   );
 };
