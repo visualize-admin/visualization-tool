@@ -5,16 +5,16 @@ import {
   Box,
   Button,
   ClickAwayListener,
-  IconButton,
   Input,
   InputAdornment,
   Menu,
   Typography,
+  ListSubheader,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { groups } from "d3";
-import { get, keyBy, sortBy } from "lodash";
+import { get, keyBy, sortBy, groupBy } from "lodash";
 import React, {
   MouseEventHandler,
   useCallback,
@@ -50,14 +50,12 @@ import {
 import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcSearch from "@/icons/components/IcSearch";
-import SvgIcSettings from "@/icons/components/IcSettings";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
-import useDisclosure from "./use-disclosure";
 
 const useStyles = makeStyles(() => {
   return {
@@ -82,7 +80,11 @@ const useStyles = makeStyles(() => {
 });
 
 const AutocompletePopper = styled("div")(({ theme }) => ({
-  // TODO See how to remove the important
+  // The autocomplete styles the Popper and sets its width
+  // to its anchorEl width via the style attribute
+  // Since we cannot override the style attribute through
+  // componentsProps.popper yet, we have to use !important
+  // here
   width: "350px !important",
   [`& .${autocompleteClasses.paper}`]: {
     boxShadow: "none",
@@ -102,10 +104,8 @@ const AutocompletePopper = styled("div")(({ theme }) => ({
       gridColumnGap: "0.5rem",
       minHeight: "auto",
       alignItems: "flex-start",
-      padding: 8,
-      borderBottom: `1px solid  ${
-        theme.palette.mode === "light" ? " #eaecef" : "#30363d"
-      }`,
+      padding: "8px 16px",
+      borderBottom: `1px solid  ${theme.palette.divider}`,
       "& > *:nth-child(1), & > *:nth-child(3)": {
         // background: "green",
         marginTop: "0.375rem",
@@ -148,7 +148,7 @@ const DimensionValueTree = ({
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
   const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
 
-  const { options, byValue } = useMemo(() => {
+  const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = sortBy(
       dfs(tree, (node, { depth, parents }) => ({
         ...node,
@@ -156,36 +156,68 @@ const DimensionValueTree = ({
       })),
       (node) => node.parents.map((x) => x.label).join(" > ")
     );
-    const byValue = keyBy(flat, (x) => x.value);
-    return { options: sortBy(flat, groupByParent), byValue };
+    const optionsByValue = keyBy(flat, (x) => x.value);
+    const optionsByParent = groupBy(flat, groupByParent);
+    return {
+      options: sortBy(flat, groupByParent),
+      optionsByValue,
+      optionsByParent,
+    };
   }, [tree]);
 
-  const values = useMemo(() => {
-    return (
+  const { values, valueGroups } = useMemo(() => {
+    const values = (
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
       []
-    ).map((v) => byValue[v]);
-  }, [byValue, rawValues]);
+    ).map((v) => optionsByValue[v]);
+    const grouped = groups(values, groupByParent);
+    return {
+      values,
+      valueGroups: grouped,
+      valuesByParent: groupBy(values, groupByParent),
+    };
+  }, [optionsByValue, rawValues]);
 
   const handleSelect = useEvent((ev, newValues: typeof values) => {
     setPendingValues(newValues);
   });
 
-  const {
-    open: openAutocomplete,
-    close: closeAutocomplete,
-    isOpen: isAutocompleteOpen,
-  } = useDisclosure();
+  const pendingValuesByParent = useMemo(() => {
+    return groupBy(pendingValues, groupByParent);
+  }, [pendingValues]);
+
+  const hasSelectedAllGroup = useCallback(
+    (groupKey: string) => {
+      return (
+        pendingValuesByParent[groupKey]?.length >=
+        optionsByParent[groupKey]?.length
+      );
+    },
+    [pendingValuesByParent, optionsByParent]
+  );
+
+  const handleClickGroup = useEvent((groupLabel: string) => {
+    return setPendingValues((pendingValues) => {
+      if (hasSelectedAllGroup(groupLabel)) {
+        const toRemove = new Set(
+          optionsByParent[groupLabel].map((x) => x.value)
+        );
+        return pendingValues.filter((x) => !toRemove.has(x.value));
+      } else {
+        return [...pendingValues, ...optionsByParent[groupLabel]];
+      }
+    });
+  });
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenAutocomplete: MouseEventHandler<HTMLButtonElement> = useEvent(
     (ev) => {
       setPendingValues(values);
       setAnchorEl(ev.currentTarget);
-      openAutocomplete();
     }
   );
   const handleCloseAutocomplete = useEvent(() => {
+    setAnchorEl(undefined);
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
@@ -194,18 +226,19 @@ const DimensionValueTree = ({
       },
     });
     anchorEl?.focus();
-    setAnchorEl(undefined);
-    closeAutocomplete();
   });
-  const grouped = groups(values, groupByParent);
   return (
     <Box sx={{ position: "relative" }}>
       <Box color="grey.500" mb={4}>
+        <Button variant="inline" onClick={handleOpenAutocomplete}>
+          Select filters
+        </Button>
+        <Box component="span" mx={1}>
+          ·
+        </Box>
         <Button
           onClick={selectAll}
           variant="inline"
-          color="primary"
-          sx={{ typography: "body2", py: 1 }}
           disabled={activeKeys.size === allValues.length}
         >
           <Trans id="controls.filter.select.all">Select all</Trans>
@@ -216,15 +249,11 @@ const DimensionValueTree = ({
         <Button
           onClick={selectNone}
           variant="inline"
-          color="primary"
-          sx={{ typography: "body2" }}
           disabled={activeKeys.size === 0}
         >
           <Trans id="controls.filter.select.none">Select none</Trans>
         </Button>
-        <IconButton onClick={handleOpenAutocomplete}>
-          <SvgIcSettings />
-        </IconButton>
+
         <br />
         <Typography
           variant="body2"
@@ -237,10 +266,10 @@ const DimensionValueTree = ({
           </Trans>
         </Typography>
       </Box>
-      {grouped.map(([parentLabel, children]) => {
+      {valueGroups.map(([parentLabel, children]) => {
         return (
-          <Box sx={{ mb: 1 }} key={parentLabel}>
-            <Typography variant="h5" gutterBottom>
+          <Box sx={{ mb: 4 }} key={parentLabel}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
               {parentLabel}
             </Typography>
             {children.map((v) => {
@@ -262,12 +291,12 @@ const DimensionValueTree = ({
       <Menu open={!!anchorEl} anchorEl={anchorEl}>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <div>
-            <Box mx="1rem" mb={"0.5rem"}>
+            <Box mx="1rem" my={"0.5rem"}>
               <Typography variant="h5">
                 Select values to be displayed
               </Typography>
               <Typography variant="caption">
-                For best results, select no more than 7 values
+                For best results, do not select more than 7 values
               </Typography>
             </Box>
             <Autocomplete
@@ -281,6 +310,36 @@ const DimensionValueTree = ({
                 if (reason === "escape") {
                   handleCloseAutocomplete();
                 }
+              }}
+              renderGroup={(params) => {
+                return (
+                  <>
+                    {params.group ? (
+                      <ListSubheader
+                        sx={{
+                          minHeight: "3rem",
+                          py: "0.5rem",
+                          alignItems: "center",
+                          display: "grid",
+                          gridTemplateColumns: "auto max-content",
+                          pl: "2.25rem",
+                        }}
+                        key={params.key}
+                      >
+                        <span>{params.group}</span>
+                        <Button
+                          variant="text"
+                          onClick={() => handleClickGroup(params.group)}
+                        >
+                          {hasSelectedAllGroup(params.group)
+                            ? "Select none"
+                            : "Select all"}
+                        </Button>
+                      </ListSubheader>
+                    ) : null}
+                    {params.children}
+                  </>
+                );
               }}
               options={options}
               groupBy={groupByParent}
@@ -328,6 +387,29 @@ const DimensionValueTree = ({
                 </Box>
               )}
             />
+            <Box
+              sx={{
+                position: "sticky",
+                zIndex: 1000,
+                bottom: "0",
+                left: "0",
+                marginTop: "1rem",
+                right: "0",
+                padding: "1rem",
+                background: "rgba(255,255,255,0.75)",
+              }}
+            >
+              <Button
+                size="large"
+                sx={{
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+                onClick={handleCloseAutocomplete}
+              >
+                Apply
+              </Button>
+            </Box>
           </div>
         </ClickAwayListener>
       </Menu>
@@ -373,7 +455,6 @@ export const DimensionValuesMultiFilter = ({
           : null;
 
       const fullpath = `fields["segment"].${path}colorMapping["${value}"]`;
-      console.log(fullpath, chartConfig);
       const color = chartConfig ? get(chartConfig, fullpath) : null;
       return color;
     },
