@@ -34,7 +34,7 @@ const useStyles = makeStyles<Theme>(() => ({
     minHeight: "20px",
     gap: "0 1.5rem",
     display: "grid",
-    gridTemplateColumns: "repeat(4, auto)",
+    gridTemplateColumns: "repeat(3, 1fr)",
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
@@ -191,10 +191,10 @@ export const LegendColor = memo(function LegendColor({
             return (
               <div
                 className={classes.legendGroup}
-                key={g.map((n) => n.label).join(">")}
+                key={g.map((n) => n.label).join(" > ")}
               >
                 <Typography variant="h5" gutterBottom>
-                  {g.map((n) => n.label).join(">")}
+                  {g.map((n) => n.label).join(" > ")}
                 </Typography>
                 {colorValues.map((item, i) => (
                   <LegendItem

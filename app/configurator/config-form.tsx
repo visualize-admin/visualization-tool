@@ -387,6 +387,7 @@ const MultiFilterContext = React.createContext({
   dimensionIri: undefined as string | undefined,
   colorConfigPath: undefined as string | undefined,
   checkboxController: new CheckboxStateController([], []),
+  getValueColor: (value: string) => "" as string,
 });
 
 export const useMultiFilterContext = () => {
@@ -406,6 +407,7 @@ export const MultiFilterContextProvider = ({
   dimensionData,
   hierarchyData,
   children,
+  getValueColor,
 }: {
   dimensionIri: string;
   hierarchyData: GQLHierarchyValue[] | undefined;
@@ -414,6 +416,7 @@ export const MultiFilterContextProvider = ({
   >["dimensionByIri"];
   children: React.ReactNode;
   colorConfigPath?: string;
+  getValueColor: (value: string) => string;
 }) => {
   const [state] = useConfiguratorState();
 
@@ -450,9 +453,17 @@ export const MultiFilterContextProvider = ({
       activeKeys,
       dimensionIri,
       colorConfigPath,
+      getValueColor,
       checkboxController: new CheckboxStateController(tree, [...activeKeys]),
     };
-  }, [hierarchyData, allValues, activeKeys, dimensionIri, colorConfigPath]);
+  }, [
+    hierarchyData,
+    allValues,
+    dimensionIri,
+    activeKeys,
+    colorConfigPath,
+    getValueColor,
+  ]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>

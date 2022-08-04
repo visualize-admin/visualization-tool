@@ -1,8 +1,8 @@
 import { HierarchyValue } from "@/graphql/resolver-types";
 
-export const dfs = function* <T extends unknown>(
+export const dfs = function <T extends unknown>(
   tree: HierarchyValue[],
-  iterator: (
+  visitor: (
     node: HierarchyValue,
     { depth, parents }: { depth: number; parents: HierarchyValue[] }
   ) => T
@@ -14,10 +14,11 @@ export const dfs = function* <T extends unknown>(
       parents: [] as HierarchyValue[],
     })),
   ].reverse();
+  const res = [];
   while (q.length > 0) {
     const popped = q.pop()!;
     const { node, depth, parents } = popped;
-    yield iterator(node, { depth, parents });
+    res.push(visitor(node, { depth, parents }));
     const childrenParents = [...parents, node];
     if (node?.children && node.children.length > 0) {
       for (let child of node.children) {
@@ -25,4 +26,5 @@ export const dfs = function* <T extends unknown>(
       }
     }
   }
+  return res;
 };

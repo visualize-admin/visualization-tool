@@ -613,6 +613,7 @@ theme.components = {
       root: {
         color: theme.palette.grey[900],
         fontWeight: "bold",
+        lineHeight: 1.5,
         borderBottom: "1px solid",
         borderBottomColor: theme.palette.grey[500],
       },

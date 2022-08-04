@@ -226,7 +226,6 @@ export const Select = ({
       )}
       <MUISelect
         sx={{
-          textOverflow: "ellipsis",
           width: "100%",
         }}
         id={id}
