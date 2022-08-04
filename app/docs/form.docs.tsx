@@ -13,7 +13,6 @@ import {
   SearchField,
   Switch,
 } from "@/components/form";
-import SearchAutocomplete from "@/components/search-autocomplete";
 import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
@@ -186,27 +185,6 @@ ${(
         </BrowseStateProvider>
       </ReactSpecimen>
     )}
-
-
-  ## Search autocomplete
-
-  ${(
-    <ReactSpecimen span={2}>
-      <BrowseStateProvider>
-        <SearchAutocomplete
-          onSelectedItemChange={({ selectedItem }) => {
-            if (selectedItem?.__typename !== "FreeSearchItem") {
-              alert(
-                `You chose an organisation/theme : ${selectedItem?.label} (${selectedItem?.iri})`
-              );
-            } else {
-              alert(`You free searched: ${selectedItem?.text}`);
-            }
-          }}
-        />
-      </BrowseStateProvider>
-    </ReactSpecimen>
-  )}
 
   ## Date picker
 
