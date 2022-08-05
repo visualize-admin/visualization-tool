@@ -60,16 +60,16 @@ import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const useStyles = makeStyles(() => {
   return {
-    autocompleteHeader: {
-      margin: "1rem 1rem",
+    autocompleteMenuContent: {
+      "--mx": "1rem",
+      "--colorBoxSize": "0.75rem",
+      "--columnGap": "1rem",
     },
-    listItems: {
-      display: "grid",
-      // checkbox content, color picker
-      gridTemplateColumns: "1fr min-content",
+    autocompleteHeader: {
+      margin: "1rem var(--mx)",
     },
     autocompleteInputContainer: {
-      margin: "0 1rem 1rem",
+      margin: "0 var(--mx) 1rem",
     },
     autocompleteApplyButtonContainer: {
       position: "sticky",
@@ -78,7 +78,7 @@ const useStyles = makeStyles(() => {
       left: "0",
       marginTop: "1rem",
       right: "0",
-      padding: "1rem",
+      padding: "1rem var(--mx)",
       background: "rgba(255,255,255,0.75)",
     },
     autocompleteApplyButton: {
@@ -88,13 +88,15 @@ const useStyles = makeStyles(() => {
       width: "100%",
     },
     optionColor: {
+      marginLeft: "0.25rem",
       borderRadius: "3px",
-      width: 12,
-      height: 12,
+      width: "var(--colorBoxSize)",
+      height: "var(--colorBoxSize)",
     },
     listSubheader: {
       minHeight: "3rem",
-      padding: "0.5rem 1rem 0.5rem 2.5rem",
+      padding:
+        "0.5rem 1rem 0.5rem calc(var(--mx) + var(--colorBoxSize) + var(--columnGap))",
       alignItems: "center",
       display: "grid",
       gridTemplateColumns: "auto max-content",
@@ -103,7 +105,6 @@ const useStyles = makeStyles(() => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      gap: "1rem",
       marginBottom: "0.5rem",
     },
   };
@@ -121,18 +122,16 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
     margin: 0,
     color: "inherit",
     fontSize: theme.typography.body2.fontSize,
-    overflow: "scroll",
   },
   [`& .${autocompleteClasses.listbox}`]: {
     padding: 0,
     maxHeight: "max-content",
-    overflow: "scroll",
     [`& .${autocompleteClasses.option}`]: {
       display: "grid",
       // color box, label, cross icon
       gridTemplateColumns: "min-content 1fr min-content",
       gridTemplateRows: "auto",
-      gridColumnGap: "0.75rem",
+      gridColumnGap: "var(--columnGap)",
       minHeight: "auto",
       alignItems: "flex-start",
       padding: "8px 16px",
@@ -370,7 +369,7 @@ const MultiFilterContent = ({
       })}
       <Menu open={!!anchorEl} anchorEl={anchorEl}>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
-          <div>
+          <div className={classes.autocompleteMenuContent}>
             <Box className={classes.autocompleteHeader}>
               <Typography variant="h5">
                 Select values to be displayed
