@@ -177,6 +177,18 @@ const isDimensionOptionEqualToDimensionValue = (
   return option.value === value?.value;
 };
 
+const getOptionsFromTree = (tree: HierarchyValue[]) => {
+  return sortBy(
+    dfs(tree, (node, { depth, parents }) => ({
+      ...node,
+      parents,
+    })),
+    (node) => node.parents.map((x) => x.label).join(" > ")
+  );
+};
+
+type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
+
 const MultiFilterContent = ({
   tree,
   dimensionIri,
@@ -196,13 +208,7 @@ const MultiFilterContent = ({
   const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
-    const flat = sortBy(
-      dfs(tree, (node, { depth, parents }) => ({
-        ...node,
-        parents,
-      })),
-      (node) => node.parents.map((x) => x.label).join(" > ")
-    );
+    const flat = getOptionsFromTree(tree);
     const optionsByValue = keyBy(flat, (x) => x.value);
     const optionsByParent = groupBy(flat, groupByParent);
     return {
