@@ -61,7 +61,7 @@ import { ControlSectionSkeleton } from "./chart-controls/section";
 const useStyles = makeStyles(() => {
   return {
     autocompleteHeader: {
-      margin: "1rem 0.5rem",
+      margin: "1rem 1rem",
     },
     listItems: {
       display: "grid",
@@ -69,7 +69,7 @@ const useStyles = makeStyles(() => {
       gridTemplateColumns: "1fr min-content",
     },
     autocompleteInputContainer: {
-      margin: "0 0.75rem 1rem",
+      margin: "0 1rem 1rem",
     },
     autocompleteApplyButtonContainer: {
       position: "sticky",
@@ -94,7 +94,7 @@ const useStyles = makeStyles(() => {
     },
     listSubheader: {
       minHeight: "3rem",
-      padding: "0.5rem 0 0.5rem, 2.25rem",
+      padding: "0.5rem 1rem 0.5rem 2.5rem",
       alignItems: "center",
       display: "grid",
       gridTemplateColumns: "auto max-content",
@@ -129,18 +129,19 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
     overflow: "scroll",
     [`& .${autocompleteClasses.option}`]: {
       display: "grid",
+      // color box, label, cross icon
       gridTemplateColumns: "min-content 1fr min-content",
       gridTemplateRows: "auto",
-      gridColumnGap: "0.5rem",
+      gridColumnGap: "0.75rem",
       minHeight: "auto",
       alignItems: "flex-start",
       padding: "8px 16px",
       borderBottom: `1px solid  ${theme.palette.divider}`,
       "& > *:nth-child(1), & > *:nth-child(3)": {
-        // background: "green",
         marginTop: "0.375rem",
       },
       '&[aria-selected="true"]': {
+        // We can see the selection status via the color box + cross icon
         backgroundColor: "transparent",
       },
       [`&.${autocompleteClasses.focused}, &.${autocompleteClasses.focused}[aria-selected="true"]`]:
