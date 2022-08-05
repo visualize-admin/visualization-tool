@@ -1,25 +1,28 @@
 import { Trans } from "@lingui/macro";
 import {
-  Autocomplete,
   autocompleteClasses,
   Box,
   Button,
   ClickAwayListener,
   Input,
   InputAdornment,
-  Menu,
   Typography,
   ListSubheader,
   AutocompleteProps,
+  Popover,
+  Autocomplete,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { groups } from "d3";
 import { get, keyBy, sortBy, groupBy } from "lodash";
 import React, {
+  forwardRef,
   MouseEventHandler,
+  MutableRefObject,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -122,6 +125,7 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
     margin: 0,
     color: "inherit",
     fontSize: theme.typography.body2.fontSize,
+    padding: 0,
   },
   [`& .${autocompleteClasses.listbox}`]: {
     padding: 0,
@@ -200,7 +204,6 @@ const MultiFilterContent = ({
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const rawValues = config.chartConfig.filters[dimensionIri];
-  const [pendingValues, setPendingValues] = useState<typeof values>([]);
 
   const classes = useStyles();
 
@@ -244,47 +247,22 @@ const MultiFilterContent = ({
     });
   });
 
-  const handleSelect = useEvent((ev, newValues: typeof values) => {
-    setPendingValues(newValues);
-  });
-
-  const pendingValuesByParent = useMemo(() => {
-    return groupBy(pendingValues, groupByParent);
-  }, [pendingValues]);
-
-  const hasSelectedAllGroup = useCallback(
-    (groupKey: string) => {
-      return (
-        pendingValuesByParent[groupKey]?.length >=
-        optionsByParent[groupKey]?.length
-      );
-    },
-    [pendingValuesByParent, optionsByParent]
-  );
-
-  const handleClickGroup = useEvent((groupLabel: string) => {
-    return setPendingValues((pendingValues) => {
-      if (hasSelectedAllGroup(groupLabel)) {
-        const toRemove = new Set(
-          optionsByParent[groupLabel].map((x) => x.value)
-        );
-        return pendingValues.filter((x) => !toRemove.has(x.value));
-      } else {
-        return [...pendingValues, ...optionsByParent[groupLabel]];
-      }
-    });
-  });
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenAutocomplete: MouseEventHandler<HTMLButtonElement> = useEvent(
     (ev) => {
-      setPendingValues(values);
       setAnchorEl(ev.currentTarget);
     }
   );
+
+  // The popover content is responsible for keeping this ref up-to-date.
+  // This is so that the click-away close event can still access the pending values
+  // without the state changing (triggering a repositioning of the popover).
+  const pendingValuesRef = useRef<AutocompleteOption[]>([]);
   const handleCloseAutocomplete = useEvent(() => {
     setAnchorEl(undefined);
-    const newValues = pendingValues.map((x) => x?.value).filter(Boolean);
+    const newValues = pendingValuesRef.current
+      .map((x) => x?.value)
+      .filter(Boolean);
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
@@ -295,23 +273,6 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
-  const [inputValue, setInputValue] = useState("");
-  const handleInputChange: AutocompleteProps<
-    unknown,
-    true,
-    true,
-    true
-  >["onInputChange"] = useEvent((ev, value, reason) => {
-    // Do not let MUI reset the input on option selection
-    if (reason === "input") {
-      setInputValue(value);
-    }
-  });
-  const handleAutocompleteClose = useEvent((ev, reason) => {
-    if (reason === "escape") {
-      handleCloseAutocomplete();
-    }
-  });
   return (
     <Box sx={{ position: "relative" }}>
       <Box color="grey.500" mb={4}>
@@ -373,108 +334,193 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <Menu open={!!anchorEl} anchorEl={anchorEl}>
+      <Popover open={!!anchorEl} anchorEl={anchorEl}>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
-          <div className={classes.autocompleteMenuContent}>
-            <Box className={classes.autocompleteHeader}>
-              <Typography variant="h5">
-                Select values to be displayed
-              </Typography>
-              <Typography variant="caption">
-                For best results, do not select more than 7 values
-              </Typography>
-            </Box>
-            <Autocomplete
-              PopperComponent={AutocompletePopper}
-              value={pendingValues}
-              multiple
-              open
-              renderTags={() => null}
-              onChange={handleSelect}
-              onClose={handleAutocompleteClose}
-              renderGroup={(params) => {
-                return (
-                  <>
-                    {params.group ? (
-                      <ListSubheader
-                        className={classes.listSubheader}
-                        key={params.key}
-                      >
-                        <span>{params.group}</span>
-                        <Button
-                          variant="text"
-                          onClick={() => handleClickGroup(params.group)}
-                        >
-                          {hasSelectedAllGroup(params.group)
-                            ? "Select none"
-                            : "Select all"}
-                        </Button>
-                      </ListSubheader>
-                    ) : null}
-                    {params.children}
-                  </>
-                );
-              }}
-              options={options}
-              groupBy={groupByParent}
-              disableCloseOnSelect
-              inputValue={inputValue}
-              onInputChange={handleInputChange}
-              isOptionEqualToValue={isDimensionOptionEqualToDimensionValue}
-              renderOption={(props, option, { selected }) => {
-                return (
-                  <li {...props}>
-                    <Box
-                      className={classes.optionColor}
-                      sx={{
-                        visibility: selected ? "visible" : "hidden",
-                        background: getValueColor(option.value),
-                      }}
-                    />
-                    <Box>{option.label}</Box>
-                    <Box
-                      component={SvgIcClose}
-                      sx={{
-                        visibility: selected ? "visible" : "hidden",
-                        width: 32,
-                      }}
-                    />
-                  </li>
-                );
-              }}
-              renderInput={(params) => (
-                <Box className={classes.autocompleteInputContainer}>
-                  <Input
-                    className={classes.autocompleteInput}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <SvgIcSearch />
-                      </InputAdornment>
-                    }
-                    ref={params.InputProps.ref}
-                    inputProps={params.inputProps}
-                    autoFocus
-                    placeholder="Search"
-                  />
-                </Box>
-              )}
-            />
-            <Box className={classes.autocompleteApplyButtonContainer}>
-              <Button
-                size="large"
-                className={classes.autocompleteApplyButton}
-                fullWidth
-                onClick={handleCloseAutocomplete}
-              >
-                Apply
-              </Button>
-            </Box>
-          </div>
+          <PopoverContent
+            pendingValuesRef={pendingValuesRef}
+            options={options}
+            optionsByParent={optionsByParent}
+            onClose={handleCloseAutocomplete}
+            values={values}
+          />
         </ClickAwayListener>
-      </Menu>
+      </Popover>
     </Box>
   );
 };
+
+const PopoverContent = forwardRef<
+  HTMLDivElement,
+  {
+    optionsByParent: Record<string, AutocompleteOption[]>;
+    onClose: () => void;
+    options: AutocompleteOption[];
+    values: AutocompleteOption[];
+    pendingValuesRef: MutableRefObject<AutocompleteOption[]>;
+  }
+>(({ optionsByParent, onClose, values, options, pendingValuesRef }, ref) => {
+  const classes = useStyles();
+  const { getValueColor } = useMultiFilterContext();
+
+  const [inputValue, setInputValue] = useState("");
+  const [pendingValues, setPendingValues] = useState<AutocompleteOption[]>(
+    () => values
+  );
+  pendingValuesRef.current = pendingValues;
+  const handleSelect = useEvent((ev, newValues: AutocompleteOption[]) => {
+    setPendingValues(newValues);
+  });
+
+  const pendingValuesByParent = useMemo(() => {
+    return groupBy(pendingValues, groupByParent);
+  }, [pendingValues]);
+
+  const handleChangeInput: AutocompleteProps<
+    HierarchyValue,
+    true,
+    false,
+    false
+  >["onInputChange"] = useEvent((ev, value, reason) => {
+    if (reason === "input") {
+      setInputValue(value);
+    }
+  });
+  const hasSelectedAllGroup = useCallback(
+    (groupKey: string) => {
+      return (
+        pendingValuesByParent[groupKey]?.length >=
+        optionsByParent[groupKey]?.length
+      );
+    },
+    [pendingValuesByParent, optionsByParent]
+  );
+
+  const handleClickGroup = useEvent((groupLabel: string) => {
+    return setPendingValues((pendingValues) => {
+      if (hasSelectedAllGroup(groupLabel)) {
+        const toRemove = new Set(
+          optionsByParent[groupLabel].map((x) => x.value)
+        );
+        return pendingValues.filter((x) => !toRemove.has(x.value));
+      } else {
+        return [...pendingValues, ...optionsByParent[groupLabel]];
+      }
+    });
+  });
+
+  const handleAutocompleteClose = useEvent((ev, reason) => {
+    if (reason === "escape") {
+      onClose();
+    }
+  });
+
+  const renderInput = useCallback(
+    (params) => (
+      <Box className={classes.autocompleteInputContainer}>
+        <Input
+          className={classes.autocompleteInput}
+          startAdornment={
+            <InputAdornment position="start">
+              <SvgIcSearch />
+            </InputAdornment>
+          }
+          ref={params.InputProps.ref}
+          inputProps={params.inputProps}
+          autoFocus
+          placeholder="Search"
+        />
+      </Box>
+    ),
+    [classes.autocompleteInput, classes.autocompleteInputContainer]
+  );
+
+  const renderGroup = useCallback(
+    (params) => {
+      return (
+        <>
+          {params.group ? (
+            <ListSubheader className={classes.listSubheader} key={params.key}>
+              <span>{params.group}</span>
+              <Button
+                variant="text"
+                onClick={() => handleClickGroup(params.group)}
+              >
+                {hasSelectedAllGroup(params.group)
+                  ? "Select none"
+                  : "Select all"}
+              </Button>
+            </ListSubheader>
+          ) : null}
+          {params.children}
+        </>
+      );
+    },
+    [classes.listSubheader, handleClickGroup, hasSelectedAllGroup]
+  );
+
+  const renderOption = useCallback(
+    (props, option, { selected }) => {
+      return (
+        <li {...props}>
+          <Box
+            className={classes.optionColor}
+            sx={{
+              visibility: selected ? "visible" : "hidden",
+              background: getValueColor(option.value),
+            }}
+          />
+          <Box>{option.label}</Box>
+          <Box
+            component={SvgIcClose}
+            sx={{
+              visibility: selected ? "visible" : "hidden",
+              width: 32,
+            }}
+          />
+        </li>
+      );
+    },
+    [classes.optionColor, getValueColor]
+  );
+  return (
+    <div className={classes.autocompleteMenuContent} ref={ref}>
+      <Box className={classes.autocompleteHeader}>
+        <Typography variant="h5">Select values to be displayed</Typography>
+        <Typography variant="caption">
+          For best results, do not select more than 7 values
+        </Typography>
+      </Box>
+      <Autocomplete
+        PopperComponent={AutocompletePopper}
+        value={pendingValues}
+        multiple
+        open
+        renderTags={() => null}
+        onChange={handleSelect}
+        onClose={handleAutocompleteClose}
+        renderGroup={renderGroup}
+        options={options}
+        groupBy={groupByParent}
+        disableCloseOnSelect
+        isOptionEqualToValue={isDimensionOptionEqualToDimensionValue}
+        renderOption={renderOption}
+        renderInput={renderInput}
+        onInputChange={handleChangeInput}
+        inputValue={inputValue}
+      />
+      <Box className={classes.autocompleteApplyButtonContainer}>
+        <Button
+          size="large"
+          className={classes.autocompleteApplyButton}
+          fullWidth
+          onClick={onClose}
+        >
+          Apply
+        </Button>
+      </Box>
+    </div>
+  );
+});
 
 export const DimensionValuesMultiFilter = ({
   dataSetIri,
