@@ -10,6 +10,7 @@ import {
   Menu,
   Typography,
   ListSubheader,
+  AutocompleteProps,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -79,7 +80,7 @@ const useStyles = makeStyles(() => {
   };
 });
 
-const AutocompletePopper = styled("div")(({ theme }) => ({
+const AutocompletePopperStyled = styled("div")(({ theme }) => ({
   // The autocomplete styles the Popper and sets its width
   // to its anchorEl width via the style attribute
   // Since we cannot override the style attribute through
@@ -127,11 +128,20 @@ const AutocompletePopper = styled("div")(({ theme }) => ({
   },
 }));
 
-const groupByParent = (node: { parents: HierarchyValue[] }) => {
-  return node.parents.map((x) => x.label).join(" > ");
+const AutocompletePopper: AutocompleteProps<
+  unknown,
+  true,
+  true,
+  true
+>["PopperComponent"] = ({ disablePortal, anchorEl, open, ...rest }) => {
+  return <AutocompletePopperStyled {...rest} />;
 };
 
-const DimensionValueTree = ({
+const groupByParent = (node: { parents: HierarchyValue[] }) => {
+  return node?.parents.map((x) => x.label).join(" > ") || "";
+};
+
+const MultiFilterContent = ({
   tree,
   dimensionIri,
 }: {
@@ -142,7 +152,6 @@ const DimensionValueTree = ({
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const rawValues = config.chartConfig.filters[dimensionIri];
-  const locale = useLocale();
   const [pendingValues, setPendingValues] = useState<typeof values>([]);
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
@@ -284,6 +293,7 @@ const DimensionValueTree = ({
           </Trans>
         </Typography>
       </Box>
+
       {valueGroups.map(([parentLabel, children]) => {
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
@@ -488,7 +498,7 @@ export const DimensionValuesMultiFilter = ({
         colorConfigPath={colorConfigPath}
         getValueColor={getValueColor}
       >
-        <DimensionValueTree
+        <MultiFilterContent
           dimensionIri={dimensionIri}
           tree={
             hierarchyTree && hierarchyTree.length > 0

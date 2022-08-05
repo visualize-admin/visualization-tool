@@ -902,6 +902,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.segment.palette,
             dimensionValues: values.map((value) => ({ value })),
+            random: true,
           });
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
         }
