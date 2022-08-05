@@ -178,6 +178,19 @@ const DimensionValueTree = ({
     };
   }, [optionsByValue, rawValues]);
 
+  // Recomputes color palette making sure that used values
+  // are sorted first, so they have different colors
+  const handleRecomputeColorMapping = useEvent(() => {
+    const usedValues = new Set(values.map((v) => v.value));
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        dimensionIri,
+        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+      },
+    });
+  });
+
   const handleSelect = useEvent((ev, newValues: typeof values) => {
     setPendingValues(newValues);
   });
@@ -218,11 +231,12 @@ const DimensionValueTree = ({
   );
   const handleCloseAutocomplete = useEvent(() => {
     setAnchorEl(undefined);
+    const newValues = pendingValues.map((x) => x?.value).filter(Boolean);
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_MULTI",
       value: {
         dimensionIri,
-        values: pendingValues.map((x) => x?.value).filter(Boolean),
+        values: newValues,
       },
     });
     anchorEl?.focus();
@@ -230,6 +244,10 @@ const DimensionValueTree = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box color="grey.500" mb={4}>
+        <Button variant="inline" onClick={handleRecomputeColorMapping}>
+          Refresh colors
+        </Button>
+        <br />
         <Button variant="inline" onClick={handleOpenAutocomplete}>
           Select filters
         </Button>

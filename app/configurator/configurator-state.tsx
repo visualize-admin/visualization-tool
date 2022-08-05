@@ -28,6 +28,7 @@ import {
   isAreaConfig,
   isColumnConfig,
   isMapConfig,
+  isSegmentColorMappingInConfig,
   isSegmentInConfig,
 } from "@/configurator/config-types";
 import {
@@ -143,6 +144,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
+      value: { dimensionIri: string; values: string[] };
+    }
+  | {
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
       value: { dimensionIri: string; values: string[] };
     }
   | {
@@ -882,6 +887,23 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             type: "single",
             value,
           };
+        }
+      }
+      return draft;
+
+    case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, values } = action.value;
+        if (
+          isSegmentColorMappingInConfig(draft.chartConfig) &&
+          draft.chartConfig.fields.segment &&
+          draft.chartConfig.fields.segment.componentIri === dimensionIri
+        ) {
+          const colorMapping = mapValueIrisToColor({
+            palette: draft.chartConfig.fields.segment.palette,
+            dimensionValues: values.map((value) => ({ value })),
+          });
+          draft.chartConfig.fields.segment.colorMapping = colorMapping;
         }
       }
       return draft;
