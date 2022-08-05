@@ -60,22 +60,54 @@ import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const useStyles = makeStyles(() => {
   return {
+    autocompleteHeader: {
+      margin: "1rem 0.5rem",
+    },
     listItems: {
       display: "grid",
       // checkbox content, color picker
       gridTemplateColumns: "1fr min-content",
     },
+    autocompleteInputContainer: {
+      margin: "0 0.75rem 1rem",
+    },
+    autocompleteApplyButtonContainer: {
+      position: "sticky",
+      zIndex: 1000,
+      bottom: "0",
+      left: "0",
+      marginTop: "1rem",
+      right: "0",
+      padding: "1rem",
+      background: "rgba(255,255,255,0.75)",
+    },
+    autocompleteApplyButton: {
+      justifyContent: "center",
+    },
+    autocompleteInput: {
+      width: "100%",
+    },
+    optionColor: {
+      borderRadius: "3px",
+      width: 12,
+      height: 12,
+    },
+    listSubheader: {
+      minHeight: "3rem",
+      padding: "0.5rem 0 0.5rem, 2.25rem",
+      alignItems: "center",
+      display: "grid",
+      gridTemplateColumns: "auto max-content",
+    },
     withChildren: {
       marginLeft: "1.25rem",
     },
-    accordionSummary: {
-      display: "grid",
-      // checkbox content, color picker
-      gridTemplateColumns: "1fr min-content",
-      flexGrow: 1,
-    },
-    accordionContent: {
-      marginLeft: "0.5rem",
+    selectedValueRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "1rem",
+      marginBottom: "0.5rem",
     },
   };
 });
@@ -141,6 +173,13 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return node?.parents.map((x) => x.label).join(" > ") || "";
 };
 
+const isDimensionOptionEqualToDimensionValue = (
+  option: HierarchyValue,
+  value: HierarchyValue
+) => {
+  return option.value === value?.value;
+};
+
 const MultiFilterContent = ({
   tree,
   dimensionIri,
@@ -153,6 +192,8 @@ const MultiFilterContent = ({
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const rawValues = config.chartConfig.filters[dimensionIri];
   const [pendingValues, setPendingValues] = useState<typeof values>([]);
+
+  const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
   const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
@@ -250,6 +291,24 @@ const MultiFilterContent = ({
     });
     anchorEl?.focus();
   });
+
+  const [inputValue, setInputValue] = useState("");
+  const handleInputChange: AutocompleteProps<
+    unknown,
+    true,
+    true,
+    true
+  >["onInputChange"] = useEvent((ev, value, reason) => {
+    // Do not let MUI reset the input on option selection
+    if (reason === "input") {
+      setInputValue(value);
+    }
+  });
+  const handleAutocompleteClose = useEvent((ev, reason) => {
+    if (reason === "escape") {
+      handleCloseAutocomplete();
+    }
+  });
   return (
     <Box sx={{ position: "relative" }}>
       <Box color="grey.500" mb={4}>
@@ -302,12 +361,7 @@ const MultiFilterContent = ({
             </Typography>
             {children.map((v) => {
               return (
-                <Flex
-                  key={v.value}
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ gap: "1rem", marginBottom: "0.5rem" }}
-                >
+                <Flex key={v.value} className={classes.selectedValueRow}>
                   <Typography variant="body2">{v?.label}</Typography>
                   <MultiFilterFieldColorPicker value={v.value} />
                 </Flex>
@@ -319,7 +373,7 @@ const MultiFilterContent = ({
       <Menu open={!!anchorEl} anchorEl={anchorEl}>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <div>
-            <Box mx="1rem" my={"0.5rem"}>
+            <Box className={classes.autocompleteHeader}>
               <Typography variant="h5">
                 Select values to be displayed
               </Typography>
@@ -334,24 +388,13 @@ const MultiFilterContent = ({
               open
               renderTags={() => null}
               onChange={handleSelect}
-              onClose={(ev, reason) => {
-                if (reason === "escape") {
-                  handleCloseAutocomplete();
-                }
-              }}
+              onClose={handleAutocompleteClose}
               renderGroup={(params) => {
                 return (
                   <>
                     {params.group ? (
                       <ListSubheader
-                        sx={{
-                          minHeight: "3rem",
-                          py: "0.5rem",
-                          alignItems: "center",
-                          display: "grid",
-                          gridTemplateColumns: "auto max-content",
-                          pl: "2.25rem",
-                        }}
+                        className={classes.listSubheader}
                         key={params.key}
                       >
                         <span>{params.group}</span>
@@ -372,19 +415,17 @@ const MultiFilterContent = ({
               options={options}
               groupBy={groupByParent}
               disableCloseOnSelect
-              isOptionEqualToValue={(option, value) => {
-                return option.value === value?.value;
-              }}
+              inputValue={inputValue}
+              onInputChange={handleInputChange}
+              isOptionEqualToValue={isDimensionOptionEqualToDimensionValue}
               renderOption={(props, option, { selected }) => {
                 return (
                   <li {...props}>
                     <Box
+                      className={classes.optionColor}
                       sx={{
                         visibility: selected ? "visible" : "hidden",
-                        borderRadius: "3px",
                         background: getValueColor(option.value),
-                        width: 12,
-                        height: 12,
                       }}
                     />
                     <Box>{option.label}</Box>
@@ -399,9 +440,9 @@ const MultiFilterContent = ({
                 );
               }}
               renderInput={(params) => (
-                <Box sx={{ mb: "0.75rem", mx: "1rem" }}>
+                <Box className={classes.autocompleteInputContainer}>
                   <Input
-                    sx={{ width: "100%" }}
+                    className={classes.autocompleteInput}
                     startAdornment={
                       <InputAdornment position="start">
                         <SvgIcSearch />
@@ -415,24 +456,11 @@ const MultiFilterContent = ({
                 </Box>
               )}
             />
-            <Box
-              sx={{
-                position: "sticky",
-                zIndex: 1000,
-                bottom: "0",
-                left: "0",
-                marginTop: "1rem",
-                right: "0",
-                padding: "1rem",
-                background: "rgba(255,255,255,0.75)",
-              }}
-            >
+            <Box className={classes.autocompleteApplyButtonContainer}>
               <Button
                 size="large"
-                sx={{
-                  width: "100%",
-                  justifyContent: "center",
-                }}
+                className={classes.autocompleteApplyButton}
+                fullWidth
                 onClick={handleCloseAutocomplete}
               >
                 Apply
