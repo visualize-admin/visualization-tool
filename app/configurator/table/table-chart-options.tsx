@@ -25,7 +25,7 @@ import {
   getDefaultCategoricalPalette,
   getDefaultDivergingSteppedPalette,
   getIconName,
-  mapColorsToComponentValuesIris,
+  mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
 import {
@@ -262,9 +262,11 @@ export const TableColumnOptions = ({
                         type: "category",
                         textStyle: "regular",
                         palette: getDefaultCategoricalPalette().value,
-                        colorMapping: mapColorsToComponentValuesIris({
+                        colorMapping: mapValueIrisToColor({
                           palette: getDefaultCategoricalPalette().value,
-                          component: component as DimensionMetaDataFragment,
+                          dimensionValues: (
+                            component as DimensionMetaDataFragment
+                          )?.values,
                         }),
                       };
                     case "heatmap":

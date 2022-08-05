@@ -975,23 +975,22 @@ export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
 })) as SteppedPalette<SequentialPaletteType>[];
 
-export const mapColorsToComponentValuesIris = ({
+export const mapValueIrisToColor = ({
   palette,
-  component,
+  dimensionValues,
 }: {
   palette: string;
-  component: DimensionMetaDataFragment;
+  dimensionValues: DimensionMetaDataFragment["values"];
 }) => {
-  if (!("values" in component)) {
+  if (!dimensionValues) {
     return {};
   }
-
   const colorScale = scaleOrdinal()
-    .domain(component.values.map((dv) => dv.value))
+    .domain(dimensionValues.map((dv) => dv.value))
     .range(getPalette(palette));
   const colorMapping = {} as { [x: string]: string };
 
-  component.values.forEach((dv) => {
+  dimensionValues.forEach((dv) => {
     colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
   });
   return colorMapping;

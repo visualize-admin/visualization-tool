@@ -13,7 +13,7 @@ import {
   categoricalPalettes,
   divergingSteppedPalettes,
   getPalette,
-  mapColorsToComponentValuesIris,
+  mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -69,9 +69,9 @@ export const ColorPalette = ({
         field,
         colorConfigPath,
         palette: palette.value,
-        colorMapping: mapColorsToComponentValuesIris({
+        colorMapping: mapValueIrisToColor({
           palette: palette.value,
-          component,
+          dimensionValues: component.values,
         }),
       },
     });
@@ -211,9 +211,9 @@ const ColorPaletteReset = ({
         value: {
           field,
           colorConfigPath,
-          colorMapping: mapColorsToComponentValuesIris({
+          colorMapping: mapValueIrisToColor({
             palette,
-            component,
+            dimensionValues: component.values,
           }),
         },
       }),

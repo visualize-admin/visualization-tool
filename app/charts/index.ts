@@ -23,7 +23,7 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 
-import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
+import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
   getGeoDimensions,
@@ -172,9 +172,9 @@ export const getInitialConfig = ({
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
-            colorMapping: mapColorsToComponentValuesIris({
+            colorMapping: mapValueIrisToColor({
               palette: "category10",
-              component: getCategoricalDimensions(dimensions)[0],
+              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
         },
@@ -190,9 +190,9 @@ export const getInitialConfig = ({
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
-            colorMapping: mapColorsToComponentValuesIris({
+            colorMapping: mapValueIrisToColor({
               palette: "category10",
-              component: getCategoricalDimensions(dimensions)[0],
+              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
         },
@@ -965,11 +965,13 @@ const convertTableFieldsToSegmentField = ({
     return {
       componentIri,
       palette: "category10",
-      colorMapping: mapColorsToComponentValuesIris({
+      colorMapping: mapValueIrisToColor({
         palette: "category10",
-        component: dimensions.find(
-          (d) => d.iri === componentIri
-        ) as DimensionMetaDataFragment,
+        dimensionValues: (
+          dimensions.find(
+            (d) => d.iri === componentIri
+          ) as DimensionMetaDataFragment
+        )?.values,
       }),
     };
   }

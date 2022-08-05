@@ -21,7 +21,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
@@ -643,11 +643,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );
+            const selectedValues = component?.values.slice(0, 7) || [];
             const colorMapping =
-              component &&
-              mapColorsToComponentValuesIris({
+              component?.values &&
+              mapValueIrisToColor({
                 palette: "category10",
-                component,
+                dimensionValues: component?.values,
               });
 
             // FIXME: This should be more chart specific
@@ -656,9 +657,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               draft.chartConfig.filters[action.value.componentIri] = {
                 type: "multi",
                 values: Object.fromEntries(
-                  (component?.values.map((v) => v.value).slice(0, 7) || []).map(
-                    (x) => [x, true]
-                  )
+                  selectedValues.map((v) => v.value).map((x) => [x, true])
                 ),
               };
               draft.chartConfig.fields.segment = {
@@ -697,10 +696,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
             const colorMapping =
               component &&
-              mapColorsToComponentValuesIris({
+              mapValueIrisToColor({
                 palette:
                   draft.chartConfig.fields.segment.palette || "category10",
-                component,
+                dimensionValues: component?.values,
               });
 
             draft.chartConfig.fields.segment.componentIri =
