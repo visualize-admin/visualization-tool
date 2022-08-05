@@ -395,7 +395,7 @@ const PopoverContent = forwardRef<
     [pendingValuesByParent, optionsByParent]
   );
 
-  const handleClickGroup = useEvent((groupLabel: string) => {
+  const handleSelectGroup = useEvent((groupLabel: string) => {
     return setPendingValues((pendingValues) => {
       if (hasSelectedAllGroup(groupLabel)) {
         const toRemove = new Set(
@@ -443,11 +443,13 @@ const PopoverContent = forwardRef<
               <span>{params.group}</span>
               <Button
                 variant="text"
-                onClick={() => handleClickGroup(params.group)}
+                onClick={() => handleSelectGroup(params.group)}
               >
-                {hasSelectedAllGroup(params.group)
-                  ? "Select none"
-                  : "Select all"}
+                {hasSelectedAllGroup(params.group) ? (
+                  <Trans id="controls.filter.select.all">Select all</Trans>
+                ) : (
+                  <Trans id="controls.filter.select.none">Select none</Trans>
+                )}
               </Button>
             </ListSubheader>
           ) : null}
@@ -455,7 +457,7 @@ const PopoverContent = forwardRef<
         </>
       );
     },
-    [classes.listSubheader, handleClickGroup, hasSelectedAllGroup]
+    [classes.listSubheader, handleSelectGroup, hasSelectedAllGroup]
   );
 
   const renderOption = useCallback(
@@ -485,9 +487,15 @@ const PopoverContent = forwardRef<
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
       <Box className={classes.autocompleteHeader}>
-        <Typography variant="h5">Select values to be displayed</Typography>
+        <Typography variant="h5">
+          <Trans id="controls.select-values">
+            Select values to be displayed
+          </Trans>
+        </Typography>
         <Typography variant="caption">
-          For best results, do not select more than 7 values
+          <Trans id="controls.select-values-caption">
+            For best results, do not select more than 7 values
+          </Trans>
         </Typography>
       </Box>
       <Autocomplete
@@ -515,7 +523,7 @@ const PopoverContent = forwardRef<
           fullWidth
           onClick={onClose}
         >
-          Apply
+          <Trans id="controls.select-values-apply">Apply</Trans>
         </Button>
       </Box>
     </div>
