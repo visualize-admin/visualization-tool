@@ -653,6 +653,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             if (isSegmentInConfig(draft.chartConfig)) {
+              draft.chartConfig.filters[action.value.componentIri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  (component?.values.map((v) => v.value).slice(0, 7) || []).map(
+                    (x) => [x, true]
+                  )
+                ),
+              };
               draft.chartConfig.fields.segment = {
                 componentIri: action.value.componentIri,
                 palette: "category10",
