@@ -99,9 +99,6 @@ const useStyles = makeStyles(() => {
       display: "grid",
       gridTemplateColumns: "auto max-content",
     },
-    withChildren: {
-      marginLeft: "1.25rem",
-    },
     selectedValueRow: {
       display: "flex",
       justifyContent: "space-between",
