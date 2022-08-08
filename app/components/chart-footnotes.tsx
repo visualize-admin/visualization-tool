@@ -84,6 +84,20 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
+        {dataCubeByIri.landingPage && (
+          <Link
+            href={dataCubeByIri.landingPage}
+            underline="always"
+            target="_blank"
+            typography="caption"
+            color="grey.600"
+            sx={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
+          >
+            <Icon name="linkExternal" size={12} />
+            <Trans id="dataset.metadata.landingpage">Landing page</Trans>
+          </Link>
+        )}
+
         <Box
           sx={{
             mt: 2,
