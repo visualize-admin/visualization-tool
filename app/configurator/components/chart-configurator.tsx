@@ -461,9 +461,10 @@ const useStyles = makeStyles<
     justifyContent: "flex-end",
     flexGrow: 0,
     flexShrink: 0,
-    paddingBottom: "4px",
+    paddingBottom: 0,
   },
   addDimensionContainer: {
+    marginTop: "1rem",
     paddingLeft: theme.spacing(2),
     "& .menu-button": {
       background: "transparent",
