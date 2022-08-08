@@ -109,6 +109,7 @@ const useStyles = makeStyles(() => {
       justifyContent: "space-between",
       alignItems: "center",
       marginBottom: "0.5rem",
+      gap: "0.5rem",
     },
   };
 });
