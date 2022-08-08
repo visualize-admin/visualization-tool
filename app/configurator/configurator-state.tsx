@@ -54,6 +54,8 @@ import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
 
+export const DEFAULT_PALETTE = "category10";
+
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "STEP_NEXT"; dataSetMetadata: DataCubeMetadata }
@@ -655,7 +657,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             const colorMapping =
               component?.values &&
               mapValueIrisToColor({
-                palette: "category10",
+                palette: DEFAULT_PALETTE,
                 dimensionValues: component?.values,
               });
 
@@ -670,7 +672,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               };
               draft.chartConfig.fields.segment = {
                 componentIri: action.value.componentIri,
-                palette: "category10",
+                palette: DEFAULT_PALETTE,
                 // Type exists only within column charts.
                 ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
                 sorting: {
@@ -706,7 +708,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               component &&
               mapValueIrisToColor({
                 palette:
-                  draft.chartConfig.fields.segment.palette || "category10",
+                  draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
                 dimensionValues: component?.values,
               });
 

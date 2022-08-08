@@ -8,6 +8,7 @@ import { Label } from "@/components/form";
 import {
   ConfiguratorStateConfiguringChart,
   useConfiguratorState,
+  DEFAULT_PALETTE,
 } from "@/configurator";
 import {
   categoricalPalettes,
@@ -194,7 +195,7 @@ const ColorPaletteReset = ({
     `chartConfig.fields["${field}"].${
       colorConfigPath ? `${colorConfigPath}.` : ""
     }palette`,
-    "category10"
+    DEFAULT_PALETTE
   ) as string;
 
   const colorMapping = get(

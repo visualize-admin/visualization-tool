@@ -22,6 +22,7 @@ import {
   TableColumn,
   TableFields,
 } from "@/configurator/config-types";
+import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -171,9 +172,9 @@ export const getInitialConfig = ({
           },
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: "category10",
+            palette: DEFAULT_PALETTE,
             colorMapping: mapValueIrisToColor({
-              palette: "category10",
+              palette: DEFAULT_PALETTE,
               dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
@@ -188,10 +189,10 @@ export const getInitialConfig = ({
           y: { componentIri: measures[0].iri },
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: "category10",
+            palette: DEFAULT_PALETTE,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
-              palette: "category10",
+              palette: DEFAULT_PALETTE,
               dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
@@ -964,9 +965,9 @@ const convertTableFieldsToSegmentField = ({
 
     return {
       componentIri,
-      palette: "category10",
+      palette: DEFAULT_PALETTE,
       colorMapping: mapValueIrisToColor({
-        palette: "category10",
+        palette: DEFAULT_PALETTE,
         dimensionValues: (
           dimensions.find(
             (d) => d.iri === componentIri
