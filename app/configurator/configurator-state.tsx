@@ -79,6 +79,7 @@ export type ConfiguratorStateAction =
         field: string;
         componentIri: string;
         dataSetMetadata: DataCubeMetadata;
+        selectedValues?: $FixMe[];
       };
     }
   | {
@@ -648,7 +649,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );
-            const selectedValues = component?.values.slice(0, 7) || [];
+            const selectedValues = action.value.selectedValues
+              ? action.value.selectedValues
+              : component?.values.slice(0, 7) || [];
             const colorMapping =
               component?.values &&
               mapValueIrisToColor({
