@@ -223,6 +223,9 @@ export const parseCubeDimension = ({
     ? units?.get(unitTerm.value)?.label?.value
     : undefined;
 
+  const rawOrder = dim.out(ns.sh.order).value;
+  const order = rawOrder !== undefined ? parseInt(rawOrder, 10) : undefined;
+
   return {
     cube,
     dimension: dim,
@@ -239,6 +242,7 @@ export const parseCubeDimension = ({
       unit: dimensionUnit,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
+      order: order,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
         ? "Time"
         : dataKindTerm?.equals(ns.schema.GeoCoordinates)
