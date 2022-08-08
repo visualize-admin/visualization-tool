@@ -447,9 +447,9 @@ const PopoverContent = forwardRef<
                 onClick={() => handleSelectGroup(params.group)}
               >
                 {hasSelectedAllGroup(params.group) ? (
-                  <Trans id="controls.filter.select.all">Select all</Trans>
-                ) : (
                   <Trans id="controls.filter.select.none">Select none</Trans>
+                ) : (
+                  <Trans id="controls.filter.select.all">Select all</Trans>
                 )}
               </Button>
             </ListSubheader>
