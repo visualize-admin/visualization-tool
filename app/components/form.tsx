@@ -247,12 +247,15 @@ export const MiniSelect = ({
       sx={{
         borderColor: "transparent",
         fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+        lineHeight: "normal !important",
 
         backgroundColor: "transparent",
-        py: 0,
+        p: 0,
         pl: 1,
-        pr: 4,
         mr: 1, // Fix for Chrome which cuts of the label otherwise
+        "& > select": {
+          p: 0,
+        },
         ":focus": {
           outline: "none",
           borderColor: "primary.main",
