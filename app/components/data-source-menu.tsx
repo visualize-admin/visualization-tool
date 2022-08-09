@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import {
   createContext,
   Dispatch,
@@ -74,9 +73,6 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
     setSource(source);
   };
 
-  const router = useRouter();
-  const endpoint = router.query.endpoint;
-
   useEffect(() => {
     const endpoint = localStorage.getItem("endpoint");
 
@@ -89,19 +85,6 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
       );
     }
   }, []);
-
-  if (endpoint !== undefined && !Array.isArray(endpoint)) {
-    const query = router.query;
-    delete query.endpoint;
-
-    router.push({ pathname: router.pathname, query }, undefined, {
-      shallow: true,
-    });
-
-    if (TRUSTED_ENDPOINTS.includes(endpoint)) {
-      handleSourceChange(convertEndpointToSource(endpoint));
-    }
-  }
 
   return (
     <DataSourceStateContext.Provider value={[source, handleSourceChange]}>
