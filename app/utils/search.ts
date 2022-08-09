@@ -1,3 +1,10 @@
+/**
+ * Cube search functionality implemented inside the app server.
+ * This should be removed when we use directly the full-text search
+ * capabilities from Stardog.
+ * @see https://github.com/visualize-admin/visualization-tool/pull/611
+ */
+
 import { flatten } from "lodash";
 import lunr from "lunr";
 
@@ -113,7 +120,7 @@ export const makeCubeIndex = (cubesData: ResolvedDataCube["data"][]) => {
   return idx;
 };
 
-export const searchCubes = (
+export const searchCubesFromIndex = (
   idx: lunr.Index,
   rawSearchTerm: string,
   cubesByIri: Record<string, ResolvedDataCube>

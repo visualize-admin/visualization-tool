@@ -36,8 +36,12 @@ import {
 } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
+import { searchCubes } from "@/rdf/query-search";
 import cachedWithTTL from "@/utils/cached-with-ttl";
-import { makeCubeIndex as makeCubeIndexRaw, searchCubes } from "@/utils/search";
+import {
+  makeCubeIndex as makeCubeIndexRaw,
+  searchCubesFromIndex,
+} from "@/utils/search";
 import truthy from "@/utils/truthy";
 
 const CUBES_CACHE_TTL = 60 * 1000;
@@ -112,7 +116,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   { setup },
   info
 ) => {
-  const { sparqlClient } = await setup(info);
+  const { sparqlClient, sparqlClientStream } = await setup(info);
   const sortResults = <T extends unknown[]>(
     results: T,
     getter: (d: T[number]) => ResolvedDataCube["data"]
@@ -128,34 +132,46 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     }
   };
 
-  if (query) {
-    const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
+  let candidates: ReturnType<typeof searchCubesFromIndex>;
+  if (process.env.USE_SPARQL_SEARCH) {
+    candidates = await searchCubes({
       locale,
-      sourceUrl,
       includeDrafts,
       filters,
       sparqlClient,
+      query,
+      sparqlClientStream,
     });
-    const candidates = searchCubes(cubesIndex, query, cubesByIri);
     sortResults(candidates, (x) => x.dataCube.data);
-
     return candidates;
   } else {
-    const cubes = await getCubes({
-      locale: parseLocaleString(locale),
-      sourceUrl,
-      includeDrafts: includeDrafts ? true : false,
-      filters: filters ? filters : undefined,
-    });
+    if (query) {
+      const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
+        locale,
+        includeDrafts,
+        filters,
+        sourceUrl,
+        sparqlClient,
+      });
+      candidates = searchCubesFromIndex(cubesIndex, query, cubesByIri);
+      sortResults(candidates, (x) => x.dataCube.data);
+      return candidates;
+    } else {
+      const cubes = await getCubes({
+        locale: parseLocaleString(locale),
+        includeDrafts: includeDrafts ? true : false,
+        filters: filters ? filters : undefined,
+        sourceUrl,
+      });
 
-    const dataCubeCandidates = cubes.map(({ data }) => data);
-    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
-    sortResults(dataCubeCandidates, (x) => x);
-
-    return dataCubeCandidates.map(({ iri }) => {
-      const cube = cubesByIri[iri];
-      return { dataCube: cube };
-    });
+      const dataCubeCandidates = cubes.map(({ data }) => data);
+      const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+      sortResults(dataCubeCandidates, (x) => x);
+      return dataCubeCandidates.map(({ iri }) => {
+        const cube = cubesByIri[iri];
+        return { dataCube: cube };
+      });
+    }
   }
 };
 
