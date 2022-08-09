@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   autocompleteClasses,
   Box,
@@ -9,8 +9,11 @@ import {
   Typography,
   ListSubheader,
   AutocompleteProps,
-  Popover,
   Autocomplete,
+  Divider,
+  Drawer as MuiDrawer,
+  Theme,
+  IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -52,6 +55,7 @@ import {
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { dfs } from "@/lib/dfs";
@@ -61,18 +65,31 @@ import { valueComparator } from "@/utils/sorting-values";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
-const useStyles = makeStyles(() => {
+const Drawer = styled(MuiDrawer)(({ theme }) => ({
+  "& .MuiPaper-root": {
+    top: 152,
+    bottom: 0,
+    height: "auto",
+    borderLeft: `1px ${theme.palette.divider} solid`,
+    borderTop: `1px ${theme.palette.divider} solid`,
+  },
+}));
+
+const useStyles = makeStyles((theme: Theme) => {
   return {
     autocompleteMenuContent: {
       "--mx": "1rem",
-      "--colorBoxSize": "0.75rem",
-      "--columnGap": "1rem",
+      "--colorBoxSize": "1.25rem",
+      "--columnGap": "0.75rem",
+      width: 320,
     },
     autocompleteHeader: {
       margin: "1rem var(--mx)",
     },
     autocompleteInputContainer: {
-      margin: "0 var(--mx) 1rem",
+      margin: "0 var(--mx) 0rem",
+      paddingBottom: "1rem",
+      borderBottom: `1px solid ${theme.palette.divider}`,
     },
     autocompleteApplyButtonContainer: {
       position: "sticky",
@@ -91,18 +108,30 @@ const useStyles = makeStyles(() => {
       width: "100%",
     },
     optionColor: {
-      marginLeft: "0.25rem",
-      borderRadius: "3px",
+      borderRadius: "4px",
       width: "var(--colorBoxSize)",
       height: "var(--colorBoxSize)",
+      boxSizing: "border-box",
+      border: `1px solid ${theme.palette.divider}`,
+      transition: "background-color 0.125s ease-out",
     },
     listSubheader: {
       minHeight: "3rem",
-      padding:
-        "0.5rem 1rem 0.5rem calc(var(--mx) + var(--colorBoxSize) + var(--columnGap))",
+      padding: "0.5rem 0rem",
+      margin: "0.5rem 1rem",
       alignItems: "center",
-      display: "grid",
-      gridTemplateColumns: "auto max-content",
+      gridTemplateRows: "auto min-content",
+      border: `1px solid ${theme.palette.divider}`,
+      borderWidth: "1px 0 1px 0",
+      "& button": {
+        padding: 0,
+        minHeight: "auto",
+      },
+
+      "&:before, &:after": {
+        display: "block",
+        content: "' '",
+      },
     },
     selectedValueRow: {
       display: "flex",
@@ -120,7 +149,7 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
   // Since we cannot override the style attribute through
   // componentsProps.popper yet, we have to use !important
   // here
-  width: "350px !important",
+  width: "100% !important",
   [`& .${autocompleteClasses.paper}`]: {
     boxShadow: "none",
     margin: 0,
@@ -129,23 +158,19 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
     padding: 0,
   },
   [`& .${autocompleteClasses.listbox}`]: {
-    padding: 0,
     maxHeight: "max-content",
     [`& .${autocompleteClasses.option}`]: {
       display: "grid",
-      // color box, label, cross icon
+      // color box, label, selected icon
       gridTemplateColumns: "min-content 1fr min-content",
       gridTemplateRows: "auto",
       gridColumnGap: "var(--columnGap)",
       minHeight: "auto",
       alignItems: "flex-start",
       padding: "8px 16px",
-      borderBottom: `1px solid  ${theme.palette.divider}`,
-      "& > *:nth-child(1), & > *:nth-child(3)": {
-        marginTop: "0.375rem",
-      },
+
       '&[aria-selected="true"]': {
-        // We can see the selection status via the color box + cross icon
+        // We can see the selection status via the color box + selected icon
         backgroundColor: "transparent",
       },
       [`&.${autocompleteClasses.focused}, &.${autocompleteClasses.focused}[aria-selected="true"]`]:
@@ -235,19 +260,6 @@ const MultiFilterContent = ({
     };
   }, [optionsByValue, rawValues]);
 
-  // Recomputes color palette making sure that used values
-  // are sorted first, so they have different colors
-  const handleRecomputeColorMapping = useEvent(() => {
-    const usedValues = new Set(values.map((v) => v.value));
-    dispatch({
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        dimensionIri,
-        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
-      },
-    });
-  });
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenAutocomplete: MouseEventHandler<HTMLButtonElement> = useEvent(
     (ev) => {
@@ -276,46 +288,55 @@ const MultiFilterContent = ({
 
   return (
     <Box sx={{ position: "relative" }}>
-      <Box color="grey.500" mb={4}>
-        <Button variant="inline" onClick={handleRecomputeColorMapping}>
-          Refresh colors
-        </Button>
-        <br />
-        <Button variant="inline" onClick={handleOpenAutocomplete}>
-          Select filters
-        </Button>
-        <Box component="span" mx={1}>
-          ·
-        </Box>
-        <Button
-          onClick={selectAll}
-          variant="inline"
-          disabled={activeKeys.size === allValues.length}
-        >
-          <Trans id="controls.filter.select.all">Select all</Trans>
-        </Button>
-        <Box component="span" mx={1}>
-          ·
-        </Box>
-        <Button
-          onClick={selectNone}
-          variant="inline"
-          disabled={activeKeys.size === 0}
-        >
-          <Trans id="controls.filter.select.none">Select none</Trans>
-        </Button>
+      <Box mb={4}>
+        <Flex justifyContent="space-between">
+          <Flex gap="0.75rem">
+            <Button
+              onClick={selectAll}
+              variant="inline"
+              disabled={activeKeys.size === allValues.length}
+            >
+              <Trans id="controls.filter.select.all">Select all</Trans>
+            </Button>
+            <Button
+              onClick={selectNone}
+              variant="inline"
+              disabled={activeKeys.size === 0}
+            >
+              <Trans id="controls.filter.select.none">Select none</Trans>
+            </Button>
+          </Flex>
+          <div>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={handleOpenAutocomplete}
+            >
+              <Trans id="controls.filters.select.filters">Filters</Trans>
+            </Button>
+          </div>
+        </Flex>
+        <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
+        <Flex justifyContent="space-between">
+          <Typography variant="h5">
+            <Trans id="controls.filters.select.selected-filters">
+              Selected filters
+            </Trans>
+          </Typography>
+          <Typography
+            variant="body2"
+            color="grey.700"
+            sx={{ display: "inline" }}
+            component="span"
+          >
+            <Trans id="controls.filter.nb-elements">
+              {activeKeys.size} of {allValues.length}
+            </Trans>
+          </Typography>
+        </Flex>
 
-        <br />
-        <Typography
-          variant="body2"
-          color="grey.700"
-          sx={{ display: "inline" }}
-          component="span"
-        >
-          <Trans id="controls.filter.nb-elements">
-            {activeKeys.size} of {allValues.length}
-          </Trans>
-        </Typography>
+        <Divider sx={{ my: "0.75rem" }} />
       </Box>
 
       {valueGroups.map(([parentLabel, children]) => {
@@ -335,7 +356,7 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <Popover open={!!anchorEl} anchorEl={anchorEl}>
+      <Drawer anchor="right" open={!!anchorEl} hideBackdrop>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <PopoverContent
             pendingValuesRef={pendingValuesRef}
@@ -345,7 +366,7 @@ const MultiFilterContent = ({
             values={values}
           />
         </ClickAwayListener>
-      </Popover>
+      </Drawer>
     </Box>
   );
 };
@@ -419,6 +440,7 @@ const PopoverContent = forwardRef<
     (params) => (
       <Box className={classes.autocompleteInputContainer}>
         <Input
+          size="small"
           className={classes.autocompleteInput}
           startAdornment={
             <InputAdornment position="start">
@@ -428,7 +450,10 @@ const PopoverContent = forwardRef<
           ref={params.InputProps.ref}
           inputProps={params.inputProps}
           autoFocus
-          placeholder="Search"
+          placeholder={t({
+            id: "select.controls.filters.search",
+            message: "Search",
+          })}
         />
       </Box>
     ),
@@ -441,7 +466,7 @@ const PopoverContent = forwardRef<
         <>
           {params.group ? (
             <ListSubheader className={classes.listSubheader} key={params.key}>
-              <span>{params.group}</span>
+              <div>{params.group}</div>
               <Button
                 variant="text"
                 onClick={() => handleSelectGroup(params.group)}
@@ -468,16 +493,19 @@ const PopoverContent = forwardRef<
           <Box
             className={classes.optionColor}
             sx={{
-              visibility: selected ? "visible" : "hidden",
-              background: getValueColor(option.value),
+              border: selected ? "none" : "1px solid #ccc",
+              backgroundColor: selected
+                ? getValueColor(option.value)
+                : "transparent",
             }}
           />
           <Box>{option.label}</Box>
           <Box
-            component={SvgIcClose}
+            component={SvgIcCheck}
             sx={{
               visibility: selected ? "visible" : "hidden",
-              width: 32,
+              width: 16,
+              height: 16,
             }}
           />
         </li>
@@ -488,14 +516,18 @@ const PopoverContent = forwardRef<
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
       <Box className={classes.autocompleteHeader}>
-        <Typography variant="h5">
-          <Trans id="controls.select-values">
-            Select values to be displayed
-          </Trans>
-        </Typography>
-        <Typography variant="caption">
-          <Trans id="controls.select-values-caption">
-            For best results, do not select more than 7 values
+        <Flex alignItems="center" justifyContent="space-between">
+          <Typography variant="h5" gutterBottom>
+            <Trans id="controls.set-filters">Set filters</Trans>
+          </Typography>
+          <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
+            <SvgIcClose fontSize="inherit" />
+          </IconButton>
+        </Flex>
+        <Typography variant="body2" color="textSecondary">
+          <Trans id="controls.set-filters-caption">
+            For best results, do not select more than 7 values in the
+            visualization.
           </Trans>
         </Typography>
       </Box>
@@ -519,12 +551,12 @@ const PopoverContent = forwardRef<
       />
       <Box className={classes.autocompleteApplyButtonContainer}>
         <Button
-          size="large"
+          size="small"
           className={classes.autocompleteApplyButton}
           fullWidth
           onClick={onClose}
         >
-          <Trans id="controls.select-values-apply">Apply</Trans>
+          <Trans id="controls.set-values-apply">Apply filters</Trans>
         </Button>
       </Box>
     </div>

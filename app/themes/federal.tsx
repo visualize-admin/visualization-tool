@@ -40,6 +40,9 @@ export const theme = createTheme({
       disabled: "#599cbd",
     },
     divider: "#CCCCCC",
+    action: {
+      hover: "#d8e8ef",
+    },
     secondary: {
       main: "#757575",
       hover: "#616161",
@@ -150,8 +153,8 @@ theme.typography = merge(theme.typography, {
     fontWeight: "bold",
   }),
   h5: createTypographyVariant(theme, {
-    fontSize: [12, 14],
-    lineHeight: [18, 20],
+    fontSize: [14],
+    lineHeight: [20],
     fontWeight: "bold",
   }),
   body1: createTypographyVariant(theme, {
@@ -223,6 +226,14 @@ theme.components = {
   },
   MuiButton: {
     variants: [
+      {
+        props: { size: "small" },
+        style: {
+          fontSize: 14,
+          minHeight: 32,
+          minWidth: "auto",
+        },
+      },
       {
         props: { variant: "selectColorPicker" },
         style: {
@@ -384,6 +395,7 @@ theme.components = {
       root: {
         alignItems: "flex-start",
         justifyContent: "flex-start",
+        minWidth: "auto",
         "& .MuiListItemIcon-root.MuiListItemIcon-root": {
           minWidth: "24px",
         },

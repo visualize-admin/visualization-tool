@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:615
+#: app/configurator/components/chart-configurator.tsx:616
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
@@ -21,25 +21,21 @@ msgstr "Aggiungi filtro"
 #~ msgid "Browse {0}"
 #~ msgstr "Sfoglia {0}"
 
-#: app/configurator/components/chart-configurator.tsx:587
+#: app/configurator/components/chart-configurator.tsx:588
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
-#: app/configurator/components/chart-configurator.tsx:584
+#: app/configurator/components/chart-configurator.tsx:585
 msgid "Move filter down"
 msgstr "Sposta il filtro in basso"
 
-#: app/configurator/components/chart-configurator.tsx:581
+#: app/configurator/components/chart-configurator.tsx:582
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
 #: app/configurator/components/dataset-browse.tsx:948
 msgid "No results"
 msgstr "Nessun risultato"
-
-#: app/components/search-autocomplete.tsx:74
-#~ msgid "Search “{0}”"
-#~ msgstr "Cerca “{0}”"
 
 #: app/components/chart-preview.tsx:112
 msgid "annotation.add.description"
@@ -160,7 +156,7 @@ msgstr "Quantili (distribuzione omogenea dei valori)"
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Intervalli uguali"
 
-#: app/configurator/components/chart-configurator.tsx:663
+#: app/configurator/components/chart-configurator.tsx:664
 #: app/configurator/components/ui-helpers.ts:558
 #: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base"
@@ -271,12 +267,12 @@ msgstr "Colore"
 msgid "controls.color.add"
 msgstr "Aggiungi ..."
 
-#: app/configurator/components/chart-controls/color-palette.tsx:85
+#: app/configurator/components/chart-controls/color-palette.tsx:86
 #: app/configurator/components/chart-controls/color-ramp.tsx:129
 msgid "controls.color.palette"
 msgstr "Palette di colori"
 
-#: app/configurator/components/chart-controls/color-palette.tsx:243
+#: app/configurator/components/chart-controls/color-palette.tsx:244
 msgid "controls.color.palette.reset"
 msgstr "Ripristina la tavolozza dei colori"
 
@@ -320,19 +316,27 @@ msgstr "Nessuno"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
-#: app/configurator/components/filters.tsx:314
+#: app/configurator/components/filters.tsx:333
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
 
-#: app/configurator/components/filters.tsx:294
-#: app/configurator/components/filters.tsx:449
+#: app/configurator/components/filters.tsx:299
+#: app/configurator/components/filters.tsx:477
 msgid "controls.filter.select.all"
 msgstr "Seleziona tutti"
 
-#: app/configurator/components/filters.tsx:304
-#: app/configurator/components/filters.tsx:451
+#: app/configurator/components/filters.tsx:306
+#: app/configurator/components/filters.tsx:475
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
+
+#: app/configurator/components/filters.tsx:316
+msgid "controls.filters.select.filters"
+msgstr "Filtri"
+
+#: app/configurator/components/filters.tsx:323
+msgid "controls.filters.select.selected-filters"
+msgstr "Filtri selezionati"
 
 #: app/configurator/interactive-filters/editor-time-interval-brush.tsx:123
 msgid "controls.filters.time.range"
@@ -440,7 +444,7 @@ msgstr "Cancella la ricerca"
 msgid "controls.section.additional-information"
 msgstr "Informazioni aggiuntive"
 
-#: app/configurator/components/chart-configurator.tsx:525
+#: app/configurator/components/chart-configurator.tsx:526
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
 
@@ -452,7 +456,7 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
-#: app/configurator/components/chart-configurator.tsx:540
+#: app/configurator/components/chart-configurator.tsx:541
 msgid "controls.section.data.filters"
 msgstr "Filtri"
 
@@ -508,18 +512,6 @@ msgstr "Ordinamento della tabella"
 #: app/configurator/table/table-chart-configurator.tsx:91
 msgid "controls.section.tableoptions"
 msgstr "Opzioni della tabella"
-
-#: app/configurator/components/filters.tsx:491
-msgid "controls.select-values"
-msgstr ""
-
-#: app/configurator/components/filters.tsx:526
-msgid "controls.select-values-apply"
-msgstr ""
-
-#: app/configurator/components/filters.tsx:496
-msgid "controls.select-values-caption"
-msgstr ""
 
 #: app/configurator/components/chart-type-selector.tsx:136
 msgid "controls.select.chart.type"
@@ -579,6 +571,18 @@ msgstr "Seleziona una misura"
 #: app/configurator/components/field.tsx:673
 msgid "controls.select.optional"
 msgstr "facoltativo"
+
+#: app/configurator/components/filters.tsx:521
+msgid "controls.set-filters"
+msgstr "Filtrer"
+
+#: app/configurator/components/filters.tsx:528
+msgid "controls.set-filters-caption"
+msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dans la visualisation"
+
+#: app/configurator/components/filters.tsx:559
+msgid "controls.set-values-apply"
+msgstr "Appliquer les filtres"
 
 #: app/configurator/table/table-chart-sorting-options.tsx:236
 msgid "controls.sorting.addDimension"
@@ -686,10 +690,6 @@ msgstr "Cubo IRI"
 msgid "dataset-preview.back-to-results"
 msgstr "Torna ai set di dati"
 
-#: app/configurator/components/configurator.tsx:43
-#~ msgid "dataset-selector.choose-another-dataset"
-#~ msgstr "Scegli un altro set di dati"
-
 #: app/components/chart-published.tsx:117
 msgid "dataset.hasImputedValues"
 msgstr "In questo set di dati mancano alcuni dati. Questi sono stati interpolati per colmare le lacune.."
@@ -767,18 +767,6 @@ msgstr "Bozza"
 #: app/configurator/components/dataset-preview.tsx:112
 msgid "datatable.showing.first.rows"
 msgstr "Sono mostrate soltanto le prime 10 righe"
-
-#: app/configurator/components/filters.tsx:489
-#~ msgid "filters.select-values"
-#~ msgstr ""
-
-#: app/configurator/components/filters.tsx:524
-#~ msgid "filters.select-values-apply"
-#~ msgstr ""
-
-#: app/configurator/components/filters.tsx:494
-#~ msgid "filters.select-values-caption"
-#~ msgstr ""
 
 #: app/utils/flashes.tsx:31
 msgid "flashes.couldnt-load-cube.title"
@@ -933,13 +921,13 @@ msgstr "Ecco una visualizzazione che ho creato usando visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
+#: app/configurator/components/filters.tsx:453
+msgid "select.controls.filters.search"
+msgstr "Cerca"
+
 #: app/configurator/components/stepper.tsx:191
 msgid "step.annotate"
 msgstr "Prima di pubblicare, aggiungere un titolo e una descrizione al tuo grafico e scegliere quali elementi possono essere interattivi."
-
-#: app/configurator/components/stepper.tsx:182
-#~ msgid "step.visualization.type"
-#~ msgstr "Seleziona il tipo di grafico desiderato per i tuoi dati."
 
 #: app/configurator/components/stepper.tsx:180
 msgid "step.visualize"
