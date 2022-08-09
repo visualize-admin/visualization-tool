@@ -118,32 +118,27 @@ const MetadataMenu = ({ contentId }: { contentId?: string }) => {
       }}
     >
       <LanguageMenu contentId={contentId} />
-      <DataSourceMenu />
     </Flex>
   );
 };
 
 export const Logo = () => {
   return (
-    <NextLink href="/" passHref>
-      <Flex
-        component="a"
-        sx={{
-          order: [2, 1],
-          alignItems: ["center", "flex-start"],
-          cursor: "pointer",
-          textDecoration: "none",
-          color: "grey.900",
-        }}
-      >
+    <Flex sx={{ order: [2, 1], alignItems: ["center", "flex-start"] }}>
+      <NextLink href="/" passHref>
         <Box
+          component="a"
           role="figure"
           aria-labelledby="logo"
           sx={{ display: ["block", "none"], mx: 4, my: 4, width: 24 }}
         >
           <LogoMobile />
         </Box>
+      </NextLink>
+
+      <NextLink href="/" passHref>
         <Box
+          component="a"
           role="figure"
           aria-labelledby="logo"
           sx={{
@@ -157,15 +152,24 @@ export const Logo = () => {
         >
           <LogoDesktop />
         </Box>
-        <Typography
-          component="h1"
-          variant="h4"
-          sx={{ pl: [0, 6], color: "grey.800" }}
-        >
-          visualize.admin.ch
-        </Typography>
+      </NextLink>
+
+      <Flex sx={{ flexDirection: "column", pl: [0, 6] }}>
+        <NextLink href="/" passHref>
+          <Box component="a" sx={{ textDecoration: "none" }}>
+            <Typography
+              component="h1"
+              variant="h4"
+              sx={{ color: "grey.800", cursor: "pointer" }}
+            >
+              visualize.admin.ch
+            </Typography>
+          </Box>
+        </NextLink>
+
+        <DataSourceMenu />
       </Flex>
-    </NextLink>
+    </Flex>
   );
 };
 

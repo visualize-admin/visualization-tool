@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import {
   createContext,
   Dispatch,
@@ -7,7 +8,8 @@ import {
   useState,
 } from "react";
 
-import { Select } from "@/components/form";
+import Flex from "@/components/flex";
+import { MiniSelect } from "@/components/form";
 import { Option } from "@/configurator";
 
 const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
@@ -97,13 +99,16 @@ export const DataSourceMenu = () => {
   const [source, setSource] = useDataSource();
 
   return (
-    <Select
-      id="dataSourceSelect"
-      options={TRUSTED_ENDPOINT_OPTIONS}
-      value={convertSourceToEndpoint(source)}
-      onChange={(e) => {
-        setSource(convertEndpointToSource(e.target.value as string));
-      }}
-    />
+    <Flex sx={{ alignItems: "center", gap: 1 }}>
+      <Typography variant="h4">Datasource:</Typography>
+      <MiniSelect
+        id="dataSourceSelect"
+        options={TRUSTED_ENDPOINT_OPTIONS}
+        value={convertSourceToEndpoint(source)}
+        onChange={(e) => {
+          setSource(convertEndpointToSource(e.target.value as string));
+        }}
+      />
+    </Flex>
   );
 };
