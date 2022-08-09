@@ -4,7 +4,6 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
 import * as ns from "./namespace";
-import { sparqlClient } from "./sparql-client";
 
 interface ResourceLabel {
   iri: Term;
@@ -34,15 +33,15 @@ const buildUnitLabelsQuery = (values: Term[], locale: string) => {
 export async function loadUnitLabels({
   ids,
   locale = "en",
-  client = sparqlClient,
+  sparqlClient,
 }: {
   ids: Term[];
   locale?: string;
-  client?: ParsingClient;
+  sparqlClient: ParsingClient;
 }): Promise<ResourceLabel[]> {
   return batchLoad({
     ids,
-    client,
+    sparqlClient,
     buildQuery: (values: Term[]) => buildUnitLabelsQuery(values, locale),
   });
 }

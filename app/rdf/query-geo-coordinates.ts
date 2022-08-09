@@ -1,10 +1,10 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
 import { dimensionIsVersioned } from "./queries";
-import { sparqlClient } from "./sparql-client";
 
 export interface GeoCoordinates {
   iri: string;
@@ -17,7 +17,7 @@ export interface GeoCoordinates {
  * Creates a GeoCoordinates loader.
  */
 export const createGeoCoordinatesLoader =
-  ({ locale }: { locale: string }) =>
+  ({ locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }) =>
   async (dimensions: readonly ResolvedDimension[]) => {
     const result: GeoCoordinates[][] = [];
 

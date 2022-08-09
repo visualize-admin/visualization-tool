@@ -10,6 +10,7 @@ import {
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
+import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { PromiseValue } from "@/utils/promise";
 
@@ -190,12 +191,12 @@ export const getCube = async ({
   latest?: boolean;
 }): Promise<ResolvedDataCube | null> => {
   const source = createSource({ endpointUrl: sourceUrl });
-
   const cube = await source.cube(iri);
 
   if (!cube) {
     return null;
   }
+
   const latestCube = latest === false ? cube : await getLatestCube(cube);
   return parseCube({ cube: latestCube, locale });
 };
@@ -203,9 +204,11 @@ export const getCube = async ({
 export const getCubeDimensions = async ({
   cube,
   locale,
+  sparqlClient,
 }: {
   cube: Cube;
   locale: string;
+  sparqlClient: ParsingClient;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions.filter(
@@ -224,6 +227,7 @@ export const getCubeDimensions = async ({
       await loadUnitLabels({
         ids: dimensionUnits,
         locale: "en", // No other locales exist yet
+        sparqlClient,
       }),
       (d) => d.iri.value
     );
@@ -244,11 +248,16 @@ export const getCubeDimensions = async ({
 };
 
 export const createCubeDimensionValuesLoader =
-  (filters?: Filters) => async (dimensions: readonly ResolvedDimension[]) => {
+  (sparqlClient: ParsingClient, filters?: Filters) =>
+  async (dimensions: readonly ResolvedDimension[]) => {
     const result: DimensionValue[][] = [];
 
     for (const dimension of dimensions) {
-      const dimensionValues = await getCubeDimensionValues(dimension, filters);
+      const dimensionValues = await getCubeDimensionValues(
+        sparqlClient,
+        dimension,
+        filters
+      );
       result.push(dimensionValues);
     }
 
@@ -256,6 +265,7 @@ export const createCubeDimensionValuesLoader =
   };
 
 export const getCubeDimensionValues = async (
+  sparqlClient: ParsingClient,
   rdimension: ResolvedDimension,
   filters?: Filters
 ): Promise<DimensionValue[]> => {
@@ -282,6 +292,7 @@ export const getCubeDimensionValues = async (
   return await getCubeDimensionValuesWithLabels({
     dimension,
     cube,
+    sparqlClient,
     locale,
     filters,
   });
@@ -293,11 +304,13 @@ export const dimensionIsVersioned = (dimension: CubeDimension) =>
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
+  sparqlClient,
   locale,
   filters,
 }: {
   dimension: CubeDimension;
   cube: Cube;
+  sparqlClient: ParsingClient;
   locale: string;
   filters?: Filters;
 }): Promise<DimensionValue[]> => {
@@ -306,11 +319,7 @@ const getCubeDimensionValuesWithLabels = async ({
       !filters ? () => dimension.in || [] : undefined,
       () =>
         loadDimensionValues(
-          {
-            datasetIri: cube.term,
-            dimension,
-            cube,
-          },
+          { datasetIri: cube.term, dimension, cube, sparqlClient },
           filters
         ),
     ].filter(truthy);
@@ -356,10 +365,12 @@ const getCubeDimensionValuesWithLabels = async ({
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
     const [labels, positions, unversioned] = await Promise.all([
-      loadResourceLabels({ ids: namedNodes, locale }),
-      scaleType === "Ordinal" ? loadResourcePositions({ ids: namedNodes }) : [],
+      loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+      scaleType === "Ordinal"
+        ? loadResourcePositions({ ids: namedNodes, sparqlClient })
+        : [],
       dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: namedNodes })
+        ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
         : [],
     ]);
 
@@ -403,6 +414,7 @@ const getCubeDimensionValuesWithLabels = async ({
 export const getCubeObservations = async ({
   cube,
   locale,
+  sparqlClient,
   filters,
   limit,
   raw,
@@ -410,6 +422,7 @@ export const getCubeObservations = async ({
 }: {
   cube: Cube;
   locale: string;
+  sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
   filters?: Filters;
   /** Limit on the number of observations returned */
@@ -443,7 +456,11 @@ export const getCubeObservations = async ({
   /**
    * Add labels to named dimensions
    */
-  const allCubeDimensions = await getCubeDimensions({ cube, locale });
+  const allCubeDimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+  });
   const cubeDimensions = allCubeDimensions.filter((d) =>
     dimensions ? dimensions.includes(d.data.iri) : true
   );

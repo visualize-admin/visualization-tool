@@ -6,15 +6,19 @@ import {
 import { AnyPointer } from "clownface";
 import { isGraphPointer } from "is-graph-pointer";
 import rdf from "rdf-ext";
+import { StreamClient } from "sparql-http-client";
+import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
 
 import * as ns from "./namespace";
 import { createSource } from "./queries";
-import { sparqlClient, sparqlClientStream } from "./sparql-client";
 import { filterTree, mapTree } from "./tree-utils";
 
-const queryDimensionValues = async (dimension: string) => {
+const queryDimensionValues = async (
+  dimension: string,
+  sparqlClient: ParsingClient
+) => {
   const query = SELECT.DISTINCT`?value`.WHERE`    
       ?cube <https://cube.link/observationSet> ?observationSet .
       ?observationSet <https://cube.link/observation> ?observation .
@@ -58,7 +62,9 @@ const toTree = (
 export const queryHierarchy = async (
   dimensionIri: string,
   sourceUrl: string,
-  locale: string
+  locale: string,
+  sparqlClient: ParsingClient,
+  sparqlClientStream: StreamClient
 ): Promise<HierarchyValue[]> => {
   const source = createSource({ endpointUrl: sourceUrl });
 
@@ -91,7 +97,7 @@ export const queryHierarchy = async (
     throw new Error(`Hierarchy not found ${dimensionIri}`);
   }
 
-  const dimensionValuesProm = queryDimensionValues(dimensionIri);
+  const dimensionValuesProm = queryDimensionValues(dimensionIri, sparqlClient);
   const results = await getHierarchy(hierarchy).execute(
     // @ts-ignore
     sparqlClientStream,

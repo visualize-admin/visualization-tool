@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
 import { keyBy } from "lodash";
+import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
@@ -47,7 +48,7 @@ const getCubes = cachedWithTTL(
 );
 
 const makeCubeIndex = cachedWithTTL(
-  async ({ filters, includeDrafts, sourceUrl, locale }) => {
+  async ({ filters, includeDrafts, sourceUrl, locale, sparqlClient }) => {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
       sourceUrl,
@@ -58,10 +59,10 @@ const makeCubeIndex = cachedWithTTL(
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
     const themes = (
-      await loadThemes({ locale: locale || defaultLocale })
+      await loadThemes({ locale: locale || defaultLocale, sparqlClient })
     ).filter(truthy);
     const organizations = (
-      await loadOrganizations({ locale: locale || defaultLocale })
+      await loadOrganizations({ locale: locale || defaultLocale, sparqlClient })
     ).filter(truthy);
 
     const themeIndex = keyBy(themes, (t) => t.iri);
@@ -151,7 +152,8 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
-  async (_, { iri, sourceUrl, filters }) => {
+  async (_, { iri, sourceUrl, filters }, context, info) => {
+    const { sparqlClient } = await context.setup(info);
     const source = createSource({ endpointUrl: sourceUrl });
 
     const cube = await source.cube(iri);
@@ -167,6 +169,7 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
       const { observations: obs } = await getCubeObservations({
         cube,
         locale: "en",
+        sparqlClient,
         filters: queryFilters,
         limit: 1,
         raw: true,
@@ -176,9 +179,9 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
         continue;
       }
       const unversioned = await unversionObservation({
-        datasetIri: iri,
         observation: obs[0],
         cube: cube,
+        sparqlClient,
       });
       const ret = Object.keys(filters).map((f) => ({
         iri: f,
@@ -193,74 +196,90 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 
 export const themes: NonNullable<QueryResolvers["themes"]> = async (
   _,
-  { locale }
+  { locale },
+  context,
+  info
 ) => {
-  return (await loadThemes({ locale })).filter(truthy);
+  const { sparqlClient } = await context.setup(info);
+  return (await loadThemes({ locale, sparqlClient })).filter(truthy);
 };
 
 export const subthemes: NonNullable<QueryResolvers["subthemes"]> = async (
   _,
-  { locale, parentIri }
+  { locale, parentIri },
+  context,
+  info
 ) => {
-  return (await loadSubthemes({ locale, parentIri })).filter(truthy);
+  const { sparqlClient } = await context.setup(info);
+  return (await loadSubthemes({ locale, parentIri, sparqlClient })).filter(
+    truthy
+  );
 };
 
 export const organizations: NonNullable<QueryResolvers["organizations"]> =
-  async (_, { locale }) => {
-    return (await loadOrganizations({ locale })).filter(truthy);
+  async (_, { locale }, context, info) => {
+    const { sparqlClient } = await context.setup(info);
+    return (await loadOrganizations({ locale, sparqlClient })).filter(truthy);
   };
 
 export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
   _,
-  { organization, theme, includeDrafts }
+  { organization, theme, includeDrafts },
+  context,
+  info
 ) => {
+  const { sparqlClient } = await context.setup(info);
   const byOrg = await queryDatasetCountByOrganization({
     theme: theme || undefined,
     includeDrafts: includeDrafts ?? undefined,
+    sparqlClient,
   });
   const byTheme = await queryDatasetCountByTheme({
     organization: organization || undefined,
     includeDrafts: includeDrafts ?? undefined,
+    sparqlClient,
   });
   const bySubTheme = await queryDatasetCountBySubTheme({
     theme: theme || undefined,
     organization: organization || undefined,
     includeDrafts: includeDrafts ?? undefined,
+    sparqlClient,
   });
   return [...byOrg, ...byTheme, ...bySubTheme];
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }) => {
-    const dimensions = await getCubeDimensions({ cube, locale });
+  async ({ cube, locale }, args, context, info) => {
+    const { sparqlClient } = await context.setup(info);
+    const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }) => {
-    const dimensions = await getCubeDimensions({ cube, locale });
+  async ({ cube, locale }, args, context, info) => {
+    const { sparqlClient } = await context.setup(info);
+    const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => d.data.isMeasureDimension);
   };
 
 export const dataCubeDimensionByIri: NonNullable<
   DataCubeResolvers["dimensionByIri"]
-> = async ({ cube, locale }, { iri }) => {
+> = async ({ cube, locale }, { iri }, context, info) => {
+  const { sparqlClient } = await context.setup(info);
   const dimension = (
-    await getCubeDimensions({
-      cube,
-      locale,
-    })
+    await getCubeDimensions({ cube, locale, sparqlClient })
   ).find((d) => iri === d.data.iri);
-
   return dimension ?? null;
 };
 
 export const dataCubeObservations: NonNullable<
   DataCubeResolvers["observations"]
-> = async ({ cube, locale }, { limit, filters, dimensions }) => {
+> = async ({ cube, locale }, { limit, filters, dimensions }, context, info) => {
+  const { sparqlClient } = await context.setup(info);
   const { query, observations, observationsRaw } = await getCubeObservations({
     cube,
     locale,
+    sparqlClient,
     filters: filters ?? undefined,
     limit: limit ?? undefined,
     dimensions,
@@ -306,6 +325,7 @@ export const dataCubeObservations: NonNullable<
 };
 
 const getDimensionValuesLoader = (
+  sparqlClient: ParsingClient,
   loaders: Loaders,
   filters?: Filters | null
 ): DataLoader<any, any> => {
@@ -314,7 +334,9 @@ const getDimensionValuesLoader = (
   if (filterKey && filters) {
     let existingLoader = loaders.filteredDimensionValues.get(filterKey);
     if (!existingLoader) {
-      loader = new DataLoader(createCubeDimensionValuesLoader(filters));
+      loader = new DataLoader(
+        createCubeDimensionValuesLoader(sparqlClient, filters)
+      );
       loaders.filteredDimensionValues.set(filterKey, loader);
       return loader;
     } else {
@@ -329,17 +351,27 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
   { data: { iri } },
   { sourceUrl },
   context,
-  { variableValues: { locale } }
+  info
 ) => {
-  return queryHierarchy(iri, sourceUrl, locale);
+  const { sparqlClient, sparqlClientStream } = await context.setup(info);
+  return queryHierarchy(
+    iri,
+    sourceUrl,
+    info.variableValues.locale,
+    sparqlClient,
+    sparqlClientStream
+  );
 };
 
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
-> = async (parent, { filters }, { loaders }) => {
+> = async (parent, { filters }, context, info) => {
+  const { loaders, sparqlClient } = await context.setup(info);
+
   // Different loader if we have filters or not
-  const loader = getDimensionValuesLoader(loaders, filters);
+  const loader = getDimensionValuesLoader(sparqlClient, loaders, filters);
   const values: Array<DimensionValue> = await loader.load(parent);
+
   // TODO min max are now just `values` with 2 elements. Handle properly!
   return values.sort((a, b) =>
     ascending(

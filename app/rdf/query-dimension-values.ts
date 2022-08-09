@@ -2,6 +2,7 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { keyBy, mapValues } from "lodash";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode, Term } from "rdf-js";
+import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { Filters } from "../configurator";
 
@@ -9,8 +10,6 @@ import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
-import { sparqlClient } from "./sparql-client";
-
 
 interface DimensionValue {
   value: Literal | NamedNode<string>;
@@ -63,10 +62,11 @@ const formatFilterIntoSparqlFilter = (
 export async function unversionObservation({
   cube,
   observation,
+  sparqlClient,
 }: {
-  datasetIri: string;
   cube: Cube;
   observation: Record<string, string | number | undefined | null>;
+  sparqlClient: ParsingClient;
 }) {
   const dimensionsByPath = keyBy(
     cube.dimensions,
@@ -108,10 +108,12 @@ export async function loadDimensionValues(
     datasetIri,
     dimension,
     cube,
+    sparqlClient,
   }: {
     datasetIri: Term | undefined;
     dimension: CubeDimension;
     cube: Cube;
+    sparqlClient: ParsingClient;
   },
   filters?: Filters
 ): Promise<Array<Literal | NamedNode>> {

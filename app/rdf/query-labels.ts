@@ -7,7 +7,6 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
 import { getQueryLocales } from "./parse";
-import { sparqlClient } from "./sparql-client";
 
 interface ResourceLabel {
   iri: NamedNode;
@@ -60,17 +59,17 @@ export async function loadResourceLabels({
   ids,
   locale,
   labelTerm = schema.name,
-  client = sparqlClient,
+  sparqlClient,
 }: {
   ids: NamedNode[];
   locale: string;
   labelTerm?: NamedNode;
-  client?: ParsingClient;
+  sparqlClient: ParsingClient;
 }): Promise<ResourceLabel[]> {
   const localesFilter = makeLocalesFilter("?iri", labelTerm, "?label", locale);
   return batchLoad({
     ids,
-    client,
+    sparqlClient,
     buildQuery: (values: NamedNode[]) =>
       buildResourceLabelsQuery(values, localesFilter),
   });

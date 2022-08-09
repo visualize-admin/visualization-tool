@@ -4,7 +4,6 @@ import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
-import { sparqlClient } from "./sparql-client";
 
 interface UnversionedResource {
   iri: NamedNode;
@@ -25,10 +24,14 @@ const buildUnversionedResourceQuery = (values: NamedNode[]) => {
  */
 export async function loadUnversionedResources({
   ids,
-  client = sparqlClient,
+  sparqlClient,
 }: {
   ids: NamedNode[];
-  client?: ParsingClient;
+  sparqlClient: ParsingClient;
 }): Promise<UnversionedResource[]> {
-  return batchLoad({ ids, client, buildQuery: buildUnversionedResourceQuery });
+  return batchLoad({
+    ids,
+    sparqlClient,
+    buildQuery: buildUnversionedResourceQuery,
+  });
 }

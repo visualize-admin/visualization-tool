@@ -2,7 +2,10 @@ import { ApolloServer } from "apollo-server-micro";
 import configureCors from "cors";
 import DataLoader from "dataloader";
 import "global-agent/bootstrap";
+import { GraphQLResolveInfo } from "graphql";
 import { NextApiRequest, NextApiResponse } from "next";
+import StreamClient from "sparql-http-client";
+import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -19,32 +22,33 @@ const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
-const makeLoaders = (req: any) => {
+export const makeLoaders = async (
+  locale: string,
+  sparqlClient: ParsingClient
+) => {
   return {
-    dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
-      cacheKeyFn: (dim) => dim.dimension.path?.value,
-    }),
-    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
-    geoCoordinates: new DataLoader(
-      createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
+    dimensionValues: new DataLoader(
+      createCubeDimensionValuesLoader(sparqlClient),
       {
-        maxBatchSize: MAX_BATCH_SIZE * 0.5,
+        cacheKeyFn: (dim) => dim.dimension.path?.value,
       }
     ),
-    geoShapes: new DataLoader(
-      createGeoShapesLoader({ locale: req.headers["accept-language"] }),
-      { maxBatchSize: MAX_BATCH_SIZE }
+    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
+    geoCoordinates: new DataLoader(
+      createGeoCoordinatesLoader({ locale, sparqlClient }),
+      { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
     ),
-    themes: new DataLoader(
-      createThemeLoader({ locale: req.headers["accept-language"] })
-    ),
+    geoShapes: new DataLoader(createGeoShapesLoader({ locale, sparqlClient }), {
+      maxBatchSize: MAX_BATCH_SIZE,
+    }),
+    themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
     organizations: new DataLoader(
-      createOrganizationLoader({ locale: req.headers["accept-language"] })
+      createOrganizationLoader({ locale, sparqlClient })
     ),
   } as const;
 };
 
-export type Loaders = ReturnType<typeof makeLoaders>;
+export type Loaders = Awaited<ReturnType<typeof makeLoaders>>;
 
 const server = new ApolloServer({
   typeDefs,
@@ -53,9 +57,45 @@ const server = new ApolloServer({
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
-  context: ({ req }) => ({
-    loaders: makeLoaders(req),
-  }),
+  // Initialized in resolvers
+  context: function () {
+    const context = this as {
+      setup: (info: GraphQLResolveInfo) => {
+        loaders: Loaders;
+        sparqlClient: ParsingClient;
+        sparqlClientStream: StreamClient;
+      };
+      loaders: Loaders | undefined;
+      sparqlClient: ParsingClient | undefined;
+      sparqlClientStream: StreamClient | undefined;
+    };
+
+    return {
+      setup: async ({ variableValues }: GraphQLResolveInfo) => {
+        const { locale, sourceUrl } = variableValues;
+
+        if (
+          context.loaders === undefined &&
+          context.sparqlClient === undefined &&
+          context.sparqlClientStream === undefined
+        ) {
+          context.sparqlClient = new ParsingClient({ endpointUrl: sourceUrl });
+          context.sparqlClientStream = new StreamClient({
+            endpointUrl: sourceUrl,
+          });
+          context.loaders = await makeLoaders(locale, context.sparqlClient);
+        }
+
+        return {
+          loaders: context.loaders,
+          sparqlClient: context.sparqlClient,
+          sparqlClientStream: context.sparqlClientStream,
+        };
+      },
+      loaders: undefined,
+      sparqlClient: undefined,
+    };
+  },
   // Enable playground in production
   introspection: true,
   playground: true,
