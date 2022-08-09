@@ -129,9 +129,8 @@ export const resolvers: Resolvers = {
   DataCube,
   DataCubeTheme: {
     // Loads theme with dataloader if we need the label
-    label: async ({ iri, label }, args, context, info) => {
+    label: async ({ iri, label }, args, { loaders }) => {
       if (!label) {
-        const { loaders } = await context.setup(info);
         const resolvedTheme = await loaders.themes.load(iri);
         return resolvedTheme.label;
       }
@@ -140,9 +139,8 @@ export const resolvers: Resolvers = {
     },
   },
   DataCubeOrganization: {
-    label: async ({ iri, label }, args, context, info) => {
+    label: async ({ iri, label }, args, { loaders }) => {
       if (!label) {
-        const { loaders } = await context.setup(info);
         const resolvedTheme = await loaders.organizations.load(iri);
         return resolvedTheme.label;
       }
@@ -186,15 +184,13 @@ export const resolvers: Resolvers = {
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("geocoordinates"),
-    geoCoordinates: async (parent, args, context, info) => {
-      const { loaders } = await context.setup(info);
+    geoCoordinates: async (parent, args, { loaders }) => {
       return await loaders.geoCoordinates.load(parent);
     },
   },
   GeoShapesDimension: {
     ...mkDimensionResolvers("geoshapes"),
-    geoShapes: async (parent, args, context, info) => {
-      const { loaders } = await context.setup(info);
+    geoShapes: async (parent, args, { loaders }, info) => {
       const dimValues = (await loaders.dimensionValues.load(
         parent
       )) as DimensionValue[];

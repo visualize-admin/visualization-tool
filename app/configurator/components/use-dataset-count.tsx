@@ -7,6 +7,7 @@ import isAttrEqual from "@/utils/is-attr-equal";
 
 const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
   Object.fromEntries(l.map((o) => [o.iri, o.count]));
+
 const useDatasetCount = (
   filters: BrowseFilter[],
   includeDrafts: boolean
@@ -29,7 +30,7 @@ const useDatasetCount = (
       datasetCounts?.datasetcount
         ? countListToIndexedCount(datasetCounts?.datasetcount)
         : {},
-    [datasetCounts, dataSource]
+    [datasetCounts]
   );
 };
 

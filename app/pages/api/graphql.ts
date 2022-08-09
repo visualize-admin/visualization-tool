@@ -2,7 +2,6 @@ import { ApolloServer } from "apollo-server-micro";
 import configureCors from "cors";
 import DataLoader from "dataloader";
 import "global-agent/bootstrap";
-import { GraphQLResolveInfo } from "graphql";
 import { NextApiRequest, NextApiResponse } from "next";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
@@ -24,33 +23,45 @@ const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
-export const makeLoaders = async (
-  locale: string,
-  sparqlClient: ParsingClient
-) => {
+export const setup = async (req: any) => {
+  const locale = req.headers["accept-language"];
+  const sparqlClient = new ParsingClient({
+    endpointUrl: req.headers["data-source-url"],
+  });
+  const sparqlClientStream = new StreamClient({
+    endpointUrl: req.headers["data-source-url"],
+  });
+
   return {
-    dimensionValues: new DataLoader(
-      createCubeDimensionValuesLoader(sparqlClient),
-      {
-        cacheKeyFn: (dim) => dim.dimension.path?.value,
-      }
-    ),
-    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
-    geoCoordinates: new DataLoader(
-      createGeoCoordinatesLoader({ locale, sparqlClient }),
-      { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
-    ),
-    geoShapes: new DataLoader(createGeoShapesLoader({ locale, sparqlClient }), {
-      maxBatchSize: MAX_BATCH_SIZE,
-    }),
-    themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
-    organizations: new DataLoader(
-      createOrganizationLoader({ locale, sparqlClient })
-    ),
+    loaders: {
+      dimensionValues: new DataLoader(
+        createCubeDimensionValuesLoader(sparqlClient),
+        {
+          cacheKeyFn: (dim) => dim.dimension.path?.value,
+        }
+      ),
+      filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
+      geoCoordinates: new DataLoader(
+        createGeoCoordinatesLoader({ locale, sparqlClient }),
+        { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
+      ),
+      geoShapes: new DataLoader(
+        createGeoShapesLoader({ locale, sparqlClient }),
+        {
+          maxBatchSize: MAX_BATCH_SIZE,
+        }
+      ),
+      themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
+      organizations: new DataLoader(
+        createOrganizationLoader({ locale, sparqlClient })
+      ),
+    },
+    sparqlClient,
+    sparqlClientStream,
   } as const;
 };
 
-export type Loaders = Awaited<ReturnType<typeof makeLoaders>>;
+export type Loaders = Awaited<ReturnType<typeof setup>>["loaders"];
 
 const server = new ApolloServer({
   typeDefs,
@@ -59,46 +70,9 @@ const server = new ApolloServer({
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
-  // Initialized in resolvers
-  context: function () {
-    const context = this as {
-      setup: (info: GraphQLResolveInfo) => {
-        loaders: Loaders;
-        sparqlClient: ParsingClient;
-        sparqlClientStream: StreamClient;
-      };
-      loaders: Loaders | undefined;
-      sparqlClient: ParsingClient | undefined;
-      sparqlClientStream: StreamClient | undefined;
-    };
-
-    return {
-      setup: async ({ variableValues }: GraphQLResolveInfo) => {
-        const { locale, sourceUrl } = variableValues;
-
-        if (
-          context.loaders === undefined &&
-          context.sparqlClient === undefined &&
-          context.sparqlClientStream === undefined
-        ) {
-          context.sparqlClient = new ParsingClient({
-            endpointUrl: sourceUrl,
-          });
-          context.sparqlClientStream = new StreamClient({
-            endpointUrl: sourceUrl,
-          });
-          context.loaders = await makeLoaders(locale, context.sparqlClient);
-        }
-
-        return {
-          loaders: context.loaders,
-          sparqlClient: context.sparqlClient,
-          sparqlClientStream: context.sparqlClientStream,
-        };
-      },
-      loaders: undefined,
-      sparqlClient: undefined,
-    };
+  context: async ({ req }) => {
+    const { loaders, sparqlClient, sparqlClientStream } = await setup(req);
+    return { loaders, sparqlClient, sparqlClientStream };
   },
   // Enable playground in production
   introspection: true,
