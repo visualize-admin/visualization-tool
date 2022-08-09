@@ -41,7 +41,7 @@ export const Label = ({
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
     display="flex"
-    sx={{ mb: 1, color: "grey.600" }}
+    sx={{ color: "grey.600" }}
   >
     {children}
     {label && (
@@ -225,17 +225,19 @@ export const Select = ({
   );
 };
 
-export const MiniSelect = ({
+export const MinimalisticSelect = ({
   label,
   id,
   value,
   options,
   onChange,
+  smaller = false,
 }: {
   id: string;
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
+  smaller?: boolean;
 } & SelectProps) => (
   <Box sx={{ color: "grey.800" }}>
     {label && (
@@ -246,7 +248,7 @@ export const MiniSelect = ({
     <MUISelect
       sx={{
         borderColor: "transparent",
-        fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+        fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
         lineHeight: "normal !important",
 
         backgroundColor: "transparent",
@@ -262,7 +264,7 @@ export const MiniSelect = ({
         },
       }}
       native
-      size="small"
+      size={smaller ? "small" : "medium"}
       variant="standard"
       id={id}
       name={id}

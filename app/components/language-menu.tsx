@@ -56,8 +56,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
             rel="alternate"
             hrefLang={locale}
             sx={{
-              typography: "body2",
-              fontSize: "0.875rem",
+              typography: "body1",
               lineHeight: "1.25rem",
               p: 1,
               textTransform: "uppercase",

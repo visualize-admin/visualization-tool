@@ -26,7 +26,7 @@ import { UseQueryState } from "urql";
 import { BrowseParams } from "@/browser/dataset-browser";
 import { useDataSource } from "@/components/data-source-menu";
 import Flex, { FlexProps } from "@/components/flex";
-import { Checkbox, MiniSelect, SearchField } from "@/components/form";
+import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
 import Tag from "@/configurator/components/Tag";
 import {
@@ -396,8 +396,9 @@ export const SearchDatasetBox = ({
             </Typography>
           </label>
 
-          <MiniSelect
+          <MinimalisticSelect
             id="datasetSort"
+            smaller={true}
             value={order}
             options={isSearching ? options : options.slice(1)}
             onChange={(e) => {

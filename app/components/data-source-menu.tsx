@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import Flex from "@/components/flex";
-import { MiniSelect } from "@/components/form";
+import { Label, MinimalisticSelect } from "@/components/form";
 import { Option } from "@/configurator";
 
 const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
@@ -100,8 +100,12 @@ export const DataSourceMenu = () => {
 
   return (
     <Flex sx={{ alignItems: "center", gap: 1 }}>
-      <Typography variant="h4">Datasource:</Typography>
-      <MiniSelect
+      <Label htmlFor="dataSourceSelect">
+        <Typography sx={{ fontWeight: "bold", color: "grey.900" }}>
+          Data source:
+        </Typography>
+      </Label>
+      <MinimalisticSelect
         id="dataSourceSelect"
         options={TRUSTED_ENDPOINT_OPTIONS}
         value={convertSourceToEndpoint(source)}
