@@ -56,6 +56,7 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcCheck from "@/icons/components/IcCheck";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { dfs } from "@/lib/dfs";
@@ -66,7 +67,7 @@ import { valueComparator } from "@/utils/sorting-values";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const Drawer = styled(MuiDrawer)(({ theme }) => ({
-  "& .MuiPaper-root": {
+  "& > .MuiPaper-root": {
     top: 152,
     bottom: 0,
     height: "auto",
@@ -135,8 +136,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     selectedValueRow: {
       display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+      alignItems: "flex-start",
       marginBottom: "0.5rem",
       gap: "0.5rem",
     },
@@ -187,6 +187,14 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
   },
 }));
 
+const joinParents = (parents?: HierarchyValue[]) => {
+  return parents?.map((x) => x.label).join(" > ") || "";
+};
+
+const explodeParents = (parents: string) => {
+  return parents ? parents.split(" > ") : [];
+};
+
 const AutocompletePopper: AutocompleteProps<
   unknown,
   true,
@@ -197,7 +205,7 @@ const AutocompletePopper: AutocompleteProps<
 };
 
 const groupByParent = (node: { parents: HierarchyValue[] }) => {
-  return node?.parents.map((x) => x.label).join(" > ") || "";
+  return joinParents(node?.parents);
 };
 
 const isDimensionOptionEqualToDimensionValue = (
@@ -213,7 +221,7 @@ const getOptionsFromTree = (tree: HierarchyValue[]) => {
       ...node,
       parents,
     })),
-    (node) => node.parents.map((x) => x.label).join(" > ")
+    (node) => joinParents(node.parents)
   );
 };
 
@@ -343,13 +351,13 @@ const MultiFilterContent = ({
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
             <Typography variant="h5" sx={{ mb: 3 }}>
-              {parentLabel}
+              {interlace(explodeParents(parentLabel), <BreadcrumbChevron />)}
             </Typography>
             {children.map((v) => {
               return (
                 <Flex key={v.value} className={classes.selectedValueRow}>
-                  <Typography variant="body2">{v?.label}</Typography>
                   <MultiFilterFieldColorPicker value={v.value} />
+                  <Typography variant="body2">{v?.label}</Typography>
                 </Flex>
               );
             })}
@@ -358,7 +366,7 @@ const MultiFilterContent = ({
       })}
       <Drawer anchor="right" open={!!anchorEl} hideBackdrop>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
-          <PopoverContent
+          <DrawerContent
             pendingValuesRef={pendingValuesRef}
             options={options}
             optionsByParent={optionsByParent}
@@ -371,7 +379,34 @@ const MultiFilterContent = ({
   );
 };
 
-const PopoverContent = forwardRef<
+const interlace = <T extends unknown, I extends unknown>(
+  arr: T[],
+  interlacer: I
+) => {
+  const res = new Array(arr.length * 2 - 1);
+  for (let i = 0; i < arr.length; i++) {
+    res[i * 2] = arr[i];
+    if (i < arr.length - 1) {
+      res[i * 2 + 1] = interlacer;
+    }
+  }
+  return res;
+};
+
+const useBreadcrumbStyles = makeStyles({
+  root: {
+    display: "inline",
+    top: 2,
+    position: "relative",
+  },
+});
+
+const BreadcrumbChevron = () => {
+  const classes = useBreadcrumbStyles();
+  return <SvgIcChevronRight className={classes.root} />;
+};
+
+const DrawerContent = forwardRef<
   HTMLDivElement,
   {
     optionsByParent: Record<string, AutocompleteOption[]>;
@@ -466,7 +501,9 @@ const PopoverContent = forwardRef<
         <>
           {params.group ? (
             <ListSubheader className={classes.listSubheader} key={params.key}>
-              <div>{params.group}</div>
+              <div>
+                {interlace(explodeParents(params.group), <BreadcrumbChevron />)}
+              </div>
               <Button
                 variant="text"
                 onClick={() => handleSelectGroup(params.group)}
