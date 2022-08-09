@@ -975,7 +975,7 @@ export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
 })) as SteppedPalette<SequentialPaletteType>[];
 
-export const randomComperator = () => (Math.random() > 0.5 ? 1 : -1);
+export const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
 
 export const mapValueIrisToColor = ({
   palette,
@@ -992,7 +992,7 @@ export const mapValueIrisToColor = ({
   const paletteValues = getPalette(palette);
   const colorScale = scaleOrdinal()
     .domain(dimensionValues.map((dv) => dv.value))
-    .range(random ? [...paletteValues].sort(randomComperator) : paletteValues);
+    .range(random ? [...paletteValues].sort(randomComparator) : paletteValues);
   const colorMapping = {} as { [x: string]: string };
 
   dimensionValues.forEach((dv) => {

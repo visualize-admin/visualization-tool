@@ -707,7 +707,7 @@ export const DimensionValuesSingleFilter = ({
             <SingleFilterField
               key={dv.value}
               dimensionIri={dimensionIri}
-              label={dv.label + "toto"}
+              label={dv.label}
               value={dv.value}
             />
           );
