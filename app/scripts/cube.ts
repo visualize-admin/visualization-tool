@@ -5,7 +5,7 @@ import { config } from "dotenv";
 import fetch from "node-fetch";
 import { Client } from "urql";
 
-import { DataSourceType } from "@/components/data-source-menu";
+import { DataSourceType } from "@/graphql/resolvers/utils";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {

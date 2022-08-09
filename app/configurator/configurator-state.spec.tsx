@@ -21,6 +21,7 @@ import {
   moveFilterField,
 } from "@/configurator/configurator-state";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
@@ -102,9 +103,14 @@ describe("initChartStateFromCube", () => {
   };
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
     const { client } = setup({ cubeMetadata: bathingWaterMetadata });
+    const dataSource: DataSource = {
+      url: "https://example.com/api",
+      type: "sparql",
+    };
     const res = await initChartStateFromCube(
       client,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
+      dataSource,
       "en"
     );
     expect(res).toEqual(

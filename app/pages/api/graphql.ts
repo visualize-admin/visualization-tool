@@ -7,6 +7,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { Awaited } from "@/domain/types";
+
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../lib/run-middleware";

@@ -21,7 +21,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { DataSource, useDataSource } from "@/components/data-source-menu";
+import { useDataSource } from "@/components/data-source-menu";
 import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -49,6 +49,7 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
