@@ -74,7 +74,9 @@ describe("possible filters", () => {
           "https://fake-dimension-iri-2": { type: "single", value: 2 },
         },
       },
-      undefined,
+      {
+        setup: () => ({ sparqlClient: {} }),
+      },
       {} as GraphQLResolveInfo
     );
     expect(res).toEqual([
