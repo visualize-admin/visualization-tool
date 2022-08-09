@@ -12,6 +12,7 @@ import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { makeCubeFilters } from "@/rdf/cube-filters";
 import { PromiseValue } from "@/utils/promise";
 
 import { Filters } from "../configurator";
@@ -24,7 +25,6 @@ import {
 import { SPARQL_EDITOR } from "../domain/env";
 import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
-import isAttrEqual from "../utils/is-attr-equal";
 import truthy from "../utils/truthy";
 
 import * as ns from "./namespace";
@@ -106,27 +106,6 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
   return cube;
 };
 
-const where = (predicate: NamedNode, object: NamedNode) => {
-  return ({ cube }: $FixMe) => [[cube, predicate, object]];
-};
-
-const isVisualizeCubeFilter = where(
-  ns.schema.workExample,
-  rdf.namedNode("https://ld.admin.ch/application/visualize")
-);
-
-const makeQueryFilter = (
-  predicate: NamedNode,
-  filters: DataCubeSearchFilter[]
-) => {
-  return filters.length > 0
-    ? Cube.filter.in(
-        predicate,
-        filters.map((x) => rdf.namedNode(x.value))
-      )
-    : null;
-};
-
 export const getCubes = async ({
   includeDrafts,
   sourceUrl,
@@ -140,33 +119,7 @@ export const getCubes = async ({
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource({ endpointUrl: sourceUrl });
 
-  const themeQueryFilter = makeQueryFilter(
-    ns.dcat.theme,
-    filters?.filter(isAttrEqual("type", "DataCubeTheme")) || []
-  );
-  const orgQueryFilter = makeQueryFilter(
-    ns.dcterms.creator,
-    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) || []
-  );
-  const aboutQueryFilter = makeQueryFilter(
-    ns.schema.about,
-    filters?.filter(isAttrEqual("type", "DataCubeAbout")) || []
-  );
-
-  const cubesFilters = [
-    // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
-    Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
-    Cube.filter.noExpires(),
-    isVisualizeCubeFilter,
-    includeDrafts
-      ? null
-      : Cube.filter.status([
-          ns.adminVocabulary("CreativeWorkStatus/Published"),
-        ]),
-    themeQueryFilter,
-    orgQueryFilter,
-    aboutQueryFilter,
-  ].filter(truthy);
+  const cubesFilters = makeCubeFilters({ includeDrafts, filters });
 
   const cubes = await source.cubes({
     noShape: true,
