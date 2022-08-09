@@ -16,7 +16,7 @@ import {
   DataSource,
   convertEndpointToSource,
 } from "@/graphql/resolvers/utils";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE, DEFAULT_ENDPOINT } from "@/rdf/sparql-client";
 
 const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
   {
@@ -63,10 +63,7 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
     if (endpoint !== null && TRUSTED_ENDPOINTS.includes(endpoint)) {
       setSource(convertEndpointToSource(endpoint));
     } else {
-      localStorage.setItem(
-        "endpoint",
-        convertSourceToEndpoint(DEFAULT_DATA_SOURCE)
-      );
+      localStorage.setItem("endpoint", DEFAULT_ENDPOINT);
     }
   }, []);
 

@@ -6,6 +6,7 @@ import { convertEndpointToSource } from "@/graphql/resolvers/utils";
 import { ENDPOINT } from "../domain/env";
 
 export const DEFAULT_DATA_SOURCE = convertEndpointToSource(ENDPOINT);
+export const DEFAULT_ENDPOINT = ENDPOINT;
 
 export const sparqlClientStream = new StreamClient({
   endpointUrl: DEFAULT_DATA_SOURCE.url,
