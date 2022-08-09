@@ -1,15 +1,15 @@
 import { ConfiguratorStatePublishing } from "./configurator/config-types";
 
 export const fetchChartConfig = async (chartId: string) => {
-    return await fetch(`/api/config/${chartId}`).then((result) =>
-        result.json()
-    );
-}
+  return await fetch(`/api/config/${chartId}`).then((result) => result.json());
+};
 
 type ReturnVal = {
   key: string;
 };
-export const saveChartConfig = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
+export const saveChartConfig = async (
+  state: ConfiguratorStatePublishing
+): Promise<ReturnVal> => {
   return fetch("/api/config", {
     method: "POST",
     headers: {

@@ -49,11 +49,12 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
+import { convertSourceToEndpoint, DataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_ENDPOINT } from "@/rdf/sparql-client";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -65,6 +66,10 @@ export type ConfiguratorStateAction =
   | {
       type: "DATASET_SELECTED";
       dataSet: string | undefined;
+    }
+  | {
+      type: "ENDPOINT_CHANGED";
+      value: string;
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -182,15 +187,24 @@ const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
+const getStateWithCurrentEndpoint = (state: ConfiguratorState) => {
+  return {
+    ...state,
+    endpoint: localStorage.getItem("endpoint") || DEFAULT_ENDPOINT,
+  };
+};
+
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
   dataSet: undefined,
+  endpoint: "",
   activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
+  endpoint: "",
   chartConfig: undefined,
   meta: {
     title: {
@@ -452,6 +466,7 @@ const transitionStepNext = (
         return {
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
+          endpoint: draft.endpoint,
           meta: draft.meta,
           activeField: undefined,
           chartConfig,
@@ -597,11 +612,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
-      return action.value.state === "INITIAL" ? emptyState : action.value;
+      return action.value.state === "INITIAL"
+        ? getStateWithCurrentEndpoint(emptyState)
+        : action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
         draft.dataSet = action.dataSet;
       }
+      return draft;
+    case "ENDPOINT_CHANGED":
+      draft.endpoint = action.value;
+
       return draft;
     case "CHART_TYPE_CHANGED":
       if (
@@ -1025,10 +1046,11 @@ export const initChartStateFromChart = async (
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
   if (config && config.data) {
-    const { dataSet, meta, chartConfig } = config.data;
+    const { dataSet, endpoint, meta, chartConfig } = config.data;
     return {
       state: "CONFIGURING_CHART",
       dataSet,
+      endpoint,
       meta,
       chartConfig,
       activeField: undefined,
@@ -1058,10 +1080,7 @@ export const initChartStateFromCube = async (
     return;
   }
   return transitionStepNext(
-    {
-      ...emptyState,
-      dataSet: datasetIri,
-    },
+    getStateWithCurrentEndpoint({ ...emptyState, dataSet: datasetIri }),
     data.dataCubeByIri
   );
 };
@@ -1115,7 +1134,7 @@ const ConfiguratorStateProviderInternal = ({
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize: ConfiguratorState = initialState;
+    let stateToInitialize = getStateWithCurrentEndpoint(initialState);
 
     const initialize = async () => {
       try {
@@ -1155,6 +1174,13 @@ const ConfiguratorStateProviderInternal = ({
     locale,
     client,
   ]);
+
+  useEffect(() => {
+    dispatch({
+      type: "ENDPOINT_CHANGED",
+      value: convertSourceToEndpoint(dataSource),
+    });
+  }, [dispatch, dataSource]);
 
   useEffect(() => {
     try {

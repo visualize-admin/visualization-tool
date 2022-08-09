@@ -739,6 +739,7 @@ export type ChartConfigsAdjusters = {
 const Config = t.type(
   {
     dataSet: t.string,
+    endpoint: t.string,
     activeField: t.union([t.string, t.undefined]),
     meta: Meta,
     chartConfig: ChartConfig,
@@ -757,12 +758,14 @@ const ConfiguratorStateInitial = t.type({
   state: t.literal("INITIAL"),
   activeField: t.undefined,
   dataSet: t.undefined,
+  endpoint: t.string,
 });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
   activeField: t.undefined,
   meta: Meta,
   dataSet: t.union([t.string, t.undefined]),
+  endpoint: t.string,
   chartConfig: t.undefined,
 });
 const ConfiguratorStateConfiguringChart = t.intersection([
