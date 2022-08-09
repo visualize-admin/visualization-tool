@@ -79,7 +79,9 @@ const server = new ApolloServer({
           context.sparqlClient === undefined &&
           context.sparqlClientStream === undefined
         ) {
-          context.sparqlClient = new ParsingClient({ endpointUrl: sourceUrl });
+          context.sparqlClient = new ParsingClient({
+            endpointUrl: sourceUrl,
+          });
           context.sparqlClientStream = new StreamClient({
             endpointUrl: sourceUrl,
           });

@@ -6,7 +6,7 @@ import { Inspector } from "react-inspector";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { useDataSource } from "@/components/data-source-menu";
 import { useConfiguratorState } from "@/configurator";
-import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "@/domain/env";
+import { SPARQL_EDITOR } from "@/domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
@@ -52,7 +52,9 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
 };
 
 const DebugConfigurator = () => {
+  const [dataSource] = useDataSource();
   const [configuratorState] = useConfiguratorState();
+
   return (
     <>
       <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
@@ -66,7 +68,7 @@ const DebugConfigurator = () => {
             variant="text"
             size="small"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
-              SPARQL_ENDPOINT
+              dataSource.url
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
               configuratorState.dataSet ?? ""
             )}`}

@@ -11,34 +11,28 @@ import {
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import { Option } from "@/configurator";
+import {
+  convertSourceToEndpoint,
+  DataSource,
+  convertEndpointToSource,
+} from "@/graphql/resolvers/utils";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
   {
     value: "sparql+https://lindas.admin.ch/query",
-    label: "LINDAS PROD",
+    label: "Prod",
     position: 2,
   },
   {
     value: "sparql+https://int.lindas.admin.ch/query",
-    label: "LINDAS INT",
+    label: "Int",
     position: 1,
   },
 ];
 const TRUSTED_ENDPOINTS: string[] = TRUSTED_ENDPOINT_OPTIONS.map(
   (d) => d.value
 );
-
-export type DataSourceType = "sparql" | "sql";
-
-export type DataSource = {
-  type: DataSourceType;
-  url: string;
-};
-
-const DEFAULT_DATA_SOURCE: DataSource = {
-  type: "sparql",
-  url: "https://lindas.admin.ch/query",
-};
 
 const DataSourceStateContext = createContext<
   [DataSource, Dispatch<DataSource>] | undefined
@@ -54,18 +48,6 @@ export const useDataSource = () => {
   }
 
   return ctx;
-};
-
-const convertEndpointToSource = (endpoint: string): DataSource => {
-  const [type, url] = endpoint.split("+") as [DataSourceType, string];
-
-  return { type, url };
-};
-
-const convertSourceToEndpoint = (source: DataSource): string => {
-  const { type, url } = source;
-
-  return `${type}+${url}`;
 };
 
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {

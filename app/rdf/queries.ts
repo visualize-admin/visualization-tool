@@ -21,7 +21,7 @@ import {
   parseObservationValue,
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
-import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
+import { SPARQL_EDITOR } from "../domain/env";
 import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import isAttrEqual from "../utils/is-attr-equal";
@@ -46,11 +46,8 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
-export const createSource = ({ endpointUrl }: { endpointUrl?: string }) =>
-  new Source({
-    endpointUrl: endpointUrl || SPARQL_ENDPOINT,
-    queryOperation: "postUrlencoded",
-  });
+export const createSource = ({ endpointUrl }: { endpointUrl: string }) =>
+  new Source({ endpointUrl, queryOperation: "postUrlencoded" });
 
 const getLatestCube = async (cube: Cube): Promise<Cube> => {
   const source = cube.source;

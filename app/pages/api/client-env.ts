@@ -15,7 +15,7 @@ export default async function clientEnvApi(
         const result = `window.__clientEnv__=${JSON.stringify({
           GA_TRACKING_ID: process.env.GA_TRACKING_ID,
           SPARQL_EDITOR: process.env.SPARQL_EDITOR,
-          SPARQL_ENDPOINT: process.env.SPARQL_ENDPOINT,
+          ENDPOINT: process.env.ENDPOINT,
           SPARQL_GEO_ENDPOINT: process.env.SPARQL_GEO_ENDPOINT,
           SQL_ENDPOINT: process.env.SQL_ENDPOINT,
           PUBLIC_URL: process.env.PUBLIC_URL,
