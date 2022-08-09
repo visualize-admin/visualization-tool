@@ -29,7 +29,7 @@ const useDatasetCount = (
       datasetCounts?.datasetcount
         ? countListToIndexedCount(datasetCounts?.datasetcount)
         : {},
-    [datasetCounts]
+    [datasetCounts, dataSource]
   );
 };
 
