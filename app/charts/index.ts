@@ -22,8 +22,9 @@ import {
   TableColumn,
   TableFields,
 } from "@/configurator/config-types";
+import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
 
-import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
+import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
   getGeoDimensions,
@@ -171,10 +172,10 @@ export const getInitialConfig = ({
           },
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: "category10",
-            colorMapping: mapColorsToComponentValuesIris({
-              palette: "category10",
-              component: getCategoricalDimensions(dimensions)[0],
+            palette: DEFAULT_PALETTE,
+            colorMapping: mapValueIrisToColor({
+              palette: DEFAULT_PALETTE,
+              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
         },
@@ -188,11 +189,11 @@ export const getInitialConfig = ({
           y: { componentIri: measures[0].iri },
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: "category10",
+            palette: DEFAULT_PALETTE,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
-            colorMapping: mapColorsToComponentValuesIris({
-              palette: "category10",
-              component: getCategoricalDimensions(dimensions)[0],
+            colorMapping: mapValueIrisToColor({
+              palette: DEFAULT_PALETTE,
+              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
             }),
           },
         },
@@ -964,12 +965,14 @@ const convertTableFieldsToSegmentField = ({
 
     return {
       componentIri,
-      palette: "category10",
-      colorMapping: mapColorsToComponentValuesIris({
-        palette: "category10",
-        component: dimensions.find(
-          (d) => d.iri === componentIri
-        ) as DimensionMetaDataFragment,
+      palette: DEFAULT_PALETTE,
+      colorMapping: mapValueIrisToColor({
+        palette: DEFAULT_PALETTE,
+        dimensionValues: (
+          dimensions.find(
+            (d) => d.iri === componentIri
+          ) as DimensionMetaDataFragment
+        )?.values,
       }),
     };
   }

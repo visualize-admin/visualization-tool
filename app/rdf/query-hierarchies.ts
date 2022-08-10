@@ -13,7 +13,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 
 import * as ns from "./namespace";
 import { createSource } from "./queries";
-import { filterTree, mapTree } from "./tree-utils";
+import { pruneTree, mapTree } from "./tree-utils";
 
 const queryDimensionValues = async (
   dimension: string,
@@ -107,7 +107,7 @@ export const queryHierarchy = async (
   const tree = toTree(results, dimensionIri, locale);
   const dimensionValues = new Set(await dimensionValuesProm);
   return mapTree(
-    filterTree(tree, (node) => dimensionValues.has(node.value)),
+    pruneTree(tree, (node) => dimensionValues.has(node.value)),
     (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
   );
 };

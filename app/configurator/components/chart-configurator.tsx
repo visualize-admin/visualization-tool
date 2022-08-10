@@ -6,9 +6,17 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Theme,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { isEmpty, isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  ReactElement,
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -26,6 +34,8 @@ import {
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   isMapConfig,
+  OptionGroup,
+  Option,
 } from "@/configurator";
 import {
   ControlSection,
@@ -44,6 +54,7 @@ import MoveDragButtons from "@/configurator/components/move-drag-buttons";
 import useDisclosure from "@/configurator/components/use-disclosure";
 import {
   getFiltersByMappingStatus,
+  isConfiguring,
   moveFilterField,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
@@ -51,13 +62,26 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
+  HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+
+import useHierarchyParents from "./use-hierarchy-parents";
+
+const asGroup = (
+  parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
+) => {
+  return {
+    label: parents.map((p) => p.label).join(" > "),
+    value: parents.map((p) => p.value).join("$"),
+  };
+};
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -71,6 +95,27 @@ const DataFilterSelectGeneric = ({
   disabled?: boolean;
   onRemove: () => void;
 }) => {
+  const [state] = useConfiguratorState(isConfiguring);
+  const cubeIri = state.dataSet;
+  const locale = useLocale();
+  const hierarchyParents = useHierarchyParents(cubeIri, dimension, locale);
+
+  const values = dimension.values;
+
+  const optionGroups = useMemo(() => {
+    if (hierarchyParents) {
+      return hierarchyParents.map(
+        ([parents, dfsRes]) =>
+          [asGroup(parents), dfsRes.map((d) => d.node)] as [
+            OptionGroup,
+            Option[]
+          ]
+      );
+    } else {
+      return undefined;
+    }
+  }, [hierarchyParents]);
+
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -93,22 +138,18 @@ const DataFilterSelectGeneric = ({
     isOptional: !dimension.isKeyDimension,
   };
 
-  let component: React.ReactElement;
+  let component: ReactElement;
   if (dimension.__typename === "TemporalDimension") {
     if (dimension.timeUnit === "Day") {
-      component = (
-        <DataFilterSelectDay {...sharedProps} options={dimension.values} />
-      );
+      component = <DataFilterSelectDay {...sharedProps} options={values} />;
     } else if (dimension.timeUnit === "Month") {
-      component = (
-        <DataFilterSelect {...sharedProps} options={dimension.values} />
-      );
+      component = <DataFilterSelect {...sharedProps} options={values} />;
     } else {
       component = (
         <DataFilterSelectTime
           {...sharedProps}
-          from={dimension.values[0].value}
-          to={dimension.values[1].value}
+          from={values[0].value}
+          to={values[1].value}
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
         />
@@ -116,7 +157,11 @@ const DataFilterSelectGeneric = ({
     }
   } else {
     component = (
-      <DataFilterSelect {...sharedProps} options={dimension.values} />
+      <DataFilterSelect
+        {...sharedProps}
+        options={values}
+        optionGroups={optionGroups}
+      />
     );
   }
 
@@ -218,20 +263,28 @@ const useEnsurePossibleFilters = ({
   return { error, fetching };
 };
 
-export const ChartConfigurator = ({
-  state,
+type Dimension = NonNullable<
+  NonNullable<
+    DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+  >["dimensions"]
+>[number];
+
+const useFilterReorder = ({
+  onAddDimensionFilter,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  onAddDimensionFilter?: () => void;
 }) => {
   const [dataSource] = useDataSource();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
-  const [, dispatch] = useConfiguratorState();
-  const { fields, filters } = state.chartConfig;
-  const unmappedFilters = React.useMemo(() => {
-    return getFiltersByMappingStatus(fields, filters).unmapped;
-  }, [fields, filters]);
 
-  const variables = React.useMemo(
+  const { fields, filters } = state.chartConfig;
+  const { unmapped: unmappedFilters } = useMemo(
+    () => getFiltersByMappingStatus(fields, filters),
+    [fields, filters]
+  );
+
+  const variables = useMemo(
     () => ({
       iri: state.dataSet,
       sourceType: dataSource.type,
@@ -246,35 +299,11 @@ export const ChartConfigurator = ({
     }),
     [state.dataSet, dataSource, locale, unmappedFilters]
   );
+
   const [{ data, fetching: dataFetching }, executeQuery] =
-    useDataCubeMetadataWithComponentValuesQuery({ variables });
-  const metaData = data?.dataCubeByIri;
-
-  const handleMove = useCallback(
-    (dimensionIri: string, delta: number) => {
-      if (!metaData) {
-        return;
-      }
-
-      const dimension = data?.dataCubeByIri?.dimensions.find(
-        (d) => d.iri === dimensionIri
-      );
-      const chartConfig = moveFilterField(state.chartConfig, {
-        dimensionIri,
-        delta,
-        possibleValues: dimension ? dimension.values : [],
-      });
-
-      dispatch({
-        type: "CHART_CONFIG_REPLACED",
-        value: {
-          chartConfig,
-          dataSetMetadata: metaData,
-        },
-      });
-    },
-    [data?.dataCubeByIri?.dimensions, dispatch, metaData, state.chartConfig]
-  );
+    useDataCubeMetadataWithComponentValuesQuery({
+      variables: variables,
+    });
 
   useEffect(() => {
     executeQuery({
@@ -282,248 +311,214 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
+  const dimensions = useMemo(() => {
+    const dimensions = data?.dataCubeByIri?.dimensions;
+    type T = Exclude<typeof dimensions, undefined>;
+    if (!data?.dataCubeByIri?.dimensions) {
+      return [] as T;
+    }
+    return dimensions as T;
+  }, [data?.dataCubeByIri?.dimensions]);
+
+  const metaData = data?.dataCubeByIri;
+
+  // Handlers
+  const handleMove = useEvent((dimensionIri: string, delta: number) => {
+    if (!metaData) {
+      return;
+    }
+
+    const dimension = dimensions.find((d) => d.iri === dimensionIri);
+    const chartConfig = moveFilterField(state.chartConfig, {
+      dimensionIri,
+      delta,
+      possibleValues: dimension ? dimension.values : [],
+    });
+
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig,
+        dataSetMetadata: metaData,
+      },
+    });
+  });
+
+  const handleAddDimensionFilter = useEvent((dimension: Dimension) => {
+    onAddDimensionFilter?.();
+    const filterValue = dimension.values[0];
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      value: {
+        dimensionIri: dimension.iri,
+        value: filterValue.value,
+      },
+    });
+  });
+
+  const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      value: {
+        dimensionIri: dimension.iri,
+        value: FIELD_VALUE_NONE,
+      },
+    });
+  });
+
+  const handleDragEnd: OnDragEndResponder = useEvent((result) => {
+    const sourceIndex = result.source?.index;
+    const destinationIndex = result.destination?.index;
+    if (
+      typeof sourceIndex !== "number" ||
+      typeof destinationIndex !== "number" ||
+      result.source === result.destination
+    ) {
+      return;
+    }
+    const delta = destinationIndex - sourceIndex;
+    handleMove(result.draggableId, delta);
+  });
+
   const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
     state,
   });
   const fetching = possibleFiltersFetching || dataFetching;
 
-  const {
-    isOpen: isFilterMenuOpen,
-    open: openFilterMenu,
-    close: closeFilterMenu,
-  } = useDisclosure();
-  const filterMenuButtonRef = useRef(null);
-  if (data?.dataCubeByIri) {
-    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
+  const { filterDimensions, addableDimensions } = useMemo(() => {
+    const mappedIris = getFieldComponentIris(fields);
     const keysOrder = Object.fromEntries(
-      Object.keys(state.chartConfig.filters).map((k, i) => [k, i])
+      Object.keys(filters).map((k, i) => [k, i])
     );
     const filterDimensions = sortBy(
-      data?.dataCubeByIri.dimensions.filter(
+      dimensions.filter(
         (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
-      ),
+      ) || [],
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
-    const addableDimensions = data?.dataCubeByIri.dimensions.filter(
+    const addableDimensions = dimensions.filter(
       (dim) =>
         !mappedIris.has(dim.iri) &&
         keysOrder[dim.iri] === undefined &&
         !isStandardErrorDimension(dim)
     );
-
-    const handleDragEnd: OnDragEndResponder = (result) => {
-      const sourceIndex = result.source?.index;
-      const destinationIndex = result.destination?.index;
-      if (
-        typeof sourceIndex !== "number" ||
-        typeof destinationIndex !== "number" ||
-        result.source === result.destination
-      ) {
-        return;
-      }
-      const delta = destinationIndex - sourceIndex;
-      handleMove(result.draggableId, delta);
+    return {
+      filterDimensions,
+      addableDimensions,
     };
+  }, [dimensions, fields, filters]);
 
-    const handleAddDimensionFilter = (
-      dimension: NonNullable<
-        NonNullable<
-          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-        >["dimensions"]
-      >[number]
-    ) => {
-      closeFilterMenu();
-      const filterValue = dimension.values[0];
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
-        value: {
-          dimensionIri: dimension.iri,
-          value: filterValue.value,
-        },
-      });
-    };
+  return {
+    handleRemoveDimensionFilter,
+    handleAddDimensionFilter,
+    handleMove,
+    handleDragEnd,
+    fetching,
+    data,
+    filterDimensions,
+    addableDimensions,
+  };
+};
 
-    const handleRemoveDimensionFilter = (
-      dimension: NonNullable<
-        NonNullable<
-          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-        >["dimensions"]
-      >[number]
-    ) => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
-        value: {
-          dimensionIri: dimension.iri,
-          value: FIELD_VALUE_NONE,
-        },
-      });
-    };
+const useStyles = makeStyles<
+  Theme,
+  {
+    fetching: boolean;
+  }
+>((theme) => ({
+  filterSection: {
+    flexGrow: 1,
+  },
+  loadingIndicator: {
+    color: theme.palette.grey[700],
+    display: "inline-block",
+    marginLeft: 8,
+  },
+  filtersContainer: {
+    "& > * + *": { marginTop: theme.spacing(3) },
+    marginBottom: 4,
+  },
+  filterRow: {
+    display: "grid",
+    gridTemplateColumns: "auto min-content",
+    overflow: "hidden",
+    width: "100%",
+    gridColumnGap: theme.spacing(2),
+    gridTemplateRows: "min-content min-content",
+    gridTemplateAreas: '"description drag-button" "select drag-button"',
+    "& .buttons": {
+      transition: "color 0.125s ease, opacity 0.125s ease-out",
+      opacity: 0.25,
+      color: "secondary.active",
+    },
+    ".buttons:hover": (props) =>
+      props.fetching
+        ? {}
+        : {
+            opacity: 1,
+          },
+    "& > *": {
+      overflow: "hidden",
+    },
+  },
+  dragButtons: {
+    gridArea: "drag-button",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingBottom: 0,
+  },
+  addDimensionContainer: {
+    marginTop: "1rem",
+    paddingLeft: theme.spacing(2),
+    "& .menu-button": {
+      background: "transparent",
+      border: 0,
+      padding: 0,
+    },
+  },
+  addDimensionButton: {
+    display: "flex",
+    minWidth: "auto",
+    justifyContent: "center",
+  },
+}));
 
-    return (
-      <>
-        <ControlSection>
-          <SectionTitle titleId="controls-design">
-            <Trans id="controls.section.chart.options">Chart Options</Trans>
-          </SectionTitle>
-          <ControlSectionContent
-            side="left"
-            role="tablist"
-            aria-labelledby="controls-design"
-          >
-            <ChartFields
-              chartConfig={state.chartConfig}
-              metaData={data.dataCubeByIri}
-            />
-          </ControlSectionContent>
-        </ControlSection>
-        <ControlSection sx={{ flexGrow: 1 }}>
-          <SectionTitle titleId="controls-data">
-            <Trans id="controls.section.data.filters">Filters</Trans>{" "}
-            {fetching ? (
-              <CircularProgress
-                size={12}
-                sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
-              />
-            ) : null}
-          </SectionTitle>
+export const ChartConfigurator = ({
+  state,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+}) => {
+  const {
+    isOpen: isFilterMenuOpen,
+    open: openFilterMenu,
+    close: closeFilterMenu,
+  } = useDisclosure();
+  const {
+    fetching: dataFetching,
+    handleAddDimensionFilter,
+    handleRemoveDimensionFilter,
+    handleDragEnd,
+    data,
+    filterDimensions,
+    addableDimensions,
+    handleMove,
+  } = useFilterReorder({
+    onAddDimensionFilter: () => closeFilterMenu(),
+  });
+  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
+    state,
+  });
+  const fetching = possibleFiltersFetching || dataFetching;
 
-          <ControlSectionContent side="left" aria-labelledby="controls-data">
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="filters">
-                {(provided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    sx={{ "& > * + *": { mt: 3 }, mb: 4 }}
-                    ref={provided.innerRef}
-                  >
-                    {filterDimensions.map((dimension, i) => (
-                      <Draggable
-                        isDragDisabled={fetching}
-                        draggableId={dimension.iri}
-                        index={i}
-                        key={dimension.iri}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.dragHandleProps}
-                            {...provided.draggableProps}
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "stretch",
-                                "& .buttons": {
-                                  transition:
-                                    "color 0.125s ease, opacity 0.125s ease-out",
-                                  opacity: 0.25,
-                                  color: "secondary.active",
-                                },
-                                ".buttons:hover": fetching
-                                  ? {}
-                                  : {
-                                      opacity: 1,
-                                    },
-                              }}
-                            >
-                              <DataFilterSelectGeneric
-                                key={dimension.iri}
-                                dimension={dimension}
-                                index={i}
-                                disabled={fetching}
-                                onRemove={() =>
-                                  handleRemoveDimensionFilter(dimension)
-                                }
-                              />
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "flex-end",
-                                  flexGrow: 0,
-                                  flexShrink: 0,
-                                  mb: -1,
-                                  ml: 2,
-                                }}
-                              >
-                                <MoveDragButtons
-                                  moveUpButtonProps={{
-                                    title: t({ id: "Move filter up" }),
-                                  }}
-                                  moveDownButtonProps={{
-                                    title: t({ id: "Move filter down" }),
-                                  }}
-                                  dragButtonProps={{
-                                    title: t({
-                                      id: "Drag filters to reorganize",
-                                    }),
-                                  }}
-                                  className="buttons"
-                                  onClickUp={() =>
-                                    handleMove(dimension.iri, -1)
-                                  }
-                                  onClickDown={() =>
-                                    handleMove(dimension.iri, 1)
-                                  }
-                                />
-                              </Box>
-                            </Box>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-            {addableDimensions.length > 0 ? (
-              <Box
-                sx={{
-                  pl: 2,
-                  "& .menu-button": {
-                    background: "transparent",
-                    border: 0,
-                    padding: 0,
-                  },
-                }}
-              >
-                <Button
-                  ref={filterMenuButtonRef}
-                  onClick={openFilterMenu}
-                  variant="contained"
-                  sx={{
-                    display: "flex",
-                    minWidth: "auto",
-                    justifyContent: "center",
-                  }}
-                  color="primary"
-                >
-                  <Trans>Add filter</Trans>
-                  <Icon name="add" height={18} />
-                </Button>
-                <Menu
-                  anchorEl={filterMenuButtonRef.current}
-                  open={isFilterMenuOpen}
-                  onClose={closeFilterMenu}
-                >
-                  {addableDimensions.map((dim) => (
-                    <MenuItem
-                      onClick={() => handleAddDimensionFilter(dim)}
-                      key={dim.iri}
-                    >
-                      {dim.label}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-            ) : null}
-          </ControlSectionContent>
-        </ControlSection>
-      </>
-    );
-  } else {
+  const filterMenuButtonRef = useRef(null);
+
+  const classes = useStyles({ fetching });
+
+  if (!data?.dataCubeByIri) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -531,6 +526,124 @@ export const ChartConfigurator = ({
       </>
     );
   }
+
+  return (
+    <>
+      <ControlSection>
+        <SectionTitle titleId="controls-design">
+          <Trans id="controls.section.chart.options">Chart Options</Trans>
+        </SectionTitle>
+        <ControlSectionContent
+          side="left"
+          role="tablist"
+          aria-labelledby="controls-design"
+        >
+          <ChartFields
+            chartConfig={state.chartConfig}
+            metaData={data.dataCubeByIri}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection className={classes.filterSection}>
+        <SectionTitle titleId="controls-data">
+          <Trans id="controls.section.data.filters">Filters</Trans>{" "}
+          {fetching ? (
+            <CircularProgress size={12} className={classes.loadingIndicator} />
+          ) : null}
+        </SectionTitle>
+
+        <ControlSectionContent side="left" aria-labelledby="controls-data">
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="filters">
+              {(provided) => (
+                <Box
+                  {...provided.droppableProps}
+                  className={classes.filtersContainer}
+                  ref={provided.innerRef}
+                >
+                  {filterDimensions.map((dimension, i) => (
+                    <Draggable
+                      isDragDisabled={fetching}
+                      draggableId={dimension.iri}
+                      index={i}
+                      key={dimension.iri}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.dragHandleProps}
+                          {...provided.draggableProps}
+                        >
+                          <Box className={classes.filterRow}>
+                            <DataFilterSelectGeneric
+                              key={dimension.iri}
+                              dimension={dimension}
+                              index={i}
+                              disabled={fetching}
+                              onRemove={() =>
+                                handleRemoveDimensionFilter(dimension)
+                              }
+                            />
+                            <Box className={classes.dragButtons}>
+                              <MoveDragButtons
+                                moveUpButtonProps={{
+                                  title: t({ id: "Move filter up" }),
+                                }}
+                                moveDownButtonProps={{
+                                  title: t({ id: "Move filter down" }),
+                                }}
+                                dragButtonProps={{
+                                  title: t({
+                                    id: "Drag filters to reorganize",
+                                  }),
+                                }}
+                                className="buttons"
+                                onClickUp={() => handleMove(dimension.iri, -1)}
+                                onClickDown={() => handleMove(dimension.iri, 1)}
+                              />
+                            </Box>
+                          </Box>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          </DragDropContext>
+          {addableDimensions.length > 0 ? (
+            <Box className={classes.addDimensionContainer}>
+              <Button
+                ref={filterMenuButtonRef}
+                onClick={openFilterMenu}
+                variant="contained"
+                className={classes.addDimensionButton}
+                color="primary"
+              >
+                <Trans>Add filter</Trans>
+                <Icon name="add" height={18} />
+              </Button>
+              <Menu
+                anchorEl={filterMenuButtonRef.current}
+                open={isFilterMenuOpen}
+                onClose={closeFilterMenu}
+              >
+                {addableDimensions.map((dim) => (
+                  <MenuItem
+                    onClick={() => handleAddDimensionFilter(dim)}
+                    key={dim.iri}
+                  >
+                    {dim.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ) : null}
+        </ControlSectionContent>
+      </ControlSection>
+    </>
+  );
 };
 
 const ChartFields = ({

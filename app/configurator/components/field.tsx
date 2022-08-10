@@ -26,6 +26,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   Option,
+  OptionGroup,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
@@ -108,6 +109,7 @@ export const DataFilterSelect = ({
   disabled,
   isOptional,
   controls,
+  optionGroups,
 }: {
   dimensionIri: string;
   label: string;
@@ -116,6 +118,7 @@ export const DataFilterSelect = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
+  optionGroups?: [OptionGroup, Option[]][];
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -128,7 +131,6 @@ export const DataFilterSelect = ({
     id: "controls.select.optional",
     message: `optional`,
   });
-
   const allOptions = useMemo(() => {
     return isOptional
       ? [
@@ -149,6 +151,7 @@ export const DataFilterSelect = ({
       disabled={disabled}
       options={allOptions}
       controls={controls}
+      optionGroups={optionGroups}
       {...fieldProps}
     />
   );

@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Input, Popover } from "@mui/material";
-import { styled } from "@mui/styles";
+import { Box, Button, Input, Popover, styled } from "@mui/material";
 import { color as d3Color } from "d3";
 import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 
@@ -135,7 +134,26 @@ const ColorPickerButton = styled(Button)({
   padding: 0,
   minWidth: "auto",
   minHeight: "auto",
+  lineHeight: "16px",
 });
+
+const ColorPickerBox = styled(Box)(({ theme }) => ({
+  lineHeight: "16px",
+  "& > button": {
+    backgroundColor: "grey.100",
+    borderRadius: 4,
+    overflow: "hidden",
+    borderWidth: 1,
+    border: `1px solid ${theme.palette.divider}`,
+    p: 0,
+  },
+  "& > button:hover": {
+    cursor: "pointer",
+  },
+  "& > button[aria-expanded]": {
+    borderColor: "primary.active",
+  },
+}));
 
 export const ColorPickerMenu = (props: Props) => {
   const { selectedColor } = props;
@@ -143,22 +161,11 @@ export const ColorPickerMenu = (props: Props) => {
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
   return (
-    <Box
+    <ColorPickerBox
       sx={{
-        "> button": {
-          backgroundColor: "grey.100",
-          borderRadius: 2,
-          overflow: "hidden",
-          borderWidth: 1,
-          border: 0,
-          p: 0,
-        },
         "> button:hover": {
           borderColor,
           cursor: "pointer",
-        },
-        "> button[aria-expanded]": {
-          borderColor: "primary.active",
         },
         opacity: props.disabled ? 0.5 : 1,
         pointerEvents: props.disabled ? "none" : "auto",
@@ -185,6 +192,6 @@ export const ColorPickerMenu = (props: Props) => {
       <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>
         <ColorPicker {...props} />
       </Popover>
-    </Box>
+    </ColorPickerBox>
   );
 };

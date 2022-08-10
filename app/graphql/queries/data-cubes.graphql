@@ -42,6 +42,7 @@ fragment dimensionMetaData on Dimension {
   label
   isNumerical
   isKeyDimension
+  order
   values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
   unit
   related {
@@ -170,6 +171,7 @@ query DataCubeMetadataWithComponentValues(
     creator {
       iri
     }
+    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }

@@ -12,7 +12,7 @@ Cypress.on("uncaught:exception", (err) => {
 });
 
 beforeEach(() => {
-  cy.viewport("macbook-13");
+  cy.viewport("macbook-15");
 });
 
 describe("Editing a chart", () => {
@@ -22,13 +22,19 @@ describe("Editing a chart", () => {
     loadChartInLocalStorage(key, config);
     cy.visit(`/en/create/${key}`);
     waitForChartToBeLoaded();
-    cy.findByTestId(`selection-controls-tree-filters`, {
-      timeout: 20000,
-    });
-    cy.findByTestId("chart-edition-right-filters").scrollIntoView();
+
     cy.findByText("Select none").click();
-    cy.findByText("General public services").click();
-    cy.findByText("Basic research").click();
+    cy.findByText("Filters", {
+      selector: "button",
+    }).click();
+    cy.findByText("Military defence").click();
+    cy.findByText("Civil defence").click();
+    cy.findByText("Mining, manufacturing and construction").click();
+    cy.findByText("Transport").click();
+    cy.findByText("Communication").click();
+    cy.findByText("Apply filters").click();
+
+    cy.get('[data-name="panel-middle"]').scrollTo(0, 200);
     cy.waitForNetworkIdle(1000);
     waitForChartToBeLoaded();
     cy.screenshot(`chart-edition-${key}`);

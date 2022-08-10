@@ -975,23 +975,27 @@ export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
 })) as SteppedPalette<SequentialPaletteType>[];
 
-export const mapColorsToComponentValuesIris = ({
+export const randomComparator = () => (Math.random() > 0.5 ? 1 : -1);
+
+export const mapValueIrisToColor = ({
   palette,
-  component,
+  dimensionValues,
+  random,
 }: {
   palette: string;
-  component: DimensionMetaDataFragment;
+  dimensionValues: DimensionMetaDataFragment["values"];
+  random?: boolean;
 }) => {
-  if (!("values" in component)) {
+  if (!dimensionValues) {
     return {};
   }
-
+  const paletteValues = getPalette(palette);
   const colorScale = scaleOrdinal()
-    .domain(component.values.map((dv) => dv.value))
-    .range(getPalette(palette));
+    .domain(dimensionValues.map((dv) => dv.value))
+    .range(random ? [...paletteValues].sort(randomComparator) : paletteValues);
   const colorMapping = {} as { [x: string]: string };
 
-  component.values.forEach((dv) => {
+  dimensionValues.forEach((dv) => {
     colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
   });
   return colorMapping;

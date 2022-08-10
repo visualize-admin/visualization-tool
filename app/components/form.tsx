@@ -13,14 +13,17 @@ import {
   SelectProps,
   Typography,
   TextField,
+  ListSubheader,
+  MenuItem,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
+import { flatten } from "lodash";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 
 import Flex from "@/components/flex";
 import VisuallyHidden from "@/components/visually-hidden";
-import { FieldProps, Option } from "@/configurator";
+import { FieldProps, Option, OptionGroup } from "@/configurator";
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -151,6 +154,32 @@ export const Checkbox = ({
   />
 );
 
+const getSelectOptions = (
+  options: Option[],
+  sortOptions: boolean,
+  locale: string
+) => {
+  const noneOptions = options.filter((o) => o.isNoneValue);
+  const restOptions = options.filter((o) => !o.isNoneValue);
+
+  if (sortOptions) {
+    restOptions.sort((a, b) => {
+      if (a.position !== undefined && b.position !== undefined) {
+        return a.position < b.position;
+      } else {
+        return a.label.localeCompare(b.label, locale);
+      }
+    });
+  }
+
+  return [...noneOptions, ...restOptions];
+};
+
+export type Group = {
+  label: string;
+  value: string;
+};
+
 export const Select = ({
   label,
   id,
@@ -160,6 +189,7 @@ export const Select = ({
   onChange,
   sortOptions = true,
   controls,
+  optionGroups,
 }: {
   id: string;
   options: Option[];
@@ -167,27 +197,27 @@ export const Select = ({
   disabled?: boolean;
   sortOptions?: boolean;
   controls?: React.ReactNode;
+  optionGroups?: [OptionGroup, Option[]][];
 } & SelectProps) => {
   const locale = useLocale();
+
   const sortedOptions = useMemo(() => {
-    const noneOptions = options.filter((o) => o.isNoneValue);
-    const restOptions = options.filter((o) => !o.isNoneValue);
-
-    if (sortOptions) {
-      restOptions.sort((a, b) => {
-        if (a.position !== undefined && b.position !== undefined) {
-          return a.position < b.position;
-        } else {
-          return a.label.localeCompare(b.label, locale);
-        }
-      });
+    if (optionGroups) {
+      return flatten(
+        optionGroups.map(
+          ([group, values]) =>
+            [
+              { type: "group", ...group },
+              ...getSelectOptions(values, sortOptions, locale),
+            ] as const
+        )
+      );
+    } else {
+      return getSelectOptions(options, sortOptions, locale);
     }
-
-    return [...noneOptions, ...restOptions];
-  }, [options, locale, sortOptions]);
-
+  }, [optionGroups, sortOptions, locale, options]);
   return (
-    <Box sx={{ color: "grey.700" }}>
+    <Box>
       {label && (
         <Label htmlFor={id} smaller>
           {label}
@@ -195,14 +225,7 @@ export const Select = ({
         </Label>
       )}
       <MUISelect
-        native
         sx={{
-          borderColor: "grey.500",
-          backgroundColor: "grey.100",
-          pl: 0,
-          height: "40px",
-          color: disabled ? "grey.500" : "grey.700",
-          textOverflow: "ellipsis",
           width: "100%",
         }}
         id={id}
@@ -211,15 +234,19 @@ export const Select = ({
         value={value}
         disabled={disabled}
       >
-        {sortedOptions.map((opt) => (
-          <option
-            key={opt.value}
-            disabled={opt.disabled}
-            value={opt.value ?? undefined}
-          >
-            {opt.label}
-          </option>
-        ))}
+        {sortedOptions.map((opt) => {
+          return opt.type === "group" ? (
+            <ListSubheader>{opt.label}</ListSubheader>
+          ) : (
+            <MenuItem
+              key={opt.value}
+              disabled={opt.disabled}
+              value={opt.value ?? undefined}
+            >
+              {opt.label}
+            </MenuItem>
+          );
+        })}
       </MUISelect>
     </Box>
   );
