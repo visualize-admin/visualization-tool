@@ -21,13 +21,14 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
   isAreaConfig,
   isColumnConfig,
   isMapConfig,
+  isSegmentColorMappingInConfig,
   isSegmentInConfig,
 } from "@/configurator/config-types";
 import {
@@ -52,6 +53,8 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
+
+export const DEFAULT_PALETTE = "category10";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -78,6 +81,7 @@ export type ConfiguratorStateAction =
         field: string;
         componentIri: string;
         dataSetMetadata: DataCubeMetadata;
+        selectedValues?: $FixMe[];
       };
     }
   | {
@@ -143,6 +147,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
+      value: { dimensionIri: string; values: string[] };
+    }
+  | {
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
       value: { dimensionIri: string; values: string[] };
     }
   | {
@@ -643,19 +651,28 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );
+            const selectedValues = action.value.selectedValues
+              ? action.value.selectedValues
+              : component?.values.slice(0, 7) || [];
             const colorMapping =
-              component &&
-              mapColorsToComponentValuesIris({
-                palette: "category10",
-                component,
+              component?.values &&
+              mapValueIrisToColor({
+                palette: DEFAULT_PALETTE,
+                dimensionValues: component?.values,
               });
 
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             if (isSegmentInConfig(draft.chartConfig)) {
+              draft.chartConfig.filters[action.value.componentIri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  selectedValues.map((v) => v.value).map((x) => [x, true])
+                ),
+              };
               draft.chartConfig.fields.segment = {
                 componentIri: action.value.componentIri,
-                palette: "category10",
+                palette: DEFAULT_PALETTE,
                 // Type exists only within column charts.
                 ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
                 sorting: {
@@ -689,10 +706,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             );
             const colorMapping =
               component &&
-              mapColorsToComponentValuesIris({
+              mapValueIrisToColor({
                 palette:
-                  draft.chartConfig.fields.segment.palette || "category10",
-                component,
+                  draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
+                dimensionValues: component?.values,
               });
 
             draft.chartConfig.fields.segment.componentIri =
@@ -875,6 +892,24 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             type: "single",
             value,
           };
+        }
+      }
+      return draft;
+
+    case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, values } = action.value;
+        if (
+          isSegmentColorMappingInConfig(draft.chartConfig) &&
+          draft.chartConfig.fields.segment &&
+          draft.chartConfig.fields.segment.componentIri === dimensionIri
+        ) {
+          const colorMapping = mapValueIrisToColor({
+            palette: draft.chartConfig.fields.segment.palette,
+            dimensionValues: values.map((value) => ({ value })),
+            random: true,
+          });
+          draft.chartConfig.fields.segment.colorMapping = colorMapping;
         }
       }
       return draft;
@@ -1234,7 +1269,9 @@ export const ConfiguratorStateProvider = ({
   );
 };
 
-export const useConfiguratorState = () => {
+export const useConfiguratorState = <T extends ConfiguratorState>(
+  predicate?: (s: ConfiguratorState) => s is T
+) => {
   const ctx = useContext(ConfiguratorStateContext);
 
   if (ctx === undefined) {
@@ -1243,5 +1280,17 @@ export const useConfiguratorState = () => {
     );
   }
 
-  return ctx;
+  const [state, dispatch] = ctx;
+
+  if (predicate && !predicate(state)) {
+    throw new Error("State does not respect type guard");
+  }
+
+  return [state, dispatch] as [T, typeof dispatch];
+};
+
+export const isConfiguring = (
+  s: ConfiguratorState
+): s is ConfiguratorStateConfiguringChart => {
+  return s.state === "CONFIGURING_CHART";
 };

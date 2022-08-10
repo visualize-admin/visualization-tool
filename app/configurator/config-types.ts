@@ -597,6 +597,26 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isSegmentColorMappingInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is
+  | AreaConfig
+  | BarConfig
+  | ColumnConfig
+  | LineConfig
+  | ScatterPlotConfig
+  | PieConfig => {
+  const { chartType } = chartConfig;
+  return (
+    chartType === "area" ||
+    chartType === "bar" ||
+    chartType === "column" ||
+    chartType === "line" ||
+    chartType === "scatterplot" ||
+    chartType === "pie"
+  );
+};
+
 // Chart Config Adjusters
 export type FieldAdjuster<
   NewChartConfigType extends ChartConfig,

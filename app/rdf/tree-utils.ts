@@ -6,8 +6,8 @@ export const mapTree = (
 ) => {
   return tree.map((t): HierarchyValue => {
     return {
-      ...t,
-      children: t.children ? t.children.map(cb) : undefined,
+      ...cb(t),
+      children: t.children ? mapTree(t.children, cb) : undefined,
     };
   });
 };
@@ -32,7 +32,7 @@ const filterTreeHelper = (
  * Given a tree and a list of nodes, will remove any parent/onde that do not contain
  * at least of the provided nodes in their descendant
  */
-export const filterTree = (
+export const pruneTree = (
   tree: HierarchyValue[],
   predicate: (v: HierarchyValue) => boolean
 ): HierarchyValue[] => {

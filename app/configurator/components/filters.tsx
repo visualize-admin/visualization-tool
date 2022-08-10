@@ -1,19 +1,45 @@
-import { Trans } from "@lingui/macro";
-import { Box, BoxProps, Button, Typography } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import {
+  autocompleteClasses,
+  Box,
+  Button,
+  ClickAwayListener,
+  Input,
+  InputAdornment,
+  Typography,
+  ListSubheader,
+  AutocompleteProps,
+  Autocomplete,
+  Divider,
+  Drawer as MuiDrawer,
+  Theme,
+  IconButton,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import clsx from "clsx";
-import React, { useCallback, useMemo } from "react";
+import { groups } from "d3";
+import { get, keyBy, sortBy, groupBy } from "lodash";
+import React, {
+  forwardRef,
+  MouseEventHandler,
+  MutableRefObject,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
+import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
+  isConfiguring,
   MultiFilterContextProvider,
   useConfiguratorState,
   useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
 import {
-  MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
@@ -29,132 +55,550 @@ import {
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import SvgIcCheck from "@/icons/components/IcCheck";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
+import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcSearch from "@/icons/components/IcSearch";
+import { dfs } from "@/lib/dfs";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 
-import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
-const SelectionControls = ({
-  dimensionIri,
-  ...props
-}: { dimensionIri: string } & BoxProps) => {
-  const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues } = useMultiFilterContext();
+const Drawer = styled(MuiDrawer)(({ theme }) => ({
+  "& > .MuiPaper-root": {
+    top: 152,
+    bottom: 0,
+    height: "auto",
+    borderLeft: `1px ${theme.palette.divider} solid`,
+    borderTop: `1px ${theme.palette.divider} solid`,
+  },
+}));
 
-  return (
-    <Box color="grey.500" mb={4} {...props}>
-      <Button
-        onClick={selectAll}
-        variant="inline"
-        color="primary"
-        sx={{ typography: "body2", py: 1 }}
-        disabled={activeKeys.size === allValues.length}
-      >
-        <Trans id="controls.filter.select.all">Select all</Trans>
-      </Button>
-      <Box component="span" mx={1}>
-        ·
-      </Box>
-      <Button
-        onClick={selectNone}
-        variant="inline"
-        color="primary"
-        sx={{ typography: "body2" }}
-        disabled={activeKeys.size === 0}
-      >
-        <Trans id="controls.filter.select.none">Select none</Trans>
-      </Button>
-      <br />
-      <Typography
-        variant="body2"
-        color="grey.700"
-        sx={{ display: "inline" }}
-        component="span"
-      >
-        <Trans id="controls.filter.nb-elements">
-          {activeKeys.size} of {allValues.length}
-        </Trans>
-      </Typography>
-    </Box>
-  );
-};
-
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles((theme: Theme) => {
   return {
-    listItems: {
-      display: "grid",
-      // checkbox content, color picker
-      gridTemplateColumns: "1fr min-content",
+    autocompleteMenuContent: {
+      "--mx": "1rem",
+      "--colorBoxSize": "1.25rem",
+      "--columnGap": "0.75rem",
+      width: 320,
     },
-    withChildren: {
-      marginLeft: "1.25rem",
+    autocompleteHeader: {
+      margin: "1rem var(--mx)",
     },
-    accordionSummary: {
-      display: "grid",
-      // checkbox content, color picker
-      gridTemplateColumns: "1fr min-content",
-      flexGrow: 1,
+    autocompleteInputContainer: {
+      margin: "0 var(--mx) 0rem",
+      paddingBottom: "1rem",
+      borderBottom: `1px solid ${theme.palette.divider}`,
     },
-    accordionContent: {
-      marginLeft: "0.5rem",
+    autocompleteApplyButtonContainer: {
+      position: "sticky",
+      zIndex: 1000,
+      bottom: "0",
+      left: "0",
+      marginTop: "1rem",
+      right: "0",
+      padding: "1rem var(--mx)",
+      background: "rgba(255,255,255,0.75)",
+    },
+    autocompleteApplyButton: {
+      justifyContent: "center",
+    },
+    autocompleteInput: {
+      width: "100%",
+    },
+    optionColor: {
+      borderRadius: "4px",
+      width: "var(--colorBoxSize)",
+      height: "var(--colorBoxSize)",
+      boxSizing: "border-box",
+      border: `1px solid ${theme.palette.divider}`,
+      transition: "background-color 0.125s ease-out",
+    },
+    listSubheader: {
+      minHeight: "3rem",
+      padding: "0.5rem 0rem",
+      margin: "0.5rem 1rem",
+      alignItems: "center",
+      gridTemplateRows: "auto min-content",
+      border: `1px solid ${theme.palette.divider}`,
+      borderWidth: "1px 0 1px 0",
+      "& button": {
+        padding: 0,
+        minHeight: "auto",
+      },
+
+      "&:before, &:after": {
+        display: "block",
+        content: "' '",
+      },
+    },
+    selectedValueRow: {
+      display: "flex",
+      alignItems: "flex-start",
+      marginBottom: "0.5rem",
+      gap: "0.5rem",
     },
   };
 });
 
-const DimensionValueTree = ({
+const AutocompletePopperStyled = styled("div")(({ theme }) => ({
+  // The autocomplete styles the Popper and sets its width
+  // to its anchorEl width via the style attribute
+  // Since we cannot override the style attribute through
+  // componentsProps.popper yet, we have to use !important
+  // here
+  width: "100% !important",
+  [`& .${autocompleteClasses.paper}`]: {
+    boxShadow: "none",
+    margin: 0,
+    color: "inherit",
+    fontSize: theme.typography.body2.fontSize,
+    padding: 0,
+  },
+  [`& .${autocompleteClasses.listbox}`]: {
+    maxHeight: "max-content",
+    [`& .${autocompleteClasses.option}`]: {
+      display: "grid",
+      // color box, label, selected icon
+      gridTemplateColumns: "min-content 1fr min-content",
+      gridTemplateRows: "auto",
+      gridColumnGap: "var(--columnGap)",
+      minHeight: "auto",
+      alignItems: "flex-start",
+      padding: "8px 16px",
+
+      '&[aria-selected="true"]': {
+        // We can see the selection status via the color box + selected icon
+        backgroundColor: "transparent",
+      },
+      [`&.${autocompleteClasses.focused}, &.${autocompleteClasses.focused}[aria-selected="true"]`]:
+        {
+          backgroundColor: theme.palette.action.hover,
+        },
+    },
+  },
+  [`&.${autocompleteClasses.popper}`]: {
+    width: 200,
+  },
+  [`&.${autocompleteClasses.popperDisablePortal}`]: {
+    position: "relative",
+  },
+}));
+
+const joinParents = (parents?: HierarchyValue[]) => {
+  return parents?.map((x) => x.label).join(" > ") || "";
+};
+
+const explodeParents = (parents: string) => {
+  return parents ? parents.split(" > ") : [];
+};
+
+const AutocompletePopper: AutocompleteProps<
+  unknown,
+  true,
+  true,
+  true
+>["PopperComponent"] = ({ disablePortal, anchorEl, open, ...rest }) => {
+  return <AutocompletePopperStyled {...rest} />;
+};
+
+const groupByParent = (node: { parents: HierarchyValue[] }) => {
+  return joinParents(node?.parents);
+};
+
+const isDimensionOptionEqualToDimensionValue = (
+  option: HierarchyValue,
+  value: HierarchyValue
+) => {
+  return option.value === value?.value;
+};
+
+const getOptionsFromTree = (tree: HierarchyValue[]) => {
+  return sortBy(
+    dfs(tree, (node, { depth, parents }) => ({
+      ...node,
+      parents,
+    })),
+    (node) => joinParents(node.parents)
+  );
+};
+
+type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
+
+const MultiFilterContent = ({
   tree,
-  depth = 0,
-  classes,
+  dimensionIri,
 }: {
   tree: HierarchyValue[];
   depth: number;
   classes: ReturnType<typeof useStyles>;
+  dimensionIri: string;
 }) => {
+  const [config, dispatch] = useConfiguratorState(isConfiguring);
+  const rawValues = config.chartConfig.filters[dimensionIri];
+
+  const classes = useStyles();
+
+  const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
+  const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
+
+  const { options, optionsByValue, optionsByParent } = useMemo(() => {
+    const flat = getOptionsFromTree(tree);
+    const optionsByValue = keyBy(flat, (x) => x.value);
+    const optionsByParent = groupBy(flat, groupByParent);
+    return {
+      options: sortBy(flat, groupByParent),
+      optionsByValue,
+      optionsByParent,
+    };
+  }, [tree]);
+
+  const { values, valueGroups } = useMemo(() => {
+    const values = (
+      (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
+      []
+    ).map((v) => optionsByValue[v]);
+    const grouped = groups(values, groupByParent);
+    return {
+      values,
+      valueGroups: grouped,
+      valuesByParent: groupBy(values, groupByParent),
+    };
+  }, [optionsByValue, rawValues]);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  const handleOpenAutocomplete: MouseEventHandler<HTMLButtonElement> = useEvent(
+    (ev) => {
+      setAnchorEl(ev.currentTarget);
+    }
+  );
+
+  // The popover content is responsible for keeping this ref up-to-date.
+  // This is so that the click-away close event can still access the pending values
+  // without the state changing (triggering a repositioning of the popover).
+  const pendingValuesRef = useRef<AutocompleteOption[]>([]);
+  const handleCloseAutocomplete = useEvent(() => {
+    setAnchorEl(undefined);
+    const newValues = pendingValuesRef.current
+      .map((x) => x?.value)
+      .filter(Boolean);
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_MULTI",
+      value: {
+        dimensionIri,
+        values: newValues,
+      },
+    });
+    anchorEl?.focus();
+  });
+
   return (
-    <>
-      {tree.map((tv) => {
-        if (!tv.label) {
-          return null;
-        }
+    <Box sx={{ position: "relative" }}>
+      <Box mb={4}>
+        <Flex justifyContent="space-between">
+          <Flex gap="0.75rem">
+            <Button
+              onClick={selectAll}
+              variant="inline"
+              disabled={activeKeys.size === allValues.length}
+            >
+              <Trans id="controls.filter.select.all">Select all</Trans>
+            </Button>
+            <Button
+              onClick={selectNone}
+              variant="inline"
+              disabled={activeKeys.size === 0}
+            >
+              <Trans id="controls.filter.select.none">Select none</Trans>
+            </Button>
+          </Flex>
+          <div>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={handleOpenAutocomplete}
+            >
+              <Trans id="controls.filters.select.filters">Filters</Trans>
+            </Button>
+          </div>
+        </Flex>
+        <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
+        <Flex justifyContent="space-between">
+          <Typography variant="h5">
+            <Trans id="controls.filters.select.selected-filters">
+              Selected filters
+            </Trans>
+          </Typography>
+          <Typography
+            variant="body2"
+            color="grey.700"
+            sx={{ display: "inline" }}
+            component="span"
+          >
+            <Trans id="controls.filter.nb-elements">
+              {activeKeys.size} of {allValues.length}
+            </Trans>
+          </Typography>
+        </Flex>
+
+        <Divider sx={{ my: "0.75rem" }} />
+      </Box>
+
+      {valueGroups.map(([parentLabel, children]) => {
         return (
-          <Accordion key={tv.value} initialExpanded>
-            {tv.children && tv.children.length > 0 ? (
-              <AccordionSummary>
-                <div className={classes.accordionSummary}>
-                  <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
-                  <MultiFilterFieldColorPicker value={tv.value} />
-                </div>
-              </AccordionSummary>
-            ) : (
-              <div
-                className={clsx(
-                  classes.listItems,
-                  tv.children && tv.children.length === 0
-                    ? classes.withChildren
-                    : null
-                )}
-                key={tv.value}
-              >
-                <MultiFilterFieldCheckbox label={tv.label} value={tv.value} />
-                <MultiFilterFieldColorPicker value={tv.value} />
-              </div>
-            )}
-            {tv.children && tv.children.length > 0 ? (
-              <AccordionContent className={classes.accordionContent}>
-                <DimensionValueTree
-                  tree={tv.children}
-                  depth={depth + 1}
-                  classes={classes}
-                />
-              </AccordionContent>
-            ) : null}
-          </Accordion>
+          <Box sx={{ mb: 4 }} key={parentLabel}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {interlace(explodeParents(parentLabel), <BreadcrumbChevron />)}
+            </Typography>
+            {children.map((v) => {
+              return (
+                <Flex key={v.value} className={classes.selectedValueRow}>
+                  <MultiFilterFieldColorPicker value={v.value} />
+                  <Typography variant="body2">{v?.label}</Typography>
+                </Flex>
+              );
+            })}
+          </Box>
         );
       })}
-    </>
+      <Drawer anchor="right" open={!!anchorEl} hideBackdrop>
+        <ClickAwayListener onClickAway={handleCloseAutocomplete}>
+          <DrawerContent
+            pendingValuesRef={pendingValuesRef}
+            options={options}
+            optionsByParent={optionsByParent}
+            onClose={handleCloseAutocomplete}
+            values={values}
+          />
+        </ClickAwayListener>
+      </Drawer>
+    </Box>
   );
 };
+
+const interlace = <T extends unknown, I extends unknown>(
+  arr: T[],
+  interlacer: I
+) => {
+  const res = new Array(arr.length * 2 - 1);
+  for (let i = 0; i < arr.length; i++) {
+    res[i * 2] = arr[i];
+    if (i < arr.length - 1) {
+      res[i * 2 + 1] = interlacer;
+    }
+  }
+  return res;
+};
+
+const useBreadcrumbStyles = makeStyles({
+  root: {
+    display: "inline",
+    top: 2,
+    position: "relative",
+  },
+});
+
+const BreadcrumbChevron = () => {
+  const classes = useBreadcrumbStyles();
+  return <SvgIcChevronRight className={classes.root} />;
+};
+
+const DrawerContent = forwardRef<
+  HTMLDivElement,
+  {
+    optionsByParent: Record<string, AutocompleteOption[]>;
+    onClose: () => void;
+    options: AutocompleteOption[];
+    values: AutocompleteOption[];
+    pendingValuesRef: MutableRefObject<AutocompleteOption[]>;
+  }
+>(({ optionsByParent, onClose, values, options, pendingValuesRef }, ref) => {
+  const classes = useStyles();
+  const { getValueColor } = useMultiFilterContext();
+
+  const [inputValue, setInputValue] = useState("");
+  const [pendingValues, setPendingValues] = useState<AutocompleteOption[]>(
+    () => values
+  );
+  pendingValuesRef.current = pendingValues;
+  const handleSelect = useEvent((ev, newValues: AutocompleteOption[]) => {
+    setPendingValues(newValues);
+  });
+
+  const pendingValuesByParent = useMemo(() => {
+    return groupBy(pendingValues, groupByParent);
+  }, [pendingValues]);
+
+  const handleChangeInput: AutocompleteProps<
+    HierarchyValue,
+    true,
+    false,
+    false
+  >["onInputChange"] = useEvent((ev, value, reason) => {
+    if (reason === "input") {
+      setInputValue(value);
+    }
+  });
+  const hasSelectedAllGroup = useCallback(
+    (groupKey: string) => {
+      return (
+        pendingValuesByParent[groupKey]?.length >=
+        optionsByParent[groupKey]?.length
+      );
+    },
+    [pendingValuesByParent, optionsByParent]
+  );
+
+  const handleSelectGroup = useEvent((groupLabel: string) => {
+    return setPendingValues((pendingValues) => {
+      if (hasSelectedAllGroup(groupLabel)) {
+        const toRemove = new Set(
+          optionsByParent[groupLabel].map((x) => x.value)
+        );
+        return pendingValues.filter((x) => !toRemove.has(x.value));
+      } else {
+        return [...pendingValues, ...optionsByParent[groupLabel]];
+      }
+    });
+  });
+
+  const handleAutocompleteClose = useEvent((ev, reason) => {
+    if (reason === "escape") {
+      onClose();
+    }
+  });
+
+  const renderInput = useCallback(
+    (params) => (
+      <Box className={classes.autocompleteInputContainer}>
+        <Input
+          size="small"
+          className={classes.autocompleteInput}
+          startAdornment={
+            <InputAdornment position="start">
+              <SvgIcSearch />
+            </InputAdornment>
+          }
+          ref={params.InputProps.ref}
+          inputProps={params.inputProps}
+          autoFocus
+          placeholder={t({
+            id: "select.controls.filters.search",
+            message: "Search",
+          })}
+        />
+      </Box>
+    ),
+    [classes.autocompleteInput, classes.autocompleteInputContainer]
+  );
+
+  const renderGroup = useCallback(
+    (params) => {
+      return (
+        <>
+          {params.group ? (
+            <ListSubheader className={classes.listSubheader} key={params.key}>
+              <div>
+                {interlace(explodeParents(params.group), <BreadcrumbChevron />)}
+              </div>
+              <Button
+                variant="text"
+                onClick={() => handleSelectGroup(params.group)}
+              >
+                {hasSelectedAllGroup(params.group) ? (
+                  <Trans id="controls.filter.select.none">Select none</Trans>
+                ) : (
+                  <Trans id="controls.filter.select.all">Select all</Trans>
+                )}
+              </Button>
+            </ListSubheader>
+          ) : null}
+          {params.children}
+        </>
+      );
+    },
+    [classes.listSubheader, handleSelectGroup, hasSelectedAllGroup]
+  );
+
+  const renderOption = useCallback(
+    (props, option, { selected }) => {
+      return (
+        <li {...props}>
+          <Box
+            className={classes.optionColor}
+            sx={{
+              border: selected ? "none" : "1px solid #ccc",
+              backgroundColor: selected
+                ? getValueColor(option.value)
+                : "transparent",
+            }}
+          />
+          <Box>{option.label}</Box>
+          <Box
+            component={SvgIcCheck}
+            sx={{
+              visibility: selected ? "visible" : "hidden",
+              width: 16,
+              height: 16,
+            }}
+          />
+        </li>
+      );
+    },
+    [classes.optionColor, getValueColor]
+  );
+  return (
+    <div className={classes.autocompleteMenuContent} ref={ref}>
+      <Box className={classes.autocompleteHeader}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Typography variant="h5" gutterBottom>
+            <Trans id="controls.set-filters">Set filters</Trans>
+          </Typography>
+          <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
+            <SvgIcClose fontSize="inherit" />
+          </IconButton>
+        </Flex>
+        <Typography variant="body2" color="textSecondary">
+          <Trans id="controls.set-filters-caption">
+            For best results, do not select more than 7 values in the
+            visualization.
+          </Trans>
+        </Typography>
+      </Box>
+      <Autocomplete
+        PopperComponent={AutocompletePopper}
+        value={pendingValues}
+        multiple
+        open
+        renderTags={() => null}
+        onChange={handleSelect}
+        onClose={handleAutocompleteClose}
+        renderGroup={renderGroup}
+        options={options}
+        groupBy={groupByParent}
+        disableCloseOnSelect
+        isOptionEqualToValue={isDimensionOptionEqualToDimensionValue}
+        renderOption={renderOption}
+        renderInput={renderInput}
+        onInputChange={handleChangeInput}
+        inputValue={inputValue}
+      />
+      <Box className={classes.autocompleteApplyButtonContainer}>
+        <Button
+          size="small"
+          className={classes.autocompleteApplyButton}
+          fullWidth
+          onClick={onClose}
+        >
+          <Trans id="controls.set-values-apply">Apply filters</Trans>
+        </Button>
+      </Box>
+    </div>
+  );
+});
 
 export const DimensionValuesMultiFilter = ({
   dataSetIri,
@@ -183,6 +627,23 @@ export const DimensionValuesMultiFilter = ({
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
+  const [configuratorState, dispatch] = useConfiguratorState();
+
+  const getValueColor = useCallback(
+    (value: string) => {
+      const path = colorConfigPath ? `${colorConfigPath}.` : "";
+      const chartConfig =
+        configuratorState.state === "CONFIGURING_CHART"
+          ? configuratorState.chartConfig
+          : null;
+
+      const fullpath = `fields["segment"].${path}colorMapping["${value}"]`;
+      const color = chartConfig ? get(chartConfig, fullpath) : null;
+      return color;
+    },
+    [colorConfigPath, configuratorState]
+  );
+
   if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
     return (
       <MultiFilterContextProvider
@@ -190,13 +651,10 @@ export const DimensionValuesMultiFilter = ({
         dimensionIri={dimensionIri}
         hierarchyData={hierarchyTree || []}
         colorConfigPath={colorConfigPath}
+        getValueColor={getValueColor}
       >
-        <SelectionControls
-          data-testid="selection-controls-tree-filters"
+        <MultiFilterContent
           dimensionIri={dimensionIri}
-        />
-
-        <DimensionValueTree
           tree={
             hierarchyTree && hierarchyTree.length > 0
               ? hierarchyTree
