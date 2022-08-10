@@ -125,6 +125,7 @@ query DataCubeMetadataWithComponentValues(
     creator {
       iri
     }
+    landingPage
     dimensions {
       ...dimensionMetaData
     }
