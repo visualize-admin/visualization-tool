@@ -27,7 +27,7 @@ import React, {
 import { OperationResult, useClient } from "urql";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
-import { useDataSource } from "@/components/data-source-menu";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/src";
 
 import { Observation } from "../domain/data";
@@ -126,18 +126,21 @@ const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
 export const DataDownloadMenu = memo(
   ({
     dataSetIri,
+    dataSource,
     filters,
     title,
   }: {
-    title: string;
     dataSetIri: string;
+    dataSource: DataSource;
     filters?: QueryFilters;
+    title: string;
   }) => {
     return (
       <DataDownloadStateProvider>
         <DataDownloadInnerMenu
-          fileName={title}
           dataSetIri={dataSetIri}
+          dataSource={dataSource}
+          fileName={title}
           filters={filters}
         />
       </DataDownloadStateProvider>
@@ -146,12 +149,14 @@ export const DataDownloadMenu = memo(
 );
 
 const DataDownloadInnerMenu = ({
-  fileName,
   dataSetIri,
+  dataSource,
+  fileName,
   filters,
 }: {
-  fileName: string;
   dataSetIri: string;
+  dataSource: DataSource;
+  fileName: string;
   filters?: QueryFilters;
 }) => {
   const [state] = useDataDownloadState();
@@ -192,18 +197,20 @@ const DataDownloadInnerMenu = ({
       >
         {filters && (
           <DataDownloadMenuSection
+            dataSetIri={dataSetIri}
+            dataSource={dataSource}
             subheader={
               <Trans id="button.download.data.visible">Filtered dataset</Trans>
             }
             fileName={fileName}
-            dataSetIri={dataSetIri}
             filters={filters}
           />
         )}
         <DataDownloadMenuSection
+          dataSetIri={dataSetIri}
+          dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={fileName}
-          dataSetIri={dataSetIri}
         />
         {state.error && (
           <RawMenuItem>
@@ -218,14 +225,16 @@ const DataDownloadInnerMenu = ({
 };
 
 const DataDownloadMenuSection = ({
+  dataSetIri,
+  dataSource,
   subheader,
   fileName,
-  dataSetIri,
   filters,
 }: {
+  dataSetIri: string;
+  dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  dataSetIri: string;
   filters?: QueryFilters;
 }) => {
   return (
@@ -238,9 +247,10 @@ const DataDownloadMenuSection = ({
           {FILE_FORMATS.map((fileFormat) => (
             <DownloadMenuItem
               key={fileFormat}
+              dataSetIri={dataSetIri}
+              dataSource={dataSource}
               fileName={fileName}
               fileFormat={fileFormat}
-              dataSetIri={dataSetIri}
               filters={filters}
             />
           ))}
@@ -251,17 +261,18 @@ const DataDownloadMenuSection = ({
 };
 
 const DownloadMenuItem = ({
+  dataSetIri,
+  dataSource,
   fileName,
   fileFormat,
-  dataSetIri,
   filters,
 }: {
+  dataSetIri: string;
+  dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  dataSetIri: string;
   filters?: QueryFilters;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();

@@ -2,7 +2,6 @@ import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import React, { memo, useMemo } from "react";
 
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { FieldSetLegend } from "@/components/form";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
@@ -25,6 +24,7 @@ import {
   getGeoShapesDimensions,
 } from "@/domain/data";
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
+import { DataSource, parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/src";
 
@@ -35,6 +35,7 @@ export const MapColumnOptions = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
+  const dataSource = parseDataSource(state.dataSource);
   const chartConfig = state.chartConfig as MapConfig;
   const { activeField } = state;
 
@@ -43,14 +44,15 @@ export const MapColumnOptions = ({
       return <BaseLayersSettings />;
     case "areaLayer":
       return (
-        <AreaLayerSettings chartConfig={chartConfig} metaData={metaData} />
+        <AreaLayerSettings
+          chartConfig={chartConfig}
+          metaData={metaData}
+          dataSource={dataSource}
+        />
       );
     case "symbolLayer":
       return (
-        <SymbolLayerSettings
-          chartConfig={chartConfig}
-          metaData={metaData}
-        ></SymbolLayerSettings>
+        <SymbolLayerSettings chartConfig={chartConfig} metaData={metaData} />
       );
     default:
       return null;
@@ -79,13 +81,14 @@ export const BaseLayersSettings = memo(() => {
 
 export const AreaLayerSettings = memo(
   ({
+    dataSource,
     chartConfig,
     metaData,
   }: {
+    dataSource: DataSource;
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
-    const [dataSource] = useDataSource();
     const locale = useLocale();
     const activeField = "areaLayer";
     const geoShapesDimensions = useMemo(
@@ -336,8 +339,8 @@ export const AreaLayerSettings = memo(
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.areaLayer.componentIri}
-                dimensionIri={chartConfig.fields.areaLayer.componentIri}
                 dataSetIri={metaData.iri}
+                dimensionIri={chartConfig.fields.areaLayer.componentIri}
               />
             </ControlSectionContent>
           </ControlSection>
@@ -461,8 +464,8 @@ export const SymbolLayerSettings = memo(
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.symbolLayer.componentIri}
-                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
                 dataSetIri={metaData.iri}
+                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
               />
             </ControlSectionContent>
           )}

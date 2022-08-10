@@ -8,12 +8,15 @@ import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatte
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartTableVisualization } from "@/charts/table/chart-table";
 import { ChartConfig } from "@/configurator";
+import { DataSource } from "@/graphql/resolvers/utils";
 
 const GenericChart = ({
   dataSet,
+  dataSource,
   chartConfig,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
   // Combine filters from config + interactive filters
@@ -23,6 +26,7 @@ const GenericChart = ({
 
   const props = {
     dataSetIri: dataSet,
+    dataSource,
     chartConfig,
     queryFilters,
   };

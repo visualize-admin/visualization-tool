@@ -27,7 +27,6 @@ import { CombinedError, useClient } from "urql";
 
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
-import { useDataSource } from "@/components/data-source-menu";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -67,6 +66,7 @@ import {
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import useEvent from "@/lib/use-event";
@@ -96,9 +96,14 @@ const DataFilterSelectGeneric = ({
   onRemove: () => void;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
-  const cubeIri = state.dataSet;
+  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
-  const hierarchyParents = useHierarchyParents(cubeIri, dimension, locale);
+  const hierarchyParents = useHierarchyParents(
+    state.dataSet,
+    dataSource,
+    dimension,
+    locale
+  );
 
   const values = dimension.values;
 
@@ -187,8 +192,8 @@ const useEnsurePossibleFilters = ({
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
 }) => {
-  const [dataSource] = useDataSource();
   const [, dispatch] = useConfiguratorState();
+  const dataSource = parseDataSource(state.dataSource);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<ChartConfig["filters"]>();
@@ -252,7 +257,8 @@ const useEnsurePossibleFilters = ({
 
     run();
   }, [
-    dataSource,
+    dataSource.type,
+    dataSource.url,
     client,
     dispatch,
     state,
@@ -274,8 +280,8 @@ const useFilterReorder = ({
 }: {
   onAddDimensionFilter?: () => void;
 }) => {
-  const [dataSource] = useDataSource();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
 
   const { fields, filters } = state.chartConfig;
@@ -297,7 +303,7 @@ const useFilterReorder = ({
       // values after we change the filter order
       filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state.dataSet, dataSource, locale, unmappedFilters]
+    [state.dataSet, dataSource.type, dataSource.url, locale, unmappedFilters]
   );
 
   const [{ data, fetching: dataFetching }, executeQuery] =

@@ -4,12 +4,12 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
-import { useDataSource } from "@/components/data-source-menu";
 import { ChartConfig } from "@/configurator";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
@@ -18,14 +18,15 @@ import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   configKey,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   configKey?: string;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
   const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
@@ -140,8 +141,9 @@ export const ChartFootnotes = ({
           }}
         >
           <DataDownloadMenu
-            title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
+            dataSource={dataSource}
+            title={dataCubeByIri.title}
             filters={filters}
           />
           {chartConfig.chartType !== "table" && (

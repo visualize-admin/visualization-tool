@@ -6,7 +6,6 @@ import {
   OnDragStartResponder,
 } from "react-beautiful-dnd";
 
-import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import { ConfiguratorStateConfiguringChart } from "@/configurator";
 import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
@@ -21,6 +20,7 @@ import { TableFields } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartConfiguratorTable = ({
@@ -28,8 +28,8 @@ export const ChartConfiguratorTable = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,

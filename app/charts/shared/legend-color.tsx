@@ -7,7 +7,6 @@ import {
   useChartState,
 } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
@@ -20,6 +19,7 @@ import {
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useConfiguratorState, useLocale } from "@/src";
@@ -131,7 +131,7 @@ const useLegendGroups = (labels: string[]) => {
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
-  const [dataSource] = useDataSource();
+  const dataSource = parseDataSource(configState.dataSource);
   const locale = useLocale();
   const cubeIri = configState.dataSet;
   const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({

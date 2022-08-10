@@ -8,7 +8,6 @@ import React, { useEffect, useMemo } from "react";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { useDebounce } from "use-debounce";
 
-import { useDataSource } from "@/components/data-source-menu";
 import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
@@ -31,6 +30,7 @@ import {
   navPresenceProps,
 } from "@/configurator/components/presence";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { useConfiguratorState, useLocale } from "@/src";
@@ -62,14 +62,14 @@ const isDatasetIriVersioned = (iri: string) => {
   return iri.match(/\/\d+\/?$/) !== null;
 };
 
-export const SelectDatasetStepContent = () => {
-  const [dataSource] = useDataSource();
+const SelectDatasetStepContent = () => {
   const locale = useLocale();
+  const [configState] = useConfiguratorState();
+  const dataSource = parseDataSource(configState.dataSource);
 
   const browseState = useBrowseContext();
   const { search, order, includeDrafts, filters, dataset } = browseState;
 
-  const [configState] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(search, 500, {
     leading: true,
   });
@@ -162,7 +162,11 @@ export const SelectDatasetStepContent = () => {
                   </Trans>
                 </Button>
               </NextLink>
-              <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
+              <DataSetMetadata
+                sx={{ mt: "3rem" }}
+                dataSetIri={dataset}
+                dataSource={dataSource}
+              />
             </MotionBox>
           ) : (
             <MotionBox
@@ -187,7 +191,7 @@ export const SelectDatasetStepContent = () => {
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
               <MotionBox {...navPresenceProps} key="preview">
-                <DataSetPreview dataSetIri={dataset} />
+                <DataSetPreview dataSetIri={dataset} dataSource={dataSource} />
               </MotionBox>
             ) : (
               <MotionBox {...navPresenceProps}>

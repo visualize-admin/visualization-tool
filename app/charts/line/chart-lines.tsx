@@ -16,7 +16,6 @@ import {
   LegendColor,
 } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -36,18 +35,20 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: LineConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {

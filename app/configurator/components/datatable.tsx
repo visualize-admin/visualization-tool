@@ -13,7 +13,6 @@ import { ascending, descending } from "d3";
 import { useMemo, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { useDataSource } from "@/components/data-source-menu";
 import { Loading } from "@/components/hint";
 import { ChartConfig } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
@@ -22,6 +21,7 @@ import {
   useDataCubeObservationsQuery,
   useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 import { useDimensionFormatters } from "./ui-helpers";
@@ -135,15 +135,16 @@ const BackgroundRow = ({ nCells }: { nCells: number }) => {
 export const DataSetPreviewTable = ({
   title,
   dataSetIri,
+  dataSource,
   dimensions,
   measures,
 }: {
   title: string;
   dataSetIri: string;
+  dataSource: DataSource;
   dimensions: DimensionMetaDataFragment[];
   measures: DimensionMetaDataFragment[];
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
     variables: {
@@ -174,14 +175,15 @@ export const DataSetPreviewTable = ({
 
 export const DataSetTable = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   sx,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   sx?: SxProps<Theme>;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
   const [{ data, fetching }] = useDataCubeObservationsQuery({

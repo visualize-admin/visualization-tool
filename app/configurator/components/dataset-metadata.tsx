@@ -12,7 +12,6 @@ import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
-import { useDataSource } from "@/components/data-source-menu";
 import Tag from "@/configurator/components/Tag";
 import {
   MotionBox,
@@ -23,6 +22,7 @@ import {
   DataCubeMetadataQuery,
   useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
@@ -30,12 +30,13 @@ import truthy from "@/utils/truthy";
 
 export const DataSetMetadata = ({
   dataSetIri,
+  dataSource,
   sx,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   sx: BoxProps["sx"];
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data, fetching, error }] = useDataCubeMetadataQuery({

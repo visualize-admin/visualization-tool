@@ -12,7 +12,6 @@ import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
-import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -37,18 +36,20 @@ import {
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartMapVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;

@@ -2,7 +2,6 @@ import { Trans } from "@lingui/macro";
 import { Button, Typography } from "@mui/material";
 import React, { ReactNode, useCallback, useEffect } from "react";
 
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
 import {
@@ -11,6 +10,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
@@ -135,7 +135,7 @@ export const StepperDumb = ({
 
 export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
-  const [dataSource] = useDataSource();
+  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {

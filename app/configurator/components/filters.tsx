@@ -29,7 +29,6 @@ import React, {
   useState,
 } from "react";
 
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
@@ -56,6 +55,7 @@ import {
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -610,9 +610,10 @@ export const DimensionValuesMultiFilter = ({
   dimensionIri: string;
   colorConfigPath?: string;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const classes = useStyles();
+  const [configuratorState] = useConfiguratorState();
+  const dataSource = parseDataSource(configuratorState.dataSource);
 
   const [{ data }] = useDimensionValuesQuery({
     variables: {
@@ -637,8 +638,6 @@ export const DimensionValuesMultiFilter = ({
 
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
-
-  const [configuratorState, dispatch] = useConfiguratorState();
 
   const getValueColor = useCallback(
     (value: string) => {
@@ -688,11 +687,11 @@ export const TimeFilter = ({
   dataSetIri: string;
   dimensionIri: string;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
+  const dataSource = parseDataSource(state.dataSource);
 
   const setFilterRange = useCallback(
     ([from, to]: [string, string]) => {
@@ -773,8 +772,9 @@ export const DimensionValuesSingleFilter = ({
   dataSetIri: string;
   dimensionIri: string;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const [state] = useConfiguratorState();
+  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDimensionValuesQuery({
     variables: {
       dimensionIri,

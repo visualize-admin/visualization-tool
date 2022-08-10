@@ -4,7 +4,6 @@ import * as React from "react";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
@@ -17,15 +16,18 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartDataFilters = ({
   dataSet,
+  dataSource,
   chartConfig,
   dataFiltersConfig,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
@@ -52,6 +54,7 @@ export const ChartDataFilters = ({
             {!filtersVisible ? (
               <ChartFiltersList
                 dataSetIri={dataSet}
+                dataSource={dataSource}
                 chartConfig={chartConfig}
               />
             ) : (
@@ -90,10 +93,11 @@ export const ChartDataFilters = ({
                 gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
               }}
             >
-              {componentIris.map((d, i) => (
+              {componentIris.map((d) => (
                 <DataFilter
                   key={d}
                   dataSetIri={dataSet}
+                  dataSource={dataSource}
                   chartConfig={chartConfig}
                   dimensionIri={d}
                 />
@@ -109,16 +113,17 @@ export const ChartDataFilters = ({
 const DataFilter = ({
   dimensionIri,
   dataSetIri,
+  dataSource,
   chartConfig,
 }: {
   dimensionIri: string;
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
   const { dataFilters } = state;
 
-  const [dataSource] = useDataSource();
   const locale = useLocale();
 
   const [{ data }] = useDimensionValuesQuery({

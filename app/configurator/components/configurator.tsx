@@ -17,12 +17,17 @@ import {
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { Stepper } from "@/configurator/components/stepper";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 
 const ConfigureChartStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
+
+  const dataSource = parseDataSource(state.dataSource);
+
   return (
     <>
       <PanelLeftWrapper
@@ -41,7 +46,7 @@ const ConfigureChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -53,9 +58,13 @@ const ConfigureChartStep = () => {
 
 const DescribeChartStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "DESCRIBING_CHART") {
     return null;
   }
+
+  const dataSource = parseDataSource(state.dataSource);
+
   return (
     <>
       <PanelLeftWrapper>
@@ -63,7 +72,7 @@ const DescribeChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -74,14 +83,18 @@ const DescribeChartStep = () => {
 };
 const PublishStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "PUBLISHING") {
     return null;
   }
+
+  const dataSource = parseDataSource(state.dataSource);
+
   return (
     <>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
     </>

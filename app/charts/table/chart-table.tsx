@@ -3,7 +3,6 @@ import React, { memo } from "react";
 
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
-import { useDataSource } from "@/components/data-source-menu";
 import {
   Loading,
   LoadingDataError,
@@ -17,18 +16,19 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartTableVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: TableConfig;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,

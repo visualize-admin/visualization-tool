@@ -3,7 +3,6 @@ import { Box, ButtonBase, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import {
@@ -20,6 +19,7 @@ import {
   useChartTypeSelectorField,
 } from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -122,8 +122,8 @@ export const ChartTypeSelector = ({
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,

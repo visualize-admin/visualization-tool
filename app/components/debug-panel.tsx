@@ -4,10 +4,10 @@ import React from "react";
 import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { useDataSource } from "@/components/data-source-menu";
 import { useConfiguratorState } from "@/configurator";
 import { SPARQL_EDITOR } from "@/domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { DataSource, parseDataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 
@@ -25,10 +25,14 @@ const DebugInteractiveFilters = () => {
   );
 };
 
-const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
-  const [dataSource] = useDataSource();
+const CubeMetadata = ({
+  datasetIri,
+  dataSource,
+}: {
+  datasetIri: string;
+  dataSource: DataSource;
+}) => {
   const locale = useLocale();
-
   const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: datasetIri,
@@ -52,8 +56,8 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
 };
 
 const DebugConfigurator = () => {
-  const [dataSource] = useDataSource();
   const [configuratorState] = useConfiguratorState();
+  const dataSource = parseDataSource(configuratorState.dataSource);
 
   return (
     <>
@@ -99,7 +103,10 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
           </Button>
         )}
         {configuratorState.dataSet ? (
-          <CubeMetadata datasetIri={configuratorState.dataSet} />
+          <CubeMetadata
+            datasetIri={configuratorState.dataSet}
+            dataSource={dataSource}
+          />
         ) : null}
       </Stack>
       <Typography

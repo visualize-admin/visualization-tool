@@ -15,7 +15,6 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
-import { useDataSource } from "@/components/data-source-menu";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
@@ -23,24 +22,32 @@ import { ChartConfig, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import {
-  parseDataSource,
-  stringifyDataSource,
-} from "@/graphql/resolvers/utils";
+import { DataSource } from "@/graphql/resolvers/utils";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
 
-export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
+export const ChartPreview = ({
+  dataSetIri,
+  dataSource,
+}: {
+  dataSetIri: string;
+  dataSource: DataSource;
+}) => {
   return (
     <ChartTablePreviewProvider>
-      <ChartPreviewInner dataSetIri={dataSetIri} />
+      <ChartPreviewInner dataSetIri={dataSetIri} dataSource={dataSource} />
     </ChartTablePreviewProvider>
   );
 };
 
-export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
+export const ChartPreviewInner = ({
+  dataSetIri,
+  dataSource,
+}: {
+  dataSetIri: string;
+  dataSource: DataSource;
+}) => {
   const [state] = useConfiguratorState();
-  const [dataSource, setDataSource] = useDataSource();
   const locale = useLocale();
 
   const [{ data: metaData }] = useDataCubeMetadataQuery({
@@ -61,12 +68,6 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
       lastHeight.current = height;
     }
   }, [height]);
-
-  React.useEffect(() => {
-    if (state.dataSource !== stringifyDataSource(dataSource)) {
-      setDataSource(parseDataSource(state.dataSource));
-    }
-  }, [dataSource, setDataSource, state.dataSource]);
 
   return (
     <Flex
@@ -141,18 +142,21 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
                     width: "100%",
                   }}
                   dataSetIri={dataSetIri}
+                  dataSource={dataSource}
                   chartConfig={state.chartConfig}
                 />
               ) : (
                 <ChartWithInteractiveFilters
                   ref={chartRef}
                   dataSet={dataSetIri}
+                  dataSource={dataSource}
                   chartConfig={state.chartConfig}
                 />
               )}
               {state.chartConfig && (
                 <ChartFootnotes
                   dataSetIri={dataSetIri}
+                  dataSource={dataSource}
                   chartConfig={state.chartConfig}
                 />
               )}
@@ -169,9 +173,11 @@ const ChartWithInteractiveFilters = React.forwardRef(
   (
     {
       dataSet,
+      dataSource,
       chartConfig,
     }: {
       dataSet: string;
+      dataSource: DataSource;
       chartConfig: ChartConfig;
     },
     ref
@@ -191,15 +197,24 @@ const ChartWithInteractiveFilters = React.forwardRef(
         {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
           <ChartDataFilters
             dataSet={dataSet}
+            dataSource={dataSource}
             dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
             chartConfig={chartConfig}
           />
         ) : (
           <Flex sx={{ flexDirection: "column", my: 4 }}>
-            <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
+            <ChartFiltersList
+              dataSetIri={dataSet}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+            />
           </Flex>
         )}
-        <Chart dataSet={dataSet} chartConfig={chartConfig} />
+        <Chart
+          dataSet={dataSet}
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+        />
       </Flex>
     );
   }
@@ -207,9 +222,11 @@ const ChartWithInteractiveFilters = React.forwardRef(
 
 const Chart = ({
   dataSet,
+  dataSource,
   chartConfig,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
   // Combine filters from config + interactive filters
@@ -219,6 +236,7 @@ const Chart = ({
 
   const props = {
     dataSet,
+    dataSource,
     chartConfig: chartConfig,
     queryFilters: queryFilters,
   };

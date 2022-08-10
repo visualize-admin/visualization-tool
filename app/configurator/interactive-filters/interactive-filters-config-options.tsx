@@ -4,7 +4,6 @@ import { extent } from "d3";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
 import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
-import { useDataSource } from "@/components/data-source-menu";
 import { Checkbox } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
@@ -31,6 +30,7 @@ import {
   TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
+import { parseDataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const InteractiveFiltersOptions = ({
@@ -39,8 +39,8 @@ export const InteractiveFiltersOptions = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   const { activeField } = state;
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const dataSource = parseDataSource(state.dataSource);
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
@@ -147,8 +147,8 @@ const InteractiveTimeFilterOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const dataSource = parseDataSource(state.dataSource);
   const formatDateAuto = useFormatFullDateAuto();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -259,8 +259,8 @@ const InteractiveDataFilterOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const [dataSource] = useDataSource();
   const locale = useLocale();
+  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,
