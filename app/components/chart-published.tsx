@@ -101,9 +101,10 @@ export const ChartPublishedInner = ({
   const publishedConfiguratorState = useMemo(() => {
     return {
       state: "PUBLISHING",
+      dataSource,
       chartConfig: chartConfig,
     } as ConfiguratorStatePublishing;
-  }, [chartConfig]);
+  }, [chartConfig, dataSource]);
 
   return (
     <Box
