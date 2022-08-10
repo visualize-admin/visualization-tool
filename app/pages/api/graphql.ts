@@ -7,8 +7,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { Awaited } from "@/domain/types";
-
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../lib/run-middleware";
@@ -24,7 +22,7 @@ const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
-export const setup = async (
+const setup = (
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
@@ -51,7 +49,7 @@ export const setup = async (
   } as const;
 };
 
-export type Loaders = Awaited<ReturnType<typeof setup>>;
+export type Loaders = ReturnType<typeof setup>;
 
 const server = new ApolloServer({
   typeDefs,
@@ -60,20 +58,19 @@ const server = new ApolloServer({
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
-  context: async function (info) {
+  context: function () {
     const context = this as {
-      setup: (info: GraphQLResolveInfo) => {
-        loaders: Loaders;
-        sparqlClient: ParsingClient;
-        sparqlClientStream: StreamClient;
-      };
       loaders: Loaders | undefined;
       sparqlClient: ParsingClient | undefined;
       sparqlClientStream: StreamClient | undefined;
     };
+    // Why this isn't cleared with each request?
+    context.loaders = undefined;
+    context.sparqlClient = undefined;
+    context.sparqlClientStream = undefined;
 
     return {
-      setup: async ({
+      setup: ({
         variableValues: { locale, sourceUrl },
       }: GraphQLResolveInfo) => {
         if (
@@ -87,18 +84,14 @@ const server = new ApolloServer({
           context.sparqlClientStream = new StreamClient({
             endpointUrl: sourceUrl,
           });
-          context.loaders = await setup(
+          context.loaders = setup(
             locale,
             context.sparqlClient,
             context.sparqlClientStream
           );
         }
 
-        return {
-          loaders: context.loaders,
-          sparqlClient: context.sparqlClient,
-          sparqlClientStream: context.sparqlClientStream,
-        };
+        return context;
       },
       loaders: undefined,
       sparqlClient: undefined,
