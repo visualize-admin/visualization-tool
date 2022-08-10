@@ -334,17 +334,21 @@ const getDimensionValuesLoader = (
   }
 };
 
-const mkDimensionResolvers = (debugName: string): Resolvers['NominalDimension'] => ({
+const mkDimensionResolvers = (
+  debugName: string
+): Resolvers["NominalDimension"] => ({
   iri: ({ data: { iri } }: ResolvedDimension) => iri,
   label: ({ data: { name } }: ResolvedDimension) => name,
   related: ({ data: { related } }: ResolvedDimension) => related,
   isNumerical: ({ data: { isNumerical } }: ResolvedDimension) => isNumerical,
+  order: ({ data: { order } }: ResolvedDimension) =>
+    order !== undefined ? order : null,
   isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
   hierarchy: ({ data: { iri } }: ResolvedDimension, _, _2, ctx) => {
-    return queryHierarchy(iri, ctx.variableValues.locale)
+    return queryHierarchy(iri, ctx.variableValues.locale);
   },
   values: async (
     parent: ResolvedDimension,

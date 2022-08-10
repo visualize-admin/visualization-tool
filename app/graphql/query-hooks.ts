@@ -102,6 +102,7 @@ export type Dimension = {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -131,6 +132,7 @@ export type GeoCoordinatesDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -151,6 +153,7 @@ export type GeoShapesDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -180,6 +183,7 @@ export type Measure = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -198,6 +202,7 @@ export type NominalDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -236,6 +241,7 @@ export type OrdinalDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -321,6 +327,7 @@ export type TemporalDimension = Dimension & {
   timeFormat: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
@@ -354,17 +361,17 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, workExamples?: Maybe<Array<Maybe<string>>>, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
-type DimensionMetaData_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetaData_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetaData_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetaData_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetaData_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetaData_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
 export type DimensionMetaDataFragment = DimensionMetaData_GeoCoordinatesDimension_Fragment | DimensionMetaData_GeoShapesDimension_Fragment | DimensionMetaData_Measure_Fragment | DimensionMetaData_NominalDimension_Fragment | DimensionMetaData_OrdinalDimension_Fragment | DimensionMetaData_TemporalDimension_Fragment;
 
@@ -674,6 +681,7 @@ export const DimensionMetaDataFragmentDoc = gql`
   label
   isNumerical
   isKeyDimension
+  order
   values(filters: $filters)
   unit
   related {

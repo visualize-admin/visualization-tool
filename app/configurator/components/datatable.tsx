@@ -151,8 +151,11 @@ export const DataSetPreviewTable = ({
     },
   });
 
+  const headers = useMemo(() => {
+    return getSortedHeaders(dimensions, measures);
+  }, [dimensions, measures]);
+
   if (!fetching && data?.dataCubeByIri) {
-    const headers = [...dimensions, ...measures];
     return (
       <PreviewTable
         title={title}
@@ -185,12 +188,17 @@ export const DataSetTable = ({
     },
   });
 
-  if (!fetching && data?.dataCubeByIri) {
-    const headers = [
-      ...data.dataCubeByIri.dimensions,
-      ...data.dataCubeByIri.measures,
-    ];
+  const headers = useMemo(() => {
+    if (!data?.dataCubeByIri) {
+      return [];
+    }
+    return getSortedHeaders(
+      data.dataCubeByIri.dimensions,
+      data.dataCubeByIri.measures
+    );
+  }, [data?.dataCubeByIri]);
 
+  if (!fetching && data?.dataCubeByIri) {
     return (
       <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
         <PreviewTable
@@ -204,3 +212,14 @@ export const DataSetTable = ({
     return <Loading />;
   }
 };
+
+function getSortedHeaders(
+  dimensions: DimensionMetaDataFragment[],
+  measures: DimensionMetaDataFragment[]
+) {
+  const allDimensions = [...dimensions, ...measures];
+  allDimensions.sort((a, b) =>
+    ascending(a.order ?? Infinity, b.order ?? Infinity)
+  );
+  return allDimensions;
+}

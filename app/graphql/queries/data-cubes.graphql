@@ -38,6 +38,7 @@ fragment dimensionMetaData on Dimension {
   label
   isNumerical
   isKeyDimension
+  order
   values(filters: $filters)
   unit
   related {
