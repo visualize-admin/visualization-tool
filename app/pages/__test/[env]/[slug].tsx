@@ -7,6 +7,7 @@ import { ChartConfig, Meta } from "@/configurator";
 
 type DbConfig = {
   dataSet: string;
+  dataSource: string;
   chartConfig: ChartConfig;
   meta: Meta;
 };
@@ -27,11 +28,12 @@ const Page: NextPage = () => {
   }, [env, slug]);
 
   if (config) {
-    const { dataSet, meta, chartConfig } = config.data;
+    const { dataSet, dataSource, meta, chartConfig } = config.data;
 
     return (
       <ChartPublished
         dataSet={dataSet}
+        dataSource={dataSource}
         chartConfig={chartConfig}
         meta={meta}
         configKey={config.key}

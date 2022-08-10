@@ -7,6 +7,7 @@ import {
   useChartState,
 } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { useDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
@@ -130,11 +131,14 @@ const useLegendGroups = (labels: string[]) => {
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const cubeIri = configState.dataSet;
   const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: configState.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale: locale,
     },
   });
@@ -147,6 +151,8 @@ const useLegendGroups = (labels: string[]) => {
     variables: {
       cubeIri: cubeIri,
       dimensionIri: segmentDimension?.iri!,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale: locale,
     },
     pause: !segmentDimension?.iri,

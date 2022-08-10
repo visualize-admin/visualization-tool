@@ -35,6 +35,7 @@ export const Examples = ({
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
           dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
+          dataSource="sparql+https://lindas.admin.ch/query"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
@@ -132,6 +133,7 @@ export const Examples = ({
       >
         <ChartPublished
           dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
+          dataSource="sparql+https://lindas.admin.ch/query"
           meta={{
             title: {
               de: "Verteilung der Ausgaben und Einnahmen nach Ämtern",
