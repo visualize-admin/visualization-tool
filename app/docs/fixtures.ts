@@ -5,7 +5,7 @@ export const states: ConfiguratorState[] = [
   {
     state: "SELECTING_DATASET",
     dataSet: undefined,
-    endpoint: "",
+    dataSource: "",
     chartConfig: undefined,
     meta: {
       title: {
@@ -26,7 +26,7 @@ export const states: ConfiguratorState[] = [
   {
     state: "CONFIGURING_CHART",
     dataSet: "foo",
-    endpoint: "toto",
+    dataSource: "toto",
     chartConfig: {
       chartType: "column",
       fields: {

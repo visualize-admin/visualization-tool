@@ -5,15 +5,21 @@ export type DataSource = {
   url: string;
 };
 
-export const retrieveEndpointFromLocalStorage = () => {};
+export const retrieveDataSourceFromLocalStorage = () => {
+  return localStorage.getItem("dataSource");
+};
 
-export const convertEndpointToSource = (endpoint: string): DataSource => {
-  const [type, url] = endpoint.split("+") as [DataSourceType, string];
+export const saveDataSourceToLocalStorage = (dataSource: string) => {
+  localStorage.setItem("dataSource", dataSource);
+};
+
+export const parseDataSource = (stringifiedSource: string): DataSource => {
+  const [type, url] = stringifiedSource.split("+") as [DataSourceType, string];
 
   return { type, url };
 };
 
-export const convertSourceToEndpoint = (source: DataSource): string => {
+export const stringifyDataSource = (source: DataSource): string => {
   const { type, url } = source;
 
   return `${type}+${url}`;

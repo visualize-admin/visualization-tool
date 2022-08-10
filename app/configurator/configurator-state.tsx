@@ -49,12 +49,16 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import { convertSourceToEndpoint, DataSource } from "@/graphql/resolvers/utils";
+import {
+  stringifyDataSource,
+  DataSource,
+  retrieveDataSourceFromLocalStorage,
+} from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
-import { DEFAULT_ENDPOINT } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -68,7 +72,7 @@ export type ConfiguratorStateAction =
       dataSet: string | undefined;
     }
   | {
-      type: "ENDPOINT_CHANGED";
+      type: "DATASOURCE_CHANGED";
       value: string;
     }
   | {
@@ -187,24 +191,26 @@ const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
-const getStateWithCurrentEndpoint = (state: ConfiguratorState) => {
+const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
   return {
     ...state,
-    endpoint: localStorage.getItem("endpoint") || DEFAULT_ENDPOINT,
+    dataSource:
+      retrieveDataSourceFromLocalStorage() ||
+      stringifyDataSource(DEFAULT_DATA_SOURCE),
   };
 };
 
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
   dataSet: undefined,
-  endpoint: "",
+  dataSource: "",
   activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
-  endpoint: "",
+  dataSource: "",
   chartConfig: undefined,
   meta: {
     title: {
@@ -466,7 +472,7 @@ const transitionStepNext = (
         return {
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
-          endpoint: draft.endpoint,
+          dataSource: draft.dataSource,
           meta: draft.meta,
           activeField: undefined,
           chartConfig,
@@ -613,15 +619,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL"
-        ? getStateWithCurrentEndpoint(emptyState)
+        ? getStateWithCurrentDataSource(emptyState)
         : action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
         draft.dataSet = action.dataSet;
       }
       return draft;
-    case "ENDPOINT_CHANGED":
-      draft.endpoint = action.value;
+    case "DATASOURCE_CHANGED":
+      draft.dataSource = action.value;
 
       return draft;
     case "CHART_TYPE_CHANGED":
@@ -1046,11 +1052,11 @@ export const initChartStateFromChart = async (
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
   if (config && config.data) {
-    const { dataSet, endpoint, meta, chartConfig } = config.data;
+    const { dataSet, dataSource, meta, chartConfig } = config.data;
     return {
       state: "CONFIGURING_CHART",
       dataSet,
-      endpoint,
+      dataSource,
       meta,
       chartConfig,
       activeField: undefined,
@@ -1080,7 +1086,7 @@ export const initChartStateFromCube = async (
     return;
   }
   return transitionStepNext(
-    getStateWithCurrentEndpoint({ ...emptyState, dataSet: datasetIri }),
+    getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
     data.dataCubeByIri
   );
 };
@@ -1134,7 +1140,7 @@ const ConfiguratorStateProviderInternal = ({
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize = getStateWithCurrentEndpoint(initialState);
+    let stateToInitialize = getStateWithCurrentDataSource(initialState);
 
     const initialize = async () => {
       try {
@@ -1177,8 +1183,8 @@ const ConfiguratorStateProviderInternal = ({
 
   useEffect(() => {
     dispatch({
-      type: "ENDPOINT_CHANGED",
-      value: convertSourceToEndpoint(dataSource),
+      type: "DATASOURCE_CHANGED",
+      value: stringifyDataSource(dataSource),
     });
   }, [dispatch, dataSource]);
 

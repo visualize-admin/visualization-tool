@@ -16,13 +16,15 @@ import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import { Option } from "@/configurator";
 import {
-  convertSourceToEndpoint,
+  stringifyDataSource,
   DataSource,
-  convertEndpointToSource,
+  parseDataSource,
+  retrieveDataSourceFromLocalStorage,
+  saveDataSourceToLocalStorage,
 } from "@/graphql/resolvers/utils";
-import { DEFAULT_DATA_SOURCE, DEFAULT_ENDPOINT } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
+const TRUSTED_DATA_SOURCE_OPTIONS: Option[] = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
@@ -34,7 +36,7 @@ const TRUSTED_ENDPOINT_OPTIONS: Option[] = [
     position: 1,
   },
 ];
-const TRUSTED_ENDPOINTS: string[] = TRUSTED_ENDPOINT_OPTIONS.map(
+const TRUSTED_DATA_SOURCES: string[] = TRUSTED_DATA_SOURCE_OPTIONS.map(
   (d) => d.value
 );
 
@@ -57,17 +59,17 @@ export const useDataSource = () => {
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   const [source, setSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
   const handleSourceChange = (source: DataSource) => {
-    localStorage.setItem("endpoint", convertSourceToEndpoint(source));
+    saveDataSourceToLocalStorage(stringifyDataSource(source));
     setSource(source);
   };
 
   useEffect(() => {
-    const endpoint = localStorage.getItem("endpoint");
+    const dataSource = retrieveDataSourceFromLocalStorage();
 
-    if (endpoint !== null && TRUSTED_ENDPOINTS.includes(endpoint)) {
-      setSource(convertEndpointToSource(endpoint));
+    if (dataSource !== null && TRUSTED_DATA_SOURCES.includes(dataSource)) {
+      setSource(parseDataSource(dataSource));
     } else {
-      localStorage.setItem("endpoint", DEFAULT_ENDPOINT);
+      saveDataSourceToLocalStorage(stringifyDataSource(DEFAULT_DATA_SOURCE));
     }
   }, []);
 
@@ -102,10 +104,10 @@ export const DataSourceMenu = () => {
       </Label>
       <MinimalisticSelect
         id="dataSourceSelect"
-        options={TRUSTED_ENDPOINT_OPTIONS}
-        value={convertSourceToEndpoint(source)}
+        options={TRUSTED_DATA_SOURCE_OPTIONS}
+        value={stringifyDataSource(source)}
         onChange={(e) => {
-          setSource(convertEndpointToSource(e.target.value as string));
+          setSource(parseDataSource(e.target.value as string));
         }}
         disabled={isDisabled}
       />
