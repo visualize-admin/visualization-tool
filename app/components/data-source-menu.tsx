@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import {
   createContext,
@@ -81,7 +82,7 @@ export const DataSourceMenu = () => {
     <Flex sx={{ alignItems: "center", gap: 1 }}>
       <Label htmlFor="dataSourceSelect">
         <Typography sx={{ fontWeight: "bold", color: "grey.900" }}>
-          Data source:
+          <Trans id="data.source">Data source</Trans>:
         </Typography>
       </Label>
       <MinimalisticSelect
