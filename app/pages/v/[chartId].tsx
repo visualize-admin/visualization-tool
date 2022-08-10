@@ -116,7 +116,6 @@ const VisualizationPage = (props: PageProps) => {
               sx={{
                 color: "grey.800",
                 fontSize: "1.125rem",
-
                 fontWeight: "regular",
               }}
             >

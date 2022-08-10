@@ -11,8 +11,8 @@ import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
   ConfiguratorState,
-  isConfiguring,
   isSegmentInConfig,
+  useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
@@ -22,7 +22,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import { parseDataSource } from "@/graphql/resolvers/utils";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
-import { useConfiguratorState, useLocale } from "@/src";
+import { useLocale } from "@/src";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -35,7 +35,7 @@ const useStyles = makeStyles<Theme>(() => ({
     minHeight: "20px",
     gap: "1rem 1.5rem",
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
@@ -107,7 +107,9 @@ export const InteractiveLegendColor = () => {
       {groups.map((group) => {
         return (
           <div key={group.value}>
-            <Typography variant="h4">{group.label}</Typography>
+            {group.label ? (
+              <Typography variant="h4">{group.label}</Typography>
+            ) : null}
             {colors.domain().map((item, i) => (
               <Checkbox
                 label={item}
@@ -127,7 +129,15 @@ export const InteractiveLegendColor = () => {
 };
 
 const useLegendGroups = (labels: string[]) => {
-  const [configState] = useConfiguratorState(isConfiguring);
+  const configState = useReadOnlyConfiguratorState();
+  if (
+    configState.state === "INITIAL" ||
+    configState.state === "SELECTING_DATASET"
+  ) {
+    throw new Error(
+      `Cannot call useLegendGroups from state ${configState.state}`
+    );
+  }
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;

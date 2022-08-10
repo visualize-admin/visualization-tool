@@ -3,7 +3,7 @@ import Head from "next/head";
 import * as React from "react";
 
 import { AppLayout } from "@/components/layout";
-import { Configurator, ConfiguratorStateProvider } from "@/configurator";
+import { Configurator, EditorConfiguratorStateProvider } from "@/configurator";
 
 type PageProps = {
   locale: string;
@@ -30,9 +30,9 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
         <meta name="viewport" content="width=1280"></meta>
       </Head>
       <AppLayout>
-        <ConfiguratorStateProvider chartId={chartId}>
+        <EditorConfiguratorStateProvider chartId={chartId}>
           <Configurator />
-        </ConfiguratorStateProvider>
+        </EditorConfiguratorStateProvider>
       </AppLayout>
     </>
   );

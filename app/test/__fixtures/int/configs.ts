@@ -17,22 +17,22 @@ const configs: TestConfig[] = [
     name: "Scatterplot - Palmer Penguins",
     slug: "scatterplot-palmer-penguins",
   },
-  {
-    chartId: "clQmsblRxpK7",
-    name: "Column - Waldfläsche (standard error bars)",
-    slug: "column-waldflasche",
-  },
+  // {
+  //   chartId: "clQmsblRxpK7",
+  //   name: "Column - Waldfläsche (standard error bars)",
+  //   slug: "column-waldflasche",
+  // },
   {
     chartId: "I0KucujlOLgb",
     name: "Line - State accounts (segmented)",
     slug: "line-state-accounts",
   },
   { chartId: "Z6Re21LHbOoP", name: "Pie - Red list", slug: "pie-red-list" },
-  {
-    chartId: "jky5IEw6poT3",
-    name: "Map - Waldfläsche (areas)",
-    slug: "map-waldflasche",
-  },
+  // {
+  //   chartId: "jky5IEw6poT3",
+  //   name: "Map - Waldfläsche (areas)",
+  //   slug: "map-waldflasche",
+  // },
 ];
 
 export default configs;

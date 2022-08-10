@@ -1,6 +1,6 @@
 import { AppLayout } from "@/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
-import { ConfiguratorStateProvider } from "@/src";
+import { EditorConfiguratorStateProvider } from "@/src";
 
 export type BrowseParams = {
   type?: "theme" | "organization" | "dataset";
@@ -18,9 +18,12 @@ export type BrowseParams = {
 export const DatasetBrowser = () => {
   return (
     <AppLayout>
-      <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
+      <EditorConfiguratorStateProvider
+        chartId="new"
+        allowDefaultRedirect={false}
+      >
         <SelectDatasetStep />
-      </ConfiguratorStateProvider>
+      </EditorConfiguratorStateProvider>
     </AppLayout>
   );
 };

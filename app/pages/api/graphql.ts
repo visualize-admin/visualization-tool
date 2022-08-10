@@ -73,9 +73,9 @@ const server = new ApolloServer({
     };
 
     return {
-      setup: async ({ variableValues }: GraphQLResolveInfo) => {
-        const { locale, sourceUrl } = variableValues;
-
+      setup: async ({
+        variableValues: { locale, sourceUrl },
+      }: GraphQLResolveInfo) => {
         if (
           context.loaders === undefined &&
           context.sparqlClient === undefined &&

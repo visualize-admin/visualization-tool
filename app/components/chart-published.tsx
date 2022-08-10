@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -19,7 +19,12 @@ import GenericChart from "@/components/common-chart";
 import { DATA_SOURCE_OPTIONS } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
-import { ChartConfig, Meta } from "@/configurator";
+import {
+  ChartConfig,
+  ConfiguratorStatePublishing,
+  Meta,
+  PublishedConfiguratorStateProvider,
+} from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { ENDPOINT } from "@/domain/env";
@@ -93,6 +98,13 @@ export const ChartPublishedInner = ({
     }
   }, [height]);
 
+  const publishedConfiguratorState = useMemo(() => {
+    return {
+      state: "PUBLISHING",
+      chartConfig: chartConfig,
+    } as ConfiguratorStatePublishing;
+  }, [chartConfig]);
+
   return (
     <Box
       sx={{
@@ -160,20 +172,25 @@ export const ChartPublishedInner = ({
         )}
         <InteractiveFiltersProvider>
           <Box height={height || lastHeight.current}>
-            {isTablePreview ? (
-              <DataSetTable
-                dataSetIri={dataSet}
-                dataSource={parsedDataSource}
-                chartConfig={chartConfig}
-              />
-            ) : (
-              <ChartWithInteractiveFilters
-                ref={chartRef}
-                dataSet={dataSet}
-                dataSource={parsedDataSource}
-                chartConfig={chartConfig}
-              />
-            )}
+            <PublishedConfiguratorStateProvider
+              chartId={configKey}
+              initialState={publishedConfiguratorState}
+            >
+              {isTablePreview ? (
+                <DataSetTable
+                  dataSetIri={dataSet}
+                  dataSource={parsedDataSource}
+                  chartConfig={chartConfig}
+                />
+              ) : (
+                <ChartWithInteractiveFilters
+                  ref={chartRef}
+                  dataSet={dataSet}
+                  dataSource={parsedDataSource}
+                  chartConfig={chartConfig}
+                />
+              )}
+            </PublishedConfiguratorStateProvider>
           </Box>
           {chartConfig && (
             <ChartFootnotes
