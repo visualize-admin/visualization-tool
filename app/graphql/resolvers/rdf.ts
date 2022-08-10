@@ -152,7 +152,8 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
-  async (_, { iri, sourceUrl, filters }, { sparqlClient }) => {
+  async (_, { iri, sourceUrl, filters }, { setup }, info) => {
+    const { sparqlClient } = await setup(info);
     const source = createSource({ endpointUrl: sourceUrl });
 
     const cube = await source.cube(iri);
@@ -196,31 +197,38 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 export const themes: NonNullable<QueryResolvers["themes"]> = async (
   _,
   { locale },
-  { sparqlClient }
+  { setup },
+  info
 ) => {
+  const { sparqlClient } = await setup(info);
   return (await loadThemes({ locale, sparqlClient })).filter(truthy);
 };
 
 export const subthemes: NonNullable<QueryResolvers["subthemes"]> = async (
   _,
   { locale, parentIri },
-  { sparqlClient }
+  { setup },
+  info
 ) => {
+  const { sparqlClient } = await setup(info);
   return (await loadSubthemes({ locale, parentIri, sparqlClient })).filter(
     truthy
   );
 };
 
 export const organizations: NonNullable<QueryResolvers["organizations"]> =
-  async (_, { locale }, { sparqlClient }) => {
+  async (_, { locale }, { setup }, info) => {
+    const { sparqlClient } = await setup(info);
     return (await loadOrganizations({ locale, sparqlClient })).filter(truthy);
   };
 
 export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
   _,
   { organization, theme, includeDrafts },
-  { sparqlClient }
+  { setup },
+  info
 ) => {
+  const { sparqlClient } = await setup(info);
   const byOrg = await queryDatasetCountByOrganization({
     theme: theme || undefined,
     includeDrafts: includeDrafts ?? undefined,
@@ -241,20 +249,23 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, args, { sparqlClient }) => {
+  async ({ cube, locale }, args, { setup }, info) => {
+    const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, args, { sparqlClient }) => {
+  async ({ cube, locale }, args, { setup }, info) => {
+    const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => d.data.isMeasureDimension);
   };
 
 export const dataCubeDimensionByIri: NonNullable<
   DataCubeResolvers["dimensionByIri"]
-> = async ({ cube, locale }, { iri }, { sparqlClient }) => {
+> = async ({ cube, locale }, { iri }, { setup }, info) => {
+  const { sparqlClient } = await setup(info);
   const dimension = (
     await getCubeDimensions({ cube, locale, sparqlClient })
   ).find((d) => iri === d.data.iri);
@@ -266,8 +277,10 @@ export const dataCubeObservations: NonNullable<
 > = async (
   { cube, locale },
   { limit, filters, dimensions },
-  { sparqlClient }
+  { setup },
+  info
 ) => {
+  const { sparqlClient } = await setup(info);
   const { query, observations, observationsRaw } = await getCubeObservations({
     cube,
     locale,
@@ -342,9 +355,10 @@ const getDimensionValuesLoader = (
 export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
   { data: { iri } },
   { sourceUrl },
-  { sparqlClient, sparqlClientStream },
+  { setup },
   info
 ) => {
+  const { sparqlClient, sparqlClientStream } = await setup(info);
   return queryHierarchy(
     iri,
     sourceUrl,
@@ -356,7 +370,8 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
 
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
-> = async (parent, { filters }, { loaders, sparqlClient }) => {
+> = async (parent, { filters }, { setup }, info) => {
+  const { loaders, sparqlClient } = await setup(info);
   // Different loader if we have filters or not
   const loader = getDimensionValuesLoader(sparqlClient, loaders, filters);
   const values: Array<DimensionValue> = await loader.load(parent);
