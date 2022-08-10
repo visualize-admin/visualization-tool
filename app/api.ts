@@ -17,6 +17,7 @@ export const saveChartConfig = async (
     },
     body: JSON.stringify({
       dataSet: state.dataSet,
+      dataSource: state.dataSource,
       meta: state.meta,
       chartConfig: state.chartConfig,
     }),

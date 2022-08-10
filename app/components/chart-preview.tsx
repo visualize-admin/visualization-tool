@@ -23,6 +23,10 @@ import { ChartConfig, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import {
+  parseDataSource,
+  stringifyDataSource,
+} from "@/graphql/resolvers/utils";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
 
@@ -36,7 +40,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
 
 export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
-  const [dataSource] = useDataSource();
+  const [dataSource, setDataSource] = useDataSource();
   const locale = useLocale();
 
   const [{ data: metaData }] = useDataCubeMetadataQuery({
@@ -57,6 +61,12 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
       lastHeight.current = height;
     }
   }, [height]);
+
+  React.useEffect(() => {
+    if (state.dataSource !== stringifyDataSource(dataSource)) {
+      setDataSource(parseDataSource(state.dataSource));
+    }
+  }, [dataSource, setDataSource, state.dataSource]);
 
   return (
     <Flex

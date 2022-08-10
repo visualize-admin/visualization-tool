@@ -43,13 +43,14 @@ const EmbedPage = (props: PageProps) => {
   const {
     config: {
       key,
-      data: { dataSet, meta, chartConfig },
+      data: { dataSet, dataSource, meta, chartConfig },
     },
   } = props;
 
   return (
     <ChartPublished
       dataSet={dataSet}
+      dataSource={dataSource}
       chartConfig={chartConfig}
       meta={meta}
       configKey={key}

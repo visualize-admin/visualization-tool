@@ -68,7 +68,7 @@ const VisualizationPage = (props: PageProps) => {
   const {
     config: {
       key,
-      data: { dataSet, meta, chartConfig },
+      data: { dataSet, dataSource, meta, chartConfig },
     },
   } = props;
 
@@ -99,6 +99,7 @@ const VisualizationPage = (props: PageProps) => {
             <ChartPanelPublished chartType={chartConfig.chartType}>
               <ChartPublished
                 dataSet={dataSet}
+                dataSource={dataSource}
                 chartConfig={chartConfig}
                 meta={meta}
                 configKey={key}

@@ -24,16 +24,23 @@ import { DataSetTable } from "@/configurator/components/datatable";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import {
+  parseDataSource,
+  stringifyDataSource,
+} from "@/graphql/resolvers/utils";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const ChartPublished = ({
   dataSet,
+  dataSource,
   meta,
   chartConfig,
   configKey,
 }: {
   dataSet: string;
+  dataSource: string;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
@@ -42,6 +49,7 @@ export const ChartPublished = ({
     <ChartTablePreviewProvider>
       <ChartPublishedInner
         dataSet={dataSet}
+        dataSource={dataSource}
         meta={meta}
         chartConfig={chartConfig}
         configKey={configKey}
@@ -52,22 +60,27 @@ export const ChartPublished = ({
 
 export const ChartPublishedInner = ({
   dataSet,
+  dataSource,
   meta,
   chartConfig,
   configKey,
 }: {
   dataSet: string;
+  dataSource: string | undefined;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
-  const [dataSource] = useDataSource();
+  const [globalDataSource, setGlobalDataSource] = useDataSource();
+  const parsedDataSource = dataSource
+    ? parseDataSource(dataSource)
+    : DEFAULT_DATA_SOURCE;
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: parsedDataSource.type,
+      sourceUrl: parsedDataSource.url,
       locale,
     },
   });
@@ -81,6 +94,15 @@ export const ChartPublishedInner = ({
       lastHeight.current = height;
     }
   }, [height]);
+
+  React.useEffect(() => {
+    if (
+      dataSource !== undefined &&
+      dataSource !== stringifyDataSource(globalDataSource)
+    ) {
+      setGlobalDataSource(parseDataSource(dataSource));
+    }
+  }, [globalDataSource, setGlobalDataSource, dataSource]);
 
   return (
     <Box
