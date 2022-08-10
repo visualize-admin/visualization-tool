@@ -1,13 +1,16 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import {
   createContext,
   Dispatch,
   ReactNode,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
+import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
@@ -75,8 +78,20 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const isDataSourceChangeable = (pathname: string) => {
+  if (pathname === "/" || pathname === "/browse") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const DataSourceMenu = () => {
   const [source, setSource] = useDataSource();
+  const router = useRouter();
+  const isDisabled = useMemo(() => {
+    return !isDataSourceChangeable(router.pathname);
+  }, [router.pathname]);
 
   return (
     <Flex sx={{ alignItems: "center", gap: 1 }}>
@@ -92,6 +107,7 @@ export const DataSourceMenu = () => {
         onChange={(e) => {
           setSource(convertEndpointToSource(e.target.value as string));
         }}
+        disabled={isDisabled}
       />
     </Flex>
   );

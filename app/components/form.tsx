@@ -232,6 +232,7 @@ export const MinimalisticSelect = ({
   options,
   onChange,
   smaller = false,
+  disabled,
 }: {
   id: string;
   options: Option[];
@@ -270,6 +271,7 @@ export const MinimalisticSelect = ({
       name={id}
       onChange={onChange}
       value={value}
+      disabled={disabled}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
