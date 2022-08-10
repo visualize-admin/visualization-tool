@@ -82,7 +82,7 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const isDataSourceChangeable = (pathname: string) => {
-  if (pathname === "/" || pathname === "/browse") {
+  if (pathname === "/browse") {
     return true;
   } else {
     return false;
