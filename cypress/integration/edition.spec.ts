@@ -24,13 +24,15 @@ describe("Editing a chart", () => {
     waitForChartToBeLoaded();
 
     cy.findByText("Select none").click();
-    cy.findByText("Select filters").click();
+    cy.findByText("Filters", {
+      selector: "button",
+    }).click();
     cy.findByText("Military defence").click();
     cy.findByText("Civil defence").click();
     cy.findByText("Mining, manufacturing and construction").click();
     cy.findByText("Transport").click();
     cy.findByText("Communication").click();
-    cy.findByText("Apply").click();
+    cy.findByText("Apply filters").click();
 
     cy.get('[data-name="panel-middle"]').scrollTo(0, 200);
     cy.waitForNetworkIdle(1000);
