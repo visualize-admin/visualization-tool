@@ -11,6 +11,7 @@
       }
     },
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_106/dataset",
+    "dataSource": "sparql+https://lindas.admin.ch/query",
     "chartConfig": {
       "fields": {
         "x": {
