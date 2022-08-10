@@ -198,8 +198,6 @@ export const DataSetTable = ({
     );
   }, [data?.dataCubeByIri]);
 
-  console.log(headers);
-
   if (!fetching && data?.dataCubeByIri) {
     return (
       <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
