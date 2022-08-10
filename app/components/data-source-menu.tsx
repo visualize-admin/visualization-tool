@@ -25,16 +25,18 @@ import {
 } from "@/graphql/resolvers/utils";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-export const DATA_SOURCE_OPTIONS: Option[] = [
+export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
     position: 2,
+    isTrusted: true,
   },
   {
     value: "sparql+https://int.lindas.admin.ch/query",
     label: "Int",
     position: 1,
+    isTrusted: false,
   },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 const DATA_SOURCE_URLS: string[] = DATA_SOURCE_OPTIONS.map((d) => d.value);
