@@ -40,8 +40,8 @@ export const Label = ({
     component="label"
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
+    color="secondary"
     display="flex"
-    sx={{ color: "grey.600" }}
   >
     {children}
     {label && (
@@ -291,23 +291,24 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "grey.600", fontSize: "1rem", pb: 2 }}>
+  <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
       </Label>
     )}
     <MUIInput
+      id={name}
+      size="small"
+      color="secondary"
+      name={name}
+      value={value}
+      onChange={onChange}
       sx={{
         borderColor: "grey.500",
         backgroundColor: "grey.100",
         width: "100%",
       }}
-      size="small"
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
     />
   </Box>
 );
@@ -452,9 +453,9 @@ export const SearchField = ({
               </VisuallyHidden>
               <Box
                 aria-hidden="true"
-                sx={{ borderRadius: "50%", color: "grey.600", mr: "0.25rem" }}
+                sx={{ borderRadius: "50%", mr: "0.25rem" }}
               >
-                <Icon name="close" size={16} />
+                <Icon name="close" size={16} color="secondary" />
               </Box>
             </ButtonBase>
           ) : null
@@ -471,11 +472,11 @@ export const FieldSetLegend = ({
 }) => (
   <Typography
     variant="caption"
+    color="secondary"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.600",
       pl: 0,
     }}
     component="legend"
