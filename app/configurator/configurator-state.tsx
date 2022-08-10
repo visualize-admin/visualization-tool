@@ -8,6 +8,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useMemo,
 } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
@@ -1245,16 +1246,47 @@ const ConfiguratorStateProviderInternal = ({
   );
 };
 
-export const ConfiguratorStateProvider = ({
-  chartId,
+export const PublishedConfiguratorStateProvider = ({
   children,
   initialState,
-  allowDefaultRedirect,
 }: {
   chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
+  readonly?: boolean;
+}) => {
+  const stateAndDispatch = useMemo(() => {
+    return [
+      initialState,
+      () => {
+        throw new Error(
+          "Should not call dispatch on config statefor publishers"
+        );
+      },
+    ] as React.ComponentProps<
+      typeof ConfiguratorStateContext.Provider
+    >["value"];
+  }, [initialState]);
+  return (
+    <ConfiguratorStateContext.Provider value={stateAndDispatch}>
+      {children}
+    </ConfiguratorStateContext.Provider>
+  );
+};
+
+export const EditorConfiguratorStateProvider = ({
+  chartId,
+  children,
+  initialState,
+  allowDefaultRedirect,
+  readonly,
+}: {
+  chartId: string;
+  children?: ReactNode;
+  initialState?: ConfiguratorState;
+  allowDefaultRedirect?: boolean;
+  readonly?: boolean;
 }) => {
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
@@ -1287,6 +1319,26 @@ export const useConfiguratorState = <T extends ConfiguratorState>(
   }
 
   return [state, dispatch] as [T, typeof dispatch];
+};
+
+export const useReadOnlyConfiguratorState = <T extends ConfiguratorState>(
+  predicate?: (s: ConfiguratorState) => s is T
+) => {
+  const ctx = useContext(ConfiguratorStateContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need an <ConfiguratorStateProvider> to useConfiguratorState"
+    );
+  }
+
+  const [state, dispatch] = ctx;
+
+  if (predicate && !predicate(state)) {
+    throw new Error("State does not respect type guard");
+  }
+
+  return state as T;
 };
 
 export const isConfiguring = (

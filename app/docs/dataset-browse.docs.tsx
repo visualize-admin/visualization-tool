@@ -2,7 +2,7 @@
 import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 
-import { ConfiguratorStateProvider } from "@/configurator";
+import { EditorConfiguratorStateProvider } from "@/configurator";
 import { DatasetResult } from "@/configurator/components/dataset-browse";
 import { states } from "@/docs/fixtures";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
@@ -13,7 +13,7 @@ export default () => markdown`
 
 > Dataset results are shown when selecting a dataset at the beginning of the chart creation process.
   ${(
-    <ConfiguratorStateProvider
+    <EditorConfiguratorStateProvider
       chartId={states[0].state}
       initialState={states[0]}
       allowDefaultRedirect={false}
@@ -60,7 +60,7 @@ export default () => markdown`
           />
         </Box>
       </ReactSpecimen>
-    </ConfiguratorStateProvider>
+    </EditorConfiguratorStateProvider>
   )}
 
 

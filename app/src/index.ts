@@ -5,7 +5,7 @@
 export { I18nProvider } from "@lingui/react";
 export {
   Configurator,
-  ConfiguratorStateProvider,
+  EditorConfiguratorStateProvider,
   useConfiguratorState,
 } from "../configurator";
 export { DatasetBrowser } from "../browser";

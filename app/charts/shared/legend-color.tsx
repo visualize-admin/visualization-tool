@@ -11,8 +11,8 @@ import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
   ConfiguratorState,
-  isConfiguring,
   isSegmentInConfig,
+  useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
@@ -21,7 +21,7 @@ import {
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
-import { useConfiguratorState, useLocale } from "@/src";
+import { useLocale } from "@/src";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -126,7 +126,15 @@ export const InteractiveLegendColor = () => {
 };
 
 const useLegendGroups = (labels: string[]) => {
-  const [configState] = useConfiguratorState(isConfiguring);
+  const configState = useReadOnlyConfiguratorState();
+  if (
+    configState.state === "INITIAL" ||
+    configState.state === "SELECTING_DATASET"
+  ) {
+    throw new Error(
+      `Cannot call useLegendGroups from state ${configState.state}`
+    );
+  }
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
