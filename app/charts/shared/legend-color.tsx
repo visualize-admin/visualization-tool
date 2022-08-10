@@ -34,7 +34,7 @@ const useStyles = makeStyles<Theme>(() => ({
     minHeight: "20px",
     gap: "1rem 1.5rem",
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
@@ -106,7 +106,9 @@ export const InteractiveLegendColor = () => {
       {groups.map((group) => {
         return (
           <div key={group.value}>
-            <Typography variant="h4">{group.label}</Typography>
+            {group.label ? (
+              <Typography variant="h4">{group.label}</Typography>
+            ) : null}
             {colors.domain().map((item, i) => (
               <Checkbox
                 label={item}
