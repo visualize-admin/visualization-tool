@@ -23,7 +23,9 @@ describe("Editing a chart", () => {
     cy.visit(`/en/create/${key}`);
     waitForChartToBeLoaded();
 
-    cy.findByText("Select none").click();
+    cy.waitForNetworkIdle(1000);
+
+    cy.findByText("Select none", { timeout: 10 * 1000 }).click();
     cy.findByText("Filters", {
       selector: "button",
     }).click();
