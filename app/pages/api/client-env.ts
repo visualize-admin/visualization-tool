@@ -16,6 +16,10 @@ export default async function clientEnvApi(
           GA_TRACKING_ID: process.env.GA_TRACKING_ID,
           SPARQL_EDITOR: process.env.SPARQL_EDITOR,
           ENDPOINT: process.env.ENDPOINT,
+          WHITELISTED_DATA_SOURCES:
+            process.env.WHITELISTED_DATA_SOURCES !== undefined
+              ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES)
+              : ["Prod"],
           SPARQL_GEO_ENDPOINT: process.env.SPARQL_GEO_ENDPOINT,
           SQL_ENDPOINT: process.env.SQL_ENDPOINT,
           PUBLIC_URL: process.env.PUBLIC_URL,

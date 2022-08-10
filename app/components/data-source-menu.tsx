@@ -15,6 +15,7 @@ import React from "react";
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import { Option } from "@/configurator";
+import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
   stringifyDataSource,
   DataSource,
@@ -24,7 +25,7 @@ import {
 } from "@/graphql/resolvers/utils";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-const TRUSTED_DATA_SOURCE_OPTIONS: Option[] = [
+export const DATA_SOURCE_OPTIONS: Option[] = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
@@ -35,10 +36,8 @@ const TRUSTED_DATA_SOURCE_OPTIONS: Option[] = [
     label: "Int",
     position: 1,
   },
-];
-const TRUSTED_DATA_SOURCES: string[] = TRUSTED_DATA_SOURCE_OPTIONS.map(
-  (d) => d.value
-);
+].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
+const DATA_SOURCE_URLS: string[] = DATA_SOURCE_OPTIONS.map((d) => d.value);
 
 const DataSourceStateContext = createContext<
   [DataSource, Dispatch<DataSource>] | undefined
@@ -66,7 +65,7 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const dataSource = retrieveDataSourceFromLocalStorage();
 
-    if (dataSource !== null && TRUSTED_DATA_SOURCES.includes(dataSource)) {
+    if (dataSource !== null && DATA_SOURCE_URLS.includes(dataSource)) {
       setSource(parseDataSource(dataSource));
     } else {
       saveDataSourceToLocalStorage(stringifyDataSource(DEFAULT_DATA_SOURCE));
@@ -104,7 +103,7 @@ export const DataSourceMenu = () => {
       </Label>
       <MinimalisticSelect
         id="dataSourceSelect"
-        options={TRUSTED_DATA_SOURCE_OPTIONS}
+        options={DATA_SOURCE_OPTIONS}
         value={stringifyDataSource(source)}
         onChange={(e) => {
           setSource(parseDataSource(e.target.value as string));

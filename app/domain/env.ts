@@ -25,6 +25,11 @@ export const ENDPOINT =
   process.env.ENDPOINT ??
   "sparql+https://lindas.admin.ch/query";
 
+export const WHITELISTED_DATA_SOURCES = clientEnv?.WHITELISTED_DATA_SOURCES ??
+  (process.env.WHITELISTED_DATA_SOURCES !== undefined
+    ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES!)
+    : undefined) ?? ["Prod"];
+
 export const SPARQL_GEO_ENDPOINT =
   clientEnv?.SPARQL_GEO_ENDPOINT ??
   process.env.SPARQL_GEO_ENDPOINT ??
