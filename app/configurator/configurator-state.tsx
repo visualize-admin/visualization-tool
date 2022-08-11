@@ -52,7 +52,7 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/utils";
+import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/data-source";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";

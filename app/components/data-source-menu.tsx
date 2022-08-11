@@ -21,7 +21,7 @@ import {
   parseDataSource,
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
-} from "@/graphql/resolvers/utils";
+} from "@/graphql/resolvers/data-source";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
