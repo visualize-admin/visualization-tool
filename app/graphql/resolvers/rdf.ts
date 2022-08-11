@@ -92,8 +92,11 @@ const makeCubeIndex = cachedWithTTL(
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
-  { sourceUrl, locale, query, order, includeDrafts, filters }
+  { sourceUrl, locale, query, order, includeDrafts, filters },
+  { setup },
+  info
 ) => {
+  const { sparqlClient } = await setup(info);
   const sortResults = <T extends unknown[]>(
     results: T,
     getter: (d: T[number]) => ResolvedDataCube["data"]
@@ -117,6 +120,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
       order,
       includeDrafts,
       filters,
+      sparqlClient,
     });
     const candidates = searchCubes(cubesIndex, query, cubesByIri);
     sortResults(candidates, (x) => x.dataCube.data);
