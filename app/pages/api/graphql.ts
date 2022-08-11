@@ -53,7 +53,7 @@ const setup = async (
 
 export type Loaders = Awaited<ReturnType<typeof setup>>;
 
-const setupContext = async ({
+const createContextContent = async ({
   sourceUrl,
   locale,
 }: {
@@ -70,6 +70,19 @@ const setupContext = async ({
   return { loaders, sparqlClient, sparqlClientStream };
 };
 
+export const createContext = () => {
+  let setupping: ReturnType<typeof createContextContent>;
+
+  return {
+    setup: async ({
+      variableValues: { locale, sourceUrl },
+    }: GraphQLResolveInfo) => {
+      setupping = setupping || createContextContent({ locale, sourceUrl });
+      return await setupping;
+    },
+  };
+};
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -77,20 +90,7 @@ const server = new ApolloServer({
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
-  context: async () => {
-    const ctx = {} as {
-      setupping: ReturnType<typeof setupContext>;
-    };
-
-    return {
-      setup: async ({
-        variableValues: { locale, sourceUrl },
-      }: GraphQLResolveInfo) => {
-        ctx.setupping = ctx.setupping || setupContext({ locale, sourceUrl });
-        return await ctx.setupping;
-      },
-    };
-  },
+  context: createContext,
   // Enable playground in production
   introspection: true,
   playground: true,

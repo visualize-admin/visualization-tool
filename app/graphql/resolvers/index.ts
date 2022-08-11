@@ -134,7 +134,7 @@ export const resolvers: Resolvers = {
       if (!label) {
         const { loaders } = await setup(info);
         const resolvedTheme = await loaders.themes.load(iri);
-        return resolvedTheme.label;
+        return resolvedTheme?.label || "";
       }
 
       return label;
@@ -145,7 +145,7 @@ export const resolvers: Resolvers = {
       if (!label) {
         const { loaders } = await setup(info);
         const resolvedTheme = await loaders.organizations.load(iri);
-        return resolvedTheme.label;
+        return resolvedTheme?.label || "";
       }
 
       return label;
