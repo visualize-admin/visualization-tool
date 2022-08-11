@@ -16,6 +16,7 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
+import { useIsTrustedDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import {
@@ -73,9 +74,7 @@ export const ChartPublishedInner = ({
   configKey: string;
 }) => {
   const locale = useLocale();
-  // const isDataSourceTrusted = React.useMemo(() => {
-  //   return DATA_SOURCE_OPTIONS.find((d) => d.value === dataSource)?.isTrusted;
-  // }, [dataSource]);
+  const isTrustedDataSource = useIsTrustedDataSource(dataSource);
 
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: {
@@ -140,7 +139,7 @@ export const ChartPublishedInner = ({
             </HintRed>
           </Box>
         )}
-        {/* {!isDataSourceTrusted && (
+        {!isTrustedDataSource && (
           <Box sx={{ mb: 4 }}>
             <HintBlue iconName="hintWarning">
               <Trans id="data.source.notTrusted">
@@ -148,7 +147,7 @@ export const ChartPublishedInner = ({
               </Trans>
             </HintBlue>
           </Box>
-        )} */}
+        )}
         {isUsingImputation(chartConfig) && (
           <Box sx={{ mb: 4 }}>
             <HintBlue iconName="hintWarning">

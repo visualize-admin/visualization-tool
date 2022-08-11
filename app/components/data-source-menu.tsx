@@ -40,6 +40,14 @@ export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 const DATA_SOURCE_URLS: string[] = DATA_SOURCE_OPTIONS.map((d) => d.value);
 
+export const useIsTrustedDataSource = (dataSource: DataSource) => {
+  return useMemo(() => {
+    const stringifiedDataSource = stringifyDataSource(dataSource);
+    return DATA_SOURCE_OPTIONS.find((d) => d.value === stringifiedDataSource)
+      ?.isTrusted;
+  }, [dataSource]);
+};
+
 const DataSourceStateContext = createContext<
   [DataSource, Dispatch<DataSource>] | undefined
 >(undefined);
