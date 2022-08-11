@@ -22,7 +22,7 @@ const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
-const setup = (
+const setup = async (
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
@@ -49,7 +49,24 @@ const setup = (
   } as const;
 };
 
-export type Loaders = ReturnType<typeof setup>;
+export type Loaders = Awaited<ReturnType<typeof setup>>;
+
+const setupContext = async ({
+  sourceUrl,
+  locale,
+}: {
+  sourceUrl: string;
+  locale: string;
+}) => {
+  const sparqlClient = new ParsingClient({
+    endpointUrl: sourceUrl,
+  });
+  const sparqlClientStream = new StreamClient({
+    endpointUrl: sourceUrl,
+  });
+  const loaders = await setup(locale, sparqlClient, sparqlClientStream);
+  return { loaders, sparqlClient, sparqlClientStream };
+};
 
 const server = new ApolloServer({
   typeDefs,
@@ -58,43 +75,22 @@ const server = new ApolloServer({
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
-  context: function () {
-    const context = this as {
-      loaders: Loaders | undefined;
-      sparqlClient: ParsingClient | undefined;
-      sparqlClientStream: StreamClient | undefined;
+  context: async () => {
+    const ctx = {} as {
+      setupping: Promise<{
+        loaders: Loaders | undefined;
+        sparqlClient: ParsingClient | undefined;
+        sparqlClientStream: StreamClient | undefined;
+      }>;
     };
-    // Why this isn't cleared with each request?
-    context.loaders = undefined;
-    context.sparqlClient = undefined;
-    context.sparqlClientStream = undefined;
 
     return {
-      setup: ({
+      setup: async ({
         variableValues: { locale, sourceUrl },
       }: GraphQLResolveInfo) => {
-        if (
-          context.loaders === undefined &&
-          context.sparqlClient === undefined &&
-          context.sparqlClientStream === undefined
-        ) {
-          context.sparqlClient = new ParsingClient({
-            endpointUrl: sourceUrl,
-          });
-          context.sparqlClientStream = new StreamClient({
-            endpointUrl: sourceUrl,
-          });
-          context.loaders = setup(
-            locale,
-            context.sparqlClient,
-            context.sparqlClientStream
-          );
-        }
-
-        return context;
+        ctx.setupping = ctx.setupping || setupContext({ locale, sourceUrl });
+        return await ctx.setupping;
       },
-      loaders: undefined,
-      sparqlClient: undefined,
     };
   },
   // Enable playground in production
