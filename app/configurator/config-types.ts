@@ -756,9 +756,17 @@ export type ChartConfigsAdjusters = {
   map: MapAdjusters;
 };
 
+const DataSource = t.type({
+  type: t.union([t.literal("sql"), t.literal("sparql")]),
+  url: t.string,
+});
+
+export type DataSource = t.TypeOf<typeof DataSource>;
+
 const Config = t.type(
   {
     dataSet: t.string,
+    dataSource: DataSource,
     activeField: t.union([t.string, t.undefined]),
     meta: Meta,
     chartConfig: ChartConfig,
@@ -777,12 +785,14 @@ const ConfiguratorStateInitial = t.type({
   state: t.literal("INITIAL"),
   activeField: t.undefined,
   dataSet: t.undefined,
+  dataSource: DataSource,
 });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
   activeField: t.undefined,
   meta: Meta,
   dataSet: t.union([t.string, t.undefined]),
+  dataSource: DataSource,
   chartConfig: t.undefined,
 });
 const ConfiguratorStateConfiguringChart = t.intersection([

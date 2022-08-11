@@ -29,7 +29,12 @@ export const ChartConfiguratorTable = ({
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
   });
 
   const metaData = data?.dataCubeByIri;

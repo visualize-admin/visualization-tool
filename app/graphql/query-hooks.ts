@@ -45,14 +45,30 @@ export type DataCube = {
 
 
 export type DataCubeObservationsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
   dimensions?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
 
+export type DataCubeDimensionsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
 export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+
+export type DataCubeMeasuresArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type DataCubeOrganization = {
@@ -112,7 +128,15 @@ export type Dimension = {
 
 
 export type DimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type DimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -143,7 +167,15 @@ export type GeoCoordinatesDimension = Dimension & {
 
 
 export type GeoCoordinatesDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type GeoCoordinatesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -164,7 +196,15 @@ export type GeoShapesDimension = Dimension & {
 
 
 export type GeoShapesDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type GeoShapesDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type HierarchyValue = {
@@ -193,7 +233,15 @@ export type Measure = Dimension & {
 
 
 export type MeasureValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type MeasureHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type NominalDimension = Dimension & {
@@ -212,7 +260,15 @@ export type NominalDimension = Dimension & {
 
 
 export type NominalDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type NominalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 
@@ -251,7 +307,15 @@ export type OrdinalDimension = Dimension & {
 
 
 export type OrdinalDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type OrdinalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export type Query = {
@@ -267,6 +331,8 @@ export type Query = {
 
 
 export type QueryDataCubeByIriArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
@@ -276,11 +342,15 @@ export type QueryDataCubeByIriArgs = {
 
 export type QueryPossibleFiltersArgs = {
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters: Scalars['Filters'];
 };
 
 
 export type QueryDataCubesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
@@ -290,22 +360,30 @@ export type QueryDataCubesArgs = {
 
 
 export type QueryThemesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
 };
 
 
 export type QuerySubthemesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   parentIri: Scalars['String'];
 };
 
 
 export type QueryOrganizationsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
 };
 
 
 export type QueryDatasetcountArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
@@ -337,7 +415,15 @@ export type TemporalDimension = Dimension & {
 
 
 export type TemporalDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type TemporalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -351,6 +437,8 @@ export enum TimeUnit {
 }
 
 export type DataCubesQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
@@ -377,6 +465,8 @@ export type DimensionMetaDataFragment = DimensionMetaData_GeoCoordinatesDimensio
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -408,6 +498,8 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
 
 export type DataCubePreviewObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   latest?: Maybe<Scalars['Boolean']>;
@@ -418,6 +510,8 @@ export type DataCubePreviewObservationsQuery = { __typename: 'Query', dataCubeBy
 
 export type DataCubeMetadataQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
 }>;
@@ -427,6 +521,8 @@ export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -459,6 +555,8 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
 export type DimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -488,6 +586,8 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
 export type GeoCoordinatesByDimensionIriQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
 }>;
@@ -498,6 +598,8 @@ export type GeoCoordinatesByDimensionIriQuery = { __typename: 'Query', dataCubeB
 export type GeoShapesByDimensionIriQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
 }>;
@@ -508,6 +610,8 @@ export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?
 export type TemporalDimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -521,6 +625,8 @@ export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?
 
 export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
@@ -554,6 +660,8 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
 
 export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   filters: Scalars['Filters'];
 }>;
 
@@ -561,6 +669,8 @@ export type PossibleFiltersQueryVariables = Exact<{
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
 export type ThemesQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
 }>;
 
@@ -568,6 +678,8 @@ export type ThemesQueryVariables = Exact<{
 export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> };
 
 export type OrganizationsQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
 }>;
 
@@ -575,6 +687,8 @@ export type OrganizationsQueryVariables = Exact<{
 export type OrganizationsQuery = { __typename: 'Query', organizations: Array<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> };
 
 export type SubthemesQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   parentIri: Scalars['String'];
 }>;
@@ -585,6 +699,8 @@ export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typenam
 export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, hasValue?: Maybe<boolean> };
 
 export type DimensionHierarchyQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   cubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
@@ -666,6 +782,8 @@ export type DimensionHierarchyQuery = { __typename: 'Query', dataCubeByIri?: May
       )>> }> }> };
 
 export type DatasetCountQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
@@ -682,7 +800,7 @@ export const DimensionMetaDataFragmentDoc = gql`
   isNumerical
   isKeyDimension
   order
-  values(filters: $filters)
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
   unit
   related {
     iri
@@ -704,8 +822,10 @@ export const HierarchyValueFieldsFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
+    query DataCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
   dataCubes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
     locale: $locale
     query: $query
     order: $order
@@ -738,16 +858,22 @@ export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQuery
   return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
-    query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+    query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     description
     publicationStatus
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
   }
@@ -758,9 +884,20 @@ export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCube
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
 };
 export const DataCubePreviewObservationsDocument = gql`
-    query DataCubePreviewObservations($iri: String!, $locale: String!, $dimensions: [String!], $latest: Boolean) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
-    observations(limit: 10, dimensions: $dimensions) {
+    query DataCubePreviewObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $dimensions: [String!], $latest: Boolean) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      dimensions: $dimensions
+      limit: 10
+    ) {
       data
       sparql
     }
@@ -772,8 +909,14 @@ export function useDataCubePreviewObservationsQuery(options: Omit<Urql.UseQueryA
   return Urql.useQuery<DataCubePreviewObservationsQuery>({ query: DataCubePreviewObservationsDocument, ...options });
 };
 export const DataCubeMetadataDocument = gql`
-    query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+    query DataCubeMetadata($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     identifier
     title
@@ -803,8 +946,14 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
 export const DataCubeMetadataWithComponentValuesDocument = gql`
-    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+    query DataCubeMetadataWithComponentValues($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     publisher
@@ -814,10 +963,10 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
       iri
     }
     landingPage
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
   }
@@ -828,9 +977,19 @@ export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.U
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
-    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ...dimensionMetaData
     }
   }
@@ -841,9 +1000,19 @@ export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<Dimensio
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
 };
 export const GeoCoordinatesByDimensionIriDocument = gql`
-    query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+    query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on GeoCoordinatesDimension {
         geoCoordinates {
           iri
@@ -861,9 +1030,19 @@ export function useGeoCoordinatesByDimensionIriQuery(options: Omit<Urql.UseQuery
   return Urql.useQuery<GeoCoordinatesByDimensionIriQuery>({ query: GeoCoordinatesByDimensionIriDocument, ...options });
 };
 export const GeoShapesByDimensionIriDocument = gql`
-    query GeoShapesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+    query GeoShapesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on GeoShapesDimension {
         geoShapes
       }
@@ -876,9 +1055,19 @@ export function useGeoShapesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<GeoShapesByDimensionIriQuery>({ query: GeoShapesByDimensionIriDocument, ...options });
 };
 export const TemporalDimensionValuesDocument = gql`
-    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on TemporalDimension {
         ...dimensionMetaData
         timeUnit
@@ -893,18 +1082,30 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     description
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    observations(dimensions: $dimensions, filters: $filters, limit: $limit) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      dimensions: $dimensions
+      filters: $filters
+      limit: $limit
+    ) {
       data
       sparqlEditorUrl
     }
@@ -916,8 +1117,13 @@ export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<Dat
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
 };
 export const PossibleFiltersDocument = gql`
-    query PossibleFilters($iri: String!, $filters: Filters!) {
-  possibleFilters(iri: $iri, filters: $filters) {
+    query PossibleFilters($iri: String!, $sourceType: String!, $sourceUrl: String!, $filters: Filters!) {
+  possibleFilters(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    filters: $filters
+  ) {
     iri
     type
     value
@@ -929,8 +1135,8 @@ export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<Possible
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
 };
 export const ThemesDocument = gql`
-    query Themes($locale: String!) {
-  themes(locale: $locale) {
+    query Themes($sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  themes(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
     iri
     label
   }
@@ -941,8 +1147,8 @@ export function useThemesQuery(options: Omit<Urql.UseQueryArgs<ThemesQueryVariab
   return Urql.useQuery<ThemesQuery>({ query: ThemesDocument, ...options });
 };
 export const OrganizationsDocument = gql`
-    query Organizations($locale: String!) {
-  organizations(locale: $locale) {
+    query Organizations($sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  organizations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
     iri
     label
   }
@@ -953,8 +1159,13 @@ export function useOrganizationsQuery(options: Omit<Urql.UseQueryArgs<Organizati
   return Urql.useQuery<OrganizationsQuery>({ query: OrganizationsDocument, ...options });
 };
 export const SubthemesDocument = gql`
-    query Subthemes($locale: String!, $parentIri: String!) {
-  subthemes(locale: $locale, parentIri: $parentIri) {
+    query Subthemes($sourceType: String!, $sourceUrl: String!, $locale: String!, $parentIri: String!) {
+  subthemes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    parentIri: $parentIri
+  ) {
     label
     iri
   }
@@ -965,10 +1176,19 @@ export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQuery
   return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
 };
 export const DimensionHierarchyDocument = gql`
-    query DimensionHierarchy($locale: String!, $cubeIri: String!, $dimensionIri: String!) {
-  dataCubeByIri(iri: $cubeIri, locale: $locale) {
-    dimensionByIri(iri: $dimensionIri) {
-      hierarchy {
+    query DimensionHierarchy($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeIri: String!, $dimensionIri: String!) {
+  dataCubeByIri(
+    iri: $cubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
+      hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
@@ -989,8 +1209,10 @@ export function useDimensionHierarchyQuery(options: Omit<Urql.UseQueryArgs<Dimen
   return Urql.useQuery<DimensionHierarchyQuery>({ query: DimensionHierarchyDocument, ...options });
 };
 export const DatasetCountDocument = gql`
-    query DatasetCount($theme: String, $organization: String, $subtheme: String, $includeDrafts: Boolean) {
+    query DatasetCount($sourceType: String!, $sourceUrl: String!, $theme: String, $organization: String, $subtheme: String, $includeDrafts: Boolean) {
   datasetcount(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
     theme: $theme
     organization: $organization
     subtheme: $subtheme

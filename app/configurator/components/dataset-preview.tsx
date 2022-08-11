@@ -9,6 +9,7 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSetPreviewTable } from "@/configurator/components/datatable";
+import { DataSource } from "@/configurator/config-types";
 import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -18,10 +19,21 @@ export interface Preview {
   label: string;
 }
 
-export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
+export const DataSetPreview = ({
+  dataSetIri,
+  dataSource,
+}: {
+  dataSetIri: string;
+  dataSource: DataSource;
+}) => {
   const locale = useLocale();
   const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
-    variables: { iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
 
   if (metaData && metaData.dataCubeByIri) {
@@ -96,14 +108,16 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             <DataSetPreviewTable
               title={dataCubeByIri.title}
               dataSetIri={dataCubeByIri.iri}
+              dataSource={dataSource}
               dimensions={dataCubeByIri.dimensions}
               measures={dataCubeByIri.measures}
             />
           </Box>
           <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
             <DataDownloadMenu
-              title={dataCubeByIri.title}
               dataSetIri={dataSetIri}
+              dataSource={dataSource}
+              title={dataCubeByIri.title}
             />
             <Typography
               variant="body2"

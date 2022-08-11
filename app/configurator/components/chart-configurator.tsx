@@ -95,9 +95,13 @@ const DataFilterSelectGeneric = ({
   onRemove: () => void;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
-  const cubeIri = state.dataSet;
   const locale = useLocale();
-  const hierarchyParents = useHierarchyParents(cubeIri, dimension, locale);
+  const hierarchyParents = useHierarchyParents(
+    state.dataSet,
+    state.dataSource,
+    dimension,
+    locale
+  );
 
   const values = dimension.values;
 
@@ -178,7 +182,7 @@ const orderedIsEqual = (
  * This runs every time the state changes and it ensures that the selected filters
  * return at least 1 observation. Otherwise filters are reloaded.
  */
-export const useEnsurePossibleFilters = ({
+const useEnsurePossibleFilters = ({
   state,
 }: {
   state:
@@ -214,6 +218,8 @@ export const useEnsurePossibleFilters = ({
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
           iri: state.dataSet,
+          sourceType: state.dataSource.type,
+          sourceUrl: state.dataSource.url,
           filters: unmappedFilters,
           filterKey: Object.keys(unmappedFilters).join(", "),
         })
@@ -254,6 +260,8 @@ export const useEnsurePossibleFilters = ({
     state.chartConfig.fields,
     state.chartConfig.filters,
     state.dataSet,
+    state.dataSource.type,
+    state.dataSource.url,
   ]);
   return { error, fetching };
 };
@@ -281,6 +289,8 @@ const useFilterReorder = ({
   const variables = useMemo(
     () => ({
       iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
       filters: unmappedFilters,
       // This is important for urql not to think that filters
@@ -289,7 +299,13 @@ const useFilterReorder = ({
       // values after we change the filter order
       filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state.dataSet, locale, unmappedFilters]
+    [
+      state.dataSet,
+      state.dataSource.type,
+      state.dataSource.url,
+      locale,
+      unmappedFilters,
+    ]
   );
 
   const [{ data, fetching: dataFetching }, executeQuery] =

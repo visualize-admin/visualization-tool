@@ -16,11 +16,13 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
+import { useIsTrustedDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
+  DataSource,
   Meta,
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
@@ -30,14 +32,17 @@ import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const ChartPublished = ({
   dataSet,
+  dataSource,
   meta,
   chartConfig,
   configKey,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
@@ -46,6 +51,7 @@ export const ChartPublished = ({
     <ChartTablePreviewProvider>
       <ChartPublishedInner
         dataSet={dataSet}
+        dataSource={dataSource}
         meta={meta}
         chartConfig={chartConfig}
         configKey={configKey}
@@ -56,18 +62,27 @@ export const ChartPublished = ({
 
 export const ChartPublishedInner = ({
   dataSet,
+  dataSource = DEFAULT_DATA_SOURCE,
   meta,
   chartConfig,
   configKey,
 }: {
   dataSet: string;
+  dataSource: DataSource | undefined;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
   const locale = useLocale();
+  const isTrustedDataSource = useIsTrustedDataSource(dataSource);
+
   const [{ data: metaData }] = useDataCubeMetadataQuery({
-    variables: { iri: dataSet, locale },
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const [isTablePreview] = useChartTablePreview();
 
@@ -83,9 +98,10 @@ export const ChartPublishedInner = ({
   const publishedConfiguratorState = useMemo(() => {
     return {
       state: "PUBLISHING",
+      dataSource,
       chartConfig: chartConfig,
     } as ConfiguratorStatePublishing;
-  }, [chartConfig]);
+  }, [chartConfig, dataSource]);
 
   return (
     <Box
@@ -123,6 +139,15 @@ export const ChartPublishedInner = ({
             </HintRed>
           </Box>
         )}
+        {!isTrustedDataSource && (
+          <Box sx={{ mb: 4 }}>
+            <HintBlue iconName="hintWarning">
+              <Trans id="data.source.notTrusted">
+                This chart is not using a trusted data source.
+              </Trans>
+            </HintBlue>
+          </Box>
+        )}
         {isUsingImputation(chartConfig) && (
           <Box sx={{ mb: 4 }}>
             <HintBlue iconName="hintWarning">
@@ -150,11 +175,16 @@ export const ChartPublishedInner = ({
               initialState={publishedConfiguratorState}
             >
               {isTablePreview ? (
-                <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
+                <DataSetTable
+                  dataSetIri={dataSet}
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                />
               ) : (
                 <ChartWithInteractiveFilters
                   ref={chartRef}
                   dataSet={dataSet}
+                  dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               )}
@@ -163,6 +193,7 @@ export const ChartPublishedInner = ({
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
+              dataSource={dataSource}
               chartConfig={chartConfig}
               configKey={configKey}
             />
@@ -177,14 +208,16 @@ const ChartWithInteractiveFilters = React.forwardRef(
   (
     {
       dataSet,
+      dataSource,
       chartConfig,
     }: {
       dataSet: string;
+      dataSource: DataSource;
       chartConfig: ChartConfig;
     },
     ref
   ) => {
-    const [IFstate, dispatch] = useInteractiveFilters();
+    const [_, dispatch] = useInteractiveFilters();
     const { interactiveFiltersConfig } = chartConfig;
 
     const presetFrom =
@@ -225,11 +258,16 @@ const ChartWithInteractiveFilters = React.forwardRef(
         {chartConfig.interactiveFiltersConfig && (
           <ChartDataFilters
             dataSet={dataSet}
+            dataSource={dataSource}
             dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
             chartConfig={chartConfig}
           />
         )}
-        <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
+        <GenericChart
+          dataSet={dataSet}
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+        />
       </Flex>
     );
   }

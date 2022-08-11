@@ -22,9 +22,11 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
+import { useDataSource } from "@/components/data-source-menu";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
+  DataSource,
   ImputationType,
   isAreaConfig,
   isColumnConfig,
@@ -50,10 +52,12 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
+import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/data-source";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const DEFAULT_PALETTE = "category10";
 
@@ -67,6 +71,10 @@ export type ConfiguratorStateAction =
   | {
       type: "DATASET_SELECTED";
       dataSet: string | undefined;
+    }
+  | {
+      type: "DATASOURCE_CHANGED";
+      value: DataSource;
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -189,15 +197,26 @@ const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
+const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
+  const dataSource = retrieveDataSourceFromLocalStorage();
+
+  return {
+    ...state,
+    dataSource: dataSource || DEFAULT_DATA_SOURCE,
+  };
+};
+
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
   dataSet: undefined,
+  dataSource: DEFAULT_DATA_SOURCE,
   activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
+  dataSource: DEFAULT_DATA_SOURCE,
   chartConfig: undefined,
   meta: {
     title: {
@@ -459,6 +478,7 @@ const transitionStepNext = (
         return {
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
+          dataSource: draft.dataSource,
           meta: draft.meta,
           activeField: undefined,
           chartConfig,
@@ -604,11 +624,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
-      return action.value.state === "INITIAL" ? emptyState : action.value;
+      return action.value.state === "INITIAL"
+        ? getStateWithCurrentDataSource(emptyState)
+        : action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
         draft.dataSet = action.dataSet;
       }
+      return draft;
+    case "DATASOURCE_CHANGED":
+      draft.dataSource = action.value;
       return draft;
     case "CHART_TYPE_CHANGED":
       if (
@@ -1059,10 +1084,11 @@ export const initChartStateFromChart = async (
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
   if (config && config.data) {
-    const { dataSet, meta, chartConfig } = config.data;
+    const { dataSet, dataSource, meta, chartConfig } = config.data;
     return {
       state: "CONFIGURING_CHART",
       dataSet,
+      dataSource,
       meta,
       chartConfig,
       activeField: undefined,
@@ -1073,6 +1099,7 @@ export const initChartStateFromChart = async (
 export const initChartStateFromCube = async (
   client: Client,
   datasetIri: DatasetIri,
+  dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
   const { data } = await client
@@ -1080,6 +1107,8 @@ export const initChartStateFromCube = async (
       DataCubeMetadataWithComponentValuesDocument,
       {
         iri: datasetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         locale,
       }
     )
@@ -1089,10 +1118,7 @@ export const initChartStateFromCube = async (
     return;
   }
   return transitionStepNext(
-    {
-      ...emptyState,
-      dataSet: datasetIri,
-    },
+    getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
     data.dataCubeByIri
   );
 };
@@ -1137,6 +1163,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
+  const [dataSource] = useDataSource();
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
@@ -1145,7 +1172,7 @@ const ConfiguratorStateProviderInternal = ({
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize: ConfiguratorState = initialState;
+    let stateToInitialize = getStateWithCurrentDataSource(initialState);
 
     const initialize = async () => {
       try {
@@ -1157,6 +1184,7 @@ const ConfiguratorStateProviderInternal = ({
             newChartState = await initChartStateFromCube(
               client,
               query.cube,
+              dataSource,
               locale
             );
           }
@@ -1174,6 +1202,7 @@ const ConfiguratorStateProviderInternal = ({
     };
     initialize();
   }, [
+    dataSource,
     dispatch,
     chartId,
     replace,
@@ -1183,6 +1212,13 @@ const ConfiguratorStateProviderInternal = ({
     locale,
     client,
   ]);
+
+  useEffect(() => {
+    dispatch({
+      type: "DATASOURCE_CHANGED",
+      value: dataSource,
+    });
+  }, [dispatch, dataSource]);
 
   useEffect(() => {
     try {

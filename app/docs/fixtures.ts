@@ -1,3 +1,5 @@
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
 import { DimensionMetaDataFragment, TimeUnit } from "../graphql/query-hooks";
 
@@ -5,6 +7,7 @@ export const states: ConfiguratorState[] = [
   {
     state: "SELECTING_DATASET",
     dataSet: undefined,
+    dataSource: DEFAULT_DATA_SOURCE,
     chartConfig: undefined,
     meta: {
       title: {
@@ -25,6 +28,7 @@ export const states: ConfiguratorState[] = [
   {
     state: "CONFIGURING_CHART",
     dataSet: "foo",
+    dataSource: DEFAULT_DATA_SOURCE,
     chartConfig: {
       chartType: "column",
       fields: {

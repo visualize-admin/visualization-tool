@@ -37,13 +37,19 @@ type DataCube {
   expires: String
   publicationStatus: DataCubePublicationStatus!
   observations(
+    sourceType: String!
+    sourceUrl: String!
     limit: Int
     dimensions: [String!]
     filters: Filters
   ): ObservationsQuery!
-  dimensions: [Dimension!]!
-  dimensionByIri(iri: String!): Dimension
-  measures: [Measure!]!
+  dimensions(sourceType: String!, sourceUrl: String!): [Dimension!]!
+  dimensionByIri(
+    iri: String!
+    sourceType: String!
+    sourceUrl: String!
+  ): Dimension
+  measures(sourceType: String!, sourceUrl: String!): [Measure!]!
   themes: [DataCubeTheme!]!
 }
 
@@ -69,9 +75,13 @@ interface Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type GeoCoordinates {
@@ -89,10 +99,14 @@ type GeoCoordinatesDimension implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type ObservationFilter {
@@ -109,10 +123,14 @@ type GeoShapesDimension implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   geoShapes: GeoShapes
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type NominalDimension implements Dimension {
@@ -123,9 +141,13 @@ type NominalDimension implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type OrdinalDimension implements Dimension {
@@ -136,9 +158,13 @@ type OrdinalDimension implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 enum TimeUnit {
@@ -161,9 +187,13 @@ type TemporalDimension implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type Measure implements Dimension {
@@ -174,9 +204,13 @@ type Measure implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
-  values(filters: Filters): [DimensionValue!]!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
   related: [RelatedDimension!]
-  hierarchy: [HierarchyValue!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
 type DataCubeResult {
@@ -216,23 +250,47 @@ type DatasetCount {
 # clients can execute, along with the return type for each.
 type Query {
   dataCubeByIri(
+    sourceType: String!
+    sourceUrl: String!
     locale: String
     iri: String!
     latest: Boolean = true
     filters: Filters
   ): DataCube
-  possibleFilters(iri: String!, filters: Filters!): [ObservationFilter!]!
+  possibleFilters(
+    iri: String!
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters!
+  ): [ObservationFilter!]!
   dataCubes(
+    sourceType: String!
+    sourceUrl: String!
     locale: String
     query: String
     order: DataCubeResultOrder
     includeDrafts: Boolean
     filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
-  themes(locale: String!): [DataCubeTheme!]!
-  subthemes(locale: String!, parentIri: String!): [DataCubeTheme!]!
-  organizations(locale: String!): [DataCubeOrganization!]!
+  themes(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+  ): [DataCubeTheme!]!
+  subthemes(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    parentIri: String!
+  ): [DataCubeTheme!]!
+  organizations(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+  ): [DataCubeOrganization!]!
   datasetcount(
+    sourceType: String!
+    sourceUrl: String!
     theme: String
     organization: String
     subtheme: String

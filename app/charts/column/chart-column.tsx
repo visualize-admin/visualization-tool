@@ -33,6 +33,7 @@ import {
 import {
   ColumnConfig,
   ColumnFields,
+  DataSource,
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
@@ -47,18 +48,22 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ColumnConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null,
       filters: queryFilters,
     },

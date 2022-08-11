@@ -20,10 +20,15 @@ export const PUBLIC_URL = (
   ""
 ).replace(/\/$/, "");
 
-export const SPARQL_ENDPOINT =
-  clientEnv?.SPARQL_ENDPOINT ??
-  process.env.SPARQL_ENDPOINT ??
-  "https://int.lindas.admin.ch/query";
+export const ENDPOINT =
+  clientEnv?.ENDPOINT ??
+  process.env.ENDPOINT ??
+  "sparql+https://lindas.admin.ch/query";
+
+export const WHITELISTED_DATA_SOURCES = clientEnv?.WHITELISTED_DATA_SOURCES ??
+  (process.env.WHITELISTED_DATA_SOURCES !== undefined
+    ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES!)
+    : undefined) ?? ["Prod"];
 
 export const SPARQL_GEO_ENDPOINT =
   clientEnv?.SPARQL_GEO_ENDPOINT ??
@@ -32,6 +37,9 @@ export const SPARQL_GEO_ENDPOINT =
 
 export const SPARQL_EDITOR =
   clientEnv?.SPARQL_EDITOR ?? process.env.SPARQL_EDITOR;
+
+export const SQL_ENDPOINT =
+  clientEnv?.SQL_ENDPOINT ?? process.env.SQL_ENDPOINT ?? "";
 
 export const GRAPHQL_ENDPOINT =
   clientEnv?.GRAPHQL_ENDPOINT ?? process.env.GRAPHQL_ENDPOINT ?? "/api/graphql";

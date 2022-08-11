@@ -4,8 +4,8 @@ import React from "react";
 import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { useConfiguratorState } from "@/configurator";
-import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "@/domain/env";
+import { DataSource, useConfiguratorState } from "@/configurator";
+import { SPARQL_EDITOR } from "@/domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
@@ -24,14 +24,23 @@ const DebugInteractiveFilters = () => {
   );
 };
 
-const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
+const CubeMetadata = ({
+  datasetIri,
+  dataSource,
+}: {
+  datasetIri: string;
+  dataSource: DataSource;
+}) => {
   const locale = useLocale();
   const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: datasetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale: locale,
     },
   });
+
   return metadata ? (
     <Stack direction="row" spacing={2}>
       <Icon name="column" display="inline" size={16} />
@@ -47,6 +56,7 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
 
 const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
+
   return (
     <>
       <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
@@ -60,7 +70,7 @@ const DebugConfigurator = () => {
             variant="text"
             size="small"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
-              SPARQL_ENDPOINT
+              configuratorState.dataSource.url
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
               configuratorState.dataSet ?? ""
             )}`}
@@ -91,7 +101,10 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
           </Button>
         )}
         {configuratorState.dataSet ? (
-          <CubeMetadata datasetIri={configuratorState.dataSet} />
+          <CubeMetadata
+            datasetIri={configuratorState.dataSet}
+            dataSource={configuratorState.dataSource}
+          />
         ) : null}
       </Stack>
       <Typography

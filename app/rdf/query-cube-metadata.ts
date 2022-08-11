@@ -1,12 +1,12 @@
 import RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { keyBy } from "lodash";
+import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 
 import { makeLocalesFilter } from "./query-labels";
-import { sparqlClient } from "./sparql-client";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
@@ -28,7 +28,7 @@ const parseSparqlOrganization = (sparqlOrg: any) => {
 // Handles both batch loading and loading all themes
 // Batch loading is done by load all themes and then filtering according to given IRIs
 export const createThemeLoader =
-  ({ locale }: { locale: string }) =>
+  ({ locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }) =>
   async (
     filterIris?: readonly string[]
   ): Promise<(RawDataCubeTheme | null)[]> => {
@@ -57,7 +57,7 @@ export const createThemeLoader =
   };
 
 export const createOrganizationLoader =
-  ({ locale }: { locale: string }) =>
+  ({ locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }) =>
   async (
     filterIris?: readonly string[]
   ): Promise<(RawDataCubeOrganization | null)[]> => {
@@ -82,18 +82,32 @@ export const createOrganizationLoader =
     return parsed;
   };
 
-export const loadThemes = ({ locale }: { locale: string }) => {
-  return createThemeLoader({ locale })();
+export const loadThemes = ({
+  locale,
+  sparqlClient,
+}: {
+  locale: string;
+  sparqlClient: ParsingClient;
+}) => {
+  return createThemeLoader({ locale, sparqlClient })();
 };
 
-export const loadOrganizations = ({ locale }: { locale: string }) => {
-  return createOrganizationLoader({ locale })();
+export const loadOrganizations = ({
+  locale,
+  sparqlClient,
+}: {
+  locale: string;
+  sparqlClient: ParsingClient;
+}) => {
+  return createOrganizationLoader({ locale, sparqlClient })();
 };
 
 export const queryDatasetCountByOrganization = async ({
+  sparqlClient,
   theme,
   includeDrafts,
 }: {
+  sparqlClient: ParsingClient;
   theme?: string;
   includeDrafts?: boolean;
 }) => {
@@ -130,9 +144,11 @@ const makeVisualizeDatasetFilter = (options?: { includeDrafts?: boolean }) => {
 };
 
 export const queryDatasetCountByTheme = async ({
+  sparqlClient,
   organization,
   includeDrafts,
 }: {
+  sparqlClient: ParsingClient;
   organization?: string;
   includeDrafts?: boolean;
 }) => {
@@ -158,10 +174,12 @@ export const queryDatasetCountByTheme = async ({
 };
 
 export const queryDatasetCountBySubTheme = async ({
+  sparqlClient,
   organization,
   theme,
   includeDrafts,
 }: {
+  sparqlClient: ParsingClient;
   organization?: string;
   theme?: string;
   includeDrafts?: boolean;
@@ -188,6 +206,7 @@ export const queryDatasetCountBySubTheme = async ({
 };
 
 export const queryLatestPublishedCubeFromUnversionedIri = async (
+  sparqlClient: ParsingClient,
   unversionedIri: string
 ) => {
   const iri = RDF.variable("iri");
@@ -223,9 +242,11 @@ export const queryLatestPublishedCubeFromUnversionedIri = async (
 };
 
 export const loadSubthemes = async ({
+  sparqlClient,
   parentIri,
   locale,
 }: {
+  sparqlClient: ParsingClient;
   parentIri: string;
   locale: string;
 }) => {

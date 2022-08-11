@@ -1,4 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import ParsingClient from "sparql-http-client/ParsingClient";
+
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 import { getCubeDimensions, getCubes } from "../../rdf/queries";
 
@@ -12,15 +15,23 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET":
       try {
         const locale = "de";
-        const result = await getCubes({ locale, includeDrafts: true });
+        const result = await getCubes({
+          locale,
+          includeDrafts: true,
+          sourceUrl: DEFAULT_DATA_SOURCE.url,
+        });
+
+        const sparqlClient = new ParsingClient({
+          endpointUrl: DEFAULT_DATA_SOURCE.url,
+        });
 
         const cubesWithDimensions = await Promise.all(
           result.map(async ({ cube, locale, data }) => {
             return {
               ...data,
-              dimensions: (await getCubeDimensions({ cube, locale })).map(
-                ({ data }) => data
-              ),
+              dimensions: (
+                await getCubeDimensions({ cube, locale, sparqlClient })
+              ).map(({ data }) => data),
             };
           })
         );
@@ -39,4 +50,4 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default route
+export default route;

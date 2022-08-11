@@ -20,9 +20,11 @@ import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configu
 
 const ConfigureChartStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
+
   return (
     <>
       <PanelLeftWrapper
@@ -41,7 +43,10 @@ const ConfigureChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -53,9 +58,11 @@ const ConfigureChartStep = () => {
 
 const DescribeChartStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "DESCRIBING_CHART") {
     return null;
   }
+
   return (
     <>
       <PanelLeftWrapper>
@@ -63,7 +70,10 @@ const DescribeChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -74,14 +84,19 @@ const DescribeChartStep = () => {
 };
 const PublishStep = () => {
   const [state] = useConfiguratorState();
+
   if (state.state !== "PUBLISHING") {
     return null;
   }
+
   return (
     <>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
     </>

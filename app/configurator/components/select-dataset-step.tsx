@@ -4,7 +4,8 @@ import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import ParsingClient from "sparql-http-client/ParsingClient";
 import { useDebounce } from "use-debounce";
 
 import { Footer } from "@/components/footer";
@@ -30,7 +31,9 @@ import {
 } from "@/configurator/components/presence";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
+import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { useConfiguratorState, useLocale } from "@/src";
+import { getQueryParams } from "@/utils/flashes";
 
 const softJSONParse = (v: string) => {
   try {
@@ -50,13 +53,21 @@ export const formatBackLink = (
   return buildURLFromBrowseState(backParameters);
 };
 
-export const SelectDatasetStepContent = () => {
+/**
+ * Heuristic to check if a dataset IRI is versioned.
+ * Versioned iris look like https://blabla/<number/
+ */
+const isDatasetIriVersioned = (iri: string) => {
+  return iri.match(/\/\d+\/?$/) !== null;
+};
+
+const SelectDatasetStepContent = () => {
   const locale = useLocale();
+  const [configState] = useConfiguratorState();
 
   const browseState = useBrowseContext();
   const { search, order, includeDrafts, filters, dataset } = browseState;
 
-  const [configState] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(search, 500, {
     leading: true,
   });
@@ -67,6 +78,8 @@ export const SelectDatasetStepContent = () => {
   // Use the debounced query value here only!
   const [datacubesQuery] = useDataCubesQuery({
     variables: {
+      sourceType: configState.dataSource.type,
+      sourceUrl: configState.dataSource.url,
       locale,
       query: debouncedQuery,
       order,
@@ -79,9 +92,38 @@ export const SelectDatasetStepContent = () => {
     },
   });
 
+  useEffect(() => {
+    const run = async () => {
+      if (
+        dataset !== null &&
+        !Array.isArray(dataset) &&
+        !isDatasetIriVersioned(dataset)
+      ) {
+        const sparqlClient = new ParsingClient({
+          endpointUrl: configState.dataSource.url,
+        });
+        const resp = await queryLatestPublishedCubeFromUnversionedIri(
+          sparqlClient,
+          dataset
+        );
+
+        if (!resp) {
+          router.replace({
+            pathname: `/?${getQueryParams("CANNOT_FIND_CUBE", {
+              iri: dataset,
+            })}`,
+          });
+        }
+      }
+    };
+
+    run();
+  });
+
   if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
+
   return (
     <PanelLayout
       sx={{
@@ -120,7 +162,11 @@ export const SelectDatasetStepContent = () => {
                   </Trans>
                 </Button>
               </NextLink>
-              <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
+              <DataSetMetadata
+                sx={{ mt: "3rem" }}
+                dataSetIri={dataset}
+                dataSource={configState.dataSource}
+              />
             </MotionBox>
           ) : (
             <MotionBox
@@ -145,7 +191,10 @@ export const SelectDatasetStepContent = () => {
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
               <MotionBox {...navPresenceProps} key="preview">
-                <DataSetPreview dataSetIri={dataset} />
+                <DataSetPreview
+                  dataSetIri={dataset}
+                  dataSource={configState.dataSource}
+                />
               </MotionBox>
             ) : (
               <MotionBox {...navPresenceProps}>

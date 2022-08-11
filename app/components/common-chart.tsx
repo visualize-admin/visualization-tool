@@ -7,13 +7,15 @@ import { ChartPieVisualization } from "@/charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartTableVisualization } from "@/charts/table/chart-table";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, DataSource } from "@/configurator";
 
 const GenericChart = ({
   dataSet,
+  dataSource,
   chartConfig,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
   // Combine filters from config + interactive filters
@@ -23,6 +25,7 @@ const GenericChart = ({
 
   const props = {
     dataSetIri: dataSet,
+    dataSource,
     chartConfig,
     queryFilters,
   };

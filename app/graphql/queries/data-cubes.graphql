@@ -1,4 +1,6 @@
 query DataCubes(
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $query: String
   $order: DataCubeResultOrder
@@ -6,6 +8,8 @@ query DataCubes(
   $filters: [DataCubeSearchFilter!]
 ) {
   dataCubes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
     locale: $locale
     query: $query
     order: $order
@@ -39,7 +43,7 @@ fragment dimensionMetaData on Dimension {
   isNumerical
   isKeyDimension
   order
-  values(filters: $filters)
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
   unit
   related {
     iri
@@ -53,19 +57,27 @@ fragment dimensionMetaData on Dimension {
 
 query DataCubePreview(
   $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
   $filters: Filters
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     description
     publicationStatus
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
   }
@@ -73,20 +85,45 @@ query DataCubePreview(
 
 query DataCubePreviewObservations(
   $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $dimensions: [String!]
   $latest: Boolean
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
-    observations(limit: 10, dimensions: $dimensions) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      dimensions: $dimensions
+      limit: 10
+    ) {
       data
       sparql
     }
   }
 }
 
-query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+query DataCubeMetadata(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $latest: Boolean
+) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     identifier
     title
@@ -113,11 +150,19 @@ query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
 
 query DataCubeMetadataWithComponentValues(
   $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
   $filters: Filters
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     publisher
@@ -127,10 +172,10 @@ query DataCubeMetadataWithComponentValues(
       iri
     }
     landingPage
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
   }
@@ -139,12 +184,24 @@ query DataCubeMetadataWithComponentValues(
 query DimensionValues(
   $dataCubeIri: String!
   $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
   $filters: Filters
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ...dimensionMetaData
     }
   }
@@ -153,11 +210,23 @@ query DimensionValues(
 query GeoCoordinatesByDimensionIri(
   $dataCubeIri: String!
   $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on GeoCoordinatesDimension {
         geoCoordinates {
           iri
@@ -173,11 +242,23 @@ query GeoCoordinatesByDimensionIri(
 query GeoShapesByDimensionIri(
   $dataCubeIri: String!
   $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on GeoShapesDimension {
         geoShapes
       }
@@ -188,12 +269,24 @@ query GeoShapesByDimensionIri(
 query TemporalDimensionValues(
   $dataCubeIri: String!
   $dimensionIri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $latest: Boolean
   $filters: Filters
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
-    dimensionByIri(iri: $dimensionIri) {
+  dataCubeByIri(
+    iri: $dataCubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
       ... on TemporalDimension {
         ...dimensionMetaData
         timeUnit
@@ -205,53 +298,95 @@ query TemporalDimensionValues(
 
 query DataCubeObservations(
   $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $dimensions: [String!]
   $filters: Filters
   $latest: Boolean
   $limit: Int
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
     iri
     title
     description
-    dimensions {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    measures {
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetaData
     }
-    observations(dimensions: $dimensions, filters: $filters, limit: $limit) {
+    observations(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      dimensions: $dimensions
+      filters: $filters
+      limit: $limit
+    ) {
       data
       sparqlEditorUrl
     }
   }
 }
 
-query PossibleFilters($iri: String!, $filters: Filters!) {
-  possibleFilters(iri: $iri, filters: $filters) {
+query PossibleFilters(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $filters: Filters!
+) {
+  possibleFilters(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    filters: $filters
+  ) {
     iri
     type
     value
   }
 }
 
-query Themes($locale: String!) {
-  themes(locale: $locale) {
+query Themes($sourceType: String!, $sourceUrl: String!, $locale: String!) {
+  themes(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
     iri
     label
   }
 }
 
-query Organizations($locale: String!) {
-  organizations(locale: $locale) {
+query Organizations(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+) {
+  organizations(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  ) {
     iri
     label
   }
 }
 
-query Subthemes($locale: String!, $parentIri: String!) {
-  subthemes(locale: $locale, parentIri: $parentIri) {
+query Subthemes(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $parentIri: String!
+) {
+  subthemes(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    parentIri: $parentIri
+  ) {
     label
     iri
   }
@@ -266,13 +401,24 @@ fragment hierarchyValueFields on HierarchyValue {
 }
 
 query DimensionHierarchy(
+  $sourceType: String!
+  $sourceUrl: String!
   $locale: String!
   $cubeIri: String!
   $dimensionIri: String!
 ) {
-  dataCubeByIri(iri: $cubeIri, locale: $locale) {
-    dimensionByIri(iri: $dimensionIri) {
-      hierarchy {
+  dataCubeByIri(
+    iri: $cubeIri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+  ) {
+    dimensionByIri(
+      iri: $dimensionIri
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+    ) {
+      hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
@@ -289,12 +435,16 @@ query DimensionHierarchy(
 }
 
 query DatasetCount(
+  $sourceType: String!
+  $sourceUrl: String!
   $theme: String
   $organization: String
   $subtheme: String
   $includeDrafts: Boolean
 ) {
   datasetcount(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
     theme: $theme
     organization: $organization
     subtheme: $subtheme

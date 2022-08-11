@@ -43,8 +43,8 @@ export const Label = ({
     component="label"
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
+    color="secondary"
     display="flex"
-    sx={{ mb: 1, color: "grey.600" }}
   >
     {children}
     {label && (
@@ -252,17 +252,20 @@ export const Select = ({
   );
 };
 
-export const MiniSelect = ({
+export const MinimalisticSelect = ({
   label,
   id,
   value,
   options,
   onChange,
+  smaller = false,
+  disabled,
 }: {
   id: string;
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
+  smaller?: boolean;
 } & SelectProps) => (
   <Box sx={{ color: "grey.800" }}>
     {label && (
@@ -273,25 +276,29 @@ export const MiniSelect = ({
     <MUISelect
       sx={{
         borderColor: "transparent",
-        fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+        fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
+        lineHeight: "normal !important",
 
         backgroundColor: "transparent",
-        py: 0,
+        p: 0,
         pl: 1,
-        pr: 4,
         mr: 1, // Fix for Chrome which cuts of the label otherwise
+        "& > select": {
+          p: 0,
+        },
         ":focus": {
           outline: "none",
           borderColor: "primary.main",
         },
       }}
       native
-      size="small"
+      size={smaller ? "small" : "medium"}
       variant="standard"
       id={id}
       name={id}
       onChange={onChange}
       value={value}
+      disabled={disabled}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
@@ -313,23 +320,24 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "grey.600", fontSize: "1rem", pb: 2 }}>
+  <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
       </Label>
     )}
     <MUIInput
+      id={name}
+      size="small"
+      color="secondary"
+      name={name}
+      value={value}
+      onChange={onChange}
       sx={{
         borderColor: "grey.500",
         backgroundColor: "grey.100",
         width: "100%",
       }}
-      size="small"
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
     />
   </Box>
 );
@@ -474,9 +482,9 @@ export const SearchField = ({
               </VisuallyHidden>
               <Box
                 aria-hidden="true"
-                sx={{ borderRadius: "50%", color: "grey.600", mr: "0.25rem" }}
+                sx={{ borderRadius: "50%", mr: "0.25rem" }}
               >
-                <Icon name="close" size={16} />
+                <Icon name="close" size={16} color="secondary" />
               </Box>
             </ButtonBase>
           ) : null
@@ -493,11 +501,11 @@ export const FieldSetLegend = ({
 }) => (
   <Typography
     variant="caption"
+    color="secondary"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.600",
       pl: 0,
     }}
     component="legend"

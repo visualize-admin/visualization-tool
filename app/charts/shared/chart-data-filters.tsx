@@ -7,7 +7,11 @@ import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
-import { ChartConfig, InteractiveFiltersDataConfig } from "@/configurator";
+import {
+  ChartConfig,
+  DataSource,
+  InteractiveFiltersDataConfig,
+} from "@/configurator";
 import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
@@ -21,10 +25,12 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartDataFilters = ({
   dataSet,
+  dataSource,
   chartConfig,
   dataFiltersConfig,
 }: {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
@@ -51,6 +57,7 @@ export const ChartDataFilters = ({
             {!filtersVisible ? (
               <ChartFiltersList
                 dataSetIri={dataSet}
+                dataSource={dataSource}
                 chartConfig={chartConfig}
               />
             ) : (
@@ -89,10 +96,11 @@ export const ChartDataFilters = ({
                 gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
               }}
             >
-              {componentIris.map((d, i) => (
+              {componentIris.map((d) => (
                 <DataFilter
                   key={d}
                   dataSetIri={dataSet}
+                  dataSource={dataSource}
                   chartConfig={chartConfig}
                   dimensionIri={d}
                 />
@@ -108,10 +116,12 @@ export const ChartDataFilters = ({
 const DataFilter = ({
   dimensionIri,
   dataSetIri,
+  dataSource,
   chartConfig,
 }: {
   dimensionIri: string;
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
@@ -120,7 +130,13 @@ const DataFilter = ({
   const locale = useLocale();
 
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const setDataFilter = (e: SelectChangeEvent<unknown>) => {

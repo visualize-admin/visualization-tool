@@ -18,6 +18,7 @@ import {
   smoothPresenceProps,
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
+import { DataSource } from "@/configurator/config-types";
 import {
   DataCubeMetadataQuery,
   useDataCubeMetadataQuery,
@@ -29,15 +30,22 @@ import truthy from "@/utils/truthy";
 
 export const DataSetMetadata = ({
   dataSetIri,
+  dataSource,
   sx,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   sx: BoxProps["sx"];
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data, fetching, error }] = useDataCubeMetadataQuery({
-    variables: { iri: dataSetIri, locale },
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
   });
   const cube = data?.dataCubeByIri;
   const openDataLink = makeOpenDataLink(locale, cube);

@@ -18,7 +18,7 @@ import {
   LoadingGeoDimensionsError,
   NoDataHint,
 } from "@/components/hint";
-import { BaseLayer, MapConfig, MapFields } from "@/configurator";
+import { BaseLayer, DataSource, MapConfig, MapFields } from "@/configurator";
 import {
   AreaLayer,
   GeoData,
@@ -40,22 +40,24 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartMapVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },
@@ -71,6 +73,8 @@ export const ChartMapVisualization = ({
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
         dataCubeIri: dataSetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
         dimensionIri: symbolDimensionIri,
         locale,
       },
@@ -85,6 +89,8 @@ export const ChartMapVisualization = ({
   const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
     variables: {
       dataCubeIri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       dimensionIri: areaDimensionIri,
       locale,
     },

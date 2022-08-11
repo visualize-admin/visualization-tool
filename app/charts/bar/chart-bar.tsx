@@ -24,6 +24,7 @@ import {
   BarFields,
   InteractiveFiltersConfig,
   FilterValueSingle,
+  DataSource,
 } from "@/configurator";
 import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
@@ -35,18 +36,22 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartBarsVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: BarConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },

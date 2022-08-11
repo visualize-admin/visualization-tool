@@ -6,6 +6,10 @@
       "description": { "de": "", "en": "", "fr": "", "it": "" }
     },
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_105/dataset",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://lindas.admin.ch/query"
+    },
     "chartConfig": {
       "fields": {
         "x": {

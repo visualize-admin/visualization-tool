@@ -18,6 +18,7 @@ import {
   OnlyNegativeDataHint,
 } from "@/components/hint";
 import {
+  DataSource,
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
@@ -33,19 +34,22 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartPieVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: PieConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null,
       filters: queryFilters,
     },

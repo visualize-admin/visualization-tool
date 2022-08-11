@@ -8,6 +8,7 @@ import {
   ChartConfig,
   ChartType,
   ColumnConfig,
+  DataSource,
   TableConfig,
 } from "@/configurator/config-types";
 import {
@@ -102,9 +103,14 @@ describe("initChartStateFromCube", () => {
   };
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
     const { client } = setup({ cubeMetadata: bathingWaterMetadata });
+    const dataSource: DataSource = {
+      url: "https://example.com/api",
+      type: "sparql",
+    };
     const res = await initChartStateFromCube(
       client,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
+      dataSource,
       "en"
     );
     expect(res).toEqual(

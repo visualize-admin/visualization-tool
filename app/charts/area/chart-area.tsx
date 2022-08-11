@@ -25,6 +25,7 @@ import {
 import {
   AreaConfig,
   AreaFields,
+  DataSource,
   InteractiveFiltersConfig,
 } from "@/configurator";
 import { isNumber } from "@/configurator/components/ui-helpers";
@@ -37,18 +38,22 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: AreaConfig;
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },

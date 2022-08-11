@@ -16,6 +16,10 @@
       }
     },
     "dataSet": "https://environment.ld.admin.ch/foen/ubd003701/1",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://lindas.admin.ch/query"
+    },
     "chartConfig": {
       "fields": {
         "x": {

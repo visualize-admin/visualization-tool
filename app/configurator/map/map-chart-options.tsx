@@ -1,4 +1,3 @@
-
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import React, { memo, useMemo } from "react";
@@ -19,6 +18,7 @@ import {
   ColorPickerField,
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
+import { DataSource } from "@/configurator/config-types";
 import {
   GeoFeature,
   getGeoDimensions,
@@ -43,14 +43,15 @@ export const MapColumnOptions = ({
       return <BaseLayersSettings />;
     case "areaLayer":
       return (
-        <AreaLayerSettings chartConfig={chartConfig} metaData={metaData} />
+        <AreaLayerSettings
+          chartConfig={chartConfig}
+          metaData={metaData}
+          dataSource={state.dataSource}
+        />
       );
     case "symbolLayer":
       return (
-        <SymbolLayerSettings
-          chartConfig={chartConfig}
-          metaData={metaData}
-        ></SymbolLayerSettings>
+        <SymbolLayerSettings chartConfig={chartConfig} metaData={metaData} />
       );
     default:
       return null;
@@ -79,9 +80,11 @@ export const BaseLayersSettings = memo(() => {
 
 export const AreaLayerSettings = memo(
   ({
+    dataSource,
     chartConfig,
     metaData,
   }: {
+    dataSource: DataSource;
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
@@ -102,9 +105,11 @@ export const AreaLayerSettings = memo(
 
     const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
       variables: {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
         dataCubeIri: metaData.iri,
         dimensionIri: chartConfig.fields.areaLayer.componentIri,
-        locale,
       },
     });
 
@@ -333,8 +338,8 @@ export const AreaLayerSettings = memo(
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.areaLayer.componentIri}
-                dimensionIri={chartConfig.fields.areaLayer.componentIri}
                 dataSetIri={metaData.iri}
+                dimensionIri={chartConfig.fields.areaLayer.componentIri}
               />
             </ControlSectionContent>
           </ControlSection>
@@ -458,8 +463,8 @@ export const SymbolLayerSettings = memo(
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.symbolLayer.componentIri}
-                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
                 dataSetIri={metaData.iri}
+                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
               />
             </ControlSectionContent>
           )}

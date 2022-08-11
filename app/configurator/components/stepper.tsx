@@ -136,7 +136,12 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: dataSetIri ?? "", locale },
+    variables: {
+      iri: dataSetIri ?? "",
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
   });
   const goNext = useCallback(() => {
     if (data?.dataCubeByIri) {

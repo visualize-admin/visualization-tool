@@ -4,7 +4,6 @@ import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
-import { sparqlClient } from "./sparql-client";
 
 interface ResourcePosition {
   iri: NamedNode;
@@ -26,14 +25,14 @@ const buildResourcePositionQuery = (values: NamedNode<string>[]) => {
  */
 export async function loadResourcePositions({
   ids,
-  client = sparqlClient,
+  sparqlClient,
 }: {
   ids: NamedNode[];
-  client?: ParsingClient;
+  sparqlClient: ParsingClient;
 }) {
   return batchLoad<ResourcePosition, NamedNode>({
     ids,
-    client,
+    sparqlClient,
     buildQuery: (values) => buildResourcePositionQuery(values),
   });
 }

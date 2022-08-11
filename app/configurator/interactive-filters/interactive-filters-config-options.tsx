@@ -41,7 +41,12 @@ export const InteractiveFiltersOptions = ({
   const locale = useLocale();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
   });
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -144,7 +149,12 @@ const InteractiveTimeFilterOptions = ({
   const formatDateAuto = useFormatFullDateAuto();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
   });
 
   // FIXME: this binds "time" to field "x"
@@ -248,7 +258,12 @@ const InteractiveDataFilterOptions = ({
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
   });
   const { chartConfig } = state;
   if (data?.dataCubeByIri) {

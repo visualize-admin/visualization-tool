@@ -87,41 +87,47 @@ const Page: NextPage<PageProps> = ({ configs }) => {
       <ContentLayout>
         <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
           <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
-            {configs.map(({ key, data: { dataSet, chartConfig, meta } }, i) => {
-              return (
-                <Box
-                  key={key}
-                  id={`chart-${key}`}
-                  sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
-                >
-                  <ChartPanelPublished chartType={chartConfig.chartType}>
-                    <HiddenUntilScrolledTo
-                      initialVisible={i < 5}
-                      fallback={<div>Loading...</div>}
-                    >
-                      <ChartPublished
-                        dataSet={dataSet}
-                        chartConfig={chartConfig}
-                        meta={meta}
-                        configKey={key}
-                      />
-                    </HiddenUntilScrolledTo>
-                    <Box
-                      mb={2}
-                      mx={4}
-                      mr={6}
-                      textAlign="right"
-                      typography="caption"
-                    >
-                      Id: {key} -{" "}
-                      <NextLink href={`/v/${key}`} passHref>
-                        <Link color="primary">Open</Link>
-                      </NextLink>{" "}
-                    </Box>
-                  </ChartPanelPublished>
-                </Box>
-              );
-            })}
+            {configs.map(
+              (
+                { key, data: { dataSet, dataSource, chartConfig, meta } },
+                i
+              ) => {
+                return (
+                  <Box
+                    key={key}
+                    id={`chart-${key}`}
+                    sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
+                  >
+                    <ChartPanelPublished chartType={chartConfig.chartType}>
+                      <HiddenUntilScrolledTo
+                        initialVisible={i < 5}
+                        fallback={<div>Loading...</div>}
+                      >
+                        <ChartPublished
+                          dataSet={dataSet}
+                          dataSource={dataSource}
+                          chartConfig={chartConfig}
+                          meta={meta}
+                          configKey={key}
+                        />
+                      </HiddenUntilScrolledTo>
+                      <Box
+                        mb={2}
+                        mx={4}
+                        mr={6}
+                        textAlign="right"
+                        typography="caption"
+                      >
+                        Id: {key} -{" "}
+                        <NextLink href={`/v/${key}`} passHref>
+                          <Link color="primary">Open</Link>
+                        </NextLink>{" "}
+                      </Box>
+                    </ChartPanelPublished>
+                  </Box>
+                );
+              }
+            )}
           </Flex>
         </Box>
       </ContentLayout>

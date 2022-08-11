@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ChartConfig, Meta } from "@/configurator";
+import { ChartConfig, DataSource, Meta } from "@/configurator";
 
 type DbConfig = {
   dataSet: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   meta: Meta;
 };
@@ -27,11 +28,12 @@ const Page: NextPage = () => {
   }, [env, slug]);
 
   if (config) {
-    const { dataSet, meta, chartConfig } = config.data;
+    const { dataSet, dataSource, meta, chartConfig } = config.data;
 
     return (
       <ChartPublished
         dataSet={dataSet}
+        dataSource={dataSource}
         chartConfig={chartConfig}
         meta={meta}
         configKey={config.key}

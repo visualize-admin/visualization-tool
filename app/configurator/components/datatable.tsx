@@ -14,7 +14,7 @@ import { useMemo, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
-import { ChartConfig } from "@/configurator/config-types";
+import { ChartConfig, DataSource } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
@@ -134,11 +134,13 @@ const BackgroundRow = ({ nCells }: { nCells: number }) => {
 export const DataSetPreviewTable = ({
   title,
   dataSetIri,
+  dataSource,
   dimensions,
   measures,
 }: {
   title: string;
   dataSetIri: string;
+  dataSource: DataSource;
   dimensions: DimensionMetaDataFragment[];
   measures: DimensionMetaDataFragment[];
 }) => {
@@ -146,6 +148,8 @@ export const DataSetPreviewTable = ({
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
     variables: {
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       dimensions: null,
     },
@@ -170,10 +174,12 @@ export const DataSetPreviewTable = ({
 
 export const DataSetTable = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   sx,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   sx?: SxProps<Theme>;
 }) => {
@@ -182,6 +188,8 @@ export const DataSetTable = ({
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       dimensions: null,
       filters,

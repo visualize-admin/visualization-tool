@@ -26,6 +26,7 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import {
+  DataSource,
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
@@ -42,18 +43,22 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
   queryFilters,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: ScatterPlotConfig;
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null, // FIXME: Other fields may also be measures
       filters: queryFilters,
     },

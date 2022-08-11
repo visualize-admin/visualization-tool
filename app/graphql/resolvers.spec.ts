@@ -67,12 +67,16 @@ describe("possible filters", () => {
       {},
       {
         iri: "https://fake-iri",
+        sourceType: "sparql",
+        sourceUrl: "https://fake-source.com/query",
         filters: {
           "https://fake-dimension-iri-1": { type: "single", value: 1 },
           "https://fake-dimension-iri-2": { type: "single", value: 2 },
         },
       },
-      undefined,
+      {
+        setup: () => ({ sparqlClient: {} }),
+      },
       {} as GraphQLResolveInfo
     );
     expect(res).toEqual([

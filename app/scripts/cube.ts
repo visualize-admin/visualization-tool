@@ -5,6 +5,8 @@ import { config } from "dotenv";
 import fetch from "node-fetch";
 import { Client } from "urql";
 
+import { DataSource } from "@/configurator";
+
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
   DataCubeMetadataDocument,
@@ -22,6 +24,8 @@ type Args<T> = { client: Client; report: (x: any) => void } & T;
 
 type CubeQueryOptions = {
   iri: string;
+  sourceType: DataSource["type"];
+  sourceUrl: string;
   locale: string;
   latest?: boolean;
 };
@@ -29,6 +33,7 @@ type CubeQueryOptions = {
 const showCubeInfo = async ({
   client,
   iri,
+  sourceType,
   locale,
   latest,
   report,
@@ -36,6 +41,7 @@ const showCubeInfo = async ({
   const res = await client
     .query(DataCubeMetadataDocument, {
       iri,
+      sourceType,
       locale,
       latest,
     })
@@ -58,6 +64,7 @@ const showCubeInfo = async ({
 const showCubeComponents = async ({
   client,
   iri,
+  sourceType,
   locale,
   latest,
   report,
@@ -65,6 +72,7 @@ const showCubeComponents = async ({
   const res = await client
     .query(DataCubeMetadataWithComponentValuesDocument, {
       iri,
+      sourceType,
       locale,
       latest,
     })
@@ -80,6 +88,8 @@ const showCubeComponents = async ({
 const previewCube = async ({
   client,
   iri,
+  sourceType,
+  sourceUrl,
   locale,
   latest,
   report,
@@ -87,11 +97,7 @@ const previewCube = async ({
   const { data: info, error } = await client
     .query<DataCubeMetadataWithComponentValuesQuery>(
       DataCubeMetadataWithComponentValuesDocument,
-      {
-        iri,
-        locale,
-        latest,
-      }
+      { iri, sourceType, sourceUrl, locale, latest }
     )
     .toPromise();
 
@@ -109,6 +115,8 @@ const previewCube = async ({
       DataCubePreviewObservationsDocument,
       {
         iri,
+        sourceType,
+        sourceUrl,
         locale,
         latest,
         measures: measures.map((m) => m.iri),
@@ -124,16 +132,28 @@ const previewCube = async ({
 };
 
 const main = async () => {
-  const localeArg = {
-    argument: ["-l", "--locale"],
-    defaultValue: "en",
-    help: "Locale",
-  };
-
   const iriArg = {
     argument: ["-i", "--iri"],
     help: "Datacube iri",
     required: true,
+  };
+
+  const sourceTypeArg = {
+    argument: ["-l", "--sourceType"],
+    defaultValue: "sparql",
+    help: "DataSourceType",
+  };
+
+  const sourceUrlArg = {
+    argument: ["-l", "--sourceUrl"],
+    defaultValue: "https://lindas.admin.ch/query",
+    help: "DataUrlType",
+  };
+
+  const localeArg = {
+    argument: ["-l", "--locale"],
+    defaultValue: "en",
+    help: "Locale",
   };
 
   const jsonArg = {
@@ -153,17 +173,38 @@ const main = async () => {
   const commands = {
     info: {
       description: "Get info on the datacube",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [
+        iriArg,
+        sourceTypeArg,
+        sourceUrlArg,
+        localeArg,
+        jsonArg,
+        noLatestArg,
+      ],
       handler: showCubeInfo,
     },
     preview: {
       description: "Preview observations on the datacube",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [
+        iriArg,
+        sourceTypeArg,
+        sourceUrlArg,
+        localeArg,
+        jsonArg,
+        noLatestArg,
+      ],
       handler: previewCube,
     },
     components: {
       description: "Show cube components",
-      arguments: [iriArg, localeArg, jsonArg, noLatestArg],
+      arguments: [
+        iriArg,
+        sourceTypeArg,
+        sourceUrlArg,
+        localeArg,
+        jsonArg,
+        noLatestArg,
+      ],
       handler: showCubeComponents,
     },
   };

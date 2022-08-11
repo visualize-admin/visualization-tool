@@ -9,7 +9,7 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { TableConfig } from "@/configurator";
+import { DataSource, TableConfig } from "@/configurator";
 import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
@@ -20,17 +20,20 @@ import { useLocale } from "@/locales/use-locale";
 
 export const ChartTableVisualization = ({
   dataSetIri,
+  dataSource,
   chartConfig,
 }: {
   dataSetIri: string;
+  dataSource: DataSource;
   chartConfig: TableConfig;
 }) => {
   const locale = useLocale();
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
       dimensions: null,
       filters: chartConfig.filters,
     },

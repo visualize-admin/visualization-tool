@@ -9,9 +9,9 @@ import {
   Checkbox,
   Select,
   Input,
-  MiniSelect,
   SearchField,
   Switch,
+  MinimalisticSelect,
 } from "@/components/form";
 import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
 
@@ -140,11 +140,13 @@ ${(
     </ReactSpecimen>
   )}
 
-  ## MiniSelect
+  ## MinimalisticSelect
+
+  Can take a smaller prop to make it smaller.
 
   ${(
     <ReactSpecimen span={2}>
-      <MiniSelect
+      <MinimalisticSelect
         id="dim"
         label="Dimension wählen"
         options={[

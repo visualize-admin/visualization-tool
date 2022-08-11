@@ -67,8 +67,10 @@ export const ChartOptionsSelector = ({
   const locale = useLocale();
   const [{ data }] = useDataCubeObservationsQuery({
     variables: {
-      locale,
       iri: state.dataSet,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
       dimensions: null,
       filters: state.chartConfig.filters,
     },

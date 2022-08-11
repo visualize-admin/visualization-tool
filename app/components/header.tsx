@@ -9,6 +9,10 @@ import React, {
   useState,
 } from "react";
 
+import {
+  DataSourceMenu,
+  DATA_SOURCE_OPTIONS,
+} from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
 
@@ -92,35 +96,52 @@ export const Header = ({
           flexDirection: ["column", "row"],
         }}
       >
-        <LanguageMenu contentId={contentId} />
         <Logo />
+        <MetadataMenu />
       </Flex>
       <HeaderBorder />
     </Box>
   );
 };
 
+const MetadataMenu = ({ contentId }: { contentId?: string }) => {
+  return (
+    <Flex
+      sx={{
+        flexDirection: ["row", "column"],
+        order: [1, 2],
+        justifyContent: ["flex-end", "flex-start"],
+        alignItems: ["center", "flex-end"],
+        gap: 3,
+        width: ["100%", "auto"],
+        height: ["30px", "auto"],
+        ml: [0, "auto"],
+        pr: [3, 0],
+        backgroundColor: ["grey.300", "transparent"],
+      }}
+    >
+      <LanguageMenu contentId={contentId} />
+    </Flex>
+  );
+};
+
 export const Logo = () => {
   return (
-    <NextLink href="/" passHref>
-      <Flex
-        component="a"
-        sx={{
-          order: [2, 1],
-          alignItems: ["center", "flex-start"],
-          cursor: "pointer",
-          textDecoration: "none",
-          color: "grey.900",
-        }}
-      >
+    <Flex sx={{ order: [2, 1], alignItems: ["center", "flex-start"] }}>
+      <NextLink href="/" passHref>
         <Box
+          component="a"
           role="figure"
           aria-labelledby="logo"
           sx={{ display: ["block", "none"], mx: 4, my: 4, width: 24 }}
         >
           <LogoMobile />
         </Box>
+      </NextLink>
+
+      <NextLink href="/" passHref>
         <Box
+          component="a"
           role="figure"
           aria-labelledby="logo"
           sx={{
@@ -134,15 +155,24 @@ export const Logo = () => {
         >
           <LogoDesktop />
         </Box>
-        <Typography
-          component="h1"
-          variant="h4"
-          sx={{ pl: [0, 6], color: "grey.800" }}
-        >
-          visualize.admin.ch
-        </Typography>
+      </NextLink>
+
+      <Flex sx={{ flexDirection: "column", pl: [0, 6] }}>
+        <NextLink href="/" passHref>
+          <Box component="a" sx={{ textDecoration: "none" }}>
+            <Typography
+              component="h1"
+              variant="h4"
+              sx={{ color: "grey.800", cursor: "pointer" }}
+            >
+              visualize.admin.ch
+            </Typography>
+          </Box>
+        </NextLink>
+
+        {DATA_SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
       </Flex>
-    </NextLink>
+    </Flex>
   );
 };
 

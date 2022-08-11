@@ -611,23 +611,31 @@ export const DimensionValuesMultiFilter = ({
 }) => {
   const locale = useLocale();
   const classes = useStyles();
+  const [configuratorState] = useConfiguratorState();
 
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: configuratorState.dataSource.type,
+      sourceUrl: configuratorState.dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const [{ fetching: fetchingHierarchy, data: hierarchyData }] =
     useDimensionHierarchyQuery({
       variables: {
         cubeIri: dataSetIri,
+        sourceType: configuratorState.dataSource.type,
+        sourceUrl: configuratorState.dataSource.url,
         locale,
         dimensionIri,
       },
     });
+
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
-
-  const [configuratorState, dispatch] = useConfiguratorState();
 
   const getValueColor = useCallback(
     (value: string) => {
@@ -697,7 +705,13 @@ export const TimeFilter = ({
   );
 
   const [{ data }] = useTemporalDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;
@@ -756,8 +770,15 @@ export const DimensionValuesSingleFilter = ({
   dimensionIri: string;
 }) => {
   const locale = useLocale();
+  const [state] = useConfiguratorState();
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+    variables: {
+      dimensionIri,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      dataCubeIri: dataSetIri,
+    },
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;

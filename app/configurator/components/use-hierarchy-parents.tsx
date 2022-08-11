@@ -2,19 +2,23 @@ import { groups } from "d3-array";
 import { uniqBy } from "lodash";
 import { useMemo } from "react";
 
+import { DataSource } from "@/configurator/config-types";
 import { useDimensionHierarchyQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { dfs } from "@/lib/dfs";
 
 const useHierarchyParents = (
-  cubeIri: string,
+  dataSet: string,
+  dataSource: DataSource,
   dimension: DataCubeMetadata["dimensions"][number],
   locale: string
 ) => {
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
-      cubeIri: cubeIri,
+      cubeIri: dataSet,
       dimensionIri: dimension.iri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale: locale,
     },
   });

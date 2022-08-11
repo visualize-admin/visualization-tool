@@ -3,6 +3,10 @@
   "data": {
     "state": "DESCRIBING_CHART",
     "dataSet": "https://environment.ld.admin.ch/foen/palmer-penguins/18",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://int.lindas.admin.ch/query"
+    },
     "meta": {
       "title": {
         "de": "",
