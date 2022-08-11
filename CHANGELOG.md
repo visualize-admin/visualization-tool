@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unpublished
 
-Nothing yet.
+- Add an option to see cubes from different LINDAS environments within one Visualize instance
+- Store data source in charts' configs
 
 ## [3.7.4] - 2022-05-31
 
