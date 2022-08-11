@@ -12,6 +12,8 @@ import {
   DimensionResolvers,
   QueryResolvers,
   Resolvers,
+  Maybe,
+  DataCubeSearchFilter,
 } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
 import { defaultLocale, parseLocaleString } from "@/locales/locales";
@@ -47,44 +49,58 @@ const getCubes = cachedWithTTL(
   CUBES_CACHE_TTL
 );
 
+const makeCubeIndexToCache = async ({
+  filters,
+  includeDrafts,
+  sourceUrl,
+  locale,
+  sparqlClient,
+}: {
+  filters: Maybe<DataCubeSearchFilter[]> | undefined;
+  includeDrafts: boolean | null | undefined;
+  sourceUrl: string;
+  locale: Maybe<string> | undefined;
+  sparqlClient: ParsingClient;
+}) => {
+  const cubes = await getCubes({
+    locale: parseLocaleString(locale),
+    sourceUrl,
+    includeDrafts: includeDrafts ? true : false,
+    filters: filters ? filters : undefined,
+  });
+  const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+
+  const dataCubeCandidates = cubes.map(({ data }) => data);
+  const themes = (
+    await loadThemes({ locale: locale || defaultLocale, sparqlClient })
+  ).filter(truthy);
+  const organizations = (
+    await loadOrganizations({ locale: locale || defaultLocale, sparqlClient })
+  ).filter(truthy);
+
+  const themeIndex = keyBy(themes, (t) => t.iri);
+  const organizationIndex = keyBy(organizations, (o) => o.iri);
+  const fullCubes = dataCubeCandidates.map((c) => ({
+    ...c,
+    creator: c.creator?.iri
+      ? {
+          ...c.creator,
+          label: organizationIndex[c.creator.iri]?.label || "",
+        }
+      : c.creator,
+    themes: c.themes?.map((t) => ({
+      ...t,
+      label: themeIndex[t.iri]?.label,
+    })),
+  }));
+  return {
+    index: makeCubeIndexRaw(fullCubes),
+    cubesByIri,
+  };
+};
+
 const makeCubeIndex = cachedWithTTL(
-  async ({ filters, includeDrafts, sourceUrl, locale, sparqlClient }) => {
-    const cubes = await getCubes({
-      locale: parseLocaleString(locale),
-      sourceUrl,
-      includeDrafts: includeDrafts ? true : false,
-      filters: filters ? filters : undefined,
-    });
-    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
-
-    const dataCubeCandidates = cubes.map(({ data }) => data);
-    const themes = (
-      await loadThemes({ locale: locale || defaultLocale, sparqlClient })
-    ).filter(truthy);
-    const organizations = (
-      await loadOrganizations({ locale: locale || defaultLocale, sparqlClient })
-    ).filter(truthy);
-
-    const themeIndex = keyBy(themes, (t) => t.iri);
-    const organizationIndex = keyBy(organizations, (o) => o.iri);
-    const fullCubes = dataCubeCandidates.map((c) => ({
-      ...c,
-      creator: c.creator?.iri
-        ? {
-            ...c.creator,
-            label: organizationIndex[c.creator.iri]?.label || "",
-          }
-        : c.creator,
-      themes: c.themes?.map((t) => ({
-        ...t,
-        label: themeIndex[t.iri]?.label,
-      })),
-    }));
-    return {
-      index: makeCubeIndexRaw(fullCubes),
-      cubesByIri,
-    };
-  },
+  makeCubeIndexToCache,
   ({ filters, includeDrafts, sourceUrl, locale }) =>
     JSON.stringify({ filters, includeDrafts, sourceUrl, locale }),
   CUBES_CACHE_TTL
@@ -116,8 +132,6 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
       locale,
       sourceUrl,
-      query,
-      order,
       includeDrafts,
       filters,
       sparqlClient,
