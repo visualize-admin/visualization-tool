@@ -79,11 +79,7 @@ const server = new ApolloServer({
   },
   context: async () => {
     const ctx = {} as {
-      setupping: Promise<{
-        loaders: Loaders | undefined;
-        sparqlClient: ParsingClient | undefined;
-        sparqlClientStream: StreamClient | undefined;
-      }>;
+      setupping: ReturnType<typeof setupContext>;
     };
 
     return {
