@@ -25,6 +25,7 @@ import {
 import {
   AreaConfig,
   AreaFields,
+  DataSource,
   InteractiveFiltersConfig,
 } from "@/configurator";
 import { isNumber } from "@/configurator/components/ui-helpers";
@@ -33,7 +34,6 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartAreasVisualization = ({

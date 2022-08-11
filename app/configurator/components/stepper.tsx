@@ -10,7 +10,6 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
@@ -135,13 +134,12 @@ export const StepperDumb = ({
 
 export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
-  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSetIri ?? "",
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
     },
   });

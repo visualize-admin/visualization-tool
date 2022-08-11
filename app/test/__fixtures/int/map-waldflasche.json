@@ -3,7 +3,10 @@
   "data": {
     "state": "CONFIGURING_CHART",
     "dataSet": "https://environment.ld.admin.ch/foen/nfi/49-19-None-None-44/cube/1",
-    "dataSource": "sparql+https://int.lindas.admin.ch/query",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://int.lindas.admin.ch/query"
+    },
     "meta": {
       "title": {
         "de": "",

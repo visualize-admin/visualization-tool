@@ -14,14 +14,13 @@ import { useMemo, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
-import { ChartConfig } from "@/configurator/config-types";
+import { ChartConfig, DataSource } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
   useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 import { useDimensionFormatters } from "./ui-helpers";

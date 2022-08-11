@@ -30,7 +30,6 @@ import {
   navPresenceProps,
 } from "@/configurator/components/presence";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { useConfiguratorState, useLocale } from "@/src";
@@ -65,7 +64,6 @@ const isDatasetIriVersioned = (iri: string) => {
 const SelectDatasetStepContent = () => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
-  const dataSource = parseDataSource(configState.dataSource);
 
   const browseState = useBrowseContext();
   const { search, order, includeDrafts, filters, dataset } = browseState;
@@ -80,8 +78,8 @@ const SelectDatasetStepContent = () => {
   // Use the debounced query value here only!
   const [datacubesQuery] = useDataCubesQuery({
     variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: configState.dataSource.type,
+      sourceUrl: configState.dataSource.url,
       locale,
       query: debouncedQuery,
       order,
@@ -101,7 +99,9 @@ const SelectDatasetStepContent = () => {
         !Array.isArray(dataset) &&
         !isDatasetIriVersioned(dataset)
       ) {
-        const sparqlClient = new ParsingClient({ endpointUrl: dataSource.url });
+        const sparqlClient = new ParsingClient({
+          endpointUrl: configState.dataSource.url,
+        });
         const resp = await queryLatestPublishedCubeFromUnversionedIri(
           sparqlClient,
           dataset
@@ -165,7 +165,7 @@ const SelectDatasetStepContent = () => {
               <DataSetMetadata
                 sx={{ mt: "3rem" }}
                 dataSetIri={dataset}
-                dataSource={dataSource}
+                dataSource={configState.dataSource}
               />
             </MotionBox>
           ) : (
@@ -191,7 +191,10 @@ const SelectDatasetStepContent = () => {
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
               <MotionBox {...navPresenceProps} key="preview">
-                <DataSetPreview dataSetIri={dataset} dataSource={dataSource} />
+                <DataSetPreview
+                  dataSetIri={dataset}
+                  dataSource={configState.dataSource}
+                />
               </MotionBox>
             ) : (
               <MotionBox {...navPresenceProps}>

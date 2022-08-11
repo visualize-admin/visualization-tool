@@ -19,7 +19,6 @@ import {
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
@@ -130,6 +129,7 @@ export const InteractiveLegendColor = () => {
 
 const useLegendGroups = (labels: string[]) => {
   const configState = useReadOnlyConfiguratorState();
+
   if (
     configState.state === "INITIAL" ||
     configState.state === "SELECTING_DATASET"
@@ -138,15 +138,15 @@ const useLegendGroups = (labels: string[]) => {
       `Cannot call useLegendGroups from state ${configState.state}`
     );
   }
+
+  const locale = useLocale();
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
-  const dataSource = parseDataSource(configState.dataSource);
-  const locale = useLocale();
-  const cubeIri = configState.dataSet;
+  const { dataSet, dataSource } = configState;
   const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      iri: configState.dataSet,
+      iri: dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale: locale,
@@ -159,7 +159,7 @@ const useLegendGroups = (labels: string[]) => {
   }, [cubeMetadata?.dataCubeByIri?.dimensions, segment?.componentIri]);
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
-      cubeIri: cubeIri,
+      cubeIri: dataSet,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -177,7 +177,7 @@ const useLegendGroups = (labels: string[]) => {
     const labelSet = new Set(labels);
     const groups = new Map<HierarchyValue[], string[]>();
     [
-      ...dfs(hierarchy, (node, { depth, parents }) => {
+      ...dfs(hierarchy, (node, { parents }) => {
         if (!labelSet.has(node.label)) {
           return;
         }

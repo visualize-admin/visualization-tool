@@ -14,11 +14,10 @@ import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { Option } from "@/configurator";
+import { DataSource, Option } from "@/configurator";
 import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
   stringifyDataSource,
-  DataSource,
   parseDataSource,
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
@@ -60,17 +59,20 @@ export const useDataSource = () => {
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   const [source, setSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
   const handleSourceChange = (source: DataSource) => {
-    saveDataSourceToLocalStorage(stringifyDataSource(source));
+    saveDataSourceToLocalStorage(source);
     setSource(source);
   };
 
   useEffect(() => {
     const dataSource = retrieveDataSourceFromLocalStorage();
 
-    if (dataSource !== null && DATA_SOURCE_URLS.includes(dataSource)) {
-      setSource(parseDataSource(dataSource));
+    if (
+      dataSource &&
+      DATA_SOURCE_URLS.includes(stringifyDataSource(dataSource))
+    ) {
+      setSource(dataSource);
     } else {
-      saveDataSourceToLocalStorage(stringifyDataSource(DEFAULT_DATA_SOURCE));
+      saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
     }
   }, []);
 

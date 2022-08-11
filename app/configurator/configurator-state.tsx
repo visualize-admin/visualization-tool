@@ -26,6 +26,7 @@ import { useDataSource } from "@/components/data-source-menu";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
+  DataSource,
   ImputationType,
   isAreaConfig,
   isColumnConfig,
@@ -51,11 +52,7 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import {
-  stringifyDataSource,
-  DataSource,
-  retrieveDataSourceFromLocalStorage,
-} from "@/graphql/resolvers/utils";
+import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
@@ -77,7 +74,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "DATASOURCE_CHANGED";
-      value: string;
+      value: DataSource;
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -201,25 +198,25 @@ export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
 const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
+  const dataSource = retrieveDataSourceFromLocalStorage();
+
   return {
     ...state,
-    dataSource:
-      retrieveDataSourceFromLocalStorage() ||
-      stringifyDataSource(DEFAULT_DATA_SOURCE),
+    dataSource: dataSource || DEFAULT_DATA_SOURCE,
   };
 };
 
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
   dataSet: undefined,
-  dataSource: "",
+  dataSource: DEFAULT_DATA_SOURCE,
   activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
-  dataSource: "",
+  dataSource: DEFAULT_DATA_SOURCE,
   chartConfig: undefined,
   meta: {
     title: {
@@ -637,7 +634,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
     case "DATASOURCE_CHANGED":
       draft.dataSource = action.value;
-
       return draft;
     case "CHART_TYPE_CHANGED":
       if (
@@ -1220,7 +1216,7 @@ const ConfiguratorStateProviderInternal = ({
   useEffect(() => {
     dispatch({
       type: "DATASOURCE_CHANGED",
-      value: stringifyDataSource(dataSource),
+      value: dataSource,
     });
   }, [dispatch, dataSource]);
 

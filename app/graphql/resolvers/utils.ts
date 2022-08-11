@@ -1,20 +1,28 @@
-export type DataSourceType = "sparql" | "sql";
+import { DataSource } from "@/configurator";
 
-export type DataSource = {
-  type: DataSourceType;
-  url: string;
-};
-
-export const retrieveDataSourceFromLocalStorage = () => {
+export const retrieveStringifiedDataSourceFromLocalStorage = () => {
   return localStorage.getItem("dataSource");
 };
 
-export const saveDataSourceToLocalStorage = (dataSource: string) => {
-  localStorage.setItem("dataSource", dataSource);
+export const retrieveDataSourceFromLocalStorage = () => {
+  const dataSource = retrieveStringifiedDataSourceFromLocalStorage();
+
+  if (dataSource) {
+    return parseDataSource(dataSource);
+  }
+
+  return null;
+};
+
+export const saveDataSourceToLocalStorage = (dataSource: DataSource) => {
+  localStorage.setItem("dataSource", stringifyDataSource(dataSource));
 };
 
 export const parseDataSource = (stringifiedSource: string): DataSource => {
-  const [type, url] = stringifiedSource.split("+") as [DataSourceType, string];
+  const [type, url] = stringifiedSource.split("+") as [
+    DataSource["type"],
+    string
+  ];
 
   return { type, url };
 };

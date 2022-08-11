@@ -7,8 +7,7 @@ import { ChartPieVisualization } from "@/charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartTableVisualization } from "@/charts/table/chart-table";
-import { ChartConfig } from "@/configurator";
-import { DataSource } from "@/graphql/resolvers/utils";
+import { ChartConfig, DataSource } from "@/configurator";
 
 const GenericChart = ({
   dataSet,

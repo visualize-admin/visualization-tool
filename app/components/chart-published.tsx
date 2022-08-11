@@ -16,23 +16,22 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
-import { DATA_SOURCE_OPTIONS } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
+  DataSource,
   Meta,
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { ENDPOINT } from "@/domain/env";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { DataSource, parseDataSource } from "@/graphql/resolvers/utils";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const ChartPublished = ({
   dataSet,
@@ -42,7 +41,7 @@ export const ChartPublished = ({
   configKey,
 }: {
   dataSet: string;
-  dataSource: string;
+  dataSource: DataSource;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
@@ -62,28 +61,27 @@ export const ChartPublished = ({
 
 export const ChartPublishedInner = ({
   dataSet,
-  dataSource = ENDPOINT,
+  dataSource = DEFAULT_DATA_SOURCE,
   meta,
   chartConfig,
   configKey,
 }: {
   dataSet: string;
-  dataSource: string | undefined;
+  dataSource: DataSource | undefined;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
   const locale = useLocale();
-  const parsedDataSource = parseDataSource(dataSource);
-  const isDataSourceTrusted = React.useMemo(() => {
-    return DATA_SOURCE_OPTIONS.find((d) => d.value === dataSource)?.isTrusted;
-  }, [dataSource]);
+  // const isDataSourceTrusted = React.useMemo(() => {
+  //   return DATA_SOURCE_OPTIONS.find((d) => d.value === dataSource)?.isTrusted;
+  // }, [dataSource]);
 
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSet,
-      sourceType: parsedDataSource.type,
-      sourceUrl: parsedDataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
     },
   });
@@ -142,7 +140,7 @@ export const ChartPublishedInner = ({
             </HintRed>
           </Box>
         )}
-        {!isDataSourceTrusted && (
+        {/* {!isDataSourceTrusted && (
           <Box sx={{ mb: 4 }}>
             <HintBlue iconName="hintWarning">
               <Trans id="data.source.notTrusted">
@@ -150,7 +148,7 @@ export const ChartPublishedInner = ({
               </Trans>
             </HintBlue>
           </Box>
-        )}
+        )} */}
         {isUsingImputation(chartConfig) && (
           <Box sx={{ mb: 4 }}>
             <HintBlue iconName="hintWarning">
@@ -180,14 +178,14 @@ export const ChartPublishedInner = ({
               {isTablePreview ? (
                 <DataSetTable
                   dataSetIri={dataSet}
-                  dataSource={parsedDataSource}
+                  dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithInteractiveFilters
                   ref={chartRef}
                   dataSet={dataSet}
-                  dataSource={parsedDataSource}
+                  dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               )}
@@ -196,7 +194,7 @@ export const ChartPublishedInner = ({
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
-              dataSource={parsedDataSource}
+              dataSource={dataSource}
               chartConfig={chartConfig}
               configKey={configKey}
             />

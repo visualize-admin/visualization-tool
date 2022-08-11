@@ -66,7 +66,6 @@ import {
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import useEvent from "@/lib/use-event";
@@ -96,11 +95,10 @@ const DataFilterSelectGeneric = ({
   onRemove: () => void;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
-  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
   const hierarchyParents = useHierarchyParents(
     state.dataSet,
-    dataSource,
+    state.dataSource,
     dimension,
     locale
   );
@@ -193,7 +191,6 @@ const useEnsurePossibleFilters = ({
     | ConfiguratorStatePublishing;
 }) => {
   const [, dispatch] = useConfiguratorState();
-  const dataSource = parseDataSource(state.dataSource);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<ChartConfig["filters"]>();
@@ -221,8 +218,8 @@ const useEnsurePossibleFilters = ({
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
           iri: state.dataSet,
-          sourceType: dataSource.type,
-          sourceUrl: dataSource.url,
+          sourceType: state.dataSource.type,
+          sourceUrl: state.dataSource.url,
           filters: unmappedFilters,
           filterKey: Object.keys(unmappedFilters).join(", "),
         })
@@ -257,14 +254,14 @@ const useEnsurePossibleFilters = ({
 
     run();
   }, [
-    dataSource.type,
-    dataSource.url,
     client,
     dispatch,
     state,
     state.chartConfig.fields,
     state.chartConfig.filters,
     state.dataSet,
+    state.dataSource.type,
+    state.dataSource.url,
   ]);
   return { error, fetching };
 };
@@ -281,7 +278,6 @@ const useFilterReorder = ({
   onAddDimensionFilter?: () => void;
 }) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const dataSource = parseDataSource(state.dataSource);
   const locale = useLocale();
 
   const { fields, filters } = state.chartConfig;
@@ -293,8 +289,8 @@ const useFilterReorder = ({
   const variables = useMemo(
     () => ({
       iri: state.dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
       filters: unmappedFilters,
       // This is important for urql not to think that filters
@@ -303,7 +299,13 @@ const useFilterReorder = ({
       // values after we change the filter order
       filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state.dataSet, dataSource.type, dataSource.url, locale, unmappedFilters]
+    [
+      state.dataSet,
+      state.dataSource.type,
+      state.dataSource.url,
+      locale,
+      unmappedFilters,
+    ]
   );
 
   const [{ data, fetching: dataFetching }, executeQuery] =

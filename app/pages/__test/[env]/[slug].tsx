@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ChartConfig, Meta } from "@/configurator";
+import { ChartConfig, DataSource, Meta } from "@/configurator";
 
 type DbConfig = {
   dataSet: string;
-  dataSource: string;
+  dataSource: DataSource;
   chartConfig: ChartConfig;
   meta: Meta;
 };

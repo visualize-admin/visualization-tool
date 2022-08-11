@@ -55,7 +55,6 @@ import {
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -613,13 +612,12 @@ export const DimensionValuesMultiFilter = ({
   const locale = useLocale();
   const classes = useStyles();
   const [configuratorState] = useConfiguratorState();
-  const dataSource = parseDataSource(configuratorState.dataSource);
 
   const [{ data }] = useDimensionValuesQuery({
     variables: {
       dimensionIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: configuratorState.dataSource.type,
+      sourceUrl: configuratorState.dataSource.url,
       locale,
       dataCubeIri: dataSetIri,
     },
@@ -629,8 +627,8 @@ export const DimensionValuesMultiFilter = ({
     useDimensionHierarchyQuery({
       variables: {
         cubeIri: dataSetIri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
+        sourceType: configuratorState.dataSource.type,
+        sourceUrl: configuratorState.dataSource.url,
         locale,
         dimensionIri,
       },
@@ -691,7 +689,6 @@ export const TimeFilter = ({
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
-  const dataSource = parseDataSource(state.dataSource);
 
   const setFilterRange = useCallback(
     ([from, to]: [string, string]) => {
@@ -710,8 +707,8 @@ export const TimeFilter = ({
   const [{ data }] = useTemporalDimensionValuesQuery({
     variables: {
       dimensionIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
       dataCubeIri: dataSetIri,
     },
@@ -774,12 +771,11 @@ export const DimensionValuesSingleFilter = ({
 }) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
-  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDimensionValuesQuery({
     variables: {
       dimensionIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
       dataCubeIri: dataSetIri,
     },

@@ -6,7 +6,10 @@
       "description": { "de": "", "en": "", "fr": "", "it": "" }
     },
     "dataSet": "http://ld.zazuko.com/foag/dataset",
-    "dataSource": "sparql+https://lindas.admin.ch/query",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://lindas.admin.ch/query"
+    },
     "chartConfig": {
       "fields": {
         "x": {

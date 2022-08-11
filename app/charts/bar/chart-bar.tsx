@@ -24,6 +24,7 @@ import {
   BarFields,
   InteractiveFiltersConfig,
   FilterValueSingle,
+  DataSource,
 } from "@/configurator";
 import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
@@ -31,7 +32,6 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartBarsVisualization = ({

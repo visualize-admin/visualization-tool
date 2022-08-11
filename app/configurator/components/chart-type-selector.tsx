@@ -19,7 +19,6 @@ import {
   useChartTypeSelectorField,
 } from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -123,12 +122,11 @@ export const ChartTypeSelector = ({
     | ConfiguratorStatePublishing;
 }) => {
   const locale = useLocale();
-  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
     },
   });

@@ -18,7 +18,7 @@ import {
   LoadingGeoDimensionsError,
   NoDataHint,
 } from "@/components/hint";
-import { BaseLayer, MapConfig, MapFields } from "@/configurator";
+import { BaseLayer, DataSource, MapConfig, MapFields } from "@/configurator";
 import {
   AreaLayer,
   GeoData,
@@ -36,7 +36,6 @@ import {
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartMapVisualization = ({

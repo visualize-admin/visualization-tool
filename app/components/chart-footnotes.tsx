@@ -4,12 +4,11 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, DataSource } from "@/configurator";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";

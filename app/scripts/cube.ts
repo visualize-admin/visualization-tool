@@ -5,7 +5,7 @@ import { config } from "dotenv";
 import fetch from "node-fetch";
 import { Client } from "urql";
 
-import { DataSourceType } from "@/graphql/resolvers/utils";
+import { DataSource } from "@/configurator";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
@@ -24,7 +24,7 @@ type Args<T> = { client: Client; report: (x: any) => void } & T;
 
 type CubeQueryOptions = {
   iri: string;
-  sourceType: DataSourceType;
+  sourceType: DataSource["type"];
   sourceUrl: string;
   locale: string;
   latest?: boolean;

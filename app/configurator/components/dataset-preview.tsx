@@ -9,9 +9,9 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSetPreviewTable } from "@/configurator/components/datatable";
+import { DataSource } from "@/configurator/config-types";
 import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export interface Preview {

@@ -14,7 +14,6 @@ import {
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export type InteractiveFilterType = "legend" | "time" | "dataFilters";
@@ -25,12 +24,11 @@ export const InteractiveFiltersConfigurator = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   const locale = useLocale();
-  const dataSource = parseDataSource(state.dataSource);
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
       locale,
     },
   });

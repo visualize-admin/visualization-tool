@@ -18,13 +18,13 @@ import {
   ColorPickerField,
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
+import { DataSource } from "@/configurator/config-types";
 import {
   GeoFeature,
   getGeoDimensions,
   getGeoShapesDimensions,
 } from "@/domain/data";
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
-import { DataSource, parseDataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/src";
 
@@ -35,7 +35,6 @@ export const MapColumnOptions = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
-  const dataSource = parseDataSource(state.dataSource);
   const chartConfig = state.chartConfig as MapConfig;
   const { activeField } = state;
 
@@ -47,7 +46,7 @@ export const MapColumnOptions = ({
         <AreaLayerSettings
           chartConfig={chartConfig}
           metaData={metaData}
-          dataSource={dataSource}
+          dataSource={state.dataSource}
         />
       );
     case "symbolLayer":

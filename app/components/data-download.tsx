@@ -27,7 +27,7 @@ import React, {
 import { OperationResult, useClient } from "urql";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
-import { DataSource } from "@/graphql/resolvers/utils";
+import { DataSource } from "@/configurator";
 import { useLocale } from "@/src";
 
 import { Observation } from "../domain/data";

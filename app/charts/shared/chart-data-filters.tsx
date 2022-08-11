@@ -7,7 +7,11 @@ import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
-import { ChartConfig, InteractiveFiltersDataConfig } from "@/configurator";
+import {
+  ChartConfig,
+  DataSource,
+  InteractiveFiltersDataConfig,
+} from "@/configurator";
 import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
@@ -16,7 +20,6 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 

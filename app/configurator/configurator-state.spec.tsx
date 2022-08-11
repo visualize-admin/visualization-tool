@@ -8,6 +8,7 @@ import {
   ChartConfig,
   ChartType,
   ColumnConfig,
+  DataSource,
   TableConfig,
 } from "@/configurator/config-types";
 import {
@@ -21,7 +22,6 @@ import {
   moveFilterField,
 } from "@/configurator/configurator-state";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";

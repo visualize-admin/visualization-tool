@@ -18,11 +18,11 @@ import {
   smoothPresenceProps,
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
+import { DataSource } from "@/configurator/config-types";
 import {
   DataCubeMetadataQuery,
   useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";

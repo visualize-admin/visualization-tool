@@ -2,8 +2,8 @@ import { groups } from "d3-array";
 import { uniqBy } from "lodash";
 import { useMemo } from "react";
 
+import { DataSource } from "@/configurator/config-types";
 import { useDimensionHierarchyQuery } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { DataCubeMetadata } from "@/graphql/types";
 import { dfs } from "@/lib/dfs";
 

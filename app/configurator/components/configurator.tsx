@@ -17,7 +17,6 @@ import {
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { Stepper } from "@/configurator/components/stepper";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
-import { parseDataSource } from "@/graphql/resolvers/utils";
 
 const ConfigureChartStep = () => {
   const [state] = useConfiguratorState();
@@ -25,8 +24,6 @@ const ConfigureChartStep = () => {
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
-
-  const dataSource = parseDataSource(state.dataSource);
 
   return (
     <>
@@ -46,7 +43,10 @@ const ConfigureChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -63,8 +63,6 @@ const DescribeChartStep = () => {
     return null;
   }
 
-  const dataSource = parseDataSource(state.dataSource);
-
   return (
     <>
       <PanelLeftWrapper>
@@ -72,7 +70,10 @@ const DescribeChartStep = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
@@ -88,13 +89,14 @@ const PublishStep = () => {
     return null;
   }
 
-  const dataSource = parseDataSource(state.dataSource);
-
   return (
     <>
       <PanelMiddleWrapper>
         <ChartPanelConfigurator>
-          <ChartPreview dataSetIri={state.dataSet} dataSource={dataSource} />
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
     </>

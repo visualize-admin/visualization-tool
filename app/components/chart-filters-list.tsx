@@ -2,10 +2,9 @@ import { Box, Typography } from "@mui/material";
 import { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, DataSource } from "@/configurator";
 import { useTimeFormatUnit } from "@/configurator/components/ui-helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartFiltersList = ({

@@ -23,6 +23,7 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import {
+  DataSource,
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
@@ -35,7 +36,6 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataSource } from "@/graphql/resolvers/utils";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartLinesVisualization = ({
