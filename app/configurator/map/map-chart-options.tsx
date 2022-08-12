@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import React, { memo, useMemo } from "react";
 
 import Flex from "@/components/flex";
@@ -289,45 +289,47 @@ export const AreaLayerSettings = memo(
               numberOfGeoShapes >= 3 && (
                 <>
                   <FieldSetLegend legendTitle="Interpolation" />
-                  <ChartOptionSelectField
-                    id="areaLayer.colorScaleInterpolationType"
-                    label={null}
-                    field={activeField}
-                    path="colorScaleInterpolationType"
-                    options={[
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.quantize",
-                          message: "Quantize (equal intervals)",
-                        }),
-                        value: "quantize",
-                      },
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.quantiles",
-                          message: "Quantiles (equal distribution of values)",
-                        }),
-                        value: "quantile",
-                      },
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.jenks",
-                          message: "Jenks (natural breaks)",
-                        }),
-                        value: "jenks",
-                      },
-                    ]}
-                    disabled={isHidden}
-                  />
-                  <ChartOptionSelectField<number>
-                    id="areaLayer.nbClass"
-                    label="Number of classes"
-                    field={activeField}
-                    path="nbClass"
-                    options={numberOfColorScaleClasses}
-                    getValue={(d) => +d}
-                    disabled={isHidden}
-                  />
+                  <Stack spacing={2}>
+                    <ChartOptionSelectField
+                      id="areaLayer.colorScaleInterpolationType"
+                      label={null}
+                      field={activeField}
+                      path="colorScaleInterpolationType"
+                      options={[
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.quantize",
+                            message: "Quantize (equal intervals)",
+                          }),
+                          value: "quantize",
+                        },
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.quantiles",
+                            message: "Quantiles (equal distribution of values)",
+                          }),
+                          value: "quantile",
+                        },
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.jenks",
+                            message: "Jenks (natural breaks)",
+                          }),
+                          value: "jenks",
+                        },
+                      ]}
+                      disabled={isHidden}
+                    />
+                    <ChartOptionSelectField<number>
+                      id="areaLayer.nbClass"
+                      label="Number of classes"
+                      field={activeField}
+                      path="nbClass"
+                      options={numberOfColorScaleClasses}
+                      getValue={(d) => +d}
+                      disabled={isHidden}
+                    />
+                  </Stack>
                 </>
               )}
           </ControlSectionContent>
