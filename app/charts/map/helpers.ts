@@ -1,8 +1,8 @@
 import { extent, geoBounds } from "d3";
 
-import { AreaLayer, SymbolLayer } from "../../domain/data";
+import { BBox } from "@/configurator/config-types";
 
-export type BBox = [[number, number], [number, number]];
+import { AreaLayer, SymbolLayer } from "../../domain/data";
 
 export const getBBox = (
   shapes?: AreaLayer["shapes"],

@@ -24,12 +24,13 @@ import {
   emptyStyle,
   getBaseLayerStyle,
 } from "@/charts/map/get-base-layer-style";
-import { BBox, getBBox } from "@/charts/map/helpers";
+import { getBBox } from "@/charts/map/helpers";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { convertHexToRgbArray } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";

@@ -439,6 +439,12 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
+const BBox = t.tuple([
+  t.tuple([t.number, t.number]),
+  t.tuple([t.number, t.number]),
+]);
+export type BBox = t.TypeOf<typeof BBox>;
+
 const MapAreaLayer = t.intersection([
   t.type({
     componentIri: t.string,
@@ -477,6 +483,7 @@ export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 const BaseLayer = t.type({
   show: t.boolean,
   controlsType: t.union([t.literal("dynamic"), t.literal("locked")]),
+  bbox: t.union([BBox, t.undefined]),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
