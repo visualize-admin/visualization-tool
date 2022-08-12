@@ -73,6 +73,23 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
+        <Box component="fieldset" mt={4}>
+          <FieldSetLegend legendTitle="Map controls type" />
+          <Flex sx={{ justifyContent: "flex-start" }}>
+            <ChartOptionRadioField
+              label="Dynamic"
+              field={null}
+              path="baseLayer.controlsType"
+              value="dynamic"
+            />
+            <ChartOptionRadioField
+              label="Locked"
+              field={null}
+              path="baseLayer.controlsType"
+              value="locked"
+            />
+          </Flex>
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );

@@ -476,8 +476,10 @@ export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({
   show: t.boolean,
+  controlsType: t.union([t.literal("dynamic"), t.literal("locked")]),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
+
 const MapFields = t.type({
   areaLayer: MapAreaLayer,
   symbolLayer: MapSymbolLayer,

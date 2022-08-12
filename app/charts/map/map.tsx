@@ -114,6 +114,7 @@ let globalScatterplotLayerId = 0;
 export const MapComponent = () => {
   const {
     showBaseLayer,
+    controlsType,
     features,
     identicalLayerComponentIris,
     areaLayer,
@@ -131,7 +132,7 @@ export const MapComponent = () => {
     },
     []
   );
-  const [isViewStateLocked, setIsViewStateLocked] = useState(false);
+  const isViewStateLocked = controlsType === "locked";
 
   const mapBounds = useRef<LngLatBounds>();
   const hasSetInitialZoom = useRef<boolean>();

@@ -602,7 +602,7 @@ export const getFiltersByMappingStatus = (
   return { unmapped, mapped };
 };
 
-export const getChartOptionBooleanField = (
+export const getChartOptionField = (
   state: ConfiguratorStateConfiguringChart,
   field: string | null,
   path: string,

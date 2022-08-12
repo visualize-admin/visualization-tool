@@ -53,6 +53,7 @@ export interface MapState {
   chartType: "map";
   bounds: Bounds;
   features: GeoData;
+  controlsType: "dynamic" | "locked";
   showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
@@ -342,6 +343,7 @@ const useMapState = (
     features,
     bounds,
     showBaseLayer: baseLayer.show,
+    controlsType: baseLayer.controlsType || "dynamic",
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
