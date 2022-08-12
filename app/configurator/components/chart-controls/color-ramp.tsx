@@ -125,7 +125,7 @@ export const ColorRampField = ({
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label disabled={disabled} smaller {...getLabelProps()}>
+      <Label disabled={disabled} smaller {...getLabelProps()} sx={{ mb: 1 }}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Button

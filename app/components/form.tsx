@@ -15,6 +15,7 @@ import {
   TextField,
   ListSubheader,
   MenuItem,
+  TypographyProps,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
@@ -33,11 +34,13 @@ export const Label = ({
   htmlFor,
   smaller = false,
   children,
+  sx,
 }: {
   label?: string;
   htmlFor: string;
   smaller?: boolean;
   children: ReactNode;
+  sx?: TypographyProps["sx"];
 }) => (
   <Typography
     component="label"
@@ -45,6 +48,7 @@ export const Label = ({
     variant={smaller ? "caption" : "body1"}
     color="secondary"
     display="flex"
+    sx={sx}
   >
     {children}
   </Typography>
@@ -214,7 +218,7 @@ export const Select = ({
   return (
     <Box>
       {label && (
-        <Label htmlFor={id} smaller>
+        <Label htmlFor={id} smaller sx={{ mb: 1 }}>
           {label}
           {controls}
         </Label>
