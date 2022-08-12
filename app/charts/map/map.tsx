@@ -390,7 +390,8 @@ export const MapComponent = () => {
               currentBBox.current = e.target.getBounds().toArray() as BBox;
             }}
             scrollZoom={!isViewStateLocked}
-            onMouseMove={undefined}
+            doubleClickZoom={!isViewStateLocked}
+            touchZoomRotate={!isViewStateLocked}
             ref={handleRefNode}
             onLoad={(e) => {
               currentBBox.current = e.target.getBounds().toArray() as BBox;
