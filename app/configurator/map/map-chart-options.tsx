@@ -40,7 +40,7 @@ export const MapColumnOptions = ({
 
   switch (activeField) {
     case "baseLayer":
-      return <BaseLayersSettings />;
+      return <BaseLayerSettings />;
     case "areaLayer":
       return (
         <AreaLayerSettings
@@ -58,7 +58,7 @@ export const MapColumnOptions = ({
   }
 };
 
-export const BaseLayersSettings = memo(() => {
+const BaseLayerSettings = memo(() => {
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
