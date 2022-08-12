@@ -14,10 +14,11 @@ import {
   Drawer as MuiDrawer,
   Theme,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { groups } from "d3";
+import { ascending, groups } from "d3";
 import { get, keyBy, sortBy, groupBy } from "lodash";
 import React, {
   forwardRef,
@@ -58,11 +59,14 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
+
+import { interlace } from "../../utils/interlace";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -115,6 +119,10 @@ const useStyles = makeStyles((theme: Theme) => {
       boxSizing: "border-box",
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
+    },
+    optionCheck: {
+      width: 16,
+      height: 16,
     },
     listSubheader: {
       minHeight: "3rem",
@@ -242,14 +250,14 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
+  const { activeKeys, allValues } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
     const optionsByValue = keyBy(flat, (x) => x.value);
     const optionsByParent = groupBy(flat, groupByParent);
     return {
-      options: sortBy(flat, groupByParent),
+      options: sortBy(flat, [groupByParent, (x) => x.label]),
       optionsByValue,
       optionsByParent,
     };
@@ -258,9 +266,20 @@ const MultiFilterContent = ({
   const { values, valueGroups } = useMemo(() => {
     const values = (
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
-      []
+      Object.keys(optionsByValue)
     ).map((v) => optionsByValue[v]);
-    const grouped = groups(values, groupByParent);
+    const grouped = groups(values, groupByParent)
+      .sort(
+        (a, b) =>
+          ascending(explodeParents(a[0]).length, explodeParents(b[0]).length) ||
+          ascending(a[0], b[0])
+      )
+      .map(([parent, group]) => {
+        return [
+          parent,
+          group.sort((a, b) => ascending(a.label, b.label)),
+        ] as const;
+      });
     return {
       values,
       valueGroups: grouped,
@@ -294,10 +313,23 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
+  // Recomputes color palette making sure that used values
+  // are sorted first, so they have different colors
+  const handleRecomputeColorMapping = useEvent(() => {
+    const usedValues = new Set(values.map((v) => v.value));
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        dimensionIri,
+        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+      },
+    });
+  });
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" gap="0.75rem">
           <Flex gap="0.75rem">
             <Button
               onClick={selectAll}
@@ -331,13 +363,23 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
+            <Tooltip
+              title={
+                <Trans id="controls.filters.select.refresh-colors">
+                  Refresh colors
+                </Trans>
+              }
+            >
+              <IconButton
+                sx={{ ml: 1, my: -1 }}
+                size="small"
+                onClick={handleRecomputeColorMapping}
+              >
+                <SvgIcFormatting fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
           </Typography>
-          <Typography
-            variant="body2"
-            color="grey.700"
-            sx={{ display: "inline" }}
-            component="span"
-          >
+          <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
               {activeKeys.size} of {allValues.length}
             </Trans>
@@ -377,20 +419,6 @@ const MultiFilterContent = ({
       </Drawer>
     </Box>
   );
-};
-
-const interlace = <T extends unknown, I extends unknown>(
-  arr: T[],
-  interlacer: I
-) => {
-  const res = new Array(arr.length * 2 - 1);
-  for (let i = 0; i < arr.length; i++) {
-    res[i * 2] = arr[i];
-    if (i < arr.length - 1) {
-      res[i * 2 + 1] = interlacer;
-    }
-  }
-  return res;
 };
 
 const useBreadcrumbStyles = makeStyles({
@@ -527,28 +555,26 @@ const DrawerContent = forwardRef<
     (props, option, { selected }) => {
       return (
         <li {...props}>
-          <Box
+          <div
             className={classes.optionColor}
-            sx={{
+            style={{
               border: selected ? "none" : "1px solid #ccc",
               backgroundColor: selected
                 ? getValueColor(option.value)
                 : "transparent",
             }}
           />
-          <Box>{option.label}</Box>
-          <Box
-            component={SvgIcCheck}
-            sx={{
+          <div>{option.label}</div>
+          <SvgIcCheck
+            className={classes.optionCheck}
+            style={{
               visibility: selected ? "visible" : "hidden",
-              width: 16,
-              height: 16,
             }}
           />
         </li>
       );
     },
-    [classes.optionColor, getValueColor]
+    [classes.optionCheck, classes.optionColor, getValueColor]
   );
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
