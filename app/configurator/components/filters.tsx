@@ -116,6 +116,10 @@ const useStyles = makeStyles((theme: Theme) => {
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
     },
+    optionCheck: {
+      width: 16,
+      height: 16,
+    },
     listSubheader: {
       minHeight: "3rem",
       padding: "0.5rem 0rem",
@@ -332,12 +336,7 @@ const MultiFilterContent = ({
               Selected filters
             </Trans>
           </Typography>
-          <Typography
-            variant="body2"
-            color="grey.700"
-            sx={{ display: "inline" }}
-            component="span"
-          >
+          <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
               {activeKeys.size} of {allValues.length}
             </Trans>
@@ -527,28 +526,26 @@ const DrawerContent = forwardRef<
     (props, option, { selected }) => {
       return (
         <li {...props}>
-          <Box
+          <div
             className={classes.optionColor}
-            sx={{
+            style={{
               border: selected ? "none" : "1px solid #ccc",
               backgroundColor: selected
                 ? getValueColor(option.value)
                 : "transparent",
             }}
           />
-          <Box>{option.label}</Box>
-          <Box
-            component={SvgIcCheck}
-            sx={{
+          <div>{option.label}</div>
+          <SvgIcCheck
+            className={classes.optionCheck}
+            style={{
               visibility: selected ? "visible" : "hidden",
-              width: 16,
-              height: 16,
             }}
           />
         </li>
       );
     },
-    [classes.optionColor, getValueColor]
+    [classes.optionCheck, classes.optionColor, getValueColor]
   );
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
