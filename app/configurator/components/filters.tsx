@@ -258,7 +258,7 @@ const MultiFilterContent = ({
   const { values, valueGroups } = useMemo(() => {
     const values = (
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
-      []
+      Object.keys(optionsByValue)
     ).map((v) => optionsByValue[v]);
     const grouped = groups(values, groupByParent);
     return {
