@@ -1,7 +1,8 @@
 import { WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { MapboxLayer } from "@deck.gl/mapbox";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
@@ -366,19 +367,7 @@ export const MapComponent = () => {
   return (
     <Box>
       {isViewStateLocked ? null : (
-        <Box
-          sx={{
-            zIndex: 13,
-            position: "absolute",
-            bottom: 55,
-            right: 15,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <ZoomButton iconName="add" handleClick={zoomIn} />
-          <ZoomButton iconName="minus" handleClick={zoomOut} />
-        </Box>
+        <ZoomButtons zoomIn={zoomIn} zoomOut={zoomOut} />
       )}
 
       {featuresLoaded && (
@@ -437,42 +426,75 @@ export const MapComponent = () => {
   );
 };
 
+const useStyles = makeStyles<Theme>((theme) => ({
+  zoomButtons: {
+    zIndex: 13,
+    position: "absolute",
+    bottom: 55,
+    right: 15,
+    display: "flex",
+    flexDirection: "column",
+  },
+  zoomButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 32,
+    height: 32,
+    borderRadius: 4,
+    border: "1px solid",
+    borderColor: theme.palette.grey[500],
+    color: theme.palette.grey[700],
+    backgroundColor: theme.palette.grey[100],
+    padding: 0,
+    "&:first-of-type": {
+      borderBottomRightRadius: 0,
+      borderBottomLeftRadius: 0,
+      borderBottom: 0,
+    },
+    "&:hover": {
+      backgroundColor: theme.palette.grey[200],
+    },
+    "&:last-of-type": {
+      borderTopRightRadius: 0,
+      borderTopLeftRadius: 0,
+    },
+  },
+}));
+
+const ZoomButtons = ({
+  zoomIn,
+  zoomOut,
+}: {
+  zoomIn: () => void;
+  zoomOut: () => void;
+}) => {
+  const classes = useStyles();
+
+  return (
+    <Box className={classes.zoomButtons}>
+      <ZoomButton iconName="add" handleClick={zoomIn} />
+      <ZoomButton iconName="minus" handleClick={zoomOut} />
+    </Box>
+  );
+};
+
 const ZoomButton = ({
   iconName,
   handleClick,
 }: {
   iconName: IconName;
   handleClick: () => void;
-}) => (
-  <Button
-    variant="contained"
-    sx={{
-      width: 32,
-      height: 32,
-      borderRadius: 4,
-      border: "1px solid",
-      borderColor: "grey.500",
-      color: "grey.700",
-      backgroundColor: "grey.100",
-      padding: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      "&:first-of-type": {
-        borderBottomRightRadius: 0,
-        borderBottomLeftRadius: 0,
-        borderBottom: 0,
-      },
-      "&:hover": {
-        backgroundColor: "grey.200",
-      },
-      "&:last-of-type": {
-        borderTopRightRadius: 0,
-        borderTopLeftRadius: 0,
-      },
-    }}
-    onClick={handleClick}
-  >
-    <Icon name={iconName} size={24} />
-  </Button>
-);
+}) => {
+  const classes = useStyles();
+
+  return (
+    <Button
+      className={classes.zoomButton}
+      variant="contained"
+      onClick={handleClick}
+    >
+      <Icon name={iconName} size={24} />
+    </Button>
+  );
+};
