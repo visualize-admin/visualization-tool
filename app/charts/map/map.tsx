@@ -4,7 +4,7 @@ import { MapboxLayer } from "@deck.gl/mapbox";
 import { Box, Button } from "@mui/material";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
-import maplibregl, { LngLatLike, StyleSpecification } from "maplibre-gl";
+import maplibregl, { LngLatLike } from "maplibre-gl";
 import React, {
   useMemo,
   useEffect,
@@ -30,18 +30,6 @@ import { useLocale } from "@/src";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import Layer from "./layer";
-
-function getFirstLabelLayerId(style: StyleSpecification) {
-  const layers = style.layers;
-  // Find the index of the first symbol (i.e. label) layer in the map style
-  for (let i = 0; i < layers.length; i++) {
-    const layer = layers[i];
-    if (layer.type === "symbol" && layer["source-layer"]?.includes("label")) {
-      return layer.id;
-    }
-  }
-  return undefined;
-}
 
 type MinMaxZoomViewState = Pick<
   ViewState,
@@ -204,8 +192,6 @@ export const MapComponent = () => {
 
   const featuresLoaded =
     features.areaLayer !== undefined || features.symbolLayer !== undefined;
-
-  // const compactMapAttribution = deckRef.current?.deck.width < 600;
 
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;

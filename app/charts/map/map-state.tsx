@@ -65,7 +65,6 @@ export interface MapState {
     measureDimension?: DimensionMetaDataFragment;
     errorDimension?: DimensionMetaDataFragment;
     getFormattedError: null | ((d: Observation) => string);
-    // getError: null | ((d: Observation) => [number, number]);
     getColor: (x: number | null) => number[];
     colorScale:
       | ScaleSequential<string>
@@ -88,8 +87,6 @@ export interface MapState {
     errorDimension?: DimensionMetaDataFragment;
     measureDimension?: DimensionMetaDataFragment;
     getFormattedError: null | ((d: Observation) => string);
-    // getErrorRange: null | ((d: Observation) => [number, number]);
-    // getError: null | ((d: Observation) => [number, number]);
     color: string;
     radiusScale: ScalePower<number, number>;
     dataDomain: [number, number];
