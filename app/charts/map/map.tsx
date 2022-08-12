@@ -13,18 +13,12 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import ReactMap, {
-  LngLatLike,
-  LngLatBounds,
-  MapRef,
-  ViewState,
-} from "react-map-gl";
+import ReactMap, { LngLatLike, MapRef, ViewState } from "react-map-gl";
 
 import {
   emptyStyle,
   getBaseLayerStyle,
 } from "@/charts/map/get-base-layer-style";
-import { getBBox } from "@/charts/map/helpers";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { convertHexToRgbArray } from "@/charts/shared/colors";
@@ -120,6 +114,7 @@ export const MapComponent = () => {
     identicalLayerComponentIris,
     areaLayer,
     symbolLayer,
+    bbox,
   } = useChartState() as MapState;
   const locale = useLocale();
 
@@ -135,7 +130,7 @@ export const MapComponent = () => {
   );
   const isViewStateLocked = controlsType === "locked";
 
-  const mapBounds = useRef<LngLatBounds>();
+  const currentBBox = useRef<BBox>();
   const hasSetInitialZoom = useRef<boolean>();
 
   useEffect(() => {
@@ -143,22 +138,12 @@ export const MapComponent = () => {
       return;
     }
 
-    const bbox = getBBox(
-      areaLayer.show ? features.areaLayer?.shapes : undefined,
-      symbolLayer.show ? features.symbolLayer?.points : undefined
-    );
     if (bbox) {
       setViewState(constrainZoom(viewState, bbox));
     }
 
     hasSetInitialZoom.current = true;
-  }, [
-    viewState,
-    features.areaLayer?.shapes,
-    features.symbolLayer?.points,
-    areaLayer,
-    symbolLayer,
-  ]);
+  }, [viewState, bbox]);
 
   const mapNodeRef = useRef<MapRef | null>(null);
   const handleRefNode = (mapRef: MapRef) => {
@@ -392,23 +377,23 @@ export const MapComponent = () => {
                 e.originalEvent && e.originalEvent.type !== "resize";
 
               if (userTriggered) {
-                mapBounds.current = e.target.getBounds();
+                currentBBox.current = e.target.getBounds().toArray() as BBox;
               }
 
               onViewStateChange(e);
             }}
             onResize={(e) => {
-              if (mapBounds.current && isViewStateLocked) {
-                e.target.fitBounds(mapBounds.current, { duration: 0 });
+              if (currentBBox.current && isViewStateLocked) {
+                e.target.fitBounds(currentBBox.current, { duration: 0 });
               }
 
-              mapBounds.current = e.target.getBounds();
+              currentBBox.current = e.target.getBounds().toArray() as BBox;
             }}
             scrollZoom={!isViewStateLocked}
             onMouseMove={undefined}
             ref={handleRefNode}
             onLoad={(e) => {
-              mapBounds.current = e.target.getBounds();
+              currentBBox.current = e.target.getBounds().toArray() as BBox;
             }}
           >
             {areaLayer.show ? (

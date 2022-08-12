@@ -35,6 +35,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   BaseLayer,
+  BBox,
   ColorScaleInterpolationType,
   DivergingPaletteType,
   MapFields,
@@ -49,11 +50,14 @@ import {
 } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
+import { getBBox } from "./helpers";
+
 export interface MapState {
   chartType: "map";
   bounds: Bounds;
   features: GeoData;
   controlsType: "dynamic" | "locked";
+  bbox: BBox | undefined;
   showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
@@ -338,12 +342,20 @@ const useMapState = (
     chartHeight: width * 0.5,
   };
 
+  const bbox =
+    chartProps.baseLayer.bbox ||
+    getBBox(
+      areaLayer.show ? features.areaLayer?.shapes : undefined,
+      symbolLayer.show ? features.symbolLayer?.points : undefined
+    );
+
   return {
     chartType: "map",
     features,
     bounds,
     showBaseLayer: baseLayer.show,
     controlsType: baseLayer.controlsType || "dynamic",
+    bbox,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
