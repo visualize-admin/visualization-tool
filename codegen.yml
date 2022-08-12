@@ -12,6 +12,7 @@ generates:
       preResolveTypes: true
       withComponent: false
       withHooks: true
+      contextType: ./context#GraphQLContext
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -19,6 +20,7 @@ generates:
     config:
       useIndexSignature: true
       noSchemaStitching: true
+      contextType: ./context#GraphQLContext
       scalars:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"

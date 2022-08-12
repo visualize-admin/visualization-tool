@@ -33,6 +33,14 @@ export const isCubePublished = (cube: Cube): boolean =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
 
+export const parseVersionHistory = (cube: Cube) => {
+  return cube.in(ns.schema.hasPart)?.value;
+};
+
+export const parseIri = (cube: Cube) => {
+  return cube.term?.value ?? "[NO IRI]";
+};
+
 /**
  * Parses a cube coming from rdf-cube-view-query into a simple javascript object
  *
@@ -51,7 +59,7 @@ export const parseCube = ({
     cube,
     locale,
     data: {
-      iri: cube.term?.value ?? "[NO IRI]",
+      iri: parseIri(cube),
       identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
       title: cube.out(ns.schema.name, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.schema.description, outOpts)?.value ?? "",
@@ -69,7 +77,7 @@ export const parseCube = ({
             iri: creatorIri,
           }
         : undefined,
-      versionHistory: cube.in(ns.schema.hasPart)?.value,
+      versionHistory: parseVersionHistory(cube),
       contactPoint: {
         name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
         email: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.hasEmail)?.value,

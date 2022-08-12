@@ -5,6 +5,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -17,7 +18,6 @@ import {
 } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
 import { defaultLocale, parseLocaleString } from "@/locales/locales";
-import { Loaders } from "@/pages/api/graphql";
 import {
   createCubeDimensionValuesLoader,
   createSource,

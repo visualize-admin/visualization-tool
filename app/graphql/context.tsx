@@ -1,9 +1,22 @@
+import DataLoader from "dataloader";
+import { GraphQLResolveInfo } from "graphql";
 import { ReactNode } from "react";
+import StreamClient from "sparql-http-client";
+import ParsingClient from "sparql-http-client/ParsingClient";
 import { createClient, defaultExchanges, Provider } from "urql";
 
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
+import { Awaited } from "@/domain/types";
 // @ts-ignore - dynamic package import based on NODE_ENV
 import { devtoolsExchange } from "@/graphql/devtools";
+
+import { createCubeDimensionValuesLoader } from "../rdf/queries";
+import {
+  createOrganizationLoader,
+  createThemeLoader,
+} from "../rdf/query-cube-metadata";
+import { createGeoCoordinatesLoader } from "../rdf/query-geo-coordinates";
+import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
 
 const client = createClient({
   url: GRAPHQL_ENDPOINT,
@@ -16,3 +29,65 @@ const client = createClient({
 export const GraphqlProvider = ({ children }: { children: ReactNode }) => {
   return <Provider value={client}>{children}</Provider>;
 };
+
+const MAX_BATCH_SIZE = 500;
+const createLoaders = async (
+  locale: string,
+  sparqlClient: ParsingClient,
+  sparqlClientStream: StreamClient
+) => {
+  return {
+    dimensionValues: new DataLoader(
+      createCubeDimensionValuesLoader(sparqlClient),
+      {
+        cacheKeyFn: (dim) => dim.dimension.path?.value,
+      }
+    ),
+    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
+    geoCoordinates: new DataLoader(
+      createGeoCoordinatesLoader({ locale, sparqlClient }),
+      { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
+    ),
+    geoShapes: new DataLoader(createGeoShapesLoader({ locale, sparqlClient }), {
+      maxBatchSize: MAX_BATCH_SIZE,
+    }),
+    themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
+    organizations: new DataLoader(
+      createOrganizationLoader({ locale, sparqlClient })
+    ),
+  } as const;
+};
+
+export type Loaders = Awaited<ReturnType<typeof createLoaders>>;
+
+const createContextContent = async ({
+  sourceUrl,
+  locale,
+}: {
+  sourceUrl: string;
+  locale: string;
+}) => {
+  const sparqlClient = new ParsingClient({
+    endpointUrl: sourceUrl,
+  });
+  const sparqlClientStream = new StreamClient({
+    endpointUrl: sourceUrl,
+  });
+  const loaders = await createLoaders(locale, sparqlClient, sparqlClientStream);
+  return { loaders, sparqlClient, sparqlClientStream };
+};
+
+export const createContext = () => {
+  let setupping: ReturnType<typeof createContextContent>;
+
+  return {
+    setup: async ({
+      variableValues: { locale, sourceUrl },
+    }: GraphQLResolveInfo) => {
+      setupping = setupping || createContextContent({ locale, sourceUrl });
+      return await setupping;
+    },
+  };
+};
+
+export type GraphQLContext = ReturnType<typeof createContext>;

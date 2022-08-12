@@ -6,6 +6,7 @@ import {
 } from "../rdf/queries";
 import { unversionObservation as unversionObservation_ } from "../rdf/query-dimension-values";
 
+import { GraphQLContext } from "./context";
 import { Query } from "./resolvers";
 
 const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
@@ -75,8 +76,8 @@ describe("possible filters", () => {
         },
       },
       {
-        setup: () => ({ sparqlClient: {} }),
-      },
+        setup: () => Promise.resolve({ sparqlClient: {} }),
+      } as unknown as GraphQLContext,
       {} as GraphQLResolveInfo
     );
     expect(res).toEqual([
