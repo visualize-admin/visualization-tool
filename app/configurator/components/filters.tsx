@@ -14,6 +14,7 @@ import {
   Drawer as MuiDrawer,
   Theme,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -58,6 +59,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
@@ -311,6 +313,19 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
+  // Recomputes color palette making sure that used values
+  // are sorted first, so they have different colors
+  const handleRecomputeColorMapping = useEvent(() => {
+    const usedValues = new Set(values.map((v) => v.value));
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        dimensionIri,
+        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+      },
+    });
+  });
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
@@ -348,6 +363,21 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
+            <Tooltip
+              title={
+                <Trans id="controls.filters.select.refresh-colors">
+                  Refresh colors
+                </Trans>
+              }
+            >
+              <IconButton
+                sx={{ ml: 1, my: -1 }}
+                size="small"
+                onClick={handleRecomputeColorMapping}
+              >
+                <SvgIcFormatting fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
           </Typography>
           <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
