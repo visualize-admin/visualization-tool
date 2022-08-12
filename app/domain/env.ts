@@ -27,7 +27,7 @@ export const ENDPOINT =
 
 export const WHITELISTED_DATA_SOURCES = clientEnv?.WHITELISTED_DATA_SOURCES ??
   (process.env.WHITELISTED_DATA_SOURCES !== undefined
-    ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES!)
+    ? JSON.parse(process.env.WHITELISTED_DATA_SOURCES)
     : undefined) ?? ["Prod"];
 
 export const SPARQL_GEO_ENDPOINT =
