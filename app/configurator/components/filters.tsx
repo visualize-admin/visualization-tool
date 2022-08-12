@@ -64,6 +64,8 @@ import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 
+import { interlace } from "../../utils/interlace";
+
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const Drawer = styled(MuiDrawer)(({ theme }) => ({
@@ -246,7 +248,7 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
+  const { activeKeys, allValues } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
@@ -376,20 +378,6 @@ const MultiFilterContent = ({
       </Drawer>
     </Box>
   );
-};
-
-const interlace = <T extends unknown, I extends unknown>(
-  arr: T[],
-  interlacer: I
-) => {
-  const res = new Array(Math.max(arr.length * 2 - 1, 0));
-  for (let i = 0; i < arr.length; i++) {
-    res[i * 2] = arr[i];
-    if (i < arr.length - 1) {
-      res[i * 2 + 1] = interlacer;
-    }
-  }
-  return res;
 };
 
 const useBreadcrumbStyles = makeStyles({
