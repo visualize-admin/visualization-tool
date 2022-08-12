@@ -47,11 +47,6 @@ export const Label = ({
     display="flex"
   >
     {children}
-    {label && (
-      <Box sx={{ mb: 1 }} title={label}>
-        {label}
-      </Box>
-    )}
   </Typography>
 );
 
