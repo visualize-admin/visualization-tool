@@ -140,13 +140,7 @@ export const EditorBrush = ({
     };
 
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [
-    brush,
-    disabled,
-    theme.palette.grey[300],
-    theme.palette.grey[500],
-    theme.palette.primary.main,
-  ]);
+  }, [brush, disabled, theme.palette.grey, theme.palette.primary.main]);
 
   // Set default selection to currently selected extent (or full extent if no
   // extent has been selected yet). Currently selected extent is kept when

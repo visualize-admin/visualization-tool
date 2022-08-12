@@ -132,6 +132,9 @@ export const Table = () => {
             groupBy: groupingIris,
             hiddenColumns: hiddenIris,
           }),
+          // eslint does not detect correctly the dependencies here due to the
+          // hook not being in the body of the component.
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           [state, groupingIris, hiddenIris, sortingIris]
         );
       },
@@ -255,7 +258,14 @@ export const Table = () => {
         </>
       );
     },
-    [groupingIris.length, prepareRow, rowHeight, rows, tableColumnsMeta]
+    [
+      classes.mobileRow,
+      groupingIris.length,
+      prepareRow,
+      rowHeight,
+      rows,
+      tableColumnsMeta,
+    ]
   );
 
   return (
