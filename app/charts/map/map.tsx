@@ -4,7 +4,7 @@ import { MapboxLayer } from "@deck.gl/mapbox";
 import { Box, Button } from "@mui/material";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
-import maplibregl, { LngLatLike } from "maplibre-gl";
+import maplibregl from "maplibre-gl";
 import React, {
   useMemo,
   useEffect,
@@ -12,7 +12,12 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import ReactMap, { MapRef, ViewState } from "react-map-gl";
+import ReactMap, {
+  LngLatLike,
+  LngLatBounds,
+  MapRef,
+  ViewState,
+} from "react-map-gl";
 
 import {
   emptyStyle,
@@ -120,11 +125,14 @@ export const MapComponent = () => {
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const onViewStateChange = useCallback(
-    ({ viewState }: { viewState: ViewState }) =>
-      setViewState((oldVs) => ({ ...oldVs, ...viewState })),
+    ({ viewState }: { viewState: ViewState }) => {
+      setViewState((oldVs) => ({ ...oldVs, ...viewState }));
+    },
     []
   );
+  const [isViewStateLocked, setIsViewStateLocked] = useState(false);
 
+  const mapBounds = useRef<LngLatBounds>();
   const hasSetInitialZoom = useRef<boolean>();
 
   useEffect(() => {
@@ -357,19 +365,22 @@ export const MapComponent = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          zIndex: 13,
-          position: "absolute",
-          bottom: 55,
-          right: 15,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <ZoomButton iconName="add" handleClick={zoomIn} />
-        <ZoomButton iconName="minus" handleClick={zoomOut} />
-      </Box>
+      {isViewStateLocked ? null : (
+        <Box
+          sx={{
+            zIndex: 13,
+            position: "absolute",
+            bottom: 55,
+            right: 15,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <ZoomButton iconName="add" handleClick={zoomIn} />
+          <ZoomButton iconName="minus" handleClick={zoomOut} />
+        </Box>
+      )}
+
       {featuresLoaded && (
         <>
           <ReactMap
@@ -384,8 +395,30 @@ export const MapComponent = () => {
               position: "absolute",
             }}
             {...viewState}
-            onMove={onViewStateChange}
+            dragPan={!isViewStateLocked}
+            onMove={(e) => {
+              const userTriggered =
+                e.originalEvent && e.originalEvent.type !== "resize";
+
+              if (userTriggered) {
+                mapBounds.current = e.target.getBounds();
+              }
+
+              onViewStateChange(e);
+            }}
+            onResize={(e) => {
+              if (mapBounds.current && isViewStateLocked) {
+                e.target.fitBounds(mapBounds.current, { duration: 0 });
+              }
+
+              mapBounds.current = e.target.getBounds();
+            }}
+            scrollZoom={!isViewStateLocked}
+            onMouseMove={undefined}
             ref={handleRefNode}
+            onLoad={(e) => {
+              mapBounds.current = e.target.getBounds();
+            }}
           >
             {areaLayer.show ? (
               <Layer
