@@ -221,10 +221,9 @@ const useMapState = (
     [symbolErrorDimension?.unit, formatNumber, getSymbolError]
   );
 
-  const getDataByHierarchyLevel = useCallback(
+  const getData = useCallback(
     ({
       geoDimensionIri,
-      hierarchyLevel,
       getLabel,
     }: {
       geoDimensionIri: string;
@@ -238,9 +237,9 @@ const useMapState = (
         isGeoShapesDimension(dimension) &&
         features.areaLayer?.shapes?.features
       ) {
-        const hierarchyLabels = features.areaLayer.shapes.features
-          .filter((d) => d.properties.hierarchyLevel === hierarchyLevel)
-          .map((d) => d.properties.label);
+        const hierarchyLabels = features.areaLayer.shapes.features.map(
+          (d) => d.properties.label
+        );
 
         return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
       }
@@ -253,24 +252,19 @@ const useMapState = (
   const areaData = useMemo(
     () =>
       areaLayer.componentIri !== ""
-        ? getDataByHierarchyLevel({
+        ? getData({
             geoDimensionIri: areaLayer.componentIri,
             hierarchyLevel: areaLayer.hierarchyLevel,
             getLabel: getAreaLabel,
           })
         : [],
-    [
-      areaLayer.componentIri,
-      areaLayer.hierarchyLevel,
-      getAreaLabel,
-      getDataByHierarchyLevel,
-    ]
+    [areaLayer.componentIri, areaLayer.hierarchyLevel, getAreaLabel, getData]
   );
 
   const symbolData = useMemo(
     () =>
       symbolLayer.componentIri !== ""
-        ? getDataByHierarchyLevel({
+        ? getData({
             geoDimensionIri: symbolLayer.componentIri,
             hierarchyLevel: symbolLayer.hierarchyLevel,
             getLabel: getSymbolLabel,
@@ -280,7 +274,7 @@ const useMapState = (
       symbolLayer.componentIri,
       symbolLayer.hierarchyLevel,
       getSymbolLabel,
-      getDataByHierarchyLevel,
+      getData,
     ]
   );
 

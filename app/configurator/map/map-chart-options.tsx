@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import React, { memo, useMemo } from "react";
 
 import Flex from "@/components/flex";
@@ -19,11 +19,7 @@ import {
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
 import { DataSource } from "@/configurator/config-types";
-import {
-  GeoFeature,
-  getGeoDimensions,
-  getGeoShapesDimensions,
-} from "@/domain/data";
+import { getGeoDimensions, getGeoShapesDimensions } from "@/domain/data";
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/src";
@@ -119,18 +115,6 @@ export const AreaLayerSettings = memo(
         ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as any)
         : undefined;
 
-    const hierarchyLevelOptions = useMemo(
-      () =>
-        [
-          ...new Set(
-            (
-              geoShapes?.topology?.objects?.shapes?.geometries as GeoFeature[]
-            )?.map((d) => d.properties.hierarchyLevel)
-          ),
-        ]?.map((d) => ({ value: d, label: `${d}` })),
-      [geoShapes]
-    );
-
     const measuresOptions = useMemo(
       () =>
         metaData.measures.map((d) => ({
@@ -195,25 +179,6 @@ export const AreaLayerSettings = memo(
               field={activeField}
               path="componentIri"
               options={geoShapesDimensionsOptions}
-              disabled={isHidden}
-            />
-          </ControlSectionContent>
-        </ControlSection>
-        <ControlSection>
-          <SectionTitle iconName="list">
-            {t({ id: "controls.hierarchy", message: "Hierarchy level" })}
-          </SectionTitle>
-          <ControlSectionContent side="right">
-            <ChartOptionSelectField<number>
-              id="areaLayer.hierarchyLevel"
-              label={t({
-                id: "controls.hierarchy.select",
-                message: "Select a hierarchy level",
-              })}
-              field={activeField}
-              path="hierarchyLevel"
-              options={hierarchyLevelOptions}
-              getValue={(d) => +d}
               disabled={isHidden}
             />
           </ControlSectionContent>
@@ -289,45 +254,47 @@ export const AreaLayerSettings = memo(
               numberOfGeoShapes >= 3 && (
                 <>
                   <FieldSetLegend legendTitle="Interpolation" />
-                  <ChartOptionSelectField
-                    id="areaLayer.colorScaleInterpolationType"
-                    label={null}
-                    field={activeField}
-                    path="colorScaleInterpolationType"
-                    options={[
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.quantize",
-                          message: "Quantize (equal intervals)",
-                        }),
-                        value: "quantize",
-                      },
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.quantiles",
-                          message: "Quantiles (equal distribution of values)",
-                        }),
-                        value: "quantile",
-                      },
-                      {
-                        label: t({
-                          id: "chart.map.layers.area.discretization.jenks",
-                          message: "Jenks (natural breaks)",
-                        }),
-                        value: "jenks",
-                      },
-                    ]}
-                    disabled={isHidden}
-                  />
-                  <ChartOptionSelectField<number>
-                    id="areaLayer.nbClass"
-                    label="Number of classes"
-                    field={activeField}
-                    path="nbClass"
-                    options={numberOfColorScaleClasses}
-                    getValue={(d) => +d}
-                    disabled={isHidden}
-                  />
+                  <Stack spacing={2}>
+                    <ChartOptionSelectField
+                      id="areaLayer.colorScaleInterpolationType"
+                      label={null}
+                      field={activeField}
+                      path="colorScaleInterpolationType"
+                      options={[
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.quantize",
+                            message: "Quantize (equal intervals)",
+                          }),
+                          value: "quantize",
+                        },
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.quantiles",
+                            message: "Quantiles (equal distribution of values)",
+                          }),
+                          value: "quantile",
+                        },
+                        {
+                          label: t({
+                            id: "chart.map.layers.area.discretization.jenks",
+                            message: "Jenks (natural breaks)",
+                          }),
+                          value: "jenks",
+                        },
+                      ]}
+                      disabled={isHidden}
+                    />
+                    <ChartOptionSelectField<number>
+                      id="areaLayer.nbClass"
+                      label="Number of classes"
+                      field={activeField}
+                      path="nbClass"
+                      options={numberOfColorScaleClasses}
+                      getValue={(d) => +d}
+                      disabled={isHidden}
+                    />
+                  </Stack>
                 </>
               )}
           </ControlSectionContent>

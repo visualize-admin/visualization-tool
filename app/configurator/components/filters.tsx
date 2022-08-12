@@ -67,6 +67,7 @@ import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 
 import { interlace } from "../../utils/interlace";
+import { ColorMapping, ConfiguratorState } from "../config-types";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -120,6 +121,9 @@ const useStyles = makeStyles((theme: Theme) => {
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
     },
+    optionLabel: {
+      flexGrow: 1,
+    },
     optionCheck: {
       width: 16,
       height: 16,
@@ -168,13 +172,10 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
   [`& .${autocompleteClasses.listbox}`]: {
     maxHeight: "max-content",
     [`& .${autocompleteClasses.option}`]: {
-      display: "grid",
-      // color box, label, selected icon
-      gridTemplateColumns: "min-content 1fr min-content",
-      gridTemplateRows: "auto",
-      gridColumnGap: "var(--columnGap)",
+      display: "flex",
       minHeight: "auto",
-      alignItems: "flex-start",
+      alignItems: "center",
+      justifyContent: "flex-start",
       padding: "8px 16px",
 
       '&[aria-selected="true"]': {
@@ -235,6 +236,21 @@ const getOptionsFromTree = (tree: HierarchyValue[]) => {
 
 type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
 
+const getColorMapping = (
+  config: ConfiguratorState,
+  colorConfigPath: string | undefined
+) => {
+  if (!config.activeField) {
+    return;
+  }
+  return get(
+    config.chartConfig.fields,
+    `${config.activeField}${
+      colorConfigPath ? `${colorConfigPath}.` : ""
+    }colorMapping`
+  ) as ColorMapping | undefined;
+};
+
 const MultiFilterContent = ({
   tree,
   dimensionIri,
@@ -250,7 +266,7 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues } = useMultiFilterContext();
+  const { activeKeys, allValues, colorConfigPath } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
@@ -326,6 +342,10 @@ const MultiFilterContent = ({
     });
   });
 
+  const hasColorMapping = useMemo(() => {
+    return !!getColorMapping(config, colorConfigPath);
+  }, [colorConfigPath, config]);
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
@@ -363,21 +383,23 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
-            <Tooltip
-              title={
-                <Trans id="controls.filters.select.refresh-colors">
-                  Refresh colors
-                </Trans>
-              }
-            >
-              <IconButton
-                sx={{ ml: 1, my: -1 }}
-                size="small"
-                onClick={handleRecomputeColorMapping}
+            {hasColorMapping ? (
+              <Tooltip
+                title={
+                  <Trans id="controls.filters.select.refresh-colors">
+                    Refresh colors
+                  </Trans>
+                }
               >
-                <SvgIcFormatting fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
+                <IconButton
+                  sx={{ ml: 1, my: -2 }}
+                  size="small"
+                  onClick={handleRecomputeColorMapping}
+                >
+                  <SvgIcFormatting fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </Typography>
           <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
@@ -398,8 +420,13 @@ const MultiFilterContent = ({
             {children.map((v) => {
               return (
                 <Flex key={v.value} className={classes.selectedValueRow}>
-                  <MultiFilterFieldColorPicker value={v.value} />
-                  <Typography variant="body2">{v?.label}</Typography>
+                  {hasColorMapping ? (
+                    <MultiFilterFieldColorPicker value={v.value} />
+                  ) : null}
+                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                    {v?.label}
+                  </Typography>
+                  {hasColorMapping ? null : <SvgIcCheck />}
                 </Flex>
               );
             })}
@@ -414,6 +441,7 @@ const MultiFilterContent = ({
             optionsByParent={optionsByParent}
             onClose={handleCloseAutocomplete}
             values={values}
+            hasColorMapping={hasColorMapping}
           />
         </ClickAwayListener>
       </Drawer>
@@ -442,8 +470,17 @@ const DrawerContent = forwardRef<
     options: AutocompleteOption[];
     values: AutocompleteOption[];
     pendingValuesRef: MutableRefObject<AutocompleteOption[]>;
+    hasColorMapping: boolean;
   }
->(({ optionsByParent, onClose, values, options, pendingValuesRef }, ref) => {
+>((props, ref) => {
+  const {
+    optionsByParent,
+    onClose,
+    values,
+    options,
+    pendingValuesRef,
+    hasColorMapping,
+  } = props;
   const classes = useStyles();
   const { getValueColor } = useMultiFilterContext();
 
@@ -555,16 +592,18 @@ const DrawerContent = forwardRef<
     (props, option, { selected }) => {
       return (
         <li {...props}>
-          <div
-            className={classes.optionColor}
-            style={{
-              border: selected ? "none" : "1px solid #ccc",
-              backgroundColor: selected
-                ? getValueColor(option.value)
-                : "transparent",
-            }}
-          />
-          <div>{option.label}</div>
+          {hasColorMapping ? (
+            <div
+              className={classes.optionColor}
+              style={{
+                border: selected ? "none" : "1px solid #ccc",
+                backgroundColor: selected
+                  ? getValueColor(option.value)
+                  : "transparent",
+              }}
+            />
+          ) : null}
+          <div className={classes.optionLabel}>{option.label}</div>
           <SvgIcCheck
             className={classes.optionCheck}
             style={{
@@ -574,7 +613,13 @@ const DrawerContent = forwardRef<
         </li>
       );
     },
-    [classes.optionCheck, classes.optionColor, getValueColor]
+    [
+      classes.optionCheck,
+      classes.optionColor,
+      classes.optionLabel,
+      getValueColor,
+      hasColorMapping,
+    ]
   );
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
@@ -599,6 +644,7 @@ const DrawerContent = forwardRef<
         value={pendingValues}
         multiple
         open
+        noOptionsText={t({ id: "No results" })}
         renderTags={() => null}
         onChange={handleSelect}
         onClose={handleAutocompleteClose}
