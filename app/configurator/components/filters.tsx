@@ -303,7 +303,7 @@ const MultiFilterContent = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" gap="0.75rem">
           <Flex gap="0.75rem">
             <Button
               onClick={selectAll}
