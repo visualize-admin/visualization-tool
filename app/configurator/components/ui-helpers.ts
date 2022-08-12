@@ -890,36 +890,6 @@ export const categoricalPalettes: Array<{
 
 export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
 
-export const getColorInterpolator = (
-  palette?: SequentialPaletteType | DivergingPaletteType
-): ((t: number) => string) => {
-  switch (palette) {
-    case "BrBG":
-      return interpolateBrBG;
-    case "PRGn":
-      return interpolatePRGn;
-    case "PiYG":
-      return interpolatePiYG;
-    case "PuOr":
-      return interpolatePuOr;
-    case "blues":
-      return interpolateBlues;
-    case "greens":
-      return interpolateGreens;
-    case "greys":
-      return interpolateGreys;
-    case "oranges":
-      return interpolateOranges;
-    case "purples":
-      return interpolatePurples;
-    case "reds":
-      return interpolateReds;
-
-    default:
-      return interpolateOranges;
-  }
-};
-
 type Palette<T> = {
   label: string;
   value: T;
@@ -939,6 +909,44 @@ const divergingPaletteKeys = [
   "PuOr",
 ] as DivergingPaletteType[];
 
+const sequentialPaletteKeys = [
+  "blues",
+  "greens",
+  "greys",
+  "oranges",
+  "purples",
+  "reds",
+] as SequentialPaletteType[];
+
+const interpolatorByName = {
+  BrBG: interpolateBrBG,
+  PRGn: interpolatePRGn,
+  PiYG: interpolatePiYG,
+  PuOr: interpolatePuOr,
+  blues: interpolateBlues,
+  greens: interpolateGreens,
+  greys: interpolateGreys,
+  oranges: interpolateOranges,
+  purples: interpolatePurples,
+  reds: interpolateReds,
+};
+const defaultInterpolator = interpolatorByName["oranges"];
+
+export const getColorInterpolator = (
+  palette?: SequentialPaletteType | DivergingPaletteType
+): ((t: number) => string) => {
+  const interpolator = interpolatorByName[palette!] ?? defaultInterpolator;
+  // If the palette is sequential, we artificially clamp the value not to display too
+  // white a value
+  const isSequential = palette
+    ? // @ts-ignore
+      sequentialPaletteKeys.includes(palette)
+    : false;
+  return isSequential
+    ? (n: number) => interpolator(n * 0.8 + 0.2)
+    : interpolator;
+};
+
 export const divergingPalettes = divergingPaletteKeys.map((d) => ({
   label: d,
   value: d,
@@ -953,15 +961,6 @@ export const divergingSteppedPalettes = divergingPaletteKeys.map((d) => ({
 
 export const getDefaultDivergingSteppedPalette = () =>
   divergingSteppedPalettes[0];
-
-const sequentialPaletteKeys = [
-  "blues",
-  "greens",
-  "greys",
-  "oranges",
-  "purples",
-  "reds",
-] as SequentialPaletteType[];
 
 export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   label: d,
