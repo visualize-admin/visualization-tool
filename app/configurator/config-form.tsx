@@ -13,7 +13,7 @@ import { useClient } from "urql";
 import { getFieldComponentIri } from "@/charts";
 import { ChartConfig, ChartType } from "@/configurator/config-types";
 import {
-  getChartOptionBooleanField,
+  getChartOptionField,
   getFilterValue,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
@@ -197,28 +197,25 @@ export const useChartOptionRadioField = ({
   path,
   value,
 }: {
-  field: string;
+  field: string | null;
   path: string;
   value: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      dispatch({
-        type: "CHART_OPTION_CHANGED",
-        value: {
-          field,
-          path,
-          value,
-        },
-      });
-    },
-    [dispatch, field, path, value]
-  );
+  const onChange = useCallback(() => {
+    dispatch({
+      type: "CHART_OPTION_CHANGED",
+      value: {
+        field,
+        path,
+        value,
+      },
+    });
+  }, [dispatch, field, path, value]);
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(state, `chartConfig.fields["${field}"].${path}`, "")
+      ? getChartOptionField(state, field, path)
       : "";
   const checked = stateValue ? stateValue === value : undefined;
 
@@ -256,7 +253,7 @@ export const useChartOptionBooleanField = ({
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? getChartOptionBooleanField(state, field, path, defaultValue)
+      ? getChartOptionField(state, field, path, defaultValue)
       : defaultValue;
   const checked = stateValue ? stateValue : false;
 
