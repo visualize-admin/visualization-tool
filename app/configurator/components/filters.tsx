@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { groups } from "d3";
+import { ascending, groups } from "d3";
 import { get, keyBy, sortBy, groupBy } from "lodash";
 import React, {
   forwardRef,
@@ -255,7 +255,7 @@ const MultiFilterContent = ({
     const optionsByValue = keyBy(flat, (x) => x.value);
     const optionsByParent = groupBy(flat, groupByParent);
     return {
-      options: sortBy(flat, groupByParent),
+      options: sortBy(flat, [groupByParent, (x) => x.label]),
       optionsByValue,
       optionsByParent,
     };
@@ -266,7 +266,18 @@ const MultiFilterContent = ({
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
       Object.keys(optionsByValue)
     ).map((v) => optionsByValue[v]);
-    const grouped = groups(values, groupByParent);
+    const grouped = groups(values, groupByParent)
+      .sort(
+        (a, b) =>
+          ascending(explodeParents(a[0]).length, explodeParents(b[0]).length) ||
+          ascending(a[0], b[0])
+      )
+      .map(([parent, group]) => {
+        return [
+          parent,
+          group.sort((a, b) => ascending(a.label, b.label)),
+        ] as const;
+      });
     return {
       values,
       valueGroups: grouped,
