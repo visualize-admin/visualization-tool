@@ -557,7 +557,7 @@ const fieldLabels = {
   }),
   "chart.map.layers.base": defineMessage({
     id: "chart.map.layers.base",
-    message: "Base Layer",
+    message: "Map Display",
   }),
   "chart.map.layers.area": defineMessage({
     id: "chart.map.layers.area",

@@ -93,7 +93,7 @@ const BaseLayerSettings = memo(() => {
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
-        <Trans id="chart.map.layers.base">Base Layer</Trans>
+        <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
@@ -104,23 +104,26 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
-        <Box component="fieldset" mt={4}>
-          <FieldSetLegend legendTitle="Map controls type" />
-          <Flex sx={{ justifyContent: "flex-start" }}>
-            <ChartOptionRadioField
-              label="Dynamic"
-              field={null}
-              path="baseLayer.controlsType"
-              value="dynamic"
-            />
-            <ChartOptionRadioField
-              label="Locked"
-              field={null}
-              path="baseLayer.controlsType"
-              value="locked"
-            />
-          </Flex>
-        </Box>
+        <Flex>
+          <ChartOptionRadioField
+            label={t({
+              id: "chart.map.layers.base.view.dynamic",
+              message: "Dynamic view",
+            })}
+            field={null}
+            path="baseLayer.controlsType"
+            value="dynamic"
+          />
+          <ChartOptionRadioField
+            label={t({
+              id: "chart.map.layers.base.view.locked",
+              message: "Locked view",
+            })}
+            field={null}
+            path="baseLayer.controlsType"
+            value="locked"
+          />
+        </Flex>
       </ControlSectionContent>
     </ControlSection>
   );
