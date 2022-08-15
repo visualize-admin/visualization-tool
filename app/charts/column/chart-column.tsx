@@ -141,7 +141,7 @@ export const ChartColumns = memo(
             {fields.segment && interactiveFiltersConfig?.legend.active ? (
               <InteractiveLegendColor />
             ) : fields.segment ? (
-              <LegendColor symbol="line" />
+              <LegendColor symbol="square" />
             ) : null}
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
@@ -170,7 +170,7 @@ export const ChartColumns = memo(
             {fields.segment && interactiveFiltersConfig?.legend.active ? (
               <InteractiveLegendColor />
             ) : fields.segment ? (
-              <LegendColor symbol="line" />
+              <LegendColor symbol="square" />
             ) : null}
           </GroupedColumnChart>
         ) : (

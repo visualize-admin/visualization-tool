@@ -124,7 +124,7 @@ export const ChartBars = memo(
             interactiveFiltersConfig?.legend.active === true ? (
               <InteractiveLegendColor />
             ) : fields.segment ? (
-              <LegendColor symbol="line" />
+              <LegendColor symbol="square" />
             ) : null}
           </GroupedBarsChart>
         ) : (
