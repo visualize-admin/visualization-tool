@@ -253,11 +253,6 @@ const getColorMapping = (
   const colorMappingPath = `${config.activeField}.${
     colorConfigPath ? `${colorConfigPath}.` : ""
   }colorMapping`;
-  console.log(
-    colorMappingPath,
-    get(config.chartConfig.fields, colorMappingPath),
-    config
-  );
   return get(config.chartConfig.fields, colorMappingPath) as
     | ColorMapping
     | undefined;
