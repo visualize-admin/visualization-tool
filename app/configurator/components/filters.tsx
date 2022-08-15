@@ -117,9 +117,12 @@ const useStyles = makeStyles((theme: Theme) => {
       borderRadius: "4px",
       width: "var(--colorBoxSize)",
       height: "var(--colorBoxSize)",
+      flexShrink: 0,
       boxSizing: "border-box",
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
+      alignSelf: "flex-start",
+      marginTop: "0.125rem",
     },
     optionLabel: {
       flexGrow: 1,
@@ -127,6 +130,9 @@ const useStyles = makeStyles((theme: Theme) => {
     optionCheck: {
       width: 16,
       height: 16,
+      flexShrink: 0,
+      alignSelf: "flex-start",
+      marginTop: "0.125rem",
     },
     listSubheader: {
       minHeight: "3rem",
@@ -176,6 +182,7 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
       minHeight: "auto",
       alignItems: "center",
       justifyContent: "flex-start",
+      gap: "0.5rem",
       padding: "8px 16px",
 
       '&[aria-selected="true"]': {
@@ -596,7 +603,7 @@ const DrawerContent = forwardRef<
             <div
               className={classes.optionColor}
               style={{
-                border: selected ? "none" : "1px solid #ccc",
+                border: "1px solid #ccc",
                 backgroundColor: selected
                   ? getValueColor(option.value)
                   : "transparent",
