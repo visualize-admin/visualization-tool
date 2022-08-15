@@ -250,12 +250,17 @@ const getColorMapping = (
   if (!config.activeField) {
     return;
   }
-  return get(
-    config.chartConfig.fields,
-    `${config.activeField}${
-      colorConfigPath ? `${colorConfigPath}.` : ""
-    }colorMapping`
-  ) as ColorMapping | undefined;
+  const colorMappingPath = `${config.activeField}.${
+    colorConfigPath ? `${colorConfigPath}.` : ""
+  }colorMapping`;
+  console.log(
+    colorMappingPath,
+    get(config.chartConfig.fields, colorMappingPath),
+    config
+  );
+  return get(config.chartConfig.fields, colorMappingPath) as
+    | ColorMapping
+    | undefined;
 };
 
 const MultiFilterContent = ({
