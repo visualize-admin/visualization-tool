@@ -104,7 +104,8 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
-        <Flex>
+        {/* FIXME: change the styles of MUI components to match design specs */}
+        <Box sx={{ ml: "6px" }}>
           <ChartOptionRadioField
             label={t({
               id: "chart.map.layers.base.view.dynamic",
@@ -123,7 +124,7 @@ const BaseLayerSettings = memo(() => {
             path="baseLayer.controlsType"
             value="locked"
           />
-        </Flex>
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );
