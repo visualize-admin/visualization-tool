@@ -8,10 +8,10 @@ import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
 import React, {
   useMemo,
-  useEffect,
   useRef,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import ReactMap, { LngLatLike, MapRef, ViewState } from "react-map-gl";
 
@@ -24,13 +24,16 @@ import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { convertHexToRgbArray } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { Bounds } from "@/charts/shared/use-width";
 import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+
 import Layer from "./layer";
+import { setMap } from "./ref";
 
 type MinMaxZoomViewState = Pick<
   ViewState,
@@ -42,7 +45,7 @@ type MinMaxZoomViewState = Pick<
   height: number;
 };
 
-const INITIAL_VIEW_STATE: MinMaxZoomViewState = {
+const BASE_VIEW_STATE: MinMaxZoomViewState = {
   minZoom: 1,
   maxZoom: 13,
   latitude: 46.8182,
@@ -50,6 +53,19 @@ const INITIAL_VIEW_STATE: MinMaxZoomViewState = {
   zoom: 5,
   width: 400,
   height: 400,
+};
+
+const getInitialViewState = (bbox: BBox | undefined, chartBounds: Bounds) => {
+  if (bbox) {
+    const { width, height } = chartBounds;
+    const vp = new WebMercatorViewport({ ...BASE_VIEW_STATE, width, height });
+    const bounds = vp.fitBounds(bbox);
+    const viewState = { ...BASE_VIEW_STATE, ...bounds };
+
+    return viewState;
+  }
+
+  return BASE_VIEW_STATE;
 };
 
 /**
@@ -114,21 +130,27 @@ export const MapComponent = () => {
     identicalLayerComponentIris,
     areaLayer,
     symbolLayer,
+    bounds,
     bbox,
   } = useChartState() as MapState;
+  const isViewStateLocked = controlsType === "locked";
+  const initialViewState = useMemo(() => {
+    return !isViewStateLocked
+      ? BASE_VIEW_STATE
+      : getInitialViewState(bbox, bounds);
+  }, [isViewStateLocked, bbox, bounds]);
   const locale = useLocale();
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+  const [viewState, setViewState] = useState(initialViewState);
   const onViewStateChange = useCallback(
     ({ viewState }: { viewState: ViewState }) => {
       setViewState((oldVs) => ({ ...oldVs, ...viewState }));
     },
     []
   );
-  const isViewStateLocked = controlsType === "locked";
 
   const currentBBox = useRef<BBox>();
   const hasSetInitialZoom = useRef<boolean>();
@@ -138,12 +160,12 @@ export const MapComponent = () => {
       return;
     }
 
-    if (bbox) {
+    if (bbox && !isViewStateLocked) {
       setViewState(constrainZoom(viewState, bbox));
     }
 
     hasSetInitialZoom.current = true;
-  }, [viewState, bbox]);
+  }, [viewState, isViewStateLocked, bbox]);
 
   const mapNodeRef = useRef<MapRef | null>(null);
   const handleRefNode = (mapRef: MapRef) => {
@@ -394,6 +416,7 @@ export const MapComponent = () => {
             touchZoomRotate={!isViewStateLocked}
             ref={handleRefNode}
             onLoad={(e) => {
+              setMap(e.target);
               currentBBox.current = e.target.getBounds().toArray() as BBox;
             }}
           >

@@ -1,7 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 
+import { getMap } from "@/charts/map/ref";
 import Flex from "@/components/flex";
 import { FieldSetLegend } from "@/components/form";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
@@ -19,6 +20,7 @@ import {
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
 import { DataSource } from "@/configurator/config-types";
+import { isConfiguring } from "@/configurator/configurator-state";
 import {
   GeoFeature,
   getGeoDimensions,
@@ -26,7 +28,7 @@ import {
 } from "@/domain/data";
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import { useLocale } from "@/src";
+import { useConfiguratorState, useLocale } from "@/src";
 
 export const MapColumnOptions = ({
   state,
@@ -59,6 +61,35 @@ export const MapColumnOptions = ({
 };
 
 const BaseLayerSettings = memo(() => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = state.chartConfig as MapConfig;
+
+  useEffect(() => {
+    const map = getMap();
+
+    if (chartConfig.baseLayer.controlsType === "locked") {
+      if (map !== null) {
+        dispatch({
+          type: "CHART_OPTION_CHANGED",
+          value: {
+            field: null,
+            path: "baseLayer.bbox",
+            value: map.getBounds().toArray(),
+          },
+        });
+      }
+    } else {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field: null,
+          path: "baseLayer.bbox",
+          value: undefined,
+        },
+      });
+    }
+  }, [chartConfig.baseLayer.controlsType, dispatch]);
+
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
