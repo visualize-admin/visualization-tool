@@ -6,13 +6,7 @@ import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
-import React, {
-  useMemo,
-  useRef,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import ReactMap, { LngLatLike, MapRef, ViewState } from "react-map-gl";
 
 import {
@@ -28,6 +22,7 @@ import { Bounds } from "@/charts/shared/use-width";
 import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -55,14 +50,29 @@ const BASE_VIEW_STATE: MinMaxZoomViewState = {
   height: 400,
 };
 
-const getInitialViewState = (bbox: BBox | undefined, chartBounds: Bounds) => {
+/**
+ * Compute map center along with a proper zoom level taking chart dimensions
+ * into account.
+ *
+ * @param bbox Bounding box of the feature to be contained.
+ * @param chartDimensions Chart's dimensions.
+ */
+const getInitialViewState = ({
+  bbox,
+  chartDimensions,
+}: {
+  bbox: BBox | undefined;
+  chartDimensions: Bounds;
+}) => {
   if (bbox) {
-    const { width, height } = chartBounds;
-    const vp = new WebMercatorViewport({ ...BASE_VIEW_STATE, width, height });
-    const bounds = vp.fitBounds(bbox);
-    const viewState = { ...BASE_VIEW_STATE, ...bounds };
+    const vp = new WebMercatorViewport({
+      ...BASE_VIEW_STATE,
+      width: chartDimensions.width,
+      height: chartDimensions.height,
+    });
+    const fitted = vp.fitBounds(bbox);
 
-    return viewState;
+    return { ...BASE_VIEW_STATE, ...fitted };
   }
 
   return BASE_VIEW_STATE;
@@ -122,7 +132,10 @@ const constrainZoom = (
 let globalGeoJsonLayerId = 0;
 let globalScatterplotLayerId = 0;
 
+const DURATION = 500;
+
 export const MapComponent = () => {
+  const locale = useLocale();
   const {
     showBaseLayer,
     controlsType,
@@ -133,31 +146,30 @@ export const MapComponent = () => {
     bounds,
     bbox,
   } = useChartState() as MapState;
-  const initialViewStateRef = useRef<MinMaxZoomViewState | null>(null);
+
   const isViewStateLocked = controlsType === "locked";
+  // Needed to be able to "refresh" the map to its initial position.
+  const firstViewStateRef = useRef<MinMaxZoomViewState | null>(null);
   const initialViewState = useMemo(() => {
-    return !isViewStateLocked
-      ? BASE_VIEW_STATE
-      : getInitialViewState(bbox, bounds);
+    if (isViewStateLocked) {
+      return getInitialViewState({ bbox, chartDimensions: bounds });
+    } else {
+      return BASE_VIEW_STATE;
+    }
   }, [isViewStateLocked, bbox, bounds]);
-  const locale = useLocale();
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
   const [viewState, setViewState] = useState(initialViewState);
-  const onViewStateChange = useCallback(
+  const onViewStateChange = useEvent(
     ({ viewState }: { viewState: ViewState }) => {
-      setViewState((oldVs) => ({ ...oldVs, ...viewState }));
-    },
-    []
+      setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
+    }
   );
 
-  const currentBBox = useRef<BBox>();
-  const hasSetInitialZoom = useRef<boolean>();
-
   useEffect(() => {
-    if (hasSetInitialZoom.current) {
+    if (firstViewStateRef.current) {
       return;
     }
 
@@ -172,11 +184,9 @@ export const MapComponent = () => {
     }
 
     if (newViewState) {
-      initialViewStateRef.current = newViewState;
+      firstViewStateRef.current = newViewState;
       setViewState(newViewState);
     }
-
-    hasSetInitialZoom.current = true;
   }, [viewState, isViewStateLocked, bbox]);
 
   const mapNodeRef = useRef<MapRef | null>(null);
@@ -187,13 +197,15 @@ export const MapComponent = () => {
     mapNodeRef.current = mapRef;
   };
 
+  const currentBBox = useRef<BBox>();
+
   const refresh = () => {
-    if (initialViewStateRef.current) {
-      const { longitude, latitude, zoom } = initialViewStateRef.current;
+    if (firstViewStateRef.current) {
+      const { longitude, latitude, zoom } = firstViewStateRef.current;
       const newViewState = {
         center: [longitude, latitude] as LngLatLike,
         zoom,
-        duration: 500,
+        duration: DURATION,
       };
       mapNodeRef.current?.flyTo(newViewState);
     }
@@ -203,7 +215,7 @@ export const MapComponent = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
-      duration: 500,
+      duration: DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
@@ -212,29 +224,20 @@ export const MapComponent = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
-      duration: 500,
+      duration: DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
 
-  const symbolColorRgbArray = useMemo(
-    () => convertHexToRgbArray(symbolLayer.color),
-    [symbolLayer.color]
-  );
+  const symbolColorRgbArray = useMemo(() => {
+    return convertHexToRgbArray(symbolLayer.color);
+  }, [symbolLayer.color]);
 
-  const baseLayerStyle = useMemo(
-    () =>
-      getBaseLayerStyle({
-        locale,
-        showLabels: !areaLayer.show,
-      }),
-    [locale, areaLayer.show]
-  );
+  const baseLayerStyle = useMemo(() => {
+    return getBaseLayerStyle({ locale, showLabels: !areaLayer.show });
+  }, [locale, areaLayer.show]);
+
   const mapStyle = showBaseLayer ? baseLayerStyle : emptyStyle;
-
-  const featuresLoaded =
-    features.areaLayer !== undefined || features.symbolLayer !== undefined;
-
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -397,6 +400,9 @@ export const MapComponent = () => {
     symbolLayer,
   ]);
 
+  const featuresLoaded =
+    features.areaLayer !== undefined || features.symbolLayer !== undefined;
+
   return (
     <Box>
       {isViewStateLocked ? null : (
@@ -410,9 +416,10 @@ export const MapComponent = () => {
       {featuresLoaded && (
         <>
           <ReactMap
+            ref={handleRefNode}
+            mapLib={maplibregl}
             /* @ts-ignore */
             mapStyle={mapStyle}
-            mapLib={maplibregl}
             style={{
               left: 0,
               top: 0,
@@ -420,8 +427,14 @@ export const MapComponent = () => {
               height: "100%",
               position: "absolute",
             }}
-            {...viewState}
             dragPan={!isViewStateLocked}
+            scrollZoom={!isViewStateLocked}
+            doubleClickZoom={!isViewStateLocked}
+            touchZoomRotate={!isViewStateLocked}
+            onLoad={(e) => {
+              setMap(e.target);
+              currentBBox.current = e.target.getBounds().toArray() as BBox;
+            }}
             onMove={(e) => {
               const userTriggered =
                 e.originalEvent && e.originalEvent.type !== "resize";
@@ -439,14 +452,7 @@ export const MapComponent = () => {
 
               currentBBox.current = e.target.getBounds().toArray() as BBox;
             }}
-            scrollZoom={!isViewStateLocked}
-            doubleClickZoom={!isViewStateLocked}
-            touchZoomRotate={!isViewStateLocked}
-            ref={handleRefNode}
-            onLoad={(e) => {
-              setMap(e.target);
-              currentBBox.current = e.target.getBounds().toArray() as BBox;
-            }}
+            {...viewState}
           >
             {areaLayer.show ? (
               <Layer
