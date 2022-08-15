@@ -342,12 +342,22 @@ const useMapState = (
     chartHeight: width * 0.5,
   };
 
-  const bbox =
-    chartProps.baseLayer.bbox ||
-    getBBox(
-      areaLayer.show ? features.areaLayer?.shapes : undefined,
-      symbolLayer.show ? features.symbolLayer?.points : undefined
-    );
+  const bbox = useMemo(() => {
+    if (chartProps.baseLayer.bbox !== undefined) {
+      return chartProps.baseLayer.bbox;
+    } else {
+      return getBBox(
+        areaLayer.show ? features.areaLayer?.shapes : undefined,
+        symbolLayer.show ? features.symbolLayer?.points : undefined
+      );
+    }
+  }, [
+    areaLayer.show,
+    features.areaLayer?.shapes,
+    symbolLayer.show,
+    features.symbolLayer?.points,
+    chartProps.baseLayer.bbox,
+  ]);
 
   return {
     chartType: "map",
