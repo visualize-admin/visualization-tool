@@ -133,6 +133,7 @@ export const MapComponent = () => {
     bounds,
     bbox,
   } = useChartState() as MapState;
+  const initialViewStateRef = useRef<MinMaxZoomViewState | null>(null);
   const isViewStateLocked = controlsType === "locked";
   const initialViewState = useMemo(() => {
     return !isViewStateLocked
@@ -160,8 +161,19 @@ export const MapComponent = () => {
       return;
     }
 
-    if (bbox && !isViewStateLocked) {
-      setViewState(constrainZoom(viewState, bbox));
+    let newViewState: MinMaxZoomViewState | undefined = undefined;
+
+    if (bbox) {
+      if (!isViewStateLocked) {
+        newViewState = constrainZoom(viewState, bbox);
+      } else {
+        newViewState = viewState;
+      }
+    }
+
+    if (newViewState) {
+      initialViewStateRef.current = newViewState;
+      setViewState(newViewState);
     }
 
     hasSetInitialZoom.current = true;
@@ -173,6 +185,18 @@ export const MapComponent = () => {
       return;
     }
     mapNodeRef.current = mapRef;
+  };
+
+  const refresh = () => {
+    if (initialViewStateRef.current) {
+      const { longitude, latitude, zoom } = initialViewStateRef.current;
+      const newViewState = {
+        center: [longitude, latitude] as LngLatLike,
+        zoom,
+        duration: 500,
+      };
+      mapNodeRef.current?.flyTo(newViewState);
+    }
   };
 
   const zoomIn = () => {
@@ -376,7 +400,11 @@ export const MapComponent = () => {
   return (
     <Box>
       {isViewStateLocked ? null : (
-        <ZoomButtons zoomIn={zoomIn} zoomOut={zoomOut} />
+        <MapControlButtons
+          refresh={refresh}
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+        />
       )}
 
       {featuresLoaded && (
@@ -473,24 +501,26 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const ZoomButtons = ({
+const MapControlButtons = ({
+  refresh,
   zoomIn,
   zoomOut,
 }: {
+  refresh: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
 }) => {
   const classes = useStyles();
 
   return (
-    <Box className={classes.zoomButtons}>
-      <ZoomButton iconName="add" handleClick={zoomIn} />
-      <ZoomButton iconName="minus" handleClick={zoomOut} />
+      <MapControlButton iconName="circle" handleClick={refresh} />
+      <MapControlButton iconName="add" handleClick={zoomIn} />
+      <MapControlButton iconName="minus" handleClick={zoomOut} />
     </Box>
   );
 };
 
-const ZoomButton = ({
+const MapControlButton = ({
   iconName,
   handleClick,
 }: {
