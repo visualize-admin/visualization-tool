@@ -466,37 +466,39 @@ export const MapComponent = () => {
 };
 
 const useStyles = makeStyles<Theme>((theme) => ({
-  zoomButtons: {
+  mapControlButtons: {
     zIndex: 13,
     position: "absolute",
-    bottom: 55,
-    right: 15,
+    bottom: 32,
+    right: 16,
     display: "flex",
     flexDirection: "column",
   },
-  zoomButton: {
+  mapControlButton: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    minWidth: 0,
+    minHeight: 0,
     width: 32,
     height: 32,
-    borderRadius: 4,
     border: "1px solid",
     borderColor: theme.palette.grey[500],
+    borderBottom: 0,
+    borderRadius: 0,
     color: theme.palette.grey[700],
     backgroundColor: theme.palette.grey[100],
     padding: 0,
-    "&:first-of-type": {
-      borderBottomRightRadius: 0,
-      borderBottomLeftRadius: 0,
-      borderBottom: 0,
-    },
     "&:hover": {
       backgroundColor: theme.palette.grey[200],
     },
+    "&:first-of-type": {
+      borderTopRightRadius: 3,
+      borderTopLeftRadius: 3,
+    },
     "&:last-of-type": {
-      borderTopRightRadius: 0,
-      borderTopLeftRadius: 0,
+      borderBottomRightRadius: 3,
+      borderBottomLeftRadius: 3,
     },
   },
 }));
@@ -513,7 +515,8 @@ const MapControlButtons = ({
   const classes = useStyles();
 
   return (
-      <MapControlButton iconName="circle" handleClick={refresh} />
+    <Box className={classes.mapControlButtons}>
+      <MapControlButton iconName="refresh" handleClick={refresh} />
       <MapControlButton iconName="add" handleClick={zoomIn} />
       <MapControlButton iconName="minus" handleClick={zoomOut} />
     </Box>
@@ -531,7 +534,7 @@ const MapControlButton = ({
 
   return (
     <Button
-      className={classes.zoomButton}
+      className={classes.mapControlButton}
       variant="contained"
       onClick={handleClick}
     >
