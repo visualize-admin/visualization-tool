@@ -84,6 +84,7 @@ import { default as Pdf } from "@/icons/components/IcPdf";
 import { default as Play } from "@/icons/components/IcPlay";
 import { default as Previous } from "@/icons/components/IcPrevious";
 import { default as Print } from "@/icons/components/IcPrint";
+import { default as Refresh } from "@/icons/components/IcRefresh";
 import { default as Remove } from "@/icons/components/IcRemove";
 import { default as Reset } from "@/icons/components/IcReset";
 import { default as Resize } from "@/icons/components/IcResize";
@@ -215,6 +216,7 @@ export const Icons = {
   play: Play,
   previous: Previous,
   print: Print,
+  refresh: Refresh,
   remove: Remove,
   reset: Reset,
   resize: Resize,
