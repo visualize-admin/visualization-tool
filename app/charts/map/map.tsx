@@ -6,7 +6,7 @@ import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ReactMap, { LngLatLike, MapRef, ViewState } from "react-map-gl";
 
 import {
@@ -57,25 +57,21 @@ const BASE_VIEW_STATE: MinMaxZoomViewState = {
  * @param bbox Bounding box of the feature to be contained.
  * @param chartDimensions Chart's dimensions.
  */
-const getInitialViewState = ({
+const getViewStateFromBounds = ({
   bbox,
   chartDimensions,
 }: {
-  bbox: BBox | undefined;
+  bbox: BBox;
   chartDimensions: Bounds;
 }) => {
-  if (bbox) {
-    const vp = new WebMercatorViewport({
-      ...BASE_VIEW_STATE,
-      width: chartDimensions.width,
-      height: chartDimensions.height,
-    });
-    const fitted = vp.fitBounds(bbox);
+  const vp = new WebMercatorViewport({
+    ...BASE_VIEW_STATE,
+    width: chartDimensions.width,
+    height: chartDimensions.height,
+  });
+  const fitted = vp.fitBounds(bbox);
 
-    return { ...BASE_VIEW_STATE, ...fitted };
-  }
-
-  return BASE_VIEW_STATE;
+  return { ...BASE_VIEW_STATE, ...fitted };
 };
 
 /**
@@ -134,6 +130,43 @@ let globalScatterplotLayerId = 0;
 
 const FLY_TO_DURATION = 500;
 
+const useViewState = ({
+  chartDimensions,
+  bbox,
+  locked,
+}: {
+  chartDimensions: Bounds;
+  bbox: BBox | undefined;
+  locked: boolean;
+}) => {
+  const [viewState, setViewState] = useState(
+    locked && bbox
+      ? getViewStateFromBounds({ bbox, chartDimensions })
+      : BASE_VIEW_STATE
+  );
+
+  const onViewStateChange = useEvent(
+    ({ viewState }: { viewState: ViewState }) => {
+      setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
+    }
+  );
+
+  // Needed to be able to "refresh" the map to its initial position.
+  const initialViewState = useMemo(() => {
+    let newViewState: MinMaxZoomViewState | undefined = undefined;
+
+    if (bbox && !locked) {
+      newViewState = constrainZoom(viewState, bbox);
+      setViewState(newViewState);
+    }
+
+    return newViewState ?? viewState;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { initialViewState, viewState, onViewStateChange };
+};
+
 export const MapComponent = () => {
   const locale = useLocale();
   const {
@@ -147,48 +180,16 @@ export const MapComponent = () => {
     bbox,
   } = useChartState() as MapState;
   const classes = useStyles();
-
-  const isViewStateLocked = controlsType === "locked";
-  // Needed to be able to "refresh" the map to its initial position.
-  const firstViewStateRef = useRef<MinMaxZoomViewState | null>(null);
-  const initialViewState = useMemo(() => {
-    if (isViewStateLocked) {
-      return getInitialViewState({ bbox, chartDimensions: bounds });
-    } else {
-      return BASE_VIEW_STATE;
-    }
-  }, [isViewStateLocked, bbox, bounds]);
+  const locked = controlsType === "locked";
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
-  const [viewState, setViewState] = useState(initialViewState);
-  const onViewStateChange = useEvent(
-    ({ viewState }: { viewState: ViewState }) => {
-      setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
-    }
-  );
-
-  useEffect(() => {
-    if (firstViewStateRef.current) {
-      return;
-    }
-
-    let newViewState: MinMaxZoomViewState | undefined = undefined;
-
-    if (bbox) {
-      if (!isViewStateLocked) {
-        newViewState = constrainZoom(viewState, bbox);
-      } else {
-        newViewState = viewState;
-      }
-    }
-
-    if (newViewState) {
-      firstViewStateRef.current = newViewState;
-      setViewState(newViewState);
-    }
-  }, [viewState, isViewStateLocked, bbox]);
+  const { initialViewState, viewState, onViewStateChange } = useViewState({
+    chartDimensions: bounds,
+    bbox,
+    locked,
+  });
 
   const mapNodeRef = useRef<MapRef | null>(null);
   const handleRefNode = (mapRef: MapRef) => {
@@ -202,8 +203,8 @@ export const MapComponent = () => {
 
   // Reset the map to its initial state.
   const reset = () => {
-    if (firstViewStateRef.current) {
-      const { longitude, latitude, zoom } = firstViewStateRef.current;
+    if (initialViewState) {
+      const { longitude, latitude, zoom } = initialViewState;
       const newViewState = {
         center: [longitude, latitude] as LngLatLike,
         zoom,
@@ -407,7 +408,7 @@ export const MapComponent = () => {
 
   return (
     <Box>
-      {isViewStateLocked ? null : (
+      {locked ? null : (
         <div className={classes.controlButtons}>
           <ControlButton iconName="refresh" onClick={reset} />
           <ControlButton iconName="add" onClick={zoomIn} />
@@ -429,10 +430,10 @@ export const MapComponent = () => {
               height: "100%",
               position: "absolute",
             }}
-            dragPan={!isViewStateLocked}
-            scrollZoom={!isViewStateLocked}
-            doubleClickZoom={!isViewStateLocked}
-            touchZoomRotate={!isViewStateLocked}
+            dragPan={!locked}
+            scrollZoom={!locked}
+            doubleClickZoom={!locked}
+            touchZoomRotate={!locked}
             onLoad={(e) => {
               setMap(e.target);
               currentBBox.current = e.target.getBounds().toArray() as BBox;
@@ -448,7 +449,7 @@ export const MapComponent = () => {
               onViewStateChange(e);
             }}
             onResize={(e) => {
-              if (currentBBox.current && isViewStateLocked) {
+              if (currentBBox.current && locked) {
                 e.target.fitBounds(currentBBox.current, { duration: 0 });
               }
 
