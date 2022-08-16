@@ -343,14 +343,13 @@ const useMapState = (
   };
 
   const bbox = useMemo(() => {
-    if (chartProps.baseLayer.bbox !== undefined) {
-      return chartProps.baseLayer.bbox;
-    } else {
-      return getBBox(
+    return (
+      chartProps.baseLayer.bbox ??
+      getBBox(
         areaLayer.show ? features.areaLayer?.shapes : undefined,
         symbolLayer.show ? features.symbolLayer?.points : undefined
-      );
-    }
+      )
+    );
   }, [
     areaLayer.show,
     features.areaLayer?.shapes,
