@@ -23,7 +23,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { CombinedError, useClient } from "urql";
+import { useClient } from "urql";
 
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
@@ -64,6 +64,7 @@ import {
   HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
+  PossibleFiltersQueryVariables,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -212,17 +213,19 @@ const useEnsurePossibleFilters = ({
       lastFilters.current = unmappedFilters;
 
       setFetching(true);
-      const {
-        data,
-        error,
-      }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
-        .query(PossibleFiltersDocument, {
-          iri: state.dataSet,
-          sourceType: state.dataSource.type,
-          sourceUrl: state.dataSource.url,
-          filters: unmappedFilters,
-          filterKey: Object.keys(unmappedFilters).join(", "),
-        })
+      const { data, error } = await client
+        .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
+          PossibleFiltersDocument,
+          {
+            iri: state.dataSet,
+            sourceType: state.dataSource.type,
+            sourceUrl: state.dataSource.url,
+            filters: unmappedFilters,
+
+            // @ts-ignore This is to make urql requery
+            filterKey: Object.keys(unmappedFilters).join(", "),
+          }
+        )
         .toPromise();
       if (error || !data) {
         setError(error);
