@@ -139,7 +139,7 @@ export const ChartScatterplot = memo(
         {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
           <InteractiveLegendColor />
         ) : fields.segment ? (
-          <LegendColor symbol="line" />
+          <LegendColor symbol="circle" />
         ) : null}{" "}
       </ScatterplotChart>
     );

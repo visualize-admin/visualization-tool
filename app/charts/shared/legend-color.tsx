@@ -50,7 +50,7 @@ const useItemStyles = makeStyles<
   legendItem: {
     position: "relative",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "flex-start",
     fontWeight: theme.typography.fontWeightRegular,
     color: theme.palette.grey[700],
     fontSize: theme.typography.body2.fontSize,
@@ -60,7 +60,9 @@ const useItemStyles = makeStyles<
       position: "relative",
       display: "block",
       width: ".5rem",
+      marginTop: ({ symbol }) => (symbol === "line" ? "0.75rem" : "0.5rem"),
       marginRight: "0.5rem",
+      flexShrink: 0,
       backgroundColor: ({ color }) => color,
       height: ({ symbol }) =>
         symbol === "square" || symbol === "circle" ? `.5rem` : 2,
@@ -71,9 +73,6 @@ const useItemStyles = makeStyles<
 
 type SegmentConfigState<T extends ConfiguratorState = ConfiguratorState> =
   T extends { chartConfig: { fields: { segment: any } } } ? T : never;
-
-type S = SegmentConfigState<ConfiguratorState>;
-// ^?
 
 export const InteractiveLegendColor = () => {
   const [state, dispatch] = useInteractiveFilters();
