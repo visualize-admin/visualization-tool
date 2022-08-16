@@ -79,52 +79,49 @@ export const useChartFieldField = ({
   const client = useClient();
   const locale = useLocale();
 
-  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
-    async (e) => {
-      if (!state.dataSet) {
-        return;
-      }
-      if (e.target.value !== FIELD_VALUE_NONE) {
-        const dimensionIri = e.target.value as string;
-        const { data: hierarchyData } = await client
-          .query<DimensionHierarchyQuery, DimensionHierarchyQueryVariables>(
-            DimensionHierarchyDocument,
-            {
-              locale,
-              cubeIri: state.dataSet,
-              dimensionIri,
-              sourceUrl: state.dataSource.url,
-              sourceType: state.dataSource.type,
-            }
-          )
-          .toPromise();
-        const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
-          ?.hierarchy as HierarchyValue[];
+  const onChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
+    if (!state.dataSet) {
+      return;
+    }
+    if (e.target.value !== FIELD_VALUE_NONE) {
+      const dimensionIri = e.target.value as string;
+      const { data: hierarchyData } = await client
+        .query<DimensionHierarchyQuery, DimensionHierarchyQueryVariables>(
+          DimensionHierarchyDocument,
+          {
+            locale,
+            cubeIri: state.dataSet,
+            dimensionIri,
+            sourceUrl: state.dataSource.url,
+            sourceType: state.dataSource.type,
+          }
+        )
+        .toPromise();
+      const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
+        ?.hierarchy as HierarchyValue[];
 
-        // If the dimension has a hierarchy, we select 7 leaves
-        const leafs = getLeafs(tree, 7);
+      // If the dimension has a hierarchy, we select 7 leaves
+      const leafs = getLeafs(tree, 7);
 
-        dispatch({
-          type: "CHART_FIELD_CHANGED",
-          value: {
-            field,
-            dataSetMetadata,
-            componentIri: dimensionIri,
-            selectedValues: leafs,
-          },
-        });
-      } else {
-        dispatch({
-          type: "CHART_FIELD_DELETED",
-          value: {
-            field,
-            dataSetMetadata,
-          },
-        });
-      }
-    },
-    [client, locale, state.dataSet, dispatch, field, dataSetMetadata]
-  );
+      dispatch({
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          field,
+          dataSetMetadata,
+          componentIri: dimensionIri,
+          selectedValues: leafs,
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHART_FIELD_DELETED",
+        value: {
+          field,
+          dataSetMetadata,
+        },
+      });
+    }
+  });
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
