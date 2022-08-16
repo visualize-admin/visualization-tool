@@ -132,7 +132,7 @@ const constrainZoom = (
 let globalGeoJsonLayerId = 0;
 let globalScatterplotLayerId = 0;
 
-const DURATION = 500;
+const FLY_TO_DURATION = 500;
 
 export const MapComponent = () => {
   const locale = useLocale();
@@ -146,6 +146,7 @@ export const MapComponent = () => {
     bounds,
     bbox,
   } = useChartState() as MapState;
+  const classes = useStyles();
 
   const isViewStateLocked = controlsType === "locked";
   // Needed to be able to "refresh" the map to its initial position.
@@ -199,13 +200,14 @@ export const MapComponent = () => {
 
   const currentBBox = useRef<BBox>();
 
-  const refresh = () => {
+  // Reset the map to its initial state.
+  const reset = () => {
     if (firstViewStateRef.current) {
       const { longitude, latitude, zoom } = firstViewStateRef.current;
       const newViewState = {
         center: [longitude, latitude] as LngLatLike,
         zoom,
-        duration: DURATION,
+        duration: FLY_TO_DURATION,
       };
       mapNodeRef.current?.flyTo(newViewState);
     }
@@ -215,7 +217,7 @@ export const MapComponent = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
-      duration: DURATION,
+      duration: FLY_TO_DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
@@ -224,7 +226,7 @@ export const MapComponent = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
-      duration: DURATION,
+      duration: FLY_TO_DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
@@ -406,11 +408,11 @@ export const MapComponent = () => {
   return (
     <Box>
       {isViewStateLocked ? null : (
-        <MapControlButtons
-          refresh={refresh}
-          zoomIn={zoomIn}
-          zoomOut={zoomOut}
-        />
+        <div className={classes.controlButtons}>
+          <ControlButton iconName="refresh" onClick={reset} />
+          <ControlButton iconName="add" onClick={zoomIn} />
+          <ControlButton iconName="minus" onClick={zoomOut} />
+        </div>
       )}
 
       {featuresLoaded && (
@@ -472,7 +474,7 @@ export const MapComponent = () => {
 };
 
 const useStyles = makeStyles<Theme>((theme) => ({
-  mapControlButtons: {
+  controlButtons: {
     zIndex: 13,
     position: "absolute",
     bottom: 32,
@@ -480,7 +482,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
-  mapControlButton: {
+  controlButton: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -509,40 +511,20 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const MapControlButtons = ({
-  refresh,
-  zoomIn,
-  zoomOut,
-}: {
-  refresh: () => void;
-  zoomIn: () => void;
-  zoomOut: () => void;
-}) => {
-  const classes = useStyles();
-
-  return (
-    <Box className={classes.mapControlButtons}>
-      <MapControlButton iconName="refresh" handleClick={refresh} />
-      <MapControlButton iconName="add" handleClick={zoomIn} />
-      <MapControlButton iconName="minus" handleClick={zoomOut} />
-    </Box>
-  );
-};
-
-const MapControlButton = ({
+const ControlButton = ({
   iconName,
-  handleClick,
+  onClick,
 }: {
   iconName: IconName;
-  handleClick: () => void;
+  onClick: () => void;
 }) => {
   const classes = useStyles();
 
   return (
     <Button
-      className={classes.mapControlButton}
+      className={classes.controlButton}
       variant="contained"
-      onClick={handleClick}
+      onClick={onClick}
     >
       <Icon name={iconName} size={24} />
     </Button>
