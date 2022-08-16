@@ -34,7 +34,8 @@ export const BASE_VIEW_STATE: MinMaxZoomViewState = {
  * into account.
  *
  * @param bbox Bounding box of the feature to be contained.
- * @param chartDimensions Chart's dimensions.
+ * @param chartDimensions Chart's dimensions needed to correctly initialize view state
+ * in locked mode.
  */
 export const getViewStateFromBounds = ({
   bbox,
@@ -104,6 +105,14 @@ export const constrainZoom = (
   }
 };
 
+/**
+ * @param bbox Bounding box saved in chart config or bounding box of visible features.
+ * @param chartDimensions Chart's dimensions needed to correctly initialize view state
+ * in locked mode.
+ * @param locked Boolean describing whether a map is locked (interactions disabled,
+ * bbox saved in chart config and maintained during resizing) or not (interactions allowed,
+ * initial view state dynamically adjusted to fit visible features).
+ */
 type ViewStateInitializationProps = {
   bbox: BBox | undefined;
   chartDimensions: Bounds;
@@ -120,6 +129,13 @@ export const initializeViewState = ({
     : BASE_VIEW_STATE;
 };
 
+/**
+ * Hook used by a map chart that controls its view state.
+ *
+ * In addition to keeping track on the current view state, it also exposes
+ * the initial view state of the map and makes sure that it contains all features
+ * in the first place (if the map was not initialized with a locked mode).
+ */
 export const useViewState = (props: ViewStateInitializationProps) => {
   const { bbox, locked } = props;
   const [viewState, setViewState] = useState(initializeViewState(props));
