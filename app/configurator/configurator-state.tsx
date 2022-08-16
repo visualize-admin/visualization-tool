@@ -678,16 +678,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           dataSetMetadata,
           selectedValues: actionSelectedValues,
         } = action.value;
+        const component = dataSetMetadata.dimensions.find(
+          (dim) => dim.iri === componentIri
+        );
+        const selectedValues = actionSelectedValues
+          ? actionSelectedValues
+          : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) || [];
         if (!f) {
           // The field was not defined before
           if (field === "segment") {
-            const component = dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === componentIri
-            );
-            const selectedValues = actionSelectedValues
-              ? actionSelectedValues
-              : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) ||
-                [];
             const colorMapping =
               component?.values &&
               mapValueIrisToColor({
@@ -735,9 +734,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             draft.chartConfig.fields.segment &&
             "palette" in draft.chartConfig.fields.segment
           ) {
-            const component = dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === componentIri
-            );
             const colorMapping =
               component &&
               mapValueIrisToColor({
@@ -748,6 +744,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
             draft.chartConfig.fields.segment.componentIri = componentIri;
             draft.chartConfig.fields.segment.colorMapping = colorMapping;
+            draft.chartConfig.filters[componentIri] = {
+              type: "multi",
+              values: Object.fromEntries(
+                selectedValues.map((v) => v.value).map((x) => [x, true])
+              ),
+            };
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {
@@ -757,9 +759,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 );
             }
           } else {
-            const component = dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === componentIri
-            );
             // Reset other field options
             (draft.chartConfig.fields as GenericFields)[field] = {
               componentIri: componentIri,
