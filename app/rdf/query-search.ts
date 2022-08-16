@@ -5,7 +5,6 @@ import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
-import { ResultRow } from "sparql-http-client/ResultParser";
 
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
@@ -13,14 +12,8 @@ import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
 import truthy from "@/utils/truthy";
 
-const parseFloatZeroed = (s: string) => {
-  const n = parseFloat(s);
-  if (Number.isNaN(n)) {
-    return 0;
-  } else {
-    return n;
-  }
-};
+import { computeScores } from "./query-search-score-utils";
+
 const toNamedNode = (x: string) => {
   return `<${x}>`;
 };
@@ -37,18 +30,6 @@ const makeInFilter = (varName: string, values: string[]) => {
 type RdfValue<T> = {
   value: T;
 };
-const parseScoreRow = (x: ResultRow) => {
-  return {
-    cubeIri: x.cube.value,
-    scoreName: parseFloatZeroed(x.scoreName?.value),
-    scoreDescription: parseFloatZeroed(x.scoreDescription?.value),
-    scoreTheme: parseFloatZeroed(x.scoreTheme?.value),
-    scorePublisher: parseFloatZeroed(x.scorePublisher?.value),
-    scoreCreator: parseFloatZeroed(x.scoreCreator?.value),
-  };
-};
-type ScoreKey = Exclude<keyof ReturnType<typeof parseScoreRow>, "cubeIri">;
-
 export const searchCubes = async ({
   query,
   locale,
@@ -152,42 +133,9 @@ export const searchCubes = async ({
     operation: "postUrlencoded",
   });
 
-  const scores = scoresRaw.map((r) => parseScoreRow(r));
-
-  // Reduce to a single weighted score
-  const weights: Record<ScoreKey, number> = {
-    scoreName: 5,
-    scoreDescription: 2,
-    scoreTheme: 1,
-    scorePublisher: 1,
-    scoreCreator: 1,
-  };
-
-  const infoPerCube = scores.reduce(
-    (acc, scoreRow) => {
-      let cubeScore = acc[scoreRow.cubeIri]?.score ?? 0;
-      for (let [key, weight] of Object.entries(weights)) {
-        const attrScore = scoreRow[key as ScoreKey] ?? 0;
-        if (attrScore > 0) {
-          cubeScore = cubeScore + scoreRow[key as ScoreKey] * weight;
-        }
-      }
-      if (cubeScore > 0 || !query || query.length === 0) {
-        acc[scoreRow.cubeIri] = acc[scoreRow.cubeIri] || {
-          score: 0,
-        };
-        acc[scoreRow.cubeIri].score = cubeScore;
-      }
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        score: number;
-        highlights: Record<ScoreKey, string>;
-      }
-    >
-  );
+  const infoPerCube = computeScores(scoresRaw, {
+    keepZeros: !query || query.length === 0,
+  });
 
   // Find information on cubes
   // Potential optimisation: filter out cubes that are below some threshold
