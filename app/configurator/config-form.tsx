@@ -21,6 +21,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   DimensionHierarchyDocument,
   DimensionHierarchyQuery,
+  DimensionHierarchyQueryVariables,
   DimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
@@ -86,11 +87,16 @@ export const useChartFieldField = ({
       if (e.target.value !== FIELD_VALUE_NONE) {
         const dimensionIri = e.target.value as string;
         const { data: hierarchyData } = await client
-          .query(DimensionHierarchyDocument, {
-            locale,
-            cubeIri: state.dataSet,
-            dimensionIri,
-          })
+          .query<DimensionHierarchyQuery, DimensionHierarchyQueryVariables>(
+            DimensionHierarchyDocument,
+            {
+              locale,
+              cubeIri: state.dataSet,
+              dimensionIri,
+              sourceUrl: state.dataSource.url,
+              sourceType: state.dataSource.type,
+            }
+          )
           .toPromise();
         const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
           ?.hierarchy as HierarchyValue[];
