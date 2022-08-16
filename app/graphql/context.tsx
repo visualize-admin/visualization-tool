@@ -74,7 +74,21 @@ const createContextContent = async ({
     endpointUrl: sourceUrl,
   });
   const loaders = await createLoaders(locale, sparqlClient, sparqlClientStream);
-  return { loaders, sparqlClient, sparqlClientStream };
+  return new Proxy(
+    { loaders, sparqlClient, sparqlClientStream },
+    {
+      get(target, prop, receiver) {
+        if (prop === "sparqlClient" || prop === "sparqlClientStream") {
+          if (!sourceUrl) {
+            throw new Error(
+              'To use sparqlClient or sparqlClientStream from the GraphQL context, your query must have a "sourceUrl" variable'
+            );
+          }
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    }
+  );
 };
 
 export const createContext = () => {
