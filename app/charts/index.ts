@@ -258,7 +258,7 @@ export const getInitialConfig = ({
         },
         baseLayer: {
           show: true,
-          controlsType: "dynamic",
+          locked: false,
           bbox: undefined,
         },
       };

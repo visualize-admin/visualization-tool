@@ -16,6 +16,7 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
+  ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
@@ -67,7 +68,7 @@ const BaseLayerSettings = memo(() => {
   useEffect(() => {
     const map = getMap();
 
-    if (chartConfig.baseLayer.controlsType === "locked") {
+    if (chartConfig.baseLayer.locked) {
       if (map !== null) {
         dispatch({
           type: "CHART_OPTION_CHANGED",
@@ -88,7 +89,7 @@ const BaseLayerSettings = memo(() => {
         },
       });
     }
-  }, [chartConfig.baseLayer.controlsType, dispatch]);
+  }, [chartConfig.baseLayer.locked, dispatch]);
 
   return (
     <ControlSection>
@@ -104,25 +105,14 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
-        {/* FIXME: change the styles of MUI components to match design specs */}
-        <Box sx={{ ml: "6px" }}>
-          <ChartOptionRadioField
-            label={t({
-              id: "chart.map.layers.base.view.dynamic",
-              message: "Dynamic view",
-            })}
-            field={null}
-            path="baseLayer.controlsType"
-            value="dynamic"
-          />
-          <ChartOptionRadioField
+        <Box sx={{ ml: 4, mt: 4 }}>
+          <ChartOptionSwitchField
             label={t({
               id: "chart.map.layers.base.view.locked",
               message: "Locked view",
             })}
             field={null}
-            path="baseLayer.controlsType"
-            value="locked"
+            path="baseLayer.locked"
           />
         </Box>
       </ControlSectionContent>

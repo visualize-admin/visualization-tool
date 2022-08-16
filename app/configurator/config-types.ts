@@ -482,7 +482,7 @@ export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({
   show: t.boolean,
-  controlsType: t.union([t.literal("dynamic"), t.literal("locked")]),
+  locked: t.boolean,
   bbox: t.union([BBox, t.undefined]),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;

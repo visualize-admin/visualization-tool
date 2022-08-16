@@ -171,7 +171,7 @@ export const MapComponent = () => {
   const locale = useLocale();
   const {
     showBaseLayer,
-    controlsType,
+    locked,
     features,
     identicalLayerComponentIris,
     areaLayer,
@@ -180,7 +180,6 @@ export const MapComponent = () => {
     bbox,
   } = useChartState() as MapState;
   const classes = useStyles();
-  const locked = controlsType === "locked";
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
