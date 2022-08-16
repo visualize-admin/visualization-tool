@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import React, { memo, useEffect, useMemo } from "react";
 
 import { getMap } from "@/charts/map/ref";
@@ -161,12 +161,6 @@ export const AreaLayerSettings = memo(
       | GeoFeature[]
       | undefined;
 
-    const hierarchyLevelOptions = useMemo(() => {
-      return [
-        ...new Set(geometries?.map((d) => d.properties.hierarchyLevel)),
-      ]?.map((d) => ({ value: d, label: `${d}` }));
-    }, [geometries]);
-
     const measuresOptions = useMemo(() => {
       return metaData.measures.map((d) => ({
         value: d.iri,
@@ -222,25 +216,6 @@ export const AreaLayerSettings = memo(
               field={activeField}
               path="componentIri"
               options={geoShapesDimensionsOptions}
-              disabled={isHidden}
-            />
-          </ControlSectionContent>
-        </ControlSection>
-        <ControlSection>
-          <SectionTitle iconName="list">
-            {t({ id: "controls.hierarchy", message: "Hierarchy level" })}
-          </SectionTitle>
-          <ControlSectionContent side="right">
-            <ChartOptionSelectField<number>
-              id="areaLayer.hierarchyLevel"
-              label={t({
-                id: "controls.hierarchy.select",
-                message: "Select a hierarchy level",
-              })}
-              field={activeField}
-              path="hierarchyLevel"
-              options={hierarchyLevelOptions}
-              getValue={(d) => +d}
               disabled={isHidden}
             />
           </ControlSectionContent>
@@ -311,45 +286,47 @@ export const AreaLayerSettings = memo(
             {colorScaleType === "discrete" && nbOfGeoShapes >= 3 && (
               <>
                 <FieldSetLegend legendTitle="Interpolation" />
-                <ChartOptionSelectField
-                  id="areaLayer.colorScaleInterpolationType"
-                  label={null}
-                  field={activeField}
-                  path="colorScaleInterpolationType"
-                  options={[
-                    {
-                      label: t({
-                        id: "chart.map.layers.area.discretization.quantize",
-                        message: "Quantize (equal intervals)",
-                      }),
-                      value: "quantize",
-                    },
-                    {
-                      label: t({
-                        id: "chart.map.layers.area.discretization.quantiles",
-                        message: "Quantiles (equal distribution of values)",
-                      }),
-                      value: "quantile",
-                    },
-                    {
-                      label: t({
-                        id: "chart.map.layers.area.discretization.jenks",
-                        message: "Jenks (natural breaks)",
-                      }),
-                      value: "jenks",
-                    },
-                  ]}
-                  disabled={isHidden}
-                />
-                <ChartOptionSelectField<number>
-                  id="areaLayer.nbClass"
-                  label="Number of classes"
-                  field={activeField}
-                  path="nbClass"
-                  options={colorClassesOptions}
-                  getValue={(d) => +d}
-                  disabled={isHidden}
-                />
+                <Stack spacing={2}>
+                  <ChartOptionSelectField
+                    id="areaLayer.colorScaleInterpolationType"
+                    label={null}
+                    field={activeField}
+                    path="colorScaleInterpolationType"
+                    options={[
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantize",
+                          message: "Quantize (equal intervals)",
+                        }),
+                        value: "quantize",
+                      },
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantiles",
+                          message: "Quantiles (equal distribution of values)",
+                        }),
+                        value: "quantile",
+                      },
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.jenks",
+                          message: "Jenks (natural breaks)",
+                        }),
+                        value: "jenks",
+                      },
+                    ]}
+                    disabled={isHidden}
+                  />
+                  <ChartOptionSelectField<number>
+                    id="areaLayer.nbClass"
+                    label="Number of classes"
+                    field={activeField}
+                    path="nbClass"
+                    options={colorClassesOptions}
+                    getValue={(d) => +d}
+                    disabled={isHidden}
+                  />
+                </Stack>
               </>
             )}
           </ControlSectionContent>

@@ -313,7 +313,7 @@ theme.components = {
       },
       sizeMedium: {
         fontSize: 14,
-        lineHeight: "24px",
+        lineHeight: "20px",
         minHeight: 40,
       },
       sizeLarge: {

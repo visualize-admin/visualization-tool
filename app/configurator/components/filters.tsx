@@ -14,10 +14,11 @@ import {
   Drawer as MuiDrawer,
   Theme,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { groups } from "d3";
+import { ascending, groups } from "d3";
 import { get, keyBy, sortBy, groupBy } from "lodash";
 import React, {
   forwardRef,
@@ -58,11 +59,15 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
+
+import { interlace } from "../../utils/interlace";
+import { ColorMapping, ConfiguratorState } from "../config-types";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -112,9 +117,22 @@ const useStyles = makeStyles((theme: Theme) => {
       borderRadius: "4px",
       width: "var(--colorBoxSize)",
       height: "var(--colorBoxSize)",
+      flexShrink: 0,
       boxSizing: "border-box",
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
+      alignSelf: "flex-start",
+      marginTop: "0.125rem",
+    },
+    optionLabel: {
+      flexGrow: 1,
+    },
+    optionCheck: {
+      width: 16,
+      height: 16,
+      flexShrink: 0,
+      alignSelf: "flex-start",
+      marginTop: "0.125rem",
     },
     listSubheader: {
       minHeight: "3rem",
@@ -160,13 +178,11 @@ const AutocompletePopperStyled = styled("div")(({ theme }) => ({
   [`& .${autocompleteClasses.listbox}`]: {
     maxHeight: "max-content",
     [`& .${autocompleteClasses.option}`]: {
-      display: "grid",
-      // color box, label, selected icon
-      gridTemplateColumns: "min-content 1fr min-content",
-      gridTemplateRows: "auto",
-      gridColumnGap: "var(--columnGap)",
+      display: "flex",
       minHeight: "auto",
-      alignItems: "flex-start",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      gap: "0.5rem",
       padding: "8px 16px",
 
       '&[aria-selected="true"]': {
@@ -227,6 +243,21 @@ const getOptionsFromTree = (tree: HierarchyValue[]) => {
 
 type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
 
+const getColorMapping = (
+  config: ConfiguratorState,
+  colorConfigPath: string | undefined
+) => {
+  if (!config.activeField) {
+    return;
+  }
+  const colorMappingPath = `${config.activeField}.${
+    colorConfigPath ? `${colorConfigPath}.` : ""
+  }colorMapping`;
+  return get(config.chartConfig.fields, colorMappingPath) as
+    | ColorMapping
+    | undefined;
+};
+
 const MultiFilterContent = ({
   tree,
   dimensionIri,
@@ -242,14 +273,14 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues, getValueColor } = useMultiFilterContext();
+  const { activeKeys, allValues, colorConfigPath } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
     const optionsByValue = keyBy(flat, (x) => x.value);
     const optionsByParent = groupBy(flat, groupByParent);
     return {
-      options: sortBy(flat, groupByParent),
+      options: sortBy(flat, [groupByParent, (x) => x.label]),
       optionsByValue,
       optionsByParent,
     };
@@ -258,9 +289,20 @@ const MultiFilterContent = ({
   const { values, valueGroups } = useMemo(() => {
     const values = (
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
-      []
+      Object.keys(optionsByValue)
     ).map((v) => optionsByValue[v]);
-    const grouped = groups(values, groupByParent);
+    const grouped = groups(values, groupByParent)
+      .sort(
+        (a, b) =>
+          ascending(explodeParents(a[0]).length, explodeParents(b[0]).length) ||
+          ascending(a[0], b[0])
+      )
+      .map(([parent, group]) => {
+        return [
+          parent,
+          group.sort((a, b) => ascending(a.label, b.label)),
+        ] as const;
+      });
     return {
       values,
       valueGroups: grouped,
@@ -294,10 +336,27 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
+  // Recomputes color palette making sure that used values
+  // are sorted first, so they have different colors
+  const handleRecomputeColorMapping = useEvent(() => {
+    const usedValues = new Set(values.map((v) => v.value));
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        dimensionIri,
+        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+      },
+    });
+  });
+
+  const hasColorMapping = useMemo(() => {
+    return !!getColorMapping(config, colorConfigPath);
+  }, [colorConfigPath, config]);
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" gap="0.75rem">
           <Flex gap="0.75rem">
             <Button
               onClick={selectAll}
@@ -331,13 +390,25 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
+            {hasColorMapping ? (
+              <Tooltip
+                title={
+                  <Trans id="controls.filters.select.refresh-colors">
+                    Refresh colors
+                  </Trans>
+                }
+              >
+                <IconButton
+                  sx={{ ml: 1, my: -2 }}
+                  size="small"
+                  onClick={handleRecomputeColorMapping}
+                >
+                  <SvgIcFormatting fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </Typography>
-          <Typography
-            variant="body2"
-            color="grey.700"
-            sx={{ display: "inline" }}
-            component="span"
-          >
+          <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
               {activeKeys.size} of {allValues.length}
             </Trans>
@@ -356,8 +427,13 @@ const MultiFilterContent = ({
             {children.map((v) => {
               return (
                 <Flex key={v.value} className={classes.selectedValueRow}>
-                  <MultiFilterFieldColorPicker value={v.value} />
-                  <Typography variant="body2">{v?.label}</Typography>
+                  {hasColorMapping ? (
+                    <MultiFilterFieldColorPicker value={v.value} />
+                  ) : null}
+                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                    {v?.label}
+                  </Typography>
+                  {hasColorMapping ? null : <SvgIcCheck />}
                 </Flex>
               );
             })}
@@ -372,25 +448,12 @@ const MultiFilterContent = ({
             optionsByParent={optionsByParent}
             onClose={handleCloseAutocomplete}
             values={values}
+            hasColorMapping={hasColorMapping}
           />
         </ClickAwayListener>
       </Drawer>
     </Box>
   );
-};
-
-const interlace = <T extends unknown, I extends unknown>(
-  arr: T[],
-  interlacer: I
-) => {
-  const res = new Array(arr.length * 2 - 1);
-  for (let i = 0; i < arr.length; i++) {
-    res[i * 2] = arr[i];
-    if (i < arr.length - 1) {
-      res[i * 2 + 1] = interlacer;
-    }
-  }
-  return res;
 };
 
 const useBreadcrumbStyles = makeStyles({
@@ -414,8 +477,17 @@ const DrawerContent = forwardRef<
     options: AutocompleteOption[];
     values: AutocompleteOption[];
     pendingValuesRef: MutableRefObject<AutocompleteOption[]>;
+    hasColorMapping: boolean;
   }
->(({ optionsByParent, onClose, values, options, pendingValuesRef }, ref) => {
+>((props, ref) => {
+  const {
+    optionsByParent,
+    onClose,
+    values,
+    options,
+    pendingValuesRef,
+    hasColorMapping,
+  } = props;
   const classes = useStyles();
   const { getValueColor } = useMultiFilterContext();
 
@@ -527,28 +599,34 @@ const DrawerContent = forwardRef<
     (props, option, { selected }) => {
       return (
         <li {...props}>
-          <Box
-            className={classes.optionColor}
-            sx={{
-              border: selected ? "none" : "1px solid #ccc",
-              backgroundColor: selected
-                ? getValueColor(option.value)
-                : "transparent",
-            }}
-          />
-          <Box>{option.label}</Box>
-          <Box
-            component={SvgIcCheck}
-            sx={{
+          {hasColorMapping ? (
+            <div
+              className={classes.optionColor}
+              style={{
+                border: "1px solid #ccc",
+                backgroundColor: selected
+                  ? getValueColor(option.value)
+                  : "transparent",
+              }}
+            />
+          ) : null}
+          <div className={classes.optionLabel}>{option.label}</div>
+          <SvgIcCheck
+            className={classes.optionCheck}
+            style={{
               visibility: selected ? "visible" : "hidden",
-              width: 16,
-              height: 16,
             }}
           />
         </li>
       );
     },
-    [classes.optionColor, getValueColor]
+    [
+      classes.optionCheck,
+      classes.optionColor,
+      classes.optionLabel,
+      getValueColor,
+      hasColorMapping,
+    ]
   );
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
@@ -573,6 +651,7 @@ const DrawerContent = forwardRef<
         value={pendingValues}
         multiple
         open
+        noOptionsText={t({ id: "No results" })}
         renderTags={() => null}
         onChange={handleSelect}
         onClose={handleAutocompleteClose}

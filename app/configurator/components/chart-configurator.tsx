@@ -579,37 +579,36 @@ export const ChartConfigurator = ({
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
+                          className={classes.filterRow}
                           {...provided.dragHandleProps}
                           {...provided.draggableProps}
                         >
-                          <Box className={classes.filterRow}>
-                            <DataFilterSelectGeneric
-                              key={dimension.iri}
-                              dimension={dimension}
-                              index={i}
-                              disabled={fetching}
-                              onRemove={() =>
-                                handleRemoveDimensionFilter(dimension)
-                              }
+                          <DataFilterSelectGeneric
+                            key={dimension.iri}
+                            dimension={dimension}
+                            index={i}
+                            disabled={fetching}
+                            onRemove={() =>
+                              handleRemoveDimensionFilter(dimension)
+                            }
+                          />
+                          <Box className={classes.dragButtons}>
+                            <MoveDragButtons
+                              moveUpButtonProps={{
+                                title: t({ id: "Move filter up" }),
+                              }}
+                              moveDownButtonProps={{
+                                title: t({ id: "Move filter down" }),
+                              }}
+                              dragButtonProps={{
+                                title: t({
+                                  id: "Drag filters to reorganize",
+                                }),
+                              }}
+                              className="buttons"
+                              onClickUp={() => handleMove(dimension.iri, -1)}
+                              onClickDown={() => handleMove(dimension.iri, 1)}
                             />
-                            <Box className={classes.dragButtons}>
-                              <MoveDragButtons
-                                moveUpButtonProps={{
-                                  title: t({ id: "Move filter up" }),
-                                }}
-                                moveDownButtonProps={{
-                                  title: t({ id: "Move filter down" }),
-                                }}
-                                dragButtonProps={{
-                                  title: t({
-                                    id: "Drag filters to reorganize",
-                                  }),
-                                }}
-                                className="buttons"
-                                onClickUp={() => handleMove(dimension.iri, -1)}
-                                onClickDown={() => handleMove(dimension.iri, 1)}
-                              />
-                            </Box>
                           </Box>
                         </div>
                       )}

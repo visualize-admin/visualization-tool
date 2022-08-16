@@ -19,9 +19,11 @@ import {
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { dfs } from "@/lib/dfs";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
+import { interlace } from "@/utils/interlace";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -209,8 +211,16 @@ export const LegendColor = memo(function LegendColor({
                 className={classes.legendGroup}
                 key={g.map((n) => n.label).join(" > ")}
               >
-                <Typography variant="h5" gutterBottom>
-                  {g.map((n) => n.label).join(" > ")}
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  display="flex"
+                  alignItems="center"
+                >
+                  {interlace(
+                    g.map((n) => n.label),
+                    <SvgIcChevronRight />
+                  )}
                 </Typography>
                 {colorValues.map((item, i) => (
                   <LegendItem
