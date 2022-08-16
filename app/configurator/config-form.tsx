@@ -80,6 +80,9 @@ export const useChartFieldField = ({
 
   const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
     async (e) => {
+      if (!state.dataSet) {
+        return;
+      }
       if (e.target.value !== FIELD_VALUE_NONE) {
         const dimensionIri = e.target.value as string;
         const { data: hierarchyData } = await client
