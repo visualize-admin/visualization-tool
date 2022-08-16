@@ -23,7 +23,7 @@ const Search = ({
       query: query,
       filters: filters,
       includeDrafts: !!includeDrafts,
-      sourceUrl: "https://int.lindas.admin.ch",
+      sourceUrl: "https://int.lindas.admin.ch/query",
       sourceType: "sparql",
     },
   });
