@@ -19,7 +19,7 @@ export type MinMaxZoomViewState = Pick<
   height: number;
 };
 
-const BASE_VIEW_STATE: MinMaxZoomViewState = {
+export const BASE_VIEW_STATE: MinMaxZoomViewState = {
   minZoom: 1,
   maxZoom: 13,
   latitude: 46.8182,
@@ -104,20 +104,25 @@ export const constrainZoom = (
   }
 };
 
-export const useViewState = ({
-  chartDimensions,
-  bbox,
-  locked,
-}: {
-  chartDimensions: Bounds;
+type ViewStateInitializationProps = {
   bbox: BBox | undefined;
+  chartDimensions: Bounds;
   locked: boolean;
-}) => {
-  const [viewState, setViewState] = useState(
-    locked && bbox
-      ? getViewStateFromBounds({ bbox, chartDimensions })
-      : BASE_VIEW_STATE
-  );
+};
+
+export const initializeViewState = ({
+  bbox,
+  chartDimensions,
+  locked,
+}: ViewStateInitializationProps) => {
+  return bbox && locked
+    ? getViewStateFromBounds({ bbox, chartDimensions })
+    : BASE_VIEW_STATE;
+};
+
+export const useViewState = (props: ViewStateInitializationProps) => {
+  const { bbox, locked } = props;
+  const [viewState, setViewState] = useState(initializeViewState(props));
 
   const onViewStateChange = useEvent(
     ({ viewState }: { viewState: ViewState }) => {
