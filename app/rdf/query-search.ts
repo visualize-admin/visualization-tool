@@ -1,4 +1,4 @@
-import { DESCRIBE, SELECT } from "@tpluscode/sparql-builder";
+import { DESCRIBE, SELECT, sparql } from "@tpluscode/sparql-builder";
 import clownface from "clownface";
 import { descending } from "d3";
 import { Cube } from "rdf-cube-view-query";
@@ -80,8 +80,6 @@ export const searchCubes = async ({
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
-    ?cube ${ns.schema.description} ?description.
-    ?cube ${ns.dcterms.publisher} ?publisher.
     
     ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
     ?cube ${ns.schema.creativeWorkStatus} ?workStatus.
@@ -110,47 +108,51 @@ export const searchCubes = async ({
     ?versionHistory ${ns.schema.hasPart} ?cube.
     ?cube ${ns.dcat.theme} ?theme.
 
-    # TODO Improve performance of query that use OPTIONAL
-    # We want to retrieve cubes whether they have a theme
-    OPTIONAL {
-     ?theme ${ns.schema.name} ?themeName.
-    }
     ${makeInFilter("theme", themeValues)}
-
-    # TODO Improve performance of query that use OPTIONAL
-    # We want to retrieve cubes whether they have a creator
-    OPTIONAL {
-     ?cube ${ns.dcterms.creator} ?creator.
-    }
     ${makeInFilter("creator", creatorValues)}
-
-    ?creator ${ns.schema.name} ?creatorLabel.
 
     ${
       query && query.length > 0
-        ? `
+        ? sparql`
       { (?name ?scoreName) <tag:stardog:api:property:textMatch> "${query}". }
-      UNION {{
-        (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${query}" .
-      }}
-      UNION  {{
-        (?publisher ?scorePublisher) <tag:stardog:api:property:textMatch> "${query}"  .
-      }}
-      UNION  {{
-        (?themeName ?scoreTheme) <tag:stardog:api:property:textMatch> "${query}"  .
-      }}
-      UNION  {{
-        (?creatorLabel ?scoreCreator) <tag:stardog:api:property:textMatch> "${query}"  .
-      }}
+      UNION {
+        OPTIONAL {
+          ?cube ${ns.schema.description} ?description.
+          (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${query}" .
+        }
+      }
+      UNION  {
+        OPTIONAL {
+          ?cube ${ns.dcterms.publisher} ?publisher.
+          (?publisher ?scorePublisher) <tag:stardog:api:property:textMatch> "${query}"  .
+        }
+      }
+      UNION  {
+        OPTIONAL {
+          ?theme ${ns.schema.name} ?themeName.   
+          (?themeName ?scoreTheme)
+            <tag:stardog:api:property:textMatch> "${query}"  .
+        }
+      }
+      UNION  {
+        OPTIONAL {
+          ?cube ${ns.dcterms.creator} ?creator.
+          ?creator ${ns.schema.name} ?creatorLabel.
+          (?creatorLabel ?scoreCreator)
+            <tag:stardog:api:property:textMatch> "${query}"  .
+        }
+      }
       `
         : ""
     }
 
   `;
 
-  const scores = (await scoresQuery.execute(sparqlClient.query)).map((r) =>
-    parseScoreRow(r)
-  );
+  const scoresRaw = await scoresQuery.execute(sparqlClient.query, {
+    operation: "postUrlencoded",
+  });
+
+  const scores = scoresRaw.map((r) => parseScoreRow(r));
 
   // Reduce to a single weighted score
   const weights: Record<ScoreKey, number> = {
@@ -196,7 +198,9 @@ export const searchCubes = async ({
     throw new Error("Must pass locale");
   }
 
-  const cubeStream = await cubesQuery.execute(sparqlClientStream.query);
+  const cubeStream = await cubesQuery.execute(sparqlClientStream.query, {
+    operation: "postUrlencoded",
+  });
   const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
   const cf = clownface({ dataset: cubeDataset });
 
