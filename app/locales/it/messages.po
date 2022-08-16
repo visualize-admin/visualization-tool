@@ -120,59 +120,55 @@ msgid "button.share"
 msgstr "Condividi"
 
 #: app/configurator/components/ui-helpers.ts:562
-#: app/configurator/map/map-chart-options.tsx:204
+#: app/configurator/map/map-chart-options.tsx:195
 msgid "chart.map.layers.area"
 msgstr "Aree"
 
-#: app/configurator/map/map-chart-options.tsx:288
+#: app/configurator/map/map-chart-options.tsx:279
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Continuo"
 
-#: app/configurator/map/map-chart-options.tsx:301
+#: app/configurator/map/map-chart-options.tsx:292
 msgid "chart.map.layers.area.discretization.discrete"
 msgstr "Discreto"
 
-#: app/configurator/map/map-chart-options.tsx:344
+#: app/configurator/map/map-chart-options.tsx:335
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (interruzioni naturali)"
 
-#: app/configurator/map/map-chart-options.tsx:337
+#: app/configurator/map/map-chart-options.tsx:328
 msgid "chart.map.layers.area.discretization.quantiles"
 msgstr "Quantili (distribuzione omogenea dei valori)"
 
-#: app/configurator/map/map-chart-options.tsx:330
+#: app/configurator/map/map-chart-options.tsx:321
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Intervalli uguali"
 
 #: app/configurator/components/chart-configurator.tsx:680
 #: app/configurator/components/ui-helpers.ts:558
-#: app/configurator/map/map-chart-options.tsx:96
+#: app/configurator/map/map-chart-options.tsx:97
 msgid "chart.map.layers.base"
 msgstr "Visualizzazione della mappa"
 
-#: app/configurator/map/map-chart-options.tsx:100
+#: app/configurator/map/map-chart-options.tsx:101
 msgid "chart.map.layers.base.show"
 msgstr "Mostra mappa del mondo"
 
-#: app/configurator/map/map-chart-options.tsx:109
-msgid "chart.map.layers.base.view.dynamic"
-msgstr "Vista dinamica"
-
-#: app/configurator/map/map-chart-options.tsx:118
+#: app/configurator/map/map-chart-options.tsx:110
 msgid "chart.map.layers.base.view.locked"
 msgstr "Vista bloccata"
 
-#: app/configurator/map/map-chart-options.tsx:208
-#: app/configurator/map/map-chart-options.tsx:423
+#: app/configurator/map/map-chart-options.tsx:199
+#: app/configurator/map/map-chart-options.tsx:414
 msgid "chart.map.layers.show"
 msgstr "Mostra il livello"
 
 #: app/configurator/components/ui-helpers.ts:566
-#: app/configurator/map/map-chart-options.tsx:419
+#: app/configurator/map/map-chart-options.tsx:410
 msgid "chart.map.layers.symbol"
 msgstr "Simboli"
 
-#: app/configurator/map/map-chart-options.tsx:507
+#: app/configurator/map/map-chart-options.tsx:498
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "In questo set di dati non ci sono dimensioni geografiche da mostrare!"
 
@@ -254,8 +250,8 @@ msgid "controls.chart.type.table"
 msgstr "Tabella"
 
 #: app/configurator/components/ui-helpers.ts:544
-#: app/configurator/map/map-chart-options.tsx:277
-#: app/configurator/map/map-chart-options.tsx:473
+#: app/configurator/map/map-chart-options.tsx:268
+#: app/configurator/map/map-chart-options.tsx:464
 msgid "controls.color"
 msgstr "Colore"
 
@@ -276,7 +272,7 @@ msgstr "Ripristina la tavolozza dei colori"
 msgid "controls.color.palette.sequential"
 msgstr "Sequenziale"
 
-#: app/configurator/map/map-chart-options.tsx:477
+#: app/configurator/map/map-chart-options.tsx:468
 msgid "controls.color.select"
 msgstr "Seleziona un colore"
 
@@ -296,19 +292,19 @@ msgstr "impilate"
 msgid "controls.description"
 msgstr "Descrizione"
 
-#: app/configurator/map/map-chart-options.tsx:219
-#: app/configurator/map/map-chart-options.tsx:434
+#: app/configurator/map/map-chart-options.tsx:210
+#: app/configurator/map/map-chart-options.tsx:425
 msgid "controls.dimension.geographical"
 msgstr "Dimensione geografica"
 
-#: app/configurator/components/field.tsx:668
+#: app/configurator/components/field.tsx:669
 msgid "controls.dimension.none"
 msgstr "Nessuno"
 
 #: app/charts/shared/chart-data-filters.tsx:214
-#: app/configurator/components/field.tsx:125
-#: app/configurator/components/field.tsx:182
-#: app/configurator/components/field.tsx:282
+#: app/configurator/components/field.tsx:126
+#: app/configurator/components/field.tsx:183
+#: app/configurator/components/field.tsx:283
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
@@ -338,11 +334,11 @@ msgstr "Filtri selezionati"
 msgid "controls.filters.time.range"
 msgstr "intervallo di tempo"
 
-#: app/configurator/map/map-chart-options.tsx:240
+#: app/configurator/map/map-chart-options.tsx:231
 msgid "controls.hierarchy"
 msgstr "Livello gerarchico"
 
-#: app/configurator/map/map-chart-options.tsx:245
+#: app/configurator/map/map-chart-options.tsx:236
 msgid "controls.hierarchy.select"
 msgstr "Selezionare un livello gerarchico"
 
@@ -411,8 +407,8 @@ msgid "controls.language.italian"
 msgstr "Italiano"
 
 #: app/configurator/components/ui-helpers.ts:536
-#: app/configurator/map/map-chart-options.tsx:259
-#: app/configurator/map/map-chart-options.tsx:455
+#: app/configurator/map/map-chart-options.tsx:250
+#: app/configurator/map/map-chart-options.tsx:446
 msgid "controls.measure"
 msgstr "Misura"
 
@@ -424,7 +420,7 @@ msgstr "Attivo"
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
 
-#: app/configurator/map/map-chart-options.tsx:281
+#: app/configurator/map/map-chart-options.tsx:272
 msgid "controls.scale.type"
 msgstr "Tipo di scala"
 
@@ -546,21 +542,21 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Stile del testo"
 
 #: app/configurator/components/chart-options-selector.tsx:192
-#: app/configurator/map/map-chart-options.tsx:227
-#: app/configurator/map/map-chart-options.tsx:442
+#: app/configurator/map/map-chart-options.tsx:218
+#: app/configurator/map/map-chart-options.tsx:433
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
 #: app/configurator/components/chart-options-selector.tsx:193
-#: app/configurator/map/map-chart-options.tsx:264
-#: app/configurator/map/map-chart-options.tsx:460
+#: app/configurator/map/map-chart-options.tsx:255
+#: app/configurator/map/map-chart-options.tsx:451
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
-#: app/configurator/components/field.tsx:130
-#: app/configurator/components/field.tsx:187
-#: app/configurator/components/field.tsx:287
-#: app/configurator/components/field.tsx:673
+#: app/configurator/components/field.tsx:131
+#: app/configurator/components/field.tsx:188
+#: app/configurator/components/field.tsx:288
+#: app/configurator/components/field.tsx:674
 msgid "controls.select.optional"
 msgstr "facoltativo"
 
