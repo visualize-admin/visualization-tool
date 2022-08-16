@@ -60,6 +60,7 @@ import { useLocale } from "@/locales/use-locale";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const DEFAULT_PALETTE = "category10";
+const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -671,15 +672,22 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const f = (draft.chartConfig.fields as GenericFields)[
           action.value.field
         ];
+        const {
+          field,
+          componentIri,
+          dataSetMetadata,
+          selectedValues: actionSelectedValues,
+        } = action.value;
         if (!f) {
           // The field was not defined before
-          if (action.value.field === "segment") {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
+          if (field === "segment") {
+            const component = dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === componentIri
             );
-            const selectedValues = action.value.selectedValues
-              ? action.value.selectedValues
-              : component?.values.slice(0, 7) || [];
+            const selectedValues = actionSelectedValues
+              ? actionSelectedValues
+              : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) ||
+                [];
             const colorMapping =
               component?.values &&
               mapValueIrisToColor({
@@ -690,14 +698,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             if (isSegmentInConfig(draft.chartConfig)) {
-              draft.chartConfig.filters[action.value.componentIri] = {
+              draft.chartConfig.filters[componentIri] = {
                 type: "multi",
                 values: Object.fromEntries(
                   selectedValues.map((v) => v.value).map((x) => [x, true])
                 ),
               };
               draft.chartConfig.fields.segment = {
-                componentIri: action.value.componentIri,
+                componentIri: componentIri,
                 palette: DEFAULT_PALETTE,
                 // Type exists only within column charts.
                 ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
@@ -713,7 +721,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             if (draft.chartConfig.interactiveFiltersConfig) {
               draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
                 draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
+                  (c) => c !== componentIri
                 );
             }
             // }
@@ -722,13 +730,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           // The field is being updated
           if (
             // draft.chartConfig.chartType !== "table" &&
-            action.value.field === "segment" &&
+            field === "segment" &&
             "segment" in draft.chartConfig.fields &&
             draft.chartConfig.fields.segment &&
             "palette" in draft.chartConfig.fields.segment
           ) {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
+            const component = dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === componentIri
             );
             const colorMapping =
               component &&
@@ -738,29 +746,28 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 dimensionValues: component?.values,
               });
 
-            draft.chartConfig.fields.segment.componentIri =
-              action.value.componentIri;
+            draft.chartConfig.fields.segment.componentIri = componentIri;
             draft.chartConfig.fields.segment.colorMapping = colorMapping;
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {
               draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
                 draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
+                  (c) => c !== componentIri
                 );
             }
           } else {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
+            const component = dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === componentIri
             );
             // Reset other field options
-            (draft.chartConfig.fields as GenericFields)[action.value.field] = {
-              componentIri: action.value.componentIri,
+            (draft.chartConfig.fields as GenericFields)[field] = {
+              componentIri: componentIri,
             };
             // if x !== time, also deactivate interactive time filter
             if (
               isColumnConfig(draft.chartConfig) &&
-              action.value.field === "x" &&
+              field === "x" &&
               component?.__typename !== "TemporalDimension" &&
               draft.chartConfig.interactiveFiltersConfig
             ) {
