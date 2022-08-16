@@ -227,9 +227,7 @@ const ColorPaletteReset = ({
       (pc, i) => pc === colorMappingColors[i]
     );
 
-    return same ? (
-      <Box mt={2} />
-    ) : (
+    return (
       <Button
         disabled={same}
         onClick={resetColorPalette}
