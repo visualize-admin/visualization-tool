@@ -165,9 +165,6 @@ export const searchCubes = async ({
 
   const infoPerCube = scores.reduce(
     (acc, scoreRow) => {
-      acc[scoreRow.cubeIri] = acc[scoreRow.cubeIri] || {
-        score: 0,
-      };
       let cubeScore = acc[scoreRow.cubeIri]?.score ?? 0;
       for (let [key, weight] of Object.entries(weights)) {
         const attrScore = scoreRow[key as ScoreKey] ?? 0;
@@ -175,7 +172,12 @@ export const searchCubes = async ({
           cubeScore = cubeScore + scoreRow[key as ScoreKey] * weight;
         }
       }
-      acc[scoreRow.cubeIri].score = cubeScore;
+      if (cubeScore > 0 || !query || query.length === 0) {
+        acc[scoreRow.cubeIri] = acc[scoreRow.cubeIri] || {
+          score: 0,
+        };
+        acc[scoreRow.cubeIri].score = cubeScore;
+      }
       return acc;
     },
     {} as Record<
