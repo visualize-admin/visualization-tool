@@ -19,7 +19,7 @@ docker build \
     --build-arg COMMIT=$CI_COMMIT_SHA \
     --build-arg MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY \
     --build-arg VECTOR_TILE_URL=$VECTOR_TILE_URL \
-    $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -L 1 -I {} echo "-t {}" ) .
+    $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -n 1 -I {} echo "-t {}" ) .
 
 # Push all the tags
 docker push $DOCKER_IMAGE_TAGS
