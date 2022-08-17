@@ -7,11 +7,7 @@ import React, { SyntheticEvent } from "react";
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
-import {
-  ControlSection,
-  ControlSectionContent,
-  ControlSectionSkeleton,
-} from "@/configurator/components/chart-controls/section";
+import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import {
   getFieldLabel,
   getIconName,
@@ -135,11 +131,15 @@ const ChartTypeSelectorField = ({
 
 export const ChartTypeSelector = ({
   state,
+  showHelp,
+  sx,
 }: {
   state:
     | ConfiguratorStateConfiguringChart
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
+  showHelp?: boolean;
+  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -156,20 +156,24 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <ControlSection sx={{ position: "relative", width: "320px" }}>
+      <Box sx={sx}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
-        <Box sx={{ m: 4, textAlign: "center" }}>
-          <Typography variant="body2">
-            <Trans id="controls.switch.chart.type">
-              Switch to another chart type while maintaining most filter
-              settings.
-            </Trans>
-          </Typography>
-        </Box>
+        {showHelp !== false ? (
+          <Box sx={{ m: 4, textAlign: "center" }}>
+            <Typography variant="body2">
+              <Trans id="controls.switch.chart.type">
+                Switch to another chart type while maintaining most filter
+                settings.
+              </Trans>
+            </Typography>
+          </Box>
+        ) : (
+          false
+        )}
 
-        <ControlSectionContent side="left">
+        <div>
           {!possibleChartTypes ? (
             <Hint>
               <Trans id="hint.no.visualization.with.dataset">
@@ -183,7 +187,7 @@ export const ChartTypeSelector = ({
                 sx={{
                   gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
                   gridGap: "0.75rem",
-                  mx: 4,
+                  mx: 2,
                 }}
               >
                 {enabledChartTypes.map((d) => (
@@ -204,8 +208,8 @@ export const ChartTypeSelector = ({
               </Button> */}
             </Flex>
           )}
-        </ControlSectionContent>
-      </ControlSection>
+        </div>
+      </Box>
     );
   } else {
     return <ControlSectionSkeleton />;
