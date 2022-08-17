@@ -41,7 +41,7 @@ export const theme = createTheme({
     },
     divider: "#CCCCCC",
     action: {
-      hover: "#d8e8ef",
+      hover: "#F2F7F9",
     },
     secondary: {
       main: "#757575",
