@@ -676,7 +676,7 @@ const ChartFields = ({
             key={field}
             value={field}
             icon="baseLayer"
-            label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
+            label={<Trans id="chart.map.layers.base">Map Display</Trans>}
             active={chartConfig.baseLayer.show}
           />
         ) : (

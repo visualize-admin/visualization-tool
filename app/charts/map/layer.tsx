@@ -11,7 +11,7 @@
 import assert from "assert";
 
 import isEqual from "lodash/isEqual";
-import { Map } from "maplibre-gl";
+import { Map } from "mapbox-gl";
 import { useRef, useState, useMemo, useEffect } from "react";
 import { LayerProps, useMap } from "react-map-gl";
 
@@ -22,7 +22,6 @@ const MAX_ZOOM = 24;
 
 function createLayer(
   map: Map,
-  id: string,
   props: LayerProps,
   beforeId: string | undefined
 ) {
@@ -127,7 +126,7 @@ const Layer = ({
   if (mapLayer) {
     updateLayer(map, id, layer, layerRef.current);
   } else if (map) {
-    createLayer(map, id, layer, beforeId);
+    createLayer(map, layer, beforeId);
   }
 
   // Store last rendered props

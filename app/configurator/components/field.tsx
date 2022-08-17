@@ -11,6 +11,7 @@ import {
   Label,
   Radio,
   Select,
+  Switch,
 } from "@/components/form";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
@@ -707,7 +708,7 @@ export const ChartOptionRadioField = ({
   disabled = false,
 }: {
   label: string;
-  field: string;
+  field: string | null;
   path: string;
   value: string;
   defaultChecked?: boolean;
@@ -792,6 +793,35 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
       options={options}
       {...fieldProps}
     ></Select>
+  );
+};
+
+export const ChartOptionSwitchField = ({
+  label,
+  field,
+  path,
+  defaultValue = false,
+  disabled = false,
+}: {
+  label: string;
+  field: string | null;
+  path: string;
+  defaultValue?: boolean;
+  disabled?: boolean;
+}) => {
+  const fieldProps = useChartOptionBooleanField({
+    field,
+    path,
+    defaultValue,
+  });
+
+  return (
+    <Switch
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultValue}
+    ></Switch>
   );
 };
 

@@ -148,11 +148,15 @@ msgstr "Quantize (equal intervals)"
 #: app/configurator/components/ui-helpers.ts:558
 #: app/configurator/map/map-chart-options.tsx:65
 msgid "chart.map.layers.base"
-msgstr "Base Layer"
+msgstr "Map Display"
 
 #: app/configurator/map/map-chart-options.tsx:69
 msgid "chart.map.layers.base.show"
-msgstr "Show"
+msgstr "Show Worldmap"
+
+#: app/configurator/map/map-chart-options.tsx:110
+msgid "chart.map.layers.base.view.locked"
+msgstr "Locked view"
 
 #: app/configurator/map/map-chart-options.tsx:172
 #: app/configurator/map/map-chart-options.tsx:396
@@ -293,7 +297,7 @@ msgstr "Description"
 msgid "controls.dimension.geographical"
 msgstr "Geographical dimension"
 
-#: app/configurator/components/field.tsx:668
+#: app/configurator/components/field.tsx:669
 msgid "controls.dimension.none"
 msgstr "None"
 
@@ -553,10 +557,10 @@ msgstr "Select a dimension"
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
-#: app/configurator/components/field.tsx:130
-#: app/configurator/components/field.tsx:187
-#: app/configurator/components/field.tsx:287
-#: app/configurator/components/field.tsx:673
+#: app/configurator/components/field.tsx:131
+#: app/configurator/components/field.tsx:188
+#: app/configurator/components/field.tsx:288
+#: app/configurator/components/field.tsx:674
 msgid "controls.select.optional"
 msgstr "optional"
 

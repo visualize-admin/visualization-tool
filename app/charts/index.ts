@@ -258,6 +258,8 @@ export const getInitialConfig = ({
         },
         baseLayer: {
           show: true,
+          locked: false,
+          bbox: undefined,
         },
       };
 

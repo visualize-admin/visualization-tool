@@ -1,165 +1,64 @@
-import { WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { MapboxLayer } from "@deck.gl/mapbox";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
-import maplibregl, { LngLatLike, StyleSpecification } from "maplibre-gl";
-import React, {
-  useMemo,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
-import ReactMap, { MapRef, ViewState } from "react-map-gl";
+import maplibregl from "maplibre-gl";
+import React, { useEffect, useMemo, useRef } from "react";
+import ReactMap, { LngLatLike, MapRef } from "react-map-gl";
 
 import {
   emptyStyle,
   getBaseLayerStyle,
 } from "@/charts/map/get-base-layer-style";
-import { BBox, getBBox } from "@/charts/map/helpers";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { convertHexToRgbArray } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+
+import { useViewState } from "./helpers";
 import Layer from "./layer";
-
-function getFirstLabelLayerId(style: StyleSpecification) {
-  const layers = style.layers;
-  // Find the index of the first symbol (i.e. label) layer in the map style
-  for (let i = 0; i < layers.length; i++) {
-    const layer = layers[i];
-    if (layer.type === "symbol" && layer["source-layer"]?.includes("label")) {
-      return layer.id;
-    }
-  }
-  return undefined;
-}
-
-type MinMaxZoomViewState = Pick<
-  ViewState,
-  "zoom" | "latitude" | "longitude"
-> & {
-  minZoom: number;
-  maxZoom: number;
-  width: number;
-  height: number;
-};
-
-const INITIAL_VIEW_STATE: MinMaxZoomViewState = {
-  minZoom: 1,
-  maxZoom: 13,
-  latitude: 46.8182,
-  longitude: 8.2275,
-  zoom: 5,
-  width: 400,
-  height: 400,
-};
-
-/**
- * Constrain the viewState to always _contain_ the supplied bbox.
- *
- * (Other implementations ensure that the bbox _covers_ the viewport)
- *
- * @param viewState deck.gl viewState
- * @param bbox Bounding box of the feature to be contained
- */
-const constrainZoom = (
-  viewState: MinMaxZoomViewState,
-  bbox: BBox,
-  { padding = 0 }: { padding?: number } = {}
-) => {
-  const vp = new WebMercatorViewport(viewState);
-
-  const { width, height, zoom, longitude, latitude } = viewState;
-
-  // Make sure the map is rendered before trying to project & fitBounds
-  if (vp.width > 1 && vp.height > 1) {
-    const [x, y] = vp.project([longitude, latitude]);
-    const [x0, y1] = vp.project(bbox[0]);
-    const [x1, y0] = vp.project(bbox[1]);
-
-    const fitted = vp.fitBounds(bbox, { padding });
-
-    const [cx, cy] = vp.project([fitted.longitude, fitted.latitude]);
-
-    const h = height - padding * 2;
-    const w = width - padding * 2;
-
-    const h2 = h / 2;
-    const w2 = w / 2;
-
-    const y2 =
-      y1 - y0 < h ? cy : y - h2 < y0 ? y0 + h2 : y + h2 > y1 ? y1 - h2 : y;
-    const x2 =
-      x1 - x0 < w ? cx : x - w2 < x0 ? x0 + w2 : x + w2 > x1 ? x1 - w2 : x;
-
-    const p = vp.unproject([x2, y2]);
-
-    return {
-      ...viewState,
-      zoom: Math.min(viewState.maxZoom, Math.max(zoom, fitted.zoom)),
-      longitude: p[0],
-      latitude: p[1],
-    };
-  } else {
-    return viewState;
-  }
-};
+import { setMap } from "./ref";
 
 let globalGeoJsonLayerId = 0;
 let globalScatterplotLayerId = 0;
 
+const FLY_TO_DURATION = 500;
+const RESET_DURATION = 1500;
+
 export const MapComponent = () => {
+  const locale = useLocale();
   const {
     showBaseLayer,
+    locked,
     features,
     identicalLayerComponentIris,
     areaLayer,
     symbolLayer,
+    bounds: { width, height },
+    lockedBBox,
+    featuresBBox,
   } = useChartState() as MapState;
-  const locale = useLocale();
+  const classes = useStyles();
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-  const onViewStateChange = useCallback(
-    ({ viewState }: { viewState: ViewState }) =>
-      setViewState((oldVs) => ({ ...oldVs, ...viewState })),
-    []
-  );
-
-  const hasSetInitialZoom = useRef<boolean>();
-
-  useEffect(() => {
-    if (hasSetInitialZoom.current) {
-      return;
-    }
-
-    const bbox = getBBox(
-      areaLayer.show ? features.areaLayer?.shapes : undefined,
-      symbolLayer.show ? features.symbolLayer?.points : undefined
-    );
-    if (bbox) {
-      setViewState(constrainZoom(viewState, bbox));
-    }
-
-    hasSetInitialZoom.current = true;
-  }, [
-    viewState,
-    features.areaLayer?.shapes,
-    features.symbolLayer?.points,
-    areaLayer,
-    symbolLayer,
-  ]);
+  const { defaultViewState, viewState, onViewStateChange } = useViewState({
+    width,
+    height,
+    lockedBBox,
+    featuresBBox,
+  });
 
   const mapNodeRef = useRef<MapRef | null>(null);
   const handleRefNode = (mapRef: MapRef) => {
@@ -168,12 +67,38 @@ export const MapComponent = () => {
     }
     mapNodeRef.current = mapRef;
   };
+  const currentBBox = useRef<BBox>();
+
+  const lockedRef = useRef(locked);
+  useEffect(() => {
+    lockedRef.current = locked;
+  }, [locked]);
+
+  // Resets the map to its default state (showing all visible features).
+  const reset = useEvent(() => {
+    // Reset the map only when it's in an unlocked mode.
+    if (!lockedRef.current) {
+      const { longitude, latitude, zoom } = defaultViewState;
+      const newViewState = {
+        center: [longitude, latitude] as LngLatLike,
+        zoom,
+        duration: RESET_DURATION,
+      };
+      mapNodeRef.current?.flyTo(newViewState);
+    }
+  });
+
+  // Reset the view when default view changes (new features appeared on the map).
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultViewState]);
 
   const zoomIn = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
-      duration: 500,
+      duration: FLY_TO_DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
@@ -182,31 +107,20 @@ export const MapComponent = () => {
     const newViewState = {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
-      duration: 500,
+      duration: FLY_TO_DURATION,
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
 
-  const symbolColorRgbArray = useMemo(
-    () => convertHexToRgbArray(symbolLayer.color),
-    [symbolLayer.color]
-  );
+  const symbolColorRgbArray = useMemo(() => {
+    return convertHexToRgbArray(symbolLayer.color);
+  }, [symbolLayer.color]);
 
-  const baseLayerStyle = useMemo(
-    () =>
-      getBaseLayerStyle({
-        locale,
-        showLabels: !areaLayer.show,
-      }),
-    [locale, areaLayer.show]
-  );
+  const baseLayerStyle = useMemo(() => {
+    return getBaseLayerStyle({ locale, showLabels: !areaLayer.show });
+  }, [locale, areaLayer.show]);
+
   const mapStyle = showBaseLayer ? baseLayerStyle : emptyStyle;
-
-  const featuresLoaded =
-    features.areaLayer !== undefined || features.symbolLayer !== undefined;
-
-  // const compactMapAttribution = deckRef.current?.deck.width < 600;
-
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -369,27 +283,26 @@ export const MapComponent = () => {
     symbolLayer,
   ]);
 
+  const featuresLoaded =
+    features.areaLayer !== undefined || features.symbolLayer !== undefined;
+
   return (
     <Box>
-      <Box
-        sx={{
-          zIndex: 13,
-          position: "absolute",
-          bottom: 55,
-          right: 15,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <ZoomButton iconName="add" handleClick={zoomIn} />
-        <ZoomButton iconName="minus" handleClick={zoomOut} />
-      </Box>
+      {locked ? null : (
+        <div className={classes.controlButtons}>
+          <ControlButton iconName="refresh" onClick={reset} />
+          <ControlButton iconName="add" onClick={zoomIn} />
+          <ControlButton iconName="minus" onClick={zoomOut} />
+        </div>
+      )}
+
       {featuresLoaded && (
         <>
           <ReactMap
+            ref={handleRefNode}
+            mapLib={maplibregl}
             /* @ts-ignore */
             mapStyle={mapStyle}
-            mapLib={maplibregl}
             style={{
               left: 0,
               top: 0,
@@ -397,9 +310,32 @@ export const MapComponent = () => {
               height: "100%",
               position: "absolute",
             }}
+            dragPan={!locked}
+            scrollZoom={!locked}
+            doubleClickZoom={!locked}
+            touchZoomRotate={!locked}
+            onLoad={(e) => {
+              setMap(e.target);
+              currentBBox.current = e.target.getBounds().toArray() as BBox;
+            }}
+            onMove={(e) => {
+              const userTriggered =
+                e.originalEvent && e.originalEvent.type !== "resize";
+
+              if (userTriggered) {
+                currentBBox.current = e.target.getBounds().toArray() as BBox;
+              }
+
+              onViewStateChange(e);
+            }}
+            onResize={(e) => {
+              if (currentBBox.current && locked) {
+                e.target.fitBounds(currentBBox.current, { duration: 0 });
+              }
+
+              currentBBox.current = e.target.getBounds().toArray() as BBox;
+            }}
             {...viewState}
-            onMove={onViewStateChange}
-            ref={handleRefNode}
           >
             {areaLayer.show ? (
               <Layer
@@ -418,42 +354,60 @@ export const MapComponent = () => {
   );
 };
 
-const ZoomButton = ({
+const useStyles = makeStyles<Theme>((theme) => ({
+  controlButtons: {
+    zIndex: 13,
+    position: "absolute",
+    bottom: 32,
+    right: 16,
+    display: "flex",
+    flexDirection: "column",
+  },
+  controlButton: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 0,
+    minHeight: 0,
+    width: 32,
+    height: 32,
+    border: "1px solid",
+    borderColor: theme.palette.grey[500],
+    borderBottom: 0,
+    borderRadius: 0,
+    color: theme.palette.grey[700],
+    backgroundColor: theme.palette.grey[100],
+    padding: 0,
+    "&:hover": {
+      backgroundColor: theme.palette.grey[200],
+    },
+    "&:first-of-type": {
+      borderTopRightRadius: 3,
+      borderTopLeftRadius: 3,
+    },
+    "&:last-of-type": {
+      borderBottomRightRadius: 3,
+      borderBottomLeftRadius: 3,
+    },
+  },
+}));
+
+const ControlButton = ({
   iconName,
-  handleClick,
+  onClick,
 }: {
   iconName: IconName;
-  handleClick: () => void;
-}) => (
-  <Button
-    variant="contained"
-    sx={{
-      width: 32,
-      height: 32,
-      borderRadius: 4,
-      border: "1px solid",
-      borderColor: "grey.500",
-      color: "grey.700",
-      backgroundColor: "grey.100",
-      padding: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      "&:first-of-type": {
-        borderBottomRightRadius: 0,
-        borderBottomLeftRadius: 0,
-        borderBottom: 0,
-      },
-      "&:hover": {
-        backgroundColor: "grey.200",
-      },
-      "&:last-of-type": {
-        borderTopRightRadius: 0,
-        borderTopLeftRadius: 0,
-      },
-    }}
-    onClick={handleClick}
-  >
-    <Icon name={iconName} size={24} />
-  </Button>
-);
+  onClick: () => void;
+}) => {
+  const classes = useStyles();
+
+  return (
+    <Button
+      className={classes.controlButton}
+      variant="contained"
+      onClick={onClick}
+    >
+      <Icon name={iconName} size={24} />
+    </Button>
+  );
+};

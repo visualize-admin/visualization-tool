@@ -35,6 +35,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   BaseLayer,
+  BBox,
   ColorScaleInterpolationType,
   DivergingPaletteType,
   MapFields,
@@ -49,10 +50,15 @@ import {
 } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
+import { getBBox } from "./helpers";
+
 export interface MapState {
   chartType: "map";
   bounds: Bounds;
   features: GeoData;
+  locked: boolean;
+  lockedBBox: BBox | undefined;
+  featuresBBox: BBox | undefined;
   showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
@@ -65,7 +71,6 @@ export interface MapState {
     measureDimension?: DimensionMetaDataFragment;
     errorDimension?: DimensionMetaDataFragment;
     getFormattedError: null | ((d: Observation) => string);
-    // getError: null | ((d: Observation) => [number, number]);
     getColor: (x: number | null) => number[];
     colorScale:
       | ScaleSequential<string>
@@ -88,8 +93,6 @@ export interface MapState {
     errorDimension?: DimensionMetaDataFragment;
     measureDimension?: DimensionMetaDataFragment;
     getFormattedError: null | ((d: Observation) => string);
-    // getErrorRange: null | ((d: Observation) => [number, number]);
-    // getError: null | ((d: Observation) => [number, number]);
     color: string;
     radiusScale: ScalePower<number, number>;
     dataDomain: [number, number];
@@ -334,11 +337,26 @@ const useMapState = (
     chartHeight: width * 0.5,
   };
 
+  const featuresBBox = useMemo(() => {
+    return getBBox(
+      areaLayer.show ? features.areaLayer?.shapes : undefined,
+      symbolLayer.show ? features.symbolLayer?.points : undefined
+    );
+  }, [
+    areaLayer.show,
+    features.areaLayer?.shapes,
+    symbolLayer.show,
+    features.symbolLayer?.points,
+  ]);
+
   return {
     chartType: "map",
     features,
     bounds,
     showBaseLayer: baseLayer.show,
+    locked: baseLayer.locked || false,
+    lockedBBox: chartProps.baseLayer.bbox,
+    featuresBBox,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,

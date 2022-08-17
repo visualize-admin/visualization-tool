@@ -98,7 +98,13 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string | null;
-        value: string | boolean | Record<string, string> | undefined;
+        value:
+          | string
+          | boolean
+          | Record<string, string | number | boolean>
+          | (string | number | boolean)[]
+          | (string | number | boolean)[][]
+          | undefined;
       };
     }
   | {
@@ -602,7 +608,7 @@ export const getFiltersByMappingStatus = (
   return { unmapped, mapped };
 };
 
-export const getChartOptionBooleanField = (
+export const getChartOptionField = (
   state: ConfiguratorStateConfiguringChart,
   field: string | null,
   path: string,

@@ -1,8 +1,120 @@
+import { WebMercatorViewport } from "@deck.gl/core";
 import { extent, geoBounds } from "d3";
+import { useMemo, useState } from "react";
+import { ViewState } from "react-map-gl";
+
+import { BBox } from "@/configurator/config-types";
+import useEvent from "@/lib/use-event";
 
 import { AreaLayer, SymbolLayer } from "../../domain/data";
 
-export type BBox = [[number, number], [number, number]];
+export type MinMaxZoomViewState = Pick<
+  ViewState,
+  "zoom" | "latitude" | "longitude"
+> & {
+  minZoom: number;
+  maxZoom: number;
+  width: number;
+  height: number;
+};
+
+export const BASE_VIEW_STATE: MinMaxZoomViewState = {
+  minZoom: 1,
+  maxZoom: 13,
+  latitude: 46.8182,
+  longitude: 8.2275,
+  zoom: 5,
+  width: 400,
+  height: 400,
+};
+
+/**
+ * Compute map center along with a proper zoom level taking chart dimensions
+ * into account.
+ *
+ * @param bbox Bounding box of the feature to be contained.
+ * @param chartDimensions Chart's dimensions needed to correctly initialize view state
+ * in locked mode.
+ */
+export const getViewStateFromBounds = ({
+  width,
+  height,
+  bbox,
+  padding = 0,
+}: {
+  width: number;
+  height: number;
+  padding?: number;
+  bbox: BBox | undefined;
+}) => {
+  if (!bbox) {
+    return;
+  }
+
+  const viewport = new WebMercatorViewport({
+    ...BASE_VIEW_STATE,
+    width: width * (1 - padding),
+    height: height * (1 - padding),
+  });
+  const fitted = viewport.fitBounds(bbox);
+
+  return { ...BASE_VIEW_STATE, ...fitted };
+};
+
+/**
+ * @param bbox Bounding box saved in chart config or bounding box of visible features.
+ * @param chartDimensions Chart's dimensions needed to correctly initialize view state
+ * in locked mode.
+ * @param locked Boolean describing whether a map is locked (interactions disabled,
+ * bbox saved in chart config and maintained during resizing) or not (interactions allowed,
+ * initial view state dynamically adjusted to fit visible features).
+ */
+export type ViewStateInitializationProps = {
+  width: number;
+  height: number;
+  lockedBBox: BBox | undefined;
+  featuresBBox: BBox | undefined;
+};
+
+/**
+ * Hook used by a map chart that controls its view state.
+ *
+ * In addition to keeping track on the current view state, it also exposes
+ * the initial view state of the map and makes sure that it contains all features
+ * in the first place (if the map was not initialized with a locked mode).
+ */
+export const useViewState = (props: ViewStateInitializationProps) => {
+  const { width, height, lockedBBox, featuresBBox } = props;
+  const lockedViewState = useMemo(() => {
+    return getViewStateFromBounds({
+      width,
+      height,
+      bbox: lockedBBox,
+    });
+  }, [width, height, lockedBBox]);
+  const defaultViewState = useMemo(() => {
+    return (
+      getViewStateFromBounds({
+        width,
+        height,
+        padding: 1 / 3,
+        bbox: featuresBBox,
+      }) ?? BASE_VIEW_STATE
+    );
+  }, [width, height, featuresBBox]);
+
+  // Locked view state takes precedence, as it must have come from a locked mode.
+  const [viewState, setViewState] = useState(
+    lockedViewState || defaultViewState
+  );
+  const onViewStateChange = useEvent(
+    ({ viewState }: { viewState: ViewState }) => {
+      setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
+    }
+  );
+
+  return { defaultViewState, viewState, onViewStateChange };
+};
 
 export const getBBox = (
   shapes?: AreaLayer["shapes"],

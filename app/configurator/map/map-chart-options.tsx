@@ -1,7 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Stack } from "@mui/material";
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 
+import { getMap } from "@/charts/map/ref";
 import Flex from "@/components/flex";
 import { FieldSetLegend } from "@/components/form";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
@@ -15,14 +16,20 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
+  ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
 import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
 import { DataSource } from "@/configurator/config-types";
-import { getGeoDimensions, getGeoShapesDimensions } from "@/domain/data";
+import { isConfiguring } from "@/configurator/configurator-state";
+import {
+  GeoFeature,
+  getGeoDimensions,
+  getGeoShapesDimensions,
+} from "@/domain/data";
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import { useLocale } from "@/src";
+import { useConfiguratorState, useLocale } from "@/src";
 
 export const MapColumnOptions = ({
   state,
@@ -36,7 +43,7 @@ export const MapColumnOptions = ({
 
   switch (activeField) {
     case "baseLayer":
-      return <BaseLayersSettings />;
+      return <BaseLayerSettings />;
     case "areaLayer":
       return (
         <AreaLayerSettings
@@ -54,11 +61,40 @@ export const MapColumnOptions = ({
   }
 };
 
-export const BaseLayersSettings = memo(() => {
+const BaseLayerSettings = memo(() => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = state.chartConfig as MapConfig;
+
+  useEffect(() => {
+    const map = getMap();
+
+    if (chartConfig.baseLayer.locked) {
+      if (map !== null) {
+        dispatch({
+          type: "CHART_OPTION_CHANGED",
+          value: {
+            field: null,
+            path: "baseLayer.bbox",
+            value: map.getBounds().toArray(),
+          },
+        });
+      }
+    } else {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field: null,
+          path: "baseLayer.bbox",
+          value: undefined,
+        },
+      });
+    }
+  }, [chartConfig.baseLayer.locked, dispatch]);
+
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
-        <Trans id="chart.map.layers.base">Base Layer</Trans>
+        <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
@@ -69,6 +105,16 @@ export const BaseLayersSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
+        <Box sx={{ ml: 4, mt: 4 }}>
+          <ChartOptionSwitchField
+            label={t({
+              id: "chart.map.layers.base.view.locked",
+              message: "Locked view",
+            })}
+            field={null}
+            path="baseLayer.locked"
+          />
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );
@@ -86,62 +132,53 @@ export const AreaLayerSettings = memo(
   }) => {
     const locale = useLocale();
     const activeField = "areaLayer";
-    const geoShapesDimensions = useMemo(
-      () => getGeoShapesDimensions(metaData.dimensions),
-      [metaData.dimensions]
-    );
-    const geoShapesDimensionsOptions = useMemo(
-      () =>
-        geoShapesDimensions.map((d) => ({
-          value: d.iri,
-          label: d.label,
-        })),
-      [geoShapesDimensions]
-    );
+    const geoShapesDimensions = useMemo(() => {
+      return getGeoShapesDimensions(metaData.dimensions);
+    }, [metaData.dimensions]);
+    const geoShapesDimensionsOptions = useMemo(() => {
+      return geoShapesDimensions.map((d) => ({
+        value: d.iri,
+        label: d.label,
+      }));
+    }, [geoShapesDimensions]);
 
     const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
       variables: {
+        dataCubeIri: metaData.iri,
+        dimensionIri: chartConfig.fields.areaLayer.componentIri,
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
         locale,
-        dataCubeIri: metaData.iri,
-        dimensionIri: chartConfig.fields.areaLayer.componentIri,
       },
     });
 
     const geoShapes =
       fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
       "GeoShapesDimension"
-        ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as any)
+        ? fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes
         : undefined;
+    const geometries = geoShapes?.topology?.objects?.shapes?.geometries as
+      | GeoFeature[]
+      | undefined;
 
-    const measuresOptions = useMemo(
-      () =>
-        metaData.measures.map((d) => ({
-          value: d.iri,
-          label: d.label,
-        })),
-      [metaData.measures]
-    );
+    const measuresOptions = useMemo(() => {
+      return metaData.measures.map((d) => ({
+        value: d.iri,
+        label: d.label,
+      }));
+    }, [metaData.measures]);
 
-    const numberOfGeoShapes = (geoShapes?.topology?.objects?.shapes?.geometries
-      ?.length || 0) as number;
+    const nbOfGeoShapes = geometries?.length || 0;
+    const colorClassesOptions = useMemo(() => {
+      return Array.from(
+        { length: Math.min(7, Math.max(0, nbOfGeoShapes - 2)) },
+        (_, i) => i + 3
+      ).map((d) => ({ value: d, label: `${d}` }));
+    }, [nbOfGeoShapes]);
 
-    const numberOfColorScaleClasses = useMemo(
-      () =>
-        Array.from(
-          { length: Math.min(7, Math.max(0, numberOfGeoShapes - 2)) },
-          (_, i) => i + 3
-        ).map((d) => ({ value: d, label: `${d}` })),
-      [numberOfGeoShapes]
-    );
-
-    const currentNumberOfColorScaleClasses =
-      chartConfig.fields.areaLayer.nbClass;
-    const currentColorScaleType = chartConfig.fields.areaLayer.colorScaleType;
-
+    const { colorScaleType, nbClass, show } = chartConfig.fields.areaLayer;
     const isAvailable = geoShapesDimensions.length > 0;
-    const isHidden = !chartConfig.fields.areaLayer.show;
+    const isHidden = !show;
 
     return !isAvailable ? (
       <NoGeoDimensionsWarning />
@@ -225,7 +262,7 @@ export const AreaLayerSettings = memo(
               />
 
               {/* Limit the number of clusters to min. 3 */}
-              {numberOfGeoShapes >= 3 && (
+              {nbOfGeoShapes >= 3 && (
                 <ChartOptionRadioField
                   label={t({
                     id: "chart.map.layers.area.discretization.discrete",
@@ -242,61 +279,56 @@ export const AreaLayerSettings = memo(
             <ColorRampField
               field={activeField}
               path="palette"
-              nbClass={
-                currentColorScaleType === "discrete"
-                  ? currentNumberOfColorScaleClasses
-                  : undefined
-              }
+              nbClass={colorScaleType === "discrete" ? nbClass : undefined}
               disabled={isHidden}
             />
 
-            {chartConfig.fields.areaLayer.colorScaleType === "discrete" &&
-              numberOfGeoShapes >= 3 && (
-                <>
-                  <FieldSetLegend legendTitle="Interpolation" />
-                  <Stack spacing={2}>
-                    <ChartOptionSelectField
-                      id="areaLayer.colorScaleInterpolationType"
-                      label={null}
-                      field={activeField}
-                      path="colorScaleInterpolationType"
-                      options={[
-                        {
-                          label: t({
-                            id: "chart.map.layers.area.discretization.quantize",
-                            message: "Quantize (equal intervals)",
-                          }),
-                          value: "quantize",
-                        },
-                        {
-                          label: t({
-                            id: "chart.map.layers.area.discretization.quantiles",
-                            message: "Quantiles (equal distribution of values)",
-                          }),
-                          value: "quantile",
-                        },
-                        {
-                          label: t({
-                            id: "chart.map.layers.area.discretization.jenks",
-                            message: "Jenks (natural breaks)",
-                          }),
-                          value: "jenks",
-                        },
-                      ]}
-                      disabled={isHidden}
-                    />
-                    <ChartOptionSelectField<number>
-                      id="areaLayer.nbClass"
-                      label="Number of classes"
-                      field={activeField}
-                      path="nbClass"
-                      options={numberOfColorScaleClasses}
-                      getValue={(d) => +d}
-                      disabled={isHidden}
-                    />
-                  </Stack>
-                </>
-              )}
+            {colorScaleType === "discrete" && nbOfGeoShapes >= 3 && (
+              <>
+                <FieldSetLegend legendTitle="Interpolation" />
+                <Stack spacing={2}>
+                  <ChartOptionSelectField
+                    id="areaLayer.colorScaleInterpolationType"
+                    label={null}
+                    field={activeField}
+                    path="colorScaleInterpolationType"
+                    options={[
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantize",
+                          message: "Quantize (equal intervals)",
+                        }),
+                        value: "quantize",
+                      },
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantiles",
+                          message: "Quantiles (equal distribution of values)",
+                        }),
+                        value: "quantile",
+                      },
+                      {
+                        label: t({
+                          id: "chart.map.layers.area.discretization.jenks",
+                          message: "Jenks (natural breaks)",
+                        }),
+                        value: "jenks",
+                      },
+                    ]}
+                    disabled={isHidden}
+                  />
+                  <ChartOptionSelectField<number>
+                    id="areaLayer.nbClass"
+                    label="Number of classes"
+                    field={activeField}
+                    path="nbClass"
+                    options={colorClassesOptions}
+                    getValue={(d) => +d}
+                    disabled={isHidden}
+                  />
+                </Stack>
+              </>
+            )}
           </ControlSectionContent>
         </ControlSection>
         {!isHidden && (
@@ -329,23 +361,19 @@ export const SymbolLayerSettings = memo(
       () => getGeoDimensions(metaData.dimensions),
       [metaData.dimensions]
     );
-    const geoDimensionsOptions = useMemo(
-      () =>
-        geoDimensions.map((d) => ({
-          value: d.iri,
-          label: d.label,
-        })),
-      [geoDimensions]
-    );
+    const geoDimensionsOptions = useMemo(() => {
+      return geoDimensions.map((d) => ({
+        value: d.iri,
+        label: d.label,
+      }));
+    }, [geoDimensions]);
 
-    const measuresOptions = useMemo(
-      () =>
-        metaData.measures.map((d) => ({
-          value: d.iri,
-          label: d.label,
-        })),
-      [metaData.measures]
-    );
+    const measuresOptions = useMemo(() => {
+      return metaData.measures.map((d) => ({
+        value: d.iri,
+        label: d.label,
+      }));
+    }, [metaData.measures]);
 
     const isAvailable = geoDimensions.length > 0;
     const isHidden = !chartConfig.fields.symbolLayer.show;
