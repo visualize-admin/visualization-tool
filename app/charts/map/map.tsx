@@ -5,7 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import ReactMap, { LngLatLike, MapRef } from "react-map-gl";
 
 import {
@@ -20,6 +20,7 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -74,7 +75,7 @@ export const MapComponent = () => {
   }, [locked]);
 
   // Resets the map to its default state (showing all visible features).
-  const reset = useCallback(() => {
+  const reset = useEvent(() => {
     // Reset the map only when it's in an unlocked mode.
     if (!lockedRef.current) {
       const { longitude, latitude, zoom } = defaultViewState;
@@ -85,12 +86,13 @@ export const MapComponent = () => {
       };
       mapNodeRef.current?.flyTo(newViewState);
     }
-  }, [defaultViewState]);
+  });
 
   // Reset the view when default view changes (new features appeared on the map).
   useEffect(() => {
     reset();
-  }, [reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultViewState]);
 
   const zoomIn = () => {
     const newViewState = {
