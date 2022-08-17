@@ -1101,7 +1101,12 @@ export const initChartStateFromChart = async (
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
   if (config && config.data) {
-    const { dataSet, dataSource, meta, chartConfig } = config.data;
+    const {
+      dataSet,
+      dataSource = DEFAULT_DATA_SOURCE,
+      meta,
+      chartConfig,
+    } = config.data;
     return {
       state: "CONFIGURING_CHART",
       dataSet,
