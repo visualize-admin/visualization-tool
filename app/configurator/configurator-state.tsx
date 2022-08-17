@@ -60,6 +60,7 @@ import { useLocale } from "@/locales/use-locale";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const DEFAULT_PALETTE = "category10";
+const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -623,6 +624,135 @@ export const getChartOptionField = (
   );
 };
 
+const handleChartFieldChanged = (
+  draft: ConfiguratorState,
+  action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_CHANGED" }>
+) => {
+  if (draft.state !== "CONFIGURING_CHART") {
+    return draft;
+  }
+  const {
+    field,
+    componentIri,
+    dataSetMetadata,
+    selectedValues: actionSelectedValues,
+  } = action.value;
+  const f = (draft.chartConfig.fields as GenericFields)[field];
+  const component = dataSetMetadata.dimensions.find(
+    (dim) => dim.iri === componentIri
+  );
+  const selectedValues = actionSelectedValues
+    ? actionSelectedValues
+    : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) || [];
+  if (!f) {
+    // The field was not defined before
+    if (field === "segment") {
+      const colorMapping =
+        component?.values &&
+        mapValueIrisToColor({
+          palette: DEFAULT_PALETTE,
+          dimensionValues: component?.values,
+        });
+
+      // FIXME: This should be more chart specific
+      // (no "stacked" for scatterplots for instance)
+      if (isSegmentInConfig(draft.chartConfig)) {
+        draft.chartConfig.filters[componentIri] = {
+          type: "multi",
+          values: Object.fromEntries(
+            selectedValues.map((v) => v.value).map((x) => [x, true])
+          ),
+        };
+        draft.chartConfig.fields.segment = {
+          componentIri: componentIri,
+          palette: DEFAULT_PALETTE,
+          // Type exists only within column charts.
+          ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
+          sorting: {
+            sortingType: "byDimensionLabel",
+            sortingOrder: "asc",
+          },
+          colorMapping: colorMapping,
+        };
+      }
+
+      // Remove this component from the interactive filter, if it is there
+      if (draft.chartConfig.interactiveFiltersConfig) {
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+            (c) => c !== componentIri
+          );
+      }
+      // }
+    }
+  } else {
+    // The field is being updated
+    if (
+      // draft.chartConfig.chartType !== "table" &&
+      field === "segment" &&
+      "segment" in draft.chartConfig.fields &&
+      draft.chartConfig.fields.segment &&
+      "palette" in draft.chartConfig.fields.segment
+    ) {
+      const colorMapping =
+        component &&
+        mapValueIrisToColor({
+          palette: draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
+          dimensionValues: component?.values,
+        });
+
+      draft.chartConfig.fields.segment.componentIri = componentIri;
+      draft.chartConfig.fields.segment.colorMapping = colorMapping;
+      draft.chartConfig.filters[componentIri] = {
+        type: "multi",
+        values: Object.fromEntries(
+          selectedValues.map((v) => v.value).map((x) => [x, true])
+        ),
+      };
+
+      // Remove this component from the interactive filter, if it is there
+      if (draft.chartConfig.interactiveFiltersConfig) {
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+            (c) => c !== componentIri
+          );
+      }
+    } else {
+      // Reset other field options
+      (draft.chartConfig.fields as GenericFields)[field] = {
+        componentIri: componentIri,
+      };
+      // if x !== time, also deactivate interactive time filter
+      if (
+        isColumnConfig(draft.chartConfig) &&
+        field === "x" &&
+        component?.__typename !== "TemporalDimension" &&
+        draft.chartConfig.interactiveFiltersConfig
+      ) {
+        setWith(
+          draft,
+          `chartConfig.interactiveFiltersConfig.time.active`,
+          false,
+          Object
+        );
+      }
+      // Remove this component from the interactive filter, if it is there
+      if (draft.chartConfig.interactiveFiltersConfig) {
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+            (c) => c !== action.value.componentIri
+          );
+      }
+    }
+  }
+
+  draft.chartConfig = deriveFiltersFromFields(
+    draft.chartConfig,
+    action.value.dataSetMetadata
+  );
+  return draft;
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -673,126 +803,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_FIELD_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
-        const f = (draft.chartConfig.fields as GenericFields)[
-          action.value.field
-        ];
-        if (!f) {
-          // The field was not defined before
-          if (action.value.field === "segment") {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
-            );
-            const selectedValues = action.value.selectedValues
-              ? action.value.selectedValues
-              : component?.values.slice(0, 7) || [];
-            const colorMapping =
-              component?.values &&
-              mapValueIrisToColor({
-                palette: DEFAULT_PALETTE,
-                dimensionValues: component?.values,
-              });
-
-            // FIXME: This should be more chart specific
-            // (no "stacked" for scatterplots for instance)
-            if (isSegmentInConfig(draft.chartConfig)) {
-              draft.chartConfig.filters[action.value.componentIri] = {
-                type: "multi",
-                values: Object.fromEntries(
-                  selectedValues.map((v) => v.value).map((x) => [x, true])
-                ),
-              };
-              draft.chartConfig.fields.segment = {
-                componentIri: action.value.componentIri,
-                palette: DEFAULT_PALETTE,
-                // Type exists only within column charts.
-                ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
-                sorting: {
-                  sortingType: "byDimensionLabel",
-                  sortingOrder: "asc",
-                },
-                colorMapping: colorMapping,
-              };
-            }
-
-            // Remove this component from the interactive filter, if it is there
-            if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
-                );
-            }
-            // }
-          }
-        } else {
-          // The field is being updated
-          if (
-            // draft.chartConfig.chartType !== "table" &&
-            action.value.field === "segment" &&
-            "segment" in draft.chartConfig.fields &&
-            draft.chartConfig.fields.segment &&
-            "palette" in draft.chartConfig.fields.segment
-          ) {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
-            );
-            const colorMapping =
-              component &&
-              mapValueIrisToColor({
-                palette:
-                  draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
-                dimensionValues: component?.values,
-              });
-
-            draft.chartConfig.fields.segment.componentIri =
-              action.value.componentIri;
-            draft.chartConfig.fields.segment.colorMapping = colorMapping;
-
-            // Remove this component from the interactive filter, if it is there
-            if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
-                );
-            }
-          } else {
-            const component = action.value.dataSetMetadata.dimensions.find(
-              (dim) => dim.iri === action.value.componentIri
-            );
-            // Reset other field options
-            (draft.chartConfig.fields as GenericFields)[action.value.field] = {
-              componentIri: action.value.componentIri,
-            };
-            // if x !== time, also deactivate interactive time filter
-            if (
-              isColumnConfig(draft.chartConfig) &&
-              action.value.field === "x" &&
-              component?.__typename !== "TemporalDimension" &&
-              draft.chartConfig.interactiveFiltersConfig
-            ) {
-              setWith(
-                draft,
-                `chartConfig.interactiveFiltersConfig.time.active`,
-                false,
-                Object
-              );
-            }
-            // Remove this component from the interactive filter, if it is there
-            if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
-                );
-            }
-          }
-        }
-
-        draft.chartConfig = deriveFiltersFromFields(
-          draft.chartConfig,
-          action.value.dataSetMetadata
-        );
-      }
-      return draft;
+      return handleChartFieldChanged(draft, action);
 
     case "CHART_FIELD_DELETED":
       if (draft.state === "CONFIGURING_CHART") {

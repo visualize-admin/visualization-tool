@@ -10,8 +10,11 @@ import { DataSource } from "@/configurator";
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
   DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataQueryVariables,
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
+  DataCubeMetadataWithComponentValuesQueryVariables,
   DataCubePreviewObservationsDocument,
   DataCubePreviewObservationsQuery,
 } from "../graphql/query-hooks";
@@ -34,17 +37,22 @@ const showCubeInfo = async ({
   client,
   iri,
   sourceType,
+  sourceUrl,
   locale,
   latest,
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query(DataCubeMetadataDocument, {
-      iri,
-      sourceType,
-      locale,
-      latest,
-    })
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
+      {
+        iri,
+        sourceType,
+        sourceUrl,
+        locale,
+        latest,
+      }
+    )
     .toPromise();
 
   if (res.error) {
@@ -53,7 +61,7 @@ const showCubeInfo = async ({
 
   const cube = res.data?.dataCubeByIri;
 
-  if (cube.iri !== iri) {
+  if (cube?.iri !== iri) {
     console.warn(
       "warn: Cube has been resolved to its latest version, pass --no-latest if you want the exact version"
     );
@@ -65,14 +73,19 @@ const showCubeComponents = async ({
   client,
   iri,
   sourceType,
+  sourceUrl,
   locale,
   latest,
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query(DataCubeMetadataWithComponentValuesDocument, {
+    .query<
+      DataCubeMetadataWithComponentValuesQuery,
+      DataCubeMetadataWithComponentValuesQueryVariables
+    >(DataCubeMetadataWithComponentValuesDocument, {
       iri,
       sourceType,
+      sourceUrl,
       locale,
       latest,
     })
