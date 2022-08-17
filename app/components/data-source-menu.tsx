@@ -28,12 +28,18 @@ export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
-    position: 2,
+    position: 3,
     isTrusted: true,
   },
   {
     value: "sparql+https://int.lindas.admin.ch/query",
     label: "Int",
+    position: 2,
+    isTrusted: false,
+  },
+  {
+    value: "sparql+https://test.lindas.admin.ch/query",
+    label: "Test",
     position: 1,
     isTrusted: false,
   },
