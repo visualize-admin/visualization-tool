@@ -1,4 +1,5 @@
 stages:
+  - lint
   - build
   - release
 
