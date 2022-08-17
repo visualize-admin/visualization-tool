@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Builds and push the docker image to the registry
 # The DOCKER_IMAGE_TAGS environment variable must be set and will
