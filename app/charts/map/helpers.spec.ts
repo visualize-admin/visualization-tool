@@ -33,27 +33,17 @@ describe("useViewState", () => {
       },
     });
 
-    // If featuresBBox was not privded, defaultViewState should equal BASE_VIEW_STATE.
-    expect(result.current.defaultViewState.latitude).toEqual(
-      BASE_VIEW_STATE.latitude
+    // If featuresBBox was not provided, defaultViewState should equal BASE_VIEW_STATE.
+    expect(BASE_VIEW_STATE).toEqual(
+      expect.objectContaining(result.current.defaultViewState)
     );
-    expect(result.current.defaultViewState.longitude).toEqual(
-      BASE_VIEW_STATE.longitude
-    );
-    expect(result.current.defaultViewState.zoom).toEqual(BASE_VIEW_STATE.zoom);
 
     rerender({ width, height, lockedBBox: undefined, featuresBBox });
 
     // If featuresBBox was provided afterwards, defaultViewState should be
     // different than BASE_VIEW_state.
-    expect(result.current.defaultViewState.latitude).not.toEqual(
-      BASE_VIEW_STATE.latitude
-    );
-    expect(result.current.defaultViewState.longitude).not.toEqual(
-      BASE_VIEW_STATE.longitude
-    );
-    expect(result.current.defaultViewState.zoom).not.toEqual(
-      BASE_VIEW_STATE.zoom
+    expect(BASE_VIEW_STATE).not.toEqual(
+      expect.objectContaining(result.current.defaultViewState)
     );
   });
 
@@ -71,14 +61,8 @@ describe("useViewState", () => {
     });
 
     // If featuresBBox was provided, defaultViewState should not equal BASE_VIEW_STATE.
-    expect(result.current.defaultViewState.latitude).not.toEqual(
-      BASE_VIEW_STATE.latitude
-    );
-    expect(result.current.defaultViewState.longitude).not.toEqual(
-      BASE_VIEW_STATE.longitude
-    );
-    expect(result.current.defaultViewState.zoom).not.toEqual(
-      BASE_VIEW_STATE.zoom
+    expect(BASE_VIEW_STATE).not.toEqual(
+      expect.objectContaining(result.current.defaultViewState)
     );
 
     const { result: resultLocked } = renderHook<
@@ -95,14 +79,8 @@ describe("useViewState", () => {
 
     // If lockedBBox was provided, viewState should be different than the one
     // based on featuresBBox.
-    expect(result.current.viewState.latitude).not.toEqual(
-      resultLocked.current.viewState.latitude
-    );
-    expect(result.current.viewState.longitude).not.toEqual(
-      resultLocked.current.viewState.longitude
-    );
-    expect(result.current.viewState.zoom).not.toEqual(
-      resultLocked.current.viewState.zoom
+    expect(resultLocked.current.viewState).not.toEqual(
+      result.current.viewState
     );
   });
 });
