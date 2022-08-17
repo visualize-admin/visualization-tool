@@ -235,7 +235,7 @@ export const Select = ({
       >
         {sortedOptions.map((opt) => {
           return opt.type === "group" ? (
-            <ListSubheader>{opt.label}</ListSubheader>
+            <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
           ) : (
             <MenuItem
               key={opt.value}
