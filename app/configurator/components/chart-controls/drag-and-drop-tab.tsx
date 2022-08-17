@@ -22,6 +22,7 @@ type Props = {
   items: TableColumn[];
   metaData: DataCubeMetadata;
   isDropDisabled?: boolean;
+  emptyComponent?: React.ReactNode;
 };
 export const TabDropZone = ({
   id,
@@ -29,6 +30,7 @@ export const TabDropZone = ({
   title,
   metaData,
   isDropDisabled,
+  emptyComponent,
 }: Props) => {
   const { dimensions, measures } = metaData;
 
@@ -52,6 +54,7 @@ export const TabDropZone = ({
                 sx={{ p: 0, minHeight: 60, position: "relative" }}
                 ref={innerRef}
               >
+                {items.length === 0 && emptyComponent ? emptyComponent : null}
                 {items.map(({ componentIri, index, isHidden }, i) => {
                   return (
                     <Draggable
