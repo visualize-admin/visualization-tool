@@ -1,5 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, ButtonBase, Typography } from "@mui/material";
+import { Box, BoxProps, ButtonBase, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
@@ -29,6 +31,44 @@ import {
   ConfiguratorStatePublishing,
 } from "../config-types";
 
+const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
+  root: {
+    width: "86px",
+    height: "64px",
+    borderRadius: 4,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+
+    transition: "all .2s",
+    cursor: "pointer",
+
+    "&:hover": {
+      backgroundColor: theme.palette.action.hover,
+    },
+    "& svg": {
+      color: theme.palette.primary.main,
+    },
+  },
+  checked: {
+    color: "white",
+    backgroundColor: theme.palette.primary.main,
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
+    "& svg": {
+      color: "white",
+    },
+  },
+  disabled: {
+    cursor: "initial",
+    "& svg": {
+      color: theme.palette.grey[500],
+    },
+  },
+}));
+
 export const ChartTypeSelectionButton = ({
   label,
   value,
@@ -40,45 +80,25 @@ export const ChartTypeSelectionButton = ({
   disabled?: boolean;
   onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
+  const classes = useSelectionButtonStyles();
   return (
     <ButtonBase
       tabIndex={0}
       value={value}
       onClick={onClick}
       disabled={disabled}
-      sx={{
-        width: "86px",
-        height: "64px",
-        borderRadius: 4,
-
-        backgroundColor: checked ? "muted.dark" : "grey.100",
-        color: checked ? "primary.main" : disabled ? "grey.500" : "grey.700",
-
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-
-        cursor: disabled ? "initial" : "pointer",
-        pointerEvents: disabled ? "none" : "initial",
-
-        transition: "all .2s",
-
-        ":hover": {
-          backgroundColor: disabled
-            ? "muted.colored"
-            : checked
-            ? "primary"
-            : "muted.dark",
-        },
-      }}
+      className={clsx(
+        classes.root,
+        disabled ? classes.disabled : null,
+        checked ? classes.checked : null
+      )}
     >
       <Icon size={24} name={getIconName(label)} />
       <Typography
-        variant="body2"
+        variant="caption"
         sx={{
-          color: disabled ? "grey.600" : "grey.700",
-          fontSize: ["0.75rem", "0.75rem", "0.75rem"],
+          color: disabled ? "text.primary" : "inherit",
+          mt: 1,
         }}
       >
         {getFieldLabel(label)}
