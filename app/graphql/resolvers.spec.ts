@@ -23,6 +23,9 @@ const unversionObservation = unversionObservation_ as unknown as jest.Mock<
 jest.mock("../rdf/query-dimension-values", () => ({
   unversionObservation: jest.fn(),
 }));
+jest.mock("../rdf/query-search", () => ({
+  unversionObservation: jest.fn(),
+}));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
   createSource: jest.fn(),
