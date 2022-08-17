@@ -1,45 +1,108 @@
-import { Bounds } from "@/charts/shared/use-width";
+import { renderHook } from "@testing-library/react-hooks";
+
 import { BBox } from "@/configurator/config-types";
 
-import { BASE_VIEW_STATE, initializeViewState } from "./helpers";
+import {
+  BASE_VIEW_STATE,
+  useViewState,
+  ViewStateInitializationProps,
+} from "./helpers";
 
-describe("initialization of view state", () => {
-  const bbox = [
-    [0, 0],
-    [0, 0],
-  ] as BBox;
-  const chartDimensions = {
-    width: 400,
-    height: 400,
-  } as Bounds;
+const width = 400;
+const height = 200;
+const lockedBBox = [
+  [6.8965001, 46.3947983],
+  [6.8965001, 46.3947983],
+] as BBox;
+const featuresBBox = [
+  [6.4965001, 46.2947983],
+  [6.9965001, 46.4947983],
+] as BBox;
 
-  it("should use base view state when bbox is undefined", () => {
-    const viewState = initializeViewState({
-      chartDimensions,
-      bbox: undefined,
-      locked: true,
+describe("useViewState", () => {
+  it("should properly set defaultViewState", () => {
+    const { result, rerender } = renderHook<
+      ViewStateInitializationProps,
+      ReturnType<typeof useViewState>
+    >((props: ViewStateInitializationProps) => useViewState(props), {
+      initialProps: {
+        width,
+        height,
+        lockedBBox: undefined,
+        featuresBBox: undefined,
+      },
     });
 
-    expect(viewState).toEqual(BASE_VIEW_STATE);
+    // If featuresBBox was not privded, defaultViewState should equal BASE_VIEW_STATE.
+    expect(result.current.defaultViewState.latitude).toEqual(
+      BASE_VIEW_STATE.latitude
+    );
+    expect(result.current.defaultViewState.longitude).toEqual(
+      BASE_VIEW_STATE.longitude
+    );
+    expect(result.current.defaultViewState.zoom).toEqual(BASE_VIEW_STATE.zoom);
+
+    rerender({ width, height, lockedBBox: undefined, featuresBBox });
+
+    // If featuresBBox was provided afterwards, defaultViewState should be
+    // different than BASE_VIEW_state.
+    expect(result.current.defaultViewState.latitude).not.toEqual(
+      BASE_VIEW_STATE.latitude
+    );
+    expect(result.current.defaultViewState.longitude).not.toEqual(
+      BASE_VIEW_STATE.longitude
+    );
+    expect(result.current.defaultViewState.zoom).not.toEqual(
+      BASE_VIEW_STATE.zoom
+    );
   });
 
-  it("should use base view state when a map is not locked", () => {
-    const viewState = initializeViewState({
-      chartDimensions,
-      bbox,
-      locked: false,
+  it("should properly set viewState", () => {
+    const { result } = renderHook<
+      ViewStateInitializationProps,
+      ReturnType<typeof useViewState>
+    >((props: ViewStateInitializationProps) => useViewState(props), {
+      initialProps: {
+        width,
+        height,
+        lockedBBox: undefined,
+        featuresBBox,
+      },
     });
 
-    expect(viewState).toEqual(BASE_VIEW_STATE);
-  });
+    // If featuresBBox was provided, defaultViewState should not equal BASE_VIEW_STATE.
+    expect(result.current.defaultViewState.latitude).not.toEqual(
+      BASE_VIEW_STATE.latitude
+    );
+    expect(result.current.defaultViewState.longitude).not.toEqual(
+      BASE_VIEW_STATE.longitude
+    );
+    expect(result.current.defaultViewState.zoom).not.toEqual(
+      BASE_VIEW_STATE.zoom
+    );
 
-  it("should use not use base view state when map is locked", () => {
-    const viewState = initializeViewState({
-      chartDimensions,
-      bbox,
-      locked: true,
+    const { result: resultLocked } = renderHook<
+      ViewStateInitializationProps,
+      ReturnType<typeof useViewState>
+    >((props: ViewStateInitializationProps) => useViewState(props), {
+      initialProps: {
+        width,
+        height,
+        lockedBBox,
+        featuresBBox,
+      },
     });
 
-    expect(viewState).not.toEqual(BASE_VIEW_STATE);
+    // If lockedBBox was provided, viewState should be different than the one
+    // based on featuresBBox.
+    expect(result.current.viewState.latitude).not.toEqual(
+      resultLocked.current.viewState.latitude
+    );
+    expect(result.current.viewState.longitude).not.toEqual(
+      resultLocked.current.viewState.longitude
+    );
+    expect(result.current.viewState.zoom).not.toEqual(
+      resultLocked.current.viewState.zoom
+    );
   });
 });

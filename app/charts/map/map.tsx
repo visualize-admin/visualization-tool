@@ -5,7 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
 import { orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
-import React, { useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import ReactMap, { LngLatLike, MapRef } from "react-map-gl";
 
 import {
@@ -32,6 +32,7 @@ let globalGeoJsonLayerId = 0;
 let globalScatterplotLayerId = 0;
 
 const FLY_TO_DURATION = 500;
+const RESET_DURATION = 1500;
 
 export const MapComponent = () => {
   const locale = useLocale();
@@ -42,18 +43,20 @@ export const MapComponent = () => {
     identicalLayerComponentIris,
     areaLayer,
     symbolLayer,
-    bounds,
-    bbox,
+    bounds: { width, height },
+    lockedBBox,
+    featuresBBox,
   } = useChartState() as MapState;
   const classes = useStyles();
 
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
-  const { initialViewState, viewState, onViewStateChange } = useViewState({
-    chartDimensions: bounds,
-    bbox,
-    locked,
+  const { defaultViewState, viewState, onViewStateChange } = useViewState({
+    width,
+    height,
+    lockedBBox,
+    featuresBBox,
   });
 
   const mapNodeRef = useRef<MapRef | null>(null);
@@ -63,21 +66,31 @@ export const MapComponent = () => {
     }
     mapNodeRef.current = mapRef;
   };
-
   const currentBBox = useRef<BBox>();
 
-  // Reset the map to its initial state.
-  const reset = () => {
-    if (initialViewState) {
-      const { longitude, latitude, zoom } = initialViewState;
+  const lockedRef = useRef(locked);
+  useEffect(() => {
+    lockedRef.current = locked;
+  }, [locked]);
+
+  // Resets the map to its default state (showing all visible features).
+  const reset = useCallback(() => {
+    // Reset the map only when it's in an unlocked mode.
+    if (!lockedRef.current) {
+      const { longitude, latitude, zoom } = defaultViewState;
       const newViewState = {
         center: [longitude, latitude] as LngLatLike,
         zoom,
-        duration: FLY_TO_DURATION,
+        duration: RESET_DURATION,
       };
       mapNodeRef.current?.flyTo(newViewState);
     }
-  };
+  }, [defaultViewState]);
+
+  // Reset the view when default view changes (new features appeared on the map).
+  useEffect(() => {
+    reset();
+  }, [reset]);
 
   const zoomIn = () => {
     const newViewState = {

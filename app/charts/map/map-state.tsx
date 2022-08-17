@@ -57,7 +57,8 @@ export interface MapState {
   bounds: Bounds;
   features: GeoData;
   locked: boolean;
-  bbox: BBox | undefined;
+  lockedBBox: BBox | undefined;
+  featuresBBox: BBox | undefined;
   showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
@@ -336,20 +337,16 @@ const useMapState = (
     chartHeight: width * 0.5,
   };
 
-  const bbox = useMemo(() => {
-    return (
-      chartProps.baseLayer.bbox ??
-      getBBox(
-        areaLayer.show ? features.areaLayer?.shapes : undefined,
-        symbolLayer.show ? features.symbolLayer?.points : undefined
-      )
+  const featuresBBox = useMemo(() => {
+    return getBBox(
+      areaLayer.show ? features.areaLayer?.shapes : undefined,
+      symbolLayer.show ? features.symbolLayer?.points : undefined
     );
   }, [
     areaLayer.show,
     features.areaLayer?.shapes,
     symbolLayer.show,
     features.symbolLayer?.points,
-    chartProps.baseLayer.bbox,
   ]);
 
   return {
@@ -358,7 +355,8 @@ const useMapState = (
     bounds,
     showBaseLayer: baseLayer.show,
     locked: baseLayer.locked || false,
-    bbox,
+    lockedBBox: chartProps.baseLayer.bbox,
+    featuresBBox,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,

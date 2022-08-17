@@ -7,7 +7,6 @@ import { BBox } from "@/configurator/config-types";
 import useEvent from "@/lib/use-event";
 
 import { AreaLayer, SymbolLayer } from "../../domain/data";
-import { Bounds } from "../shared/use-width";
 
 export type MinMaxZoomViewState = Pick<
   ViewState,
@@ -38,71 +37,28 @@ export const BASE_VIEW_STATE: MinMaxZoomViewState = {
  * in locked mode.
  */
 export const getViewStateFromBounds = ({
+  width,
+  height,
   bbox,
-  chartDimensions,
+  padding = 0,
 }: {
-  bbox: BBox;
-  chartDimensions: Bounds;
+  width: number;
+  height: number;
+  padding?: number;
+  bbox: BBox | undefined;
 }) => {
-  const vp = new WebMercatorViewport({
+  if (!bbox) {
+    return;
+  }
+
+  const viewport = new WebMercatorViewport({
     ...BASE_VIEW_STATE,
-    width: chartDimensions.width,
-    height: chartDimensions.height,
+    width: width * (1 - padding),
+    height: height * (1 - padding),
   });
-  const fitted = vp.fitBounds(bbox);
+  const fitted = viewport.fitBounds(bbox);
 
   return { ...BASE_VIEW_STATE, ...fitted };
-};
-
-/**
- * Constrain the viewState to always _contain_ the supplied bbox.
- *
- * (Other implementations ensure that the bbox _covers_ the viewport)
- *
- * @param viewState deck.gl viewState
- * @param bbox Bounding box of the feature to be contained
- */
-export const constrainZoom = (
-  viewState: MinMaxZoomViewState,
-  bbox: BBox,
-  { padding = 0 }: { padding?: number } = {}
-) => {
-  const vp = new WebMercatorViewport(viewState);
-
-  const { width, height, zoom, longitude, latitude } = viewState;
-
-  // Make sure the map is rendered before trying to project & fitBounds
-  if (vp.width > 1 && vp.height > 1) {
-    const [x, y] = vp.project([longitude, latitude]);
-    const [x0, y1] = vp.project(bbox[0]);
-    const [x1, y0] = vp.project(bbox[1]);
-
-    const fitted = vp.fitBounds(bbox, { padding });
-
-    const [cx, cy] = vp.project([fitted.longitude, fitted.latitude]);
-
-    const h = height - padding * 2;
-    const w = width - padding * 2;
-
-    const h2 = h / 2;
-    const w2 = w / 2;
-
-    const y2 =
-      y1 - y0 < h ? cy : y - h2 < y0 ? y0 + h2 : y + h2 > y1 ? y1 - h2 : y;
-    const x2 =
-      x1 - x0 < w ? cx : x - w2 < x0 ? x0 + w2 : x + w2 > x1 ? x1 - w2 : x;
-
-    const p = vp.unproject([x2, y2]);
-
-    return {
-      ...viewState,
-      zoom: Math.min(viewState.maxZoom, Math.max(zoom, fitted.zoom)),
-      longitude: p[0],
-      latitude: p[1],
-    };
-  } else {
-    return viewState;
-  }
 };
 
 /**
@@ -113,20 +69,11 @@ export const constrainZoom = (
  * bbox saved in chart config and maintained during resizing) or not (interactions allowed,
  * initial view state dynamically adjusted to fit visible features).
  */
-type ViewStateInitializationProps = {
-  bbox: BBox | undefined;
-  chartDimensions: Bounds;
-  locked: boolean;
-};
-
-export const initializeViewState = ({
-  bbox,
-  chartDimensions,
-  locked,
-}: ViewStateInitializationProps) => {
-  return bbox && locked
-    ? getViewStateFromBounds({ bbox, chartDimensions })
-    : BASE_VIEW_STATE;
+export type ViewStateInitializationProps = {
+  width: number;
+  height: number;
+  lockedBBox: BBox | undefined;
+  featuresBBox: BBox | undefined;
 };
 
 /**
@@ -137,29 +84,36 @@ export const initializeViewState = ({
  * in the first place (if the map was not initialized with a locked mode).
  */
 export const useViewState = (props: ViewStateInitializationProps) => {
-  const { bbox, locked } = props;
-  const [viewState, setViewState] = useState(initializeViewState(props));
+  const { width, height, lockedBBox, featuresBBox } = props;
+  const lockedViewState = useMemo(() => {
+    return getViewStateFromBounds({
+      width,
+      height,
+      bbox: lockedBBox,
+    });
+  }, [width, height, lockedBBox]);
+  const defaultViewState = useMemo(() => {
+    return (
+      getViewStateFromBounds({
+        width,
+        height,
+        padding: 1 / 3,
+        bbox: featuresBBox,
+      }) ?? BASE_VIEW_STATE
+    );
+  }, [width, height, featuresBBox]);
 
+  // Locked view state takes precedence, as it must have come from a locked mode.
+  const [viewState, setViewState] = useState(
+    lockedViewState || defaultViewState
+  );
   const onViewStateChange = useEvent(
     ({ viewState }: { viewState: ViewState }) => {
       setViewState((oldViewState) => ({ ...oldViewState, ...viewState }));
     }
   );
 
-  // Needed to be able to "reset" the map to its initial position.
-  const initialViewState = useMemo(() => {
-    let newViewState: MinMaxZoomViewState | undefined = undefined;
-
-    if (bbox && !locked) {
-      newViewState = constrainZoom(viewState, bbox);
-      setViewState(newViewState);
-    }
-
-    return newViewState ?? viewState;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return { initialViewState, viewState, onViewStateChange };
+  return { defaultViewState, viewState, onViewStateChange };
 };
 
 export const getBBox = (
