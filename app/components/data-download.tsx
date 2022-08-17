@@ -34,6 +34,7 @@ import { Observation } from "../domain/data";
 import {
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,
+  DataCubeObservationsQueryVariables,
   DimensionMetaDataFragment,
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
@@ -318,7 +319,10 @@ const DownloadMenuItem = ({
         try {
           const result: OperationResult<DataCubeObservationsQuery> =
             await urqlClient
-              .query(DataCubeObservationsDocument, {
+              .query<
+                DataCubeObservationsQuery,
+                DataCubeObservationsQueryVariables
+              >(DataCubeObservationsDocument, {
                 iri: dataSetIri,
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
