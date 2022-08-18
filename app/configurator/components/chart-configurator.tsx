@@ -553,103 +553,109 @@ export const ChartConfigurator = ({
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection className={classes.filterSection}>
-        <SectionTitle titleId="controls-data">
-          <Trans id="controls.section.data.filters">Filters</Trans>{" "}
-          {fetching ? (
-            <CircularProgress size={12} className={classes.loadingIndicator} />
-          ) : null}
-        </SectionTitle>
+      {filterDimensions.length === 0 &&
+      addableDimensions.length === 0 ? null : (
+        <ControlSection className={classes.filterSection}>
+          <SectionTitle titleId="controls-data">
+            <Trans id="controls.section.data.filters">Filters</Trans>{" "}
+            {fetching ? (
+              <CircularProgress
+                size={12}
+                className={classes.loadingIndicator}
+              />
+            ) : null}
+          </SectionTitle>
 
-        <ControlSectionContent aria-labelledby="controls-data">
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="filters">
-              {(provided) => (
-                <Box
-                  {...provided.droppableProps}
-                  className={classes.filtersContainer}
-                  ref={provided.innerRef}
-                >
-                  {filterDimensions.map((dimension, i) => (
-                    <Draggable
-                      isDragDisabled={fetching}
-                      draggableId={dimension.iri}
-                      index={i}
-                      key={dimension.iri}
-                    >
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          className={classes.filterRow}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
-                        >
-                          <DataFilterSelectGeneric
-                            key={dimension.iri}
-                            dimension={dimension}
-                            index={i}
-                            disabled={fetching}
-                            onRemove={() =>
-                              handleRemoveDimensionFilter(dimension)
-                            }
-                          />
-                          <Box className={classes.dragButtons}>
-                            <MoveDragButtons
-                              moveUpButtonProps={{
-                                title: t({ id: "Move filter up" }),
-                              }}
-                              moveDownButtonProps={{
-                                title: t({ id: "Move filter down" }),
-                              }}
-                              dragButtonProps={{
-                                title: t({
-                                  id: "Drag filters to reorganize",
-                                }),
-                              }}
-                              className="buttons"
-                              onClickUp={() => handleMove(dimension.iri, -1)}
-                              onClickDown={() => handleMove(dimension.iri, 1)}
-                            />
-                          </Box>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
-          </DragDropContext>
-          {addableDimensions.length > 0 ? (
-            <Box className={classes.addDimensionContainer}>
-              <Button
-                ref={filterMenuButtonRef}
-                onClick={openFilterMenu}
-                variant="contained"
-                className={classes.addDimensionButton}
-                color="primary"
-              >
-                <Trans>Add filter</Trans>
-                <Icon name="add" height={18} />
-              </Button>
-              <Menu
-                anchorEl={filterMenuButtonRef.current}
-                open={isFilterMenuOpen}
-                onClose={closeFilterMenu}
-              >
-                {addableDimensions.map((dim) => (
-                  <MenuItem
-                    onClick={() => handleAddDimensionFilter(dim)}
-                    key={dim.iri}
+          <ControlSectionContent aria-labelledby="controls-data">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="filters">
+                {(provided) => (
+                  <Box
+                    {...provided.droppableProps}
+                    className={classes.filtersContainer}
+                    ref={provided.innerRef}
                   >
-                    {dim.label}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-          ) : null}
-        </ControlSectionContent>
-      </ControlSection>
+                    {filterDimensions.map((dimension, i) => (
+                      <Draggable
+                        isDragDisabled={fetching}
+                        draggableId={dimension.iri}
+                        index={i}
+                        key={dimension.iri}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            className={classes.filterRow}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                          >
+                            <DataFilterSelectGeneric
+                              key={dimension.iri}
+                              dimension={dimension}
+                              index={i}
+                              disabled={fetching}
+                              onRemove={() =>
+                                handleRemoveDimensionFilter(dimension)
+                              }
+                            />
+                            <Box className={classes.dragButtons}>
+                              <MoveDragButtons
+                                moveUpButtonProps={{
+                                  title: t({ id: "Move filter up" }),
+                                }}
+                                moveDownButtonProps={{
+                                  title: t({ id: "Move filter down" }),
+                                }}
+                                dragButtonProps={{
+                                  title: t({
+                                    id: "Drag filters to reorganize",
+                                  }),
+                                }}
+                                className="buttons"
+                                onClickUp={() => handleMove(dimension.iri, -1)}
+                                onClickDown={() => handleMove(dimension.iri, 1)}
+                              />
+                            </Box>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+            {addableDimensions.length > 0 ? (
+              <Box className={classes.addDimensionContainer}>
+                <Button
+                  ref={filterMenuButtonRef}
+                  onClick={openFilterMenu}
+                  variant="contained"
+                  className={classes.addDimensionButton}
+                  color="primary"
+                >
+                  <Trans>Add filter</Trans>
+                  <Icon name="add" height={18} />
+                </Button>
+                <Menu
+                  anchorEl={filterMenuButtonRef.current}
+                  open={isFilterMenuOpen}
+                  onClose={closeFilterMenu}
+                >
+                  {addableDimensions.map((dim) => (
+                    <MenuItem
+                      onClick={() => handleAddDimensionFilter(dim)}
+                      key={dim.iri}
+                    >
+                      {dim.label}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            ) : null}
+          </ControlSectionContent>
+        </ControlSection>
+      )}
     </>
   );
 };
