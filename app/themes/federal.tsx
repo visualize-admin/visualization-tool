@@ -27,6 +27,8 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   return res;
 };
 
+const commonInputPadding = 4;
+
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */
@@ -478,7 +480,7 @@ theme.components = {
     },
     styleOverrides: {
       root: {
-        padding: 4,
+        padding: commonInputPadding,
         color: "primary.main",
       },
       disabled: {
@@ -497,6 +499,20 @@ theme.components = {
         "& > :nth-child(2) > div > :nth-child(2)": {
           minHeight: 230,
         },
+      },
+    },
+  },
+  MuiFormControl: {
+    styleOverrides: {
+      root: {
+        width: "100%",
+      },
+    },
+  },
+  MuiFormControlLabel: {
+    styleOverrides: {
+      root: {
+        marginLeft: -commonInputPadding,
       },
     },
   },
@@ -538,6 +554,13 @@ theme.components = {
       },
     },
   },
+  MuiRadio: {
+    styleOverrides: {
+      root: {
+        padding: commonInputPadding,
+      },
+    },
+  },
   MuiSelect: {
     styleOverrides: {
       select: {
@@ -558,6 +581,7 @@ theme.components = {
         width: 28,
         height: 16,
         padding: 0,
+        marginLeft: commonInputPadding,
         marginRight: "0.5rem",
 
         display: "flex",

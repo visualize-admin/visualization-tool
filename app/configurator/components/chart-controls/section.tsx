@@ -62,7 +62,13 @@ export const ControlSectionContent = ({
       component={component}
       role={role}
       aria-labelledby={ariaLabelledBy}
-      sx={{ px: side === "left" ? 2 : 4, pb: 4, ...sx }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        px: side === "left" ? 2 : 4,
+        pb: 4,
+        ...sx,
+      }}
     >
       {children}
     </Box>
@@ -90,12 +96,11 @@ export const SectionTitle = ({
       variant="h5"
       id={titleId}
       sx={{
-        padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(
-          2
-        )} ${theme.spacing(4)}`,
         display: "flex",
         alignItems: "center",
         width: "100%",
+        p: 4,
+        pb: 2,
         border: "none",
         justifyContent: "flex-start",
         color: disabled ? "grey.600" : color ?? "grey.800",
