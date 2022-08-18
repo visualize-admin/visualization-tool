@@ -211,7 +211,7 @@ export const TableColumnOptions = ({
         >
           {component.label}
         </SectionTitle>
-        <ControlSectionContent side="right">
+        <ControlSectionContent>
           {component.__typename !== "Measure" && (
             <ChartOptionGroupHiddenField
               label={t({
@@ -239,7 +239,7 @@ export const TableColumnOptions = ({
           <SectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <Stack spacing={2}>
               <ChartOptionSelectField<ColumnStyle>
                 id="columnStyle"
@@ -309,7 +309,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" component="fieldset">
+          <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -333,7 +333,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" component="fieldset">
+          <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -477,7 +477,7 @@ const TableSettings = () => {
       <SectionTitle iconName="settings">
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right">
+      <ControlSectionContent>
         <ChartOptionCheckboxField
           label={t({
             id: "controls.tableSettings.showSearch",

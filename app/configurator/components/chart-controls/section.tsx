@@ -43,18 +43,18 @@ export const ControlSection = forwardRef<
 });
 
 export const ControlSectionContent = ({
-  side,
   component,
   role,
   ariaLabelledBy,
   children,
+  px,
   sx,
 }: {
-  side: "left" | "right";
   component?: ElementType;
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
+  px?: "small" | "default";
   sx?: BoxProps["sx"];
 }) => {
   return (
@@ -65,7 +65,7 @@ export const ControlSectionContent = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        px: side === "left" ? 2 : 4,
+        px: px === "small" ? 2 : 4,
         pb: 4,
         ...sx,
       }}
@@ -121,8 +121,8 @@ export const ControlSectionSkeleton = ({
 }: {
   sx?: React.ComponentProps<typeof ControlSection>["sx"];
 }) => (
-  <ControlSection sx={{ mt: 2, px: 2, ...sx }}>
-    <ControlSectionContent side="left">
+  <ControlSection sx={{ mt: 2, ...sx }}>
+    <ControlSectionContent px="small">
       <Typography variant="h1">
         <Skeleton sx={{ bgcolor: "grey.300" }} />
       </Typography>{" "}
