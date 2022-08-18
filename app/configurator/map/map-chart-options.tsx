@@ -96,7 +96,7 @@ const BaseLayerSettings = memo(() => {
       <SectionTitle iconName="mapMaptype">
         <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right">
+      <ControlSectionContent>
         <ChartOptionCheckboxField
           label={t({
             id: "chart.map.layers.base.show",
@@ -105,16 +105,14 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
-        <Box sx={{ ml: 4, mt: 4 }}>
-          <ChartOptionSwitchField
-            label={t({
-              id: "chart.map.layers.base.view.locked",
-              message: "Locked view",
-            })}
-            field={null}
-            path="baseLayer.locked"
-          />
-        </Box>
+        <ChartOptionSwitchField
+          label={t({
+            id: "chart.map.layers.base.view.locked",
+            message: "Locked view",
+          })}
+          field={null}
+          path="baseLayer.locked"
+        />
       </ControlSectionContent>
     </ControlSection>
   );
@@ -188,7 +186,7 @@ export const AreaLayerSettings = memo(
           <SectionTitle iconName="mapRegions">
             <Trans id="chart.map.layers.area">Areas</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionCheckboxField
               label={t({
                 id: "chart.map.layers.show",
@@ -206,7 +204,7 @@ export const AreaLayerSettings = memo(
               message: "Geographical dimension",
             })}
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionSelectField
               id="areaLayer.componentIri"
               label={t({
@@ -224,7 +222,7 @@ export const AreaLayerSettings = memo(
           <SectionTitle iconName="chartBar">
             {t({ id: "controls.measure", message: "Measure" })}
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionSelectField
               id="areaLayer.measureIri"
               label={t({
@@ -242,39 +240,41 @@ export const AreaLayerSettings = memo(
           <SectionTitle iconName="color">
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
-          <ControlSectionContent side="right">
-            <FieldSetLegend
-              legendTitle={t({
-                id: "controls.scale.type",
-                message: "Scale type",
-              })}
-            />
-            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionRadioField
-                label={t({
-                  id: "chart.map.layers.area.discretization.continuous",
-                  message: "Continuous",
+          <ControlSectionContent>
+            <div>
+              <FieldSetLegend
+                legendTitle={t({
+                  id: "controls.scale.type",
+                  message: "Scale type",
                 })}
-                field={activeField}
-                path="colorScaleType"
-                value="continuous"
-                disabled={isHidden}
               />
-
-              {/* Limit the number of clusters to min. 3 */}
-              {nbOfGeoShapes >= 3 && (
+              <Flex sx={{ justifyContent: "flex-start" }}>
                 <ChartOptionRadioField
                   label={t({
-                    id: "chart.map.layers.area.discretization.discrete",
-                    message: "Discrete",
+                    id: "chart.map.layers.area.discretization.continuous",
+                    message: "Continuous",
                   })}
                   field={activeField}
                   path="colorScaleType"
-                  value="discrete"
+                  value="continuous"
                   disabled={isHidden}
                 />
-              )}
-            </Flex>
+
+                {/* Limit the number of clusters to min. 3 */}
+                {nbOfGeoShapes >= 3 && (
+                  <ChartOptionRadioField
+                    label={t({
+                      id: "chart.map.layers.area.discretization.discrete",
+                      message: "Discrete",
+                    })}
+                    field={activeField}
+                    path="colorScaleType"
+                    value="discrete"
+                    disabled={isHidden}
+                  />
+                )}
+              </Flex>
+            </div>
 
             <ColorRampField
               field={activeField}
@@ -334,7 +334,7 @@ export const AreaLayerSettings = memo(
         {!isHidden && (
           <ControlSection>
             <SectionTitle iconName="filter">Filter</SectionTitle>
-            <ControlSectionContent side="right">
+            <ControlSectionContent>
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.areaLayer.componentIri}
                 dataSetIri={metaData.iri}
@@ -386,7 +386,7 @@ export const SymbolLayerSettings = memo(
           <SectionTitle iconName="mapSymbols">
             <Trans id="chart.map.layers.symbol">Symbols</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionCheckboxField
               label={t({
                 id: "chart.map.layers.show",
@@ -404,7 +404,7 @@ export const SymbolLayerSettings = memo(
               message: "Geographical dimension",
             })}
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionSelectField
               id="symbolLayer.componentIri"
               label={t({
@@ -422,7 +422,7 @@ export const SymbolLayerSettings = memo(
           <SectionTitle iconName="chartBar">
             {t({ id: "controls.measure", message: "Measure" })}
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ChartOptionSelectField
               id="symbolLayer.measureIri"
               label={t({
@@ -440,7 +440,7 @@ export const SymbolLayerSettings = memo(
           <SectionTitle iconName="color">
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
-          <ControlSectionContent side="right">
+          <ControlSectionContent>
             <ColorPickerField
               label={t({
                 id: "controls.color.select",
@@ -455,7 +455,7 @@ export const SymbolLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="filter">Filter</SectionTitle>
           {!isHidden && (
-            <ControlSectionContent side="right">
+            <ControlSectionContent>
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.symbolLayer.componentIri}
                 dataSetIri={metaData.iri}

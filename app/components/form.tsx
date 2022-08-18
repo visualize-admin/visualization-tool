@@ -22,7 +22,6 @@ import { timeFormat } from "d3-time-format";
 import { flatten } from "lodash";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 
-import Flex from "@/components/flex";
 import VisuallyHidden from "@/components/visually-hidden";
 import { FieldProps, Option, OptionGroup } from "@/configurator";
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
@@ -30,13 +29,11 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
 export const Label = ({
-  label,
   htmlFor,
   smaller = false,
   children,
   sx,
 }: {
-  label?: string;
   htmlFor: string;
   smaller?: boolean;
   children: ReactNode;
@@ -61,7 +58,16 @@ export const Radio = ({
   checked,
   disabled,
   onChange,
-}: { label: string; disabled?: boolean } & FieldProps) => {
+}: {
+  label: string;
+  disabled?: boolean;
+} & FieldProps) => {
+  const color = checked
+    ? disabled
+      ? "primary.disabled"
+      : "primary"
+    : "grey.500";
+
   return (
     <FormControlLabel
       label={label || "-"}
@@ -80,22 +86,7 @@ export const Radio = ({
           checked={!!checked}
           disabled={disabled}
           size="small"
-          sx={{
-            color:
-              checked && !disabled
-                ? "primary"
-                : checked && disabled
-                ? "primary.disabled"
-                : "grey.500",
-            "> *": {
-              fill:
-                checked && !disabled
-                  ? "primary"
-                  : checked && disabled
-                  ? "primary.disabled"
-                  : "grey.500",
-            },
-          }}
+          sx={{ color, "> *": { fill: color } }}
         />
       }
       disabled={disabled}
@@ -124,7 +115,6 @@ export const Checkbox = ({
     label={label || "-"}
     htmlFor={`${name}-${label}`}
     disabled={disabled}
-    sx={{ display: "flex", ml: 0 }}
     componentsProps={{
       typography: {
         variant: smaller ? "caption" : "body2",
@@ -144,12 +134,12 @@ export const Checkbox = ({
         indeterminate={indeterminate}
         sx={{
           alignSelf: "start",
-          mr: smaller ? 0 : 1,
           svg: { color },
           input: { color },
         }}
       />
     }
+    sx={{ display: "flex" }}
   />
 );
 
@@ -495,19 +485,22 @@ export const SearchField = ({
 
 export const FieldSetLegend = ({
   legendTitle,
+  sx,
 }: {
   legendTitle: string | ReactNode;
+  sx?: TypographyProps["sx"];
 }) => (
   <Typography
     variant="caption"
     color="secondary"
+    component="legend"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       pl: 0,
+      ...sx,
     }}
-    component="legend"
   >
     {legendTitle}
   </Typography>
@@ -526,34 +519,27 @@ export const Switch = ({
   disabled?: boolean;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
+
   return (
-    <Flex
-      sx={{
-        position: "relative",
-        height: "16px",
-        alignItems: "center",
+    <FormControlLabel
+      htmlFor={genId}
+      label={label}
+      componentsProps={{
+        typography: {
+          variant: "body2",
+          color: "grey.800",
+        },
       }}
-    >
-      <FormControlLabel
-        htmlFor={genId}
-        label={label}
-        componentsProps={{
-          typography: {
-            variant: "body2",
-            color: "grey.800",
-          },
-        }}
-        sx={{ fontSize: "0.875rem" }}
-        control={
-          <MUISwitch
-            id={genId}
-            name={name}
-            checked={checked}
-            disabled={disabled}
-            onChange={onChange}
-          />
-        }
-      />
-    </Flex>
+      control={
+        <MUISwitch
+          id={genId}
+          name={name}
+          checked={checked}
+          disabled={disabled}
+          onChange={onChange}
+        />
+      }
+      sx={{ fontSize: "0.875rem" }}
+    />
   );
 };

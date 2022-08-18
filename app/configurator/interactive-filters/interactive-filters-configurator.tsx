@@ -66,7 +66,7 @@ export const InteractiveFiltersConfigurator = ({
             Interactive Filters
           </Trans>
         </SectionTitle>
-        <ControlSectionContent side="left">
+        <ControlSectionContent px="small">
           {/* Time */}
           {timeDimension &&
             timeDimension.__typename === "TemporalDimension" &&

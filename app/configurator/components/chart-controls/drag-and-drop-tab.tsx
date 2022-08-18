@@ -44,7 +44,7 @@ export const TabDropZone = ({
           <ControlSection isHighlighted={isDraggingOver}>
             <SectionTitle>{title}</SectionTitle>
             <ControlSectionContent
-              side="left"
+              px="small"
               role="tablist"
               aria-labelledby={`controls-${id}`}
             >

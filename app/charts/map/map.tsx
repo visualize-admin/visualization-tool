@@ -386,6 +386,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
       borderTopLeftRadius: 3,
     },
     "&:last-of-type": {
+      borderBottom: "1px solid",
+      borderBottomColor: theme.palette.grey[500],
       borderBottomRightRadius: 3,
       borderBottomLeftRadius: 3,
     },

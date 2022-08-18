@@ -55,7 +55,7 @@ export const ChartAnnotationsSelector = ({
             <SectionTitle iconName={getIconName(state.activeField)}>
               {state.activeField && getFieldLabel(state.activeField)}
             </SectionTitle>
-            <ControlSectionContent side="right">
+            <ControlSectionContent>
               {state.activeField &&
                 orderedLocales.map((locale) => (
                   <Box
