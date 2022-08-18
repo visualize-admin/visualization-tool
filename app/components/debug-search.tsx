@@ -6,7 +6,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useEffect } from "react";
 
 import { DataCubeSearchFilter, useDataCubesQuery } from "@/graphql/query-hooks";
 
@@ -48,6 +49,13 @@ const Search = ({
   includeDrafts: boolean;
   sourceUrl: string;
 }) => {
+  const startTimeRef = useRef(0);
+  const [endTime, setEndTime] = useState(0);
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, [query, locale]);
+
   const [cubes] = useDataCubesQuery({
     variables: {
       locale: locale,
@@ -58,6 +66,19 @@ const Search = ({
       sourceType: "sparql",
     },
   });
+
+  useEffect(() => {
+    if (cubes.data) {
+      console.log("seting end time", query);
+      setEndTime(Date.now());
+    }
+  }, [cubes.data]);
+
+  const responseTime =
+    startTimeRef.current && endTime
+      ? endTime - startTimeRef.current
+      : undefined;
+
   return (
     <Box>
       <Typography variant="h5">
@@ -68,15 +89,24 @@ const Search = ({
             ))
           : null}
       </Typography>
+
       {cubes.fetching ? (
         <CircularProgress />
       ) : (
-        <Typography
-          variant="caption"
-          color={cubes.data?.dataCubes.length === 0 ? "error" : undefined}
-        >
-          {cubes.data?.dataCubes.length} results
-        </Typography>
+        <div>
+          <Typography
+            variant="caption"
+            color={cubes.data?.dataCubes.length === 0 ? "error" : undefined}
+          >
+            {cubes.data?.dataCubes.length} results |{" "}
+          </Typography>
+          <Typography
+            variant="caption"
+            color={responseTime && responseTime > 1500 ? "error" : undefined}
+          >
+            {responseTime !== undefined ? `${responseTime}ms` : ""}
+          </Typography>
+        </div>
       )}
       {cubes.error ? (
         <Typography color="error">{cubes.error.message}</Typography>
