@@ -77,6 +77,8 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
     setSource(source);
   };
 
+  const router = useRouter();
+
   useEffect(() => {
     const dataSource = retrieveDataSourceFromLocalStorage();
 
@@ -89,6 +91,28 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
       saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
     }
   }, []);
+
+  useEffect(() => {
+    if (router.isReady) {
+      const routerSource = router.query.dataSource;
+      const stringifiedSource = stringifyDataSource(source);
+
+      if (routerSource !== undefined && !Array.isArray(routerSource)) {
+        if (routerSource !== stringifiedSource) {
+          handleSourceChange(parseDataSource(routerSource));
+        }
+      } else {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, dataSource: stringifiedSource },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    }
+  }, [router, source]);
 
   return (
     <DataSourceStateContext.Provider value={[source, handleSourceChange]}>
@@ -106,7 +130,7 @@ const isDataSourceChangeable = (pathname: string) => {
 };
 
 export const DataSourceMenu = () => {
-  const [source, setSource] = useDataSource();
+  const [source] = useDataSource();
   const router = useRouter();
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);
@@ -124,7 +148,15 @@ export const DataSourceMenu = () => {
         options={DATA_SOURCE_OPTIONS}
         value={stringifyDataSource(source)}
         onChange={(e) => {
-          setSource(parseDataSource(e.target.value as string));
+          const newDataSource = e.target.value as string;
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: { ...router.query, dataSource: newDataSource },
+            },
+            undefined,
+            { shallow: true }
+          );
         }}
         disabled={isDisabled}
       />
