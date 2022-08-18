@@ -149,7 +149,7 @@ export const ChartTypeSelector = ({
           </Typography>
         </Box>
 
-        <ControlSectionContent side="left">
+        <ControlSectionContent>
           {!possibleChartTypes ? (
             <Hint>
               <Trans id="hint.no.visualization.with.dataset">

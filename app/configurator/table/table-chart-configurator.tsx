@@ -96,7 +96,7 @@ export const ChartConfiguratorTable = ({
             <Trans id="controls.section.tableoptions">Table Options</Trans>
           </SectionTitle>
           <ControlSectionContent
-            side="left"
+            px="small"
             role="tablist"
             aria-labelledby="controls-settings"
           >

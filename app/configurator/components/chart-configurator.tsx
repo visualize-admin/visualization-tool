@@ -543,7 +543,7 @@ export const ChartConfigurator = ({
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
         <ControlSectionContent
-          side="left"
+          px="small"
           role="tablist"
           aria-labelledby="controls-design"
         >
@@ -561,7 +561,7 @@ export const ChartConfigurator = ({
           ) : null}
         </SectionTitle>
 
-        <ControlSectionContent side="left" aria-labelledby="controls-data">
+        <ControlSectionContent aria-labelledby="controls-data">
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="filters">
               {(provided) => (

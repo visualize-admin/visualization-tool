@@ -253,7 +253,7 @@ const EncodingOptionsPanel = ({
         <SectionTitle iconName={getIconName(encoding.field)}>
           {getFieldLabel(encoding.field)}
         </SectionTitle>
-        <ControlSectionContent side="right">
+        <ControlSectionContent>
           <ChartFieldField
             field={encoding.field}
             label={getFieldLabelHint[encoding.field]}
@@ -296,7 +296,7 @@ const EncodingOptionsPanel = ({
               Show additional information
             </Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" component="fieldset">
+          <ControlSectionContent component="fieldset">
             <ChartOptionCheckboxField
               path="showStandardError"
               field={encoding.field}
@@ -314,7 +314,7 @@ const EncodingOptionsPanel = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" component="fieldset">
+          <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -451,7 +451,7 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right" component="fieldset">
+      <ControlSectionContent component="fieldset">
         <Box>
           <Select
             id="sort-by"
@@ -564,7 +564,7 @@ const ChartImputationType = ({
       <SectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right" component="fieldset">
+      <ControlSectionContent component="fieldset">
         {!disabled && (
           <Box mb={5}>
             <Trans id="controls.section.imputation.explanation">
