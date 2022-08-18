@@ -544,7 +544,7 @@ export const ChartConfigurator = ({
         <SectionTitle titleId="controls-design">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
-        <ControlSectionContent side="left">
+        <ControlSectionContent px="small">
           <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
         </ControlSectionContent>
         <Divider />
