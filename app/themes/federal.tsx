@@ -480,8 +480,8 @@ theme.components = {
     },
     styleOverrides: {
       root: {
-        padding: commonInputPadding,
-        color: "primary.main",
+        padding: 0,
+        margin: 0,
       },
       disabled: {
         color: "grey.500",
@@ -512,7 +512,8 @@ theme.components = {
   MuiFormControlLabel: {
     styleOverrides: {
       root: {
-        marginLeft: -commonInputPadding,
+        marginLeft: 0,
+        gap: "0.375rem",
       },
     },
   },
@@ -557,7 +558,7 @@ theme.components = {
   MuiRadio: {
     styleOverrides: {
       root: {
-        padding: commonInputPadding,
+        padding: 0,
       },
     },
   },
@@ -581,8 +582,6 @@ theme.components = {
         width: 28,
         height: 16,
         padding: 0,
-        marginLeft: commonInputPadding,
-        marginRight: "0.5rem",
 
         display: "flex",
 

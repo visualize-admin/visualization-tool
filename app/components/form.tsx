@@ -134,7 +134,6 @@ export const Checkbox = ({
         indeterminate={indeterminate}
         sx={{
           alignSelf: "start",
-          mr: smaller ? 0 : 1,
           svg: { color },
           input: { color },
         }}
