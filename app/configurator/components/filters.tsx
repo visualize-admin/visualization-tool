@@ -823,12 +823,15 @@ export const TimeFilter = ({
 
     return (
       <Box>
-        {timeFormatUnit(timeRange[0], timeUnit)} –{" "}
-        {timeFormatUnit(timeRange[1], timeUnit)}
+        <Typography variant="body2">
+          {timeFormatUnit(timeRange[0], timeUnit)} –{" "}
+          {timeFormatUnit(timeRange[1], timeUnit)}
+        </Typography>
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
+          timeUnit={timeUnit}
           onChange={([from, to]) =>
             setFilterRange([formatDateValue(from), formatDateValue(to)])
           }
