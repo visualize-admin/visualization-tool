@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
+import { keyBy } from "lodash";
 import { useRouter } from "next/router";
 import {
   createContext,
@@ -14,17 +15,22 @@ import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { DataSource, Option } from "@/configurator";
+import { DataSource } from "@/configurator";
 import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
   stringifyDataSource,
-  parseDataSource,
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
+  parseDataSource,
 } from "@/graphql/resolvers/data-source";
+import useEvent from "@/lib/use-event";
+import {
+  updateRouterQuery,
+  useSyncRouterQueryParam,
+} from "@/lib/use-sync-router-param";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
+export const SOURCE_OPTIONS = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
@@ -44,18 +50,19 @@ export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
     isTrusted: false,
   },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
-const DATA_SOURCE_URLS: string[] = DATA_SOURCE_OPTIONS.map((d) => d.value);
+
+const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
+const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
 
 export const useIsTrustedDataSource = (dataSource: DataSource) => {
   return useMemo(() => {
     const stringifiedDataSource = stringifyDataSource(dataSource);
-    return DATA_SOURCE_OPTIONS.find((d) => d.value === stringifiedDataSource)
-      ?.isTrusted;
+    return SOURCES_BY_VALUE[stringifiedDataSource]?.isTrusted;
   }, [dataSource]);
 };
 
 const DataSourceStateContext = createContext<
-  [DataSource, Dispatch<DataSource>] | undefined
+  { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
 >(undefined);
 
 export const useDataSource = () => {
@@ -71,27 +78,44 @@ export const useDataSource = () => {
 };
 
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const [source, setSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
-  const handleSourceChange = (source: DataSource) => {
-    saveDataSourceToLocalStorage(source);
-    setSource(source);
-  };
+  const router = useRouter();
+  const [source, rawSetSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
+  const setSource = useEvent((source: string) => {
+    updateRouterQuery(router, { dataSource: SOURCES_BY_VALUE[source]?.label });
+  });
+  const sourceLabel = useMemo(() => {
+    return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
+  }, [source]);
+
+  useSyncRouterQueryParam({
+    param: "dataSource",
+    value: sourceLabel,
+    onParamChange: (routerParamValue) => {
+      const newSource = parseDataSource(
+        SOURCES_BY_LABEL[routerParamValue]?.value
+      );
+
+      if (newSource) {
+        saveDataSourceToLocalStorage(newSource);
+        rawSetSource(newSource);
+      }
+    },
+  });
 
   useEffect(() => {
     const dataSource = retrieveDataSourceFromLocalStorage();
 
-    if (
-      dataSource &&
-      DATA_SOURCE_URLS.includes(stringifyDataSource(dataSource))
-    ) {
-      setSource(dataSource);
+    if (dataSource && SOURCES_BY_VALUE[stringifyDataSource(dataSource)]) {
+      rawSetSource(dataSource);
     } else {
       saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
     }
   }, []);
 
   return (
-    <DataSourceStateContext.Provider value={[source, handleSourceChange]}>
+    <DataSourceStateContext.Provider
+      value={{ dataSource: source, setDataSource: setSource }}
+    >
       {children}
     </DataSourceStateContext.Provider>
   );
@@ -106,7 +130,7 @@ const isDataSourceChangeable = (pathname: string) => {
 };
 
 export const DataSourceMenu = () => {
-  const [source, setSource] = useDataSource();
+  const { dataSource, setDataSource } = useDataSource();
   const router = useRouter();
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);
@@ -121,10 +145,10 @@ export const DataSourceMenu = () => {
       </Label>
       <MinimalisticSelect
         id="dataSourceSelect"
-        options={DATA_SOURCE_OPTIONS}
-        value={stringifyDataSource(source)}
+        options={SOURCE_OPTIONS}
+        value={stringifyDataSource(dataSource)}
         onChange={(e) => {
-          setSource(parseDataSource(e.target.value as string));
+          setDataSource(e.target.value as string);
         }}
         disabled={isDisabled}
       />

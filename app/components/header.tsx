@@ -9,10 +9,7 @@ import React, {
   useState,
 } from "react";
 
-import {
-  DataSourceMenu,
-  DATA_SOURCE_OPTIONS,
-} from "@/components/data-source-menu";
+import { DataSourceMenu, SOURCE_OPTIONS } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
 
@@ -170,7 +167,7 @@ export const Logo = () => {
           </Box>
         </NextLink>
 
-        {DATA_SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
+        {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
       </Flex>
     </Flex>
   );

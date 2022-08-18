@@ -148,7 +148,7 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
 };
 
 export const useBrowseState = () => {
-  const [dataSource] = useDataSource();
+  const { dataSource } = useDataSource();
   const locale = useLocale();
   const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
@@ -617,7 +617,7 @@ export const Subthemes = ({
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
-  const [dataSource] = useDataSource();
+  const { dataSource } = useDataSource();
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
     variables: {
@@ -787,7 +787,7 @@ const NavSection = ({
 };
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
-  const [dataSource] = useDataSource();
+  const { dataSource } = useDataSource();
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
