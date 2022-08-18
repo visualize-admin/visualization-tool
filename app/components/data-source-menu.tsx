@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
+import { keyBy } from "lodash";
 import { useRouter } from "next/router";
 import {
   createContext,
@@ -14,7 +15,7 @@ import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { DataSource, Option } from "@/configurator";
+import { DataSource } from "@/configurator";
 import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
   stringifyDataSource,
@@ -24,7 +25,7 @@ import {
 } from "@/graphql/resolvers/data-source";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
+export const SOURCE_OPTIONS = [
   {
     value: "sparql+https://lindas.admin.ch/query",
     label: "Prod",
@@ -44,12 +45,14 @@ export const DATA_SOURCE_OPTIONS: ({ isTrusted: boolean } & Option)[] = [
     isTrusted: false,
   },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
-const DATA_SOURCE_URLS: string[] = DATA_SOURCE_OPTIONS.map((d) => d.value);
+
+const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
+const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
 
 export const useIsTrustedDataSource = (dataSource: DataSource) => {
   return useMemo(() => {
     const stringifiedDataSource = stringifyDataSource(dataSource);
-    return DATA_SOURCE_OPTIONS.find((d) => d.value === stringifiedDataSource)
+    return SOURCE_OPTIONS.find((d) => d.value === stringifiedDataSource)
       ?.isTrusted;
   }, [dataSource]);
 };
@@ -82,10 +85,7 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const dataSource = retrieveDataSourceFromLocalStorage();
 
-    if (
-      dataSource &&
-      DATA_SOURCE_URLS.includes(stringifyDataSource(dataSource))
-    ) {
+    if (dataSource && SOURCES_BY_VALUE[stringifyDataSource(dataSource)]) {
       setSource(dataSource);
     } else {
       saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
@@ -94,22 +94,27 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (router.isReady) {
-      const routerSource = router.query.dataSource;
-      const stringifiedSource = stringifyDataSource(source);
+      const routerSourceLabel = router.query.dataSource as string;
+      const routerSource = SOURCES_BY_LABEL[routerSourceLabel]?.value;
 
-      if (routerSource !== undefined && !Array.isArray(routerSource)) {
-        if (routerSource !== stringifiedSource) {
+      const strSource = stringifyDataSource(source);
+      const strSourceLabel = SOURCES_BY_VALUE[strSource]?.label;
+
+      if (routerSource !== undefined) {
+        if (routerSource !== strSource) {
           handleSourceChange(parseDataSource(routerSource));
         }
       } else {
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: { ...router.query, dataSource: stringifiedSource },
-          },
-          undefined,
-          { shallow: true }
-        );
+        if (strSourceLabel) {
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: { ...router.query, dataSource: strSourceLabel },
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
       }
     }
   }, [router, source]);
@@ -145,18 +150,21 @@ export const DataSourceMenu = () => {
       </Label>
       <MinimalisticSelect
         id="dataSourceSelect"
-        options={DATA_SOURCE_OPTIONS}
+        options={SOURCE_OPTIONS}
         value={stringifyDataSource(source)}
         onChange={(e) => {
-          const newDataSource = e.target.value as string;
-          router.replace(
-            {
-              pathname: router.pathname,
-              query: { ...router.query, dataSource: newDataSource },
-            },
-            undefined,
-            { shallow: true }
-          );
+          const sourceLabel = SOURCES_BY_VALUE[e.target.value as string]?.label;
+
+          if (sourceLabel) {
+            router.replace(
+              {
+                pathname: router.pathname,
+                query: { ...router.query, dataSource: sourceLabel },
+              },
+              undefined,
+              { shallow: true }
+            );
+          }
         }}
         disabled={isDisabled}
       />
