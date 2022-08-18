@@ -30,6 +30,30 @@ const makeInFilter = (varName: string, values: string[]) => {
 type RdfValue<T> = {
   value: T;
 };
+
+const makeVisualizeFilter = (includeDrafts: boolean) => {
+  return sparql`
+    ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
+    ?cube ${ns.schema.creativeWorkStatus} ?workStatus.
+    
+    ${
+      !includeDrafts
+        ? `
+      FILTER (
+        ?workStatus IN (<https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)
+        )`
+        : ""
+    }
+
+    FILTER (
+      NOT EXISTS { ?cube <http://schema.org/validThrough> ?validThrough . }
+    )
+    FILTER (
+      NOT EXISTS { ?cube <http://schema.org/expires> ?expires . }
+    )
+  `;
+};
+
 export const searchCubes = async ({
   query,
   locale,
@@ -62,33 +86,16 @@ export const searchCubes = async ({
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
     
-    ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?cube ${ns.schema.creativeWorkStatus} ?workStatus.
-
     OPTIONAL {
       ?cube ${ns.schema.about} ?about.
     }
-    
-    ${
-      !includeDrafts
-        ? `
-      FILTER (
-        ?workStatus IN (<https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)
-        )`
-        : ""
-    }
 
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/validThrough> ?validThrough . }
-    )
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/expires> ?expires . }
-    )
     ${makeInFilter("about", aboutValues)}
     
     ?versionHistory ${ns.schema.hasPart} ?cube.
     ?cube ${ns.dcat.theme} ?theme.
 
+    ${makeVisualizeFilter(!!includeDrafts)}
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
 
