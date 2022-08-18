@@ -161,9 +161,11 @@ const TabContent = ({
         px: 3,
         borderRadius: 3,
         transition: "0.125s ease background-color",
-        "&:hover": {
-          backgroundColor: "grey.200",
-        },
+        "&:hover": editable
+          ? {
+              backgroundColor: "grey.200",
+            }
+          : undefined,
       }}
     >
       <Icon name={iconName} />

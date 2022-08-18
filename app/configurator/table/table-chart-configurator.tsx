@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { Divider } from "@mui/material";
 import { useCallback, useState } from "react";
 import {
   DragDropContext,
@@ -21,6 +22,8 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartTypeSelector } from "../components/chart-type-selector";
 
 export const ChartConfiguratorTable = ({
   state,
@@ -92,6 +95,13 @@ export const ChartConfiguratorTable = ({
     return (
       <>
         <ControlSection>
+          <SectionTitle titleId="controls-design">
+            <Trans id="controls.select.chart.type">Chart Type</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="left">
+            <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
+          </ControlSectionContent>
+          <Divider />
           <SectionTitle>
             <Trans id="controls.section.tableoptions">Table Options</Trans>
           </SectionTitle>

@@ -50,6 +50,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
+  DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
 import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/data-source";
@@ -1125,15 +1126,15 @@ export const initChartStateFromCube = async (
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
   const { data } = await client
-    .query<DataCubeMetadataWithComponentValuesQuery>(
-      DataCubeMetadataWithComponentValuesDocument,
-      {
-        iri: datasetIri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale,
-      }
-    )
+    .query<
+      DataCubeMetadataWithComponentValuesQuery,
+      DataCubeMetadataWithComponentValuesQueryVariables
+    >(DataCubeMetadataWithComponentValuesDocument, {
+      iri: datasetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    })
     .toPromise();
   if (!data || !data?.dataCubeByIri) {
     console.warn(`Could not fetch cube with iri ${datasetIri}`);

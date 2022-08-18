@@ -17,6 +17,7 @@ import {
   DataCubeMetadataWithComponentValuesQueryVariables,
   DataCubePreviewObservationsDocument,
   DataCubePreviewObservationsQuery,
+  DataCubePreviewObservationsQueryVariables,
 } from "../graphql/query-hooks";
 
 config();
@@ -108,10 +109,16 @@ const previewCube = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const { data: info, error } = await client
-    .query<DataCubeMetadataWithComponentValuesQuery>(
-      DataCubeMetadataWithComponentValuesDocument,
-      { iri, sourceType, sourceUrl, locale, latest }
-    )
+    .query<
+      DataCubeMetadataWithComponentValuesQuery,
+      DataCubeMetadataWithComponentValuesQueryVariables
+    >(DataCubeMetadataWithComponentValuesDocument, {
+      iri,
+      sourceType,
+      sourceUrl,
+      locale,
+      latest,
+    })
     .toPromise();
 
   if (error) {
@@ -122,19 +129,17 @@ const previewCube = async ({
     throw new Error(`Could not find datacube ${iri}`);
   }
 
-  const { measures } = info["dataCubeByIri"];
   const res = await client
-    .query<DataCubePreviewObservationsQuery>(
-      DataCubePreviewObservationsDocument,
-      {
-        iri,
-        sourceType,
-        sourceUrl,
-        locale,
-        latest,
-        measures: measures.map((m) => m.iri),
-      }
-    )
+    .query<
+      DataCubePreviewObservationsQuery,
+      DataCubePreviewObservationsQueryVariables
+    >(DataCubePreviewObservationsDocument, {
+      iri,
+      sourceType,
+      sourceUrl,
+      locale,
+      latest,
+    })
     .toPromise();
 
   if (res.error) {

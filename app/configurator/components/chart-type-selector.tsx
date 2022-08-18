@@ -1,15 +1,13 @@
 import { Trans } from "@lingui/macro";
-import { Box, ButtonBase, Typography } from "@mui/material";
+import { Box, BoxProps, ButtonBase, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React, { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
-import {
-  ControlSection,
-  ControlSectionContent,
-  ControlSectionSkeleton,
-} from "@/configurator/components/chart-controls/section";
+import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import {
   getFieldLabel,
   getIconName,
@@ -29,6 +27,44 @@ import {
   ConfiguratorStatePublishing,
 } from "../config-types";
 
+const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
+  root: {
+    width: "86px",
+    height: "64px",
+    borderRadius: 4,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+
+    transition: "all .2s",
+    cursor: "pointer",
+
+    "&:hover": {
+      backgroundColor: theme.palette.action.hover,
+    },
+    "& svg": {
+      color: theme.palette.primary.main,
+    },
+  },
+  checked: {
+    color: "white",
+    backgroundColor: theme.palette.primary.main,
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main,
+    },
+    "& svg": {
+      color: "white",
+    },
+  },
+  disabled: {
+    cursor: "initial",
+    "& svg": {
+      color: theme.palette.grey[500],
+    },
+  },
+}));
+
 export const ChartTypeSelectionButton = ({
   label,
   value,
@@ -40,45 +76,25 @@ export const ChartTypeSelectionButton = ({
   disabled?: boolean;
   onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
+  const classes = useSelectionButtonStyles();
   return (
     <ButtonBase
       tabIndex={0}
       value={value}
       onClick={onClick}
       disabled={disabled}
-      sx={{
-        width: "86px",
-        height: "64px",
-        borderRadius: 4,
-
-        backgroundColor: checked ? "muted.dark" : "grey.100",
-        color: checked ? "primary.main" : disabled ? "grey.500" : "grey.700",
-
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-
-        cursor: disabled ? "initial" : "pointer",
-        pointerEvents: disabled ? "none" : "initial",
-
-        transition: "all .2s",
-
-        ":hover": {
-          backgroundColor: disabled
-            ? "muted.colored"
-            : checked
-            ? "primary"
-            : "muted.dark",
-        },
-      }}
+      className={clsx(
+        classes.root,
+        disabled ? classes.disabled : null,
+        checked ? classes.checked : null
+      )}
     >
       <Icon size={24} name={getIconName(label)} />
       <Typography
-        variant="body2"
+        variant="caption"
         sx={{
-          color: disabled ? "grey.600" : "grey.700",
-          fontSize: ["0.75rem", "0.75rem", "0.75rem"],
+          color: disabled ? "text.primary" : "inherit",
+          mt: 1,
         }}
       >
         {getFieldLabel(label)}
@@ -115,11 +131,15 @@ const ChartTypeSelectorField = ({
 
 export const ChartTypeSelector = ({
   state,
+  showHelp,
+  sx,
 }: {
   state:
     | ConfiguratorStateConfiguringChart
     | ConfiguratorStateDescribingChart
     | ConfiguratorStatePublishing;
+  showHelp?: boolean;
+  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -136,20 +156,24 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <ControlSection sx={{ position: "relative", width: "320px" }}>
+      <Box sx={sx}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
-        <Box sx={{ m: 4, textAlign: "center" }}>
-          <Typography variant="body2">
-            <Trans id="controls.switch.chart.type">
-              Switch to another chart type while maintaining most filter
-              settings.
-            </Trans>
-          </Typography>
-        </Box>
+        {showHelp !== false ? (
+          <Box sx={{ m: 4, textAlign: "center" }}>
+            <Typography variant="body2">
+              <Trans id="controls.switch.chart.type">
+                Switch to another chart type while maintaining most filter
+                settings.
+              </Trans>
+            </Typography>
+          </Box>
+        ) : (
+          false
+        )}
 
-        <ControlSectionContent>
+        <div>
           {!possibleChartTypes ? (
             <Hint>
               <Trans id="hint.no.visualization.with.dataset">
@@ -163,7 +187,7 @@ export const ChartTypeSelector = ({
                 sx={{
                   gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
                   gridGap: "0.75rem",
-                  mx: 4,
+                  mx: 2,
                 }}
               >
                 {enabledChartTypes.map((d) => (
@@ -184,8 +208,8 @@ export const ChartTypeSelector = ({
               </Button> */}
             </Flex>
           )}
-        </ControlSectionContent>
-      </ControlSection>
+        </div>
+      </Box>
     );
   } else {
     return <ControlSectionSkeleton />;

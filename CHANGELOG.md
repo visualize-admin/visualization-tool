@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unpublished
+## [3.7.7] - 2022-08-17
 
 - Add an option to see cubes from different LINDAS environments within one Visualize instance
 - Store data source in charts' configs
+- Improvement to hierarchy handling
+  - See hierarchies in left filters
+  - See hierarchies in the legend
+  - Selection of values as part of segmentation now supports search and has been redesigned for clarity
+- Improvements to default selection of values for segmentation
+  - Only 7 values
+- Legend symbols: squares (instead of lines) are used for pie / area / columns bar
+- Ability to lock a map to the current viewed bounding box
 
 ## [3.7.4] - 2022-05-31
 

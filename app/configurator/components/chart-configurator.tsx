@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -72,6 +73,7 @@ import { Icon } from "@/icons";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 
+import { ChartTypeSelector } from "./chart-type-selector";
 import useHierarchyParents from "./use-hierarchy-parents";
 
 const asGroup = (
@@ -539,6 +541,13 @@ export const ChartConfigurator = ({
   return (
     <>
       <ControlSection>
+        <SectionTitle titleId="controls-design">
+          <Trans id="controls.select.chart.type">Chart Type</Trans>
+        </SectionTitle>
+        <ControlSectionContent side="left">
+          <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
+        </ControlSectionContent>
+        <Divider />
         <SectionTitle titleId="controls-design">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
