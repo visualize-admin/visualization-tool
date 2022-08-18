@@ -12,9 +12,11 @@ import React, { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
-import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
+
+import { useTimeFormatUnit } from "../components/ui-helpers";
 
 const HANDLE_SIZE = 20;
 const HANDLE_OFFSET = HANDLE_SIZE / 8;
@@ -25,19 +27,21 @@ export const EditorIntervalBrush = ({
   timeExtent,
   timeRange,
   timeInterval,
+  timeUnit,
   onChange,
   disabled = false,
 }: {
   timeExtent: Date[];
   timeRange: Date[];
   timeInterval: CountableTimeInterval;
+  timeUnit: TimeUnit;
   onChange: (extent: Date[]) => void;
   disabled?: boolean;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
-  const formatDateAuto = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
 
   const brushWidth = width - (MARGIN + HANDLE_OFFSET) * 2;
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
@@ -140,10 +144,10 @@ export const EditorIntervalBrush = ({
         }}
       >
         <Typography component="div" variant="caption">
-          {formatDateAuto(timeExtent[0])}
+          {timeFormatUnit(timeExtent[0], timeUnit)}
         </Typography>
         <Typography component="div" variant="caption">
-          {formatDateAuto(timeExtent[1])}
+          {timeFormatUnit(timeExtent[1], timeUnit)}
         </Typography>
       </Flex>
     </Box>

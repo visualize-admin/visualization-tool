@@ -829,6 +829,7 @@ export const TimeFilter = ({
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
+          timeUnit={timeUnit}
           onChange={([from, to]) =>
             setFilterRange([formatDateValue(from), formatDateValue(to)])
           }
