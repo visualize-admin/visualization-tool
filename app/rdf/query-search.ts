@@ -93,8 +93,10 @@ export const searchCubes = async ({
       ?cube ${ns.schema.about} ?about.
     }
 
+    OPTIONAL {
+      ?versionHistory ${ns.schema.hasPart} ?cube.
+    }
     
-    ?versionHistory ${ns.schema.hasPart} ?cube.
     ${makeVisualizeFilter(!!includeDrafts)}
 
     ${makeInFilter("about", aboutValues)}
