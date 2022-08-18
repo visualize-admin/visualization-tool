@@ -105,16 +105,14 @@ const BaseLayerSettings = memo(() => {
           field={null}
           path="baseLayer.show"
         />
-        <Box sx={{ ml: 4, mt: 4 }}>
-          <ChartOptionSwitchField
-            label={t({
-              id: "chart.map.layers.base.view.locked",
-              message: "Locked view",
-            })}
-            field={null}
-            path="baseLayer.locked"
-          />
-        </Box>
+        <ChartOptionSwitchField
+          label={t({
+            id: "chart.map.layers.base.view.locked",
+            message: "Locked view",
+          })}
+          field={null}
+          path="baseLayer.locked"
+        />
       </ControlSectionContent>
     </ControlSection>
   );
@@ -243,38 +241,40 @@ export const AreaLayerSettings = memo(
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent side="right">
-            <FieldSetLegend
-              legendTitle={t({
-                id: "controls.scale.type",
-                message: "Scale type",
-              })}
-            />
-            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionRadioField
-                label={t({
-                  id: "chart.map.layers.area.discretization.continuous",
-                  message: "Continuous",
+            <div>
+              <FieldSetLegend
+                legendTitle={t({
+                  id: "controls.scale.type",
+                  message: "Scale type",
                 })}
-                field={activeField}
-                path="colorScaleType"
-                value="continuous"
-                disabled={isHidden}
               />
-
-              {/* Limit the number of clusters to min. 3 */}
-              {nbOfGeoShapes >= 3 && (
+              <Flex sx={{ justifyContent: "flex-start" }}>
                 <ChartOptionRadioField
                   label={t({
-                    id: "chart.map.layers.area.discretization.discrete",
-                    message: "Discrete",
+                    id: "chart.map.layers.area.discretization.continuous",
+                    message: "Continuous",
                   })}
                   field={activeField}
                   path="colorScaleType"
-                  value="discrete"
+                  value="continuous"
                   disabled={isHidden}
                 />
-              )}
-            </Flex>
+
+                {/* Limit the number of clusters to min. 3 */}
+                {nbOfGeoShapes >= 3 && (
+                  <ChartOptionRadioField
+                    label={t({
+                      id: "chart.map.layers.area.discretization.discrete",
+                      message: "Discrete",
+                    })}
+                    field={activeField}
+                    path="colorScaleType"
+                    value="discrete"
+                    disabled={isHidden}
+                  />
+                )}
+              </Flex>
+            </div>
 
             <ColorRampField
               field={activeField}
