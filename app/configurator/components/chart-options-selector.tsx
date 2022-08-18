@@ -357,6 +357,7 @@ const ChartFieldOptions = ({
         chartType === "column" && (
           <Box component="fieldset" mt={4}>
             <FieldSetLegend
+              sx={{ mb: 1 }}
               legendTitle={
                 <Trans id="controls.select.column.layout">Column layout</Trans>
               }
