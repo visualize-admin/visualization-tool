@@ -1185,7 +1185,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
-  const [dataSource] = useDataSource();
+  const { dataSource } = useDataSource();
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;

@@ -12,7 +12,7 @@ const useDatasetCount = (
   filters: BrowseFilter[],
   includeDrafts: boolean
 ): Record<string, number> => {
-  const [dataSource] = useDataSource();
+  const { dataSource } = useDataSource();
   const [{ data: datasetCounts }] = useDatasetCountQuery({
     variables: {
       sourceType: dataSource.type,
