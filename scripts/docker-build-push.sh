@@ -22,4 +22,4 @@ docker build \
     $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -n 1 -I {} echo "-t {}" ) .
 
 # Push all the tags
-docker push $DOCKER_IMAGE_TAGS
+echo $DOCKER_IMAGE_TAGS | xargs -n 1 docker push
