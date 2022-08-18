@@ -86,16 +86,18 @@ export const searchCubes = async ({
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
     
+    ?cube ${ns.dcat.theme} ?theme.
+    ?cube ${ns.dcterms.creator} ?creator.
+    
     OPTIONAL {
       ?cube ${ns.schema.about} ?about.
     }
 
-    ${makeInFilter("about", aboutValues)}
     
     ?versionHistory ${ns.schema.hasPart} ?cube.
-    ?cube ${ns.dcat.theme} ?theme.
-
     ${makeVisualizeFilter(!!includeDrafts)}
+
+    ${makeInFilter("about", aboutValues)}
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
 
@@ -124,7 +126,7 @@ export const searchCubes = async ({
       }
       UNION  {
         OPTIONAL {
-          ?cube ${ns.dcterms.creator} ?creator.
+
           ?creator ${ns.schema.name} ?creatorLabel.
           (?creatorLabel ?scoreCreator)
             <tag:stardog:api:property:textMatch> "${query}"  .
