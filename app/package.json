@@ -73,6 +73,7 @@
     "io-ts": "^2.2.10",
     "is-graph-pointer": "^1.2.2",
     "isomorphic-unfetch": "^3.0.0",
+    "jotai": "^1.7.8",
     "lodash": "^4.17.20",
     "make-plural": "6.2.2",
     "maplibre-gl": "^2.1.6",
