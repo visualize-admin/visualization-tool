@@ -2,15 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import { keyBy } from "lodash";
 import { useRouter } from "next/router";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, Dispatch, ReactNode, useContext, useMemo } from "react";
 import React from "react";
 
 import Flex from "@/components/flex";
@@ -24,10 +16,7 @@ import {
   parseDataSource,
 } from "@/graphql/resolvers/data-source";
 import useEvent from "@/lib/use-event";
-import {
-  updateRouterQuery,
-  useSyncRouterQueryParam,
-} from "@/lib/use-sync-router-param";
+import { useRouteState } from "@/lib/use-sync-router-param";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const SOURCE_OPTIONS = [
@@ -77,44 +66,54 @@ export const useDataSource = () => {
   return ctx;
 };
 
+const parseSourceByLabel = (label: string): DataSource | undefined => {
+  const newSource = SOURCES_BY_LABEL[label];
+  return newSource ? parseDataSource(newSource.value) : undefined;
+};
+
+const sourceToLabel = (source: DataSource) => {
+  return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
+};
+
+const getURLParam = (param: string) => {
+  const url =
+    typeof window !== "undefined" ? new URL(window.location.href) : null;
+  if (!url) {
+    return undefined;
+  }
+  return url.searchParams.get(param);
+};
+
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
-  const [source, rawSetSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
-  const setSource = useEvent((source: string) => {
-    updateRouterQuery(router, { dataSource: SOURCES_BY_VALUE[source]?.label });
-  });
-  const sourceLabel = useMemo(() => {
-    return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
-  }, [source]);
+  const [source, setSource] = useRouteState(
+    () => {
+      // Cannot use next router here as it is initialized asynchronously
+      const urlParam = getURLParam("dataSource");
 
-  useSyncRouterQueryParam({
-    param: "dataSource",
-    value: sourceLabel,
-    onParamChange: (routerParamValue) => {
-      const newSource = parseDataSource(
-        SOURCES_BY_LABEL[routerParamValue]?.value
-      );
-
-      if (newSource) {
-        saveDataSourceToLocalStorage(newSource);
-        rawSetSource(newSource);
-      }
+      // Priority for initial state: URL -> localStorage -> default
+      const initial =
+        (urlParam && parseSourceByLabel(urlParam)) ||
+        retrieveDataSourceFromLocalStorage() ||
+        DEFAULT_DATA_SOURCE;
+      return initial;
     },
-  });
-
-  useEffect(() => {
-    const dataSource = retrieveDataSourceFromLocalStorage();
-
-    if (dataSource && SOURCES_BY_VALUE[stringifyDataSource(dataSource)]) {
-      rawSetSource(dataSource);
-    } else {
-      saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
+    {
+      param: "dataSource",
+      deserialize: (l) => parseSourceByLabel(l) || DEFAULT_DATA_SOURCE,
+      serialize: sourceToLabel,
+      onValueChange: (newSource) => {
+        saveDataSourceToLocalStorage(newSource);
+      },
     }
-  }, []);
+  );
+
+  const setSourceByValue = useEvent((sourceValue: string) => {
+    setSource(parseDataSource(SOURCES_BY_VALUE[sourceValue]?.value));
+  });
 
   return (
     <DataSourceStateContext.Provider
-      value={{ dataSource: source, setDataSource: setSource }}
+      value={{ dataSource: source, setDataSource: setSourceByValue }}
     >
       {children}
     </DataSourceStateContext.Provider>

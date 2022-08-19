@@ -5,6 +5,9 @@ export const retrieveStringifiedDataSourceFromLocalStorage = () => {
 };
 
 export const retrieveDataSourceFromLocalStorage = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
   const dataSource = retrieveStringifiedDataSourceFromLocalStorage();
 
   if (dataSource) {
