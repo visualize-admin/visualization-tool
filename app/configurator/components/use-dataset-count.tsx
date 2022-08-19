@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 
+import { dataSourceAtom } from "@/atoms/dataSource";
 import { BrowseFilter } from "@/configurator/components/dataset-browse";
-import { dataSourceAtom } from "@/domain/data-source/atoms";
 import { useDatasetCountQuery } from "@/graphql/query-hooks";
 import isAttrEqual from "@/utils/is-attr-equal";
 

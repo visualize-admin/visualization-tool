@@ -24,6 +24,7 @@ import React, {
 } from "react";
 import { UseQueryState } from "urql";
 
+import { dataSourceAtom } from "@/atoms/dataSource";
 import { BrowseParams } from "@/browser/dataset-browser";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
@@ -37,7 +38,6 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
-import { dataSourceAtom } from "@/domain/data-source/atoms";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,

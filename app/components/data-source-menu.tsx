@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 import React from "react";
 
+import { dataSourceAtom } from "@/atoms/dataSource";
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { dataSourceAtom } from "@/domain/data-source/atoms";
 import {
   stringifyDataSource,
   parseDataSource,

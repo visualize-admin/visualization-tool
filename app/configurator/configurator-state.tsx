@@ -15,6 +15,7 @@ import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import { fetchChartConfig, saveChartConfig } from "@/api";
+import { dataSourceAtom } from "@/atoms/dataSource";
 import {
   getChartConfigAdjustedToChartType,
   getFieldComponentIris,
@@ -47,7 +48,6 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { dataSourceAtom } from "@/domain/data-source/atoms";
 import { retrieveDataSourceFromLocalStorage } from "@/domain/data-source/helpers";
 import {
   DataCubeMetadataWithComponentValuesDocument,
