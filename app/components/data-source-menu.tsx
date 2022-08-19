@@ -14,6 +14,7 @@ import {
   SOURCE_OPTIONS,
   isDataSourceChangeable,
 } from "@/domain/data-source/helpers";
+import { useSyncRouterQueryParam } from "@/lib/use-sync-router-param";
 
 export const DataSourceMenu = () => {
   const [dataSource, setDataSource] = useAtom(dataSourceAtom);
@@ -21,6 +22,12 @@ export const DataSourceMenu = () => {
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);
   }, [router.pathname]);
+
+  // Keep data source in URL param in case of sharing the links.
+  useSyncRouterQueryParam({
+    param: "dataSource",
+    value: stringifyDataSource(dataSource),
+  });
 
   return (
     <Flex sx={{ alignItems: "center", gap: 1 }}>
