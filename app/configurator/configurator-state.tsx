@@ -48,7 +48,6 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { retrieveDataSourceFromLocalStorage } from "@/domain/data-source/helpers";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -205,15 +204,6 @@ export type ActionType<ConfiguratorStateAction> =
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
-
-const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
-  const dataSource = retrieveDataSourceFromLocalStorage();
-
-  return {
-    ...state,
-    dataSource: dataSource || DEFAULT_DATA_SOURCE,
-  };
-};
 
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
@@ -761,10 +751,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 ) => {
   switch (action.type) {
     case "INITIALIZED":
-      // Never restore from an UNINITIALIZED state
-      return action.value.state === "INITIAL"
-        ? getStateWithCurrentDataSource(emptyState)
-        : action.value;
+      return action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
         draft.dataSet = action.dataSet;
@@ -1142,7 +1129,7 @@ export const initChartStateFromCube = async (
     return;
   }
   return transitionStepNext(
-    getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
+    { ...emptyState, dataSet: datasetIri, dataSource },
     data.dataCubeByIri
   );
 };
@@ -1189,14 +1176,17 @@ const ConfiguratorStateProviderInternal = ({
 }) => {
   const dataSource = useAtomValue(dataSourceAtom);
   const locale = useLocale();
-  const stateAndDispatch = useImmerReducer(reducer, initialState);
+  const stateAndDispatch = useImmerReducer(reducer, {
+    ...initialState,
+    dataSource,
+  });
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize = getStateWithCurrentDataSource(initialState);
+    let stateToInitialize = { ...initialState, dataSource };
 
     const initialize = async () => {
       try {
@@ -1221,7 +1211,14 @@ const ConfiguratorStateProviderInternal = ({
 
         stateToInitialize = newChartState || stateToInitialize;
       } finally {
-        dispatch({ type: "INITIALIZED", value: stateToInitialize });
+        dispatch({
+          type: "INITIALIZED",
+          value:
+            stateToInitialize.state === "INITIAL"
+              ? // Never restore from an UNINITIALIZED state
+                { ...emptyState, dataSource }
+              : stateToInitialize,
+        });
       }
     };
     initialize();
