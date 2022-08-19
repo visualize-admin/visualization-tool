@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react-hooks";
 import mittEmitter from "next/dist/shared/lib/mitt";
 import { useRouter } from "next/router";
 
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
 import { useRouteState } from "./use-route-state";
 
@@ -65,19 +65,6 @@ describe("use route state", () => {
 
   it("should keep router query in sync", () => {
     const { setState, router } = setup();
-    // When setting the state, the router query is synced
-    act(() => {
-      setState(prodSource);
-    });
-    expect(router.query).toEqual({
-      dataSource: JSON.stringify(prodSource),
-    });
-  });
-
-  it("should keep router query in sync", () => {
-    const { router, setState } = setup();
-
-    // When setting the state, the router query is synced
     act(() => {
       setState(prodSource);
     });
@@ -93,10 +80,10 @@ describe("use route state", () => {
       },
     });
 
-    // When setting the state, the router query is synced
     act(() => {
       setState(prodSource);
     });
+
     expect(getState()).toEqual(prodSource);
     expect(router.query).toEqual({
       dataSource: JSON.stringify(prodSource),
@@ -111,7 +98,6 @@ describe("use route state", () => {
       },
     });
 
-    // When setting the state, the router query is synced
     act(() => {
       setState(prodSource);
     });

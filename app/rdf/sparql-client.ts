@@ -1,11 +1,7 @@
 import { DatasetCore, Quad, Stream } from "rdf-js";
 import StreamClient from "sparql-http-client";
 
-import { parseDataSource } from "@/graphql/resolvers/data-source";
-
-import { ENDPOINT } from "../domain/env";
-
-export const DEFAULT_DATA_SOURCE = parseDataSource(ENDPOINT);
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
 export const sparqlClientStream = new StreamClient({
   endpointUrl: DEFAULT_DATA_SOURCE.url,

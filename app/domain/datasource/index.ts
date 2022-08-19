@@ -3,7 +3,8 @@ import { useContext, createContext, Dispatch, useMemo } from "react";
 import { DataSource } from "@/configurator/config-types";
 import useEvent from "@/lib/use-event";
 import { useRouteState } from "@/lib/use-route-state";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+
+import { ENDPOINT } from "../env";
 
 import { SOURCES_BY_VALUE, SOURCES_BY_LABEL } from "./constants";
 import {
@@ -19,6 +20,8 @@ export const parseDataSource = (stringifiedSource: string): DataSource => {
 
   return { type, url };
 };
+
+export const DEFAULT_DATA_SOURCE = parseDataSource(ENDPOINT);
 
 export const stringifyDataSource = (source: DataSource): string => {
   const { type, url } = source;
