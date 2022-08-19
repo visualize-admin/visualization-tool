@@ -44,22 +44,14 @@ export const isDataSourceChangeable = (pathname: string) => {
   }
 };
 
-export const retrieveStringifiedDataSourceFromLocalStorage = () => {
-  return localStorage.getItem("dataSource");
-};
-
 export const retrieveDataSourceFromLocalStorage = () => {
-  const dataSource = retrieveStringifiedDataSourceFromLocalStorage();
+  const dataSource = localStorage.getItem("dataSource");
 
   if (dataSource) {
     return parseDataSource(dataSource);
   }
 
   return null;
-};
-
-export const saveDataSourceToLocalStorage = (dataSource: DataSource) => {
-  localStorage.setItem("dataSource", stringifyDataSource(dataSource));
 };
 
 export const parseDataSource = (stringifiedSource: string): DataSource => {

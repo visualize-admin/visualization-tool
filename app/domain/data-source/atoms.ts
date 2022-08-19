@@ -1,5 +1,8 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-export const dataSourceAtom = atom(DEFAULT_DATA_SOURCE);
+export const dataSourceAtom = atomWithStorage(
+  "dataSource",
+  DEFAULT_DATA_SOURCE
+);
