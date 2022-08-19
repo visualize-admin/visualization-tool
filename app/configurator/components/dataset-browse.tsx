@@ -52,6 +52,7 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import isAttrEqual from "@/utils/is-attr-equal";
 import truthy from "@/utils/truthy";
@@ -1038,7 +1039,7 @@ export const DatasetResult = ({
       previous: JSON.stringify(browseParams),
     };
   }, [browseParams]);
-  const handleClick = useCallback(() => {
+  const handleClick = useEvent(() => {
     router.push(
       {
         pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
@@ -1047,7 +1048,7 @@ export const DatasetResult = ({
       undefined,
       { shallow: true }
     );
-  }, [router, iri, filterParams]);
+  });
   return (
     <MotionCard
       {...smoothPresenceProps}
