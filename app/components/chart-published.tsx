@@ -16,7 +16,6 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
-import { useIsTrustedDataSource } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
 import {
@@ -28,11 +27,14 @@ import {
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import {
+  DEFAULT_DATA_SOURCE,
+  useIsTrustedDataSource,
+} from "@/domain/datasource";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const ChartPublished = ({
   dataSet,

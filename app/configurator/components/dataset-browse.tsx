@@ -24,7 +24,6 @@ import React, {
 import { UseQueryState } from "urql";
 
 import { BrowseParams } from "@/browser/dataset-browser";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
@@ -37,6 +36,7 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
+import { useDataSource } from "@/domain/datasource";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,

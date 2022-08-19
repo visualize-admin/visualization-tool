@@ -1,4 +1,4 @@
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
 import { DimensionMetaDataFragment, TimeUnit } from "../graphql/query-hooks";

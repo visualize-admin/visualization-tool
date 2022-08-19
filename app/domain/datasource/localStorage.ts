@@ -1,4 +1,6 @@
-import { DataSource } from "@/configurator";
+import { DataSource } from "@/configurator/config-types";
+
+import { parseDataSource, stringifyDataSource } from ".";
 
 export const retrieveStringifiedDataSourceFromLocalStorage = () => {
   return localStorage.getItem("dataSource");
@@ -19,19 +21,4 @@ export const retrieveDataSourceFromLocalStorage = () => {
 
 export const saveDataSourceToLocalStorage = (dataSource: DataSource) => {
   localStorage.setItem("dataSource", stringifyDataSource(dataSource));
-};
-
-export const parseDataSource = (stringifiedSource: string): DataSource => {
-  const [type, url] = stringifiedSource.split("+") as [
-    DataSource["type"],
-    string
-  ];
-
-  return { type, url };
-};
-
-export const stringifyDataSource = (source: DataSource): string => {
-  const { type, url } = source;
-
-  return `${type}+${url}`;
 };

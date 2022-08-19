@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { useDataSource } from "@/components/data-source-menu";
 import { BrowseFilter } from "@/configurator/components/dataset-browse";
+import { useDataSource } from "@/domain/datasource";
 import { useDatasetCountQuery } from "@/graphql/query-hooks";
 import isAttrEqual from "@/utils/is-attr-equal";
 
