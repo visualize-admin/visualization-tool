@@ -1,13 +1,9 @@
-import { atom } from "jotai";
 import { keyBy } from "lodash";
 import { useMemo } from "react";
 
 import { DataSource } from "@/configurator";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
-import { WHITELISTED_DATA_SOURCES } from "./env";
-
-export const dataSourceAtom = atom(DEFAULT_DATA_SOURCE);
+import { WHITELISTED_DATA_SOURCES } from "../env";
 
 export const SOURCE_OPTIONS = [
   {

@@ -1,4 +1,5 @@
 import { current, produce } from "immer";
+import { useAtomValue } from "jotai";
 import { get, mapValues, pickBy } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
@@ -22,7 +23,6 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { useDataSource } from "@/components/data-source-menu";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -47,7 +47,8 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { retrieveDataSourceFromLocalStorage } from "@/domain/data-source";
+import { dataSourceAtom } from "@/domain/data-source/atoms";
+import { retrieveDataSourceFromLocalStorage } from "@/domain/data-source/helpers";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -1186,7 +1187,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
-  const { dataSource } = useDataSource();
+  const dataSource = useAtomValue(dataSourceAtom);
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;

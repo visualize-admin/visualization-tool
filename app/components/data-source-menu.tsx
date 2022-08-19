@@ -1,99 +1,22 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
+import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useMemo } from "react";
 import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { DataSource } from "@/configurator";
+import { dataSourceAtom } from "@/domain/data-source/atoms";
 import {
   stringifyDataSource,
-  retrieveDataSourceFromLocalStorage,
-  saveDataSourceToLocalStorage,
   parseDataSource,
-  SOURCES_BY_VALUE,
-  SOURCES_BY_LABEL,
   SOURCE_OPTIONS,
   isDataSourceChangeable,
-} from "@/domain/data-source";
-import useEvent from "@/lib/use-event";
-import {
-  updateRouterQuery,
-  useSyncRouterQueryParam,
-} from "@/lib/use-sync-router-param";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
-
-const DataSourceStateContext = createContext<
-  { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
->(undefined);
-
-export const useDataSource = () => {
-  const ctx = useContext(DataSourceStateContext);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap the application in <DataSourceProvider /> to useDataSource()"
-    );
-  }
-
-  return ctx;
-};
-
-export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
-  const [source, rawSetSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
-  const setSource = useEvent((source: string) => {
-    updateRouterQuery(router, { dataSource: SOURCES_BY_VALUE[source]?.label });
-  });
-  const sourceLabel = useMemo(() => {
-    return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
-  }, [source]);
-
-  useSyncRouterQueryParam({
-    param: "dataSource",
-    value: sourceLabel,
-    onParamChange: (routerParamValue) => {
-      const newSource = parseDataSource(
-        SOURCES_BY_LABEL[routerParamValue]?.value
-      );
-
-      if (newSource) {
-        saveDataSourceToLocalStorage(newSource);
-        rawSetSource(newSource);
-      }
-    },
-  });
-
-  useEffect(() => {
-    const dataSource = retrieveDataSourceFromLocalStorage();
-
-    if (dataSource && SOURCES_BY_VALUE[stringifyDataSource(dataSource)]) {
-      rawSetSource(dataSource);
-    } else {
-      saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
-    }
-  }, []);
-
-  return (
-    <DataSourceStateContext.Provider
-      value={{ dataSource: source, setDataSource: setSource }}
-    >
-      {children}
-    </DataSourceStateContext.Provider>
-  );
-};
+} from "@/domain/data-source/helpers";
 
 export const DataSourceMenu = () => {
-  const { dataSource, setDataSource } = useDataSource();
+  const [dataSource, setDataSource] = useAtom(dataSourceAtom);
   const router = useRouter();
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);
@@ -111,7 +34,7 @@ export const DataSourceMenu = () => {
         options={SOURCE_OPTIONS}
         value={stringifyDataSource(dataSource)}
         onChange={(e) => {
-          setDataSource(e.target.value as string);
+          setDataSource(parseDataSource(e.target.value as string));
         }}
         disabled={isDisabled}
       />

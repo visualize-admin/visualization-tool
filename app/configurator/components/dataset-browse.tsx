@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Stack } from "@mui/material";
 import { Reorder } from "framer-motion";
+import { useAtomValue } from "jotai";
 import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
@@ -24,7 +25,6 @@ import React, {
 import { UseQueryState } from "urql";
 
 import { BrowseParams } from "@/browser/dataset-browser";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
@@ -37,6 +37,7 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
+import { dataSourceAtom } from "@/domain/data-source/atoms";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -148,7 +149,7 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
 };
 
 export const useBrowseState = () => {
-  const { dataSource } = useDataSource();
+  const dataSource = useAtomValue(dataSourceAtom);
   const locale = useLocale();
   const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
@@ -617,7 +618,7 @@ export const Subthemes = ({
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
-  const { dataSource } = useDataSource();
+  const dataSource = useAtomValue(dataSourceAtom);
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
     variables: {
@@ -787,7 +788,7 @@ const NavSection = ({
 };
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
-  const { dataSource } = useDataSource();
+  const dataSource = useAtomValue(dataSourceAtom);
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({

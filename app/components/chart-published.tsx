@@ -27,7 +27,7 @@ import {
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { useIsTrustedDataSource } from "@/domain/data-source";
+import { useIsTrustedDataSource } from "@/domain/data-source/helpers";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useResizeObserver } from "@/lib/use-resize-observer";
