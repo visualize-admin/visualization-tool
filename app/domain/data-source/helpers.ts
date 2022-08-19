@@ -2,8 +2,21 @@ import { keyBy } from "lodash";
 import { useMemo } from "react";
 
 import { DataSource } from "@/configurator";
+import { getLocalStorageItem } from "@/lib/local-storage-helpers";
+import { getURLParam } from "@/lib/router-helpers";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
+
+export const getDataSourceFromURLOrLocalStorage = () => {
+  const urlSource = getURLParam("dataSource");
+  if (urlSource) {
+    return parseDataSource(urlSource);
+  }
+  const storageSource = getLocalStorageItem("dataSource");
+  if (storageSource) {
+    return parseDataSource(storageSource);
+  }
+};
 
 export const SOURCE_OPTIONS = [
   {
