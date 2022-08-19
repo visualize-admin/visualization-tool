@@ -1,7 +1,7 @@
 import { DatasetCore, Quad, Stream } from "rdf-js";
 import StreamClient from "sparql-http-client";
 
-import { parseDataSource } from "@/graphql/resolvers/data-source";
+import { parseDataSource } from "@/domain/data-source";
 
 import { ENDPOINT } from "../domain/env";
 

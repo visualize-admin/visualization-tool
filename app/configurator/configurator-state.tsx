@@ -47,13 +47,13 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { retrieveDataSourceFromLocalStorage } from "@/domain/data-source";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/data-source";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";

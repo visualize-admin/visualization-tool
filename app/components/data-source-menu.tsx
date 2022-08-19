@@ -16,13 +16,13 @@ import React from "react";
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import { DataSource } from "@/configurator";
-import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
   stringifyDataSource,
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
   parseDataSource,
-} from "@/graphql/resolvers/data-source";
+} from "@/domain/data-source";
+import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import useEvent from "@/lib/use-event";
 import {
   updateRouterQuery,
