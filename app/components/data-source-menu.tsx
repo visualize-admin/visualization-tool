@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
-import { keyBy } from "lodash";
 import { useRouter } from "next/router";
 import {
   createContext,
@@ -21,45 +20,17 @@ import {
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
   parseDataSource,
+  SOURCES_BY_VALUE,
+  SOURCES_BY_LABEL,
+  SOURCE_OPTIONS,
+  isDataSourceChangeable,
 } from "@/domain/data-source";
-import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import useEvent from "@/lib/use-event";
 import {
   updateRouterQuery,
   useSyncRouterQueryParam,
 } from "@/lib/use-sync-router-param";
 import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
-
-export const SOURCE_OPTIONS = [
-  {
-    value: "sparql+https://lindas.admin.ch/query",
-    label: "Prod",
-    position: 3,
-    isTrusted: true,
-  },
-  {
-    value: "sparql+https://int.lindas.admin.ch/query",
-    label: "Int",
-    position: 2,
-    isTrusted: false,
-  },
-  {
-    value: "sparql+https://test.lindas.admin.ch/query",
-    label: "Test",
-    position: 1,
-    isTrusted: false,
-  },
-].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
-
-const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
-const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
-
-export const useIsTrustedDataSource = (dataSource: DataSource) => {
-  return useMemo(() => {
-    const stringifiedDataSource = stringifyDataSource(dataSource);
-    return SOURCES_BY_VALUE[stringifiedDataSource]?.isTrusted;
-  }, [dataSource]);
-};
 
 const DataSourceStateContext = createContext<
   { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
@@ -119,14 +90,6 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </DataSourceStateContext.Provider>
   );
-};
-
-const isDataSourceChangeable = (pathname: string) => {
-  if (pathname === "/" || pathname === "/browse") {
-    return true;
-  } else {
-    return false;
-  }
 };
 
 export const DataSourceMenu = () => {
