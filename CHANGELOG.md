@@ -9,8 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.7.8] - 2022-08-22
+
 - Fixed organization search
 - Explanation on how to create groups for tables
+- Fixed delay in setting datasource
 
 ## [3.7.7] - 2022-08-17
 
