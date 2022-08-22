@@ -7,6 +7,9 @@ export const updateRouterQuery = (
   router: NextRouter,
   values: { [k: string]: string }
 ) => {
+  if (Object.entries(values).every(([k, v]) => router.query[k] === v)) {
+    return;
+  }
   router.replace(
     {
       pathname: router.pathname,
@@ -27,11 +30,13 @@ export const useRouteState = <T>(
     onValueChange,
     deserialize,
     serialize,
+    shouldValueBeSaved,
   }: {
     param: string;
     onValueChange: (val: T) => void;
     deserialize: (itemS: string) => T;
     serialize: (item: T) => string;
+    shouldValueBeSaved?: (item: T) => boolean;
   }
 ) => {
   const router = useRouter();
@@ -39,16 +44,27 @@ export const useRouteState = <T>(
   const [val, rawSetVal] = useState(initialState);
 
   const setVal = useEvent((newVal: T) => {
+    if (val === newVal) {
+      return;
+    }
     rawSetVal(newVal);
-    updateRouterQuery(router, { [param]: serialize(newVal) });
+    if (
+      !shouldValueBeSaved ||
+      shouldValueBeSaved?.(newVal) ||
+      router.query[param]
+    ) {
+      updateRouterQuery(router, { [param]: serialize(newVal) });
+    }
     onValueChange(newVal);
   });
 
   const handleRouteChange = useEvent(() => {
     const routerVal = router.query[param] as string;
     if (routerVal === undefined) {
-      // Update router to reflect local state
-      updateRouterQuery(router, { [param]: serialize(val) });
+      if (!shouldValueBeSaved || shouldValueBeSaved?.(val)) {
+        // Update router to reflect local state
+        updateRouterQuery(router, { [param]: serialize(val) });
+      }
     } else {
       // Update local state to reflect router
       if (routerVal !== serialize(val)) {
@@ -64,12 +80,11 @@ export const useRouteState = <T>(
     return () => router.events.off("routeChangeComplete", handleRouteChange);
   }, [handleRouteChange, router.events]);
 
-  // Make sure router state is synchronized initially
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
-    updateRouterQuery(router, { [param]: serialize(val) });
+    handleRouteChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
