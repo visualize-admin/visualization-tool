@@ -24,7 +24,6 @@ import React, {
 import { UseQueryState } from "urql";
 
 import { BrowseParams } from "@/browser/dataset-browser";
-import { useDataSource } from "@/components/data-source-menu";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
@@ -37,6 +36,7 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
+import { useDataSource } from "@/domain/datasource";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -52,6 +52,7 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
+import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import isAttrEqual from "@/utils/is-attr-equal";
 import truthy from "@/utils/truthy";
@@ -1038,7 +1039,7 @@ export const DatasetResult = ({
       previous: JSON.stringify(browseParams),
     };
   }, [browseParams]);
-  const handleClick = useCallback(() => {
+  const handleClick = useEvent(() => {
     router.push(
       {
         pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
@@ -1047,7 +1048,7 @@ export const DatasetResult = ({
       undefined,
       { shallow: true }
     );
-  }, [router, iri, filterParams]);
+  });
   return (
     <MotionCard
       {...smoothPresenceProps}

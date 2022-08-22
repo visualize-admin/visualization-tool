@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
 import { getCubeDimensions, getCubes } from "../../rdf/queries";
-
 /**
  * Endpoint to write configuration to.
  */

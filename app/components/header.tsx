@@ -9,9 +9,10 @@ import React, {
   useState,
 } from "react";
 
-import { DataSourceMenu, SOURCE_OPTIONS } from "@/components/data-source-menu";
+import { DataSourceMenu } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
+import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 
 const DEFAULT_HEADER_PROGRESS = 100;
 

@@ -1,120 +1,25 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
-import { keyBy } from "lodash";
 import { useRouter } from "next/router";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ReactNode, useMemo } from "react";
 import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { DataSource } from "@/configurator";
-import { WHITELISTED_DATA_SOURCES } from "@/domain/env";
 import {
+  DataSourceStateContext,
   stringifyDataSource,
-  retrieveDataSourceFromLocalStorage,
-  saveDataSourceToLocalStorage,
-  parseDataSource,
-} from "@/graphql/resolvers/data-source";
-import useEvent from "@/lib/use-event";
-import {
-  updateRouterQuery,
-  useSyncRouterQueryParam,
-} from "@/lib/use-sync-router-param";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
-
-export const SOURCE_OPTIONS = [
-  {
-    value: "sparql+https://lindas.admin.ch/query",
-    label: "Prod",
-    position: 3,
-    isTrusted: true,
-  },
-  {
-    value: "sparql+https://int.lindas.admin.ch/query",
-    label: "Int",
-    position: 2,
-    isTrusted: false,
-  },
-  {
-    value: "sparql+https://test.lindas.admin.ch/query",
-    label: "Test",
-    position: 1,
-    isTrusted: false,
-  },
-].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
-
-const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
-const SOURCES_BY_VALUE = keyBy(SOURCE_OPTIONS, (d) => d.value);
-
-export const useIsTrustedDataSource = (dataSource: DataSource) => {
-  return useMemo(() => {
-    const stringifiedDataSource = stringifyDataSource(dataSource);
-    return SOURCES_BY_VALUE[stringifiedDataSource]?.isTrusted;
-  }, [dataSource]);
-};
-
-const DataSourceStateContext = createContext<
-  { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
->(undefined);
-
-export const useDataSource = () => {
-  const ctx = useContext(DataSourceStateContext);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap the application in <DataSourceProvider /> to useDataSource()"
-    );
-  }
-
-  return ctx;
-};
+  useDataSource,
+  useDataSourceState,
+} from "@/domain/datasource";
+import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
-  const [source, rawSetSource] = useState<DataSource>(DEFAULT_DATA_SOURCE);
-  const setSource = useEvent((source: string) => {
-    updateRouterQuery(router, { dataSource: SOURCES_BY_VALUE[source]?.label });
-  });
-  const sourceLabel = useMemo(() => {
-    return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
-  }, [source]);
-
-  useSyncRouterQueryParam({
-    param: "dataSource",
-    value: sourceLabel,
-    onParamChange: (routerParamValue) => {
-      const newSource = parseDataSource(
-        SOURCES_BY_LABEL[routerParamValue]?.value
-      );
-
-      if (newSource) {
-        saveDataSourceToLocalStorage(newSource);
-        rawSetSource(newSource);
-      }
-    },
-  });
-
-  useEffect(() => {
-    const dataSource = retrieveDataSourceFromLocalStorage();
-
-    if (dataSource && SOURCES_BY_VALUE[stringifyDataSource(dataSource)]) {
-      rawSetSource(dataSource);
-    } else {
-      saveDataSourceToLocalStorage(DEFAULT_DATA_SOURCE);
-    }
-  }, []);
+  const [source, setSourceByValue] = useDataSourceState();
 
   return (
     <DataSourceStateContext.Provider
-      value={{ dataSource: source, setDataSource: setSource }}
+      value={{ dataSource: source, setDataSource: setSourceByValue }}
     >
       {children}
     </DataSourceStateContext.Provider>

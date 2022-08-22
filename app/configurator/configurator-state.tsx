@@ -22,7 +22,6 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { useDataSource } from "@/components/data-source-menu";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -47,18 +46,18 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { DEFAULT_DATA_SOURCE, useDataSource } from "@/domain/datasource";
+import { retrieveDataSourceFromLocalStorage } from "@/domain/datasource/localStorage";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
-import { retrieveDataSourceFromLocalStorage } from "@/graphql/resolvers/data-source";
 import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
-import { DEFAULT_DATA_SOURCE } from "@/rdf/sparql-client";
 
 export const DEFAULT_PALETTE = "category10";
 const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
