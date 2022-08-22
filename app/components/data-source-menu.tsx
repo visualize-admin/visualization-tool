@@ -27,7 +27,11 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const isDataSourceChangeable = (pathname: string) => {
-  if (pathname === "/" || pathname === "/browse") {
+  if (
+    pathname === "/" ||
+    pathname === "/browse" ||
+    pathname === "/_cube-checker"
+  ) {
     return true;
   } else {
     return false;
