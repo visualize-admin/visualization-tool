@@ -199,7 +199,7 @@ export const ControlTabButton = ({
       py: 3,
       fontWeight: "normal",
 
-      fontSize: ["0.875rem", "0.875rem", "0.875rem"],
+      fontSize: "0.875rem",
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
@@ -281,7 +281,7 @@ export const ControlTabButtonInner = ({
           </Typography>
         )}
         <Typography
-          variant="h4"
+          variant="h5"
           sx={{
             color: optional && !checked ? "grey.600" : "grey.800",
             textAlign: "left",
