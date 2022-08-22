@@ -7,6 +7,9 @@ export const updateRouterQuery = (
   router: NextRouter,
   values: { [k: string]: string }
 ) => {
+  if (Object.entries(values).every(([k, v]) => router.query[k] === v)) {
+    return;
+  }
   router.replace(
     {
       pathname: router.pathname,
