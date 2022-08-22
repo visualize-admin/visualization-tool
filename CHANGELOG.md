@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+## Unreleased
+
+- Fixed organization search
+- Explanation on how to create groups for tables
+
 ## [3.7.7] - 2022-08-17
 
 - Add an option to see cubes from different LINDAS environments within one Visualize instance

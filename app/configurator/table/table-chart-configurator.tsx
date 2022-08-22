@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Divider } from "@mui/material";
+import { Divider, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useCallback, useState } from "react";
 import {
   DragDropContext,
@@ -24,6 +25,29 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartTypeSelector } from "../components/chart-type-selector";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  emptyGroups: {
+    textAlign: "center",
+    border: "1px dashed",
+    borderColor: theme.palette.divider,
+    margin: theme.spacing(2),
+    color: theme.palette.text.secondary,
+    borderRadius: 8,
+    padding: theme.spacing(2),
+  },
+}));
+
+const EmptyGroups = () => {
+  const classes = useStyles();
+  return (
+    <Typography variant="body2" component="div" className={classes.emptyGroups}>
+      <Trans id="controls.groups.empty-help">
+        Drag and drop columns here to make groups.
+      </Trans>
+    </Typography>
+  );
+};
 
 export const ChartConfiguratorTable = ({
   state,
@@ -131,6 +155,7 @@ export const ChartConfiguratorTable = ({
             metaData={data.dataCubeByIri}
             items={groupFields}
             isDropDisabled={isGroupsDropDisabled}
+            emptyComponent={<EmptyGroups />}
           ></TabDropZone>
 
           <TabDropZone
