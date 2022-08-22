@@ -90,6 +90,11 @@ export const useDataSourceState = () => {
       onValueChange: (newSource) => {
         saveDataSourceToLocalStorage(newSource);
       },
+      shouldValueBeSaved: (item) =>
+        !(
+          item.type === DEFAULT_DATA_SOURCE.type &&
+          item.url === DEFAULT_DATA_SOURCE.url
+        ),
     }
   );
 
