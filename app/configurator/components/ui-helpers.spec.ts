@@ -56,6 +56,14 @@ describe("useDimensionFormatters", () => {
           isNumerical: true,
           isKeyDimension: false,
         } as DimensionMetaDataFragment,
+        {
+          iri: "iri-currency",
+          isNumerical: true,
+          isKeyDimension: false,
+          isCurrency: true,
+          currencyExponent: 1,
+          __typename: "Measure",
+        } as DimensionMetaDataFragment,
       ])
     );
     return { formatters };
@@ -74,6 +82,11 @@ describe("useDimensionFormatters", () => {
   it("should work with numbers", () => {
     const { formatters } = setup();
     expect(formatters["iri-number"]("2.33333")).toEqual("2,33");
+  });
+
+  it("should work with currencies", () => {
+    const { formatters } = setup();
+    expect(formatters["iri-currency"]("20002.3333")).toEqual("20'002,3");
   });
 });
 

@@ -39,7 +39,7 @@ import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
 import { loadResourcePositions } from "./query-positions";
 import { loadUnversionedResources } from "./query-sameas";
-import { loadUnitLabels } from "./query-unit-labels";
+import { loadUnits } from "./query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -173,8 +173,8 @@ export const getCubeDimensions = async ({
       return t ? [t] : [];
     });
 
-    const dimensionUnitLabels = index(
-      await loadUnitLabels({
+    const dimensionUnitIndex = index(
+      await loadUnits({
         ids: dimensionUnits,
         locale: "en", // No other locales exist yet
         sparqlClient,
@@ -187,7 +187,7 @@ export const getCubeDimensions = async ({
         dim,
         cube,
         locale,
-        units: dimensionUnitLabels,
+        units: dimensionUnitIndex,
       });
     });
   } catch (e) {

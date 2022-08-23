@@ -49,6 +49,8 @@ export type ResolvedDimension = {
     isNumerical: boolean;
     isKeyDimension: boolean;
     isMeasureDimension: boolean;
+    isCurrency: boolean;
+    currencyExponent?: number;
     hasUndefinedValues: boolean;
     unit?: string;
     dataType?: string;

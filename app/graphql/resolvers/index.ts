@@ -87,7 +87,7 @@ const DataCube: DataCubeResolvers = {
   },
 };
 
-const mkDimensionResolvers = (debugName: string): Resolvers["Dimension"] => ({
+const mkDimensionResolvers = (type: string): Resolvers["Dimension"] => ({
   // TODO: how to pass dataSource here? If it's possible, then we also could have
   // different resolvers for RDF and SQL.
   __resolveType({ data: { dataKind, scaleType } }) {
@@ -160,7 +160,10 @@ export const resolvers: Resolvers = {
       getSparqlEditorUrl({ query }),
   },
   Dimension: {
-    __resolveType({ data: { dataKind, scaleType } }) {
+    __resolveType({ data: { dataKind, scaleType, isMeasureDimension } }) {
+      if (isMeasureDimension) {
+        return "Measure";
+      }
       if (dataKind === "Time") {
         return "TemporalDimension";
       } else if (dataKind === "GeoCoordinates") {
@@ -175,25 +178,25 @@ export const resolvers: Resolvers = {
     },
   },
   NominalDimension: {
-    ...mkDimensionResolvers("nominal"),
+    ...mkDimensionResolvers("NominalDimension"),
   },
   OrdinalDimension: {
-    ...mkDimensionResolvers("ordinal"),
+    ...mkDimensionResolvers("OrdinalDimension"),
   },
   TemporalDimension: {
-    ...mkDimensionResolvers("temporal"),
+    ...mkDimensionResolvers("TemporalDimension"),
     timeUnit: ({ data: { timeUnit } }) => timeUnit!,
     timeFormat: ({ data: { timeFormat } }) => timeFormat!,
   },
   GeoCoordinatesDimension: {
-    ...mkDimensionResolvers("geocoordinates"),
+    ...mkDimensionResolvers("GeoCoordinatesDimension"),
     geoCoordinates: async (parent, args, { setup }, info) => {
       const { loaders } = await setup(info);
       return await loaders.geoCoordinates.load(parent);
     },
   },
   GeoShapesDimension: {
-    ...mkDimensionResolvers("geoshapes"),
+    ...mkDimensionResolvers("GeoShapesDimension"),
     geoShapes: async (parent, args, { setup }, info) => {
       const { loaders } = await setup(info);
       const dimValues = (await loaders.dimensionValues.load(
@@ -229,6 +232,12 @@ export const resolvers: Resolvers = {
     },
   },
   Measure: {
-    ...mkDimensionResolvers("measure"),
+    ...mkDimensionResolvers("Measure"),
+    isCurrency: ({ data: { isCurrency } }) => {
+      return isCurrency;
+    },
+    currencyExponent: ({ data: { currencyExponent } }) => {
+      return currencyExponent || 0;
+    },
   },
 };

@@ -51,6 +51,7 @@ import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
+  Measure,
   TemporalDimension,
   TimeUnit,
 } from "../../graphql/query-hooks";
@@ -149,9 +150,16 @@ const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
   };
 };
 
+const currencyFormatter = (d: Measure, locale: string) => {
+  const formatLocale = getD3FormatLocale(locale);
+  // Use the currency exponent from the dimension, with default 2
+  return formatLocale.format(`,.${d.currencyExponent || 2}f`);
+};
+
 export const useDimensionFormatters = (
   dimensions: DimensionMetaDataFragment[]
 ) => {
+  const locale = useLocale();
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
   ) => string;
@@ -161,16 +169,28 @@ export const useDimensionFormatters = (
   return useMemo(() => {
     return Object.fromEntries(
       dimensions.map((d) => {
-        return [
-          d.iri,
-          d.__typename === "Measure" || d.isNumerical
-            ? formatNumber
-            : d.__typename === "TemporalDimension"
-            ? dateFormatterFromDimension(d, dateFormatters, formatDateAuto)
-            : isNamedNodeDimension(d)
-            ? namedNodeFormatter(d)
-            : formatIdentity,
-        ];
+        let formatter: (s: any) => string;
+        if (d.__typename === "Measure") {
+          if (d.isCurrency) {
+            formatter = currencyFormatter(d, locale);
+          } else {
+            formatter = formatNumber;
+          }
+        } else if (d.__typename === "TemporalDimension") {
+          formatter = dateFormatterFromDimension(
+            d,
+            dateFormatters,
+            formatDateAuto
+          );
+        } else if (isNamedNodeDimension(d)) {
+          formatter = namedNodeFormatter(d);
+        } else if (d.isNumerical) {
+          formatter = formatNumber;
+        } else {
+          formatter = formatIdentity;
+        }
+
+        return [d.iri, formatter];
       })
     );
   }, [dimensions, formatNumber, dateFormatters, formatDateAuto]);

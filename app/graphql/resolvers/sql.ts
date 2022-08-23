@@ -89,6 +89,10 @@ const parseSQLDimension = (
       iri,
       name,
       isLiteral: true,
+
+      // FIXME: Handle currencies in SQL resolvers
+      isCurrency: false,
+      currencyExponent: 0,
       // FIXME: not only measures can be numerical
       isNumerical: isMeasure,
       isKeyDimension: true,
