@@ -764,11 +764,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       areaLayer: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions.find(
+          const areaDimension = dimensions.find(
             (d) => d.__typename === "GeoShapesDimension" && d.iri === oldValue
           );
 
-          if (ok) {
+          if (areaDimension) {
             return produce(newChartConfig, (draft) => {
               draft.fields.areaLayer.componentIri = oldValue;
             });
