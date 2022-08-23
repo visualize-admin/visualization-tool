@@ -62,6 +62,7 @@ export const sourceToLabel = (source: DataSource) => {
   return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
 };
 
+export const getURLParam = (param: string) => {
   const url = isRunningInBrowser() ? new URL(window.location.href) : null;
   if (!url) {
     return undefined;
