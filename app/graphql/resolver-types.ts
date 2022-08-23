@@ -232,6 +232,8 @@ export type Measure = Dimension & {
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
+  isCurrency?: Maybe<Scalars['Boolean']>;
+  currencyExponent?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
   hierarchy?: Maybe<Array<HierarchyValue>>;
@@ -710,6 +712,8 @@ export type MeasureResolvers<ContextType = GraphQLContext, ParentType extends Re
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isCurrency?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  currencyExponent?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<MeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;

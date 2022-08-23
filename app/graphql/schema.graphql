@@ -204,6 +204,8 @@ type Measure implements Dimension {
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
+  isCurrency: Boolean
+  currencyExponent: Int
   values(
     sourceType: String!
     sourceUrl: String!

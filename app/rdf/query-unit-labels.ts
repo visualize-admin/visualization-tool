@@ -10,8 +10,9 @@ interface ResourceLabel {
   label?: Term;
 }
 
-const buildUnitLabelsQuery = (values: Term[], locale: string) => {
-  return SELECT.DISTINCT`?iri ?label`.WHERE`
+const buildUnitsQuery = (values: Term[], locale: string) => {
+  return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent ?isCurrency`
+    .WHERE`
         values ?iri {
           ${values}
         }
@@ -20,6 +21,9 @@ const buildUnitLabelsQuery = (values: Term[], locale: string) => {
         OPTIONAL { ?iri  ${ns.qudt.symbol}  ?symbol }
         OPTIONAL { ?iri  ${ns.qudt.ucumCode}  ?ucumCode }
         OPTIONAL { ?iri  ${ns.qudt.expression}  ?expression }
+
+        OPTIONAL { ?iri ?isCurrency ${ns.qudt.CurrencyUnit} }
+        OPTIONAL { ?iri ${ns.qudt.currencyExponent} ?currencyExponent }
 
         BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
         
@@ -30,7 +34,7 @@ const buildUnitLabelsQuery = (values: Term[], locale: string) => {
 /**
  * Load labels for a list of unit IDs
  */
-export async function loadUnitLabels({
+export async function loadUnits({
   ids,
   locale = "en",
   sparqlClient,
@@ -42,6 +46,6 @@ export async function loadUnitLabels({
   return batchLoad({
     ids,
     sparqlClient,
-    buildQuery: (values: Term[]) => buildUnitLabelsQuery(values, locale),
+    buildQuery: (values: Term[]) => buildUnitsQuery(values, locale),
   });
 }

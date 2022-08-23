@@ -53,6 +53,10 @@ fragment dimensionMetaData on Dimension {
     timeUnit
     timeFormat
   }
+  ... on Measure {
+    isCurrency
+    currencyExponent
+  }
 }
 
 query DataCubePreview(
