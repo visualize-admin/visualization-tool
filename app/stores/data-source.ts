@@ -14,8 +14,10 @@ type DataSourceStore = {
   setDataSource: (value: string) => void;
 };
 
+const STORAGE_KEY = "dataSource";
+
 const customPersist =
-  (name: string, config: StateCreator<DataSourceStore>) =>
+  (config: StateCreator<DataSourceStore>) =>
   (
     set: StoreApi<DataSourceStore>["setState"],
     get: StoreApi<DataSourceStore>["getState"],
@@ -26,7 +28,10 @@ const customPersist =
         set(payload);
 
         if (isRunningInBrowser()) {
-          localStorage.setItem(name, stringifyDataSource(payload.dataSource));
+          localStorage.setItem(
+            STORAGE_KEY,
+            stringifyDataSource(payload.dataSource)
+          );
         }
       },
       get,
@@ -40,9 +45,9 @@ const customPersist =
       const urlDataSource = getURLParam("dataSource");
       if (urlDataSource) {
         dataSource = parseDataSource(urlDataSource);
-        localStorage.setItem(name, urlDataSource);
+        localStorage.setItem(STORAGE_KEY, urlDataSource);
       } else {
-        const storageDataSource = localStorage.getItem(name);
+        const storageDataSource = localStorage.getItem(STORAGE_KEY);
         if (storageDataSource) {
           dataSource = parseDataSource(storageDataSource);
         }
@@ -53,7 +58,7 @@ const customPersist =
   };
 
 export const useDataSourceStore = create<DataSourceStore>(
-  customPersist("dataSource", (set) => ({
+  customPersist((set) => ({
     dataSource: DEFAULT_DATA_SOURCE,
     setDataSource: (value) => {
       set({ dataSource: parseDataSource(value) });
