@@ -51,6 +51,7 @@ import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
+  Measure,
   TemporalDimension,
   TimeUnit,
 } from "../../graphql/query-hooks";
@@ -149,9 +150,16 @@ const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
   };
 };
 
+const currencyFormatter = (d: Measure, locale: string) => {
+  const formatLocale = getD3FormatLocale(locale);
+  // Use the currency exponent from the dimension, with default 2
+  return formatLocale.format(`,.${d.currencyExponent || 2}f`);
+};
+
 export const useDimensionFormatters = (
   dimensions: DimensionMetaDataFragment[]
 ) => {
+  const locale = useLocale();
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
   ) => string;
@@ -163,7 +171,11 @@ export const useDimensionFormatters = (
       dimensions.map((d) => {
         let formatter: (s: any) => string;
         if (d.__typename === "Measure") {
-          formatter = formatNumber;
+          if (d.isCurrency) {
+            formatter = currencyFormatter(d, locale);
+          } else {
+            formatter = formatNumber;
+          }
         } else if (d.__typename === "TemporalDimension") {
           formatter = dateFormatterFromDimension(
             d,
