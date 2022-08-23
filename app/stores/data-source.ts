@@ -54,6 +54,8 @@ const customPersist =
         const storageDataSource = localStorage.getItem(STORAGE_KEY);
         if (storageDataSource) {
           dataSource = parseDataSource(storageDataSource);
+        } else {
+          localStorage.setItem(STORAGE_KEY, stringifyDataSource(dataSource));
         }
       }
     }
