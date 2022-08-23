@@ -161,16 +161,24 @@ export const useDimensionFormatters = (
   return useMemo(() => {
     return Object.fromEntries(
       dimensions.map((d) => {
-        return [
-          d.iri,
-          d.__typename === "Measure" || d.isNumerical
-            ? formatNumber
-            : d.__typename === "TemporalDimension"
-            ? dateFormatterFromDimension(d, dateFormatters, formatDateAuto)
-            : isNamedNodeDimension(d)
-            ? namedNodeFormatter(d)
-            : formatIdentity,
-        ];
+        let formatter: (s: any) => string;
+        if (d.__typename === "Measure") {
+          formatter = formatNumber;
+        } else if (d.__typename === "TemporalDimension") {
+          formatter = dateFormatterFromDimension(
+            d,
+            dateFormatters,
+            formatDateAuto
+          );
+        } else if (isNamedNodeDimension(d)) {
+          formatter = namedNodeFormatter(d);
+        } else if (d.isNumerical) {
+          formatter = formatNumber;
+        } else {
+          formatter = formatIdentity;
+        }
+
+        return [d.iri, formatter];
       })
     );
   }, [dimensions, formatNumber, dateFormatters, formatDateAuto]);
