@@ -321,6 +321,7 @@ export const Input = ({
       color="secondary"
       name={name}
       value={value}
+      disabled={disabled}
       onChange={onChange}
       sx={{
         borderColor: "grey.500",
