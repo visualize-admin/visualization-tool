@@ -1,6 +1,7 @@
 import { useContext, createContext, Dispatch, useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
+import { isRunningInBrowser } from "@/lib/is-running-in-browser";
 import useEvent from "@/lib/use-event";
 import { useRouteState } from "@/lib/use-route-state";
 
@@ -61,9 +62,7 @@ export const sourceToLabel = (source: DataSource) => {
   return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
 };
 
-const getURLParam = (param: string) => {
-  const url =
-    typeof window !== "undefined" ? new URL(window.location.href) : null;
+  const url = isRunningInBrowser() ? new URL(window.location.href) : null;
   if (!url) {
     return undefined;
   }

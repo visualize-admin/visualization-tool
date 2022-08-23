@@ -1,5 +1,7 @@
 import qs from "qs";
 
+import { isRunningInBrowser } from "@/lib/is-running-in-browser";
+
 const FLAG_PREFIX = "flag__";
 
 export const flag = (name: string, value?: any) => {
@@ -28,7 +30,7 @@ const initFromSearchParams = (locationSearch: string) => {
   }
 };
 
-if (typeof window !== "undefined") {
+if (isRunningInBrowser()) {
   // @ts-ignore
   window.flag = flag;
   initFromSearchParams(window.location.search);
