@@ -23,7 +23,7 @@ export const ChartAnnotator = ({
         <SectionTitle titleId="controls-design">
           <Trans id="controls.section.description">Annotate</Trans>
         </SectionTitle>
-        <ControlSectionContent px="small">
+        <ControlSectionContent px="small" gap="none">
           <AnnotatorTabField
             value={"title"}
             icon="text"

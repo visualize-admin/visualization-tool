@@ -96,7 +96,7 @@ const BaseLayerSettings = memo(() => {
       <SectionTitle iconName="mapMaptype">
         <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
-      <ControlSectionContent>
+      <ControlSectionContent gap="large">
         <ChartOptionCheckboxField
           label={t({
             id: "chart.map.layers.base.show",

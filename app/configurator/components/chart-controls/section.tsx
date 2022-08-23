@@ -128,7 +128,7 @@ export const ControlSectionSkeleton = ({
   sx?: React.ComponentProps<typeof ControlSection>["sx"];
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>
-    <ControlSectionContent px="small">
+    <ControlSectionContent px="small" gap="none">
       <Typography variant="h1">
         <Skeleton sx={{ bgcolor: "grey.300" }} />
       </Typography>{" "}
