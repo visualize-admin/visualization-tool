@@ -2,7 +2,7 @@ import { Paper } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 
 import { PreviewTable } from "@/configurator/components/datatable";
-import observations from "@/test/__fixtures/api/bathingsite-observations.json";
+import observations from "@/test/__fixtures/data/bathingsite-observations.json";
 
 export default () => {
   return markdown`

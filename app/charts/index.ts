@@ -1,4 +1,4 @@
-import { group } from "d3";
+import { ascending, group } from "d3";
 import produce from "immer";
 import { get, groupBy } from "lodash";
 
@@ -199,6 +199,9 @@ export const getInitialConfig = ({
         },
       };
     case "table":
+      const allDimensionsSorted = [...dimensions, ...measures].sort((a, b) =>
+        ascending(a.order ?? Infinity, b.order ?? Infinity)
+      );
       return {
         chartType,
         filters: {},
@@ -209,7 +212,7 @@ export const getInitialConfig = ({
         },
         sorting: [],
         fields: Object.fromEntries<TableColumn>(
-          [...dimensions, ...measures].map((d, i) => [
+          allDimensionsSorted.map((d, i) => [
             d.iri,
             {
               componentIri: d.iri,
@@ -225,7 +228,7 @@ export const getInitialConfig = ({
               },
             },
           ])
-        ),
+        ) as TableFields,
       };
     case "map":
       const {
