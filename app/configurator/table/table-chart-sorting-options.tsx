@@ -70,9 +70,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
     padding: 0,
     cursor: "pointer",
     marginLeft: "auto",
-    marginBottom: theme.spacing(2),
-    top: "2px",
-    position: "relative",
+    minWidth: 0,
+    minHeight: 0,
   },
   iconWrapper: {
     // @ts-ignore
