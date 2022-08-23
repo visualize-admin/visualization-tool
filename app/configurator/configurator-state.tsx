@@ -1390,7 +1390,7 @@ export const useReadOnlyConfiguratorState = <T extends ConfiguratorState>(
     );
   }
 
-  const [state, dispatch] = ctx;
+  const [state] = ctx;
 
   if (predicate && !predicate(state)) {
     throw new Error("State does not respect type guard");
