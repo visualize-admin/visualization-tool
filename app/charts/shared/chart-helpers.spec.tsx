@@ -9,7 +9,7 @@ import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters
 import { LineConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
-import line1Fixture from "@/test/__fixtures/prod/line-1.json";
+import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
 const makeCubeNsGetters = (cubeIri: string) => ({
   col: (col: string) => `${cubeIri}/dimension/${col}`,

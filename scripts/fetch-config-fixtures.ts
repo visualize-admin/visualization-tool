@@ -5,11 +5,13 @@
  */
 
 // @ts-ignore
+import path from "path";
+
 import { build, completionHandler } from "@cozy/cli-tree";
 import fs from "fs-extra";
-import path from "path";
-import testConfigs from "../app/test/__fixtures/int/configs";
 import fetch from "isomorphic-unfetch";
+
+import testConfigs from "../app/test/__fixtures/config/int/configs";
 
 const pullConfigs = async ({
   baseUrl,

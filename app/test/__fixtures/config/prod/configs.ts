@@ -1,4 +1,4 @@
-import { TestConfig } from "@/test/__fixtures/types";
+import { TestConfig } from "@/test/__fixtures/config/types";
 
 const configs: TestConfig[] = [
   {
