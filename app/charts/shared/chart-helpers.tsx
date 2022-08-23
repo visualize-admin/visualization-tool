@@ -20,7 +20,7 @@ import {
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import truthy from "@/utils/truthy";
 
 export type QueryFilters = Filters | FilterValueSingle;
@@ -286,7 +286,7 @@ const SlugRe = /\W+/g;
 export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
 
 export const getLabelWithUnit = (
-  dimension: DimensionMetaDataFragment
+  dimension: DimensionMetadataFragment
 ): string => {
   return dimension.unit
     ? `${dimension.label} (${dimension.unit})`

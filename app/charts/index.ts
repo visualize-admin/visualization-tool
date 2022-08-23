@@ -30,7 +30,7 @@ import {
   getGeoDimensions,
   getTimeDimensions,
 } from "../domain/data";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 
@@ -53,7 +53,7 @@ export const enabledChartTypes: ChartType[] = [
  */
 export const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
-  preferredType?: DimensionMetaDataFragment["__typename"]
+  preferredType?: DimensionMetadataFragment["__typename"]
 ) => {
   const dim =
     dimensions.find(
@@ -976,7 +976,7 @@ const convertTableFieldsToSegmentField = ({
         dimensionValues: (
           dimensions.find(
             (d) => d.iri === componentIri
-          ) as DimensionMetaDataFragment
+          ) as DimensionMetadataFragment
         )?.values,
       }),
     };

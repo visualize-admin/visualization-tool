@@ -21,7 +21,7 @@ import {
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
@@ -132,7 +132,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+  } as DimensionMetadataFragment;
 
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
@@ -144,7 +144,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+  } as DimensionMetadataFragment;
 
   describe("applyNonTableDimensionToFilters", () => {
     it("should remove single value filter when a keyDimension is used as a field", () => {

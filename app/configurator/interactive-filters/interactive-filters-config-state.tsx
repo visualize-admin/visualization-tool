@@ -2,7 +2,7 @@ import produce from "immer";
 
 import { InteractiveFiltersConfig } from "@/configurator/config-types";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const toggleInteractiveFilter = produce(
   (
@@ -79,7 +79,7 @@ export const toggleInteractiveDataFilter = produce(
     }: {
       path: "dataFilters";
       value: boolean;
-      dimensions: DimensionMetaDataFragment[];
+      dimensions: DimensionMetadataFragment[];
     }
   ): InteractiveFiltersConfig => {
     if (!IFConfig?.[path]) {

@@ -50,7 +50,7 @@ import { useMemo } from "react";
 import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   Measure,
   TemporalDimension,
   TimeUnit,
@@ -138,12 +138,12 @@ const formatIdentity = (x: string | Date | null) => {
   return `${x}`;
 };
 
-const isNamedNodeDimension = (d: DimensionMetaDataFragment) => {
+const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
   const first = d.values?.[0];
   return first && first.label !== first.value;
 };
 
-const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
+const namedNodeFormatter = (d: DimensionMetadataFragment) => {
   const valuesByIri = keyBy(d.values, (x) => x.value);
   return (v: string) => {
     return valuesByIri[v]?.label || v;
@@ -157,7 +157,7 @@ const currencyFormatter = (d: Measure, locale: string) => {
 };
 
 export const useDimensionFormatters = (
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => {
   const locale = useLocale();
   const formatNumber = useFormatNumber() as unknown as (
@@ -423,7 +423,7 @@ export const useErrorMeasure = (
   }, [dimensions, measures, valueIri]);
 };
 
-export const useErrorVariable = (errorMeasure?: DimensionMetaDataFragment) => {
+export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
@@ -434,7 +434,7 @@ export const useErrorVariable = (errorMeasure?: DimensionMetaDataFragment) => {
 };
 
 export const useErrorRange = (
-  errorMeasure: DimensionMetaDataFragment | undefined,
+  errorMeasure: DimensionMetadataFragment | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {
@@ -1002,7 +1002,7 @@ export const mapValueIrisToColor = ({
   random,
 }: {
   palette: string;
-  dimensionValues: DimensionMetaDataFragment["values"];
+  dimensionValues: DimensionMetadataFragment["values"];
   random?: boolean;
 }) => {
   if (!dimensionValues) {

@@ -16,7 +16,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractiveLegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 
@@ -178,7 +178,7 @@ const scatterplotMeasures = [
     label: "Übrige Sortimente in m3",
     __typename: "Measure",
   },
-] as DimensionMetaDataFragment[];
+] as DimensionMetadataFragment[];
 
 const scatterplotDimensions = [
   {
@@ -466,7 +466,7 @@ const scatterplotDimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as unknown as DimensionMetaDataFragment[];
+] as unknown as DimensionMetadataFragment[];
 const scatterplotObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

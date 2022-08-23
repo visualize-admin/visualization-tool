@@ -1,7 +1,7 @@
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
-import { DimensionMetaDataFragment, TimeUnit } from "../graphql/query-hooks";
+import { DimensionMetadataFragment, TimeUnit } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
   {
@@ -114,7 +114,7 @@ export const fields: ColumnFields = {
   },
 };
 
-export const dimensions: DimensionMetaDataFragment[] = [
+export const dimensions: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     label: "Jahr",
@@ -145,7 +145,7 @@ export const dimensions: DimensionMetaDataFragment[] = [
     values: [],
   },
 ];
-export const measures: DimensionMetaDataFragment[] = [
+export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     label: "Investitionen: Einnahmen - Total",

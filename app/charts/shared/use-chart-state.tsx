@@ -13,15 +13,15 @@ import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { TableChartState } from "@/charts/table/table-state";
 import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Has } from "@/lib/has";
 
 export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
   interactiveFiltersConfig: InteractiveFiltersConfig;
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }
 
 export type ChartState =

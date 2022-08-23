@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
 
-import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
+import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
 
 import {
   getTimeIntervalFormattedSelectOptions,
@@ -42,7 +42,7 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DimensionMetaDataFragment,
+        } as DimensionMetadataFragment,
         {
           iri: "iri-yearly",
           timeFormat: "%Y",
@@ -50,12 +50,12 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DimensionMetaDataFragment,
+        } as DimensionMetadataFragment,
         {
           iri: "iri-number",
           isNumerical: true,
           isKeyDimension: false,
-        } as DimensionMetaDataFragment,
+        } as DimensionMetadataFragment,
         {
           iri: "iri-currency",
           isNumerical: true,
@@ -63,7 +63,7 @@ describe("useDimensionFormatters", () => {
           isCurrency: true,
           currencyExponent: 1,
           __typename: "Measure",
-        } as DimensionMetaDataFragment,
+        } as DimensionMetadataFragment,
       ])
     );
     return { formatters };

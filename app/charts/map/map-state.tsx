@@ -48,7 +48,7 @@ import {
   Observation,
   ObservationValue,
 } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 import { getBBox } from "./helpers";
 
@@ -68,8 +68,8 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
-    measureDimension?: DimensionMetaDataFragment;
-    errorDimension?: DimensionMetaDataFragment;
+    measureDimension?: DimensionMetadataFragment;
+    errorDimension?: DimensionMetadataFragment;
     getFormattedError: null | ((d: Observation) => string);
     getColor: (x: number | null) => number[];
     colorScale:
@@ -90,8 +90,8 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
-    errorDimension?: DimensionMetaDataFragment;
-    measureDimension?: DimensionMetaDataFragment;
+    errorDimension?: DimensionMetadataFragment;
+    measureDimension?: DimensionMetadataFragment;
     getFormattedError: null | ((d: Observation) => string);
     color: string;
     radiusScale: ScalePower<number, number>;

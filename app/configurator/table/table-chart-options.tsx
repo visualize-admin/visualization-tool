@@ -40,7 +40,7 @@ import {
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
 import { canDimensionBeMultiFiltered } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 
 const useTableColumnGroupHiddenField = ({
@@ -263,7 +263,7 @@ export const TableColumnOptions = ({
                       colorMapping: mapValueIrisToColor({
                         palette: getDefaultCategoricalPalette().value,
                         dimensionValues: (
-                          component as DimensionMetaDataFragment
+                          component as DimensionMetadataFragment
                         )?.values,
                       }),
                     };
@@ -296,7 +296,7 @@ export const TableColumnOptions = ({
             <ColumnStyleSubOptions
               chartConfig={chartConfig}
               activeField={activeField}
-              component={component as DimensionMetaDataFragment}
+              component={component as DimensionMetadataFragment}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -366,7 +366,7 @@ const ColumnStyleSubOptions = ({
 }: {
   chartConfig: TableConfig;
   activeField: string;
-  component: DimensionMetaDataFragment;
+  component: DimensionMetadataFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (
