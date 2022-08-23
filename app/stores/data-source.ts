@@ -17,20 +17,20 @@ type DataSourceStore = {
   setDataSource: (value: string) => void;
 };
 
-const STORAGE_KEY = "dataSource";
+const PARAM_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
-  localStorage.setItem(STORAGE_KEY, stringifyDataSource(value));
+  localStorage.setItem(PARAM_KEY, stringifyDataSource(value));
 };
 
 const updateRouterDataSourceParam = (dataSource: DataSource) => {
-  const urlDataSourceLabel = getURLParam("dataSource");
+  const urlDataSourceLabel = getURLParam(PARAM_KEY);
   const dataSourceLabel = sourceToLabel(dataSource);
 
   if (urlDataSourceLabel !== dataSourceLabel) {
     Router.replace({
       pathname: Router.pathname,
-      query: { ...Router.query, dataSource: dataSourceLabel },
+      query: { ...Router.query, [PARAM_KEY]: dataSourceLabel },
     });
   }
 };
@@ -65,7 +65,7 @@ const dataSourceStoreMiddleware =
     let dataSource = DEFAULT_DATA_SOURCE;
 
     if (isRunningInBrowser()) {
-      const urlDataSourceLabel = getURLParam("dataSource");
+      const urlDataSourceLabel = getURLParam(PARAM_KEY);
       const urlDataSource = urlDataSourceLabel
         ? parseSourceByLabel(urlDataSourceLabel)
         : undefined;
@@ -74,7 +74,7 @@ const dataSourceStoreMiddleware =
         dataSource = urlDataSource;
         saveToLocalStorage(urlDataSource);
       } else {
-        const storageDataSource = localStorage.getItem(STORAGE_KEY);
+        const storageDataSource = localStorage.getItem(PARAM_KEY);
 
         if (storageDataSource) {
           dataSource = parseDataSource(storageDataSource);
