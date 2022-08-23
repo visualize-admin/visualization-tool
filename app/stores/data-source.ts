@@ -17,6 +17,10 @@ type DataSourceStore = {
 
 const STORAGE_KEY = "dataSource";
 
+const saveToLocalStorage = (value: DataSource) => {
+  localStorage.setItem(STORAGE_KEY, stringifyDataSource(value));
+};
+
 /**
  * Custom middleware that saves data source to localStorage.
  *
@@ -35,10 +39,7 @@ const dataSourceStoreMiddleware =
         set(payload);
 
         if (isRunningInBrowser()) {
-          localStorage.setItem(
-            STORAGE_KEY,
-            stringifyDataSource(payload.dataSource)
-          );
+          saveToLocalStorage(payload.dataSource);
         }
       },
       get,
@@ -57,14 +58,14 @@ const dataSourceStoreMiddleware =
 
       if (urlDataSourceLabel && urlDataSource) {
         dataSource = urlDataSource;
-        localStorage.setItem(STORAGE_KEY, stringifyDataSource(urlDataSource));
+        saveToLocalStorage(urlDataSource);
       } else {
         const storageDataSource = localStorage.getItem(STORAGE_KEY);
 
         if (storageDataSource) {
           dataSource = parseDataSource(storageDataSource);
         } else {
-          localStorage.setItem(STORAGE_KEY, stringifyDataSource(dataSource));
+          saveToLocalStorage(dataSource);
         }
       }
     }
