@@ -182,6 +182,13 @@ const DebugSearch = () => {
       <Search
         sourceUrl={sourceUrl}
         includeDrafts={includeDrafts}
+        query="bath"
+        filters={[territoryTheme]}
+        locale="en"
+      />
+      <Search
+        sourceUrl={sourceUrl}
+        includeDrafts={includeDrafts}
         query="Ausgaben"
         filters={[]}
         locale="de"

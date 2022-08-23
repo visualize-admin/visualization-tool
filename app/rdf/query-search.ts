@@ -54,8 +54,19 @@ const makeVisualizeFilter = (includeDrafts: boolean) => {
   `;
 };
 
+const enhanceQuery = (rawQuery: string) => {
+  return (
+    rawQuery
+      .toLowerCase()
+      .split(" ")
+      // Wildcard Searches on each term
+      .map((t) => `${t}*`)
+      .join(" ")
+  );
+};
+
 export const searchCubes = async ({
-  query,
+  query: rawQuery,
   locale,
   filters,
   includeDrafts,
@@ -69,6 +80,8 @@ export const searchCubes = async ({
   sparqlClient: ParsingClient;
   sparqlClientStream: StreamClient;
 }) => {
+  const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
+
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ||
