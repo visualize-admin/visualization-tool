@@ -34,6 +34,7 @@ import {
 } from "@/configurator/table/table-config-state";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+import useEvent from "@/lib/use-event";
 
 const TableSortingOptionItem = ({
   componentIri,
@@ -52,7 +53,7 @@ const TableSortingOptionItem = ({
     metaData.dimensions.find(({ iri }) => iri === componentIri) ??
     metaData.measures.find(({ iri }) => iri === componentIri);
 
-  const onRemove = useCallback(() => {
+  const onRemove = useEvent(() => {
     dispatch({
       type: "CHART_CONFIG_REPLACED",
       value: {
@@ -62,23 +63,20 @@ const TableSortingOptionItem = ({
         dataSetMetadata: metaData,
       },
     });
-  }, [chartConfig, dispatch, index, metaData]);
+  });
 
-  const onChangeSortingOrder = useCallback(
-    (e) => {
+  const onChangeSortingOrder = useEvent((e: ChangeEvent<HTMLInputElement>) => {
       dispatch({
         type: "CHART_CONFIG_REPLACED",
         value: {
           chartConfig: changeSortingOptionOrder(chartConfig, {
             index,
-            sortingOrder: e.currentTarget.value,
+          sortingOrder: e.currentTarget.value as "asc" | "desc",
           }),
           dataSetMetadata: metaData,
         },
       });
-    },
-    [chartConfig, dispatch, index, metaData]
-  );
+  });
 
   const sortingType =
     component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
