@@ -54,13 +54,13 @@ const Search = ({
 
   useEffect(() => {
     startTimeRef.current = Date.now();
-  }, [query, locale]);
+  }, [query, locale, includeDrafts]);
 
   const [cubes] = useDataCubesQuery({
     variables: {
       locale: locale,
       query: query,
-      filters: filters.map(({ name, type, value }) => ({ type, value })),
+      filters: filters.map(({ type, value }) => ({ type, value })),
       includeDrafts,
       sourceUrl,
       sourceType: "sparql",
@@ -69,7 +69,6 @@ const Search = ({
 
   useEffect(() => {
     if (cubes.data) {
-      console.log("seting end time", query);
       setEndTime(Date.now());
     }
   }, [cubes.data]);
