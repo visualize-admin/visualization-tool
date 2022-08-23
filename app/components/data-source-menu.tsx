@@ -1,30 +1,14 @@
 import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import {
-  DataSourceStateContext,
-  stringifyDataSource,
-  useDataSource,
-  useDataSourceState,
-} from "@/domain/datasource";
+import { stringifyDataSource } from "@/domain/datasource";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
-
-export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const [source, setSourceByValue] = useDataSourceState();
-
-  return (
-    <DataSourceStateContext.Provider
-      value={{ dataSource: source, setDataSource: setSourceByValue }}
-    >
-      {children}
-    </DataSourceStateContext.Provider>
-  );
-};
+import { useDataSourceStore } from "@/stores/data-source";
 
 const isDataSourceChangeable = (pathname: string) => {
   if (pathname === "/" || pathname === "/browse") {
@@ -35,7 +19,7 @@ const isDataSourceChangeable = (pathname: string) => {
 };
 
 export const DataSourceMenu = () => {
-  const { dataSource, setDataSource } = useDataSource();
+  const { dataSource, setDataSource } = useDataSourceStore();
   const router = useRouter();
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);

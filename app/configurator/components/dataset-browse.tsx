@@ -36,7 +36,6 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
-import { useDataSource } from "@/domain/datasource";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -54,6 +53,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 import truthy from "@/utils/truthy";
 
@@ -149,7 +149,7 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
 };
 
 export const useBrowseState = () => {
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
@@ -618,7 +618,7 @@ export const Subthemes = ({
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
     variables: {
@@ -788,7 +788,7 @@ const NavSection = ({
 };
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({

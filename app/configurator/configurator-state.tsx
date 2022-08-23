@@ -46,7 +46,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DEFAULT_DATA_SOURCE, useDataSource } from "@/domain/datasource";
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { retrieveDataSourceFromLocalStorage } from "@/domain/datasource/localStorage";
 import {
   DataCubeMetadataWithComponentValuesDocument,
@@ -58,6 +58,7 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
+import { useDataSourceStore } from "@/stores/data-source";
 
 export const DEFAULT_PALETTE = "category10";
 const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
@@ -1185,7 +1186,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;

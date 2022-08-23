@@ -1,4 +1,4 @@
-import { useContext, createContext, Dispatch, useMemo } from "react";
+import { useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
@@ -35,22 +35,6 @@ export const useIsTrustedDataSource = (dataSource: DataSource) => {
     const stringifiedDataSource = stringifyDataSource(dataSource);
     return SOURCES_BY_VALUE[stringifiedDataSource]?.isTrusted;
   }, [dataSource]);
-};
-
-export const DataSourceStateContext = createContext<
-  { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
->(undefined);
-
-export const useDataSource = () => {
-  const ctx = useContext(DataSourceStateContext);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap the application in <DataSourceProvider /> to useDataSource()"
-    );
-  }
-
-  return ctx;
 };
 
 export const parseSourceByLabel = (label: string): DataSource | undefined => {
