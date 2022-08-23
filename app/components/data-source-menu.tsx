@@ -8,6 +8,7 @@ import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import {
   isDataSourceChangeable,
+  sourceToLabel,
   stringifyDataSource,
 } from "@/domain/datasource";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
@@ -20,11 +21,11 @@ export const DataSourceMenu = () => {
   const isDisabled = useMemo(() => {
     return !isDataSourceChangeable(router.pathname);
   }, [router.pathname]);
-  const dataSourceStr = stringifyDataSource(dataSource);
+  const dataSourceLabel = sourceToLabel(dataSource);
 
   useSyncUrlParam({
     param: "dataSource",
-    value: dataSourceStr,
+    value: dataSourceLabel,
   });
 
   return (
@@ -37,7 +38,7 @@ export const DataSourceMenu = () => {
       <MinimalisticSelect
         id="dataSourceSelect"
         options={SOURCE_OPTIONS}
-        value={dataSourceStr}
+        value={stringifyDataSource(dataSource)}
         onChange={(e) => {
           setDataSource(e.target.value as string);
         }}

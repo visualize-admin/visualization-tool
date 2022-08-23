@@ -4,6 +4,7 @@ import { DataSource } from "@/configurator";
 import {
   DEFAULT_DATA_SOURCE,
   parseDataSource,
+  parseSourceByLabel,
   stringifyDataSource,
 } from "@/domain/datasource";
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
@@ -42,10 +43,13 @@ const customPersist =
     let dataSource = DEFAULT_DATA_SOURCE;
 
     if (isRunningInBrowser()) {
-      const urlDataSource = getURLParam("dataSource");
-      if (urlDataSource) {
-        dataSource = parseDataSource(urlDataSource);
-        localStorage.setItem(STORAGE_KEY, urlDataSource);
+      const urlDataSourceLabel = getURLParam("dataSource");
+      const urlDataSource = urlDataSourceLabel
+        ? parseSourceByLabel(urlDataSourceLabel)
+        : undefined;
+      if (urlDataSourceLabel && urlDataSource) {
+        dataSource = urlDataSource;
+        localStorage.setItem(STORAGE_KEY, stringifyDataSource(urlDataSource));
       } else {
         const storageDataSource = localStorage.getItem(STORAGE_KEY);
         if (storageDataSource) {
