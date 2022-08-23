@@ -90,7 +90,7 @@ export const getCheckboxStates = (
   return res;
 };
 
-const visitTree = (
+export const visitHierarchy = (
   tree: HierarchyValue[],
   cb: (node: HierarchyValue) => void
 ) => {
@@ -147,7 +147,7 @@ export const toggleCheckbox = (
     }
   }
 
-  visitTree(children, (child) => {
+  visitHierarchy(children, (child) => {
     act(
       child,
       (state === "indeterminate" && hasValue) || state === "unchecked"
@@ -160,7 +160,7 @@ export const toggleCheckbox = (
 
 const buildIndex = (tree: HierarchyValue[]) => {
   const index = new Map<string, HierarchyValue>();
-  visitTree(tree, (x) => index.set(x.value, x));
+  visitHierarchy(tree, (x) => index.set(x.value, x));
   return index;
 };
 

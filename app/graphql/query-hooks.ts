@@ -534,24 +534,31 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetadata_GeoCoordinatesDimension_Fragment
+      & HierarchyMetadata_GeoCoordinatesDimension_Fragment
     ) | (
       { __typename: 'GeoShapesDimension' }
       & DimensionMetadata_GeoShapesDimension_Fragment
+      & HierarchyMetadata_GeoShapesDimension_Fragment
     ) | (
       { __typename: 'Measure' }
       & DimensionMetadata_Measure_Fragment
+      & HierarchyMetadata_Measure_Fragment
     ) | (
       { __typename: 'NominalDimension' }
       & DimensionMetadata_NominalDimension_Fragment
+      & HierarchyMetadata_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
       & DimensionMetadata_OrdinalDimension_Fragment
+      & HierarchyMetadata_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetadata_TemporalDimension_Fragment
+      & HierarchyMetadata_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & DimensionMetadata_Measure_Fragment
+      & HierarchyMetadata_Measure_Fragment
     )> }> };
 
 type HierarchyMetadata_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', hierarchy?: Maybe<Array<(
@@ -1019,13 +1026,16 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
+      ...hierarchyMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
+      ...hierarchyMetadata
     }
   }
 }
-    ${DimensionMetadataFragmentDoc}`;
+    ${DimensionMetadataFragmentDoc}
+${HierarchyMetadataFragmentDoc}`;
 
 export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });

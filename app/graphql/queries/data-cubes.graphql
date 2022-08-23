@@ -178,9 +178,11 @@ query DataCubeMetadataWithComponentValues(
     landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
+      ...hierarchyMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
+      ...hierarchyMetadata
     }
   }
 }

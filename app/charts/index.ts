@@ -23,6 +23,8 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
+import { HierarchyValue } from "@/graphql/resolver-types";
+import { visitHierarchy } from "@/rdf/tree-utils";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -756,9 +758,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
   },
   map: {
-    filters: ({ oldValue, newChartConfig }) => {
+    filters: ({ oldValue, newChartConfig, dimensions }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        if (!oldValue) {
+          draft.filters = oldValue;
+        }
       });
     },
     fields: {
@@ -771,6 +775,27 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           if (areaDimension) {
             return produce(newChartConfig, (draft) => {
               draft.fields.areaLayer.componentIri = oldValue;
+
+              // Setting the filters so that bottomless areas are shown fist
+              if (areaDimension?.hierarchy) {
+                let leafs = [] as HierarchyValue[];
+                visitHierarchy(areaDimension?.hierarchy, (node) => {
+                  if (
+                    (!node.children || node.children.length === 0) &&
+                    node.hasValue
+                  ) {
+                    leafs.push(node);
+                  }
+                });
+                if (leafs.length > 0) {
+                  draft.filters[oldValue] = {
+                    type: "multi",
+                    values: Object.fromEntries(
+                      leafs.map((x) => [x.value, true])
+                    ),
+                  };
+                }
+              }
             });
           }
 
