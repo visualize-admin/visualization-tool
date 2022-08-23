@@ -47,6 +47,7 @@ export const ControlSectionContent = ({
   role,
   ariaLabelledBy,
   children,
+  gap = "default",
   px,
   sx,
 }: {
@@ -54,6 +55,10 @@ export const ControlSectionContent = ({
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
+  // large for specific purposes, e.g. base layer map options
+  // default for right panel options
+  // none for left panel options
+  gap?: "large" | "default" | "none";
   px?: "small" | "default";
   sx?: BoxProps["sx"];
 }) => {
@@ -65,6 +70,7 @@ export const ControlSectionContent = ({
       sx={{
         display: "flex",
         flexDirection: "column",
+        gap: gap === "large" ? 3 : gap === "default" ? 2 : 0,
         px: px === "small" ? 2 : 4,
         pb: 4,
         ...sx,
