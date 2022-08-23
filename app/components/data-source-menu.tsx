@@ -6,18 +6,13 @@ import React from "react";
 
 import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
-import { stringifyDataSource } from "@/domain/datasource";
+import {
+  isDataSourceChangeable,
+  stringifyDataSource,
+} from "@/domain/datasource";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { useSyncUrlParam } from "@/lib/router/use-sync-url-param";
 import { useDataSourceStore } from "@/stores/data-source";
-
-const isDataSourceChangeable = (pathname: string) => {
-  if (pathname === "/" || pathname === "/browse") {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 export const DataSourceMenu = () => {
   const { dataSource, setDataSource } = useDataSourceStore();

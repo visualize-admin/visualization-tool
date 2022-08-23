@@ -75,3 +75,11 @@ export const useDataSourceState = () => {
 
   return [source, setSourceByValue] as const;
 };
+
+export const isDataSourceChangeable = (pathname: string) => {
+  if (pathname === "/" || pathname === "/browse") {
+    return true;
+  } else {
+    return false;
+  }
+};
