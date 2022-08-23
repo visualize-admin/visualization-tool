@@ -572,6 +572,7 @@ const buildFilters = ({
     }
 
     const hasHierarchy =
+      cubeDimension.out(ns.cubeMeta.inHierarchy).values.length > 0 ||
       cubeDimension.out(ns.cubeMeta.hasHierarchy).values.length > 0;
     const toRDFValue = (value: string): NamedNode | Literal => {
       return dataType && !hasHierarchy
