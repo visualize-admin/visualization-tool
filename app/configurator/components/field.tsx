@@ -439,7 +439,6 @@ export const MetaInputField = ({
   locale,
   value,
   disabled,
-  ...props
 }: {
   label: string | ReactNode;
   metaKey: string;

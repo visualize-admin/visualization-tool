@@ -68,7 +68,7 @@ export const InteractiveFiltersOptions = ({
     return (
       <ControlSection>
         <SectionTitle iconName="segments">{component?.label}</SectionTitle>
-        <ControlSectionContent>
+        <ControlSectionContent gap="none">
           <InteractiveFiltersToggle
             label={t({
               id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
@@ -92,7 +92,7 @@ export const InteractiveFiltersOptions = ({
     return (
       <ControlSection>
         <SectionTitle iconName="time">{component?.label}</SectionTitle>
-        <ControlSectionContent>
+        <ControlSectionContent gap="none">
           <InteractiveTimeFilterOptions state={state} />
         </ControlSectionContent>
       </ControlSection>
@@ -105,7 +105,7 @@ export const InteractiveFiltersOptions = ({
             Data filters
           </Trans>
         </SectionTitle>
-        <ControlSectionContent>
+        <ControlSectionContent gap="none">
           <InteractiveDataFilterOptions state={state} />
         </ControlSectionContent>
       </ControlSection>

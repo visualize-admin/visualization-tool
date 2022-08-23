@@ -311,7 +311,7 @@ export const Input = ({
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
-      <Label htmlFor={name} smaller>
+      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
         {label}
       </Label>
     )}
@@ -321,6 +321,7 @@ export const Input = ({
       color="secondary"
       name={name}
       value={value}
+      disabled={disabled}
       onChange={onChange}
       sx={{
         borderColor: "grey.500",

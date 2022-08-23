@@ -553,6 +553,7 @@ export const ChartConfigurator = ({
         </SectionTitle>
         <ControlSectionContent
           px="small"
+          gap="none"
           role="tablist"
           aria-labelledby="controls-design"
         >
