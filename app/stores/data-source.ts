@@ -1,3 +1,4 @@
+import Router from "next/router";
 import create, { StateCreator, StoreApi } from "zustand";
 
 import { DataSource } from "@/configurator";
@@ -5,6 +6,7 @@ import {
   DEFAULT_DATA_SOURCE,
   parseDataSource,
   parseSourceByLabel,
+  sourceToLabel,
   stringifyDataSource,
 } from "@/domain/datasource";
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
@@ -19,6 +21,18 @@ const STORAGE_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
   localStorage.setItem(STORAGE_KEY, stringifyDataSource(value));
+};
+
+const updateRouterDataSourceParam = (dataSource: DataSource) => {
+  const urlDataSourceLabel = getURLParam("dataSource");
+  const dataSourceLabel = sourceToLabel(dataSource);
+
+  if (urlDataSourceLabel !== dataSourceLabel) {
+    Router.replace({
+      pathname: Router.pathname,
+      query: { ...Router.query, dataSource: dataSourceLabel },
+    });
+  }
 };
 
 /**
@@ -40,6 +54,7 @@ const dataSourceStoreMiddleware =
 
         if (isRunningInBrowser()) {
           saveToLocalStorage(payload.dataSource);
+          updateRouterDataSourceParam(get().dataSource);
         }
       },
       get,
@@ -49,7 +64,6 @@ const dataSourceStoreMiddleware =
 
     let dataSource = DEFAULT_DATA_SOURCE;
 
-    // Triggered on init.
     if (isRunningInBrowser()) {
       const urlDataSourceLabel = getURLParam("dataSource");
       const urlDataSource = urlDataSourceLabel
@@ -69,6 +83,15 @@ const dataSourceStoreMiddleware =
         }
       }
     }
+
+    const callback = () => updateRouterDataSourceParam(get().dataSource);
+
+    // No need to unsubscribe, as store is created once and needs to update
+    // URL continously.
+    Router.events.on("routeChangeComplete", callback);
+
+    // Initialize with correct url.
+    Router.ready(callback);
 
     return { ...state, dataSource };
   };
