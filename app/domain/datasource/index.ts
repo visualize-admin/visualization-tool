@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
-import { isRunningInBrowser } from "@/lib/is-running-in-browser";
+import { getURLParam } from "@/lib/router/helpers";
+import { useRouteState } from "@/lib/router/use-route-state";
 import useEvent from "@/lib/use-event";
-import { useRouteState } from "@/lib/use-route-state";
 
 import { ENDPOINT } from "../env";
 
@@ -44,14 +44,6 @@ export const parseSourceByLabel = (label: string): DataSource | undefined => {
 
 export const sourceToLabel = (source: DataSource) => {
   return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
-};
-
-export const getURLParam = (param: string) => {
-  const url = isRunningInBrowser() ? new URL(window.location.href) : null;
-  if (!url) {
-    return undefined;
-  }
-  return url.searchParams.get(param);
 };
 
 export const useDataSourceState = () => {

@@ -1,21 +1,9 @@
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import useEvent from "./use-event";
+import useEvent from "../use-event";
 
-export const updateRouterQuery = (
-  router: NextRouter,
-  values: { [k: string]: string }
-) => {
-  router.replace(
-    {
-      pathname: router.pathname,
-      query: { ...router.query, ...values },
-    },
-    undefined,
-    { shallow: true }
-  );
-};
+import { updateRouterQuery } from "./helpers";
 
 /**
  * useState that keeps router param synchronized.

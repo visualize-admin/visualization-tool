@@ -3,11 +3,11 @@ import create, { StateCreator, StoreApi } from "zustand";
 import { DataSource } from "@/configurator";
 import {
   DEFAULT_DATA_SOURCE,
-  getURLParam,
   parseDataSource,
   stringifyDataSource,
 } from "@/domain/datasource";
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
+import { getURLParam } from "@/lib/router/helpers";
 
 type DataSourceStore = {
   dataSource: DataSource;
