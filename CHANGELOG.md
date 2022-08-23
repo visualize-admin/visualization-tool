@@ -9,7 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Column order is based on the shacl:order defined in the data
+  - For the dataset preview
+  - For the table chart columns
 
 ## [3.7.8] - 2022-08-22
 
