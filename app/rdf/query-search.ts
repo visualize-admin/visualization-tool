@@ -6,11 +6,11 @@ import rdf from "rdf-ext";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
-import truthy from "@/utils/truthy";
 
 import { computeScores } from "./query-search-score-utils";
 

@@ -2,11 +2,11 @@ import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { NamedNode } from "rdf-js";
 
+import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 
 import isAttrEqual from "../utils/is-attr-equal";
-import truthy from "../utils/truthy";
 
 const where = (predicate: NamedNode, object: NamedNode) => {
   return ({ cube }: $FixMe) => [[cube, predicate, object]];

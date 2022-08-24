@@ -19,6 +19,7 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import { DataSource } from "@/configurator/config-types";
+import { truthy } from "@/domain/types";
 import {
   DataCubeMetadataQuery,
   useDataCubeMetadataQuery,
@@ -26,7 +27,6 @@ import {
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { makeOpenDataLink } from "@/utils/opendata";
-import truthy from "@/utils/truthy";
 
 export const DataSetMetadata = ({
   dataSetIri,

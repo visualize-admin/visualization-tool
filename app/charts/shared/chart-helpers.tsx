@@ -20,8 +20,8 @@ import {
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import truthy from "@/utils/truthy";
 
 export type QueryFilters = Filters | FilterValueSingle;
 

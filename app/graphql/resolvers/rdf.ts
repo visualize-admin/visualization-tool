@@ -4,6 +4,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
@@ -33,7 +34,6 @@ import {
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { searchCubes } from "@/rdf/query-search";
-import truthy from "@/utils/truthy";
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,

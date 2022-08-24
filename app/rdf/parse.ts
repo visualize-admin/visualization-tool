@@ -13,10 +13,11 @@ import {
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
+import { truthy } from "@/domain/types";
+
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
-import truthy from "../utils/truthy";
 
 import * as ns from "./namespace";
 

@@ -37,6 +37,7 @@ import {
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { useDataSource } from "@/domain/datasource";
+import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -55,7 +56,6 @@ import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import isAttrEqual from "@/utils/is-attr-equal";
-import truthy from "@/utils/truthy";
 
 import useDisclosure from "./use-disclosure";
 

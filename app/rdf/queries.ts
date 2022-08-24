@@ -12,8 +12,8 @@ import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { PromiseValue, truthy } from "@/domain/types";
 import { makeCubeFilters } from "@/rdf/cube-filters";
-import { PromiseValue } from "@/utils/promise";
 
 import { Filters } from "../configurator";
 import {
@@ -25,7 +25,6 @@ import {
 import { SPARQL_EDITOR } from "../domain/env";
 import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
-import truthy from "../utils/truthy";
 
 import * as ns from "./namespace";
 import {
