@@ -45,9 +45,9 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useLocale } from "@/locales/use-locale";
+import { sortByIndex } from "@/utils/array";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface AreasState {
@@ -359,13 +359,6 @@ const useAreasState = ({
       getCategory: getSegment,
       sortOrder: "asc",
     });
-    const cumulativeSum = (
-      (sum) => (d: Observation) =>
-        (sum += getY(d) ?? 0)
-    )(0);
-    const cumulativeRulerItemValues = [
-      ...sortedTooltipValues.map(cumulativeSum),
-    ];
 
     const yAnchor = 0;
 

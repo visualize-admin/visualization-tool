@@ -33,8 +33,8 @@ import {
 } from "@/domain/datasource";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const ChartPublished = ({
   dataSet,

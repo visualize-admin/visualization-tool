@@ -18,7 +18,7 @@ const Wrapper = ({
   return contentId === "home" ? (
     <ContentLayout contentId={contentId}>{children}</ContentLayout>
   ) : (
-    <StaticContentLayout contentId={contentId}>{children}</StaticContentLayout>
+    <StaticContentLayout>{children}</StaticContentLayout>
   );
 };
 

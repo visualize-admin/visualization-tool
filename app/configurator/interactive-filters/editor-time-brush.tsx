@@ -12,8 +12,8 @@ import {
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
 const MARGINS = {

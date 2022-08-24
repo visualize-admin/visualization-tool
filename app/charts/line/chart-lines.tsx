@@ -30,7 +30,6 @@ import {
   LineConfig,
   LineFields,
 } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -73,7 +72,6 @@ export const ChartLinesVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartLines
           observations={observations.data}
@@ -87,8 +85,6 @@ export const ChartLinesVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {
@@ -122,7 +118,6 @@ export const ChartLines = memo(function ChartLines({
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
-          {/* <HoverLine /> <HoverLineValues /> */}
           <InteractionHorizontal />
           {interactiveFiltersConfig?.time.active && <BrushTime />}
         </ChartSvg>
@@ -130,8 +125,6 @@ export const ChartLines = memo(function ChartLines({
         <Ruler />
 
         <HoverDotMultiple />
-
-        {/* <HoverDot /> */}
 
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>

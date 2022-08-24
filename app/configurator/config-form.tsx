@@ -26,10 +26,10 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
+import { dfs } from "@/utils/dfs";
+import useEvent from "@/utils/use-event";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -177,7 +177,7 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
 };
 
 export const useDimensionSelection = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [_, dispatch] = useConfiguratorState();
 
   const selectAll = useCallback(() => {
     dispatch({
@@ -431,7 +431,7 @@ const MultiFilterContext = React.createContext({
   dimensionIri: undefined as string | undefined,
   colorConfigPath: undefined as string | undefined,
   checkboxController: new CheckboxStateController([], []),
-  getValueColor: (value: string) => "" as string,
+  getValueColor: (_: string) => "" as string,
 });
 
 export const useMultiFilterContext = () => {
@@ -523,7 +523,7 @@ export const useMultiFilterCheckboxes = (
   const [, dispatch] = useConfiguratorState();
   const { dimensionIri, checkboxController } = useMultiFilterContext();
 
-  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useEvent(() => {
     if (!dimensionIri) {
       return;
     }

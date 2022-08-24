@@ -145,11 +145,9 @@ const TabsInner = ({
 
 const TabContent = ({
   iconName,
-  disabled = false,
   editable = false,
 }: {
   iconName: IconName;
-  disabled?: boolean;
   editable?: boolean;
 }) => {
   return (

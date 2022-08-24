@@ -44,10 +44,10 @@ import {
 } from "@/configurator/config-form";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
-import truthy from "@/utils/truthy";
 
 export const ControlTabField = ({
   component,

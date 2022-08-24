@@ -108,7 +108,6 @@ const ChartTypeSelectorField = ({
   value,
   metaData,
   disabled,
-  ...props
 }: {
   label: string;
   value: string;

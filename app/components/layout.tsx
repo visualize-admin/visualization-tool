@@ -34,7 +34,7 @@ export const ContentLayout = ({
         backgroundColor: contentId === "home" ? "grey.100" : "muted.main",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header pageType="content" />
       <Flex
         component="main"
         role="main"
@@ -51,13 +51,7 @@ export const ContentLayout = ({
   );
 };
 
-export const StaticContentLayout = ({
-  children,
-  contentId,
-}: {
-  children?: ReactNode;
-  contentId?: string;
-}) => {
+export const StaticContentLayout = ({ children }: { children?: ReactNode }) => {
   return (
     <Flex
       sx={{
@@ -66,7 +60,7 @@ export const StaticContentLayout = ({
         backgroundColor: "grey.100",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header pageType="content" />
       <Flex
         component="main"
         role="main"

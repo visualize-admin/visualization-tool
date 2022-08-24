@@ -25,7 +25,7 @@ import {
   mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import useEvent from "@/lib/use-event";
+import useEvent from "@/utils/use-event";
 
 type Props = {
   field: string;

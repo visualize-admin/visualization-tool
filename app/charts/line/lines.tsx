@@ -4,12 +4,10 @@ import { Fragment, memo } from "react";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { Observation } from "@/domain/data";
-import { useTheme } from "@/themes";
 
 export const Lines = () => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
-  const theme = useTheme();
 
   const lineGenerator = line<Observation>()
     .defined((d) => getY(d) !== null)

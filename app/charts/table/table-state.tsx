@@ -33,8 +33,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ColumnMeta {
   iri: string;
@@ -227,7 +227,7 @@ const useTableState = ({
    */
   const tableColumnsMeta = useMemo(
     () =>
-      Object.keys(fields).reduce((acc, iri, i) => {
+      Object.keys(fields).reduce((acc, iri) => {
         const columnMeta = fields[iri];
         const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;

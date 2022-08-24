@@ -17,7 +17,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 // Space used in chart states as bottom margin
 export const BRUSH_BOTTOM_SPACE = 100;

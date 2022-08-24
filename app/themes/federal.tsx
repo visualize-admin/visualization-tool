@@ -27,8 +27,6 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   return res;
 };
 
-const commonInputPadding = 4;
-
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */

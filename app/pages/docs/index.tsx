@@ -22,8 +22,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { i18n, I18nProvider, parseLocaleString } from "@/src";
 
-const slugger = new Slugger();
-
 const pages: ConfigPageOrGroup[] = [
   {
     path: "/",

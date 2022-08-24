@@ -31,11 +31,7 @@ export const GraphqlProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const MAX_BATCH_SIZE = 500;
-const createLoaders = async (
-  locale: string,
-  sparqlClient: ParsingClient,
-  sparqlClientStream: StreamClient
-) => {
+const createLoaders = async (locale: string, sparqlClient: ParsingClient) => {
   return {
     dimensionValues: new DataLoader(
       createCubeDimensionValuesLoader(sparqlClient),
@@ -73,7 +69,7 @@ const createContextContent = async ({
   const sparqlClientStream = new StreamClient({
     endpointUrl: sourceUrl,
   });
-  const loaders = await createLoaders(locale, sparqlClient, sparqlClientStream);
+  const loaders = await createLoaders(locale, sparqlClient);
   return new Proxy(
     { loaders, sparqlClient, sparqlClientStream },
     {

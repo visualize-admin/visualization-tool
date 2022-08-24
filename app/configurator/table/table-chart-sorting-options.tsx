@@ -41,7 +41,7 @@ import {
 } from "@/configurator/table/table-config-state";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
-import useEvent from "@/lib/use-event";
+import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   sortingItemContainer: {
@@ -367,10 +367,7 @@ export const TableSortingOptions = ({
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">
-          {(
-            { innerRef, placeholder },
-            { isDraggingOver, isUsingPlaceholder, draggingOverWith }
-          ) => {
+          {({ innerRef, placeholder }) => {
             return (
               <Box>
                 <Box ref={innerRef}>

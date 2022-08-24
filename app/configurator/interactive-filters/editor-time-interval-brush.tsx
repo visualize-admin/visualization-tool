@@ -13,8 +13,8 @@ import React, { useCallback, useEffect, useRef } from "react";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/query-hooks";
-import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useTheme } from "@/themes";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 import { useTimeFormatUnit } from "../components/ui-helpers";
 
