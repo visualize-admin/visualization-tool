@@ -30,7 +30,6 @@ import {
   LineConfig,
   LineFields,
 } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -86,8 +85,6 @@ export const ChartLinesVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {

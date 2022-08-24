@@ -86,8 +86,6 @@ export const parseDate = (dateStr: string): Date =>
   // This should probably not happen
   new Date(dateStr);
 
-export const isNumber = (x: $IntentionalAny): boolean =>
-  typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
 const getFormattersForLocale = memoize((locale) => {

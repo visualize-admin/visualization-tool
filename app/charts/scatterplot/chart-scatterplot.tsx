@@ -33,7 +33,6 @@ import {
   ScatterPlotConfig,
   ScatterPlotFields,
 } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -88,12 +87,6 @@ export const ChartScatterplotVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (
-    (observations &&
-      !observations.map((obs: $FixMe) => obs.x).some(isNumber)) ||
-    (observations && !observations.map((obs: $FixMe) => obs.y).some(isNumber))
-  ) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {
