@@ -233,11 +233,8 @@ export const resolvers: Resolvers = {
   },
   Measure: {
     ...mkDimensionResolvers("Measure"),
-    isCurrency: ({ data: { isCurrency } }) => {
-      return isCurrency;
-    },
-    currencyExponent: ({ data: { currencyExponent } }) => {
-      return currencyExponent || 0;
-    },
+    isCurrency: ({ data: { isCurrency } }) => isCurrency,
+    currencyExponent: ({ data: { currencyExponent } }) => currencyExponent || 0,
+    resolution: ({ data: { resolution } }) => resolution ?? null,
   },
 };

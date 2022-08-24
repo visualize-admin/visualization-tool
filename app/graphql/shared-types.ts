@@ -53,6 +53,7 @@ export type ResolvedDimension = {
     currencyExponent?: number;
     hasUndefinedValues: boolean;
     unit?: string;
+    resolution?: number;
     dataType?: string;
     order?: number;
     name: string;

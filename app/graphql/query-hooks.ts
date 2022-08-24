@@ -228,6 +228,7 @@ export type Measure = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   isCurrency?: Maybe<Scalars['Boolean']>;
   currencyExponent?: Maybe<Scalars['Int']>;
+  resolution?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
   hierarchy?: Maybe<Array<HierarchyValue>>;
@@ -455,7 +456,7 @@ type DimensionMetadata_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoor
 
 type DimensionMetadata_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-type DimensionMetadata_Measure_Fragment = { __typename: 'Measure', isCurrency?: Maybe<boolean>, currencyExponent?: Maybe<number>, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+type DimensionMetadata_Measure_Fragment = { __typename: 'Measure', isCurrency?: Maybe<boolean>, currencyExponent?: Maybe<number>, resolution?: Maybe<number>, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
 type DimensionMetadata_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
@@ -854,6 +855,7 @@ export const DimensionMetadataFragmentDoc = gql`
   ... on Measure {
     isCurrency
     currencyExponent
+    resolution
   }
 }
     `;

@@ -150,8 +150,28 @@ const namedNodeFormatter = (d: DimensionMetadataFragment) => {
 
 const currencyFormatter = (d: Measure) => {
   const formatLocale = getD3FormatLocale();
-  // Use the currency exponent from the dimension, with default 2
-  return formatLocale.format(`,.${d.currencyExponent || 2}f`);
+  const minDecimals = d.resolution ?? d.currencyExponent ?? 2;
+  const maxDecimals = 8;
+  const baseFormatter = formatLocale.format(`,.${maxDecimals}f`);
+  return (v: number) => {
+    const formatted = baseFormatter(v);
+    const l = formatted.length;
+
+    // TODO Decimal separator should be based on locale
+    const dot = formatted.indexOf(".");
+
+    let lastSignificantIndex = formatted.length - maxDecimals + minDecimals - 1;
+    for (let i = l - maxDecimals + minDecimals; i < l; i++) {
+      if (formatted[i] !== "0") {
+        lastSignificantIndex = i;
+      }
+    }
+    return formatted.substring(
+      0,
+      lastSignificantIndex +
+        (minDecimals === 0 || dot === lastSignificantIndex ? 0 : 1)
+    );
+  };
 };
 
 export const useDimensionFormatters = (
