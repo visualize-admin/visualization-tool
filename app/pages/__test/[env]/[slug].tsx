@@ -20,7 +20,7 @@ const Page: NextPage = () => {
   useEffect(() => {
     const run = async () => {
       const importedConfig = (
-        await import(`../../../test/__fixtures/${env}/${slug}`)
+        await import(`../../../test/__fixtures/config/${env}/${slug}`)
       ).default;
       setConfig(importedConfig);
     };
