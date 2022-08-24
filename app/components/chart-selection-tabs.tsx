@@ -110,7 +110,14 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
         }}
         onClose={handleClose}
       >
-        <ChartTypeSelector state={configuratorState} />
+        <ChartTypeSelector
+          state={configuratorState}
+          sx={{
+            width: 320,
+            px: 3,
+            pb: 3,
+          }}
+        />
       </Popover>
     </>
   );
