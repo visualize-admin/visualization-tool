@@ -56,6 +56,7 @@ fragment dimensionMetadata on Dimension {
   ... on Measure {
     isCurrency
     currencyExponent
+    resolution
   }
 }
 

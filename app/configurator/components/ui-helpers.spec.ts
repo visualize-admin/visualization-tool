@@ -64,6 +64,15 @@ describe("useDimensionFormatters", () => {
           currencyExponent: 1,
           __typename: "Measure",
         } as DimensionMetadataFragment,
+        {
+          iri: "iri-currency-int",
+          isNumerical: true,
+          isKeyDimension: false,
+          isCurrency: true,
+          currencyExponent: 1,
+          resolution: 0,
+          __typename: "Measure",
+        } as DimensionMetadataFragment,
       ])
     );
     return { formatters };
@@ -86,7 +95,19 @@ describe("useDimensionFormatters", () => {
 
   it("should work with currencies", () => {
     const { formatters } = setup();
-    expect(formatters["iri-currency"]("20002.3333")).toEqual("20'002,3");
+
+    // Keeps precision if it is over the currencyExponent
+    expect(formatters["iri-currency"]("20002.3333")).toEqual("20'002,3333");
+
+    // Pads with 0 otherwise
+    expect(formatters["iri-currency"]("20002")).toEqual("20'002,0");
+  });
+
+  it("should work with dimension marked with currency and with datatype integer", () => {
+    const { formatters } = setup();
+
+    // If we have a resolution on the dimension
+    expect(formatters["iri-currency-int"]("20002")).toEqual("20'002");
   });
 });
 

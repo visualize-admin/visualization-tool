@@ -218,33 +218,6 @@ export const dataCubeObservations: NonNullable<
     dimensions,
   });
 
-  // const constructedFilters = filters
-  //   ? await constructFilters(dataCube, filters)
-  //   : [];
-
-  // // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
-  // const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-  //   return measures?.find((iri) => iri === d.iri.value)
-  //     ? []
-  //     : ([[`dim${i}`, d]] as [string, RDFDimension][]);
-  // });
-
-  // const selectedFields = [
-  //   ...unmappedDimensions,
-  //   ...(measures
-  //     ? measures.map(
-  //         (iri, i) =>
-  //           [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
-  //       )
-  //     : []),
-  // ];
-
-  // const query = dataCube
-  //   .query()
-  //   .limit(limit ?? null)
-  //   .select(selectedFields)
-  //   .filter(constructedFilters);
-
   return {
     cube,
     locale,
