@@ -87,7 +87,7 @@ export const queryHierarchy = async (
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
-): Promise<HierarchyValue[]> => {
+): Promise<HierarchyValue[] | null> => {
   const source = createSource({ endpointUrl: sourceUrl });
 
   const cubeQuery = SELECT`?cube`.WHERE`
@@ -111,7 +111,7 @@ export const queryHierarchy = async (
 
   // @ts-ignore
   if (!isGraphPointer(hierarchy)) {
-    throw new Error(`Hierarchy not found ${dimensionIri}`);
+    return null;
   }
 
   const dimensionValuesProm = queryDimensionValues(dimensionIri, sparqlClient);

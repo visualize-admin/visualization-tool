@@ -23,6 +23,8 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
+import { HierarchyValue } from "@/graphql/resolver-types";
+import { visitHierarchy } from "@/rdf/tree-utils";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -30,7 +32,7 @@ import {
   getGeoDimensions,
   getTimeDimensions,
 } from "../domain/data";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 
@@ -53,7 +55,7 @@ export const enabledChartTypes: ChartType[] = [
  */
 export const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
-  preferredType?: DimensionMetaDataFragment["__typename"]
+  preferredType?: DimensionMetadataFragment["__typename"]
 ) => {
   const dim =
     dimensions.find(
@@ -756,21 +758,44 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
   },
   map: {
-    filters: ({ oldValue, newChartConfig }) => {
+    filters: ({ oldValue, newChartConfig, dimensions }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        if (!oldValue) {
+          draft.filters = oldValue;
+        }
       });
     },
     fields: {
       areaLayer: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions.find(
+          const areaDimension = dimensions.find(
             (d) => d.__typename === "GeoShapesDimension" && d.iri === oldValue
           );
 
-          if (ok) {
+          if (areaDimension) {
             return produce(newChartConfig, (draft) => {
               draft.fields.areaLayer.componentIri = oldValue;
+
+              // Setting the filters so that bottomless areas are shown fist
+              if (areaDimension?.hierarchy) {
+                let leafs = [] as HierarchyValue[];
+                visitHierarchy(areaDimension?.hierarchy, (node) => {
+                  if (
+                    (!node.children || node.children.length === 0) &&
+                    node.hasValue
+                  ) {
+                    leafs.push(node);
+                  }
+                });
+                if (leafs.length > 0) {
+                  draft.filters[oldValue] = {
+                    type: "multi",
+                    values: Object.fromEntries(
+                      leafs.map((x) => [x.value, true])
+                    ),
+                  };
+                }
+              }
             });
           }
 
@@ -976,7 +1001,7 @@ const convertTableFieldsToSegmentField = ({
         dimensionValues: (
           dimensions.find(
             (d) => d.iri === componentIri
-          ) as DimensionMetaDataFragment
+          ) as DimensionMetadataFragment
         )?.values,
       }),
     };

@@ -29,7 +29,7 @@ import {
 import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -100,8 +100,8 @@ export const ChartBars = memo(
     interactiveFiltersConfig,
   }: {
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
     fields: BarFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {

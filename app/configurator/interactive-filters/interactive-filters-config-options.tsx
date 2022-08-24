@@ -26,7 +26,7 @@ import {
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
@@ -234,7 +234,7 @@ const InteractiveDataFiltersToggle = ({
   path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
-  dimensions: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
 }) => {
   const fieldProps = useInteractiveDataFiltersToggle({
     path,
