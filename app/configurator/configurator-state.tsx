@@ -55,9 +55,9 @@ import {
   DimensionMetaDataFragment,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import { createChartId } from "@/lib/create-chart-id";
-import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
+import { createChartId } from "@/utils/create-chart-id";
+import { unreachableError } from "@/utils/unreachable";
 
 export const DEFAULT_PALETTE = "category10";
 const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;

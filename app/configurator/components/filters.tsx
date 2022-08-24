@@ -61,10 +61,10 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+import { dfs } from "@/utils/dfs";
 import { valueComparator } from "@/utils/sorting-values";
+import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { ColorMapping, ConfiguratorState } from "../config-types";

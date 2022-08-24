@@ -51,8 +51,8 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
 import { useLocale } from "@/locales/use-locale";
+import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface StackedColumnsState {

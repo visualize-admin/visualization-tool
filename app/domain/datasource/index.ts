@@ -1,8 +1,8 @@
 import { useContext, createContext, Dispatch, useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
-import useEvent from "@/lib/use-event";
-import { useRouteState } from "@/lib/use-route-state";
+import useEvent from "@/utils/use-event";
+import { useRouteState } from "@/utils/use-route-state";
 
 import { ENDPOINT } from "../env";
 

@@ -26,10 +26,10 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
+import { dfs } from "@/utils/dfs";
+import useEvent from "@/utils/use-event";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]

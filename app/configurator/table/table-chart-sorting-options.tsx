@@ -41,7 +41,7 @@ import {
 } from "@/configurator/table/table-config-state";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
-import useEvent from "@/lib/use-event";
+import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   sortingItemContainer: {

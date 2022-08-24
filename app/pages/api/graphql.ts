@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
-import { runMiddleware } from "../../lib/run-middleware";
+import { runMiddleware } from "../../utils/run-middleware";
 
 export const cors = configureCors();
 

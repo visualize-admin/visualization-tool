@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ViewState } from "react-map-gl";
 
 import { BBox } from "@/configurator/config-types";
-import useEvent from "@/lib/use-event";
+import useEvent from "@/utils/use-event";
 
 import { AreaLayer, SymbolLayer } from "../../domain/data";
 

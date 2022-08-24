@@ -30,7 +30,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ScatterplotState {
   chartType: string;

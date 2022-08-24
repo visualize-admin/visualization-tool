@@ -32,7 +32,7 @@ import {
 } from "../domain/data";
 import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
-import { unreachableError } from "../lib/unreachable";
+import { unreachableError } from "../utils/unreachable";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",

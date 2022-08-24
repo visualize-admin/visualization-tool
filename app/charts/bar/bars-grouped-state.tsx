@@ -32,8 +32,8 @@ import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { BarFields, SortingOrder, SortingType } from "@/configurator";
 import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
 import { useLocale } from "@/locales/use-locale";
+import { sortByIndex } from "@/utils/array";
 
 export interface GroupedBarsState {
   chartType: string;

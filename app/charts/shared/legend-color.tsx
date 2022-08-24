@@ -20,10 +20,10 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
+import { dfs } from "@/utils/dfs";
 import { interlace } from "@/utils/interlace";
+import useEvent from "@/utils/use-event";
 
 type LegendSymbol = "square" | "line" | "circle";
 

@@ -11,14 +11,14 @@ import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { DataSourceProvider } from "@/components/data-source-menu";
 import { PUBLIC_URL } from "@/domain/env";
 import { GraphqlProvider } from "@/graphql/context";
-import { analyticsPageView } from "@/lib/googleAnalytics";
-import "@/lib/nprogress.css";
-import { useNProgress } from "@/lib/use-nprogress";
+import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/federal";
 import Flashes from "@/utils/flashes";
+import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
+import { useNProgress } from "@/utils/use-nprogress";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { events: routerEvents, asPath, locale: routerLocale } = useRouter();

@@ -33,8 +33,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ColumnMeta {
   iri: string;

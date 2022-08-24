@@ -53,9 +53,9 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import isAttrEqual from "@/utils/is-attr-equal";
+import useEvent from "@/utils/use-event";
 
 import useDisclosure from "./use-disclosure";
 

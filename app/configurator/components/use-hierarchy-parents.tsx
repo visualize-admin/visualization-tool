@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { DataSource } from "@/configurator/config-types";
 import { useDimensionHierarchyQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import { dfs } from "@/lib/dfs";
+import { dfs } from "@/utils/dfs";
 
 const useHierarchyParents = (
   dataSet: string,
