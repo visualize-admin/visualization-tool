@@ -3,7 +3,7 @@ import { memo, useMemo } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const A11yTable = memo(
   ({
@@ -13,8 +13,8 @@ export const A11yTable = memo(
     observations,
   }: {
     title: string;
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
     observations: Observation[];
   }) => {
     const headers = useMemo(() => {

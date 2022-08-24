@@ -53,7 +53,7 @@ import {
   isStandardErrorDimension,
 } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -181,7 +181,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: DimensionMetaDataFragment | undefined;
+  component: DimensionMetadataFragment | undefined;
   metaData: DataCubeMetadata;
   imputationNeeded: boolean;
 }) => {

@@ -12,6 +12,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Column order is based on the shacl:order defined in the data
   - For the dataset preview
   - For the table chart columns
+- Default state for area chart uses the hierarchy and selects
+  bottommost children
+
 
 ## [3.7.8] - 2022-08-22
 

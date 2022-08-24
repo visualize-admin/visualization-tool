@@ -31,7 +31,7 @@ import {
   SymbolLayer,
 } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
@@ -238,8 +238,8 @@ export const ChartMap = memo(
   }: {
     features: GeoData;
     observations: Observation[];
-    measures: DimensionMetaDataFragment[];
-    dimensions: DimensionMetaDataFragment[];
+    measures: DimensionMetadataFragment[];
+    dimensions: DimensionMetadataFragment[];
     fields: MapFields;
     baseLayer: BaseLayer;
   }) => {

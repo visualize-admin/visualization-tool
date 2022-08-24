@@ -14,14 +14,14 @@ import { TableChartState } from "@/charts/table/table-state";
 import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { Has } from "@/domain/types";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
   interactiveFiltersConfig: InteractiveFiltersConfig;
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }
 
 export type ChartState =

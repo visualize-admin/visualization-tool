@@ -52,7 +52,7 @@ import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
@@ -358,7 +358,7 @@ export const applyTableDimensionToFilters = ({
   isGrouped,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionMetadataFragment;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
@@ -409,7 +409,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionMetadataFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];

@@ -45,7 +45,7 @@ import {
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
-import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
 
@@ -55,7 +55,7 @@ export const ControlTabField = ({
   disabled,
   labelId,
 }: {
-  component?: DimensionMetaDataFragment;
+  component?: DimensionMetadataFragment;
   value: string;
   disabled?: boolean;
   labelId: string;

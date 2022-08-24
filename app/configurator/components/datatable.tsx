@@ -17,7 +17,7 @@ import { Loading } from "@/components/hint";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
   useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
@@ -31,10 +31,10 @@ export const PreviewTable = ({
   observations,
 }: {
   title: string;
-  headers: DimensionMetaDataFragment[];
+  headers: DimensionMetadataFragment[];
   observations: Observation[];
 }) => {
-  const [sortBy, setSortBy] = useState<DimensionMetaDataFragment>();
+  const [sortBy, setSortBy] = useState<DimensionMetadataFragment>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
   const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
@@ -141,8 +141,8 @@ export const DataSetPreviewTable = ({
   title: string;
   dataSetIri: string;
   dataSource: DataSource;
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
@@ -222,8 +222,8 @@ export const DataSetTable = ({
 };
 
 function getSortedHeaders(
-  dimensions: DimensionMetaDataFragment[],
-  measures: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[],
+  measures: DimensionMetadataFragment[]
 ) {
   const allDimensions = [...dimensions, ...measures];
   allDimensions.sort((a, b) =>
