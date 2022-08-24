@@ -227,7 +227,7 @@ const useTableState = ({
    */
   const tableColumnsMeta = useMemo(
     () =>
-      Object.keys(fields).reduce((acc, iri, i) => {
+      Object.keys(fields).reduce((acc, iri) => {
         const columnMeta = fields[iri];
         const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;

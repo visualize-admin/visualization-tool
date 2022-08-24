@@ -73,7 +73,6 @@ export const ChartLinesVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartLines
           observations={observations.data}
@@ -122,7 +121,6 @@ export const ChartLines = memo(function ChartLines({
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
-          {/* <HoverLine /> <HoverLineValues /> */}
           <InteractionHorizontal />
           {interactiveFiltersConfig?.time.active && <BrushTime />}
         </ChartSvg>
@@ -130,8 +128,6 @@ export const ChartLines = memo(function ChartLines({
         <Ruler />
 
         <HoverDotMultiple />
-
-        {/* <HoverDot /> */}
 
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>

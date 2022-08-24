@@ -70,7 +70,6 @@ export const ChartAreasVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartAreas
           observations={observations.data}

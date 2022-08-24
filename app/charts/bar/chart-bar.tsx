@@ -68,7 +68,6 @@ export const ChartBarsVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartBars
           observations={observations.data}

@@ -177,7 +177,7 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
 };
 
 export const useDimensionSelection = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [_, dispatch] = useConfiguratorState();
 
   const selectAll = useCallback(() => {
     dispatch({
@@ -431,7 +431,7 @@ const MultiFilterContext = React.createContext({
   dimensionIri: undefined as string | undefined,
   colorConfigPath: undefined as string | undefined,
   checkboxController: new CheckboxStateController([], []),
-  getValueColor: (value: string) => "" as string,
+  getValueColor: (_: string) => "" as string,
 });
 
 export const useMultiFilterContext = () => {
@@ -523,7 +523,7 @@ export const useMultiFilterCheckboxes = (
   const [, dispatch] = useConfiguratorState();
   const { dimensionIri, checkboxController } = useMultiFilterContext();
 
-  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useEvent(() => {
     if (!dimensionIri) {
       return;
     }

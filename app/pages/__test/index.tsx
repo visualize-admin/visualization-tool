@@ -9,7 +9,7 @@ type PageProps = {
   configs: PromiseValue<ReturnType<typeof loadFixtureConfigs>>;
 };
 
-export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const configs = await loadFixtureConfigs();
 
   return {

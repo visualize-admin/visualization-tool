@@ -150,8 +150,8 @@ const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
   };
 };
 
-const currencyFormatter = (d: Measure, locale: string) => {
-  const formatLocale = getD3FormatLocale(locale);
+const currencyFormatter = (d: Measure) => {
+  const formatLocale = getD3FormatLocale();
   // Use the currency exponent from the dimension, with default 2
   return formatLocale.format(`,.${d.currencyExponent || 2}f`);
 };
@@ -159,7 +159,6 @@ const currencyFormatter = (d: Measure, locale: string) => {
 export const useDimensionFormatters = (
   dimensions: DimensionMetaDataFragment[]
 ) => {
-  const locale = useLocale();
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
   ) => string;
@@ -172,7 +171,7 @@ export const useDimensionFormatters = (
         let formatter: (s: any) => string;
         if (d.__typename === "Measure") {
           if (d.isCurrency) {
-            formatter = currencyFormatter(d, locale);
+            formatter = currencyFormatter(d);
           } else {
             formatter = formatNumber;
           }
@@ -457,9 +456,8 @@ export const useErrorRange = (
 };
 
 export const useFormatNumber = () => {
-  const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale(locale);
+    const { format } = getD3FormatLocale();
     const formatter = format(",.2~f");
     return (x: NumberValue | null | undefined) => {
       if (x === null || x === undefined) {
@@ -467,14 +465,13 @@ export const useFormatNumber = () => {
       }
       return `${formatter(x)}`;
     };
-  }, [locale]);
+  }, []);
   return formatter;
 };
 
 export const useFormatInteger = () => {
-  const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale(locale);
+    const { format } = getD3FormatLocale();
     const formatter = format(",.0~f");
     return (x: NumberValue | null | undefined) => {
       if (x === null || x === undefined) {
@@ -482,7 +479,7 @@ export const useFormatInteger = () => {
       }
       return formatter(x);
     };
-  }, [locale]);
+  }, []);
   return formatter;
 };
 

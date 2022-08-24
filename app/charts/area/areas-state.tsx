@@ -359,13 +359,6 @@ const useAreasState = ({
       getCategory: getSegment,
       sortOrder: "asc",
     });
-    const cumulativeSum = (
-      (sum) => (d: Observation) =>
-        (sum += getY(d) ?? 0)
-    )(0);
-    const cumulativeRulerItemValues = [
-      ...sortedTooltipValues.map(cumulativeSum),
-    ];
 
     const yAnchor = 0;
 

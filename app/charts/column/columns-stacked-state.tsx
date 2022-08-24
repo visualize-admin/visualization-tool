@@ -143,12 +143,11 @@ const useColumnsStackedState = ({
       sortData({
         data,
         getX,
-        getY,
         sortingType,
         sortingOrder,
         xOrder,
       }),
-    [data, getX, getY, sortingType, sortingOrder, xOrder]
+    [data, getX, sortingType, sortingOrder, xOrder]
   );
 
   // Data for Chart
@@ -560,14 +559,12 @@ export const StackedColumnsChart = ({
 const sortData = ({
   data,
   getX,
-  getY,
   sortingType,
   sortingOrder,
   xOrder,
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  getY: (d: Observation) => number | null;
   sortingType: SortingType | undefined;
   sortingOrder: SortingOrder | undefined;
   xOrder: string[];

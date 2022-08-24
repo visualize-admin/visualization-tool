@@ -590,9 +590,7 @@ const transitionStepPrevious = (
   }
 };
 
-export const canTransitionToPreviousStep = (
-  state: ConfiguratorState
-): boolean => {
+export const canTransitionToPreviousStep = (_: ConfiguratorState): boolean => {
   // All states are interchangeable in terms of validity
   return true;
 };
@@ -604,8 +602,8 @@ export const getFiltersByMappingStatus = (
   const mappedIris = new Set(
     Object.values(fields).map((fieldValue) => fieldValue.componentIri)
   );
-  const unmapped = pickBy(filters, (value, iri) => !mappedIris.has(iri));
-  const mapped = pickBy(filters, (value, iri) => mappedIris.has(iri));
+  const unmapped = pickBy(filters, (_, iri) => !mappedIris.has(iri));
+  const mapped = pickBy(filters, (_, iri) => mappedIris.has(iri));
   return { unmapped, mapped };
 };
 
@@ -1338,13 +1336,11 @@ export const EditorConfiguratorStateProvider = ({
   children,
   initialState,
   allowDefaultRedirect,
-  readonly,
 }: {
   chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
-  readonly?: boolean;
 }) => {
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
@@ -1390,7 +1386,7 @@ export const useReadOnlyConfiguratorState = <T extends ConfiguratorState>(
     );
   }
 
-  const [state, dispatch] = ctx;
+  const [state] = ctx;
 
   if (predicate && !predicate(state)) {
     throw new Error("State does not respect type guard");

@@ -287,7 +287,7 @@ export const SearchDatasetBox = ({
   browseState: BrowseState;
   searchResult: Maybe<DataCubesQuery>;
 }) => {
-  const [showDraftCheckbox, setShowDraftCheckbox] = useState<boolean>(false);
+  const [_, setShowDraftCheckbox] = useState<boolean>(false);
 
   const {
     search,
@@ -478,7 +478,6 @@ const NavItem = ({
   active,
   theme = defaultNavItemTheme,
   level = 1,
-  ...props
 }: {
   children: React.ReactNode;
   filters: BrowseFilter[];

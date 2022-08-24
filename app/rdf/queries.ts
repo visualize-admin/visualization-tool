@@ -485,7 +485,7 @@ export const getCubeObservations = async ({
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }
-  const observations = observationsRaw.map((obs, i) => {
+  const observations = observationsRaw.map((obs) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;

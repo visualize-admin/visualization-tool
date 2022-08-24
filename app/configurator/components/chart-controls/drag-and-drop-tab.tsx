@@ -38,10 +38,7 @@ export const TabDropZone = ({
 
   return (
     <Droppable droppableId={id} isDropDisabled={isDropDisabled}>
-      {(
-        { innerRef, placeholder },
-        { isDraggingOver, isUsingPlaceholder, draggingOverWith }
-      ) => {
+      {({ innerRef, placeholder }, { isDraggingOver }) => {
         return (
           <ControlSection isHighlighted={isDraggingOver}>
             <SectionTitle>{title}</SectionTitle>

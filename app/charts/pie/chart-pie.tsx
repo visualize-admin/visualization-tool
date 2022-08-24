@@ -69,7 +69,6 @@ export const ChartPieVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartPie
           observations={observations.data}

@@ -367,10 +367,7 @@ export const TableSortingOptions = ({
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">
-          {(
-            { innerRef, placeholder },
-            { isDraggingOver, isUsingPlaceholder, draggingOverWith }
-          ) => {
+          {({ innerRef, placeholder }) => {
             return (
               <Box>
                 <Box ref={innerRef}>

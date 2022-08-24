@@ -80,7 +80,6 @@ export const ChartColumnsVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartColumns
           observations={observations.data}

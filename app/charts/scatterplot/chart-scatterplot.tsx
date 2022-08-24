@@ -75,7 +75,6 @@ export const ChartScatterplotVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartScatterplot
           observations={observations.data}

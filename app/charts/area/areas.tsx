@@ -3,12 +3,10 @@ import { memo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
-import { useTheme } from "@/themes";
 
 export const Areas = () => {
-  const { bounds, getX, xScale, yScale, colors, series, segments } =
+  const { bounds, getX, xScale, yScale, colors, series } =
     useChartState() as AreasState;
-  const theme = useTheme();
   const areaGenerator = area<$FixMe>()
     .defined((d) => d[0] !== null && d[1] !== null)
     .x((d) => xScale(getX(d.data)))

@@ -10,7 +10,6 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
-  ConfiguratorState,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
@@ -70,9 +69,6 @@ const useItemStyles = makeStyles<
     },
   },
 }));
-
-type SegmentConfigState<T extends ConfiguratorState = ConfiguratorState> =
-  T extends { chartConfig: { fields: { segment: any } } } ? T : never;
 
 export const InteractiveLegendColor = () => {
   const [state, dispatch] = useInteractiveFilters();

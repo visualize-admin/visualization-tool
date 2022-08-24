@@ -302,7 +302,6 @@ export const Input = ({
   label,
   name,
   value,
-  checked,
   disabled,
   onChange,
 }: {

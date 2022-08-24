@@ -87,7 +87,7 @@ const DataCube: DataCubeResolvers = {
   },
 };
 
-const mkDimensionResolvers = (type: string): Resolvers["Dimension"] => ({
+const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
   // TODO: how to pass dataSource here? If it's possible, then we also could have
   // different resolvers for RDF and SQL.
   __resolveType({ data: { dataKind, scaleType } }) {
@@ -130,7 +130,7 @@ export const resolvers: Resolvers = {
   DataCube,
   DataCubeTheme: {
     // Loads theme with dataloader if we need the label
-    label: async ({ iri, label }, args, { setup }, info) => {
+    label: async ({ iri, label }, _, { setup }, info) => {
       if (!label) {
         const { loaders } = await setup(info);
         const resolvedTheme = await loaders.themes.load(iri);
@@ -141,7 +141,7 @@ export const resolvers: Resolvers = {
     },
   },
   DataCubeOrganization: {
-    label: async ({ iri, label }, args, { setup }, info) => {
+    label: async ({ iri, label }, _, { setup }, info) => {
       if (!label) {
         const { loaders } = await setup(info);
         const resolvedTheme = await loaders.organizations.load(iri);
@@ -190,14 +190,14 @@ export const resolvers: Resolvers = {
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("GeoCoordinatesDimension"),
-    geoCoordinates: async (parent, args, { setup }, info) => {
+    geoCoordinates: async (parent, _, { setup }, info) => {
       const { loaders } = await setup(info);
       return await loaders.geoCoordinates.load(parent);
     },
   },
   GeoShapesDimension: {
     ...mkDimensionResolvers("GeoShapesDimension"),
-    geoShapes: async (parent, args, { setup }, info) => {
+    geoShapes: async (parent, _, { setup }, info) => {
       const { loaders } = await setup(info);
       const dimValues = (await loaders.dimensionValues.load(
         parent

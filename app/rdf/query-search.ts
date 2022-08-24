@@ -27,9 +27,6 @@ const makeInFilter = (varName: string, values: string[]) => {
         : ""
     }`;
 };
-type RdfValue<T> = {
-  value: T;
-};
 
 const makeVisualizeFilter = (includeDrafts: boolean) => {
   return sparql`

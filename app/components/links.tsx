@@ -6,12 +6,10 @@ export const IconLink = ({
   iconName,
   href,
   title,
-  disabled = false,
 }: {
   iconName: IconName;
   title?: string;
   href: string;
-  disabled?: boolean;
 }) => (
   <UILink
     title={title}

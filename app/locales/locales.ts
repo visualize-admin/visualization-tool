@@ -79,5 +79,4 @@ const d3FormatLocales: { [locale: string]: FormatLocaleObject } = {
   // en: formatLocale(numberFormatCh as FormatLocaleDefinition),
 };
 
-export const getD3FormatLocale = (locale: string): FormatLocaleObject =>
-  d3FormatLocales.de;
+export const getD3FormatLocale = (): FormatLocaleObject => d3FormatLocales.de;

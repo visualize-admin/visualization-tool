@@ -202,10 +202,7 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   if (query.cubeIri) {
     const cubeIri = query.cubeIri as string;
     const datasourceLabel = query.dataSource as string;

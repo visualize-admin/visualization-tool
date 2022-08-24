@@ -37,7 +37,7 @@ import { searchCubes } from "@/rdf/query-search";
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
-  { sourceUrl, locale, query, order, includeDrafts, filters },
+  { locale, query, order, includeDrafts, filters },
   { setup },
   info
 ) => {
@@ -177,14 +177,14 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, args, { setup }, info) => {
+  async ({ cube, locale }, _, { setup }, info) => {
     const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, args, { setup }, info) => {
+  async ({ cube, locale }, _, { setup }, info) => {
     const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => d.data.isMeasureDimension);
