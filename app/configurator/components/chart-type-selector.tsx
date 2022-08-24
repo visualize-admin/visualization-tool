@@ -132,6 +132,7 @@ export const ChartTypeSelector = ({
   state,
   showHelp,
   sx,
+  ...props
 }: {
   state:
     | ConfiguratorStateConfiguringChart
@@ -139,7 +140,7 @@ export const ChartTypeSelector = ({
     | ConfiguratorStatePublishing;
   showHelp?: boolean;
   sx?: BoxProps["sx"];
-}) => {
+} & BoxProps) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
@@ -155,7 +156,7 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <Box sx={sx}>
+      <Box sx={sx} {...props}>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
