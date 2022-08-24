@@ -3,7 +3,6 @@ import React, {
   createContext,
   Dispatch,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -19,6 +18,7 @@ import {
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
+import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
 
@@ -81,14 +81,15 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
   );
-  const handleClose = useCallback(() => {
+  const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
     setTabsState({ isPopoverOpen: false });
-  }, [setTabsState]);
+  });
 
   useEffect(() => {
     handleClose();
-  }, [handleClose, configuratorState.chartConfig.chartType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuratorState.chartConfig.chartType]);
 
   return (
     <>
