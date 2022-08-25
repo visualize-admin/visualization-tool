@@ -8,12 +8,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowX: "hidden",
     overflowY: "auto",
     backgroundColor: theme.palette.grey[100],
+    boxShadow: theme.shadows[5],
+    borderRightColor: theme.palette.grey[500],
+    borderRightWidth: "1px",
+    borderRightStyle: "solid",
+    gridArea: "left",
   },
   panelRight: {
     backgroundColor: "white",
     overflowX: "hidden",
     overflowY: "auto",
-    boxShadow: "leftSide",
+    boxShadow: theme.shadows[5],
     borderLeftColor: theme.palette.grey[500],
     borderLeftWidth: "1px",
     borderLeftStyle: "solid",
@@ -44,12 +49,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const PanelLeftWrapper = ({
   children,
-  raised,
   sx,
   className,
 }: {
   children?: React.ReactNode;
-  raised?: boolean;
   sx?: BoxProps["sx"];
   className?: BoxProps["className"];
 }) => {
@@ -59,14 +62,7 @@ export const PanelLeftWrapper = ({
       component="section"
       data-name="panel-left"
       className={clsx(classes.panelLeft, className)}
-      sx={{
-        boxShadow: raised ? "rightSide" : undefined,
-        borderRightColor: raised ? "grey.500" : undefined,
-        borderRightWidth: raised ? "1px" : undefined,
-        borderRightStyle: raised ? "solid" : undefined,
-        gridArea: "left",
-        ...sx,
-      }}
+      sx={sx}
     >
       {children}
     </Box>

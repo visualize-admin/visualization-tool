@@ -60,6 +60,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   panelLeft: {
     backgroundColor: "transparent",
     paddingTop: 0,
+    boxShadow: "none",
+    borderRight: 0,
   },
   panelMiddle: {
     paddingTop: 0,
@@ -153,7 +155,7 @@ const SelectDatasetStepContent = () => {
 
   return (
     <PanelLayout className={classes.panelLayout}>
-      <PanelLeftWrapper raised={false} className={classes.panelLeft}>
+      <PanelLeftWrapper className={classes.panelLeft}>
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
             <MotionBox

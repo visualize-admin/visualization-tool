@@ -81,6 +81,7 @@ module.exports = {
                 'Cannot use "typography" property in makeStyles, please use sx for this',
             });
           }
+
           if (
             property.key &&
             (property.key.name === "padding" ||
@@ -96,6 +97,19 @@ module.exports = {
                 "Careful with number inside padding in margin, prefer to use either a string or theme.spacing",
             });
           }
+
+          if (
+            property.key &&
+            property.key.name === "boxShadow" &&
+            property.value.type === "Literal" &&
+            typeof property.value.value === "string"
+          ) {
+            context.report({
+              node: property,
+              message: `Please use theme.shadows instead of ${property.value.value}`,
+            });
+          }
+
           if (
             property.value.type === "Literal" &&
             isThemeColor(property.value.value)
