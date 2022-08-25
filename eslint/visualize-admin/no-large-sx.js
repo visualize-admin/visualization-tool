@@ -1,12 +1,18 @@
 const ignoredProperties = new Set([
+  // margin
   "margin",
-  "padding",
   "m",
-  "p",
+  "mx",
+  "my",
   "ml",
   "mr",
   "mt",
   "mb",
+  // padding
+  "padding",
+  "p",
+  "px",
+  "py",
   "pl",
   "pr",
   "pt",
