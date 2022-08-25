@@ -49,7 +49,7 @@ module.exports = {
             [];
           if (props.length > maxPropsForSx) {
             context.report({
-              node,
+              node: sxAttribute,
               message: `Don't create sx rules with more than ${maxPropsForSx} properties (here: ${props.length} properties). Please extract to useStyles.`,
             });
           }
