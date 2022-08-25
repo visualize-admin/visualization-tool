@@ -758,7 +758,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
   },
   map: {
-    filters: ({ oldValue, newChartConfig, dimensions }) => {
+    filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (!oldValue) {
           draft.filters = oldValue;

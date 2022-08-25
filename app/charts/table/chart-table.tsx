@@ -38,8 +38,6 @@ export const ChartTableVisualization = ({
     },
   });
 
-  const observations = data?.dataCubeByIri?.observations.data;
-
   if (data?.dataCubeByIri) {
     const { dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (

@@ -60,8 +60,6 @@ export const ChartLinesVisualization = ({
     },
   });
 
-  const observations = data?.dataCubeByIri?.observations.data;
-
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
 
