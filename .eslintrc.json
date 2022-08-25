@@ -4,6 +4,7 @@
   "rules": {
     "react/display-name": "off", 
     "visualize-admin/no-large-sx": "error",
+    "visualize-admin/make-styles": "error",
     "unused-imports/no-unused-imports-ts": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
     "import/order": [2, {
