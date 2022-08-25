@@ -294,8 +294,6 @@ export const useActiveFieldField = ({
   };
 };
 
-// const chartType =
-
 // Specific ------------------------------------------------------------------
 export const useChartType = ({
   metadata,
@@ -310,7 +308,6 @@ export const useChartType = ({
     if (!metadata) {
       return;
     }
-    console.log("on change", metadata);
     dispatch({
       type: "CHART_TYPE_CHANGED",
       value: {
