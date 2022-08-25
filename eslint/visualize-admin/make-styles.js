@@ -74,6 +74,13 @@ module.exports = {
                 "Cannot use shorthand properties in makeStyles, please use full property",
             });
           }
+          if (property.key && property.key.name === "typography") {
+            context.report({
+              node: property,
+              message:
+                'Cannot use "typography" property in makeStyles, please use sx for this',
+            });
+          }
           if (
             property.key &&
             (property.key.name === "padding" ||

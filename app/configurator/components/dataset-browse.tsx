@@ -445,7 +445,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 2,
-    typography: "tag",
   },
   removeFilterButton: {
     minWidth: "16px",
@@ -483,6 +482,7 @@ const NavChip = ({
     <Flex
       className={classes.navChip}
       sx={{
+        typography: "tag",
         color: color,
         backgroundColor: backgroundColor,
       }}
