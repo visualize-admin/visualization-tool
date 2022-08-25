@@ -23,6 +23,7 @@ const geographyTheme = {
   value: "https://register.ld.admin.ch/opendataswiss/category/geography",
 };
 
+// @ts-ignore
 const bafuCreator = {
   name: "BAFU creator",
   type: "DataCubeOrganization",
@@ -30,6 +31,7 @@ const bafuCreator = {
     "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
 };
 
+// @ts-ignore
 const mobilityTheme = {
   name: "Mobility theme",
   type: "DataCubeTheme",
