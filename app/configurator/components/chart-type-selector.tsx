@@ -123,73 +123,73 @@ export const ChartTypeSelector = ({
     },
   });
   const { value: chartType, onChange: onChangeChartType } = useChartType({
-    metaData: data?.dataCubeByIri,
+    metadata: data?.dataCubeByIri,
   });
 
-  if (data?.dataCubeByIri) {
-    const metaData = data.dataCubeByIri;
-    const possibleChartTypes = getPossibleChartType({ meta: metaData });
+  if (!data?.dataCubeByIri) {
+    return <ControlSectionSkeleton />;
+  }
 
-    return (
-      <Box sx={sx} {...props}>
-        <legend style={{ display: "none" }}>
-          <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </legend>
-        {showHelp !== false ? (
-          <Box sx={{ m: 4, textAlign: "center" }}>
-            <Typography variant="body2">
-              <Trans id="controls.switch.chart.type">
-                Switch to another chart type while maintaining most filter
-                settings.
-              </Trans>
-            </Typography>
-          </Box>
+  const metaData = data.dataCubeByIri;
+  const possibleChartTypes = getPossibleChartType({ meta: metaData });
+
+  return (
+    <Box sx={sx} {...props}>
+      <legend style={{ display: "none" }}>
+        <Trans id="controls.select.chart.type">Chart Type</Trans>
+      </legend>
+      {showHelp !== false ? (
+        <Box sx={{ m: 4, textAlign: "center" }}>
+          <Typography variant="body2">
+            <Trans id="controls.switch.chart.type">
+              Switch to another chart type while maintaining most filter
+              settings.
+            </Trans>
+          </Typography>
+        </Box>
+      ) : (
+        false
+      )}
+
+      <div>
+        {!possibleChartTypes ? (
+          <Hint>
+            <Trans id="hint.no.visualization.with.dataset">
+              No visualization can be created with the selected dataset.
+            </Trans>
+          </Hint>
         ) : (
-          false
-        )}
-
-        <div>
-          {!possibleChartTypes ? (
-            <Hint>
-              <Trans id="hint.no.visualization.with.dataset">
-                No visualization can be created with the selected dataset.
-              </Trans>
-            </Hint>
-          ) : (
-            <Flex sx={{ flexDirection: "column", gap: 5 }}>
-              <Box
-                display="grid"
-                sx={{
-                  gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-                  gridGap: "0.75rem",
-                  mx: 2,
-                }}
-              >
-                {enabledChartTypes.map((d) => (
-                  <ChartTypeSelectionButton
-                    key={d}
-                    label={d}
-                    value={d}
-                    checked={chartType === d}
-                    disabled={!possibleChartTypes.includes(d)}
-                    onClick={(e) =>
-                      onChangeChartType(e.currentTarget.value as ChartType)
-                    }
-                  />
-                ))}
-              </Box>
-              {/* TODO: Handle properly when chart composition is implemented */}
-              {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
+          <Flex sx={{ flexDirection: "column", gap: 5 }}>
+            <Box
+              display="grid"
+              sx={{
+                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+                gridGap: "0.75rem",
+                mx: 2,
+              }}
+            >
+              {enabledChartTypes.map((d) => (
+                <ChartTypeSelectionButton
+                  key={d}
+                  label={d}
+                  value={d}
+                  checked={chartType === d}
+                  disabled={!possibleChartTypes.includes(d)}
+                  onClick={(e) =>
+                    onChangeChartType(e.currentTarget.value as ChartType)
+                  }
+                />
+              ))}
+            </Box>
+            {/* TODO: Handle properly when chart composition is implemented */}
+            {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
                 <Trans id="controls.remove.visualization">
                   Remove this visualization
                 </Trans>
               </Button> */}
-            </Flex>
-          )}
-        </div>
-      </Box>
-    );
-  } else {
-    return <ControlSectionSkeleton />;
-  }
+          </Flex>
+        )}
+      </div>
+    </Box>
+  );
 };

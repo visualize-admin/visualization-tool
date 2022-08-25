@@ -298,23 +298,24 @@ export const useActiveFieldField = ({
 
 // Specific ------------------------------------------------------------------
 export const useChartType = ({
-  metaData,
+  metadata,
 }: {
-  metaData: DataCubeMetadata | null | undefined;
+  metadata: DataCubeMetadata | null | undefined;
 }): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
 } => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useEvent((chartType: ChartType) => {
-    if (!metaData) {
+    if (!metadata) {
       return;
     }
+    console.log("on change", metadata);
     dispatch({
       type: "CHART_TYPE_CHANGED",
       value: {
         chartType,
-        dataSetMetadata: metaData,
+        dataSetMetadata: metadata,
       },
     });
   });
