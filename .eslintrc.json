@@ -1,8 +1,9 @@
 {
   "extends": "next",
-  "plugins": ["unused-imports", "import"],
+  "plugins": ["unused-imports", "import", "visualize-admin"],
   "rules": {
-    "react/display-name": "off",
+    "react/display-name": "off", 
+    "visualize-admin/no-large-sx": "error",
     "unused-imports/no-unused-imports-ts": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
     "import/order": [2, {

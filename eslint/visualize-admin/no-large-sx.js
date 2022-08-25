@@ -1,0 +1,47 @@
+const ignoredProperties = new Set([
+  "margin",
+  "padding",
+  "m",
+  "p",
+  "ml",
+  "mr",
+  "mt",
+  "mb",
+  "pl",
+  "pr",
+  "pt",
+  "pb",
+]);
+
+const maxPropsForSx = 6;
+
+/** @type {import('eslint').Rule.RuleModule} */
+module.exports = {
+  create(context) {
+    return {
+      JSXOpeningElement: function (node) {
+        const sxAttribute = node.attributes.find(
+          (a) => a.name && a.name.name === "sx"
+        );
+        if (!sxAttribute) {
+          return;
+        }
+        const value = sxAttribute.value;
+
+        // Count of properties excluding spacing properties
+        if (value.type === "JSXExpressionContainer") {
+          const props =
+            value.expression.properties?.filter(
+              (p) => p.key && p.key.name && !ignoredProperties.has(p.key.name)
+            ) || [];
+          if (props.length > maxPropsForSx) {
+            context.report({
+              node,
+              message: `Don't create sx rules with more than ${maxPropsForSx} properties (here: ${props.length} properties). Please extract to useStyles.`,
+            });
+          }
+        }
+      },
+    };
+  },
+};
