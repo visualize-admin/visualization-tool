@@ -260,15 +260,15 @@ const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
 
     cursor: "pointer",
 
-    ":hover": {
+    "&:hover": {
       backgroundColor: theme.palette.grey[300],
       color: theme.palette.grey[700],
     },
-    ":active": {
+    "&:active": {
       backgroundColor: theme.palette.grey[400],
       color: theme.palette.grey[800],
     },
-    ":disabled": {
+    "&:disabled": {
       cursor: "initial",
       color: theme.palette.grey[300],
     },

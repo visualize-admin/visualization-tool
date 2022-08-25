@@ -110,6 +110,16 @@ module.exports = {
           for (let property of item.value.properties) {
             if (property.value.type === "ObjectExpression") {
               items.push(property);
+              if (
+                property.key &&
+                property.key.value &&
+                property.key.value.startsWith(":")
+              ) {
+                context.report({
+                  node: property,
+                  message: 'Cannot use only ":" Must use &: in makeStyles',
+                });
+              }
             } else {
               checkProperty(property);
             }

@@ -184,13 +184,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "0.875rem",
     transition: "background-color .2s",
     cursor: "pointer",
-    ":hover": {
+    "&:hover": {
       backgroundColor: theme.palette.action.hover,
     },
-    ":active": {
+    "&:active": {
       backgroundColor: theme.palette.action.hover,
     },
-    ":disabled": {
+    "&:disabled": {
       cursor: "initial",
       backgroundColor: theme.palette.muted.main,
     },

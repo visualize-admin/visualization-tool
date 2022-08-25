@@ -164,13 +164,13 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
     fontSize: "0.875rem",
     textDecoration: "none",
     cursor: "pointer",
-    ":hover": {
+    "&:hover": {
       color: theme.palette.primary.hover,
     },
-    ":active": {
+    "&:active": {
       color: theme.palette.primary.hover,
     },
-    ":disabled": {
+    "&:disabled": {
       cursor: "initial",
       color: theme.palette.primary.disabled,
     },
@@ -182,13 +182,13 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
     borderLeftColor: theme.palette.grey[500],
     textDecoration: "none",
     cursor: "pointer",
-    ":hover": {
+    "&:hover": {
       color: theme.palette.primary.hover,
     },
-    ":active": {
+    "&:active": {
       color: theme.palette.primary.hover,
     },
-    ":disabled": {
+    "&:disabled": {
       cursor: "initial",
       color: theme.palette.primary.disabled,
     },
