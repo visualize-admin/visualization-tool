@@ -31,14 +31,16 @@ module.exports = {
         // Count of literal properties excluding ignored properties
         if (value.type === "JSXExpressionContainer") {
           const props =
-            value.expression.properties?.filter(
-              (p) =>
-                p.key &&
-                p.key.name &&
-                !ignoredProperties.has(p.key.name) &&
-                p.value &&
-                p.value.type === "Literal"
-            ) || [];
+            (value.expression.properties &&
+              value.expression.properties.filter(
+                (p) =>
+                  p.key &&
+                  p.key.name &&
+                  !ignoredProperties.has(p.key.name) &&
+                  p.value &&
+                  p.value.type === "Literal"
+              )) ||
+            [];
           if (props.length > maxPropsForSx) {
             context.report({
               node,
