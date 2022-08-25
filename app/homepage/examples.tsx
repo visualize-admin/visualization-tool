@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
@@ -216,6 +217,17 @@ export const Examples = ({
   );
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  children: {
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "grey.300",
+    boxShadow: "primary",
+    mt: 2,
+    minWidth: 0,
+  },
+}));
+
 const Example = ({
   headline,
   description,
@@ -226,52 +238,50 @@ const Example = ({
   description: string;
   reverse?: boolean;
   children?: ReactNode;
-}) => (
-  <Flex
-    sx={{
-      flexDirection: ["column", "column", "row"],
-      justifyContent: ["flex-start", "flex-start", "space-between"],
-      alignItems: "center",
-      mb: 6,
-    }}
-  >
-    <Box
+}) => {
+  const classes = useStyles();
+  return (
+    <Flex
       sx={{
-        order: reverse ? [1, 1, 2] : [2, 2, 1],
-        minWidth: 0,
-        width: ["100%", "100%", "50%"],
-        ml: reverse ? [0, 0, 8] : 0,
-        mr: reverse ? 0 : [0, 0, 8],
+        flexDirection: ["column", "column", "row"],
+        justifyContent: ["flex-start", "flex-start", "space-between"],
+        alignItems: "center",
+        mb: 6,
       }}
     >
-      <Typography variant="h3">{headline}</Typography>
-      <Typography
-        component="p"
+      <Box
         sx={{
-          fontSize: "1rem",
-          lineHeight: 1.5,
-
-          mt: 4,
-          mb: [2, 2, 0],
+          order: reverse ? [1, 1, 2] : [2, 2, 1],
+          minWidth: 0,
+          width: ["100%", "100%", "50%"],
+          ml: reverse ? [0, 0, 8] : 0,
+          mr: reverse ? 0 : [0, 0, 8],
         }}
       >
-        {description}
-      </Typography>
-    </Box>
-    <Box
-      sx={{
-        order: reverse ? 1 : 2,
-        borderWidth: "1px",
-        borderStyle: "solid",
-        borderColor: "grey.300",
-        boxShadow: "primary",
-        width: ["100%", "100%", "50%"],
-        mt: 2,
-        minWidth: 0,
-        maxWidth: ["unset", "unset", 512],
-      }}
-    >
-      {children}
-    </Box>
-  </Flex>
-);
+        <Typography variant="h3">{headline}</Typography>
+        <Typography
+          component="p"
+          sx={{
+            fontSize: "1rem",
+            lineHeight: 1.5,
+
+            mt: 4,
+            mb: [2, 2, 0],
+          }}
+        >
+          {description}
+        </Typography>
+      </Box>
+      <Box
+        className={classes.children}
+        sx={{
+          order: reverse ? 1 : 2,
+          width: ["100%", "100%", "50%"],
+          maxWidth: ["unset", "unset", 512],
+        }}
+      >
+        {children}
+      </Box>
+    </Flex>
+  );
+};

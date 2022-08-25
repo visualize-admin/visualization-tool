@@ -1,4 +1,5 @@
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
 
@@ -310,23 +311,26 @@ ${(
 )}
 `;
 
-export const Dot = () => (
-  <Box
-    sx={{
-      width: 8,
-      height: 8,
-      borderRadius: "50%",
-      backgroundColor: "hotpink",
+const useStyles = makeStyles((theme: Theme) => ({
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: "50%",
+    backgroundColor: "hotpink",
 
-      position: "absolute",
-      left: 100,
-      top: 100,
-      transform: "translate3d(-50%, -50%, 0)",
+    position: "absolute",
+    left: 100,
+    top: 100,
+    transform: "translate3d(-50%, -50%, 0)",
 
-      pointerEvents: "none",
-    }}
-  />
-);
+    pointerEvents: "none",
+  },
+}));
+
+export const Dot = () => {
+  const classes = useStyles();
+  return <Box className={classes.dot} />;
+};
 const TooltipContent = ({ children }: { children: ReactNode }) => (
   <Box sx={{ fontSize: "0.875rem" }}>{children}</Box>
 );

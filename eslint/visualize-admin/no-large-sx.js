@@ -13,7 +13,7 @@ const ignoredProperties = new Set([
   "pb",
 ]);
 
-const maxPropsForSx = 6;
+const maxPropsForSx = 5;
 
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
@@ -28,11 +28,16 @@ module.exports = {
         }
         const value = sxAttribute.value;
 
-        // Count of properties excluding spacing properties
+        // Count of literal properties excluding ignored properties
         if (value.type === "JSXExpressionContainer") {
           const props =
             value.expression.properties?.filter(
-              (p) => p.key && p.key.name && !ignoredProperties.has(p.key.name)
+              (p) =>
+                p.key &&
+                p.key.name &&
+                !ignoredProperties.has(p.key.name) &&
+                p.value &&
+                p.value.type === "Literal"
             ) || [];
           if (props.length > maxPropsForSx) {
             context.report({

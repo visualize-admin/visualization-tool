@@ -1,7 +1,5 @@
-const noLargeSx = require("./no-large-sx");
-
 module.exports = {
   rules: {
-    "no-large-sx": noLargeSx,
+    "no-large-sx": require("./no-large-sx"),
   },
 };

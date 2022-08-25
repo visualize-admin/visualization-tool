@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Button, Typography } from "@mui/material";
+import { Button, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, { ReactNode, useCallback, useEffect } from "react";
 
 import Flex from "@/components/flex";
@@ -19,6 +20,26 @@ export type StepStatus = "past" | "current" | "future";
 const steps = ["CONFIGURING_CHART", "DESCRIBING_CHART"] as const;
 type StepState = typeof steps[number];
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    alignItems: "center",
+    position: "relative",
+
+    backgroundColor: "grey.100",
+    borderBottomWidth: "1px",
+    borderBottomStyle: "solid",
+    borderBottomColor: "grey.500",
+    overflow: "hidden",
+  },
+  container: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    px: 2,
+    minHeight: 56,
+  },
+}));
+
 export const StepperDumb = ({
   goPrevious,
   goNext,
@@ -32,6 +53,7 @@ export const StepperDumb = ({
     typeof useDataCubeMetadataWithComponentValuesQuery
   >[0]["data"];
 }) => {
+  const classes = useStyles();
   const nextDisabled =
     !canTransitionToNextStep(state, data?.dataCubeByIri) ||
     state.state === "PUBLISHING";
@@ -68,29 +90,9 @@ export const StepperDumb = ({
   }, [currentStepIndex, setProgress, progress]);
 
   return (
-    <Flex
-      sx={{
-        justifyContent: ["flex-start", "flex-start", "center"],
-        alignItems: "center",
-        position: "relative",
-
-        backgroundColor: "grey.100",
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "grey.500",
-        overflow: "hidden",
-      }}
-    >
+    <Flex className={classes.root}>
       {/* Stepper container */}
-      <Flex
-        sx={{
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          px: 2,
-          minHeight: 56,
-        }}
-      >
+      <Flex className={classes.container}>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
           <Button
             startIcon={<SvgIcChevronLeft />}

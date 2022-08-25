@@ -1,5 +1,6 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -43,6 +44,21 @@ const softJSONParse = (v: string) => {
   }
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  panelLayout: {
+    width: "100%",
+    maxWidth: 1300,
+    margin: "auto",
+    left: 0,
+    right: 0,
+    position: "static",
+    // FIXME replace 96px with actual header size
+    marginTop: "96px",
+    height: "auto",
+    paddingTop: "55px",
+  },
+}));
+
 export const formatBackLink = (
   query: Router["query"]
 ): React.ComponentProps<typeof NextLink>["href"] => {
@@ -72,6 +88,7 @@ const SelectDatasetStepContent = () => {
     leading: true,
   });
   const router = useRouter();
+  const classes = useStyles();
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -125,20 +142,7 @@ const SelectDatasetStepContent = () => {
   }
 
   return (
-    <PanelLayout
-      sx={{
-        width: "100%",
-        maxWidth: 1300,
-        margin: "auto",
-        left: 0,
-        right: 0,
-        position: "static",
-        // FIXME replace 96px with actual header size
-        marginTop: "96px",
-        height: "auto",
-        pt: "55px",
-      }}
-    >
+    <PanelLayout className={classes.panelLayout}>
       <PanelLeftWrapper
         raised={false}
         sx={{ backgroundColor: "transparent", paddingTop: 0 }}
