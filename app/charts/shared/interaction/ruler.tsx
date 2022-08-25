@@ -1,4 +1,5 @@
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import * as React from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
@@ -44,43 +45,49 @@ interface RulerContentProps {
   placement: TooltipPlacement;
 }
 
+const useStyles = makeStyles((theme: Theme) => ({
+  left: {
+    width: 0,
+    position: "absolute",
+    borderWidth: 0.5,
+    borderStyle: "solid",
+    borderColor: "grey.200",
+    pointerEvents: "none",
+    transform: "translateX(-50%)",
+  },
+  right: {
+    position: "absolute",
+    fontWeight: "bold",
+    backgroundColor: "grey.100",
+    transform: "translateX(-50%)",
+    px: 1,
+    fontSize: "0.875rem",
+    color: "grey.800",
+  },
+}));
+
 export const RulerContent = ({
   xValue,
   chartHeight,
   margins,
   xAnchor,
 }: RulerContentProps) => {
+  const classes = useStyles();
   return (
     <>
       <Box
+        className={classes.left}
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
           top: margins.top,
         }}
-        sx={{
-          width: 0,
-          position: "absolute",
-          borderWidth: 0.5,
-          borderStyle: "solid",
-          borderColor: "grey.200",
-          pointerEvents: "none",
-          transform: "translateX(-50%)",
-        }}
       />
       <Box
+        className={classes.right}
         style={{
           left: xAnchor + margins.left,
           top: chartHeight + margins.top + 6,
-        }}
-        sx={{
-          position: "absolute",
-          fontWeight: "bold",
-          backgroundColor: "grey.100",
-          transform: "translateX(-50%)",
-          px: 1,
-          fontSize: "0.875rem",
-          color: "grey.800",
         }}
       >
         {xValue}

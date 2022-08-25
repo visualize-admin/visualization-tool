@@ -1,5 +1,6 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Link, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 
@@ -35,20 +36,35 @@ const Version = () => {
   );
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: "grey.200",
+    borderTopWidth: "1px",
+    borderTopStyle: "solid",
+    borderTopColor: "grey.100",
+  },
+  logoContainer: {
+    padding: `${theme.spacing(5)} ${theme.spacing(4)}`,
+    borderTopWidth: "1px",
+    borderBottomWidth: "1px",
+    borderTopStyle: "solid",
+    borderBottomStyle: "solid",
+    borderTopColor: "grey.500",
+    borderBottomColor: "grey.500",
+  },
+}));
+
 export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
   const locale = useLocale();
-
+  const classes = useStyles();
   return (
     <Flex
       component="footer"
+      className={classes.root}
       sx={{
         flexDirection: ["column", "row"],
         justifyContent: ["flex-start", "space-between"],
         alignItems: ["flex-start", "center"],
-        backgroundColor: "grey.200",
-        borderTopWidth: "1px",
-        borderTopStyle: "solid",
-        borderTopColor: "grey.100",
         ...sx,
       }}
     >
@@ -91,14 +107,7 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
         <Box
           sx={{
             display: ["block", "none"],
-            px: 4,
-            py: 5,
-            borderTopWidth: "1px",
-            borderBottomWidth: "1px",
-            borderTopStyle: "solid",
-            borderBottomStyle: "solid",
-            borderTopColor: "grey.500",
-            borderBottomColor: "grey.500",
+
             width: ["100%", "auto"],
           }}
         >
@@ -149,69 +158,82 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
   );
 };
 
+const useFooterLinkStyles = makeStyles({
+  root: {
+    color: "primary.main",
+    fontSize: "0.875rem",
+    textDecoration: "none",
+    cursor: "pointer",
+    ":hover": {
+      color: "primary.hover",
+    },
+    ":active": {
+      color: "primary.hover",
+    },
+    ":disabled": {
+      cursor: "initial",
+      color: "primary.disabled",
+    },
+  },
+  bottomLink: {
+    fontSize: "0.875rem",
+
+    borderLeftStyle: "solid",
+    borderLeftColor: "grey.500",
+    textDecoration: "none",
+    cursor: "pointer",
+    ":hover": {
+      color: "primary.hover",
+    },
+    ":active": {
+      color: "primary.hover",
+    },
+    ":disabled": {
+      cursor: "initial",
+      color: "primary.disabled",
+    },
+  },
+});
+
 const FooterLink = ({
   children,
   ...props
 }: {
   children: ReactNode;
   href?: string;
-}) => (
-  <Link
-    {...props}
-    sx={{
-      width: ["100%", "auto"],
-      px: [0, 3],
-      py: [0, 4],
-      color: "primary.main",
-      fontSize: "0.875rem",
-
-      textDecoration: "none",
-      cursor: "pointer",
-      ":hover": {
-        color: "primary.hover",
-      },
-      ":active": {
-        color: "primary.hover",
-      },
-      ":disabled": {
-        cursor: "initial",
-        color: "primary.disabled",
-      },
-    }}
-  >
-    {children}
-  </Link>
-);
+}) => {
+  const classes = useFooterLinkStyles();
+  return (
+    <Link
+      className={classes.root}
+      {...props}
+      sx={{
+        width: ["100%", "auto"],
+        px: [0, 3],
+        py: [0, 4],
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
 
 const FooterLinkBottom = forwardRef<
   HTMLAnchorElement,
   { children: ReactNode; href?: string }
 >(function FooterLinkBottom({ children, ...props }, ref) {
+  const classes = useFooterLinkStyles();
+
   return (
     <Link
       ref={ref}
       {...props}
       color="primary"
+      className={classes.bottomLink}
       sx={{
         px: [4, 3],
         py: [3, 4],
-        fontSize: "0.875rem",
-
         borderLeftWidth: ["1px", 0],
-        borderLeftStyle: "solid",
-        borderLeftColor: "grey.500",
-        textDecoration: "none",
-        cursor: "pointer",
-        ":hover": {
-          color: "primary.hover",
-        },
-        ":active": {
-          color: "primary.hover",
-        },
-        ":disabled": {
-          cursor: "initial",
-          color: "primary.disabled",
-        },
       }}
     >
       {children}

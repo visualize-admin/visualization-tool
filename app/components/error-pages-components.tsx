@@ -1,4 +1,5 @@
-import { Link, Typography } from "@mui/material";
+import { Link, Typography, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -7,22 +8,23 @@ import { ReactNode } from "react";
 import Flex from "@/components/flex";
 import { Locale } from "@/locales/locales";
 
-export const ErrorPageHint = ({ children }: { children: ReactNode }) => (
-  <Flex
-    sx={{
-      width: "100%",
-      color: "hint",
-      my: 4,
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    {children}
-  </Flex>
-);
+const useStyles = makeStyles((theme: Theme) => ({
+  errorPageHint: {
+    width: "100%",
+    color: "hint",
+    my: 4,
+    textAlign: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    flexGrow: 1,
+  },
+}));
+
+export const ErrorPageHint = ({ children }: { children: ReactNode }) => {
+  const classes = useStyles();
+  return <Flex className={classes.errorPageHint}>{children}</Flex>;
+};
 
 export const Actions = ({ children }: { children: ReactNode }) => (
   <Flex

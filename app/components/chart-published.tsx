@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import * as React from "react";
 import { useEffect, useMemo } from "react";
 
@@ -62,6 +63,18 @@ export const ChartPublished = ({
   );
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    display: "flex",
+    flexGrow: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: 5,
+    color: "grey.800",
+    overflowX: "auto",
+  },
+}));
+
 export const ChartPublishedInner = ({
   dataSet,
   dataSource = DEFAULT_DATA_SOURCE,
@@ -75,6 +88,7 @@ export const ChartPublishedInner = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  const classes = useStyles();
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
 
@@ -106,17 +120,7 @@ export const ChartPublishedInner = ({
   }, [chartConfig, dataSource]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexGrow: 1,
-        flexDirection: "column",
-        justifyContent: "space-between",
-        p: 5,
-        color: "grey.800",
-        overflowX: "auto",
-      }}
-    >
+    <Box className={classes.root}>
       <ChartErrorBoundary resetKeys={[chartConfig]}>
         {metaData?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
