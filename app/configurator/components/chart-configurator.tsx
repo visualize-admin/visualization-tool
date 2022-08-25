@@ -455,12 +455,9 @@ const useStyles = makeStyles<
       opacity: 0.25,
       color: "secondary.active",
     },
-    ".buttons:hover": (props) =>
-      props.fetching
-        ? {}
-        : {
-            opacity: 1,
-          },
+    "& .buttons:hover": {
+      opacity: ({ fetching }) => (fetching ? undefined : 1),
+    },
     "& > *": {
       overflow: "hidden",
     },

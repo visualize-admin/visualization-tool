@@ -25,7 +25,7 @@ export const ChartPanelConfigurator = (props: ChartPanelProps) => {
   return (
     <>
       <ChartSelectionTabs
-        editable={false}
+        editable={true}
         chartType={state.chartConfig.chartType}
       />
       <ChartPanelInner showTabs {...props} />

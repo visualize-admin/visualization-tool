@@ -1,9 +1,9 @@
-import { Box, Popover, Tab, Tabs } from "@mui/material";
+import { Box, Popover, Tab, Tabs, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, {
   createContext,
   Dispatch,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -19,6 +19,7 @@ import {
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
+import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
 
@@ -71,6 +72,27 @@ export const ChartSelectionTabs = ({
   );
 };
 
+const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
+  editableChartTypeSelector: {
+    width: 320,
+    padding: `0 ${theme.spacing(3)} ${theme.spacing(3)}`,
+  },
+  tabContent: {
+    gap: theme.spacing(2),
+    alignItems: "center",
+    padding: `${theme.spacing(1)} ${theme.spacing(3)}`,
+    borderRadius: 3,
+    transition: "0.125s ease background-color",
+    "&:hover": {
+      backgroundColor: ({ editable }) =>
+        editable ? theme.palette.grey[200] : undefined,
+    },
+  },
+  tabContentIconContainer: {
+    color: theme.palette.grey[700],
+  },
+}));
+
 const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [configuratorState] = useConfiguratorState() as unknown as [
     | ConfiguratorStateConfiguringChart
@@ -81,14 +103,18 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
   );
-  const handleClose = useCallback(() => {
+
+  const classes = useStyles({ editable: true });
+
+  const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
     setTabsState({ isPopoverOpen: false });
-  }, [setTabsState]);
+  });
 
   useEffect(() => {
     handleClose();
-  }, [handleClose, configuratorState.chartConfig.chartType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuratorState.chartConfig.chartType]);
 
   return (
     <>
@@ -110,7 +136,10 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
         }}
         onClose={handleClose}
       >
-        <ChartTypeSelector state={configuratorState} />
+        <ChartTypeSelector
+          className={classes.editableChartTypeSelector}
+          state={configuratorState}
+        />
       </Popover>
     </>
   );
@@ -150,26 +179,13 @@ const TabContent = ({
   iconName: IconName;
   editable?: boolean;
 }) => {
-  return (
-    <Flex
-      sx={{
-        gap: 2,
-        alignItems: "center",
-        py: 1,
-        px: 3,
-        borderRadius: 3,
-        transition: "0.125s ease background-color",
-        "&:hover": editable
-          ? {
-              backgroundColor: "grey.200",
-            }
-          : undefined,
-      }}
-    >
-      <Icon name={iconName} />
+  const classes = useStyles({ editable });
 
+  return (
+    <Flex className={classes.tabContent}>
+      <Icon name={iconName} />
       {editable && (
-        <Box component="span" sx={{ color: "grey.700" }}>
+        <Box component="span" className={classes.tabContentIconContainer}>
           <Icon name="chevronDown" size={16} />
         </Box>
       )}
