@@ -6,9 +6,11 @@ import {
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
+  Theme,
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Reorder } from "framer-motion";
 import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
@@ -436,6 +438,37 @@ const organizationNavItemTheme = {
   countBg: "organization.light",
 };
 
+const useStyles = makeStyles(() => ({
+  navChip: {
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 2,
+    typography: "tag",
+  },
+  removeFilterButton: {
+    minWidth: "16px",
+    minHeight: "16px",
+    height: "auto",
+    alignItems: "center",
+    display: "flex",
+    width: "auto",
+    padding: 0,
+    "&:hover": {
+      background: "rgba(0, 0, 0, 0.25)",
+    },
+  },
+  navItem: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 2,
+    width: "100%",
+    display: "flex",
+    transition: "background 0.1s ease",
+  },
+}));
+
 const NavChip = ({
   children,
   color,
@@ -445,17 +478,13 @@ const NavChip = ({
   color: string;
   backgroundColor: string;
 }) => {
+  const classes = useStyles();
   return (
     <Flex
+      className={classes.navChip}
       sx={{
-        minWidth: 20,
-        height: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 2,
         color: color,
         backgroundColor: backgroundColor,
-        typography: "tag",
       }}
     >
       {children}
@@ -529,23 +558,15 @@ const NavItem = ({
     );
   }, [includeDrafts, search, filters, next.iri]);
 
+  const classes = useStyles();
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref>
       <ButtonBase
         component="a"
+        className={classes.removeFilterButton}
         sx={{
           backgroundColor: level === 1 ? theme.activeBg : "transparent",
           color: level === 1 ? theme.activeTextColor : theme.activeBg,
-          minWidth: "16px",
-          minHeight: "16px",
-          height: "auto",
-          alignItems: "center",
-          display: "flex",
-          width: "auto",
-          padding: 0,
-          "&:hover": {
-            background: "rgba(0, 0, 0, 0.25)",
-          },
         }}
       >
         <SvgIcClose width={24} height={24} />
@@ -561,18 +582,13 @@ const NavItem = ({
   return (
     <MotionBox
       {...accordionPresenceProps}
+      className={classes.navItem}
       sx={{
         mb: 1,
         pl: 4,
         pr: 2,
         py: 1,
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderRadius: 2,
-        width: "100%",
-        display: "flex",
         backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
-        transition: "background 0.1s ease",
         "&:hover": {
           background: active ? undefined : "rgba(0, 0, 0, 0.05)",
         },
@@ -989,6 +1005,20 @@ export const DatasetResults = ({
   );
 };
 
+const useResultStyles = makeStyles((theme: Theme) => ({
+  root: {
+    position: "relative",
+    color: "grey.700",
+    cursor: "pointer",
+    textAlign: "left",
+    padding: `${theme.spacing(4)} ${theme.spacing(5)}`,
+    marginBottom: `${theme.spacing(3)}`,
+    borderRadius: 10,
+    boxShadow: theme.shadows[3],
+    backgroundColor: "grey.100",
+  },
+}));
+
 export const DateFormat = ({ date }: { date: string }) => {
   const formatter = useFormatDate();
   const formatted = useMemo(() => {
@@ -1048,23 +1078,13 @@ export const DatasetResult = ({
       { shallow: true }
     );
   });
+  const classes = useResultStyles();
   return (
     <MotionCard
       {...smoothPresenceProps}
       onClick={handleClick}
       elevation={1}
-      sx={{
-        position: "relative",
-        color: "grey.700",
-        cursor: "pointer",
-        textAlign: "left",
-        py: 4,
-        px: 5,
-        borderRadius: 10,
-        boxShadow: 3,
-        backgroundColor: "grey.100",
-        mb: 3,
-      }}
+      className={classes.root}
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>

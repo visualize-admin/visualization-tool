@@ -10,6 +10,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
@@ -28,23 +29,24 @@ export const Error = ({ children }: { children: ReactNode }) => (
   </Flex>
 );
 
-export const Hint = ({ children }: { children: ReactNode }) => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    {children}
-  </Flex>
-);
+const useHintStyles = makeStyles({
+  root: {
+    width: "100%",
+    height: "100%",
+    color: "hint",
+    margin: "auto",
+    textAlign: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    flexGrow: 1,
+  },
+});
+
+export const Hint = ({ children }: { children: ReactNode }) => {
+  const classes = useHintStyles();
+  return <Flex className={classes.root}>{children}</Flex>;
+};
 
 const delayedShow = keyframes`
   0% { opacity: 0 }
@@ -70,44 +72,56 @@ const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
   );
 };
 
-export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint.main",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-      padding: 2,
-      opacity: 0,
-      animation: `0s linear ${delayMs}ms forwards ${delayedShow}`,
-    }}
-  >
-    <Spinner />
-    <Typography component="div" variant="body1">
-      <Trans id="hint.loading.data">Loading data…</Trans>
-    </Typography>
-  </Flex>
-);
+const useLoadingStyles = makeStyles({
+  root: {
+    width: "100%",
+    height: "100%",
+    margin: "auto",
+    textAlign: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    flexGrow: 1,
+    padding: 2,
+    opacity: 0,
+    color: "hint.main",
+  },
+  overlay: {
+    position: "absolute",
+    backgroundColor: "grey.100",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  },
+});
 
-export const LoadingOverlay = () => (
-  <Box
-    sx={{
-      position: "absolute",
-      backgroundColor: "grey.100",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-    }}
-  >
-    <Loading delayMs={0} />
-  </Box>
-);
+export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
+  const classes = useLoadingStyles();
+  return (
+    <Flex
+      className={classes.root}
+      sx={{
+        animation: `0s linear ${delayMs}ms forwards ${delayedShow}`,
+      }}
+    >
+      <Spinner />
+      <Typography component="div" variant="body1">
+        <Trans id="hint.loading.data">Loading data…</Trans>
+      </Typography>
+    </Flex>
+  );
+};
+
+export const LoadingOverlay = () => {
+  const classes = useLoadingStyles();
+
+  return (
+    <Box className={classes.overlay}>
+      <Loading delayMs={0} />
+    </Box>
+  );
+};
 
 export const NoDataHint = () => (
   <Alert severity="info" icon={<Icon name="warning" size={64} />}>

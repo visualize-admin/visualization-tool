@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -15,6 +16,21 @@ import { TableColumn } from "@/configurator/config-types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  icon: {
+    width: 24,
+    height: 24,
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    right: 3,
+    margin: "auto",
+    ":hover": {
+      color: "secondary.hover",
+    },
+  },
+}));
 
 type Props = {
   id: string;
@@ -33,7 +49,7 @@ export const TabDropZone = ({
   emptyComponent,
 }: Props) => {
   const { dimensions, measures } = metaData;
-
+  const classes = useStyles();
   const components = [...dimensions, ...measures];
 
   return (
@@ -90,20 +106,11 @@ export const TabDropZone = ({
                               disabled={isHidden}
                             />
                             <Box
+                              className={classes.icon}
                               sx={{
-                                width: 24,
-                                height: 24,
-                                position: "absolute",
-                                top: 0,
-                                bottom: 0,
-                                right: 3,
-                                margin: "auto",
                                 color: isDragging
                                   ? "secondary.active"
                                   : "secondary.disabled",
-                                ":hover": {
-                                  color: "secondary.hover",
-                                },
                               }}
                             >
                               <Icon name="dragndrop" />

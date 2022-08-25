@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
 import React, {
   Dispatch,
@@ -41,20 +42,27 @@ export const HeaderProgressProvider = ({
   );
 };
 
+const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
+  root: {
+    transformOrigin: "0 0",
+    width: `100%`,
+    borderBottomWidth: "4px",
+    borderBottomStyle: "solid",
+    borderBottomColor: "brand.main",
+  },
+}));
+
 export const HeaderBorder = () => {
   const { value: progress } = useHeaderProgress();
+  const classes = useHeaderBorderStyles();
   return (
     <Box
+      className={classes.root}
       sx={{
         transform: `scaleX(${progress / 100})`,
-        transformOrigin: "0 0",
         transition:
           progress === 0 ? "opacity 0.1s ease" : "transform 0.3s ease",
-        width: `100%`,
         opacity: progress === 0 ? 0 : 1,
-        borderBottomWidth: "4px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "brand.main",
       }}
     />
   );
@@ -102,6 +110,8 @@ export const Header = ({
 
 const MetadataMenu = ({ contentId }: { contentId?: string }) => {
   return (
+    // Disable no large sx for responsive properties
+    // eslint-disable-next-line visualize-admin/no-large-sx
     <Flex
       sx={{
         flexDirection: ["row", "column"],
