@@ -9,7 +9,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet
+- Font adjustment in menu
 
 ## [3.7.9] - 2022-08-25
 
