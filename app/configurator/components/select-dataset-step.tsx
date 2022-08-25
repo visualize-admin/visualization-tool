@@ -57,6 +57,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "auto",
     paddingTop: "55px",
   },
+  panelLeft: {
+    backgroundColor: "transparent",
+    paddingTop: 0,
+  },
+  panelMiddle: {
+    paddingTop: 0,
+    paddingLeft: 6,
+    gridColumnStart: "middle",
+    gridColumnEnd: "right",
+  },
 }));
 
 export const formatBackLink = (
@@ -143,10 +153,7 @@ const SelectDatasetStepContent = () => {
 
   return (
     <PanelLayout className={classes.panelLayout}>
-      <PanelLeftWrapper
-        raised={false}
-        sx={{ backgroundColor: "transparent", paddingTop: 0 }}
-      >
+      <PanelLeftWrapper raised={false} className={classes.panelLeft}>
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
             <MotionBox
@@ -183,14 +190,7 @@ const SelectDatasetStepContent = () => {
           )}
         </AnimatePresence>
       </PanelLeftWrapper>
-      <PanelMiddleWrapper
-        sx={{
-          pt: 0,
-          pl: 6,
-          gridColumnStart: "middle",
-          gridColumnEnd: "right",
-        }}
-      >
+      <PanelMiddleWrapper className={classes.panelMiddle}>
         <Box sx={{ maxWidth: 900 }}>
           <AnimatePresence exitBeforeEnter>
             {dataset ? (

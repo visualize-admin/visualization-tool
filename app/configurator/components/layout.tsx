@@ -46,17 +46,19 @@ export const PanelLeftWrapper = ({
   children,
   raised,
   sx,
+  className,
 }: {
   children?: React.ReactNode;
   raised?: boolean;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
   const classes = useStyles();
   return (
     <Box
       component="section"
       data-name="panel-left"
-      className={classes.panelLeft}
+      className={clsx(classes.panelLeft, className)}
       sx={{
         boxShadow: raised ? "rightSide" : undefined,
         borderRightColor: raised ? "grey.500" : undefined,
@@ -78,16 +80,18 @@ PanelLeftWrapper.defaultProps = {
 export const PanelRightWrapper = ({
   children,
   sx,
+  className,
 }: {
   children?: React.ReactNode;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
   const classes = useStyles();
   return (
     <Box
       component="section"
       data-name="panel-right"
-      className={classes.panelRight}
+      className={clsx(classes.panelRight, className)}
       sx={sx}
     >
       {children}
@@ -136,15 +140,17 @@ export const PanelHeader = ({
 export const PanelMiddleWrapper = ({
   children,
   sx,
+  className,
 }: {
   children: React.ReactNode;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
   const classes = useStyles();
 
   return (
     <Box
-      className={classes.panelMiddle}
+      className={clsx(classes.panelMiddle, className)}
       component="section"
       data-name="panel-middle"
       sx={sx}

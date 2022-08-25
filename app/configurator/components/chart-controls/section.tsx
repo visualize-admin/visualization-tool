@@ -7,6 +7,7 @@ import {
   TypographyProps,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { ElementType, forwardRef, HTMLProps, ReactNode } from "react";
 
 import { Icon, IconName } from "@/icons";
@@ -39,12 +40,12 @@ export const ControlSection = forwardRef<
     <Box
       ref={ref}
       role={role}
-      className={classes.controlSection}
       sx={{
         backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
         ...sx,
       }}
       {...props}
+      className={clsx(classes.controlSection, props.className)}
     >
       {children}
     </Box>
