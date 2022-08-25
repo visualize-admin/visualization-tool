@@ -313,7 +313,6 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         onMouseLeave={handleMouseLeave}
         onClick={(e) => handleClick(e, iFrameCode)}
         className={classes.button}
-        sx={{}}
       >
         <Icon name="copy" size={16} />
 
