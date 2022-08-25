@@ -102,7 +102,8 @@ module.exports = {
             property.key &&
             property.key.name === "boxShadow" &&
             property.value.type === "Literal" &&
-            typeof property.value.value === "string"
+            typeof property.value.value === "string" &&
+            property.value.value !== "none"
           ) {
             context.report({
               node: property,
