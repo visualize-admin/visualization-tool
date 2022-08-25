@@ -83,7 +83,7 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
     justifyContent: "center",
     alignItems: "center",
     flexGrow: 1,
-    padding: 2,
+    padding: theme.spacing(2),
     opacity: 0,
     color: theme.palette.muted.main,
   },

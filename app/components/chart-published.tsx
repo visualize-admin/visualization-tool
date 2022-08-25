@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     flexDirection: "column",
     justifyContent: "space-between",
-    padding: 5,
+    padding: theme.spacing(5),
     color: theme.palette.grey[800],
     overflowX: "auto",
   },

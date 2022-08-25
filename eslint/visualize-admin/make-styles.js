@@ -75,6 +75,21 @@ module.exports = {
             });
           }
           if (
+            property.key &&
+            (property.key.name === "padding" ||
+              property.key.name === "margin" ||
+              isShorthandProperty(property)) &&
+            property.value.type === "Literal" &&
+            typeof property.value.value === "number" &&
+            property.value.value !== 0
+          ) {
+            context.report({
+              node: property,
+              message:
+                "Careful with number inside padding in margin, prefer to use either a string or theme.spacing",
+            });
+          }
+          if (
             property.value.type === "Literal" &&
             isThemeColor(property.value.value)
           ) {
