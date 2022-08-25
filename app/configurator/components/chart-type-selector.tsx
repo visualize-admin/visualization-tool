@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, BoxProps, ButtonBase, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
@@ -12,16 +12,13 @@ import {
   getFieldLabel,
   getIconName,
 } from "@/configurator/components/ui-helpers";
-import {
-  FieldProps,
-  useChartTypeSelectorField,
-} from "@/configurator/config-form";
+import { FieldProps, useChartType } from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
 import {
+  ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
@@ -103,31 +100,6 @@ export const ChartTypeSelectionButton = ({
   );
 };
 
-const ChartTypeSelectorField = ({
-  label,
-  value,
-  metaData,
-  disabled,
-}: {
-  label: string;
-  value: string;
-  metaData: DataCubeMetadata;
-  disabled?: boolean;
-}) => {
-  const field = useChartTypeSelectorField({
-    value,
-    metaData,
-  });
-
-  return (
-    <ChartTypeSelectionButton
-      disabled={disabled}
-      label={label}
-      {...field}
-    ></ChartTypeSelectionButton>
-  );
-};
-
 export const ChartTypeSelector = ({
   state,
   showHelp,
@@ -149,6 +121,9 @@ export const ChartTypeSelector = ({
       sourceUrl: state.dataSource.url,
       locale,
     },
+  });
+  const { value: chartType, onChange: onChangeChartType } = useChartType({
+    metaData: data?.dataCubeByIri,
   });
 
   if (data?.dataCubeByIri) {
@@ -191,12 +166,15 @@ export const ChartTypeSelector = ({
                 }}
               >
                 {enabledChartTypes.map((d) => (
-                  <ChartTypeSelectorField
+                  <ChartTypeSelectionButton
                     key={d}
                     label={d}
                     value={d}
-                    metaData={metaData}
+                    checked={chartType === d}
                     disabled={!possibleChartTypes.includes(d)}
+                    onClick={(e) =>
+                      onChangeChartType(e.currentTarget.value as ChartType)
+                    }
                   />
                 ))}
               </Box>
