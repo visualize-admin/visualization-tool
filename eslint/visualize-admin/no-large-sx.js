@@ -25,14 +25,8 @@ const maxPropsForSx = 5;
 module.exports = {
   create(context) {
     return {
-      JSXOpeningElement: function (node) {
-        const sxAttribute = node.attributes.find(
-          (a) => a.name && a.name.name === "sx"
-        );
-        if (!sxAttribute) {
-          return;
-        }
-        const value = sxAttribute.value;
+      'JSXAttribute[name.name="sx"]': function (node) {
+        const value = node.value;
 
         // Count of literal properties excluding ignored properties
         if (value.type === "JSXExpressionContainer") {
@@ -49,7 +43,7 @@ module.exports = {
             [];
           if (props.length > maxPropsForSx) {
             context.report({
-              node: sxAttribute,
+              node,
               message: `Don't create sx rules with more than ${maxPropsForSx} properties (here: ${props.length} properties). Please extract to useStyles.`,
             });
           }
