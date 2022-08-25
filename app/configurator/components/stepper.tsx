@@ -25,17 +25,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     position: "relative",
 
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     borderBottomWidth: "1px",
     borderBottomStyle: "solid",
-    borderBottomColor: "grey.500",
+    borderBottomColor: theme.palette.grey[500],
     overflow: "hidden",
   },
   container: {
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    px: 2,
+    padding: `0 ${theme.spacing(2)}`,
     minHeight: 56,
   },
 }));

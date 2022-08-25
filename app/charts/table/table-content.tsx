@@ -49,12 +49,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
     borderTop: "1px solid",
     borderBottom: "1px solid",
-    borderTopColor: "grey.700",
-    borderBottomColor: "grey.700",
+    borderTopColor: theme.palette.grey[700],
+    borderBottomColor: theme.palette.grey[700],
     fontWeight: "bold",
     fontSize: "0.875rem",
-    backgroundColor: "grey.100",
-    color: "grey.700",
+    backgroundColor: theme.palette.grey[100],
+    color: theme.palette.grey[700],
   },
 }));
 

@@ -38,10 +38,10 @@ const Version = () => {
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: "grey.200",
+    backgroundColor: theme.palette.grey[200],
     borderTopWidth: "1px",
     borderTopStyle: "solid",
-    borderTopColor: "grey.100",
+    borderTopColor: theme.palette.grey[100],
   },
   logoContainer: {
     padding: `${theme.spacing(5)} ${theme.spacing(4)}`,
@@ -49,8 +49,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderBottomWidth: "1px",
     borderTopStyle: "solid",
     borderBottomStyle: "solid",
-    borderTopColor: "grey.500",
-    borderBottomColor: "grey.500",
+    borderTopColor: theme.palette.grey[500],
+    borderBottomColor: theme.palette.grey[500],
   },
 }));
 
@@ -158,42 +158,42 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
   );
 };
 
-const useFooterLinkStyles = makeStyles({
+const useFooterLinkStyles = makeStyles((theme: Theme) => ({
   root: {
-    color: "primary.main",
+    color: theme.palette.primary.main,
     fontSize: "0.875rem",
     textDecoration: "none",
     cursor: "pointer",
     ":hover": {
-      color: "primary.hover",
+      color: theme.palette.primary.hover,
     },
     ":active": {
-      color: "primary.hover",
+      color: theme.palette.primary.hover,
     },
     ":disabled": {
       cursor: "initial",
-      color: "primary.disabled",
+      color: theme.palette.primary.disabled,
     },
   },
   bottomLink: {
     fontSize: "0.875rem",
 
     borderLeftStyle: "solid",
-    borderLeftColor: "grey.500",
+    borderLeftColor: theme.palette.grey[500],
     textDecoration: "none",
     cursor: "pointer",
     ":hover": {
-      color: "primary.hover",
+      color: theme.palette.primary.hover,
     },
     ":active": {
-      color: "primary.hover",
+      color: theme.palette.primary.hover,
     },
     ":disabled": {
       cursor: "initial",
-      color: "primary.disabled",
+      color: theme.palette.primary.disabled,
     },
   },
-});
+}));
 
 const FooterLink = ({
   children,

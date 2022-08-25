@@ -11,8 +11,9 @@ import { Locale } from "@/locales/locales";
 const useStyles = makeStyles((theme: Theme) => ({
   errorPageHint: {
     width: "100%",
-    color: "hint",
-    my: 4,
+    color: theme.palette.hint.main,
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
     textAlign: "center",
     flexDirection: "column",
     justifyContent: "center",

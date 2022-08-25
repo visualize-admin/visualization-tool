@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 
@@ -171,29 +171,28 @@ export const DraggableTab = ({
   );
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   controlTabButton: {
-    color: "grey.700",
-    borderColor: "primary",
+    color: theme.palette.grey[700],
+    borderColor: theme.palette.primary.main,
     borderRadius: 1.5,
     width: "100%",
     minWidth: 160,
-    px: 2,
-    py: 3,
+    padding: `${theme.spacing(3)} ${theme.spacing(2)}`,
     fontWeight: "normal",
 
     fontSize: "0.875rem",
     transition: "background-color .2s",
     cursor: "pointer",
     ":hover": {
-      backgroundColor: "action.hover",
+      backgroundColor: theme.palette.action.hover,
     },
     ":active": {
-      backgroundColor: "action.hover",
+      backgroundColor: theme.palette.action.hover,
     },
     ":disabled": {
       cursor: "initial",
-      backgroundColor: "muted.main",
+      backgroundColor: theme.palette.muted.main,
     },
   },
   controlTabButtonInnerIcon: {
@@ -204,7 +203,7 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
   },
-});
+}));
 
 // Generic component
 export const ControlTabButton = ({

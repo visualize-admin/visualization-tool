@@ -31,6 +31,21 @@ declare module "@mui/material" {
     hint: PaletteColorOptions;
   }
 
+  interface PaletteColor {
+    hover?: string;
+    disabled?: string;
+    active?: string;
+  }
+
+  interface Palette {
+    muted: PaletteColor;
+    alert: PaletteColor;
+    organization: PaletteColor;
+    category: PaletteColor;
+    brand: PaletteColor;
+    hint: PaletteColor;
+  }
+
   interface TypographyPropsVariantOverrides {
     tag: true;
   }

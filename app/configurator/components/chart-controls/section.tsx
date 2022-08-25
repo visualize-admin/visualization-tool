@@ -14,7 +14,7 @@ import { useTheme } from "@/themes";
 
 const useStyles = makeStyles((theme: Theme) => ({
   controlSection: {
-    borderTopColor: "grey.500",
+    borderTopColor: theme.palette.grey[500],
     borderTopWidth: "1px",
     borderTopStyle: "solid",
     overflowX: "hidden",

@@ -51,7 +51,7 @@ export const ChartPanelPublished = (
 const useChartPanelInnerStyles = makeStyles((theme: Theme) => ({
   root: {
     flexDirection: "column",
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     boxShadow: theme.shadows[6],
     borderRadius: 12,
     // TODO: Handle properly when chart composition is implemented (enable when

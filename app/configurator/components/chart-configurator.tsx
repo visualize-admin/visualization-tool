@@ -453,7 +453,7 @@ const useStyles = makeStyles<
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
-      color: "secondary.active",
+      color: theme.palette.secondary.active,
     },
     "& .buttons:hover": {
       opacity: ({ fetching }) => (fetching ? undefined : 1),

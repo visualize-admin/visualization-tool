@@ -7,20 +7,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   panelLeft: {
     overflowX: "hidden",
     overflowY: "auto",
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
   },
   panelRight: {
     backgroundColor: "white",
     overflowX: "hidden",
     overflowY: "auto",
     boxShadow: "leftSide",
-    borderLeftColor: "grey.500",
+    borderLeftColor: theme.palette.grey[500],
     borderLeftWidth: "1px",
     borderLeftStyle: "solid",
     gridArea: "right",
   },
   panelLayout: {
-    backgroundColor: "muted.main",
+    backgroundColor: theme.palette.muted.main,
     display: "grid",
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   panelMiddle: {
     overflowX: "hidden",
     overflowY: "auto",
-    p: 4,
+    padding: 4,
     gridArea: "middle",
   },
 }));

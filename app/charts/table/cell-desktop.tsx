@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
@@ -10,21 +10,21 @@ import { Tag } from "@/charts/table/tag";
 import Flex from "@/components/flex";
 import { Observation } from "@/domain/data";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   heatmapCell: {
     alignItems: "center",
     justifyContent: "flex-end",
     textAlign: "right",
-    px: 3,
+    padding: `0 ${theme.spacing(3)}`,
   },
   defaultCell: {
     alignItems: "center",
-    px: 3,
+    paddingLeft: 0,
     "&:first-of-type": {
-      pl: 0,
+      paddingLeft: 0,
     },
     "&:last-of-type": {
-      pr: 0,
+      paddingRight: 0,
     },
   },
   barBackground: {
@@ -32,14 +32,14 @@ const useStyles = makeStyles({
     top: "-2px",
     width: "1px",
     height: 22,
-    backgroundColor: "grey.700",
+    backgroundColor: theme.palette.grey[700],
   },
   barForeground: {
     position: "absolute",
     top: 0,
     height: 18,
   },
-});
+}));
 
 export const CellDesktop = ({
   cell,

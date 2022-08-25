@@ -227,7 +227,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
 
 const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
   input: {
-    color: "grey.700",
+    color: theme.palette.grey[700],
     padding: `${theme.spacing(0)} ${theme.spacing(2)}`,
     flexGrow: 1,
     fontSize: "1rem",
@@ -239,11 +239,11 @@ const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
     borderBottomRightRadius: 0,
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: "grey.500",
+    borderColor: theme.palette.grey[500],
   },
   button: {
-    color: "grey.600",
-    backgroundColor: "grey.200",
+    color: theme.palette.grey[600],
+    backgroundColor: theme.palette.grey[200],
     position: "relative",
 
     borderTopRightRadius: "default",
@@ -255,22 +255,22 @@ const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
 
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: "grey.500",
+    borderColor: theme.palette.grey[500],
     borderLeft: "none",
 
     cursor: "pointer",
 
     ":hover": {
-      backgroundColor: "grey.300",
-      color: "grey.700",
+      backgroundColor: theme.palette.grey[300],
+      color: theme.palette.grey[700],
     },
     ":active": {
-      backgroundColor: "grey.400",
-      color: "grey.800",
+      backgroundColor: theme.palette.grey[400],
+      color: theme.palette.grey[800],
     },
     ":disabled": {
       cursor: "initial",
-      color: "grey.300",
+      color: theme.palette.grey[300],
     },
   },
 }));
@@ -330,9 +330,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     left: "50%",
     transform: "translate3d(-50%, 0, 0)",
 
-    backgroundColor: "grey.700",
+    backgroundColor: theme.palette.grey[700],
     borderRadius: 1.5,
-    color: "grey.100",
+    color: theme.palette.grey[100],
 
     fontSize: "0.625rem",
     textAlign: "center",
@@ -351,7 +351,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: 0,
       height: 0,
       border: "0.5rem solid transparent",
-      borderTopColor: "grey.700",
+      borderTopColor: theme.palette.grey[700],
       left: "50%",
       top: "100%",
       zIndex: -1,

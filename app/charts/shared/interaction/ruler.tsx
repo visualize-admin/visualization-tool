@@ -51,18 +51,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     borderWidth: 0.5,
     borderStyle: "solid",
-    borderColor: "grey.200",
+    borderColor: theme.palette.grey[200],
     pointerEvents: "none",
     transform: "translateX(-50%)",
   },
   right: {
     position: "absolute",
     fontWeight: "bold",
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     transform: "translateX(-50%)",
-    px: 1,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
     fontSize: "0.875rem",
-    color: "grey.800",
+    color: theme.palette.grey[800],
   },
 }));
 

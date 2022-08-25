@@ -48,7 +48,7 @@ const useHeaderBorderStyles = makeStyles((theme: Theme) => ({
     width: `100%`,
     borderBottomWidth: "4px",
     borderBottomStyle: "solid",
-    borderBottomColor: "brand.main",
+    borderBottomColor: theme.palette.brand.main,
   },
 }));
 

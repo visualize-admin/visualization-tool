@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     right: 3,
     margin: "auto",
     ":hover": {
-      color: "secondary.hover",
+      color: theme.palette.secondary.hover,
     },
   },
 }));

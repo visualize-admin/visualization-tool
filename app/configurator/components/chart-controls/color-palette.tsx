@@ -150,7 +150,7 @@ const useColorSquareStyles = makeStyles((theme: Theme) => ({
     padding: 0,
     width: 20,
     height: 20,
-    borderColor: "grey.100",
+    borderColor: theme.palette.grey[100],
     borderWidth: "1px",
     borderStyle: "solid",
     "&:first-of-type": {

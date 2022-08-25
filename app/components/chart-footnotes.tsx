@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       borderRadius: "3px",
       position: "relative",
       left: "calc(-1 * var(--column-gap) / 2)",
-      backgroundColor: "grey.600",
+      backgroundColor: theme.palette.grey[600],
     },
   },
 }));

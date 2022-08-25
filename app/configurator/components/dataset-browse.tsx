@@ -1008,14 +1008,14 @@ export const DatasetResults = ({
 const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
     position: "relative",
-    color: "grey.700",
+    color: theme.palette.grey[700],
     cursor: "pointer",
     textAlign: "left",
     padding: `${theme.spacing(4)} ${theme.spacing(5)}`,
     marginBottom: `${theme.spacing(3)}`,
     borderRadius: 10,
     boxShadow: theme.shadows[3],
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
   },
 }));
 

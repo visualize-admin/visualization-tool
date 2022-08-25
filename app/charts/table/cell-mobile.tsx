@@ -15,19 +15,19 @@ import { Icon } from "@/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    color: "grey.800",
+    color: theme.palette.grey[800],
     fontSize: "0.75rem",
     width: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    my: 2,
+    margin: `0 ${theme.spacing(2)}`,
     "&:first-of-type": {
-      pt: 2,
+      paddingTop: 2,
     },
     "&:last-of-type": {
       borderBottom: "1px solid",
-      borderBottomColor: "grey.400",
-      pb: 3,
+      borderBottomColor: theme.palette.grey[400],
+      paddingBottom: theme.spacing(3),
     },
   },
 }));

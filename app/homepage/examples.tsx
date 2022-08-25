@@ -221,9 +221,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   children: {
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: "grey.300",
     boxShadow: "primary",
-    mt: 2,
+    borderColor: theme.palette.grey[300],
+    marginTop: 2,
     minWidth: 0,
   },
 }));

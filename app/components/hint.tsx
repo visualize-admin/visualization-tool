@@ -9,6 +9,7 @@ import {
   BoxProps,
   Typography,
   Link,
+  Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
@@ -29,11 +30,11 @@ export const Error = ({ children }: { children: ReactNode }) => (
   </Flex>
 );
 
-const useHintStyles = makeStyles({
+const useHintStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "100%",
     height: "100%",
-    color: "hint",
+    color: theme.palette.hint.main,
     margin: "auto",
     textAlign: "center",
     flexDirection: "column",
@@ -41,7 +42,7 @@ const useHintStyles = makeStyles({
     alignItems: "center",
     flexGrow: 1,
   },
-});
+}));
 
 export const Hint = ({ children }: { children: ReactNode }) => {
   const classes = useHintStyles();
@@ -72,7 +73,7 @@ const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
   );
 };
 
-const useLoadingStyles = makeStyles({
+const useLoadingStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "100%",
     height: "100%",
@@ -84,17 +85,17 @@ const useLoadingStyles = makeStyles({
     flexGrow: 1,
     padding: 2,
     opacity: 0,
-    color: "hint.main",
+    color: theme.palette.muted.main,
   },
   overlay: {
     position: "absolute",
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
   },
-});
+}));
 
 export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
   const classes = useLoadingStyles();
