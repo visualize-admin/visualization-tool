@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Input, Popover, styled, Theme } from "@mui/material";
+import { Box, Button, Input, Popover, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
 import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
@@ -7,7 +7,7 @@ import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 import VisuallyHidden from "@/components/visually-hidden";
 import useDisclosure from "@/configurator/components/use-disclosure";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   swatch: {
     width: "1.5rem",
     height: "1.5rem",

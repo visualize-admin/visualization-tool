@@ -1,4 +1,4 @@
-import { Box, Theme } from "@mui/material";
+import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
@@ -311,7 +311,7 @@ ${(
 )}
 `;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   dot: {
     width: 8,
     height: 8,

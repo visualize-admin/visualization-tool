@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Theme, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
@@ -44,7 +44,7 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   panelLayout: {
     width: "100%",
     maxWidth: 1300,
