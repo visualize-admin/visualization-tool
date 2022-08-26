@@ -38,6 +38,7 @@ module.exports = {
                   p.key.name &&
                   !ignoredProperties.has(p.key.name) &&
                   p.value &&
+                  p.value.type &&
                   p.value.type === "Literal"
               )) ||
             [];
