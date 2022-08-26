@@ -6,16 +6,13 @@ import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
-import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
-  PanelHeader,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
 } from "@/configurator/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
-import { Stepper } from "@/configurator/components/stepper";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 
 const ConfigureChartStep = () => {
@@ -49,9 +46,9 @@ const ConfigureChartStep = () => {
           />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
-      <PanelRightWrapper>
+      {/* <PanelRightWrapper>
         <ChartOptionsSelector state={state} />
-      </PanelRightWrapper>
+      </PanelRightWrapper> */}
     </>
   );
 };
@@ -112,9 +109,6 @@ export const Configurator = () => {
     <SelectDatasetStep />
   ) : (
     <PanelLayout>
-      <PanelHeader>
-        <Stepper dataSetIri={state.dataSet} />
-      </PanelHeader>
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
       {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}
       {state.state === "PUBLISHING" ? <PublishStep /> : null}

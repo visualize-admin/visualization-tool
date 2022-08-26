@@ -1,18 +1,35 @@
-import { Box, BoxProps, Theme } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { Box, BoxProps, Button, Paper, Slide, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React from "react";
+import { TransitionGroup } from "react-transition-group";
+
+import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLeft: {
     overflowX: "hidden",
-    overflowY: "auto",
+    overflowY: "hidden",
     backgroundColor: theme.palette.grey[100],
     boxShadow: theme.shadows[5],
     borderRightColor: theme.palette.grey[500],
     borderRightWidth: "1px",
     borderRightStyle: "solid",
     gridArea: "left",
+    position: "relative",
+  },
+  panelPage: {
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    overflowY: "auto",
   },
   panelRight: {
     backgroundColor: "white",
@@ -25,10 +42,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridArea: "right",
   },
   panelLayout: {
-    backgroundColor: theme.palette.muted.main,
     display: "grid",
-    gridTemplateColumns:
-      "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+    gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr)",
     gridTemplateRows: "auto minmax(0, 1fr)",
     gridTemplateAreas: `
     "header header header"
@@ -47,6 +62,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const ChartOptionsSelectorPanel = () => {
+  const [state] = useConfiguratorState(isConfiguring);
+  return <ChartOptionsSelector state={state} />;
+};
+
 export const PanelLeftWrapper = ({
   children,
   sx,
@@ -56,16 +76,51 @@ export const PanelLeftWrapper = ({
   sx?: BoxProps["sx"];
   className?: BoxProps["className"];
 }) => {
+  const [state, dispatch] = useConfiguratorState();
+
   const classes = useStyles();
+  const panels =
+    // eslint-disable-next-line react/jsx-key
+    state.activeField ? [<ChartOptionsSelectorPanel />] : [];
   return (
-    <Box
-      component="section"
-      data-name="panel-left"
-      className={clsx(classes.panelLeft, className)}
-      sx={sx}
-    >
-      {children}
-    </Box>
+    <>
+      <Box
+        component="section"
+        data-name="panel-left"
+        className={clsx(classes.panelLeft, className)}
+        sx={sx}
+      >
+        <TransitionGroup>
+          <div className={classes.panelPage}>{children}</div>
+          {panels.map((x, i) => {
+            return (
+              <Slide key={i} direction="right">
+                <Paper elevation={2} square className={classes.panelPage}>
+                  <Box sx={{ mx: 2, my: 2 }}>
+                    <Button
+                      variant="text"
+                      size="small"
+                      color="inherit"
+                      sx={{ fontWeight: "bold" }}
+                      startIcon={<SvgIcChevronLeft />}
+                      onClick={() =>
+                        dispatch({
+                          type: "ACTIVE_FIELD_CHANGED",
+                          value: undefined,
+                        })
+                      }
+                    >
+                      <Trans id="button.back">Back</Trans>
+                    </Button>
+                  </Box>
+                  {x}
+                </Paper>
+              </Slide>
+            );
+          })}
+        </TransitionGroup>
+      </Box>
+    </>
   );
 };
 

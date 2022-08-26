@@ -20,7 +20,7 @@ import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { ascending, groups } from "d3";
 import { get, keyBy, sortBy, groupBy } from "lodash";
-import React, {
+import {
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -57,8 +57,8 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcCheck from "@/icons/components/IcCheck";
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
@@ -73,11 +73,10 @@ import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const Drawer = styled(MuiDrawer)(({ theme }) => ({
   "& > .MuiPaper-root": {
-    top: 152,
+    top: 96,
     bottom: 0,
     height: "auto",
     borderLeft: `1px ${theme.palette.divider} solid`,
-    borderTop: `1px ${theme.palette.divider} solid`,
   },
 }));
 
@@ -440,7 +439,7 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <Drawer anchor="right" open={!!anchorEl} hideBackdrop>
+      <Drawer anchor="left" open={!!anchorEl} hideBackdrop>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
@@ -631,13 +630,20 @@ const DrawerContent = forwardRef<
   return (
     <div className={classes.autocompleteMenuContent} ref={ref}>
       <Box className={classes.autocompleteHeader}>
+        <Button
+          variant="text"
+          size="small"
+          color="inherit"
+          sx={{ fontWeight: "bold", mx: -1, mt: -2, mb: 2 }}
+          startIcon={<SvgIcChevronLeft />}
+          onClick={onClose}
+        >
+          <Trans id="button.back">Back</Trans>
+        </Button>
         <Flex alignItems="center" justifyContent="space-between">
           <Typography variant="h5" gutterBottom>
             <Trans id="controls.set-filters">Set filters</Trans>
           </Typography>
-          <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
-            <SvgIcClose fontSize="inherit" />
-          </IconButton>
         </Flex>
         <Typography variant="body2" color="textSecondary">
           <Trans id="controls.set-filters-caption">
