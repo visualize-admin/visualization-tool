@@ -4,10 +4,8 @@ import create, { StateCreator, StoreApi } from "zustand";
 import { DataSource } from "@/configurator";
 import {
   DEFAULT_DATA_SOURCE,
-  parseDataSource,
   parseSourceByLabel,
   sourceToLabel,
-  stringifyDataSource,
 } from "@/domain/datasource";
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
 import { getURLParam } from "@/lib/router/helpers";
@@ -20,7 +18,15 @@ type DataSourceStore = {
 const PARAM_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
-  localStorage.setItem(PARAM_KEY, stringifyDataSource(value));
+  localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+};
+
+export const getDataSourceFromLocalStorage = () => {
+  const dataSourceLabel = localStorage.getItem(PARAM_KEY);
+
+  if (dataSourceLabel) {
+    return parseSourceByLabel(dataSourceLabel);
+  }
 };
 
 const updateRouterDataSourceParam = (dataSource: DataSource) => {
@@ -75,10 +81,10 @@ const dataSourceStoreMiddleware =
         dataSource = urlDataSource;
         saveToLocalStorage(urlDataSource);
       } else {
-        const storageDataSource = localStorage.getItem(PARAM_KEY);
+        const storageDataSource = getDataSourceFromLocalStorage();
 
         if (storageDataSource) {
-          dataSource = parseDataSource(storageDataSource);
+          dataSource = storageDataSource;
         } else {
           saveToLocalStorage(dataSource);
         }
@@ -100,8 +106,6 @@ const dataSourceStoreMiddleware =
 export const useDataSourceStore = create<DataSourceStore>(
   dataSourceStoreMiddleware((set) => ({
     dataSource: DEFAULT_DATA_SOURCE,
-    setDataSource: (value) => {
-      set({ dataSource: value });
-    },
+    setDataSource: (value) => set({ dataSource: value }),
   }))
 );

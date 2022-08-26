@@ -47,7 +47,6 @@ import {
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { retrieveDataSourceFromLocalStorage } from "@/domain/datasource/localStorage";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -58,7 +57,10 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
-import { useDataSourceStore } from "@/stores/data-source";
+import {
+  getDataSourceFromLocalStorage,
+  useDataSourceStore,
+} from "@/stores/data-source";
 
 export const DEFAULT_PALETTE = "category10";
 const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
@@ -206,7 +208,7 @@ export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
 const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
-  const dataSource = retrieveDataSourceFromLocalStorage();
+  const dataSource = getDataSourceFromLocalStorage();
 
   return {
     ...state,
