@@ -1,28 +1,9 @@
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import useEvent from "../use-event";
 
-<<<<<<< HEAD:app/utils/router/use-route-state.ts
 import { updateRouterQuery } from "./helpers";
-=======
-export const updateRouterQuery = (
-  router: NextRouter,
-  values: { [k: string]: string }
-) => {
-  if (Object.entries(values).every(([k, v]) => router.query[k] === v)) {
-    return;
-  }
-  router.replace(
-    {
-      pathname: router.pathname,
-      query: { ...router.query, ...values },
-    },
-    undefined,
-    { shallow: true }
-  );
-};
->>>>>>> 65188b5928e9764a57a455aa4c29319948ab8ac6:app/utils/use-route-state.ts
 
 /**
  * useState that keeps router param synchronized.

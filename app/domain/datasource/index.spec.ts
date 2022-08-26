@@ -95,8 +95,9 @@ describe("datasource state hook", () => {
     });
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://lindas.admin.ch/query",
+      url: "https://int.lindas.admin.ch/query",
     });
+    expect(router.query.dataSource).toBe("Int");
   });
   it("should have the correct default state from URL in priority", () => {
     const { getState } = setup({
@@ -118,5 +119,22 @@ describe("datasource state hook", () => {
     });
     expect(router.query.dataSource).toBe("Prod");
     expect(localStorage.getItem("dataSource")).toBe("Prod");
+  });
+
+  it("should not update router when default value is used", () => {
+    const { router } = setup({
+      initialURL: "https://visualize.admin.ch/",
+      localStorageValue: "",
+    });
+    expect(router.query.dataSource).toBeFalsy();
+    expect(localStorage.getItem("dataSource")).toBeFalsy();
+  });
+
+  it("should update router when default value is used and another value is present", () => {
+    const { router } = setup({
+      initialURL: "https://visualize.admin.ch/?dataSource=Int",
+      localStorageValue: "",
+    });
+    expect(router.query.dataSource).toBe("Int");
   });
 });
