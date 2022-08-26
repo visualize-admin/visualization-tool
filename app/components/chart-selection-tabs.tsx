@@ -17,6 +17,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
+import { StepperNextButton } from "@/configurator/components/stepper";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
 import useEvent from "@/utils/use-event";
@@ -170,12 +171,19 @@ const TabsInner = ({
       />
       <Box
         sx={{
-          mx: -2,
+          ml: -2,
           width: "100%",
           borderBottom: "1px solid",
           borderBottomColor: "divider",
+          textAlign: "right",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          pr: 4,
+          display: "flex",
         }}
-      ></Box>
+      >
+        <StepperNextButton />
+      </Box>
     </Tabs>
   );
 };
