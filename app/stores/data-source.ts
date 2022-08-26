@@ -10,7 +10,7 @@ import {
 import { isRunningInBrowser } from "@/lib/is-running-in-browser";
 import { getURLParam } from "@/lib/router/helpers";
 
-type DataSourceStore = {
+export type DataSourceStore = {
   dataSource: DataSource;
   setDataSource: (value: DataSource) => void;
 };
@@ -48,7 +48,7 @@ const updateRouterDataSourceParam = (dataSource: DataSource) => {
  * URL (stored as label: Prod, Int, Test); if it's not here, tries with
  * localStorage (also stored as label), otherwise uses a default data source.
  */
-const dataSourceStoreMiddleware =
+export const dataSourceStoreMiddleware =
   (config: StateCreator<DataSourceStore>) =>
   (
     set: StoreApi<DataSourceStore>["setState"],
@@ -61,7 +61,7 @@ const dataSourceStoreMiddleware =
 
         if (isRunningInBrowser()) {
           saveToLocalStorage(payload.dataSource);
-          updateRouterDataSourceParam(get().dataSource);
+          updateRouterDataSourceParam(payload.dataSource);
         }
       },
       get,
@@ -91,7 +91,14 @@ const dataSourceStoreMiddleware =
       }
     }
 
-    const callback = () => updateRouterDataSourceParam(get().dataSource);
+    const callback = () => {
+      // Theoretically get().dataSource shouldn't fail, but when testing it does.
+      const newSource = get()?.dataSource;
+
+      if (newSource) {
+        updateRouterDataSourceParam(newSource);
+      }
+    };
 
     // No need to unsubscribe, as store is created once and needs to update
     // URL continously.
@@ -103,9 +110,12 @@ const dataSourceStoreMiddleware =
     return { ...state, dataSource };
   };
 
-export const useDataSourceStore = create<DataSourceStore>(
-  dataSourceStoreMiddleware((set) => ({
-    dataSource: DEFAULT_DATA_SOURCE,
-    setDataSource: (value) => set({ dataSource: value }),
-  }))
-);
+export const createUseDataSourceStore = () =>
+  create<DataSourceStore>(
+    dataSourceStoreMiddleware((set) => ({
+      dataSource: DEFAULT_DATA_SOURCE,
+      setDataSource: (value) => set({ dataSource: value }),
+    }))
+  );
+
+export const useDataSourceStore = createUseDataSourceStore();
