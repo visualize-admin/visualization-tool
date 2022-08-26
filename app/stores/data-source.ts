@@ -38,8 +38,9 @@ const updateRouterDataSourceParam = (dataSource: DataSource) => {
 /**
  * Custom middleware that saves data source to localStorage.
  *
- * On initialization it tries to first retrieve data source from URL; if it's
- * not here, tries with localStorage, otherwise uses a default data source.
+ * On initialization it tries to first retrieve data source from the
+ * URL (stored as label: Prod, Int, Test); if it's not here, tries with
+ * localStorage (also stored as label), otherwise uses a default data source.
  */
 const dataSourceStoreMiddleware =
   (config: StateCreator<DataSourceStore>) =>
