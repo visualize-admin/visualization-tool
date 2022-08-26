@@ -42,6 +42,7 @@ const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
     },
     "& svg": {
       color: theme.palette.primary.main,
+      marginBottom: theme.spacing(1),
     },
   },
   checked: {
@@ -55,6 +56,7 @@ const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
     },
   },
   disabled: {
+    color: theme.palette.text.secondary,
     cursor: "initial",
     "& svg": {
       color: theme.palette.grey[500],
@@ -87,13 +89,7 @@ export const ChartTypeSelectionButton = ({
       )}
     >
       <Icon size={24} name={getIconName(label)} />
-      <Typography
-        variant="caption"
-        sx={{
-          color: disabled ? "text.primary" : "inherit",
-          mt: 1,
-        }}
-      >
+      <Typography variant="caption" color="inherit">
         {getFieldLabel(label)}
       </Typography>
     </ButtonBase>
