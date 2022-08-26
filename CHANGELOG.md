@@ -9,7 +9,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-- Font adjustment in menu
+Nothing yet.
+
+## [3.7.10] - 2022-08-26
+
+- Font adjustment in filters menu
 
 ## [3.7.9] - 2022-08-25
 
