@@ -3,7 +3,6 @@ import get from "lodash/get";
 import React, {
   ChangeEvent,
   InputHTMLAttributes,
-  SyntheticEvent,
   useCallback,
   useContext,
   useMemo,
@@ -296,43 +295,36 @@ export const useActiveFieldField = ({
 };
 
 // Specific ------------------------------------------------------------------
-export const useChartTypeSelectorField = ({
-  value,
-  metaData,
+export const useChartType = ({
+  metadata,
 }: {
-  value: string;
-  metaData: DataCubeMetadata;
-}): FieldProps & {
-  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
+  metadata: DataCubeMetadata | null | undefined;
+}): {
+  value: ChartType;
+  onChange: (chartType: ChartType) => void;
 } => {
   const [state, dispatch] = useConfiguratorState();
-  const onClick = useCallback<(e: SyntheticEvent<HTMLButtonElement>) => void>(
-    (e) => {
-      const chartType = e.currentTarget.value as ChartType;
+  const onChange = useEvent((chartType: ChartType) => {
+    if (!metadata) {
+      return;
+    }
+    dispatch({
+      type: "CHART_TYPE_CHANGED",
+      value: {
+        chartType,
+        dataSetMetadata: metadata,
+      },
+    });
+  });
 
-      dispatch({
-        type: "CHART_TYPE_CHANGED",
-        value: {
-          chartType,
-          dataSetMetadata: metaData,
-        },
-      });
-    },
-    [dispatch, metaData]
-  );
-
-  const stateValue =
+  const value =
     state.state === "CONFIGURING_CHART" || state.state === "DESCRIBING_CHART"
       ? get(state, "chartConfig.chartType")
       : "";
 
-  const checked = stateValue === value;
-
   return {
-    name: "chartType",
+    onChange,
     value,
-    checked,
-    onClick,
   };
 };
 

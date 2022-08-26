@@ -9,12 +9,26 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.7.10] - 2022-08-26
+
+- Font adjustment in filters menu
+
+## [3.7.9] - 2022-08-25
+
 - Column order is based on the shacl:order defined in the data
   - For the dataset preview
   - For the table chart columns
 - Default state for area chart uses the hierarchy and selects
   bottommost children
-
+- Add cube checker to docs 
+- Font alignments with design
+- Table config uses data column order to order columns
+- Search handles wildcards ("bath" returns "bathing site" results)
+- Currencies are better handled
+- Add landing page link to chart footnotes
+- Reintroduce chart selector panel section (additionally to popup on future tab)
 
 ## [3.7.8] - 2022-08-22
 

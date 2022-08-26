@@ -114,7 +114,7 @@ export const DataSetMetadata = ({
             href={cube.landingPage}
             external
             label={
-              <Trans id="dataset.metadata.landingpage">Landing page</Trans>
+              <Trans id="dataset.metadata.learnmore">Learn more about the dataset</Trans>
             }
           />
         ) : (

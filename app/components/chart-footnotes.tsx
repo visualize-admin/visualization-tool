@@ -128,20 +128,6 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
-        {dataCubeByIri.landingPage && (
-          <Link
-            href={dataCubeByIri.landingPage}
-            underline="always"
-            target="_blank"
-            typography="caption"
-            color="grey.600"
-            sx={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
-          >
-            <Icon name="linkExternal" size={12} />
-            <Trans id="dataset.metadata.landingpage">Landing page</Trans>
-          </Link>
-        )}
-
         <Box className={classes.actions}>
           <DataDownloadMenu
             dataSetIri={dataSetIri}
@@ -162,19 +148,32 @@ export const ChartFootnotes = ({
                       ? getChartIcon(chartConfig.chartType)
                       : "table"
                   }
-                  size={16}
                 />
               }
               onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-              sx={{ p: 0 }}
+              sx={{ p: 0, typography: "caption" }}
             >
-              <Typography variant="caption">
-                {isChartTablePreview ? (
-                  <Trans id="metadata.switch.chart">Switch to chart view</Trans>
-                ) : (
-                  <Trans id="metadata.switch.table">Switch to table view</Trans>
-                )}
-              </Typography>
+              {isChartTablePreview ? (
+                <Trans id="metadata.switch.chart">Switch to chart view</Trans>
+              ) : (
+                <Trans id="metadata.switch.table">Switch to table view</Trans>
+              )}
+            </Button>
+          )}
+          {dataCubeByIri.landingPage && (
+            <Button
+              variant="text"
+              component="a"
+              href={dataCubeByIri.landingPage}
+              target="_blank"
+              color="primary"
+              size="small"
+              sx={{ p: 0, typography: "caption" }}
+              startIcon={<Icon name="linkExternal" />}
+            >
+              <Trans id="dataset.metadata.learnmore">
+                Learn more about the dataset
+              </Trans>
             </Button>
           )}
           {sparqlEditorUrl && (
@@ -186,16 +185,14 @@ export const ChartFootnotes = ({
               variant="text"
               color="primary"
               size="small"
-              sx={{ p: 0 }}
+              sx={{ p: 0, typography: "caption" }}
               href={shareUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Typography variant="caption">
-                <Trans id="metadata.link.created.with.visualize">
-                  Created with visualize.admin.ch
-                </Trans>
-              </Typography>
+              <Trans id="metadata.link.created.with.visualize">
+                Created with visualize.admin.ch
+              </Trans>
             </Button>
           )}
         </Box>

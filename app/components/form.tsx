@@ -224,6 +224,9 @@ export const Select = ({
         disabled={disabled}
       >
         {sortedOptions.map((opt) => {
+          if (!opt.value) {
+            return null;
+          }
           return opt.type === "group" ? (
             <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
           ) : (

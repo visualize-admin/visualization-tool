@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, BoxProps, ButtonBase, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
@@ -12,16 +12,13 @@ import {
   getFieldLabel,
   getIconName,
 } from "@/configurator/components/ui-helpers";
-import {
-  FieldProps,
-  useChartTypeSelectorField,
-} from "@/configurator/config-form";
+import { FieldProps, useChartType } from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
 import {
+  ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
@@ -103,31 +100,6 @@ export const ChartTypeSelectionButton = ({
   );
 };
 
-const ChartTypeSelectorField = ({
-  label,
-  value,
-  metaData,
-  disabled,
-}: {
-  label: string;
-  value: string;
-  metaData: DataCubeMetadata;
-  disabled?: boolean;
-}) => {
-  const field = useChartTypeSelectorField({
-    value,
-    metaData,
-  });
-
-  return (
-    <ChartTypeSelectionButton
-      disabled={disabled}
-      label={label}
-      {...field}
-    ></ChartTypeSelectionButton>
-  );
-};
-
 export const ChartTypeSelector = ({
   state,
   showHelp,
@@ -150,68 +122,74 @@ export const ChartTypeSelector = ({
       locale,
     },
   });
+  const { value: chartType, onChange: onChangeChartType } = useChartType({
+    metadata: data?.dataCubeByIri,
+  });
 
-  if (data?.dataCubeByIri) {
-    const metaData = data.dataCubeByIri;
-    const possibleChartTypes = getPossibleChartType({ meta: metaData });
+  if (!data?.dataCubeByIri) {
+    return <ControlSectionSkeleton />;
+  }
 
-    return (
-      <Box sx={sx} {...props}>
-        <legend style={{ display: "none" }}>
-          <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </legend>
-        {showHelp !== false ? (
-          <Box sx={{ m: 4, textAlign: "center" }}>
-            <Typography variant="body2">
-              <Trans id="controls.switch.chart.type">
-                Switch to another chart type while maintaining most filter
-                settings.
-              </Trans>
-            </Typography>
-          </Box>
+  const metaData = data.dataCubeByIri;
+  const possibleChartTypes = getPossibleChartType({ meta: metaData });
+
+  return (
+    <Box sx={sx} {...props}>
+      <legend style={{ display: "none" }}>
+        <Trans id="controls.select.chart.type">Chart Type</Trans>
+      </legend>
+      {showHelp !== false ? (
+        <Box sx={{ m: 4, textAlign: "center" }}>
+          <Typography variant="body2">
+            <Trans id="controls.switch.chart.type">
+              Switch to another chart type while maintaining most filter
+              settings.
+            </Trans>
+          </Typography>
+        </Box>
+      ) : (
+        false
+      )}
+
+      <div>
+        {!possibleChartTypes ? (
+          <Hint>
+            <Trans id="hint.no.visualization.with.dataset">
+              No visualization can be created with the selected dataset.
+            </Trans>
+          </Hint>
         ) : (
-          false
-        )}
-
-        <div>
-          {!possibleChartTypes ? (
-            <Hint>
-              <Trans id="hint.no.visualization.with.dataset">
-                No visualization can be created with the selected dataset.
-              </Trans>
-            </Hint>
-          ) : (
-            <Flex sx={{ flexDirection: "column", gap: 5 }}>
-              <Box
-                display="grid"
-                sx={{
-                  gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-                  gridGap: "0.75rem",
-                  mx: 2,
-                }}
-              >
-                {enabledChartTypes.map((d) => (
-                  <ChartTypeSelectorField
-                    key={d}
-                    label={d}
-                    value={d}
-                    metaData={metaData}
-                    disabled={!possibleChartTypes.includes(d)}
-                  />
-                ))}
-              </Box>
-              {/* TODO: Handle properly when chart composition is implemented */}
-              {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
+          <Flex sx={{ flexDirection: "column", gap: 5 }}>
+            <Box
+              display="grid"
+              sx={{
+                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+                gridGap: "0.75rem",
+                mx: 2,
+              }}
+            >
+              {enabledChartTypes.map((d) => (
+                <ChartTypeSelectionButton
+                  key={d}
+                  label={d}
+                  value={d}
+                  checked={chartType === d}
+                  disabled={!possibleChartTypes.includes(d)}
+                  onClick={(e) =>
+                    onChangeChartType(e.currentTarget.value as ChartType)
+                  }
+                />
+              ))}
+            </Box>
+            {/* TODO: Handle properly when chart composition is implemented */}
+            {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
                 <Trans id="controls.remove.visualization">
                   Remove this visualization
                 </Trans>
               </Button> */}
-            </Flex>
-          )}
-        </div>
-      </Box>
-    );
-  } else {
-    return <ControlSectionSkeleton />;
-  }
+          </Flex>
+        )}
+      </div>
+    </Box>
+  );
 };

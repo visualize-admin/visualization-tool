@@ -99,6 +99,34 @@ const DEFAULT_SORTING: {
   sortingOrder: "asc",
 };
 
+const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
+  const leafs = [] as HierarchyValue[];
+  visitHierarchy(dimension?.hierarchy as HierarchyValue[], (node) => {
+    if ((!node.children || node.children.length === 0) && node.hasValue) {
+      leafs.push(node);
+    }
+  });
+  return leafs;
+};
+
+const makeInitialFiltersForArea = (
+  dimension: DataCubeMetadata["dimensions"][0]
+) => {
+  let filters = {} as ChartConfig["filters"];
+  // Setting the filters so that bottommost areas are shown first
+  // @ts-ignore
+  if (dimension?.hierarchy) {
+    const leafs = findBottommostLayers(dimension);
+    if (leafs.length > 0) {
+      filters[dimension.iri] = {
+        type: "multi",
+        values: Object.fromEntries(leafs.map((x) => [x.value, true])),
+      };
+    }
+  }
+  return filters;
+};
+
 export const getInitialConfig = ({
   chartType,
   dimensions,
@@ -238,9 +266,10 @@ export const getInitialConfig = ({
         GeoCoordinatesDimension: geoCoordinates = [],
       } = groupBy(getGeoDimensions(dimensions), (d) => d.__typename);
 
+      const areaDimension = geoShapes[0];
       return {
         chartType,
-        filters: {},
+        filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           areaLayer: {
@@ -758,7 +787,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
   },
   map: {
-    filters: ({ oldValue, newChartConfig, dimensions }) => {
+    filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (!oldValue) {
           draft.filters = oldValue;
@@ -775,27 +804,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           if (areaDimension) {
             return produce(newChartConfig, (draft) => {
               draft.fields.areaLayer.componentIri = oldValue;
-
-              // Setting the filters so that bottomless areas are shown fist
-              if (areaDimension?.hierarchy) {
-                let leafs = [] as HierarchyValue[];
-                visitHierarchy(areaDimension?.hierarchy, (node) => {
-                  if (
-                    (!node.children || node.children.length === 0) &&
-                    node.hasValue
-                  ) {
-                    leafs.push(node);
-                  }
-                });
-                if (leafs.length > 0) {
-                  draft.filters[oldValue] = {
-                    type: "multi",
-                    values: Object.fromEntries(
-                      leafs.map((x) => [x.value, true])
-                    ),
-                  };
-                }
-              }
             });
           }
 

@@ -52,12 +52,10 @@ import { IconName } from "@/icons";
 export const ControlTabField = ({
   component,
   value,
-  disabled,
   labelId,
 }: {
   component?: DimensionMetadataFragment;
   value: string;
-  disabled?: boolean;
   labelId: string;
 }) => {
   const field = useActiveFieldField({
@@ -165,7 +163,6 @@ export const DataFilterSelectDay = ({
   dimensionIri,
   label,
   options,
-  id,
   disabled,
   isOptional,
   controls,
@@ -173,7 +170,6 @@ export const DataFilterSelectDay = ({
   dimensionIri: string;
   label: string;
   options: Option[];
-  id: string;
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
@@ -338,7 +334,6 @@ export const DataFilterSelectTime = ({
   return (
     <TimeInput
       id={id}
-      controls={controls}
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
@@ -355,7 +350,6 @@ export const TimeInput = ({
   value,
   timeFormat,
   formatLocale,
-  controls,
   isOptional,
   onChange,
 }: {
@@ -364,7 +358,6 @@ export const TimeInput = ({
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
-  controls?: React.ReactNode;
   isOptional: boolean | undefined;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
@@ -644,7 +637,6 @@ export const ColorPickerField = ({
 };
 
 export const ChartFieldField = ({
-  componentIri,
   label,
   field,
   options,
@@ -652,7 +644,6 @@ export const ChartFieldField = ({
   disabled,
   dataSetMetadata,
 }: {
-  componentIri?: string;
   label: string;
   field: string;
   options: Option[];

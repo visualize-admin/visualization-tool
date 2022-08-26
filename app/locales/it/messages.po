@@ -719,8 +719,8 @@ msgstr "Addizionali informazioni"
 
 #: app/components/chart-footnotes.tsx:111
 #: app/configurator/components/dataset-metadata.tsx:117
-msgid "dataset.metadata.landingpage"
-msgstr "Pagina di destinazione"
+msgid "dataset.metadata.learnmore"
+msgstr "Ulteriori informazioni sul set di dati"
 
 #: app/configurator/components/dataset-metadata.tsx:67
 msgid "dataset.metadata.source"
