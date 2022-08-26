@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowX: "hidden",
     overflowY: "hidden",
     backgroundColor: theme.palette.grey[100],
-    boxShadow: theme.shadows[5],
     borderRightColor: theme.palette.grey[500],
     borderRightWidth: "1px",
     borderRightStyle: "solid",
@@ -57,8 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   panelMiddle: {
     overflowX: "hidden",
     overflowY: "auto",
-    padding: theme.spacing(4),
     gridArea: "middle",
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 

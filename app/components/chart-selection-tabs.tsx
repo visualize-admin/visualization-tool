@@ -168,6 +168,14 @@ const TabsInner = ({
           <TabContent iconName={getIconName(chartType)} editable={editable} />
         }
       />
+      <Box
+        sx={{
+          mx: -2,
+          width: "100%",
+          borderBottom: "1px solid",
+          borderBottomColor: "divider",
+        }}
+      ></Box>
     </Tabs>
   );
 };

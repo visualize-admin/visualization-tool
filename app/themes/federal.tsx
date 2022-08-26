@@ -715,9 +715,8 @@ theme.components = {
         paddingLeft: 24,
         backgroundColor: theme.palette.grey[100],
         color: theme.palette.grey[900],
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        boxShadow: shadows[6],
+        borderRight: "1px solid",
+        borderColor: theme.palette.divider,
 
         "&.Mui-selected": {
           height: 50,
