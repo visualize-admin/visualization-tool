@@ -27,8 +27,6 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   return res;
 };
 
-const commonInputPadding = 4;
-
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */
@@ -443,6 +441,8 @@ theme.components = {
   MuiOutlinedInput: {
     styleOverrides: {
       root: {
+        fontSize: theme.typography.body2.fontSize,
+        lineHeight: theme.typography.body2.lineHeight,
         borderRadius: (theme.shape.borderRadius as number) * 1.5,
       },
     },
@@ -570,6 +570,7 @@ theme.components = {
         padding: "8px 14px",
         color: theme.palette.grey[700],
         textOverflow: "ellipsis",
+        fontSize: theme.typography.body2.fontSize,
       },
       disabled: {
         color: theme.palette.grey[500],
@@ -683,6 +684,9 @@ theme.components = {
         "& .MuiPaper-root": {
           borderRadius: 8,
           boxShadow: "0px 10px 30px 0px rgba(0, 0, 0, 0.34)",
+        },
+        "& .MuiMenuItem-root": {
+          fontSize: theme.typography.body2.fontSize,
         },
       },
     },

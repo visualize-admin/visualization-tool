@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
-import { getURLParam } from "@/lib/router/helpers";
-import { useRouteState } from "@/lib/router/use-route-state";
-import useEvent from "@/lib/use-event";
+import { getURLParam } from "@/utils/router/helpers";
+import { useRouteState } from "@/utils/router/use-route-state";
+import useEvent from "@/utils/use-event";
 
 import { ENDPOINT } from "../env";
 
@@ -66,6 +66,11 @@ export const useDataSourceState = () => {
       onValueChange: (newSource) => {
         saveDataSourceToLocalStorage(newSource);
       },
+      shouldValueBeSaved: (item) =>
+        !(
+          item.type === DEFAULT_DATA_SOURCE.type &&
+          item.url === DEFAULT_DATA_SOURCE.url
+        ),
     }
   );
 
@@ -77,7 +82,11 @@ export const useDataSourceState = () => {
 };
 
 export const isDataSourceChangeable = (pathname: string) => {
-  if (pathname === "/" || pathname === "/browse") {
+  if (
+    pathname === "/" ||
+    pathname === "/browse" ||
+    pathname === "/_cube-checker"
+  ) {
     return true;
   } else {
     return false;

@@ -53,7 +53,7 @@ import {
   isStandardErrorDimension,
 } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -181,7 +181,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: DimensionMetaDataFragment | undefined;
+  component: DimensionMetadataFragment | undefined;
   metaData: DataCubeMetadata;
   imputationNeeded: boolean;
 }) => {
@@ -253,7 +253,7 @@ const EncodingOptionsPanel = ({
         <SectionTitle iconName={getIconName(encoding.field)}>
           {getFieldLabel(encoding.field)}
         </SectionTitle>
-        <ControlSectionContent>
+        <ControlSectionContent gap="none">
           <ChartFieldField
             field={encoding.field}
             label={getFieldLabelHint[encoding.field]}
@@ -296,7 +296,7 @@ const EncodingOptionsPanel = ({
               Show additional information
             </Trans>
           </SectionTitle>
-          <ControlSectionContent component="fieldset">
+          <ControlSectionContent component="fieldset" gap="none">
             <ChartOptionCheckboxField
               path="showStandardError"
               field={encoding.field}
@@ -314,7 +314,7 @@ const EncodingOptionsPanel = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent component="fieldset">
+          <ControlSectionContent component="fieldset" gap="none">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -451,7 +451,7 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
+      <ControlSectionContent component="fieldset" gap="none">
         <Box>
           <Select
             id="sort-by"
@@ -564,7 +564,7 @@ const ChartImputationType = ({
       <SectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
+      <ControlSectionContent component="fieldset" gap="none">
         {!disabled && (
           <Box mb={5}>
             <Trans id="controls.section.imputation.explanation">

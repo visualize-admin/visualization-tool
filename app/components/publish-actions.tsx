@@ -21,8 +21,8 @@ import {
 import Flex from "@/components/flex";
 import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
-import { useI18n } from "@/lib/use-i18n";
 import { useLocale } from "@/locales/use-locale";
+import { useI18n } from "@/utils/use-i18n";
 
 export const PublishActions = ({
   configKey,

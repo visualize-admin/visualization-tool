@@ -1,4 +1,4 @@
-import { group } from "d3";
+import { ascending, group } from "d3";
 import produce from "immer";
 import { get, groupBy } from "lodash";
 
@@ -23,6 +23,8 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
+import { HierarchyValue } from "@/graphql/resolver-types";
+import { visitHierarchy } from "@/rdf/tree-utils";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -30,9 +32,9 @@ import {
   getGeoDimensions,
   getTimeDimensions,
 } from "../domain/data";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
-import { unreachableError } from "../lib/unreachable";
+import { unreachableError } from "../utils/unreachable";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -53,7 +55,7 @@ export const enabledChartTypes: ChartType[] = [
  */
 export const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
-  preferredType?: DimensionMetaDataFragment["__typename"]
+  preferredType?: DimensionMetadataFragment["__typename"]
 ) => {
   const dim =
     dimensions.find(
@@ -95,6 +97,34 @@ const DEFAULT_SORTING: {
 } = {
   sortingType: "byDimensionLabel",
   sortingOrder: "asc",
+};
+
+const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
+  const leafs = [] as HierarchyValue[];
+  visitHierarchy(dimension?.hierarchy as HierarchyValue[], (node) => {
+    if ((!node.children || node.children.length === 0) && node.hasValue) {
+      leafs.push(node);
+    }
+  });
+  return leafs;
+};
+
+const makeInitialFiltersForArea = (
+  dimension: DataCubeMetadata["dimensions"][0]
+) => {
+  let filters = {} as ChartConfig["filters"];
+  // Setting the filters so that bottommost areas are shown first
+  // @ts-ignore
+  if (dimension?.hierarchy) {
+    const leafs = findBottommostLayers(dimension);
+    if (leafs.length > 0) {
+      filters[dimension.iri] = {
+        type: "multi",
+        values: Object.fromEntries(leafs.map((x) => [x.value, true])),
+      };
+    }
+  }
+  return filters;
 };
 
 export const getInitialConfig = ({
@@ -199,6 +229,9 @@ export const getInitialConfig = ({
         },
       };
     case "table":
+      const allDimensionsSorted = [...dimensions, ...measures].sort((a, b) =>
+        ascending(a.order ?? Infinity, b.order ?? Infinity)
+      );
       return {
         chartType,
         filters: {},
@@ -209,7 +242,7 @@ export const getInitialConfig = ({
         },
         sorting: [],
         fields: Object.fromEntries<TableColumn>(
-          [...dimensions, ...measures].map((d, i) => [
+          allDimensionsSorted.map((d, i) => [
             d.iri,
             {
               componentIri: d.iri,
@@ -225,7 +258,7 @@ export const getInitialConfig = ({
               },
             },
           ])
-        ),
+        ) as TableFields,
       };
     case "map":
       const {
@@ -233,9 +266,10 @@ export const getInitialConfig = ({
         GeoCoordinatesDimension: geoCoordinates = [],
       } = groupBy(getGeoDimensions(dimensions), (d) => d.__typename);
 
+      const areaDimension = geoShapes[0];
       return {
         chartType,
-        filters: {},
+        filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           areaLayer: {
@@ -755,17 +789,19 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.filters = oldValue;
+        if (!oldValue) {
+          draft.filters = oldValue;
+        }
       });
     },
     fields: {
       areaLayer: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions.find(
+          const areaDimension = dimensions.find(
             (d) => d.__typename === "GeoShapesDimension" && d.iri === oldValue
           );
 
-          if (ok) {
+          if (areaDimension) {
             return produce(newChartConfig, (draft) => {
               draft.fields.areaLayer.componentIri = oldValue;
             });
@@ -973,7 +1009,7 @@ const convertTableFieldsToSegmentField = ({
         dimensionValues: (
           dimensions.find(
             (d) => d.iri === componentIri
-          ) as DimensionMetaDataFragment
+          ) as DimensionMetadataFragment
         )?.values,
       }),
     };

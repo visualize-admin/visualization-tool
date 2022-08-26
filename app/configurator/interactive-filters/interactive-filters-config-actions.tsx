@@ -9,7 +9,7 @@ import {
   toggleInteractiveTimeFilter,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const useInteractiveFiltersToggle = ({
   path,
@@ -90,7 +90,7 @@ export const useInteractiveDataFiltersToggle = ({
   dimensions,
 }: {
   path: "dataFilters";
-  dimensions: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
 }) => {
   const [state, dispatch] = useConfiguratorState();
 

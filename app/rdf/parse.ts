@@ -13,10 +13,11 @@ import {
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
+import { truthy } from "@/domain/types";
+
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
-import truthy from "../utils/truthy";
 
 import * as ns from "./namespace";
 
@@ -195,7 +196,10 @@ export const parseCubeDimension = ({
   dim: CubeDimension;
   cube: Cube;
   locale: string;
-  units?: Map<string, { iri: Term; label?: Term }>;
+  units?: Map<
+    string,
+    { iri: Term; label?: Term; isCurrency?: Term; currencyExponent?: Term }
+  >;
 }): ResolvedDimension => {
   const outOpts = { language: getQueryLocales(locale) };
 
@@ -227,12 +231,17 @@ export const parseCubeDimension = ({
     .terms.some((t) => t.equals(ns.cube.MeasureDimension));
 
   const unitTerm = dim.out(ns.qudt.unit).term;
-  const dimensionUnit = unitTerm
-    ? units?.get(unitTerm.value)?.label?.value
-    : undefined;
+  const dimensionUnit = unitTerm ? units?.get(unitTerm.value) : undefined;
+  const dimensionUnitLabel = dimensionUnit?.label?.value;
 
   const rawOrder = dim.out(ns.sh.order).value;
   const order = rawOrder !== undefined ? parseInt(rawOrder, 10) : undefined;
+
+  const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
+  const resolution =
+    dataType?.equals(ns.xsd.int) || dataType?.equals(ns.xsd.integer)
+      ? 0
+      : undefined;
 
   return {
     cube,
@@ -247,9 +256,14 @@ export const parseCubeDimension = ({
       isKeyDimension,
       isMeasureDimension,
       hasUndefinedValues,
-      unit: dimensionUnit,
+      unit: dimensionUnitLabel,
       dataType: dataType?.value,
-      name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
+      resolution,
+      isCurrency: !!dimensionUnit?.isCurrency?.value,
+      currencyExponent: dimensionUnit?.currencyExponent?.value
+        ? parseInt(dimensionUnit?.currencyExponent?.value)
+        : undefined,
+      name,
       order: order,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
         ? "Time"

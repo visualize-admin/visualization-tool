@@ -3,7 +3,6 @@ import get from "lodash/get";
 import React, {
   ChangeEvent,
   InputHTMLAttributes,
-  SyntheticEvent,
   useCallback,
   useContext,
   useMemo,
@@ -26,10 +25,10 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
+import { dfs } from "@/utils/dfs";
+import useEvent from "@/utils/use-event";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -177,7 +176,7 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
 };
 
 export const useDimensionSelection = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [_, dispatch] = useConfiguratorState();
 
   const selectAll = useCallback(() => {
     dispatch({
@@ -296,43 +295,36 @@ export const useActiveFieldField = ({
 };
 
 // Specific ------------------------------------------------------------------
-export const useChartTypeSelectorField = ({
-  value,
-  metaData,
+export const useChartType = ({
+  metadata,
 }: {
-  value: string;
-  metaData: DataCubeMetadata;
-}): FieldProps & {
-  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
+  metadata: DataCubeMetadata | null | undefined;
+}): {
+  value: ChartType;
+  onChange: (chartType: ChartType) => void;
 } => {
   const [state, dispatch] = useConfiguratorState();
-  const onClick = useCallback<(e: SyntheticEvent<HTMLButtonElement>) => void>(
-    (e) => {
-      const chartType = e.currentTarget.value as ChartType;
+  const onChange = useEvent((chartType: ChartType) => {
+    if (!metadata) {
+      return;
+    }
+    dispatch({
+      type: "CHART_TYPE_CHANGED",
+      value: {
+        chartType,
+        dataSetMetadata: metadata,
+      },
+    });
+  });
 
-      dispatch({
-        type: "CHART_TYPE_CHANGED",
-        value: {
-          chartType,
-          dataSetMetadata: metaData,
-        },
-      });
-    },
-    [dispatch, metaData]
-  );
-
-  const stateValue =
+  const value =
     state.state === "CONFIGURING_CHART" || state.state === "DESCRIBING_CHART"
       ? get(state, "chartConfig.chartType")
       : "";
 
-  const checked = stateValue === value;
-
   return {
-    name: "chartType",
+    onChange,
     value,
-    checked,
-    onClick,
   };
 };
 
@@ -431,7 +423,7 @@ const MultiFilterContext = React.createContext({
   dimensionIri: undefined as string | undefined,
   colorConfigPath: undefined as string | undefined,
   checkboxController: new CheckboxStateController([], []),
-  getValueColor: (value: string) => "" as string,
+  getValueColor: (_: string) => "" as string,
 });
 
 export const useMultiFilterContext = () => {
@@ -523,7 +515,7 @@ export const useMultiFilterCheckboxes = (
   const [, dispatch] = useConfiguratorState();
   const { dimensionIri, checkboxController } = useMultiFilterContext();
 
-  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = useEvent(() => {
     if (!dimensionIri) {
       return;
     }

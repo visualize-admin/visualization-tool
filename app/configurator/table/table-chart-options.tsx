@@ -1,5 +1,4 @@
 import { t, Trans } from "@lingui/macro";
-import { Stack } from "@mui/material";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
@@ -41,7 +40,7 @@ import {
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
 import { canDimensionBeMultiFiltered } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 
 const useTableColumnGroupHiddenField = ({
@@ -240,67 +239,65 @@ export const TableColumnOptions = ({
             <Trans id="controls.section.columnstyle">Column Style</Trans>
           </SectionTitle>
           <ControlSectionContent>
-            <Stack spacing={2}>
-              <ChartOptionSelectField<ColumnStyle>
-                id="columnStyle"
-                label={t({
-                  id: "controls.select.columnStyle",
-                  message: "Column Style",
-                })}
-                options={columnStyleOptions}
-                getValue={(type) => {
-                  switch (type) {
-                    case "text":
-                      return {
-                        type: "text",
-                        textStyle: "regular",
-                        textColor: "#333",
-                        columnColor: "#fff",
-                      };
-                    case "category":
-                      return {
-                        type: "category",
-                        textStyle: "regular",
+            <ChartOptionSelectField<ColumnStyle>
+              id="columnStyle"
+              label={t({
+                id: "controls.select.columnStyle",
+                message: "Column Style",
+              })}
+              options={columnStyleOptions}
+              getValue={(type) => {
+                switch (type) {
+                  case "text":
+                    return {
+                      type: "text",
+                      textStyle: "regular",
+                      textColor: "#333",
+                      columnColor: "#fff",
+                    };
+                  case "category":
+                    return {
+                      type: "category",
+                      textStyle: "regular",
+                      palette: getDefaultCategoricalPalette().value,
+                      colorMapping: mapValueIrisToColor({
                         palette: getDefaultCategoricalPalette().value,
-                        colorMapping: mapValueIrisToColor({
-                          palette: getDefaultCategoricalPalette().value,
-                          dimensionValues: (
-                            component as DimensionMetaDataFragment
-                          )?.values,
-                        }),
-                      };
-                    case "heatmap":
-                      return {
-                        type: "heatmap",
-                        textStyle: "regular",
-                        palette: getDefaultDivergingSteppedPalette().value,
-                      };
-                    case "bar":
-                      return {
-                        type: "bar",
-                        textStyle: "regular",
-                        barColorPositive:
-                          getDefaultCategoricalPalette().colors[0],
-                        barColorNegative:
-                          getDefaultCategoricalPalette().colors[1],
-                        barColorBackground: "#ccc",
-                        barShowBackground: false,
-                      };
-                    default:
-                      return undefined;
-                  }
-                }}
-                getKey={(d) => d.type}
-                field={activeField}
-                path="columnStyle"
-              />
+                        dimensionValues: (
+                          component as DimensionMetadataFragment
+                        )?.values,
+                      }),
+                    };
+                  case "heatmap":
+                    return {
+                      type: "heatmap",
+                      textStyle: "regular",
+                      palette: getDefaultDivergingSteppedPalette().value,
+                    };
+                  case "bar":
+                    return {
+                      type: "bar",
+                      textStyle: "regular",
+                      barColorPositive:
+                        getDefaultCategoricalPalette().colors[0],
+                      barColorNegative:
+                        getDefaultCategoricalPalette().colors[1],
+                      barColorBackground: "#ccc",
+                      barShowBackground: false,
+                    };
+                  default:
+                    return undefined;
+                }
+              }}
+              getKey={(d) => d.type}
+              field={activeField}
+              path="columnStyle"
+            />
 
-              <ColumnStyleSubOptions
-                chartConfig={chartConfig}
-                activeField={activeField}
-                component={component as DimensionMetaDataFragment}
-              />
-            </Stack>
+            <ColumnStyleSubOptions
+              chartConfig={chartConfig}
+              activeField={activeField}
+              component={component as DimensionMetadataFragment}
+            />
           </ControlSectionContent>
         </ControlSection>
       )}
@@ -369,7 +366,7 @@ const ColumnStyleSubOptions = ({
 }: {
   chartConfig: TableConfig;
   activeField: string;
-  component: DimensionMetaDataFragment;
+  component: DimensionMetadataFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (

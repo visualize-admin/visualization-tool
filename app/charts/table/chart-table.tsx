@@ -10,10 +10,9 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import { DataSource, TableConfig } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -39,8 +38,6 @@ export const ChartTableVisualization = ({
     },
   });
 
-  const observations = data?.dataCubeByIri?.observations.data;
-
   if (data?.dataCubeByIri) {
     const { dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
@@ -56,8 +53,6 @@ export const ChartTableVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {
@@ -72,8 +67,8 @@ const ChartTable = memo(function ChartTable({
   chartConfig,
 }: {
   observations: Observation[];
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   chartConfig: TableConfig;
 }) {
   return (

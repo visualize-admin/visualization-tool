@@ -17,7 +17,7 @@ import {
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
 import Flex from "@/components/flex";
-import { HintBlue, HintRed } from "@/components/hint";
+import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
@@ -33,8 +33,8 @@ import {
 } from "@/domain/datasource";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { useResizeObserver } from "@/lib/use-resize-observer";
 import { useLocale } from "@/locales/use-locale";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const ChartPublished = ({
   dataSet,
@@ -143,11 +143,11 @@ export const ChartPublishedInner = ({
         )}
         {!isTrustedDataSource && (
           <Box sx={{ mb: 4 }}>
-            <HintBlue iconName="hintWarning">
+            <HintYellow iconName="hintWarning">
               <Trans id="data.source.notTrusted">
                 This chart is not using a trusted data source.
               </Trans>
-            </HintBlue>
+            </HintYellow>
           </Box>
         )}
         {isUsingImputation(chartConfig) && (

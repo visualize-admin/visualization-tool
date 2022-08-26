@@ -8,11 +8,7 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
-export const InteractionHorizontal = memo(function InteractionHorizontal({
-  debug,
-}: {
-  debug?: boolean;
-}) {
+export const InteractionHorizontal = memo(function InteractionHorizontal() {
   const [state, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 

@@ -6,11 +6,11 @@ import rdf from "rdf-ext";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
-import truthy from "@/utils/truthy";
 
 import { computeScores } from "./query-search-score-utils";
 
@@ -26,9 +26,6 @@ const makeInFilter = (varName: string, values: string[]) => {
   )`
         : ""
     }`;
-};
-type RdfValue<T> = {
-  value: T;
 };
 
 const makeVisualizeFilter = (includeDrafts: boolean) => {
@@ -54,8 +51,19 @@ const makeVisualizeFilter = (includeDrafts: boolean) => {
   `;
 };
 
+const enhanceQuery = (rawQuery: string) => {
+  return (
+    rawQuery
+      .toLowerCase()
+      .split(" ")
+      // Wildcard Searches on each term
+      .map((t) => `${t}*`)
+      .join(" ")
+  );
+};
+
 export const searchCubes = async ({
-  query,
+  query: rawQuery,
   locale,
   filters,
   includeDrafts,
@@ -69,6 +77,8 @@ export const searchCubes = async ({
   sparqlClient: ParsingClient;
   sparqlClientStream: StreamClient;
 }) => {
+  const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
+
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ||

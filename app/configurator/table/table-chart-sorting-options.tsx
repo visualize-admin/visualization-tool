@@ -1,6 +1,13 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useCallback } from "react";
+import {
+  Box,
+  Button,
+  SelectChangeEvent,
+  Theme,
+  Typography,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import React, { ChangeEvent, useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -34,25 +41,65 @@ import {
 } from "@/configurator/table/table-config-state";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
+import useEvent from "@/utils/use-event";
+
+const useStyles = makeStyles<Theme>((theme) => ({
+  sortingItemContainer: {
+    backgroundColor: theme.palette.grey[100],
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: `calc(${theme.spacing(6)} + ${theme.spacing(2)})`,
+
+    borderTopColor: theme.palette.grey[500],
+    borderTopStyle: "solid",
+    borderTopWidth: 1,
+  },
+  selectWrapper: {
+    color: theme.palette.grey[800],
+    lineHeight: "1rem",
+    textAlign: "left",
+    marginBottom: theme.spacing(4),
+  },
+  metaOptionsContainer: {
+    marginBottom: -theme.spacing(1),
+    width: "100%",
+    alignItems: "flex-start",
+  },
+  removeButton: {
+    padding: 0,
+    cursor: "pointer",
+    marginLeft: "auto",
+    minWidth: 0,
+    minHeight: 0,
+  },
+  iconWrapper: {
+    // @ts-ignore
+    color: theme.palette.secondary.disabled,
+    "&:hover": {
+      color: theme.palette.secondary.main,
+    },
+  },
+}));
 
 const TableSortingOptionItem = ({
   componentIri,
-  componentType,
   index,
+  chartConfig,
   sortingOrder,
   metaData,
-  chartConfig,
 }: {
   metaData: DataCubeMetadata;
   index: number;
   chartConfig: TableConfig;
 } & TableSortingOption) => {
   const [, dispatch] = useConfiguratorState();
+  const classes = useStyles();
   const component =
     metaData.dimensions.find(({ iri }) => iri === componentIri) ??
     metaData.measures.find(({ iri }) => iri === componentIri);
 
-  const onRemove = useCallback(() => {
+  const onRemove = useEvent(() => {
     dispatch({
       type: "CHART_CONFIG_REPLACED",
       value: {
@@ -62,100 +109,63 @@ const TableSortingOptionItem = ({
         dataSetMetadata: metaData,
       },
     });
-  }, [chartConfig, dispatch, index, metaData]);
+  });
 
-  const onChangeSortingOrder = useCallback(
-    (e) => {
-      dispatch({
-        type: "CHART_CONFIG_REPLACED",
-        value: {
-          chartConfig: changeSortingOptionOrder(chartConfig, {
-            index,
-            sortingOrder: e.currentTarget.value,
-          }),
-          dataSetMetadata: metaData,
-        },
-      });
-    },
-    [chartConfig, dispatch, index, metaData]
-  );
+  const onChangeSortingOrder = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig: changeSortingOptionOrder(chartConfig, {
+          index,
+          sortingOrder: e.currentTarget.value as "asc" | "desc",
+        }),
+        dataSetMetadata: metaData,
+      },
+    });
+  });
 
   const sortingType =
     component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
 
   return component ? (
-    <Box
-      sx={{
-        backgroundColor: "grey.100",
-        py: 4,
-        pl: 4,
-        pr: 6,
-
-        borderTopColor: "grey.500",
-        borderTopStyle: "solid",
-        borderTopWidth: 1,
-      }}
-    >
-      <Box sx={{ pr: 2 }}>
-        <Typography
-          variant="body1"
-          sx={{
-            color: "grey.800",
-            lineHeight: ["1rem", "1rem", "1rem"],
-            textAlign: "left",
-            mb: 3,
-          }}
+    <Box className={classes.sortingItemContainer}>
+      <Typography variant="body1" className={classes.selectWrapper}>
+        <ChangeTableSortingOption
+          index={index}
+          metaData={metaData}
+          chartConfig={chartConfig}
+        />
+      </Typography>
+      <Flex className={classes.metaOptionsContainer}>
+        <Radio
+          name={`${componentIri}-sortingOrder`}
+          value="asc"
+          checked={sortingOrder === "asc"}
+          onChange={onChangeSortingOrder}
+          label={getFieldLabel(`sorting.${sortingType}.asc`)}
+        />
+        <Radio
+          name={`${componentIri}-sortingOrder`}
+          value="desc"
+          checked={sortingOrder === "desc"}
+          onChange={onChangeSortingOrder}
+          label={getFieldLabel(`sorting.${sortingType}.desc`)}
+        />
+        <Button
+          variant="text"
+          className={classes.removeButton}
+          onClick={onRemove}
         >
-          <ChangeTableSortingOption
-            index={index}
-            metaData={metaData}
-            chartConfig={chartConfig}
-          />
-        </Typography>
-        <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "flex-start" }}>
-          <Radio
-            name={`${componentIri}-sortingOrder`}
-            value="asc"
-            checked={sortingOrder === "asc"}
-            onChange={onChangeSortingOrder}
-            label={getFieldLabel(`sorting.${sortingType}.asc`)}
-          />
-          <Radio
-            name={`${componentIri}-sortingOrder`}
-            value="desc"
-            checked={sortingOrder === "desc"}
-            onChange={onChangeSortingOrder}
-            label={getFieldLabel(`sorting.${sortingType}.desc`)}
-          />
-          <Button
-            variant="text"
-            sx={{
-              p: 0,
-              cursor: "pointer",
-              ml: "auto",
-              mb: 2,
-              top: "2px",
-              position: "relative",
-            }}
-            onClick={onRemove}
-          >
-            <VisuallyHidden>
-              <Trans id="controls.sorting.removeOption">
-                Remove sorting dimension
-              </Trans>
-            </VisuallyHidden>
-            <Box
-              aria-hidden="true"
-              sx={{
-                color: "secondary.disabled",
-                ":hover": { color: "secondary" },
-              }}
-            >
-              <Icon name="trash" size={20} />
-            </Box>
-          </Button>
-        </Flex>
-      </Box>
+          <VisuallyHidden>
+            <Trans id="controls.sorting.removeOption">
+              Remove sorting dimension
+            </Trans>
+          </VisuallyHidden>
+          <Box className={classes.iconWrapper} aria-hidden="true">
+            <Icon name="trash" size={20} />
+          </Box>
+        </Button>
+      </Flex>
     </Box>
   ) : null;
 };
@@ -353,14 +363,11 @@ export const TableSortingOptions = ({
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <ControlSection>
-        <SectionTitle iconName={"sort"}>
+        <SectionTitle iconName="sort">
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">
-          {(
-            { innerRef, placeholder },
-            { isDraggingOver, isUsingPlaceholder, draggingOverWith }
-          ) => {
+          {({ innerRef, placeholder }) => {
             return (
               <Box>
                 <Box ref={innerRef}>

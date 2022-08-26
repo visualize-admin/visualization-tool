@@ -35,7 +35,7 @@ import {
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 
@@ -81,7 +81,7 @@ export const DataDownloadStateProvider = ({
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
 
-const makeColumnLabel = (dim: DimensionMetaDataFragment) => {
+const makeColumnLabel = (dim: DimensionMetadataFragment) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
 };
 const prepareData = ({
@@ -89,8 +89,8 @@ const prepareData = ({
   measures,
   observations,
 }: {
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   observations: Observation[];
 }) => {
   const columns = keyBy([...dimensions, ...measures], (d) => d.iri);

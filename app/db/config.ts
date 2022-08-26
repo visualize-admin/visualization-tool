@@ -1,4 +1,4 @@
-import { createChartId } from "../lib/create-chart-id";
+import { createChartId } from "../utils/create-chart-id";
 
 import { pool } from "./pg-pool";
 

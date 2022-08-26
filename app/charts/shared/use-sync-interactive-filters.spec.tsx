@@ -8,7 +8,7 @@ import {
 } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig } from "@/configurator";
-import fixture from "@/test/__fixtures/dev/4YL1p4QTFQS4.json";
+import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 
 const chartConfig = {
   ...fixture.data.chartConfig,

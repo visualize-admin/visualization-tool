@@ -122,7 +122,7 @@ export const ChartConfiguratorTable = ({
           <SectionTitle titleId="controls-design">
             <Trans id="controls.select.chart.type">Chart Type</Trans>
           </SectionTitle>
-          <ControlSectionContent px="small">
+          <ControlSectionContent px="small" gap="none">
             <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
           </ControlSectionContent>
           <Divider />
@@ -131,6 +131,7 @@ export const ChartConfiguratorTable = ({
           </SectionTitle>
           <ControlSectionContent
             px="small"
+            gap="none"
             role="tablist"
             aria-labelledby="controls-settings"
           >

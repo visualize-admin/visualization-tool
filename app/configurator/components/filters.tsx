@@ -61,10 +61,10 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcSearch from "@/icons/components/IcSearch";
-import { dfs } from "@/lib/dfs";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+import { dfs } from "@/utils/dfs";
 import { valueComparator } from "@/utils/sorting-values";
+import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { ColorMapping, ConfiguratorState } from "../config-types";
@@ -233,7 +233,7 @@ const isDimensionOptionEqualToDimensionValue = (
 
 const getOptionsFromTree = (tree: HierarchyValue[]) => {
   return sortBy(
-    dfs(tree, (node, { depth, parents }) => ({
+    dfs(tree, (node, { parents }) => ({
       ...node,
       parents,
     })),
@@ -496,7 +496,7 @@ const DrawerContent = forwardRef<
     () => values
   );
   pendingValuesRef.current = pendingValues;
-  const handleSelect = useEvent((ev, newValues: AutocompleteOption[]) => {
+  const handleSelect = useEvent((_, newValues: AutocompleteOption[]) => {
     setPendingValues(newValues);
   });
 
@@ -509,7 +509,7 @@ const DrawerContent = forwardRef<
     true,
     false,
     false
-  >["onInputChange"] = useEvent((ev, value, reason) => {
+  >["onInputChange"] = useEvent((_, value, reason) => {
     if (reason === "input") {
       setInputValue(value);
     }
@@ -537,7 +537,7 @@ const DrawerContent = forwardRef<
     });
   });
 
-  const handleAutocompleteClose = useEvent((ev, reason) => {
+  const handleAutocompleteClose = useEvent((_, reason) => {
     if (reason === "escape") {
       onClose();
     }

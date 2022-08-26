@@ -62,10 +62,8 @@ export const HeaderBorder = () => {
 
 export const Header = ({
   pageType = "app",
-  contentId,
 }: {
   pageType?: "content" | "app";
-  contentId?: string;
 }) => {
   return (
     <Box

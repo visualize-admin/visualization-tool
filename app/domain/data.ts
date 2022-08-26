@@ -2,7 +2,7 @@ import { Literal, NamedNode } from "rdf-js";
 
 import { DimensionType } from "../charts/chart-config-ui-options";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NominalDimension,
@@ -130,16 +130,16 @@ export const parseObservationValue = ({
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: DimensionMetaDataFragment[]) =>
+export const getTimeDimensions = (dimensions: DimensionMetadataFragment[]) =>
   dimensions.filter((d) => d.__typename === "TemporalDimension");
 
 export const isCategoricalDimension = (
-  d: DimensionMetaDataFragment
+  d: DimensionMetadataFragment
 ): d is NominalDimension | OrdinalDimension => {
   return isNominalDimension(d) || isOrdinalDimension(d);
 };
 
-export const canDimensionBeMultiFiltered = (d: DimensionMetaDataFragment) => {
+export const canDimensionBeMultiFiltered = (d: DimensionMetadataFragment) => {
   return (
     isNominalDimension(d) ||
     isOrdinalDimension(d) ||
@@ -152,18 +152,18 @@ export const canDimensionBeMultiFiltered = (d: DimensionMetaDataFragment) => {
  * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = (
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => dimensions.filter(isCategoricalDimension);
 
 export const getGeoCoordinatesDimensions = (
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => dimensions.filter((d) => d.__typename === "GeoCoordinatesDimension");
 
 export const getGeoShapesDimensions = (
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => dimensions.filter((d) => d.__typename === "GeoShapesDimension");
 
-export const getGeoDimensions = (dimensions: DimensionMetaDataFragment[]) =>
+export const getGeoDimensions = (dimensions: DimensionMetadataFragment[]) =>
   dimensions.filter((d) =>
     ["GeoCoordinatesDimension", "GeoShapesDimension"].includes(d.__typename)
   );
@@ -174,33 +174,33 @@ export const getDimensionsByDimensionType = ({
   measures,
 }: {
   dimensionTypes: DimensionType[];
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }) =>
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)
   );
 
 export const isNominalDimension = (
-  dimension?: DimensionMetaDataFragment
+  dimension?: DimensionMetadataFragment
 ): dimension is GeoCoordinatesDimension => {
   return dimension?.__typename === "NominalDimension";
 };
 
 export const isOrdinalDimension = (
-  dimension?: DimensionMetaDataFragment
+  dimension?: DimensionMetadataFragment
 ): dimension is GeoCoordinatesDimension => {
   return dimension?.__typename === "OrdinalDimension";
 };
 
 export const isGeoCoordinatesDimension = (
-  dimension?: DimensionMetaDataFragment
+  dimension?: DimensionMetadataFragment
 ): dimension is GeoCoordinatesDimension => {
   return dimension?.__typename === "GeoCoordinatesDimension";
 };
 
 export const isGeoShapesDimension = (
-  dimension?: DimensionMetaDataFragment
+  dimension?: DimensionMetadataFragment
 ): dimension is GeoShapesDimension => {
   return dimension?.__typename === "GeoShapesDimension";
 };
@@ -209,13 +209,13 @@ export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
   return dim.data?.related.some((x) => x.type === "StandardError");
 };
 
-export const isStandardErrorDimension = (dim: DimensionMetaDataFragment) => {
+export const isStandardErrorDimension = (dim: DimensionMetadataFragment) => {
   return dim?.related?.some((r) => r.type === "StandardError");
 };
 
 export const findRelatedErrorDimension = (
   dimIri: string,
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => {
   return dimensions.find((x) =>
     x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")

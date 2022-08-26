@@ -198,7 +198,7 @@ ${(
           componentsProps={{}}
           value={new Date(1991, 10, 20)}
           onChange={() => {}}
-          renderDay={(date, selectedDates, pickersDayProps) => {
+          renderDay={(date, _, pickersDayProps) => {
             return (
               <PickersDay
                 {...pickersDayProps}

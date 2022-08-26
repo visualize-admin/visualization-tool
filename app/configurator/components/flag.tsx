@@ -1,6 +1,6 @@
 import qs from "qs";
 
-import { isRunningInBrowser } from "@/lib/is-running-in-browser";
+import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 
 const FLAG_PREFIX = "flag__";
 

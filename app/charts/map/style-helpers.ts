@@ -9,7 +9,7 @@ export function hasUrl(obj: AnySourceData): obj is HasUrl<AnySourceData> {
   return Object.prototype.hasOwnProperty.call(obj, "url");
 }
 
-type HasLayout<T> = T extends { layout?: infer R } ? T : never;
+type HasLayout<T> = T extends { layout?: infer T } ? T : never;
 export function hasLayout(obj: AnyLayer): obj is HasLayout<AnySourceData> {
   return Object.prototype.hasOwnProperty.call(obj, "layout");
 }

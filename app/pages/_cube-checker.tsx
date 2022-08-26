@@ -7,9 +7,13 @@ import { omit } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
 import rdf from "rdf-ext";
 import React from "react";
+import StreamClient from "sparql-http-client";
 
 import { ContentLayout } from "@/components/layout";
-import { fromStream, sparqlClientStream } from "@/rdf/sparql-client";
+import { DataSource } from "@/configurator";
+import { DEFAULT_DATA_SOURCE, parseDataSource } from "@/domain/datasource";
+import { SOURCES_BY_LABEL } from "@/domain/datasource/constants";
+import { fromStream } from "@/rdf/sparql-client";
 
 import * as ns from "../rdf/namespace";
 
@@ -37,13 +41,15 @@ type PageProps = {
   checks: { check: Omit<Check, "run">; result: CheckResult }[];
 };
 
-const describeCubes = async (cubeIris: readonly string[]) => {
+const describeCubes = async (
+  sparqlClientStream: StreamClient,
+  cubeIris: readonly string[]
+) => {
   return Promise.all(
     cubeIris.map(async (cubeIri) => {
       const query = DESCRIBE`<${cubeIri}>`;
       const stream = await query.execute(sparqlClientStream.query);
       const dataset = await fromStream(rdf.dataset(), stream);
-      console.log({ dataset });
       return clownface({ dataset });
     })
   );
@@ -60,6 +66,32 @@ const checks: Check[] = [
         return { ok: true, message: "Has shape" };
       } else {
         return { ok: false, message: "No shape" };
+      }
+    },
+  },
+  {
+    name: "Has a creator",
+    description: "Should have a shape through dcterms:creator",
+    run: async ({ cubeIri, loaders }) => {
+      const cube = await loaders.describeCubes.load(cubeIri);
+      const shape = cube.out(ns.dcterms.creator).value;
+      if (shape) {
+        return { ok: true, message: "Has creator" };
+      } else {
+        return { ok: false, message: "No creator" };
+      }
+    },
+  },
+  {
+    name: "Has a theme",
+    description: "Should have a shape through dcat:theme",
+    run: async ({ cubeIri, loaders }) => {
+      const cube = await loaders.describeCubes.load(cubeIri);
+      const shape = cube.out(ns.dcat.theme).value;
+      if (shape) {
+        return { ok: true, message: "Has a theme" };
+      } else {
+        return { ok: false, message: "No theme" };
       }
     },
   },
@@ -84,13 +116,12 @@ const checks: Check[] = [
     },
   },
   {
-    name: "Is viewable on visualize.admin",
+    name: "Is set to be viewable on visualize.admin",
     description:
       "Should have a predicate schema:workExample <https://ld.admin.ch/application/visualize>",
     run: async ({ cubeIri, loaders }) => {
       const cube = await loaders.describeCubes.load(cubeIri);
       const workExamples = cube.out(ns.schema.workExample).values;
-      console.log(workExamples);
       if (
         workExamples &&
         workExamples.includes("https://ld.admin.ch/application/visualize")
@@ -171,24 +202,48 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   if (query.cubeIri) {
     const cubeIri = query.cubeIri as string;
+    const datasourceLabel = query.dataSource as string;
+    let datasource: DataSource;
+    if (datasourceLabel && SOURCES_BY_LABEL[datasourceLabel]) {
+      datasource = parseDataSource(SOURCES_BY_LABEL[datasourceLabel].value);
+    } else {
+      datasource = DEFAULT_DATA_SOURCE;
+    }
+
+    console.log({ datasource });
+    if (datasource.type !== "sparql") {
+      throw new Error(
+        `Cannot yet use cubeChecker with datasource of type ${datasource.type}`
+      );
+    }
+
+    const sparqlClientStream = new StreamClient({
+      endpointUrl: datasource.url,
+    });
+    console.log("created stream with", datasource.url);
     const context = {
       cubeIri,
       loaders: {
-        describeCubes: new DataLoader(describeCubes),
+        describeCubes: new DataLoader<string, AnyPointer>((cubeIri) =>
+          describeCubes(sparqlClientStream, cubeIri)
+        ),
       },
     };
-    const propChecks = await Promise.all(
-      checks.map(async (c) => ({
-        check: omit(c, "run"),
-        result: await c.run(context),
-      }))
-    );
+    const runCheck = async (check: Check) => {
+      const start = Date.now();
+      const result = await check.run(context);
+      const end = Date.now();
+      console.log("Check", check.name, "ran in", end - start, "ms");
+      return {
+        check: omit(check, "run"),
+        result,
+      };
+    };
+
+    const propChecks = await Promise.all(checks.map(runCheck));
     return {
       props: {
         cubeIri: cubeIri,

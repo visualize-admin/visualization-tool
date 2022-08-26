@@ -7,7 +7,7 @@ import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();

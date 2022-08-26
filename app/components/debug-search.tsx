@@ -23,6 +23,7 @@ const geographyTheme = {
   value: "https://register.ld.admin.ch/opendataswiss/category/geography",
 };
 
+// @ts-ignore
 const bafuCreator = {
   name: "BAFU creator",
   type: "DataCubeOrganization",
@@ -30,6 +31,7 @@ const bafuCreator = {
     "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
 };
 
+// @ts-ignore
 const mobilityTheme = {
   name: "Mobility theme",
   type: "DataCubeTheme",
@@ -54,13 +56,13 @@ const Search = ({
 
   useEffect(() => {
     startTimeRef.current = Date.now();
-  }, [query, locale]);
+  }, [query, locale, includeDrafts]);
 
   const [cubes] = useDataCubesQuery({
     variables: {
       locale: locale,
       query: query,
-      filters: filters.map(({ name, type, value }) => ({ type, value })),
+      filters: filters.map(({ type, value }) => ({ type, value })),
       includeDrafts,
       sourceUrl,
       sourceType: "sparql",
@@ -69,7 +71,6 @@ const Search = ({
 
   useEffect(() => {
     if (cubes.data) {
-      console.log("seting end time", query);
       setEndTime(Date.now());
     }
   }, [cubes.data]);
@@ -182,6 +183,13 @@ const DebugSearch = () => {
       <Search
         sourceUrl={sourceUrl}
         includeDrafts={includeDrafts}
+        query="bath"
+        filters={[territoryTheme]}
+        locale="en"
+      />
+      <Search
+        sourceUrl={sourceUrl}
+        includeDrafts={includeDrafts}
         query="Ausgaben"
         filters={[]}
         locale="de"
@@ -233,6 +241,13 @@ const DebugSearch = () => {
         sourceUrl={sourceUrl}
         includeDrafts={includeDrafts}
         query="WASTA"
+        filters={[]}
+        locale="en"
+      />
+      <Search
+        sourceUrl={sourceUrl}
+        includeDrafts={includeDrafts}
+        query="tari"
         filters={[]}
         locale="en"
       />

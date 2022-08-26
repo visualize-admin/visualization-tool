@@ -21,13 +21,13 @@ import {
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
-import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
-import covid19ColumnChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
-import covid19TableChartConfig from "@/test/__fixtures/dev/chartConfig-table-covid19.json";
-import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
+import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
+import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
+import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
+import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
+import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -132,7 +132,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+  } as DimensionMetadataFragment;
 
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
@@ -144,7 +144,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+  } as DimensionMetadataFragment;
 
   describe("applyNonTableDimensionToFilters", () => {
     it("should remove single value filter when a keyDimension is used as a field", () => {

@@ -12,8 +12,8 @@ import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { PromiseValue, truthy } from "@/domain/types";
 import { makeCubeFilters } from "@/rdf/cube-filters";
-import { PromiseValue } from "@/utils/promise";
 
 import { Filters } from "../configurator";
 import {
@@ -25,7 +25,6 @@ import {
 import { SPARQL_EDITOR } from "../domain/env";
 import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
-import truthy from "../utils/truthy";
 
 import * as ns from "./namespace";
 import {
@@ -39,7 +38,7 @@ import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
 import { loadResourcePositions } from "./query-positions";
 import { loadUnversionedResources } from "./query-sameas";
-import { loadUnitLabels } from "./query-unit-labels";
+import { loadUnits } from "./query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -173,8 +172,8 @@ export const getCubeDimensions = async ({
       return t ? [t] : [];
     });
 
-    const dimensionUnitLabels = index(
-      await loadUnitLabels({
+    const dimensionUnitIndex = index(
+      await loadUnits({
         ids: dimensionUnits,
         locale: "en", // No other locales exist yet
         sparqlClient,
@@ -187,7 +186,7 @@ export const getCubeDimensions = async ({
         dim,
         cube,
         locale,
-        units: dimensionUnitLabels,
+        units: dimensionUnitIndex,
       });
     });
   } catch (e) {
@@ -486,7 +485,7 @@ export const getCubeObservations = async ({
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }
-  const observations = observationsRaw.map((obs, i) => {
+  const observations = observationsRaw.map((obs) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
@@ -572,6 +571,7 @@ const buildFilters = ({
     }
 
     const hasHierarchy =
+      cubeDimension.out(ns.cubeMeta.inHierarchy).values.length > 0 ||
       cubeDimension.out(ns.cubeMeta.hasHierarchy).values.length > 0;
     const toRDFValue = (value: string): NamedNode | Literal => {
       return dataType && !hasHierarchy

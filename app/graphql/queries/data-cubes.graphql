@@ -37,7 +37,7 @@ query DataCubes(
   }
 }
 
-fragment dimensionMetaData on Dimension {
+fragment dimensionMetadata on Dimension {
   iri
   label
   isNumerical
@@ -52,6 +52,11 @@ fragment dimensionMetaData on Dimension {
   ... on TemporalDimension {
     timeUnit
     timeFormat
+  }
+  ... on Measure {
+    isCurrency
+    currencyExponent
+    resolution
   }
 }
 
@@ -75,10 +80,10 @@ query DataCubePreview(
     description
     publicationStatus
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
     }
   }
 }
@@ -173,10 +178,27 @@ query DataCubeMetadataWithComponentValues(
     }
     landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
+      ...hierarchyMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
+      ...hierarchyMetadata
+    }
+  }
+}
+
+fragment hierarchyMetadata on Dimension {
+  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    ...hierarchyValueFields
+    children {
+      ...hierarchyValueFields
+      children {
+        ...hierarchyValueFields
+        children {
+          ...hierarchyValueFields
+        }
+      }
     }
   }
 }
@@ -202,7 +224,7 @@ query DimensionValues(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      ...dimensionMetaData
+      ...dimensionMetadata
     }
   }
 }
@@ -288,7 +310,7 @@ query TemporalDimensionValues(
       sourceUrl: $sourceUrl
     ) {
       ... on TemporalDimension {
-        ...dimensionMetaData
+        ...dimensionMetadata
         timeUnit
         timeFormat
       }
@@ -317,10 +339,10 @@ query DataCubeObservations(
     title
     description
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetaData
+      ...dimensionMetadata
     }
     observations(
       sourceType: $sourceType
@@ -418,18 +440,7 @@ query DimensionHierarchy(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-        ...hierarchyValueFields
-        children {
-          ...hierarchyValueFields
-          children {
-            ...hierarchyValueFields
-            children {
-              ...hierarchyValueFields
-            }
-          }
-        }
-      }
+      ...hierarchyMetadata
     }
   }
 }

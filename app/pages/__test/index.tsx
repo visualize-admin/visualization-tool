@@ -2,14 +2,14 @@ import { groupBy } from "lodash";
 import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 
+import { PromiseValue } from "@/domain/types";
 import { loadFixtureConfigs } from "@/test/utils";
-import { PromiseValue } from "@/utils/promise";
 
 type PageProps = {
   configs: PromiseValue<ReturnType<typeof loadFixtureConfigs>>;
 };
 
-export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const configs = await loadFixtureConfigs();
 
   return {

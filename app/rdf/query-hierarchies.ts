@@ -5,6 +5,7 @@ import {
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
 import { isGraphPointer } from "is-graph-pointer";
+import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -59,13 +60,34 @@ const toTree = (
   return results.map((r) => serializeNode(r, 0));
 };
 
+const findHierarchyForDimension = (cube: Cube, dimensionIri: string) => {
+  const newHierarchy = cube.ptr
+    .any()
+    .has(ns.sh.path, rdf.namedNode(dimensionIri))
+    .has(ns.cubeMeta.inHierarchy)
+    .out(ns.cubeMeta.inHierarchy)
+    .toArray()[0];
+  if (newHierarchy) {
+    return newHierarchy;
+  }
+  const legacyHierarchy = cube.ptr
+    .any()
+    .has(ns.sh.path, rdf.namedNode(dimensionIri))
+    .has(ns.cubeMeta.hasHierarchy)
+    .out(ns.cubeMeta.hasHierarchy)
+    .toArray()[0];
+  if (legacyHierarchy) {
+    return legacyHierarchy;
+  }
+};
+
 export const queryHierarchy = async (
   dimensionIri: string,
   sourceUrl: string,
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
-): Promise<HierarchyValue[]> => {
+): Promise<HierarchyValue[] | null> => {
   const source = createSource({ endpointUrl: sourceUrl });
 
   const cubeQuery = SELECT`?cube`.WHERE`
@@ -79,22 +101,17 @@ export const queryHierarchy = async (
   if (cubeResults.length === 0) {
     throw new Error("Could not find cube");
   }
+
   const cubeIri = cubeResults[0].cube.value;
   const cube = await source.cube(cubeIri);
   if (!cube) {
     throw new Error("Could not find cube");
   }
-  const hierarchy = cube.ptr
-    .any()
-    .has(ns.sh.path, rdf.namedNode(dimensionIri))
-    .has(ns.cubeMeta.inHierarchy)
-    .out(ns.cubeMeta.inHierarchy)
-    .toArray()
-    .shift();
+  const hierarchy = findHierarchyForDimension(cube, dimensionIri);
 
   // @ts-ignore
   if (!isGraphPointer(hierarchy)) {
-    throw new Error(`Hierarchy not found ${dimensionIri}`);
+    return null;
   }
 
   const dimensionValuesProm = queryDimensionValues(dimensionIri, sparqlClient);

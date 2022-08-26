@@ -36,6 +36,7 @@ import {
 } from "@/configurator/components/presence";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
+import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -51,11 +52,10 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
-import truthy from "@/utils/truthy";
+import useEvent from "@/utils/use-event";
 
 import useDisclosure from "./use-disclosure";
 
@@ -287,7 +287,7 @@ export const SearchDatasetBox = ({
   browseState: BrowseState;
   searchResult: Maybe<DataCubesQuery>;
 }) => {
-  const [showDraftCheckbox, setShowDraftCheckbox] = useState<boolean>(false);
+  const [_, setShowDraftCheckbox] = useState<boolean>(false);
 
   const {
     search,
@@ -478,7 +478,6 @@ const NavItem = ({
   active,
   theme = defaultNavItemTheme,
   level = 1,
-  ...props
 }: {
   children: React.ReactNode;
   filters: BrowseFilter[];

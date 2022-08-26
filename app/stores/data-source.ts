@@ -7,8 +7,8 @@ import {
   parseSourceByLabel,
   sourceToLabel,
 } from "@/domain/datasource";
-import { isRunningInBrowser } from "@/lib/is-running-in-browser";
-import { getURLParam } from "@/lib/router/helpers";
+import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { getURLParam } from "@/utils/router/helpers";
 
 export type DataSourceStore = {
   dataSource: DataSource;

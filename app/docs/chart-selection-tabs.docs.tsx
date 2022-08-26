@@ -7,7 +7,7 @@ import {
   ConfiguratorStateConfiguringChart,
   EditorConfiguratorStateProvider,
 } from "@/configurator";
-import palmerPenguinsFixture from "@/test/__fixtures/int/scatterplot-palmer-penguins.json";
+import palmerPenguinsFixture from "@/test/__fixtures/config/int/scatterplot-palmer-penguins.json";
 
 export default () => markdown`
 > Chart Selection Tabs are used in ChartPreview and ChartPublished to enable selecting a chart type in any stage of creating a chart.

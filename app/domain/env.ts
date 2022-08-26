@@ -1,4 +1,4 @@
-import { isRunningInBrowser } from "@/lib/is-running-in-browser";
+import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 
 declare global {
   interface Window {

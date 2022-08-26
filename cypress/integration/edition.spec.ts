@@ -36,7 +36,9 @@ describe("Editing a chart", () => {
     cy.findByText("Communication").click();
     cy.findByText("Apply filters").click();
 
-    cy.get('[data-name="panel-middle"]').scrollTo(0, 200);
+    cy.get('[data-name="panel-middle"]').scrollTo(0, 200, {
+      ensureScrollable: false,
+    });
     cy.waitForNetworkIdle(1000);
     waitForChartToBeLoaded();
     cy.screenshot(`chart-edition-${key}`);

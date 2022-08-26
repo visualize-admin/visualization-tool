@@ -51,16 +51,16 @@ import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
-import { createChartId } from "@/lib/create-chart-id";
-import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
 import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
+import { createChartId } from "@/utils/create-chart-id";
+import { unreachableError } from "@/utils/unreachable";
 
 export const DEFAULT_PALETTE = "category10";
 const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
@@ -361,7 +361,7 @@ export const applyTableDimensionToFilters = ({
   isGrouped,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionMetadataFragment;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
@@ -412,7 +412,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionMetadataFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
@@ -593,9 +593,7 @@ const transitionStepPrevious = (
   }
 };
 
-export const canTransitionToPreviousStep = (
-  state: ConfiguratorState
-): boolean => {
+export const canTransitionToPreviousStep = (_: ConfiguratorState): boolean => {
   // All states are interchangeable in terms of validity
   return true;
 };
@@ -607,8 +605,8 @@ export const getFiltersByMappingStatus = (
   const mappedIris = new Set(
     Object.values(fields).map((fieldValue) => fieldValue.componentIri)
   );
-  const unmapped = pickBy(filters, (value, iri) => !mappedIris.has(iri));
-  const mapped = pickBy(filters, (value, iri) => mappedIris.has(iri));
+  const unmapped = pickBy(filters, (_, iri) => !mappedIris.has(iri));
+  const mapped = pickBy(filters, (_, iri) => mappedIris.has(iri));
   return { unmapped, mapped };
 };
 
@@ -1341,13 +1339,11 @@ export const EditorConfiguratorStateProvider = ({
   children,
   initialState,
   allowDefaultRedirect,
-  readonly,
 }: {
   chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
-  readonly?: boolean;
 }) => {
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
@@ -1393,7 +1389,7 @@ export const useReadOnlyConfiguratorState = <T extends ConfiguratorState>(
     );
   }
 
-  const [state, dispatch] = ctx;
+  const [state] = ctx;
 
   if (predicate && !predicate(state)) {
     throw new Error("State does not respect type guard");

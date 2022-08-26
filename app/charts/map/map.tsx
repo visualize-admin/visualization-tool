@@ -20,8 +20,8 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 

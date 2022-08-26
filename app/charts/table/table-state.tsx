@@ -32,9 +32,9 @@ import {
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ColumnMeta {
   iri: string;
@@ -227,7 +227,7 @@ const useTableState = ({
    */
   const tableColumnsMeta = useMemo(
     () =>
-      Object.keys(fields).reduce((acc, iri, i) => {
+      Object.keys(fields).reduce((acc, iri) => {
         const columnMeta = fields[iri];
         const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;
@@ -250,7 +250,7 @@ const useTableState = ({
           const { colorMapping } = columnStyle as ColumnStyleCategory;
           const dimension = dimensions.find(
             (d) => d.iri === iri
-          ) as DimensionMetaDataFragment;
+          ) as DimensionMetadataFragment;
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal();

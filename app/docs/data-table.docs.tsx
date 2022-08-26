@@ -10,7 +10,7 @@ import {
   tableMeasures,
   tableObservations,
 } from "@/docs/fixtures";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 
@@ -20,8 +20,8 @@ ${(
   <ReactSpecimen span={6}>
     <TableChart
       data={tableObservations}
-      dimensions={tableDimensions as DimensionMetaDataFragment[]}
-      measures={tableMeasures as DimensionMetaDataFragment[]}
+      dimensions={tableDimensions as DimensionMetadataFragment[]}
+      measures={tableMeasures as DimensionMetadataFragment[]}
       chartConfig={tableConfig}
     >
       <ChartContainer>

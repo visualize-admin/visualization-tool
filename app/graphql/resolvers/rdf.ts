@@ -4,6 +4,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
@@ -33,11 +34,10 @@ import {
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { searchCubes } from "@/rdf/query-search";
-import truthy from "@/utils/truthy";
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
-  { sourceUrl, locale, query, order, includeDrafts, filters },
+  { locale, query, order, includeDrafts, filters },
   { setup },
   info
 ) => {
@@ -177,14 +177,14 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, args, { setup }, info) => {
+  async ({ cube, locale }, _, { setup }, info) => {
     const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, args, { setup }, info) => {
+  async ({ cube, locale }, _, { setup }, info) => {
     const { sparqlClient } = await setup(info);
     const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
     return dimensions.filter((d) => d.data.isMeasureDimension);
@@ -217,33 +217,6 @@ export const dataCubeObservations: NonNullable<
     limit: limit ?? undefined,
     dimensions,
   });
-
-  // const constructedFilters = filters
-  //   ? await constructFilters(dataCube, filters)
-  //   : [];
-
-  // // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
-  // const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-  //   return measures?.find((iri) => iri === d.iri.value)
-  //     ? []
-  //     : ([[`dim${i}`, d]] as [string, RDFDimension][]);
-  // });
-
-  // const selectedFields = [
-  //   ...unmappedDimensions,
-  //   ...(measures
-  //     ? measures.map(
-  //         (iri, i) =>
-  //           [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
-  //       )
-  //     : []),
-  // ];
-
-  // const query = dataCube
-  //   .query()
-  //   .limit(limit ?? null)
-  //   .select(selectedFields)
-  //   .filter(constructedFilters);
 
   return {
     cube,

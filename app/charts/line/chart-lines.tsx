@@ -30,10 +30,9 @@ import {
   LineConfig,
   LineFields,
 } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -61,8 +60,6 @@ export const ChartLinesVisualization = ({
     },
   });
 
-  const observations = data?.dataCubeByIri?.observations.data;
-
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
 
@@ -73,7 +70,6 @@ export const ChartLinesVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartLines
           observations={observations.data}
@@ -87,8 +83,6 @@ export const ChartLinesVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {
@@ -104,8 +98,8 @@ export const ChartLines = memo(function ChartLines({
   interactiveFiltersConfig,
 }: {
   observations: Observation[];
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   fields: LineFields;
   interactiveFiltersConfig: InteractiveFiltersConfig;
 }) {
@@ -122,7 +116,6 @@ export const ChartLines = memo(function ChartLines({
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
-          {/* <HoverLine /> <HoverLineValues /> */}
           <InteractionHorizontal />
           {interactiveFiltersConfig?.time.active && <BrushTime />}
         </ChartSvg>
@@ -130,8 +123,6 @@ export const ChartLines = memo(function ChartLines({
         <Ruler />
 
         <HoverDotMultiple />
-
-        {/* <HoverDot /> */}
 
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>

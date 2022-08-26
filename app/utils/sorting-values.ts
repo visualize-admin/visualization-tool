@@ -1,13 +1,5 @@
 import { DataCubeObservationsQuery } from "../graphql/query-hooks";
 
-export const defaultSorter = ({
-  value,
-  label,
-}: {
-  value?: string;
-  label?: string;
-}) => label || value;
-
 export const makeOrdinalDimensionSorter = (
   dimension: NonNullable<
     DataCubeObservationsQuery["dataCubeByIri"]

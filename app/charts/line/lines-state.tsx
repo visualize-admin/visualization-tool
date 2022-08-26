@@ -37,9 +37,9 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { sortByIndex } from "@/lib/array";
-import { estimateTextWidth } from "@/lib/estimate-text-width";
 import { useTheme } from "@/themes";
+import { sortByIndex } from "@/utils/array";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
 export interface LinesState {

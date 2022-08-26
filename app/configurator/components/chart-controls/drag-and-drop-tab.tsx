@@ -12,7 +12,7 @@ import {
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
 import { TableColumn } from "@/configurator/config-types";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 
@@ -38,10 +38,7 @@ export const TabDropZone = ({
 
   return (
     <Droppable droppableId={id} isDropDisabled={isDropDisabled}>
-      {(
-        { innerRef, placeholder },
-        { isDraggingOver, isUsingPlaceholder, draggingOverWith }
-      ) => {
+      {({ innerRef, placeholder }, { isDraggingOver }) => {
         return (
           <ControlSection isHighlighted={isDraggingOver}>
             <SectionTitle>{title}</SectionTitle>
@@ -134,7 +131,7 @@ const DraggableTabField = ({
   upperLabel,
   disabled,
 }: {
-  component: DimensionMetaDataFragment;
+  component: DimensionMetadataFragment;
   value: string;
   disabled?: boolean;
   isDragging: boolean;

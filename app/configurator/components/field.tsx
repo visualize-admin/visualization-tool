@@ -44,20 +44,18 @@ import {
 } from "@/configurator/config-form";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { truthy } from "@/domain/types";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
-import truthy from "@/utils/truthy";
 
 export const ControlTabField = ({
   component,
   value,
-  disabled,
   labelId,
 }: {
-  component?: DimensionMetaDataFragment;
+  component?: DimensionMetadataFragment;
   value: string;
-  disabled?: boolean;
   labelId: string;
 }) => {
   const field = useActiveFieldField({
@@ -165,7 +163,6 @@ export const DataFilterSelectDay = ({
   dimensionIri,
   label,
   options,
-  id,
   disabled,
   isOptional,
   controls,
@@ -173,7 +170,6 @@ export const DataFilterSelectDay = ({
   dimensionIri: string;
   label: string;
   options: Option[];
-  id: string;
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
@@ -338,7 +334,6 @@ export const DataFilterSelectTime = ({
   return (
     <TimeInput
       id={id}
-      controls={controls}
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
@@ -355,7 +350,6 @@ export const TimeInput = ({
   value,
   timeFormat,
   formatLocale,
-  controls,
   isOptional,
   onChange,
 }: {
@@ -364,7 +358,6 @@ export const TimeInput = ({
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
-  controls?: React.ReactNode;
   isOptional: boolean | undefined;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
@@ -439,7 +432,6 @@ export const MetaInputField = ({
   locale,
   value,
   disabled,
-  ...props
 }: {
   label: string | ReactNode;
   metaKey: string;
@@ -645,7 +637,6 @@ export const ColorPickerField = ({
 };
 
 export const ChartFieldField = ({
-  componentIri,
   label,
   field,
   options,
@@ -653,7 +644,6 @@ export const ChartFieldField = ({
   disabled,
   dataSetMetadata,
 }: {
-  componentIri?: string;
   label: string;
   field: string;
   options: Option[];

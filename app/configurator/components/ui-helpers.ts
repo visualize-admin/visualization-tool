@@ -50,7 +50,8 @@ import { useMemo } from "react";
 import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
+  Measure,
   TemporalDimension,
   TimeUnit,
 } from "../../graphql/query-hooks";
@@ -85,8 +86,6 @@ export const parseDate = (dateStr: string): Date =>
   // This should probably not happen
   new Date(dateStr);
 
-export const isNumber = (x: $IntentionalAny): boolean =>
-  typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
 const getFormattersForLocale = memoize((locale) => {
@@ -137,20 +136,46 @@ const formatIdentity = (x: string | Date | null) => {
   return `${x}`;
 };
 
-const isNamedNodeDimension = (d: DimensionMetaDataFragment) => {
+const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
   const first = d.values?.[0];
   return first && first.label !== first.value;
 };
 
-const namedNodeFormatter = (d: DimensionMetaDataFragment) => {
+const namedNodeFormatter = (d: DimensionMetadataFragment) => {
   const valuesByIri = keyBy(d.values, (x) => x.value);
   return (v: string) => {
     return valuesByIri[v]?.label || v;
   };
 };
 
+const currencyFormatter = (d: Measure) => {
+  const formatLocale = getD3FormatLocale();
+  const minDecimals = d.resolution ?? d.currencyExponent ?? 2;
+  const maxDecimals = 8;
+  const baseFormatter = formatLocale.format(`,.${maxDecimals}f`);
+  return (v: number) => {
+    const formatted = baseFormatter(v);
+    const l = formatted.length;
+
+    // TODO Decimal separator should be based on locale
+    const dot = formatted.indexOf(".");
+
+    let lastSignificantIndex = formatted.length - maxDecimals + minDecimals - 1;
+    for (let i = l - maxDecimals + minDecimals; i < l; i++) {
+      if (formatted[i] !== "0") {
+        lastSignificantIndex = i;
+      }
+    }
+    return formatted.substring(
+      0,
+      lastSignificantIndex +
+        (minDecimals === 0 || dot === lastSignificantIndex ? 0 : 1)
+    );
+  };
+};
+
 export const useDimensionFormatters = (
-  dimensions: DimensionMetaDataFragment[]
+  dimensions: DimensionMetadataFragment[]
 ) => {
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
@@ -161,16 +186,28 @@ export const useDimensionFormatters = (
   return useMemo(() => {
     return Object.fromEntries(
       dimensions.map((d) => {
-        return [
-          d.iri,
-          d.__typename === "Measure" || d.isNumerical
-            ? formatNumber
-            : d.__typename === "TemporalDimension"
-            ? dateFormatterFromDimension(d, dateFormatters, formatDateAuto)
-            : isNamedNodeDimension(d)
-            ? namedNodeFormatter(d)
-            : formatIdentity,
-        ];
+        let formatter: (s: any) => string;
+        if (d.__typename === "Measure") {
+          if (d.isCurrency) {
+            formatter = currencyFormatter(d);
+          } else {
+            formatter = formatNumber;
+          }
+        } else if (d.__typename === "TemporalDimension") {
+          formatter = dateFormatterFromDimension(
+            d,
+            dateFormatters,
+            formatDateAuto
+          );
+        } else if (isNamedNodeDimension(d)) {
+          formatter = namedNodeFormatter(d);
+        } else if (d.isNumerical) {
+          formatter = formatNumber;
+        } else {
+          formatter = formatIdentity;
+        }
+
+        return [d.iri, formatter];
       })
     );
   }, [dimensions, formatNumber, dateFormatters, formatDateAuto]);
@@ -403,7 +440,7 @@ export const useErrorMeasure = (
   }, [dimensions, measures, valueIri]);
 };
 
-export const useErrorVariable = (errorMeasure?: DimensionMetaDataFragment) => {
+export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
@@ -414,7 +451,7 @@ export const useErrorVariable = (errorMeasure?: DimensionMetaDataFragment) => {
 };
 
 export const useErrorRange = (
-  errorMeasure: DimensionMetaDataFragment | undefined,
+  errorMeasure: DimensionMetadataFragment | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {
@@ -437,9 +474,8 @@ export const useErrorRange = (
 };
 
 export const useFormatNumber = () => {
-  const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale(locale);
+    const { format } = getD3FormatLocale();
     const formatter = format(",.2~f");
     return (x: NumberValue | null | undefined) => {
       if (x === null || x === undefined) {
@@ -447,14 +483,13 @@ export const useFormatNumber = () => {
       }
       return `${formatter(x)}`;
     };
-  }, [locale]);
+  }, []);
   return formatter;
 };
 
 export const useFormatInteger = () => {
-  const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale(locale);
+    const { format } = getD3FormatLocale();
     const formatter = format(",.0~f");
     return (x: NumberValue | null | undefined) => {
       if (x === null || x === undefined) {
@@ -462,7 +497,7 @@ export const useFormatInteger = () => {
       }
       return formatter(x);
     };
-  }, [locale]);
+  }, []);
   return formatter;
 };
 
@@ -982,7 +1017,7 @@ export const mapValueIrisToColor = ({
   random,
 }: {
   palette: string;
-  dimensionValues: DimensionMetaDataFragment["values"];
+  dimensionValues: DimensionMetadataFragment["values"];
   random?: boolean;
 }) => {
   if (!dimensionValues) {

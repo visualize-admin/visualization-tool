@@ -33,10 +33,9 @@ import {
   ScatterPlotConfig,
   ScatterPlotFields,
 } from "@/configurator";
-import { isNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -64,8 +63,6 @@ export const ChartScatterplotVisualization = ({
     },
   });
 
-  const observations = data?.dataCubeByIri?.observations.data;
-
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
@@ -75,7 +72,6 @@ export const ChartScatterplotVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
         />
         <ChartScatterplot
           observations={observations.data}
@@ -89,12 +85,6 @@ export const ChartScatterplotVisualization = ({
     ) : (
       <NoDataHint />
     );
-  } else if (
-    (observations &&
-      !observations.map((obs: $FixMe) => obs.x).some(isNumber)) ||
-    (observations && !observations.map((obs: $FixMe) => obs.y).some(isNumber))
-  ) {
-    return <NoDataHint />;
   } else if (error) {
     return <LoadingDataError />;
   } else {
@@ -111,8 +101,8 @@ export const ChartScatterplot = memo(
     interactiveFiltersConfig,
   }: {
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
     fields: ScatterPlotFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {

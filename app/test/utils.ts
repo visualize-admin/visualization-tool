@@ -3,9 +3,9 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import { flatten } from "lodash";
 
-import intTestConfigs from "./__fixtures/int/configs";
-import prodTestConfigs from "./__fixtures/prod/configs";
-import { TestConfig } from "./__fixtures/types";
+import intTestConfigs from "./__fixtures/config/int/configs";
+import prodTestConfigs from "./__fixtures/config/prod/configs";
+import { TestConfig } from "./__fixtures/config/types";
 
 // Needs to be relative to CWD because webpack will replace __dirname with "/"
 const FIXTURES_DIR = path.join("app", "test", "__fixtures");

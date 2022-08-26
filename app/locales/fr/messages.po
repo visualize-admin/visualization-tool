@@ -719,8 +719,8 @@ msgstr "Informations complémentaires"
 
 #: app/components/chart-footnotes.tsx:111
 #: app/configurator/components/dataset-metadata.tsx:117
-msgid "dataset.metadata.landingpage"
-msgstr "Page d'accueil"
+msgid "dataset.metadata.learnmore"
+msgstr "En savoir plus sur le jeu de données"
 
 #: app/configurator/components/dataset-metadata.tsx:67
 msgid "dataset.metadata.source"

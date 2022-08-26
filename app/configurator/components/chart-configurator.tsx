@@ -11,13 +11,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { isEmpty, isEqual, sortBy } from "lodash";
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-  ReactElement,
-} from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -70,8 +64,8 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
-import useEvent from "@/lib/use-event";
 import { useLocale } from "@/locales/use-locale";
+import useEvent from "@/utils/use-event";
 
 import { ChartTypeSelector } from "./chart-type-selector";
 import useHierarchyParents from "./use-hierarchy-parents";
@@ -144,7 +138,6 @@ const DataFilterSelectGeneric = ({
     isOptional: !dimension.isKeyDimension,
   };
 
-  let component: ReactElement;
   if (dimension.__typename === "TemporalDimension") {
     if (dimension.timeUnit === "Day") {
       return <DataFilterSelectDay {...sharedProps} options={values} />;
@@ -462,12 +455,9 @@ const useStyles = makeStyles<
       opacity: 0.25,
       color: "secondary.active",
     },
-    ".buttons:hover": (props) =>
-      props.fetching
-        ? {}
-        : {
-            opacity: 1,
-          },
+    "& .buttons:hover": {
+      opacity: ({ fetching }) => (fetching ? undefined : 1),
+    },
     "& > *": {
       overflow: "hidden",
     },
@@ -553,6 +543,7 @@ export const ChartConfigurator = ({
         </SectionTitle>
         <ControlSectionContent
           px="small"
+          gap="none"
           role="tablist"
           aria-labelledby="controls-design"
         >

@@ -1,12 +1,7 @@
 import { Typography } from "@mui/material";
 import { markdown, TableSpecimen } from "catalog";
 
-import { useTheme } from "@/themes/index";
-const pixelSize = 16;
-
 export default () => {
-  const theme = useTheme();
-
   return markdown`
 
 > Text elements are based on \`MUI\` \`<Typography />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
@@ -39,7 +34,7 @@ ${(
       "body2",
       "caption",
       "tag",
-    ].map((variant, i) => {
+    ].map((variant) => {
       return {
         Variant: `\`${variant}\``,
         Sample: (

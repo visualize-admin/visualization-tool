@@ -11,7 +11,7 @@ import {
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 
@@ -194,7 +194,7 @@ const columnMeasures = [
     ],
     __typename: "Measure",
   },
-] as DimensionMetaDataFragment[];
+] as DimensionMetadataFragment[];
 
 const columnDimensions = [
   {
@@ -488,7 +488,7 @@ const columnDimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as unknown as DimensionMetaDataFragment[];
+] as unknown as DimensionMetadataFragment[];
 const columnObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
