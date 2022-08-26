@@ -1,12 +1,11 @@
 import { Trans } from "@lingui/macro";
 import { Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { ReactNode, useCallback, useEffect } from "react";
+import { ReactNode, useCallback, useEffect } from "react";
 
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
 import {
-  canTransitionToNextStep,
   canTransitionToPreviousStep,
   useConfiguratorState,
 } from "@/configurator";
@@ -14,6 +13,7 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -42,31 +42,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const StepperDumb = ({
   goPrevious,
-  goNext,
   state,
-  data,
 }: {
   goPrevious: () => void;
-  goNext: () => void;
   state: ReturnType<typeof useConfiguratorState>[0];
-  data: ReturnType<
-    typeof useDataCubeMetadataWithComponentValuesQuery
-  >[0]["data"];
 }) => {
   const classes = useStyles();
-  const nextDisabled =
-    !canTransitionToNextStep(state, data?.dataCubeByIri) ||
-    state.state === "PUBLISHING";
   const previousDisabled =
     !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";
 
   const previousLabel = <Trans id="button.back">Back</Trans>;
-  const nextLabel =
-    state.state === "DESCRIBING_CHART" || state.state === "PUBLISHING" ? (
-      <Trans id="button.publish">Publish this visualization</Trans>
-    ) : (
-      <Trans id="button.next">Next</Trans>
-    );
 
   const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
   const { value: progress, setValue: setProgress } = useHeaderProgress();
@@ -115,29 +100,18 @@ export const StepperDumb = ({
           />
         </Flex>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
-          <Button
-            endIcon={
-              state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
-            }
-            onClick={goNext}
-            disabled={nextDisabled}
-            variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
-            color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
-            size={state.state === "DESCRIBING_CHART" ? "medium" : "small"}
-            sx={{ fontWeight: "bold" }}
-          >
-            {nextLabel}
-          </Button>
+          <StepperNextButton />
         </Flex>
       </Flex>
     </Flex>
   );
 };
 
-export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
-  const [state, dispatch] = useConfiguratorState();
+export const useCurrentCubeMetadataWithComponentValuesQuery = () => {
+  const [state] = useConfiguratorState();
+  const dataSetIri = state.dataSet;
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  return useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSetIri ?? "",
       sourceType: state.dataSource.type,
@@ -145,14 +119,47 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
       locale,
     },
   });
-  const goNext = useCallback(() => {
+};
+
+export const StepperNextButton = () => {
+  const [{ data }] = useCurrentCubeMetadataWithComponentValuesQuery();
+  const [state, dispatch] = useConfiguratorState();
+
+  const goNext = useEvent(() => {
     if (data?.dataCubeByIri) {
       dispatch({
         type: "STEP_NEXT",
         dataSetMetadata: data?.dataCubeByIri,
       });
     }
-  }, [data, dispatch]);
+  });
+
+  const nextDisabled = state.state === "PUBLISHING";
+  const nextLabel =
+    state.state === "DESCRIBING_CHART" || state.state === "PUBLISHING" ? (
+      <Trans id="button.publish">Publish this visualization</Trans>
+    ) : (
+      <Trans id="button.next">Next</Trans>
+    );
+  return (
+    <Button
+      endIcon={
+        state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
+      }
+      onClick={goNext}
+      disabled={nextDisabled}
+      variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
+      color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
+      size={state.state === "DESCRIBING_CHART" ? "medium" : "small"}
+      sx={{ fontWeight: "bold" }}
+    >
+      {nextLabel}
+    </Button>
+  );
+};
+
+export const Stepper = () => {
+  const [state, dispatch] = useConfiguratorState();
 
   const goPrevious = useCallback(() => {
     if (state.state === "CONFIGURING_CHART") {
@@ -164,14 +171,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
     }
   }, [dispatch, state.state]);
 
-  return (
-    <StepperDumb
-      state={state}
-      goPrevious={goPrevious}
-      goNext={goNext}
-      data={data}
-    />
-  );
+  return <StepperDumb state={state} goPrevious={goPrevious} />;
 };
 
 export const CallToAction = ({
