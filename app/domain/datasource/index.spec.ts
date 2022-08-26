@@ -1,20 +1,23 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 import mittEmitter from "next/dist/shared/lib/mitt";
-import Router from "next/router";
+import { SingletonRouter } from "next/router";
 
 import { createUseDataSourceStore } from "@/stores/data-source";
 
-jest.mock("next/router", () => ({
-  pathname: "https://visualize.admin.ch/",
-  events: mittEmitter(),
-  isReady: true,
-  query: {},
-  ready: (f: () => void) => f(),
-  replace: (args: unknown) => {
-    Object.assign(Router, args);
+const createRouter = () => {
+  const router = {
+    pathname: "https://visualize.admin.ch/",
+    events: mittEmitter(),
+    isReady: true,
+    query: {},
+    ready: (f: () => void) => f(),
+  } as SingletonRouter;
+  // @ts-ignore
+  router.replace = (args: unknown) => {
+    Object.assign(router, args);
 
-    const url = new URL(Router.pathname);
-    Object.entries(Router.query).forEach(([k, v]) => {
+    const url = new URL(router.pathname);
+    Object.entries(router.query).forEach(([k, v]) => {
       if (typeof v === "string") {
         url.searchParams.append(k, v);
       }
@@ -27,9 +30,11 @@ jest.mock("next/router", () => ({
       href: url.toString(),
     };
 
-    Router.events.emit("routeChangeComplete");
-  },
-}));
+    router.events.emit("routeChangeComplete");
+  };
+
+  return router;
+};
 
 jest.mock("../env", () => ({
   WHITELISTED_DATA_SOURCES: ["Test", "Prod", "Int"],
@@ -47,7 +52,6 @@ describe("datasource state hook", () => {
 
     const url = new URL(initialURL);
     const urlDataSourceLabel = url.searchParams.get("dataSource");
-    Router.query = urlDataSourceLabel ? { dataSource: urlDataSourceLabel } : {};
 
     // @ts-ignore
     delete window.location;
@@ -56,13 +60,13 @@ describe("datasource state hook", () => {
       href: url.toString(),
     };
 
-    const useDataSourceStore = createUseDataSourceStore();
-
+    const router = createRouter();
+    const useDataSourceStore = createUseDataSourceStore(router);
     const hook = renderHook(() => useDataSourceStore());
 
     return {
       hook,
-      router: Router,
+      router,
       getState: () => hook.result.current.dataSource,
       setState: (v: Parameters<typeof hook.result.current.setDataSource>[0]) =>
         hook.result.current.setDataSource(v),
@@ -71,7 +75,6 @@ describe("datasource state hook", () => {
 
   beforeEach(() => {
     localStorage.clear();
-    Router.events = mittEmitter();
   });
 
   it("should have the correct default state when nothing is there", () => {

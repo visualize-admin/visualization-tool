@@ -1,4 +1,4 @@
-import Router from "next/router";
+import Router, { SingletonRouter } from "next/router";
 import create, { StateCreator, StoreApi } from "zustand";
 
 import { DataSource } from "@/configurator";
@@ -29,14 +29,17 @@ export const getDataSourceFromLocalStorage = () => {
   }
 };
 
-const updateRouterDataSourceParam = (dataSource: DataSource) => {
+const updateRouterDataSourceParam = (
+  router: SingletonRouter,
+  dataSource: DataSource
+) => {
   const urlDataSourceLabel = getURLParam(PARAM_KEY);
   const dataSourceLabel = sourceToLabel(dataSource);
 
   if (urlDataSourceLabel !== dataSourceLabel) {
-    Router.replace({
-      pathname: Router.pathname,
-      query: { ...Router.query, [PARAM_KEY]: dataSourceLabel },
+    router.replace({
+      pathname: router.pathname,
+      query: { ...router.query, [PARAM_KEY]: dataSourceLabel },
     });
   }
 };
@@ -49,7 +52,7 @@ const updateRouterDataSourceParam = (dataSource: DataSource) => {
  * localStorage (also stored as label), otherwise uses a default data source.
  */
 export const dataSourceStoreMiddleware =
-  (config: StateCreator<DataSourceStore>) =>
+  (config: StateCreator<DataSourceStore>, router: SingletonRouter) =>
   (
     set: StoreApi<DataSourceStore>["setState"],
     get: StoreApi<DataSourceStore>["getState"],
@@ -61,7 +64,7 @@ export const dataSourceStoreMiddleware =
 
         if (isRunningInBrowser()) {
           saveToLocalStorage(payload.dataSource);
-          updateRouterDataSourceParam(payload.dataSource);
+          updateRouterDataSourceParam(router, payload.dataSource);
         }
       },
       get,
@@ -96,26 +99,29 @@ export const dataSourceStoreMiddleware =
       const newSource = get()?.dataSource;
 
       if (newSource) {
-        updateRouterDataSourceParam(newSource);
+        updateRouterDataSourceParam(router, newSource);
       }
     };
 
     // No need to unsubscribe, as store is created once and needs to update
     // URL continously.
-    Router.events.on("routeChangeComplete", callback);
+    router.events.on("routeChangeComplete", callback);
 
     // Initialize with correct url.
-    Router.ready(callback);
+    router.ready(callback);
 
     return { ...state, dataSource };
   };
 
-export const createUseDataSourceStore = () =>
+export const createUseDataSourceStore = (router: SingletonRouter) =>
   create<DataSourceStore>(
-    dataSourceStoreMiddleware((set) => ({
-      dataSource: DEFAULT_DATA_SOURCE,
-      setDataSource: (value) => set({ dataSource: value }),
-    }))
+    dataSourceStoreMiddleware(
+      (set) => ({
+        dataSource: DEFAULT_DATA_SOURCE,
+        setDataSource: (value) => set({ dataSource: value }),
+      }),
+      router
+    )
   );
 
-export const useDataSourceStore = createUseDataSourceStore();
+export const useDataSourceStore = createUseDataSourceStore(Router);
