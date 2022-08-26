@@ -14,7 +14,7 @@ import { getURLParam } from "@/lib/router/helpers";
 
 type DataSourceStore = {
   dataSource: DataSource;
-  setDataSource: (value: string) => void;
+  setDataSource: (value: DataSource) => void;
 };
 
 const PARAM_KEY = "dataSource";
@@ -100,7 +100,7 @@ export const useDataSourceStore = create<DataSourceStore>(
   dataSourceStoreMiddleware((set) => ({
     dataSource: DEFAULT_DATA_SOURCE,
     setDataSource: (value) => {
-      set({ dataSource: parseDataSource(value) });
+      set({ dataSource: value });
     },
   }))
 );

@@ -9,6 +9,7 @@ import { Label, MinimalisticSelect } from "@/components/form";
 import {
   isDataSourceChangeable,
   stringifyDataSource,
+  parseDataSource,
 } from "@/domain/datasource";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { useDataSourceStore } from "@/stores/data-source";
@@ -32,7 +33,7 @@ export const DataSourceMenu = () => {
         options={SOURCE_OPTIONS}
         value={stringifyDataSource(dataSource)}
         onChange={(e) => {
-          setDataSource(e.target.value as string);
+          setDataSource(parseDataSource(e.target.value as string));
         }}
         disabled={isDisabled}
       />
