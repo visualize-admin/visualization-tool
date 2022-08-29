@@ -181,12 +181,6 @@ const pages: ConfigPageOrGroup[] = [
         title: "Publish actions",
         content: require("@/docs/publish-actions.docs"),
       },
-
-      {
-        path: "/components/steps",
-        title: "Stepper",
-        content: require("@/docs/steps.docs"),
-      },
       {
         path: "/components/table",
         title: "Preview Table",
