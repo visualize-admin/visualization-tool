@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode, useCallback, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
@@ -40,18 +40,40 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const StepperDumb = ({
-  goPrevious,
-  state,
-}: {
-  goPrevious: () => void;
-  state: ReturnType<typeof useConfiguratorState>[0];
-}) => {
-  const classes = useStyles();
+export const StepperPreviousButton = () => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const goPrevious = useEvent(() => {
+    if (state.state === "CONFIGURING_CHART") {
+      history.back();
+    } else {
+      dispatch({
+        type: "STEP_PREVIOUS",
+      });
+    }
+  });
+
   const previousDisabled =
     !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";
 
-  const previousLabel = <Trans id="button.back">Back</Trans>;
+  return (
+    <Button
+      startIcon={<SvgIcChevronLeft />}
+      onClick={goPrevious}
+      disabled={previousDisabled}
+      variant="text"
+      size="small"
+      color="inherit"
+      sx={{ fontWeight: "bold" }}
+    >
+      <Trans id="button.back">Back</Trans>
+    </Button>
+  );
+};
+
+export const StepperDumb = () => {
+  const [state] = useConfiguratorState();
+  const classes = useStyles();
 
   const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
   const { value: progress, setValue: setProgress } = useHeaderProgress();
@@ -79,17 +101,7 @@ export const StepperDumb = ({
       {/* Stepper container */}
       <Flex className={classes.container}>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
-          <Button
-            startIcon={<SvgIcChevronLeft />}
-            onClick={goPrevious}
-            disabled={previousDisabled}
-            variant="text"
-            size="small"
-            color="inherit"
-            sx={{ fontWeight: "bold" }}
-          >
-            {previousLabel}
-          </Button>
+          <StepperPreviousButton />
         </Flex>
 
         <Flex
@@ -159,19 +171,7 @@ export const StepperNextButton = () => {
 };
 
 export const Stepper = () => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const goPrevious = useCallback(() => {
-    if (state.state === "CONFIGURING_CHART") {
-      history.back();
-    } else {
-      dispatch({
-        type: "STEP_PREVIOUS",
-      });
-    }
-  }, [dispatch, state.state]);
-
-  return <StepperDumb state={state} goPrevious={goPrevious} />;
+  return <StepperDumb />;
 };
 
 export const CallToAction = ({
