@@ -1,5 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Button, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -43,6 +44,33 @@ const softJSONParse = (v: string) => {
   }
 };
 
+const useStyles = makeStyles(() => ({
+  panelLayout: {
+    width: "100%",
+    maxWidth: 1300,
+    margin: "auto",
+    left: 0,
+    right: 0,
+    position: "static",
+    // FIXME replace 96px with actual header size
+    marginTop: "96px",
+    height: "auto",
+    paddingTop: "55px",
+  },
+  panelLeft: {
+    backgroundColor: "transparent",
+    paddingTop: 0,
+    boxShadow: "none",
+    borderRight: 0,
+  },
+  panelMiddle: {
+    paddingTop: 0,
+    paddingLeft: 6,
+    gridColumnStart: "middle",
+    gridColumnEnd: "right",
+  },
+}));
+
 export const formatBackLink = (
   query: Router["query"]
 ): React.ComponentProps<typeof NextLink>["href"] => {
@@ -72,6 +100,7 @@ const SelectDatasetStepContent = () => {
     leading: true,
   });
   const router = useRouter();
+  const classes = useStyles();
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -125,24 +154,8 @@ const SelectDatasetStepContent = () => {
   }
 
   return (
-    <PanelLayout
-      sx={{
-        width: "100%",
-        maxWidth: 1300,
-        margin: "auto",
-        left: 0,
-        right: 0,
-        position: "static",
-        // FIXME replace 96px with actual header size
-        marginTop: "96px",
-        height: "auto",
-        pt: "55px",
-      }}
-    >
-      <PanelLeftWrapper
-        raised={false}
-        sx={{ backgroundColor: "transparent", paddingTop: 0 }}
-      >
+    <PanelLayout className={classes.panelLayout}>
+      <PanelLeftWrapper className={classes.panelLeft}>
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
             <MotionBox
@@ -179,14 +192,7 @@ const SelectDatasetStepContent = () => {
           )}
         </AnimatePresence>
       </PanelLeftWrapper>
-      <PanelMiddleWrapper
-        sx={{
-          pt: 0,
-          pl: 6,
-          gridColumnStart: "middle",
-          gridColumnEnd: "right",
-        }}
-      >
+      <PanelMiddleWrapper className={classes.panelMiddle}>
         <Box sx={{ maxWidth: 900 }}>
           <AnimatePresence exitBeforeEnter>
             {dataset ? (

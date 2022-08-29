@@ -2,13 +2,30 @@ import {
   Box,
   BoxProps,
   Skeleton,
+  Theme,
   Typography,
   TypographyProps,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import { ElementType, forwardRef, HTMLProps, ReactNode } from "react";
 
 import { Icon, IconName } from "@/icons";
 import { useTheme } from "@/themes";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  controlSection: {
+    borderTopColor: theme.palette.grey[500],
+    borderTopWidth: "1px",
+    borderTopStyle: "solid",
+    overflowX: "hidden",
+    overflowY: "auto",
+    flexShrink: 0,
+    "&:first-of-type": {
+      borderTopWidth: 0,
+    },
+  },
+}));
 
 export const ControlSection = forwardRef<
   HTMLDivElement,
@@ -18,24 +35,17 @@ export const ControlSection = forwardRef<
     sx?: BoxProps["sx"];
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
 >(({ role, children, isHighlighted, sx, ...props }, ref) => {
+  const classes = useStyles();
   return (
     <Box
       ref={ref}
       role={role}
       sx={{
-        borderTopColor: "grey.500",
-        borderTopWidth: "1px",
-        borderTopStyle: "solid",
-        overflowX: "hidden",
-        overflowY: "auto",
         backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
-        flexShrink: 0,
-        "&:first-of-type": {
-          borderTopWidth: 0,
-        },
         ...sx,
       }}
       {...props}
+      className={clsx(classes.controlSection, props.className)}
     >
       {children}
     </Box>

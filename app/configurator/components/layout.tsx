@@ -1,30 +1,68 @@
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React from "react";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  panelLeft: {
+    overflowX: "hidden",
+    overflowY: "auto",
+    backgroundColor: theme.palette.grey[100],
+    boxShadow: theme.shadows[5],
+    borderRightColor: theme.palette.grey[500],
+    borderRightWidth: "1px",
+    borderRightStyle: "solid",
+    gridArea: "left",
+  },
+  panelRight: {
+    backgroundColor: "white",
+    overflowX: "hidden",
+    overflowY: "auto",
+    boxShadow: theme.shadows[5],
+    borderLeftColor: theme.palette.grey[500],
+    borderLeftWidth: "1px",
+    borderLeftStyle: "solid",
+    gridArea: "right",
+  },
+  panelLayout: {
+    backgroundColor: theme.palette.muted.main,
+    display: "grid",
+    gridTemplateColumns:
+      "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+    gridTemplateRows: "auto minmax(0, 1fr)",
+    gridTemplateAreas: `
+    "header header header"
+    "left middle right"`,
+    width: "100%",
+    position: "fixed",
+    // FIXME replace 96px with actual header size
+    top: "96px",
+    height: "calc(100vh - 96px)",
+  },
+  panelMiddle: {
+    overflowX: "hidden",
+    overflowY: "auto",
+    padding: theme.spacing(4),
+    gridArea: "middle",
+  },
+}));
 
 export const PanelLeftWrapper = ({
   children,
-  raised,
   sx,
+  className,
 }: {
   children?: React.ReactNode;
-  raised?: boolean;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
+  const classes = useStyles();
   return (
     <Box
       component="section"
       data-name="panel-left"
-      sx={{
-        overflowX: "hidden",
-        overflowY: "auto",
-        backgroundColor: "grey.100",
-        boxShadow: raised ? "rightSide" : undefined,
-        borderRightColor: raised ? "grey.500" : undefined,
-        borderRightWidth: raised ? "1px" : undefined,
-        borderRightStyle: raised ? "solid" : undefined,
-        gridArea: "left",
-        ...sx,
-      }}
+      className={clsx(classes.panelLeft, className)}
+      sx={sx}
     >
       {children}
     </Box>
@@ -38,25 +76,19 @@ PanelLeftWrapper.defaultProps = {
 export const PanelRightWrapper = ({
   children,
   sx,
+  className,
 }: {
   children?: React.ReactNode;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
+  const classes = useStyles();
   return (
     <Box
       component="section"
       data-name="panel-right"
-      sx={{
-        backgroundColor: "white",
-        overflowX: "hidden",
-        overflowY: "auto",
-        boxShadow: "leftSide",
-        borderLeftColor: "grey.500",
-        borderLeftWidth: "1px",
-        borderLeftStyle: "solid",
-        gridArea: "right",
-        ...sx,
-      }}
+      className={clsx(classes.panelRight, className)}
+      sx={sx}
     >
       {children}
     </Box>
@@ -70,26 +102,12 @@ export const PanelLayout = ({
   children: React.ReactNode;
 } & BoxProps) => {
   const { sx } = boxProps;
+  const classes = useStyles();
   return (
     <Box
       {...boxProps}
-      sx={{
-        backgroundColor: "muted.main",
-        display: "grid",
-        gridTemplateColumns:
-          "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
-        gridTemplateRows: "auto minmax(0, 1fr)",
-        gridTemplateAreas: `
-        "header header header"
-        "left middle right"
-        `,
-        width: "100%",
-        position: "fixed",
-        // FIXME replace 96px with actual header size
-        top: "96px",
-        height: "calc(100vh - 96px)",
-        ...sx,
-      }}
+      className={clsx(classes.panelLayout, boxProps.className)}
+      sx={sx}
     >
       {children}
     </Box>
@@ -118,21 +136,20 @@ export const PanelHeader = ({
 export const PanelMiddleWrapper = ({
   children,
   sx,
+  className,
 }: {
   children: React.ReactNode;
   sx?: BoxProps["sx"];
+  className?: BoxProps["className"];
 }) => {
+  const classes = useStyles();
+
   return (
     <Box
+      className={clsx(classes.panelMiddle, className)}
       component="section"
       data-name="panel-middle"
-      sx={{
-        overflowX: "hidden",
-        overflowY: "auto",
-        p: 4,
-        gridArea: "middle",
-        ...sx,
-      }}
+      sx={sx}
     >
       {children}
     </Box>

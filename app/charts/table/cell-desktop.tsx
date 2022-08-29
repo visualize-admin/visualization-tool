@@ -1,4 +1,5 @@
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
 import { Cell } from "react-table";
@@ -8,6 +9,37 @@ import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import Flex from "@/components/flex";
 import { Observation } from "@/domain/data";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  heatmapCell: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+    textAlign: "right",
+    padding: `0 ${theme.spacing(3)}`,
+  },
+  defaultCell: {
+    alignItems: "center",
+    paddingLeft: 0,
+    "&:first-of-type": {
+      paddingLeft: 0,
+    },
+    "&:last-of-type": {
+      paddingRight: 0,
+    },
+  },
+  barBackground: {
+    position: "absolute",
+    top: "-2px",
+    width: "1px",
+    height: 22,
+    backgroundColor: theme.palette.grey[700],
+  },
+  barForeground: {
+    position: "absolute",
+    top: 0,
+    height: 18,
+  },
+}));
 
 export const CellDesktop = ({
   cell,
@@ -29,6 +61,7 @@ export const CellDesktop = ({
     barShowBackground,
     widthScale,
   } = columnMeta;
+  const classes = useStyles();
 
   switch (type) {
     case "text":
@@ -63,9 +96,8 @@ export const CellDesktop = ({
       const isNull = cell.value === null;
       return (
         <Flex
+          className={classes.heatmapCell}
           sx={{
-            alignItems: "center",
-            justifyContent: "flex-end",
             color: isNull
               ? textColor
               : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
@@ -76,9 +108,7 @@ export const CellDesktop = ({
               : colorScale
               ? colorScale(cell.value)
               : "grey.100",
-            textAlign: "right",
             fontWeight: textStyle,
-            px: 3,
           }}
           {...cell.getCellProps()}
         >
@@ -110,28 +140,22 @@ export const CellDesktop = ({
               }}
             >
               <Box
+                className={classes.barForeground}
                 sx={{
-                  position: "absolute",
-                  top: 0,
                   left: `${getBarLeftOffset(cell.value, widthScale)}px`,
                   width: `${getBarWidth(cell.value, widthScale)}px`,
-                  height: 18,
                   backgroundColor:
                     cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
               />
               <Box
+                className={classes.barBackground}
                 sx={{
-                  position: "absolute",
-                  top: "-2px",
                   left: `${
                     cell.value < 0
                       ? widthScale(0)
                       : getBarLeftOffset(cell.value, widthScale)
                   }px`,
-                  width: "1px",
-                  height: 22,
-                  backgroundColor: "grey.700",
                 }}
               />
             </Box>
@@ -141,21 +165,14 @@ export const CellDesktop = ({
     default:
       return (
         <Flex
+          className={classes.defaultCell}
           sx={{
-            alignItems: "center",
             justifyContent:
               columnComponentType === "Measure" ? "flex-end" : "flex-start",
             color: textColor,
             backgroundColor: columnColor,
             textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
-            px: 3,
-            "&:first-of-type": {
-              pl: 0,
-            },
-            "&:last-of-type": {
-              pr: 0,
-            },
           }}
           {...cell.getCellProps()}
         >

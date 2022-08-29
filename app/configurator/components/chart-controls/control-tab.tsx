@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
@@ -170,6 +171,40 @@ export const DraggableTab = ({
   );
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  controlTabButton: {
+    color: theme.palette.grey[700],
+    borderColor: theme.palette.primary.main,
+    borderRadius: 1.5,
+    width: "100%",
+    minWidth: 160,
+    padding: `${theme.spacing(3)} ${theme.spacing(2)}`,
+    fontWeight: "normal",
+
+    fontSize: "0.875rem",
+    transition: "background-color .2s",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: theme.palette.action.hover,
+    },
+    "&:active": {
+      backgroundColor: theme.palette.action.hover,
+    },
+    "&:disabled": {
+      cursor: "initial",
+      backgroundColor: theme.palette.muted.main,
+    },
+  },
+  controlTabButtonInnerIcon: {
+    width: 32,
+    height: 32,
+    minWidth: 32,
+    borderRadius: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+}));
+
 // Generic component
 export const ControlTabButton = ({
   checked,
@@ -181,42 +216,24 @@ export const ControlTabButton = ({
   value: string;
   onClick: (x: string) => void;
   children: ReactNode;
-}) => (
-  <Button
-    role="tab"
-    aria-selected={checked}
-    aria-controls={`filter-panel-${value}`}
-    id={`tab-${value}`}
-    onClick={() => onClick(value)}
-    sx={{
-      backgroundColor: checked ? "action.hover" : "grey.100",
-      color: "grey.700",
-      borderColor: "primary",
-      borderRadius: 1.5,
-      width: "100%",
-      minWidth: 160,
-      px: 2,
-      py: 3,
-      fontWeight: "normal",
-
-      fontSize: "0.875rem",
-      transition: "background-color .2s",
-      cursor: "pointer",
-      ":hover": {
-        backgroundColor: "action.hover",
-      },
-      ":active": {
-        backgroundColor: "action.hover",
-      },
-      ":disabled": {
-        cursor: "initial",
-        backgroundColor: "muted.main",
-      },
-    }}
-  >
-    {children}
-  </Button>
-);
+}) => {
+  const classes = useStyles();
+  return (
+    <Button
+      role="tab"
+      aria-selected={checked}
+      aria-controls={`filter-panel-${value}`}
+      id={`tab-${value}`}
+      onClick={() => onClick(value)}
+      className={classes.controlTabButton}
+      sx={{
+        backgroundColor: checked ? "action.hover" : "grey.100",
+      }}
+    >
+      {children}
+    </Button>
+  );
+};
 
 export const ControlTabButtonInner = ({
   iconName,
@@ -235,70 +252,68 @@ export const ControlTabButtonInner = ({
   // On / Off indicator
   isActive?: boolean;
   showIsActive?: boolean;
-}) => (
-  <Flex
-    sx={{
-      justifyContent: "space-between",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
-      <Flex
-        sx={{
-          width: 32,
-          height: 32,
-          minWidth: 32,
-          borderRadius: 2,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: checked ? "primary.main" : "grey.100",
-          color:
-            optional && !checked
-              ? "grey.500"
-              : checked
-              ? "grey.100"
-              : "grey.700",
-        }}
-      >
-        <Icon size={24} name={iconName} />
-      </Flex>
-
-      <Flex
-        sx={{
-          flexDirection: "column",
-          alignItems: "flex-start",
-          mx: 3,
-          flexGrow: 1,
-        }}
-      >
-        {upperLabel && (
-          <Typography
-            variant="caption"
-            sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
-          >
-            {upperLabel}
-          </Typography>
-        )}
-        <Typography
-          variant="h5"
+}) => {
+  const classes = useStyles();
+  return (
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexGrow: 1,
+      }}
+    >
+      <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
+        <Flex
+          className={classes.controlTabButtonInnerIcon}
           sx={{
-            color: optional && !checked ? "grey.600" : "grey.800",
-            textAlign: "left",
+            backgroundColor: checked ? "primary.main" : "grey.100",
+            color:
+              optional && !checked
+                ? "grey.500"
+                : checked
+                ? "grey.100"
+                : "grey.700",
           }}
         >
-          {lowerLabel}
-        </Typography>
+          <Icon size={24} name={iconName} />
+        </Flex>
+
+        <Flex
+          sx={{
+            flexDirection: "column",
+            alignItems: "flex-start",
+            mx: 3,
+            flexGrow: 1,
+          }}
+        >
+          {upperLabel && (
+            <Typography
+              variant="caption"
+              sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
+            >
+              {upperLabel}
+            </Typography>
+          )}
+          <Typography
+            variant="h5"
+            sx={{
+              color: optional && !checked ? "grey.600" : "grey.800",
+              textAlign: "left",
+            }}
+          >
+            {lowerLabel}
+          </Typography>
+        </Flex>
       </Flex>
+      {showIsActive && isActive === false ? (
+        <Box sx={{ mr: 3 }}>
+          <Trans id="controls.option.isNotActive">Off</Trans>
+        </Box>
+      ) : showIsActive && isActive ? (
+        <Box sx={{ mr: 3, color: "primary" }}>
+          <Trans id="controls.option.isActive">On</Trans>
+        </Box>
+      ) : null}
     </Flex>
-    {showIsActive && isActive === false ? (
-      <Box sx={{ mr: 3 }}>
-        <Trans id="controls.option.isNotActive">Off</Trans>
-      </Box>
-    ) : showIsActive && isActive ? (
-      <Box sx={{ mr: 3, color: "primary" }}>
-        <Trans id="controls.option.isActive">On</Trans>
-      </Box>
-    ) : null}
-  </Flex>
-);
+  );
+};
