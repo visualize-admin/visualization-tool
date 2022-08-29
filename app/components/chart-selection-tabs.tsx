@@ -17,7 +17,10 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
-import { StepperNextButton } from "@/configurator/components/stepper";
+import {
+  StepperPreviousButton,
+  StepperNextButton,
+} from "@/configurator/components/stepper";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
 import useEvent from "@/utils/use-event";
@@ -146,6 +149,21 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   );
 };
 
+const useTabsInnerStyles = makeStyles((theme: Theme) => ({
+  buttons: {
+    marginLeft: -3,
+    width: "100%",
+    borderBottom: "1px solid",
+    borderBottomColor: theme.palette.divider,
+    textAlign: "right",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingRight: 4,
+    display: "flex",
+    gap: "1rem",
+  },
+}));
+
 const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
   return <TabsInner chartType={chartType} editable={false} />;
 };
@@ -159,6 +177,7 @@ const TabsInner = ({
   editable: boolean;
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
+  const classes = useTabsInnerStyles();
   return (
     <Tabs value={0}>
       {/* TODO: Generate dynamically when chart composition is implemented */}
@@ -169,19 +188,8 @@ const TabsInner = ({
           <TabContent iconName={getIconName(chartType)} editable={editable} />
         }
       />
-      <Box
-        sx={{
-          ml: -2,
-          width: "100%",
-          borderBottom: "1px solid",
-          borderBottomColor: "divider",
-          textAlign: "right",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          pr: 4,
-          display: "flex",
-        }}
-      >
+      <Box className={classes.buttons}>
+        <StepperPreviousButton />
         <StepperNextButton />
       </Box>
     </Tabs>
