@@ -29,6 +29,10 @@ export const getDataSourceFromLocalStorage = () => {
   }
 };
 
+const shouldKeepSourceInURL = (pathname: string) => {
+  return !pathname.includes("__test");
+};
+
 const updateRouterDataSourceParam = (
   router: SingletonRouter,
   dataSource: DataSource
@@ -98,7 +102,7 @@ export const dataSourceStoreMiddleware =
       // Theoretically get().dataSource shouldn't fail, but when testing it does.
       const newSource = get()?.dataSource;
 
-      if (newSource) {
+      if (newSource && shouldKeepSourceInURL(router.pathname)) {
         updateRouterDataSourceParam(router, newSource);
       }
     };
