@@ -6,11 +6,10 @@ import React from "react";
 import { TransitionGroup } from "react-transition-group";
 
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
-import {
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
+
+import { ChartAnnotationsSelector } from "./chart-annotations-selector";
 
 const useStyles = makeStyles((theme: Theme) => ({
   panelLeft: {
@@ -62,8 +61,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const ChartOptionsSelectorPanel = () => {
-  const [state] = useConfiguratorState(isConfiguring);
-  return <ChartOptionsSelector state={state} />;
+  const [state] = useConfiguratorState();
+  if (state.state === "CONFIGURING_CHART") {
+    return <ChartOptionsSelector state={state} />;
+  } else if (state.state === "DESCRIBING_CHART") {
+    return <ChartAnnotationsSelector state={state} />;
+  }
+  return null;
 };
 
 export const PanelLeftWrapper = ({

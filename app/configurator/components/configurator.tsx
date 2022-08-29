@@ -3,14 +3,12 @@ import React from "react";
 import { ChartPanelConfigurator } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { useConfiguratorState } from "@/configurator";
-import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import {
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
-  PanelRightWrapper,
 } from "@/configurator/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
@@ -46,9 +44,6 @@ const ConfigureChartStep = () => {
           />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
-      {/* <PanelRightWrapper>
-        <ChartOptionsSelector state={state} />
-      </PanelRightWrapper> */}
     </>
   );
 };
@@ -73,9 +68,6 @@ const DescribeChartStep = () => {
           />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
-      <PanelRightWrapper>
-        <ChartAnnotationsSelector state={state} />
-      </PanelRightWrapper>
     </>
   );
 };
