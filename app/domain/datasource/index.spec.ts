@@ -61,7 +61,9 @@ describe("datasource state hook", () => {
     };
 
     // Initialize router with a proper query based on initialUrl.
-    const router = createRouter({ dataSource: urlDataSourceLabel });
+    const router = createRouter({
+      query: { dataSource: urlDataSourceLabel } as Record<string, string>,
+    });
     const useDataSourceStore = createUseDataSourceStore(router);
     const hook = renderHook(() => useDataSourceStore());
 
@@ -81,23 +83,24 @@ describe("datasource state hook", () => {
   it("should have the correct default state when nothing is there", () => {
     const { getState } = setup({
       initialURL: "https://visualize.admin.ch/",
-      localStorageValue: "Test",
+      localStorageValue: undefined,
     });
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://test.lindas.admin.ch/query",
+      url: "https://lindas.admin.ch/query",
     });
   });
 
   it("should have the correct default state from local storage", () => {
     const { getState } = setup({
-      localStorageValue: "Prod",
+      initialURL: "https://visualize.admin.ch/",
+      localStorageValue: "Test",
     });
+
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://int.lindas.admin.ch/query",
+      url: "https://test.lindas.admin.ch/query",
     });
-    expect(router.query.dataSource).toBe("Int");
   });
   it("should have the correct default state from URL in priority", () => {
     const { getState } = setup({
@@ -119,22 +122,5 @@ describe("datasource state hook", () => {
     });
     expect(router.query.dataSource).toBe("Prod");
     expect(localStorage.getItem("dataSource")).toBe("Prod");
-  });
-
-  it("should not update router when default value is used", () => {
-    const { router } = setup({
-      initialURL: "https://visualize.admin.ch/",
-      localStorageValue: "",
-    });
-    expect(router.query.dataSource).toBeFalsy();
-    expect(localStorage.getItem("dataSource")).toBeFalsy();
-  });
-
-  it("should update router when default value is used and another value is present", () => {
-    const { router } = setup({
-      initialURL: "https://visualize.admin.ch/?dataSource=Int",
-      localStorageValue: "",
-    });
-    expect(router.query.dataSource).toBe("Int");
   });
 });
