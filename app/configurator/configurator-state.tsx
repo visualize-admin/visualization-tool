@@ -102,6 +102,7 @@ export type ConfiguratorStateAction =
         field: string | null;
         value:
           | string
+          | number
           | boolean
           | Record<string, string | number | boolean>
           | (string | number | boolean)[]
@@ -688,6 +689,7 @@ const handleChartFieldChanged = (
         draft.chartConfig.fields.symbolLayer.colors = {
           type: "fixed",
           value: "#1f77b4",
+          opacity: 70,
         };
       } else {
         const componentType = component?.__typename;
