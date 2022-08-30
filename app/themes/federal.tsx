@@ -432,6 +432,8 @@ theme.components = {
       sizeSmall: {
         height: 40,
         minHeight: 40,
+        fontSize: `${theme.typography.body2.fontSize} !important`,
+        lineHeight: `${theme.typography.body2.lineHeight} !important`,
       },
       focused: {
         outline: "3px solid #333333",
