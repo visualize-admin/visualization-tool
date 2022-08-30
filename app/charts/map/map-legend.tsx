@@ -15,6 +15,7 @@ import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
+import { convertRgbArrayToHex } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -202,7 +203,9 @@ const CircleLegend = () => {
   const radius = value && radiusScale(value);
   const maxRadius = radiusScale.range()[1];
 
-  const color = value ? getColor(value) : undefined;
+  const color = interaction.d
+    ? convertRgbArrayToHex(getColor(interaction.d))
+    : undefined;
 
   const domainObservations = useMemo(
     () => dataDomain.map((d) => data.find((x) => getValue(x) === d)),
@@ -248,7 +251,7 @@ const CircleLegend = () => {
             <Circle
               value={formatNumber(value)}
               label={getLabel(interaction.d)}
-              fill={`rgb(${color.join(", ")})`}
+              fill={color}
               stroke={axisLabelColor}
               radius={radius}
               maxRadius={maxRadius}

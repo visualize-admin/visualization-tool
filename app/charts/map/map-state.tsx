@@ -14,6 +14,7 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
+import { keyBy } from "lodash";
 import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
@@ -311,11 +312,47 @@ const useMapState = (
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const colors = symbolLayer.colors;
-  const getSymbolColor =
-    colors.type === "single"
-      ? () => convertHexToRgbArray(colors.value)
-      : () => [0, 0, 0, 255 * 0.1];
+  // @ts-ignore
+  // console.log(
+  //   [...dimensions, ...measures].find(
+  //     (d) => d.iri === symbolLayer.colors.componentIri
+  //   )
+  // );
+
+  const getSymbolColor = useMemo(() => {
+    const colors = symbolLayer.colors;
+
+    switch (colors.type) {
+      case "fixed":
+        const color = convertHexToRgbArray(colors.value);
+        return (_: Observation) => color;
+      case "categorical":
+        const component = dimensions.find((d) => d.iri === colors.componentIri);
+        const componentValuesByLabel = keyBy(component?.values, (d) => d.label);
+        return (d: Observation) => {
+          const label = d[colors.componentIri] as string;
+          const value = componentValuesByLabel[label].value;
+          const color = colors.colorMapping?.[value];
+          return color ? convertHexToRgbArray(color) : [0, 0, 0, 255 * 0.1];
+        };
+      case "continous":
+        const colorScaleDomain = extent(
+          symbolData.map((d) => d[colors.componentIri]),
+          (d) => +d!
+        ) as [number, number];
+        const colorScale = scaleSequential(
+          getColorInterpolator(colors.palette as any)
+        ).domain(colorScaleDomain);
+        return (d: Observation) => {
+          const color = colorScale(+d[colors.componentIri]!);
+          if (color) {
+            const rgb = makeColor(color)?.rgb();
+            return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
+          }
+          return [0, 0, 0, 255 * 0.1];
+        };
+    }
+  }, [symbolLayer.colors, symbolData]);
 
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];

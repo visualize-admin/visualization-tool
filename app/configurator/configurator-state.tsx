@@ -46,6 +46,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { canDimensionBeMultiFiltered } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE, useDataSource } from "@/domain/datasource";
 import { retrieveDataSourceFromLocalStorage } from "@/domain/datasource/localStorage";
 import {
@@ -682,7 +683,33 @@ const handleChartFieldChanged = (
             (c) => c !== componentIri
           );
       }
-      // }
+    } else if (isMapConfig(draft.chartConfig) && field === "colors") {
+      if (componentIri === FIELD_VALUE_NONE) {
+        draft.chartConfig.fields.symbolLayer.colors = {
+          type: "fixed",
+          value: "#1f77b4",
+        };
+      } else {
+        const componentType = component?.__typename;
+
+        if (component && canDimensionBeMultiFiltered(component)) {
+          draft.chartConfig.fields.symbolLayer.colors = {
+            type: "categorical",
+            componentIri,
+            palette: "default",
+            colorMapping: mapValueIrisToColor({
+              palette: "blues",
+              dimensionValues: component.values,
+            }),
+          };
+        } else if (component && componentType === "Measure") {
+          draft.chartConfig.fields.symbolLayer.colors = {
+            type: "continous",
+            componentIri,
+            palette: "blues",
+          };
+        }
+      }
     }
   } else {
     // The field is being updated

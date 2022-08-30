@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { MapState } from "@/charts/map/map-state";
+import { convertRgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -76,13 +77,11 @@ export const MapTooltip = () => {
     () => (areaValue !== null ? areaLayer.colorScale(areaValue) : null),
     [areaValue, areaLayer]
   );
-  const symbolColor = useMemo(
-    () =>
-      symbolValue !== null
-        ? `rgb(${symbolLayer.getColor(symbolValue).join(", ")})`
-        : null,
-    [symbolValue, symbolLayer]
-  );
+  const symbolColor = useMemo(() => {
+    return interaction.d
+      ? convertRgbArrayToHex(symbolLayer.getColor(interaction.d))
+      : null;
+  }, [interaction.d, symbolLayer]);
 
   return (
     <>
@@ -139,11 +138,17 @@ export const MapTooltip = () => {
                     />
                   )}
 
-                  {showSymbolValue && symbolColor && (
+                  {showSymbolValue && (
                     <TooltipRow
                       title={symbolLayer.measureLabel}
-                      background={symbolColor}
-                      color={hcl(symbolColor).l < 55 ? "#fff" : "#000"}
+                      background={symbolColor || "#dedede"}
+                      color={
+                        symbolColor
+                          ? hcl(symbolColor).l < 55
+                            ? "#fff"
+                            : "#000"
+                          : "#000"
+                      }
                       value={formatNumberWithUnit(
                         symbolValue,
                         formatNumber,
