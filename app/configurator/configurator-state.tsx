@@ -636,9 +636,10 @@ const handleChartFieldChanged = (
     selectedValues: actionSelectedValues,
   } = action.value;
   const f = (draft.chartConfig.fields as GenericFields)[field];
-  const component = dataSetMetadata.dimensions.find(
-    (dim) => dim.iri === componentIri
-  );
+  const component = [
+    ...dataSetMetadata.dimensions,
+    ...dataSetMetadata.measures,
+  ].find((dim) => dim.iri === componentIri);
   const selectedValues = actionSelectedValues
     ? actionSelectedValues
     : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) || [];
