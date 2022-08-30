@@ -119,22 +119,14 @@ export const MapComponent = () => {
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    areaLayer.getValue,
-    areaLayer.hierarchyLevel,
-    areaLayer.getColor,
-    mapStyle,
-  ]);
+  }, [areaLayer.getValue, areaLayer.getColor, mapStyle]);
   const geoJsonLayer = useMemo(() => {
     if (!areaLayer.show) {
       return;
     }
     // Sort for smaller shapes to be over larger ones, to be able to use tooltip
     const sortedFeatures = orderBy(
-      features.areaLayer?.shapes?.features.filter(
-        ({ properties: { hierarchyLevel } }: GeoFeature) =>
-          hierarchyLevel === areaLayer.hierarchyLevel
-      ),
+      features.areaLayer?.shapes?.features,
       geoArea,
       "asc"
     );

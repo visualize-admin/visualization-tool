@@ -449,7 +449,6 @@ const MapAreaLayer = t.intersection([
   t.type({
     componentIri: t.string,
     measureIri: t.string,
-    hierarchyLevel: t.number,
     show: t.boolean,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
     nbClass: t.number,
@@ -475,7 +474,6 @@ const MapSymbolLayer = t.intersection([
   t.type({
     componentIri: t.string,
     measureIri: t.string,
-    hierarchyLevel: t.number,
     show: t.boolean,
   }),
   t.type({

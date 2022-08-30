@@ -216,7 +216,6 @@ export const resolvers: Resolvers = {
           properties: {
             iri: d.iri,
             label: d.label,
-            hierarchyLevel: d.level,
           },
           geometry: parseWKT(d.wktString),
         })) as GeoFeature[];

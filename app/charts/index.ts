@@ -276,7 +276,6 @@ export const getInitialConfig = ({
             show: geoShapes.length > 0,
             componentIri: geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
-            hierarchyLevel: 1,
             colorScaleType: "continuous",
             colorScaleInterpolationType: "linear",
             palette: "oranges",
@@ -286,7 +285,6 @@ export const getInitialConfig = ({
             show: geoShapes.length === 0,
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
-            hierarchyLevel: 1,
             colors: {
               type: "single",
               value: "#1f77b4",

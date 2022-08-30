@@ -65,7 +65,6 @@ export interface MapState {
   identicalLayerComponentIris: boolean;
   areaLayer: {
     data: Observation[];
-    hierarchyLevel: number;
     show: boolean;
     measureLabel: string;
     getLabel: (d: Observation) => string;
@@ -87,7 +86,6 @@ export interface MapState {
   };
   symbolLayer: {
     data: Observation[];
-    hierarchyLevel: number;
     show: boolean;
     measureLabel: string;
     getLabel: (d: Observation) => string;
@@ -232,7 +230,6 @@ const useMapState = (
       getLabel,
     }: {
       geoDimensionIri: string;
-      hierarchyLevel: number;
       getLabel: (d: Observation) => string;
     }) => {
       const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
@@ -259,11 +256,10 @@ const useMapState = (
       areaLayer.componentIri !== ""
         ? getData({
             geoDimensionIri: areaLayer.componentIri,
-            hierarchyLevel: areaLayer.hierarchyLevel,
             getLabel: getAreaLabel,
           })
         : [],
-    [areaLayer.componentIri, areaLayer.hierarchyLevel, getAreaLabel, getData]
+    [areaLayer.componentIri, getAreaLabel, getData]
   );
 
   const symbolData = useMemo(
@@ -271,16 +267,10 @@ const useMapState = (
       symbolLayer.componentIri !== ""
         ? getData({
             geoDimensionIri: symbolLayer.componentIri,
-            hierarchyLevel: symbolLayer.hierarchyLevel,
             getLabel: getSymbolLabel,
           })
         : [],
-    [
-      symbolLayer.componentIri,
-      symbolLayer.hierarchyLevel,
-      getSymbolLabel,
-      getData,
-    ]
+    [symbolLayer.componentIri, getSymbolLabel, getData]
   );
 
   const identicalLayerComponentIris =
@@ -368,7 +358,6 @@ const useMapState = (
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
-      hierarchyLevel: areaLayer.hierarchyLevel,
       show: fields.areaLayer.show,
       measureLabel: areaMeasureLabel,
       measureDimension: areaMeasureDimension,
@@ -385,7 +374,6 @@ const useMapState = (
     },
     symbolLayer: {
       data: symbolData,
-      hierarchyLevel: symbolLayer.hierarchyLevel,
       measureLabel: symbolMeasureLabel,
       measureDimension: symbolMeasureDimension,
       errorDimension: symbolErrorDimension,
