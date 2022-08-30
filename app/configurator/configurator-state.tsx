@@ -704,7 +704,7 @@ const handleChartFieldChanged = (
           };
         } else if (component && componentType === "Measure") {
           draft.chartConfig.fields.symbolLayer.colors = {
-            type: "continous",
+            type: "continuous",
             componentIri,
             palette: "blues",
           };

@@ -335,7 +335,7 @@ const useMapState = (
           const color = colors.colorMapping?.[value];
           return color ? convertHexToRgbArray(color) : [0, 0, 0, 255 * 0.1];
         };
-      case "continous":
+      case "continuous":
         const colorScaleDomain = extent(
           symbolData.map((d) => d[colors.componentIri]),
           (d) => +d!

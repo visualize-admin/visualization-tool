@@ -481,7 +481,7 @@ const MapSymbolLayer = t.intersection([
       t.type({ type: t.literal("fixed"), value: t.string }),
       t.intersection([
         t.type({
-          type: t.union([t.literal("categorical"), t.literal("continous")]),
+          type: t.union([t.literal("categorical"), t.literal("continuous")]),
         }),
         GenericSegmentField,
       ]),
