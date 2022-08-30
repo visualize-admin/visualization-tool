@@ -317,7 +317,10 @@ const useMapState = (
 
     switch (colors.type) {
       case "fixed":
-        const color = convertHexToRgbArray(colors.value);
+        const color = [
+          ...convertHexToRgbArray(colors.value),
+          colors.opacity * 2.55,
+        ];
         return (_: Observation) => color;
       case "categorical":
         const component = dimensions.find((d) => d.iri === colors.componentIri);

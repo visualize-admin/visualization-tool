@@ -288,6 +288,7 @@ export const getInitialConfig = ({
             colors: {
               type: "fixed",
               value: "#1f77b4",
+              opacity: 70,
             },
           },
         },

@@ -18,6 +18,7 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
+  ChartOptionSliderField,
   ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
@@ -461,6 +462,7 @@ export const SymbolLayerSettings = memo(
               options={colorDimensionsOptions}
             />
             {chartConfig.fields.symbolLayer.colors.type === "fixed" && (
+              <>
               <ColorPickerField
                 label={t({
                   id: "controls.color.select",
@@ -470,6 +472,20 @@ export const SymbolLayerSettings = memo(
                 path="colors.value"
                 disabled={isHidden}
               />
+                <ChartOptionSliderField
+                  field={activeField}
+                  path="colors.opacity"
+                  label={t({
+                    id: "controls.color.opacity",
+                    message: "Opacity",
+                  })}
+                  min={0}
+                  max={100}
+                  step={10}
+                  disabled={isHidden}
+                  defaultValue={70}
+                />
+              </>
             )}
           </ControlSectionContent>
         </ControlSection>

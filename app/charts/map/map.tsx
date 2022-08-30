@@ -224,7 +224,6 @@ export const MapComponent = () => {
       data: sortedPoints,
       pickable: identicalLayerComponentIris ? !areaLayer.show : true,
       autoHighlight: true,
-      opacity: 0.7,
       stroked: false,
       filled: true,
       radiusUnits: "pixels",

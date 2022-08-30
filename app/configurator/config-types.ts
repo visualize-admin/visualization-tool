@@ -478,7 +478,7 @@ const MapSymbolLayer = t.intersection([
   }),
   t.type({
     colors: t.union([
-      t.type({ type: t.literal("fixed"), value: t.string }),
+      t.type({ type: t.literal("fixed"), value: t.string, opacity: t.number }),
       t.intersection([
         t.type({
           type: t.union([t.literal("categorical"), t.literal("continuous")]),
