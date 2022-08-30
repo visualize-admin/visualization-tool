@@ -90,7 +90,7 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
-    getColor: (x: number | null) => number[];
+    getColor: (d: Observation) => number[];
     errorDimension?: DimensionMetadataFragment;
     measureDimension?: DimensionMetadataFragment;
     getFormattedError: null | ((d: Observation) => string);
