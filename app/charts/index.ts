@@ -287,7 +287,10 @@ export const getInitialConfig = ({
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
-            color: "#1f77b4",
+            colors: {
+              type: "single",
+              value: "#1f77b4",
+            },
           },
         },
         baseLayer: {

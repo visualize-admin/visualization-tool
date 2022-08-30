@@ -50,6 +50,8 @@ import {
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
+import { convertHexToRgbArray } from "../shared/colors";
+
 import { getBBox } from "./helpers";
 
 export interface MapState {
@@ -90,10 +92,10 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
+    getColor: (x: number | null) => number[];
     errorDimension?: DimensionMetadataFragment;
     measureDimension?: DimensionMetadataFragment;
     getFormattedError: null | ((d: Observation) => string);
-    color: string;
     radiusScale: ScalePower<number, number>;
     dataDomain: [number, number];
   };
@@ -320,6 +322,12 @@ const useMapState = (
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
+  const colors = symbolLayer.colors;
+  const getSymbolColor =
+    colors.type === "single"
+      ? () => convertHexToRgbArray(colors.value)
+      : () => [0, 0, 0, 255 * 0.1];
+
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
   const radiusScale = scaleSqrt().domain(radiusDomain).range(radiusRange);
@@ -378,7 +386,6 @@ const useMapState = (
     symbolLayer: {
       data: symbolData,
       hierarchyLevel: symbolLayer.hierarchyLevel,
-      color: fields.symbolLayer.color,
       measureLabel: symbolMeasureLabel,
       measureDimension: symbolMeasureDimension,
       errorDimension: symbolErrorDimension,
@@ -387,6 +394,7 @@ const useMapState = (
       radiusScale,
       getValue: getSymbolValue,
       getFormattedError: getSymbolFormattedError,
+      getColor: getSymbolColor,
       dataDomain: symbolDataDomain,
     },
   };

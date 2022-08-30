@@ -187,10 +187,10 @@ const CircleLegend = () => {
   const {
     symbolLayer: {
       data,
-      color: symbolColor,
       dataDomain,
       getLabel,
       getValue,
+      getColor,
       radiusScale,
     },
   } = useChartState() as MapState;
@@ -202,7 +202,7 @@ const CircleLegend = () => {
   const radius = value && radiusScale(value);
   const maxRadius = radiusScale.range()[1];
 
-  const color = value ? symbolColor : undefined;
+  const color = value ? getColor(value) : undefined;
 
   const domainObservations = useMemo(
     () => dataDomain.map((d) => data.find((x) => getValue(x) === d)),
@@ -243,11 +243,12 @@ const CircleLegend = () => {
         {interaction.d &&
           interaction.visible &&
           value !== undefined &&
-          radius !== undefined && (
+          radius !== undefined &&
+          color !== undefined && (
             <Circle
               value={formatNumber(value)}
               label={getLabel(interaction.d)}
-              fill={color}
+              fill={`rgb(${color.join(", ")})`}
               stroke={axisLabelColor}
               radius={radius}
               maxRadius={maxRadius}

@@ -447,7 +447,7 @@ export const SymbolLayerSettings = memo(
                 message: "Select a color",
               })}
               field={activeField}
-              path="color"
+              path="colors.value"
               disabled={isHidden}
             />
           </ControlSectionContent>

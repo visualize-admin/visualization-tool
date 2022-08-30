@@ -471,13 +471,25 @@ const MapAreaLayer = t.intersection([
 ]);
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.type({
-  componentIri: t.string,
-  measureIri: t.string,
-  hierarchyLevel: t.number,
-  color: t.string,
-  show: t.boolean,
-});
+const MapSymbolLayer = t.intersection([
+  t.type({
+    componentIri: t.string,
+    measureIri: t.string,
+    hierarchyLevel: t.number,
+    show: t.boolean,
+  }),
+  t.type({
+    colors: t.union([
+      t.type({ type: t.literal("single"), value: t.string }),
+      t.type({
+        type: t.literal("mapped"),
+        colorDimensionIri: t.string,
+        palette: t.string,
+        mapping: ColorMapping,
+      }),
+    ]),
+  }),
+]);
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({

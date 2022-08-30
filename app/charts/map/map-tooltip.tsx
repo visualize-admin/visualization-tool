@@ -76,6 +76,13 @@ export const MapTooltip = () => {
     () => (areaValue !== null ? areaLayer.colorScale(areaValue) : null),
     [areaValue, areaLayer]
   );
+  const symbolColor = useMemo(
+    () =>
+      symbolValue !== null
+        ? `rgb(${symbolLayer.getColor(symbolValue).join(", ")})`
+        : null,
+    [symbolValue, symbolLayer]
+  );
 
   return (
     <>
@@ -132,11 +139,11 @@ export const MapTooltip = () => {
                     />
                   )}
 
-                  {showSymbolValue && (
+                  {showSymbolValue && symbolColor && (
                     <TooltipRow
                       title={symbolLayer.measureLabel}
-                      background={symbolLayer.color}
-                      color={hcl(symbolLayer.color).l < 55 ? "#fff" : "#000"}
+                      background={symbolColor}
+                      color={hcl(symbolColor).l < 55 ? "#fff" : "#000"}
                       value={formatNumberWithUnit(
                         symbolValue,
                         formatNumber,

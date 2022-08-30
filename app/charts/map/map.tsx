@@ -14,7 +14,6 @@ import {
 } from "@/charts/map/get-base-layer-style";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
-import { convertHexToRgbArray } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator/config-types";
@@ -111,10 +110,6 @@ export const MapComponent = () => {
     };
     mapNodeRef.current?.flyTo(newViewState);
   };
-
-  const symbolColorRgbArray = useMemo(() => {
-    return convertHexToRgbArray(symbolLayer.color);
-  }, [symbolLayer.color]);
 
   const baseLayerStyle = useMemo(() => {
     return getBaseLayerStyle({ locale, showLabels: !areaLayer.show });
@@ -242,7 +237,18 @@ export const MapComponent = () => {
       lineWidthMinPixels: 1,
       getPosition: ({ coordinates }: GeoPoint) => coordinates,
       getRadius,
-      getFillColor: symbolColorRgbArray,
+      getFillColor: (d: GeoPoint) => {
+        const { observation } = d.properties;
+        if (observation) {
+          const value = symbolLayer.getValue(observation);
+
+          if (value) {
+            return symbolLayer.getColor(value);
+          }
+        }
+
+        return [222, 222, 222, 255];
+      },
       getLineColor: [255, 255, 255],
       onHover: ({
         x,
@@ -279,7 +285,6 @@ export const MapComponent = () => {
     identicalLayerComponentIris,
     scatterplotLayerId,
     setMapTooltipType,
-    symbolColorRgbArray,
     symbolLayer,
   ]);
 
