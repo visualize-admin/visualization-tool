@@ -686,7 +686,6 @@ const handleChartFieldChanged = (
   } else {
     // The field is being updated
     if (
-      // draft.chartConfig.chartType !== "table" &&
       field === "segment" &&
       "segment" in draft.chartConfig.fields &&
       draft.chartConfig.fields.segment &&

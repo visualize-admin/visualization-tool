@@ -1,5 +1,5 @@
 import {
-  color,
+  color as makeColor,
   extent,
   ScaleLinear,
   scaleLinear,
@@ -99,7 +99,7 @@ export interface MapState {
   };
 }
 
-const getColorScale = ({
+const getAreaColorScale = ({
   scaleInterpolationType,
   palette,
   getValue,
@@ -234,7 +234,6 @@ const useMapState = (
     }) => {
       const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
 
-      // Right now hierarchies are only created for geoShapes
       if (
         isGeoShapesDimension(dimension) &&
         features.areaLayer?.shapes?.features
@@ -292,7 +291,7 @@ const useMapState = (
     0, 100,
   ]) as [number, number];
 
-  const areaColorScale = getColorScale({
+  const areaColorScale = getAreaColorScale({
     scaleInterpolationType: areaLayer.colorScaleInterpolationType,
     palette: areaLayer.palette,
     getValue: getAreaValue,
@@ -306,8 +305,8 @@ const useMapState = (
       return [0, 0, 0, 255 * 0.1];
     }
 
-    const c = areaColorScale && areaColorScale(v);
-    const rgb = c && color(`${c}`)?.rgb();
+    const color = areaColorScale && areaColorScale(v);
+    const rgb = color && makeColor(color)?.rgb();
 
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
