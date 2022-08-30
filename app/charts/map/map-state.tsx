@@ -352,7 +352,7 @@ const useMapState = (
           return [0, 0, 0, 255 * 0.1];
         };
     }
-  }, [symbolLayer.colors, symbolData]);
+  }, [symbolLayer.colors, symbolData, dimensions]);
 
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
