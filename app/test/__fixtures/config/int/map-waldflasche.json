@@ -66,7 +66,8 @@
           "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
           "color": {
             "type": "single",
-            "value": "#1f77b4"
+            "value": "#1f77b4",
+            "opacity": 70
           }
         }
       },
