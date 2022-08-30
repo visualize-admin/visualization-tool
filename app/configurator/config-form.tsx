@@ -197,6 +197,49 @@ export const useDimensionSelection = (dimensionIri: string) => {
   return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
 };
 
+export const useChartOptionSliderField = ({
+  field,
+  path,
+  min,
+  max,
+  defaultValue,
+}: {
+  field: string | null;
+  path: string;
+  min: number;
+  max: number;
+  defaultValue: number;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const isValidNumber = /^\d+$/.test(value) || value === "";
+
+    if (isValidNumber) {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path,
+          value: Math.max(min, Math.min(+value, max)),
+        },
+      });
+    }
+  });
+
+  const value =
+    state.state === "CONFIGURING_CHART"
+      ? +getChartOptionField(state, field, path)
+      : defaultValue;
+
+  return {
+    name: path,
+    value,
+    onChange,
+  };
+};
+
 export const useChartOptionRadioField = ({
   field,
   path,

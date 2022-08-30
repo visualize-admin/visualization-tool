@@ -577,6 +577,28 @@ theme.components = {
       },
     },
   },
+  MuiSlider: {
+    styleOverrides: {
+      root: {
+        height: 3,
+
+        "& .MuiSlider-rail": {
+          backgroundColor: theme.palette.grey[500],
+        },
+        "& .MuiSlider-thumb": {
+          width: 20,
+          height: 20,
+
+          "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+            boxShadow: "inherit",
+          },
+          "&:before": {
+            display: "none",
+          },
+        },
+      },
+    },
+  },
   MuiSwitch: {
     styleOverrides: {
       root: {
