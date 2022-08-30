@@ -202,14 +202,18 @@ export const MapComponent = () => {
     symbolLayer.radiusScale,
     mapStyle,
   ]);
+
   const scatterplotLayer = useMemo(() => {
     if (!symbolLayer.show) {
       return;
     }
-    const getRadius = ({ properties: { observation } }: GeoPoint) =>
-      observation
-        ? symbolLayer.radiusScale(symbolLayer.getValue(observation) as number)
-        : 0;
+
+    const getRadius = ({ properties: { observation } }: GeoPoint) => {
+      const value = observation ? symbolLayer.getValue(observation) : null;
+      const radius = value ? symbolLayer.radiusScale(value) : 0;
+      return radius;
+    };
+
     // Sort for smaller points to be over larger ones, to be able to use tooltip
     const sortedPoints = features.symbolLayer?.points
       ? orderBy([...features.symbolLayer?.points], getRadius, "asc")
