@@ -312,13 +312,6 @@ const useMapState = (
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  // @ts-ignore
-  // console.log(
-  //   [...dimensions, ...measures].find(
-  //     (d) => d.iri === symbolLayer.colors.componentIri
-  //   )
-  // );
-
   const getSymbolColor = useMemo(() => {
     const colors = symbolLayer.colors;
 
