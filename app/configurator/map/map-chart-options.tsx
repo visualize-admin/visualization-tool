@@ -460,18 +460,19 @@ export const SymbolLayerSettings = memo(
             <SymbolColorSelect
               metaData={metaData}
               options={colorDimensionsOptions}
+              disabled={isHidden}
             />
             {chartConfig.fields.symbolLayer.colors.type === "fixed" && (
               <>
-              <ColorPickerField
-                label={t({
-                  id: "controls.color.select",
-                  message: "Select a color",
-                })}
-                field={activeField}
-                path="colors.value"
-                disabled={isHidden}
-              />
+                <ColorPickerField
+                  label={t({
+                    id: "controls.color.select",
+                    message: "Select a color",
+                  })}
+                  field={activeField}
+                  path="colors.value"
+                  disabled={isHidden}
+                />
                 <ChartOptionSliderField
                   field={activeField}
                   path="colors.opacity"
@@ -519,9 +520,11 @@ const NoGeoDimensionsWarning = () => {
 const SymbolColorSelect = ({
   metaData,
   options,
+  disabled,
 }: {
   metaData: DataCubeMetadata;
   options: Option[];
+  disabled?: boolean;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -567,6 +570,7 @@ const SymbolColorSelect = ({
       options={optionsWithNoneValue}
       onChange={handleChange}
       value={value}
+      disabled={disabled}
     />
   );
 };
