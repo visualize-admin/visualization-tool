@@ -286,7 +286,7 @@ export const getInitialConfig = ({
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
             colors: {
-              type: "single",
+              type: "fixed",
               value: "#1f77b4",
             },
           },

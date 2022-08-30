@@ -478,13 +478,13 @@ const MapSymbolLayer = t.intersection([
   }),
   t.type({
     colors: t.union([
-      t.type({ type: t.literal("single"), value: t.string }),
-      t.type({
-        type: t.literal("mapped"),
-        colorDimensionIri: t.string,
-        palette: t.string,
-        mapping: ColorMapping,
-      }),
+      t.type({ type: t.literal("fixed"), value: t.string }),
+      t.intersection([
+        t.type({
+          type: t.union([t.literal("categorical"), t.literal("continous")]),
+        }),
+        GenericSegmentField,
+      ]),
     ]),
   }),
 ]);
