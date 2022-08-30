@@ -124,6 +124,17 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 
 ℹ️ GeoShape dimensions can be shown on a map as _shapes_
 
+#### Currencies
+
+If the dimension is related to a currency (`?dimension a qudt:CurrencyUnit`), when the
+values are displayed, we use the currency information to show the correct number of
+decimals for the value.
+
+- CHF has currency exponent 2, so we will show _at least_ 2 decimals, adding trailing zeroes if necessary
+- YEN has currency exponent 0, so we would not add trailing zeroes
+- Additionally, if the dimension's dataType indicates it contains rounded values (`?dim sh:datatype xsd:int` or `?dim sh:datatype xsd:integer`), we do not use this logic
+  and will show the values without decimals
+
 #### Related dimensions
 
 ##### Standard error
