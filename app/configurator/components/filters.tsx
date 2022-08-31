@@ -683,10 +683,12 @@ export const DimensionValuesMultiFilter = ({
   dataSetIri,
   dimensionIri,
   colorConfigPath,
+  field = "segment",
 }: {
   dataSetIri: string;
   dimensionIri: string;
   colorConfigPath?: string;
+  field?: string;
 }) => {
   const locale = useLocale();
   const classes = useStyles();
@@ -724,11 +726,11 @@ export const DimensionValuesMultiFilter = ({
           ? configuratorState.chartConfig
           : null;
 
-      const fullpath = `fields["segment"].${path}colorMapping["${value}"]`;
+      const fullpath = `fields["${field}"].${path}colorMapping["${value}"]`;
       const color = chartConfig ? get(chartConfig, fullpath) : null;
       return color;
     },
-    [colorConfigPath, configuratorState]
+    [colorConfigPath, configuratorState, field]
   );
 
   if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
