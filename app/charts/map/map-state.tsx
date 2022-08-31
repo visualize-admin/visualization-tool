@@ -184,7 +184,7 @@ const getFixedSymbolColors = ({
   value: string;
   opacity: number;
 }) => {
-  const color = convertHexToRgbArray(value, opacity);
+  const color = convertHexToRgbArray(value, opacity * 2.55);
   return {
     type: "fixed",
     getColor: (_: Observation) => color,
