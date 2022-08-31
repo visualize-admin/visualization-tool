@@ -462,7 +462,7 @@ export const SymbolLayerSettings = memo(
               options={colorDimensionsOptions}
               disabled={isHidden}
             />
-            {chartConfig.fields.symbolLayer.colors.type === "fixed" && (
+            {chartConfig.fields.symbolLayer.colors.type === "fixed" ? (
               <>
                 <ColorPickerField
                   label={t({
@@ -487,6 +487,9 @@ export const SymbolLayerSettings = memo(
                   defaultValue={70}
                 />
               </>
+            ) : chartConfig.fields.symbolLayer.colors.type ===
+              "categorical" ? null : (
+              <ColorRampField field={activeField} path="colors.palette" />
             )}
           </ControlSectionContent>
         </ControlSection>
