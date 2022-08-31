@@ -79,6 +79,7 @@ export const MapLegend = () => {
     areaLayer.data.length >= 3 &&
     (areaLayer.colorScaleInterpolationType === "linear" ||
       areaLayer.colorScale.range().length >= 3);
+  const { colors: symbolLayerColors } = symbolLayer;
 
   return (
     <Flex sx={{ minHeight: 100, flexWrap: "wrap" }}>
@@ -113,14 +114,32 @@ export const MapLegend = () => {
       )}
 
       {symbolLayer.show && (
-        <Box sx={{ p: 4 }}>
-          {symbolLayer.measureLabel && (
-            <Typography component="div" variant="caption">
-              {symbolLayer.measureLabel}
-            </Typography>
-          )}
-          <CircleLegend />
-        </Box>
+        <Flex>
+          <Box sx={{ p: 4 }}>
+            {symbolLayerColors.type === "continuous" && (
+              <>
+                <Typography component="div" variant="caption">
+                  {symbolLayerColors.componentLabel}
+                </Typography>
+                <ContinuousColorLegend
+                  palette={symbolLayerColors.palette}
+                  domain={symbolLayerColors.domain}
+                  getValue={(d: Observation) =>
+                    d[symbolLayerColors.componentIri] as number
+                  }
+                />
+              </>
+            )}
+          </Box>
+          <Box sx={{ p: 4 }}>
+            <>
+              <Typography component="div" variant="caption">
+                {symbolLayer.measureLabel}
+              </Typography>
+              <CircleLegend />
+            </>
+          </Box>
+        </Flex>
       )}
     </Flex>
   );
