@@ -501,6 +501,8 @@ export const SymbolLayerSettings = memo(
                 key={chartConfig.fields.symbolLayer.componentIri}
                 dataSetIri={metaData.iri}
                 dimensionIri={chartConfig.fields.symbolLayer.componentIri}
+                field={activeField}
+                colorConfigPath="colors"
               />
             </ControlSectionContent>
           )}
