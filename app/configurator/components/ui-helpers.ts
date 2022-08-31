@@ -12,6 +12,9 @@ import {
   interpolatePRGn,
   interpolatePuOr,
   interpolatePurples,
+  interpolateRdBu,
+  interpolateRdYlBu,
+  interpolateRdYlGn,
   interpolateReds,
   NumberValue,
   scaleOrdinal,
@@ -938,6 +941,9 @@ type SteppedPalette<T> = Omit<Palette<T>, "interpolator"> & {
 const steppedPaletteSteps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
 
 const divergingPaletteKeys = [
+  "RdBu",
+  "RdYlBu",
+  "RdYlGn",
   "BrBG",
   "PRGn",
   "PiYG",
@@ -954,6 +960,9 @@ const sequentialPaletteKeys = [
 ] as SequentialPaletteType[];
 
 const interpolatorByName = {
+  RdBu: interpolateRdBu,
+  RdYlBu: interpolateRdYlBu,
+  RdYlGn: interpolateRdYlGn,
   BrBG: interpolateBrBG,
   PRGn: interpolatePRGn,
   PiYG: interpolatePiYG,
