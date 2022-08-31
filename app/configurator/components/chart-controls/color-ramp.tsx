@@ -12,6 +12,7 @@ import {
 } from "@/configurator";
 import {
   divergingPalettes,
+  Palette,
   sequentialPalettes,
 } from "@/configurator/components/ui-helpers";
 import { Icon } from "@/icons";
@@ -76,7 +77,7 @@ export const ColorRampField = ({
     const palettes = [...sequentialPalettes, ...divergingPalettes];
     const defaultPalette = sequentialPalettes.find(
       (d) => d.value === "oranges"
-    );
+    ) as Palette<"oranges">;
 
     return { palettes, defaultPalette };
   }, []);
@@ -87,8 +88,7 @@ export const ColorRampField = ({
   ) as DivergingPaletteType | SequentialPaletteType;
 
   const currentPalette =
-    palettes.find((d) => d.value === currentPaletteName) ||
-    sequentialPalettes[0];
+    palettes.find((d) => d.value === currentPaletteName) || defaultPalette;
 
   const onSelectedItemChange = useCallback(
     ({ selectedItem }) => {
@@ -115,7 +115,7 @@ export const ColorRampField = ({
     getItemProps,
   } = useSelect({
     items: palettes,
-    defaultSelectedItem: defaultPalette,
+    defaultSelectedItem: currentPalette,
     onSelectedItemChange,
   });
 
