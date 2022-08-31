@@ -28,6 +28,36 @@ const makeInFilter = (varName: string, values: string[]) => {
     }`;
 };
 
+// It's a bit difficult ot access the types of the various sparql libraries
+const exampleSelectQuery = SELECT``;
+const exampleDescribeQuery = DESCRIBE``;
+type SelectQuery = typeof exampleSelectQuery;
+type DescribeQuery = typeof exampleDescribeQuery;
+type StreamOfQuad = Parameters<typeof fromStream>[1];
+
+const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
+  client: T extends SelectQuery ? ParsingClient : StreamClient,
+  query: T
+): Promise<{
+  meta: RequestQueryMeta;
+  data: T extends SelectQuery ? unknown[] : StreamOfQuad;
+}> => {
+  const startTime = Date.now();
+  // @ts-ignore
+  const data = await query.execute(client.query, {
+    operation: "postUrlencoded",
+  });
+  const endTime = Date.now();
+  return {
+    meta: {
+      startTime,
+      endTime,
+      text: query.build(),
+    },
+    data,
+  };
+};
+
 const makeVisualizeFilter = (includeDrafts: boolean) => {
   return sparql`
     ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
@@ -77,6 +107,8 @@ export const searchCubes = async ({
   sparqlClient: ParsingClient;
   sparqlClientStream: StreamClient;
 }) => {
+  const queries = [] as RequestQueryMeta[];
+
   const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
 
   // Search cubeIris along with their score
@@ -150,8 +182,13 @@ export const searchCubes = async ({
 
   `;
 
-  const scoresRaw = await scoresQuery.execute(sparqlClient.query, {
-    operation: "postUrlencoded",
+  const { meta: scoresMeta, data: scoresRaw } = await executeAndMeasure(
+    sparqlClient,
+    scoresQuery
+  );
+  queries.push({
+    ...scoresMeta,
+    label: "scores",
   });
 
   const infoPerCube = computeScores(scoresRaw, {
@@ -169,8 +206,13 @@ export const searchCubes = async ({
     throw new Error("Must pass locale");
   }
 
-  const cubeStream = await cubesQuery.execute(sparqlClientStream.query, {
-    operation: "postUrlencoded",
+  const { data: cubeStream, meta: cubesMeta } = await executeAndMeasure(
+    sparqlClientStream,
+    cubesQuery
+  );
+  queries.push({
+    ...cubesMeta,
+    label: "cubes",
   });
   const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
   const cf = clownface({ dataset: cubeDataset });
@@ -211,5 +253,10 @@ export const searchCubes = async ({
       highlightedDescription: c!.data.description,
     }));
 
-  return results;
+  return {
+    candidates: results,
+    meta: {
+      queries,
+    },
+  };
 };

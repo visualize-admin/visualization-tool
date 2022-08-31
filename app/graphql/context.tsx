@@ -90,7 +90,10 @@ const createContextContent = async ({
 export const createContext = () => {
   let setupping: ReturnType<typeof createContextContent>;
 
-  return {
+  const ctx = {
+    // Stores meta information on queries that have been made during the request
+    queries: [] as RequestQueryMeta[],
+
     setup: async ({
       variableValues: { locale, sourceUrl },
     }: GraphQLResolveInfo) => {
@@ -98,6 +101,8 @@ export const createContext = () => {
       return await setupping;
     },
   };
+
+  return ctx;
 };
 
 export type GraphQLContext = ReturnType<typeof createContext>;
