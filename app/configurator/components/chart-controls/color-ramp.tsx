@@ -73,7 +73,7 @@ export const ColorRampField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const { palettes, defaultPalette } = useMemo(() => {
-    const palettes = [...divergingPalettes, ...sequentialPalettes];
+    const palettes = [...sequentialPalettes, ...divergingPalettes];
     const defaultPalette = sequentialPalettes.find(
       (d) => d.value === "oranges"
     );
@@ -144,19 +144,6 @@ export const ColorRampField = ({
         {isOpen && (
           <>
             <Typography component="div" variant="caption" sx={{ p: 1 }}>
-              <Trans id="controls.color.palette.diverging">Diverging</Trans>
-            </Typography>
-            {divergingPalettes.map((d, i) => (
-              <PaletteRamp
-                key={`diverging-${i}`}
-                palette={d}
-                itemProps={getItemProps({ item: d, index: i })}
-                highlighted={i === highlightedIndex}
-                nbClass={nbClass}
-              />
-            ))}
-
-            <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
             </Typography>
             {sequentialPalettes.map((d, i) => (
@@ -165,9 +152,24 @@ export const ColorRampField = ({
                 palette={d}
                 itemProps={getItemProps({
                   item: d,
-                  index: i + divergingPalettes.length,
+                  index: i,
                 })}
-                highlighted={i + divergingPalettes.length === highlightedIndex}
+                highlighted={i === highlightedIndex}
+                nbClass={nbClass}
+              />
+            ))}
+            <Typography component="div" variant="caption" sx={{ p: 1 }}>
+              <Trans id="controls.color.palette.diverging">Diverging</Trans>
+            </Typography>
+            {divergingPalettes.map((d, i) => (
+              <PaletteRamp
+                key={`diverging-${i}`}
+                palette={d}
+                itemProps={getItemProps({
+                  item: d,
+                  index: i + sequentialPalettes.length,
+                })}
+                highlighted={i + sequentialPalettes.length === highlightedIndex}
                 nbClass={nbClass}
               />
             ))}
