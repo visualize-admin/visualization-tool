@@ -94,7 +94,11 @@ export const MapLegend = () => {
             </Typography>
           )}
           {areaLayer.colorScaleInterpolationType === "linear" && (
-            <ContinuousColorLegend />
+            <ContinuousColorLegend
+              palette={areaLayer.palette}
+              domain={areaLayer.dataDomain}
+              getValue={areaLayer.getValue}
+            />
           )}
           {areaLayer.colorScaleInterpolationType === "quantize" && (
             <QuantizeColorLegend />
@@ -270,7 +274,7 @@ const JenksColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { dataDomain, colorScale, getValue },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
   const thresholds = useMemo(
@@ -317,7 +321,7 @@ const JenksColorLegend = () => {
   return (
     <svg width={width} height={HEIGHT}>
       <g>
-        <DataPointIndicator scale={scale} />
+        <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
       <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleThreshold<number, string>).range().map((c, i) => {
@@ -349,7 +353,7 @@ const QuantileColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { dataDomain, colorScale, getValue },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
@@ -396,7 +400,7 @@ const QuantileColorLegend = () => {
   return (
     <svg width={width} height={HEIGHT}>
       <g>
-        <DataPointIndicator scale={scale} />
+        <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
       <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleQuantile<string>).range().map((c, i) => {
@@ -428,7 +432,7 @@ const QuantizeColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { dataDomain, colorScale, getValue },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
@@ -471,7 +475,7 @@ const QuantizeColorLegend = () => {
   return (
     <svg width={width} height={HEIGHT}>
       <g>
-        <DataPointIndicator scale={scale} />
+        <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
       <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleQuantize<string>).range().map((c, i) => (
@@ -495,22 +499,27 @@ const QuantizeColorLegend = () => {
   );
 };
 
-const ContinuousColorLegend = () => {
+const ContinuousColorLegend = ({
+  palette,
+  domain,
+  getValue,
+}: {
+  palette: string;
+  domain: [number, number];
+  getValue: (d: Observation) => number | null;
+}) => {
   const width = useLegendWidth();
-
-  const {
-    areaLayer: { palette, dataDomain },
-  } = useChartState() as MapState;
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
   const scale = scaleLinear()
-    .domain(dataDomain)
+    .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
+  const [min, max] = domain;
 
   return (
     <svg width={width} height={HEIGHT}>
       <g>
-        <DataPointIndicator scale={scale} />
+        <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
       <foreignObject
         x={MARGIN.left}
@@ -521,7 +530,7 @@ const ContinuousColorLegend = () => {
         <ColorRamp
           width={width - MARGIN.left - MARGIN.right}
           height={COLOR_RAMP_HEIGHT}
-          colorInterpolator={getColorInterpolator(palette)}
+          colorInterpolator={getColorInterpolator(palette as any)}
           nbClass={width - MARGIN.left - MARGIN.right}
         />
       </foreignObject>
@@ -534,10 +543,10 @@ const ContinuousColorLegend = () => {
         fill={legendLabelColor}
       >
         <text textAnchor="start" fontSize={labelFontSize}>
-          {formatNumber(dataDomain[0])}
+          {formatNumber(min)}
         </text>
         <text x={width - MARGIN.right - MARGIN.left} textAnchor="end">
-          {formatNumber(dataDomain[1])}
+          {formatNumber(max)}
         </text>
       </g>
     </svg>
@@ -546,13 +555,12 @@ const ContinuousColorLegend = () => {
 
 const DataPointIndicator = ({
   scale,
+  getValue,
 }: {
   scale: ScaleLinear<number, number>;
+  getValue: (d: Observation) => number | null;
 }) => {
   const [state] = useInteraction();
-  const {
-    areaLayer: { getValue },
-  } = useChartState() as MapState;
   const { labelColor } = useChartTheme();
 
   return (
