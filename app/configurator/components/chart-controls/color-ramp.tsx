@@ -56,15 +56,11 @@ export const ColorRamp = ({
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
 
-type MapField = "areaLayer";
-type MapPath = "palette";
-
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
-  field: MapField;
-  path: MapPath;
+  field: "areaLayer" | "symbolLayer";
+  path: string;
 };
 
-// Currently only usable in areaLayer (map chart)!
 export const ColorRampField = ({
   field,
   path,
