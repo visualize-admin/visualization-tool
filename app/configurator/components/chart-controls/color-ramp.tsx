@@ -10,7 +10,10 @@ import {
   SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
-import { sequentialPalettes } from "@/configurator/components/ui-helpers";
+import {
+  divergingPalettes,
+  sequentialPalettes,
+} from "@/configurator/components/ui-helpers";
 import { Icon } from "@/icons";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
@@ -70,10 +73,7 @@ export const ColorRampField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const { palettes, defaultPalette } = useMemo(() => {
-    const palettes = [
-      // ...divergingPalettes,
-      ...sequentialPalettes,
-    ];
+    const palettes = [...divergingPalettes, ...sequentialPalettes];
     const defaultPalette = sequentialPalettes.find(
       (d) => d.value === "oranges"
     );
@@ -143,7 +143,7 @@ export const ColorRampField = ({
       <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen && (
           <>
-            {/* <Typography component="div" variant="caption" sx={{ p: 1 }}>
+            <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.diverging">Diverging</Trans>
             </Typography>
             {divergingPalettes.map((d, i) => (
@@ -154,7 +154,7 @@ export const ColorRampField = ({
                 highlighted={i === highlightedIndex}
                 nbClass={nbClass}
               />
-            ))} */}
+            ))}
 
             <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
@@ -165,12 +165,9 @@ export const ColorRampField = ({
                 palette={d}
                 itemProps={getItemProps({
                   item: d,
-                  index: i, // + divergingPalettes.length,
+                  index: i + divergingPalettes.length,
                 })}
-                highlighted={
-                  // i + divergingPalettes.length === highlightedIndex
-                  i === highlightedIndex
-                }
+                highlighted={i + divergingPalettes.length === highlightedIndex}
                 nbClass={nbClass}
               />
             ))}
