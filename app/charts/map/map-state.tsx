@@ -37,9 +37,11 @@ import {
 import {
   BaseLayer,
   BBox,
+  ColorMapping,
   ColorScaleInterpolationType,
   DivergingPaletteType,
   MapFields,
+  MapSymbolLayer,
   SequentialPaletteType,
 } from "@/configurator/config-types";
 import {
@@ -91,12 +93,32 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
-    getColor: (d: Observation) => number[];
-    errorDimension?: DimensionMetadataFragment;
     measureDimension?: DimensionMetadataFragment;
+    errorDimension?: DimensionMetadataFragment;
     getFormattedError: null | ((d: Observation) => string);
     radiusScale: ScalePower<number, number>;
     dataDomain: [number, number];
+    colors:
+      | {
+          type: "fixed";
+          getColor: (d: Observation) => number[];
+        }
+      | {
+          type: "categorical";
+          palette: string;
+          componentIri: string;
+          componentLabel: string;
+          domain: string[];
+          getColor: (d: Observation) => number[];
+        }
+      | {
+          type: "continuous";
+          palette: string;
+          componentIri: string;
+          componentLabel: string;
+          domain: [number, number];
+          getColor: (d: Observation) => number[];
+        };
   };
 }
 
@@ -151,6 +173,130 @@ const getAreaColorScale = ({
       return scaleLinear<string>()
         .domain(dataDomain)
         .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
+  }
+};
+
+const getFixedSymbolColors = ({
+  value,
+  opacity,
+}: {
+  type: "fixed";
+  value: string;
+  opacity: number;
+}) => {
+  const color = convertHexToRgbArray(value, opacity);
+  return {
+    type: "fixed",
+    getColor: (_: Observation) => color,
+  } as const;
+};
+
+const getCategoricalSymbolColors = (
+  {
+    palette,
+    componentIri,
+    colorMapping,
+  }: {
+    type: "categorical";
+    palette: string;
+    componentIri: string;
+    colorMapping: ColorMapping;
+  },
+  dimensions: DimensionMetadataFragment[]
+) => {
+  const component = dimensions.find((d) => d.iri === componentIri);
+  const componentLabel = component?.label || "";
+  const componentValuesByLabel = keyBy(component?.values, (d) => d.label);
+  const domain: string[] = component?.values.map((d) => d.value) || [];
+
+  return {
+    type: "categorical",
+    palette,
+    componentIri,
+    componentLabel,
+    domain,
+    getColor: (d: Observation) => {
+      const label = d[componentIri] as string;
+      const value = componentValuesByLabel[label].value;
+      const color = colorMapping?.[value];
+      return color ? convertHexToRgbArray(color) : [0, 0, 0, 255 * 0.1];
+    },
+  } as const;
+};
+
+const getContinousSymbolColors = (
+  {
+    palette,
+    componentIri,
+  }: {
+    type: "continuous";
+    palette: string;
+    componentIri: string;
+  },
+  measures: DimensionMetadataFragment[],
+  data: Observation[]
+) => {
+  const component = measures.find((d) => d.iri === componentIri);
+  const componentLabel = component?.label || "";
+  const domain = extent(
+    data.map((d) => d[componentIri]),
+    (d) => +d!
+  ) as [number, number];
+  const colorScale = scaleSequential(
+    getColorInterpolator(palette as any)
+  ).domain(domain);
+
+  return {
+    type: "continuous",
+    palette,
+    componentIri,
+    componentLabel,
+    getColor: (d: Observation) => {
+      const color = colorScale(+d[componentIri]!);
+      if (color) {
+        const rgb = makeColor(color)?.rgb();
+        return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
+      }
+      return [0, 0, 0, 255 * 0.1];
+    },
+    domain,
+  } as const;
+};
+
+const getSymbolColors = ({
+  colors,
+  dimensions,
+  measures,
+  data,
+}: {
+  colors: MapSymbolLayer["colors"];
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
+  data: Observation[];
+}) => {
+  switch (colors.type) {
+    case "fixed":
+      return getFixedSymbolColors(colors);
+    case "categorical":
+      return getCategoricalSymbolColors(
+        colors as {
+          type: "categorical";
+          componentIri: string;
+          palette: string;
+          colorMapping: ColorMapping;
+        },
+        dimensions
+      );
+    case "continuous":
+      return getContinousSymbolColors(
+        colors as {
+          type: "continuous";
+          componentIri: string;
+          palette: string;
+        },
+        measures,
+        data
+      );
   }
 };
 
@@ -312,43 +458,14 @@ const useMapState = (
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const getSymbolColor = useMemo(() => {
-    const colors = symbolLayer.colors;
-
-    switch (colors.type) {
-      case "fixed":
-        const color = [
-          ...convertHexToRgbArray(colors.value),
-          colors.opacity * 2.55,
-        ];
-        return (_: Observation) => color;
-      case "categorical":
-        const component = dimensions.find((d) => d.iri === colors.componentIri);
-        const componentValuesByLabel = keyBy(component?.values, (d) => d.label);
-        return (d: Observation) => {
-          const label = d[colors.componentIri] as string;
-          const value = componentValuesByLabel[label].value;
-          const color = colors.colorMapping?.[value];
-          return color ? convertHexToRgbArray(color) : [0, 0, 0, 255 * 0.1];
-        };
-      case "continuous":
-        const colorScaleDomain = extent(
-          symbolData.map((d) => d[colors.componentIri]),
-          (d) => +d!
-        ) as [number, number];
-        const colorScale = scaleSequential(
-          getColorInterpolator(colors.palette as any)
-        ).domain(colorScaleDomain);
-        return (d: Observation) => {
-          const color = colorScale(+d[colors.componentIri]!);
-          if (color) {
-            const rgb = makeColor(color)?.rgb();
-            return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
-          }
-          return [0, 0, 0, 255 * 0.1];
-        };
-    }
-  }, [symbolLayer.colors, symbolData, dimensions]);
+  const colors = useMemo(() => {
+    return getSymbolColors({
+      colors: symbolLayer.colors,
+      dimensions,
+      measures,
+      data: symbolData,
+    });
+  }, [symbolLayer, dimensions, measures, symbolData]);
 
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
@@ -406,16 +523,16 @@ const useMapState = (
     },
     symbolLayer: {
       data: symbolData,
+      show: fields.symbolLayer.show,
       measureLabel: symbolMeasureLabel,
       measureDimension: symbolMeasureDimension,
       errorDimension: symbolErrorDimension,
-      show: fields.symbolLayer.show,
       getLabel: getSymbolLabel,
-      radiusScale,
       getValue: getSymbolValue,
       getFormattedError: getSymbolFormattedError,
-      getColor: getSymbolColor,
+      radiusScale,
       dataDomain: symbolDataDomain,
+      colors,
     },
   };
 };

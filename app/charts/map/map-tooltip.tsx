@@ -79,7 +79,7 @@ export const MapTooltip = () => {
   );
   const symbolColor = useMemo(() => {
     return interaction.d
-      ? convertRgbArrayToHex(symbolLayer.getColor(interaction.d))
+      ? convertRgbArrayToHex(symbolLayer.colors.getColor(interaction.d))
       : null;
   }, [interaction.d, symbolLayer]);
 

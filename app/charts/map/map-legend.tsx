@@ -191,7 +191,7 @@ const CircleLegend = () => {
       dataDomain,
       getLabel,
       getValue,
-      getColor,
+      colors: { getColor },
       radiusScale,
     },
   } = useChartState() as MapState;

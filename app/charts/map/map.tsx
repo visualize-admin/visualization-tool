@@ -235,7 +235,7 @@ export const MapComponent = () => {
       getFillColor: (d: GeoPoint) => {
         const { observation } = d.properties;
         if (observation) {
-          return symbolLayer.getColor(observation);
+          return symbolLayer.colors.getColor(observation);
         }
 
         return [222, 222, 222, 255];
