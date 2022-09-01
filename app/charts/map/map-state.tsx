@@ -359,7 +359,10 @@ const useMapState = (
   );
 
   const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
-  const symbolErrorMeasure = useErrorMeasure(chartProps, areaLayer.measureIri);
+  const symbolErrorMeasure = useErrorMeasure(
+    chartProps,
+    symbolLayer.measureIri
+  );
   const getSymbolError = useErrorVariable(symbolErrorMeasure);
   const getSymbolFormattedError = useMemo(
     () =>
