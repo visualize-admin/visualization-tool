@@ -1,4 +1,5 @@
-import { Box, TableSortLabel } from "@mui/material";
+import { Box, TableSortLabel, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 
@@ -42,8 +43,24 @@ export const TableContentProvider = ({
   );
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  headerGroup: {
+    margin: 0,
+    padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+    borderTop: "1px solid",
+    borderBottom: "1px solid",
+    borderTopColor: theme.palette.grey[700],
+    borderBottomColor: theme.palette.grey[700],
+    fontWeight: "bold",
+    fontSize: "0.875rem",
+    backgroundColor: theme.palette.grey[100],
+    color: theme.palette.grey[700],
+  },
+}));
+
 export const TableContent = ({ children }: { children: React.ReactNode }) => {
   const ctx = React.useContext(TableContentContext);
+  const classes = useStyles();
 
   if (!ctx) {
     throw Error("Please wrap TableContent in TableContentProvider");
@@ -69,19 +86,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                 return (
                   // eslint-disable-next-line react/jsx-key
                   <Box
-                    sx={{
-                      m: 0,
-                      py: 2,
-                      px: 3,
-                      borderTop: "1px solid",
-                      borderTopColor: "grey.700",
-                      borderBottom: "1px solid",
-                      borderBottomColor: "grey.700",
-                      fontWeight: "bold",
-                      fontSize: "0.875rem",
-                      backgroundColor: "grey.100",
-                      color: "grey.700",
-                    }}
+                    className={classes.headerGroup}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                   >
                     <Flex

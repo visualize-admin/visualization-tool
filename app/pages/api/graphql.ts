@@ -3,7 +3,7 @@ import "global-agent/bootstrap";
 import configureCors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { createContext } from "../../graphql/context";
+import { createContext, GraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../utils/run-middleware";
@@ -16,6 +16,12 @@ const server = new ApolloServer({
   formatError: (err) => {
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
+  },
+  formatResponse: (response, reqCtx) => {
+    response.extensions = {
+      queries: (reqCtx.context as GraphQLContext).queries,
+    };
+    return response;
   },
   context: createContext,
   // Enable playground in production

@@ -6,6 +6,7 @@ import {
   Select,
   MenuItem,
   SelectProps,
+  Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import get from "lodash/get";
@@ -142,35 +143,44 @@ export const ColorPalette = ({
   );
 };
 
+const useColorSquareStyles = makeStyles((theme: Theme) => ({
+  root: {
+    display: "inline-block",
+    margin: 0,
+    padding: 0,
+    width: 20,
+    height: 20,
+    borderColor: theme.palette.grey[100],
+    borderWidth: "1px",
+    borderStyle: "solid",
+    "&:first-of-type": {
+      borderTopLeftRadius: "default",
+      borderBottomLeftRadius: "default",
+    },
+    "&:last-of-type": {
+      borderTopRightRadius: "default",
+      borderBottomRightRadius: "default",
+    },
+  },
+}));
+
 const ColorSquare = ({
   disabled,
   color,
 }: {
   disabled?: boolean;
   color: string;
-}) => (
-  <Box
-    sx={{
-      backgroundColor: disabled ? "grey.300" : color,
-      display: "inline-block",
-      margin: 0,
-      padding: 0,
-      width: 20,
-      height: 20,
-      borderColor: "grey.100",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      "&:first-of-type": {
-        borderTopLeftRadius: "default",
-        borderBottomLeftRadius: "default",
-      },
-      "&:last-of-type": {
-        borderTopRightRadius: "default",
-        borderBottomRightRadius: "default",
-      },
-    }}
-  />
-);
+}) => {
+  const classes = useColorSquareStyles();
+  return (
+    <Box
+      className={classes.root}
+      sx={{
+        backgroundColor: disabled ? "grey.300" : color,
+      }}
+    />
+  );
+};
 
 const ColorPaletteReset = ({
   field,

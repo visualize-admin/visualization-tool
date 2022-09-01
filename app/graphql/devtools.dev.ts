@@ -1,3 +1,3 @@
 import { devtoolsExchange } from "@urql/devtools";
 
-export { devtoolsExchange };
+export const devtoolsExchanges = [devtoolsExchange];

@@ -320,6 +320,17 @@ const ChangeTableSortingOption = ({
   );
 };
 
+const useTableSortingOptionsStyles = makeStyles({
+  icon: {
+    width: 24,
+    height: 24,
+    position: "absolute",
+    top: "50%",
+    right: 2,
+    marginTop: -12,
+  },
+});
+
 export const TableSortingOptions = ({
   state,
   metaData,
@@ -329,6 +340,7 @@ export const TableSortingOptions = ({
 }) => {
   const [, dispatch] = useConfiguratorState();
   const { activeField, chartConfig } = state;
+  const classes = useTableSortingOptionsStyles();
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
@@ -401,13 +413,8 @@ export const TableSortingOptions = ({
                                 chartConfig={chartConfig}
                               />
                               <Box
+                                className={classes.icon}
                                 sx={{
-                                  width: 24,
-                                  height: 24,
-                                  position: "absolute",
-                                  top: "50%",
-                                  right: 2,
-                                  marginTop: -12,
                                   color: isDragging
                                     ? "secondary.active"
                                     : "secondary.disabled",

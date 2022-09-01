@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
@@ -12,6 +13,25 @@ import { useFormatNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { Icon } from "@/icons";
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    color: theme.palette.grey[800],
+    fontSize: "0.75rem",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: `0 ${theme.spacing(2)}`,
+    "&:first-of-type": {
+      paddingTop: 2,
+    },
+    "&:last-of-type": {
+      borderBottom: "1px solid",
+      borderBottomColor: theme.palette.grey[400],
+      paddingBottom: theme.spacing(3),
+    },
+  },
+}));
+
 export const RowMobile = ({
   row,
   prepareRow,
@@ -20,7 +40,7 @@ export const RowMobile = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
-
+  const classes = useStyles();
   prepareRow(row);
 
   const headingLevel = row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
@@ -29,26 +49,7 @@ export const RowMobile = ({
       {row.subRows.length === 0 ? (
         row.cells.map((cell, i) => {
           return (
-            <Flex
-              key={i}
-              component="dl"
-              sx={{
-                color: "grey.800",
-                fontSize: "0.75rem",
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: "center",
-                my: 2,
-                "&:first-of-type": {
-                  pt: 2,
-                },
-                "&:last-of-type": {
-                  borderBottom: "1px solid",
-                  borderBottomColor: "grey.400",
-                  pb: 3,
-                },
-              }}
-            >
+            <Flex key={i} component="dl" className={classes.root}>
               <Box
                 component="dt"
                 sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}

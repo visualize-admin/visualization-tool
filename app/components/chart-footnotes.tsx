@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Box, Button, Link, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useEffect, useState, useMemo } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
@@ -15,6 +16,34 @@ import { makeOpenDataLink } from "@/utils/opendata";
 
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 
+const useStyles = makeStyles((theme: Theme) => ({
+  actions: {
+    marginTop: theme.spacing(2),
+    "--column-gap": "16px",
+    columnGap: "var(--column-gap)",
+    rowGap: 1,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    overflow: "hidden",
+
+    // Separator between flex elements, the trick to have them not displayed
+    // for each line leftmost element is to have them negatively positioned
+    // cut by the overflow hidden
+    "& > *:before": {
+      content: '" "',
+      display: "block",
+      height: "3px",
+      width: "3px ",
+      borderRadius: "3px",
+      position: "relative",
+      left: "calc(-1 * var(--column-gap) / 2)",
+      backgroundColor: theme.palette.grey[600],
+    },
+  },
+}));
+
 export const ChartFootnotes = ({
   dataSetIri,
   dataSource,
@@ -26,6 +55,7 @@ export const ChartFootnotes = ({
   chartConfig: ChartConfig;
   configKey?: string;
 }) => {
+  const classes = useStyles();
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
   const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
@@ -98,33 +128,7 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
-        <Box
-          sx={{
-            mt: 2,
-            "--column-gap": "16px",
-            columnGap: "var(--column-gap)",
-            rowGap: 1,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            flexWrap: "wrap",
-            overflow: "hidden",
-
-            // Separator between flex elements, the trick to have them not displayed
-            // for each line leftmost element is to have them negatively positioned
-            // cut by the overflow hidden
-            "& > *:before": {
-              content: '" "',
-              display: "block",
-              height: "3px",
-              width: "3px ",
-              borderRadius: "3px",
-              position: "relative",
-              left: "calc(-1 * var(--column-gap) / 2)",
-              backgroundColor: "grey.600",
-            },
-          }}
-        >
+        <Box className={classes.actions}>
           <DataDownloadMenu
             dataSetIri={dataSetIri}
             dataSource={dataSource}

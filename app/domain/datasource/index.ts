@@ -1,8 +1,9 @@
-import { useContext, createContext, Dispatch, useMemo } from "react";
+import { useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";
+import { getURLParam } from "@/utils/router/helpers";
+import { useRouteState } from "@/utils/router/use-route-state";
 import useEvent from "@/utils/use-event";
-import { useRouteState } from "@/utils/use-route-state";
 
 import { ENDPOINT } from "../env";
 
@@ -36,22 +37,6 @@ export const useIsTrustedDataSource = (dataSource: DataSource) => {
   }, [dataSource]);
 };
 
-export const DataSourceStateContext = createContext<
-  { dataSource: DataSource; setDataSource: Dispatch<string> } | undefined
->(undefined);
-
-export const useDataSource = () => {
-  const ctx = useContext(DataSourceStateContext);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap the application in <DataSourceProvider /> to useDataSource()"
-    );
-  }
-
-  return ctx;
-};
-
 export const parseSourceByLabel = (label: string): DataSource | undefined => {
   const newSource = SOURCES_BY_LABEL[label];
   return newSource ? parseDataSource(newSource.value) : undefined;
@@ -59,15 +44,6 @@ export const parseSourceByLabel = (label: string): DataSource | undefined => {
 
 export const sourceToLabel = (source: DataSource) => {
   return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
-};
-
-const getURLParam = (param: string) => {
-  const url =
-    typeof window !== "undefined" ? new URL(window.location.href) : null;
-  if (!url) {
-    return undefined;
-  }
-  return url.searchParams.get(param);
 };
 
 export const useDataSourceState = () => {
@@ -103,4 +79,16 @@ export const useDataSourceState = () => {
   });
 
   return [source, setSourceByValue] as const;
+};
+
+export const isDataSourceChangeable = (pathname: string) => {
+  if (
+    pathname === "/" ||
+    pathname === "/browse" ||
+    pathname === "/_cube-checker"
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 };

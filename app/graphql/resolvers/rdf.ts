@@ -38,7 +38,7 @@ import { searchCubes } from "@/rdf/query-search";
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
   { locale, query, order, includeDrafts, filters },
-  { setup },
+  { setup, queries },
   info
 ) => {
   const { sparqlClient, sparqlClientStream } = await setup(info);
@@ -57,7 +57,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     }
   };
 
-  const candidates = await searchCubes({
+  const { candidates, meta } = await searchCubes({
     locale,
     includeDrafts,
     filters,
@@ -65,6 +65,11 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     query,
     sparqlClientStream,
   });
+
+  for (let query of meta.queries) {
+    queries.push(query);
+  }
+
   sortResults(candidates, (x) => x.dataCube.data);
   return candidates;
 };

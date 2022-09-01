@@ -1,4 +1,5 @@
-import { BoxProps } from "@mui/material";
+import { BoxProps, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
@@ -47,28 +48,39 @@ export const ChartPanelPublished = (
   );
 };
 
-const ChartPanelInner = ({
-  children,
-  showTabs = true,
-  ...boxProps
-}: ChartPanelProps & { showTabs: boolean }) => (
-  <Flex
-    {...boxProps}
-    sx={{
+const useChartPanelInnerStyles = makeStyles<Theme, { showTabs: boolean }>(
+  (theme: Theme) => ({
+    root: {
       flexDirection: "column",
-      backgroundColor: "grey.100",
-      boxShadow: 6,
+      backgroundColor: theme.palette.grey[100],
+      boxShadow: theme.shadows[6],
       borderRadius: 12,
-      borderTopLeftRadius: showTabs ? 0 : 12,
+      borderTopLeftRadius: ({ showTabs }) => (showTabs ? 0 : 12),
       // TODO: Handle properly when chart composition is implemented (enable when
       // ChartSelectionTabs becomes scrollable)
       borderTopRightRadius: 12,
       overflow: "hidden",
       width: "auto",
-      minHeight: [150, 300, 500],
-      ...boxProps.sx,
-    }}
-  >
-    {children}
-  </Flex>
+    },
+  })
 );
+
+const ChartPanelInner = ({
+  children,
+  showTabs = true,
+  ...boxProps
+}: ChartPanelProps & { showTabs: boolean }) => {
+  const classes = useChartPanelInnerStyles({ showTabs });
+  return (
+    <Flex
+      {...boxProps}
+      className={classes.root}
+      sx={{
+        ...boxProps.sx,
+        minHeight: [150, 300, 500],
+      }}
+    >
+      {children}
+    </Flex>
+  );
+};

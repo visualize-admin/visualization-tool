@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { updateRouterQuery } from "./router/helpers";
-import useEvent from "./use-event";
+import useEvent from "../use-event";
+
+import { updateRouterQuery } from "./helpers";
 
 /**
  * useState that keeps router param synchronized.

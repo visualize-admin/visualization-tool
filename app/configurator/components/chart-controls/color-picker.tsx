@@ -1,10 +1,24 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Input, Popover, styled } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
 import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
 import useDisclosure from "@/configurator/components/use-disclosure";
+
+const useStyles = makeStyles(() => ({
+  swatch: {
+    width: "1.5rem",
+    height: "1.5rem",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "transparent",
+    borderRadius: 1.5,
+    padding: 0,
+    cursor: "pointer",
+  },
+}));
 
 const Swatch = ({
   color,
@@ -15,24 +29,16 @@ const Swatch = ({
   selected: boolean;
   onClick: MouseEventHandler<HTMLDivElement>;
 }) => {
+  const classes = useStyles();
   const borderColor = d3Color(color)?.darker().toString();
   return (
     <Box
-      style={{
+      className={classes.swatch}
+      sx={{
         borderColor: selected ? borderColor : undefined,
         boxShadow: selected ? `0 0 0.5rem 0 ${color}` : undefined,
-      }}
-      sx={{
-        width: "1.5rem",
-        height: "1.5rem",
-        backgroundColor: color,
-        borderWidth: 1,
-        borderStyle: "solid",
-        borderColor: "transparent",
-        borderRadius: 1.5,
-        p: 0,
-        cursor: "pointer",
         ":hover": { borderColor },
+        backgroundColor: color,
       }}
       role="button"
       onClick={onClick}
