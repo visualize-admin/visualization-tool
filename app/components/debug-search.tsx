@@ -1,4 +1,7 @@
 import { FormControlLabel, Stack } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -80,6 +83,8 @@ const Search = ({
       ? endTime - startTimeRef.current
       : undefined;
 
+  const queries = cubes?.extensions?.queries as RequestQueryMeta[] | undefined;
+
   return (
     <Box>
       <Typography variant="h5">
@@ -112,6 +117,7 @@ const Search = ({
       {cubes.error ? (
         <Typography color="error">{cubes.error.message}</Typography>
       ) : null}
+
       <Stack spacing={4}>
         {cubes.data?.dataCubes.map((c) => {
           return (
@@ -132,6 +138,40 @@ const Search = ({
           );
         })}
       </Stack>
+      <Accordion sx={{ mt: 2, borderTop: 0 }}>
+        <AccordionSummary sx={{ typography: "h4" }}>queries</AccordionSummary>
+        <AccordionDetails>
+          <Stack spacing={2}>
+            {queries
+              ? queries.map((q, i) => {
+                  return (
+                    <div key={i}>
+                      <Typography variant="h5">{q.label}</Typography>
+                      <Stack direction="row" spacing={4}>
+                        <div>
+                          <Typography variant="overline">Duration</Typography>
+                          <Typography variant="body2">
+                            {q.endTime - q.startTime}ms
+                          </Typography>
+                        </div>
+                      </Stack>
+                      <Accordion sx={{ mt: 2 }}>
+                        <AccordionSummary sx={{ typography: "overline" }}>
+                          Query
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Box component="pre" sx={{ fontSize: "small" }}>
+                            {q.text}
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                  );
+                })
+              : null}
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   );
 };

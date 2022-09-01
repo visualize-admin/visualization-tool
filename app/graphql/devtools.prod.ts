@@ -1,3 +1,1 @@
-const devtoolsExchange = undefined;
-
-export { devtoolsExchange };
+export const devtoolsExchanges = [];
