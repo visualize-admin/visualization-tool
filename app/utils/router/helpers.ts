@@ -18,3 +18,16 @@ export const updateRouterQuery = (
     shallow: true,
   });
 };
+
+export const setURLParam = (param: string, value: string) => {
+  const qs = new URL(window.location.href).searchParams;
+  qs.delete(param);
+  qs.append(param, value);
+  const newUrl =
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    window.location.pathname +
+    `?${qs.toString()}`;
+  window.history.replaceState({ path: newUrl }, "", newUrl);
+};
