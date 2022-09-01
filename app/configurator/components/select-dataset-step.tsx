@@ -142,12 +142,20 @@ const SelectDatasetStepContent = () => {
               iri: dataset,
             })}`,
           });
+        } else {
+          router.replace({
+            pathname: `/${locale}/browse/dataset/${encodeURIComponent(
+              resp.iri
+            )}`,
+          });
         }
       }
     };
 
-    run();
-  });
+    if (router.isReady) {
+      run();
+    }
+  }, [configState.dataSource.url, dataset, router, locale]);
 
   if (configState.state !== "SELECTING_DATASET") {
     return null;
