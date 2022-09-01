@@ -8,7 +8,7 @@ import { createClient, defaultExchanges, Provider } from "urql";
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 // @ts-ignore - dynamic package import based on NODE_ENV
-import { devtoolsExchange } from "@/graphql/devtools";
+import { devtoolsExchanges } from "@/graphql/devtools";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -22,7 +22,7 @@ const client = createClient({
   url: GRAPHQL_ENDPOINT,
   exchanges:
     process.env.NODE_ENV === "development"
-      ? [devtoolsExchange, ...defaultExchanges]
+      ? [...devtoolsExchanges, ...defaultExchanges]
       : [...defaultExchanges],
 });
 
