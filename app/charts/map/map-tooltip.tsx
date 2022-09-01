@@ -73,15 +73,15 @@ export const MapTooltip = () => {
   const showSymbolValue =
     symbolLayer.show &&
     (identicalLayerComponentIris || hoverObjectType === "symbol");
-  const areaColor = useMemo(
-    () => (areaValue !== null ? areaLayer.colorScale(areaValue) : null),
-    [areaValue, areaLayer]
-  );
-  const symbolColor = useMemo(() => {
-    return interaction.d
-      ? convertRgbArrayToHex(symbolLayer.colors.getColor(interaction.d))
-      : null;
-  }, [interaction.d, symbolLayer]);
+  const areaColorProps = useMemo(() => {
+    const color =
+      areaValue !== null ? areaLayer.colorScale(areaValue) : "#dedede";
+    const textColor = getTooltipTextColor(color);
+    return {
+      color,
+      textColor,
+    };
+  }, [areaValue, areaLayer]);
 
   return (
     <>
@@ -117,14 +117,8 @@ export const MapTooltip = () => {
                   {showAreaValue && (
                     <TooltipRow
                       title={areaLayer.measureLabel}
-                      background={areaColor || "#dedede"}
-                      color={
-                        areaColor
-                          ? hcl(areaColor).l < 55
-                            ? "#fff"
-                            : "#000"
-                          : "#000"
-                      }
+                      background={areaColorProps.color}
+                      color={areaColorProps.textColor}
                       value={formatNumberWithUnit(
                         areaValue,
                         formatNumber,
@@ -207,4 +201,8 @@ const TooltipRow = (props: TooltipRowProps) => {
       </Box>
     </>
   );
+};
+
+const getTooltipTextColor = (color: string) => {
+  return hcl(color).l < 55 ? "#fff" : "#000";
 };
