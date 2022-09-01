@@ -4,9 +4,8 @@ import {
 } from "../charts-utils";
 import offentlicheAusgabenChartConfigFixture from "../fixtures/offentliche-ausgaben-chart-config.json";
 
-const resizeObserverLoopErrRe = /> ResizeObserver loop/;
 Cypress.on("uncaught:exception", (err) => {
-  if (resizeObserverLoopErrRe.test(err.message)) {
+  if (err.message.includes("> ResizeObserver loop")) {
     return false;
   }
 });
