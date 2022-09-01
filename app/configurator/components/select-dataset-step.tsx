@@ -34,7 +34,7 @@ import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { useConfiguratorState, useLocale } from "@/src";
-import { getQueryParams } from "@/utils/flashes";
+import { getErrorQueryParams } from "@/utils/flashes";
 
 const softJSONParse = (v: string) => {
   try {
@@ -138,7 +138,7 @@ const SelectDatasetStepContent = () => {
 
         if (!resp) {
           router.replace({
-            pathname: `/?${getQueryParams("CANNOT_FIND_CUBE", {
+            pathname: `/?${getErrorQueryParams("CANNOT_FIND_CUBE", {
               iri: dataset,
             })}`,
           });
