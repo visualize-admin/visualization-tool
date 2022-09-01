@@ -177,10 +177,11 @@ type TooltipRowProps = {
   color: string;
   value: string;
   error: string | null;
+  border?: string;
 };
 
 const TooltipRow = (props: TooltipRowProps) => {
-  const { title, background, color, value, error } = props;
+  const { title, background, color, value, error, border = "none" } = props;
   return (
     <>
       <Typography component="div" variant="caption">
@@ -193,7 +194,11 @@ const TooltipRow = (props: TooltipRowProps) => {
           display: "inline-block",
           textAlign: "center",
         }}
-        style={{ background, color }}
+        style={{
+          background,
+          color,
+          border,
+        }}
       >
         <Typography component="div" variant="caption">
           {value}
