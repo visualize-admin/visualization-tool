@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import { BrowseFilter } from "@/configurator/components/dataset-browse";
-import { useDataSource } from "@/domain/datasource";
 import { useDatasetCountQuery } from "@/graphql/query-hooks";
+import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 
 const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
@@ -12,7 +12,7 @@ const useDatasetCount = (
   filters: BrowseFilter[],
   includeDrafts: boolean
 ): Record<string, number> => {
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const [{ data: datasetCounts }] = useDatasetCountQuery({
     variables: {
       sourceType: dataSource.type,

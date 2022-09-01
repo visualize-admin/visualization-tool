@@ -1,12 +1,45 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 import mittEmitter from "next/dist/shared/lib/mitt";
-import { useRouter } from "next/router";
+import { SingletonRouter } from "next/router";
 
-import { useDataSourceState } from ".";
+import { createUseDataSourceStore } from "@/stores/data-source";
 
-jest.mock("next/router", () => ({
-  useRouter: jest.fn(),
-}));
+const createRouter = ({ query }: { query: Record<string, string> }) => {
+  const router = {
+    pathname: "https://visualize.admin.ch/",
+    query: query || {},
+    events: mittEmitter(),
+    isReady: true,
+    ready: (f: () => void) => {
+      // Use setTimeout instead of invoking directly for the callbacks
+      // to be called after the datasource has been correctly set up.
+      // This follows the async nature of ready on the real router
+      setTimeout(f, 0);
+    },
+  } as SingletonRouter;
+  // @ts-ignore
+  router.replace = (args: unknown) => {
+    Object.assign(router, args);
+
+    const url = new URL(router.pathname);
+    Object.entries(router.query).forEach(([k, v]) => {
+      if (typeof v === "string") {
+        url.searchParams.append(k, v);
+      }
+    });
+
+    // @ts-ignore
+    delete window.location;
+    // @ts-ignore
+    window.location = {
+      href: url.toString(),
+    };
+
+    router.events.emit("routeChangeComplete");
+  };
+
+  return router;
+};
 
 jest.mock("../env", () => ({
   WHITELISTED_DATA_SOURCES: ["Test", "Prod", "Int"],
@@ -14,11 +47,7 @@ jest.mock("../env", () => ({
 }));
 
 describe("datasource state hook", () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
   const setup = ({
-    initialRouterQuery = {} as Record<string, string>,
     localStorageValue = undefined as string | undefined,
     initialURL = "https://visualize.admin.ch",
   } = {}) => {
@@ -26,40 +55,44 @@ describe("datasource state hook", () => {
       localStorage.setItem("dataSource", localStorageValue);
     }
 
+    const url = new URL(initialURL);
+    const urlDataSourceLabel = url.searchParams.get("dataSource");
+
     // @ts-ignore
     delete window.location;
     // @ts-ignore
     window.location = {
-      href: initialURL,
+      href: url.toString(),
     };
 
-    const router = {
-      pathname: "/hello",
-      query: initialRouterQuery,
-      events: mittEmitter(),
-      isReady: true,
-      replace: (opts: Record<string, unknown>) => {
-        Object.assign(router, opts);
-        router.events.emit("routeChangeComplete");
-      },
-    };
-    // @ts-ignore
-    useRouter.mockImplementation(() => router);
+    // Initialize router with a proper query based on initialUrl.
+    const router = createRouter({
+      query: { dataSource: urlDataSourceLabel } as Record<string, string>,
+    });
+    const useDataSourceStore = createUseDataSourceStore(router);
+    const hook = renderHook(() => useDataSourceStore());
 
-    const hook = renderHook(() => useDataSourceState());
-    return {
+    const res = {
       hook,
       router,
-      getState: () => hook.result.current[0],
-      setState: (v: Parameters<typeof hook.result.current[1]>[0]) =>
-        hook.result.current[1](v),
+      getState: () => hook.result.current.dataSource,
+      setState: (v: Parameters<typeof hook.result.current.setDataSource>[0]) =>
+        hook.result.current.setDataSource(v),
     };
+
+    return new Promise<typeof res>((resolve) => {
+      router.ready(() => resolve(res));
+    });
   };
 
-  it("should have the correct default state when nothing is there", () => {
-    const { getState } = setup({
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("should have the correct default state when nothing is there", async () => {
+    const { getState } = await setup({
       initialURL: "https://visualize.admin.ch/",
-      localStorageValue: "",
+      localStorageValue: undefined,
     });
     expect(getState()).toEqual({
       type: "sparql",
@@ -67,56 +100,38 @@ describe("datasource state hook", () => {
     });
   });
 
-  it("should have the correct default state from local storage", () => {
-    const { getState, router } = setup({
-      localStorageValue: "sparql+https://int.lindas.admin.ch/query",
+  it("should have the correct default state from local storage", async () => {
+    const { getState, router } = await setup({
+      initialURL: "https://visualize.admin.ch/",
+      localStorageValue: "Test",
     });
+
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://int.lindas.admin.ch/query",
+      url: "https://test.lindas.admin.ch/query",
     });
-    expect(router.query.dataSource).toBe("Int");
+    expect(router.query.dataSource).toBe("Test");
   });
 
-  it("should have the correct default state from URL in priority", () => {
-    const { getState } = setup({
+  it("should have the correct default state from URL in priority", async () => {
+    const { getState } = await setup({
       initialURL: "https://visualize.admin.ch/?dataSource=Test",
-      localStorageValue: "sparql+https://lindas.admin.ch/query",
+      localStorageValue: "Prod",
     });
     expect(getState()).toEqual({
       type: "sparql",
       url: "https://test.lindas.admin.ch/query",
     });
   });
-
-  it("should keep both localStorage and router updated", () => {
-    const { router, setState } = setup({
+  it("should keep both localStorage and router updated", async () => {
+    const { router, setState } = await setup({
       initialURL: "https://visualize.admin.ch/?dataSource=Int",
-      localStorageValue: "sparql+https://lindas.admin.ch/query",
+      localStorageValue: "Test",
     });
     act(() => {
-      setState("sparql+https://lindas.admin.ch/query");
+      setState({ type: "sparql", url: "https://lindas.admin.ch/query" });
     });
     expect(router.query.dataSource).toBe("Prod");
-    expect(localStorage.getItem("dataSource")).toBe(
-      "sparql+https://lindas.admin.ch/query"
-    );
-  });
-
-  it("should not update router when default value is used", () => {
-    const { router } = setup({
-      initialURL: "https://visualize.admin.ch/",
-      localStorageValue: "",
-    });
-    expect(router.query.dataSource).toBeFalsy();
-    expect(localStorage.getItem("dataSource")).toBeFalsy();
-  });
-
-  it("should update router when default value is used and another value is present", () => {
-    const { router } = setup({
-      initialURL: "https://visualize.admin.ch/?dataSource=Int",
-      localStorageValue: "",
-    });
-    expect(router.query.dataSource).toBe("Int");
+    expect(localStorage.getItem("dataSource")).toBe("Prod");
   });
 });

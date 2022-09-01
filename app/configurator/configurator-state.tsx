@@ -46,8 +46,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DEFAULT_DATA_SOURCE, useDataSource } from "@/domain/datasource";
-import { retrieveDataSourceFromLocalStorage } from "@/domain/datasource/localStorage";
+import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -56,6 +55,10 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
+import {
+  getDataSourceFromLocalStorage,
+  useDataSourceStore,
+} from "@/stores/data-source";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
@@ -205,7 +208,7 @@ export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
 const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
-  const dataSource = retrieveDataSourceFromLocalStorage();
+  const dataSource = getDataSourceFromLocalStorage();
 
   return {
     ...state,
@@ -1183,7 +1186,7 @@ const ConfiguratorStateProviderInternal = ({
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
 }) => {
-  const { dataSource } = useDataSource();
+  const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;

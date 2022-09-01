@@ -1,0 +1,131 @@
+import Router, { SingletonRouter } from "next/router";
+import create, { StateCreator, StoreApi } from "zustand";
+
+import { DataSource } from "@/configurator";
+import {
+  DEFAULT_DATA_SOURCE,
+  parseSourceByLabel,
+  sourceToLabel,
+} from "@/domain/datasource";
+import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { getURLParam } from "@/utils/router/helpers";
+
+export type DataSourceStore = {
+  dataSource: DataSource;
+  setDataSource: (value: DataSource) => void;
+};
+
+const PARAM_KEY = "dataSource";
+
+const saveToLocalStorage = (value: DataSource) => {
+  localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+};
+
+export const getDataSourceFromLocalStorage = () => {
+  const dataSourceLabel = localStorage.getItem(PARAM_KEY);
+
+  if (dataSourceLabel) {
+    return parseSourceByLabel(dataSourceLabel);
+  }
+};
+
+const shouldKeepSourceInURL = (pathname: string) => {
+  return !pathname.includes("__test");
+};
+
+const updateRouterDataSourceParam = (
+  router: SingletonRouter,
+  dataSource: DataSource
+) => {
+  const urlDataSourceLabel = getURLParam(PARAM_KEY);
+  const dataSourceLabel = sourceToLabel(dataSource);
+
+  if (urlDataSourceLabel !== dataSourceLabel) {
+    router.replace({
+      pathname: router.pathname,
+      query: { ...router.query, [PARAM_KEY]: dataSourceLabel },
+    });
+  }
+};
+
+/**
+ * Custom middleware that saves data source to localStorage.
+ *
+ * On initialization it tries to first retrieve data source from the
+ * URL (stored as label: Prod, Int, Test); if it's not here, tries with
+ * localStorage (also stored as label), otherwise uses a default data source.
+ */
+export const dataSourceStoreMiddleware =
+  (config: StateCreator<DataSourceStore>, router: SingletonRouter) =>
+  (
+    set: StoreApi<DataSourceStore>["setState"],
+    get: StoreApi<DataSourceStore>["getState"],
+    api: StoreApi<DataSourceStore>
+  ) => {
+    const state = config(
+      (payload: DataSourceStore) => {
+        set(payload);
+
+        if (isRunningInBrowser()) {
+          saveToLocalStorage(payload.dataSource);
+          updateRouterDataSourceParam(router, payload.dataSource);
+        }
+      },
+      get,
+      api,
+      []
+    );
+
+    let dataSource = DEFAULT_DATA_SOURCE;
+
+    if (isRunningInBrowser()) {
+      const urlDataSourceLabel = getURLParam(PARAM_KEY);
+      const urlDataSource = urlDataSourceLabel
+        ? parseSourceByLabel(urlDataSourceLabel)
+        : undefined;
+
+      if (urlDataSourceLabel && urlDataSource) {
+        dataSource = urlDataSource;
+        saveToLocalStorage(urlDataSource);
+      } else {
+        const storageDataSource = getDataSourceFromLocalStorage();
+
+        if (storageDataSource) {
+          dataSource = storageDataSource;
+        } else {
+          saveToLocalStorage(dataSource);
+        }
+      }
+    }
+
+    const callback = () => {
+      // Theoretically get().dataSource shouldn't fail, but when testing it does.
+      const newSource = get()?.dataSource;
+
+      if (newSource && shouldKeepSourceInURL(router.pathname)) {
+        updateRouterDataSourceParam(router, newSource);
+      }
+    };
+
+    // No need to unsubscribe, as store is created once and needs to update
+    // URL continously.
+    router.events.on("routeChangeComplete", callback);
+
+    // Initialize with correct url.
+    router.ready(callback);
+
+    return { ...state, dataSource };
+  };
+
+export const createUseDataSourceStore = (router: SingletonRouter) =>
+  create<DataSourceStore>(
+    dataSourceStoreMiddleware(
+      (set) => ({
+        dataSource: DEFAULT_DATA_SOURCE,
+        setDataSource: (value) => set({ dataSource: value }),
+      }),
+      router
+    )
+  );
+
+export const useDataSourceStore = createUseDataSourceStore(Router);
