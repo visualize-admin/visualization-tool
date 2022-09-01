@@ -18,3 +18,12 @@ export const updateRouterQuery = (
     shallow: true,
   });
 };
+
+export const setURLParam = (param: string, value: string) => {
+  const { protocol, host, pathname, href } = window.location;
+  const qs = new URL(href).searchParams;
+  qs.delete(param);
+  qs.append(param, value);
+  const newUrl = `${protocol}//${host}${pathname}?${qs}`;
+  window.history.replaceState({ path: newUrl }, "", newUrl);
+};
