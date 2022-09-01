@@ -169,8 +169,9 @@ export const MapTooltip = () => {
                   )}
 
                   {showSymbolValue && (
-                    <TooltipRow
-                      title={symbolLayer.measureLabel}
+                    <>
+                      <TooltipRow
+                        title={symbolLayer.measureLabel}
                         background={
                           symbolColorProps.type === "fixed"
                             ? symbolColorProps.color
@@ -181,22 +182,32 @@ export const MapTooltip = () => {
                             ? undefined
                             : "1px solid #ccc"
                         }
-                      color={
+                        color={
                           symbolColorProps.type === "fixed"
                             ? symbolColorProps.textColor
-                          : "#000"
-                      }
-                      value={formatNumberWithUnit(
-                        symbolValue,
-                        formatNumber,
-                        symbolLayer?.measureDimension?.unit
-                      )}
-                      error={
-                        formatSymbolError
-                          ? ` ± ${formatSymbolError(interaction.d)}`
-                          : null
-                      }
-                    />
+                            : "#000"
+                        }
+                        value={formatNumberWithUnit(
+                          symbolValue,
+                          formatNumber,
+                          symbolLayer?.measureDimension?.unit
+                        )}
+                        error={
+                          formatSymbolError
+                            ? ` ± ${formatSymbolError(interaction.d)}`
+                            : null
+                        }
+                      />
+                      {symbolColorProps.type !== "fixed" ? (
+                        <TooltipRow
+                          title={symbolColorProps.component.label}
+                          background={symbolColorProps.color}
+                          color={symbolColorProps.textColor}
+                          value={symbolColorProps.value ?? ""}
+                          error={null}
+                        />
+                      ) : null}
+                    </>
                   )}
                 </>
               }
