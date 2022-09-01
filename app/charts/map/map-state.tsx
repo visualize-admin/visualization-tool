@@ -263,7 +263,7 @@ const getContinousSymbolColors = (
   } as const;
 };
 
-const getSymbolColors = ({
+const useSymbolColors = ({
   colors,
   dimensions,
   measures,
@@ -274,6 +274,7 @@ const getSymbolColors = ({
   measures: DimensionMetadataFragment[];
   data: Observation[];
 }) => {
+  return useMemo(() => {
   switch (colors.type) {
     case "fixed":
       return getFixedSymbolColors(colors);
@@ -298,6 +299,7 @@ const getSymbolColors = ({
         data
       );
   }
+  }, [colors, data, dimensions, measures]);
 };
 
 const makeErrorFormatter = (
@@ -461,14 +463,12 @@ const useMapState = (
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const colors = useMemo(() => {
-    return getSymbolColors({
+  const symbolColors = useSymbolColors({
       colors: symbolLayer.colors,
+    data: symbolData,
       dimensions,
       measures,
-      data: symbolData,
     });
-  }, [symbolLayer, dimensions, measures, symbolData]);
 
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
@@ -535,7 +535,7 @@ const useMapState = (
       getFormattedError: getSymbolFormattedError,
       radiusScale,
       dataDomain: symbolDataDomain,
-      colors,
+      colors: symbolColors,
     },
   };
 };
