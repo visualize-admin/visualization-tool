@@ -25,6 +25,7 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -352,6 +353,13 @@ const MultiFilterContent = ({
   const hasColorMapping = useMemo(() => {
     return !!getColorMapping(config, colorConfigPath);
   }, [colorConfigPath, config]);
+
+  // Initialize color mapping with all values.
+  useEffect(() => {
+    if (hasColorMapping) {
+      handleRecomputeColorMapping();
+    }
+  }, [hasColorMapping]);
 
   return (
     <Box sx={{ position: "relative" }}>
