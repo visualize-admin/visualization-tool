@@ -429,17 +429,24 @@ export const formatNumberWithUnit = (
   return `${formatter(nb)}${unit ? ` ${unit}` : ""}`;
 };
 
+export const getErrorMeasure = (
+  { measures, dimensions }: Pick<ChartProps, "measures" | "dimensions">,
+  valueIri: string
+) => {
+  return [...measures, ...dimensions].find((m) => {
+    return m.related?.some(
+      (r) => r.type === "StandardError" && r.iri === valueIri
+    );
+  });
+};
+
 export const useErrorMeasure = (
   chartState: Pick<ChartProps, "measures" | "dimensions">,
   valueIri: string
 ) => {
   const { measures, dimensions } = chartState;
   return useMemo(() => {
-    return [...measures, ...dimensions].find((m) => {
-      return m.related?.some(
-        (r) => r.type === "StandardError" && r.iri === valueIri
-      );
-    });
+    return getErrorMeasure({ measures, dimensions }, valueIri);
   }, [dimensions, measures, valueIri]);
 };
 
@@ -478,14 +485,14 @@ export const useErrorRange = (
 
 export const useFormatNumber = () => {
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale();
-    const formatter = format(",.2~f");
-    return (x: NumberValue | null | undefined) => {
-      if (x === null || x === undefined) {
-        return "–";
-      }
-      return `${formatter(x)}`;
-    };
+  const { format } = getD3FormatLocale();
+  const formatter = format(",.2~f");
+  return (x: NumberValue | null | undefined) => {
+    if (x === null || x === undefined) {
+      return "–";
+    }
+    return `${formatter(x)}`;
+  };
   }, []);
   return formatter;
 };
