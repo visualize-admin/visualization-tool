@@ -100,11 +100,13 @@ export const MapTooltip = () => {
           type: "categorical",
           component: colors.component,
           value: obs ? (obs[colors.component.iri] as string) : null,
+          error: null,
           color,
           textColor,
         } as const;
       case "continuous":
         const rawValue = obs ? (obs[colors.component.iri] as number) : null;
+        const rawError = obs ? colors.getFormattedError?.(obs) : null;
         return {
           type: "continuous",
           component: colors.component,
@@ -113,6 +115,7 @@ export const MapTooltip = () => {
             formatNumber,
             colors.component.unit
           ),
+          error: rawError ? ` ± ${rawError}` : null,
           color,
           textColor,
         } as const;
@@ -204,7 +207,7 @@ export const MapTooltip = () => {
                           background={symbolColorProps.color}
                           color={symbolColorProps.textColor}
                           value={symbolColorProps.value ?? ""}
-                          error={null}
+                          error={symbolColorProps.error}
                         />
                       ) : null}
                     </>

@@ -29,6 +29,7 @@ import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import {
   formatNumberWithUnit,
   getColorInterpolator,
+  getErrorMeasure,
   getSingleHueSequentialPalette,
   useErrorMeasure,
   useErrorVariable,
@@ -116,6 +117,7 @@ export interface MapState {
           component: DimensionMetadataFragment;
           domain: [number, number];
           getColor: (d: Observation) => number[];
+          getFormattedError: null | ((d: Observation) => string);
         };
   };
 }
@@ -233,8 +235,10 @@ const getContinousSymbolColors = (
     palette: string;
     componentIri: string;
   },
+  data: Observation[],
+  dimensions: DimensionMetadataFragment[],
   measures: DimensionMetadataFragment[],
-  data: Observation[]
+  { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
   const component = measures.find(
     (d) => d.iri === componentIri
@@ -246,6 +250,16 @@ const getContinousSymbolColors = (
   const colorScale = scaleSequential(
     getColorInterpolator(palette as any)
   ).domain(domain);
+  const errorDimension = findRelatedErrorDimension(componentIri, dimensions);
+  const errorMeasure = getErrorMeasure({ dimensions, measures }, componentIri);
+  const getError = errorMeasure
+    ? (d: Observation) => d[errorMeasure.iri]
+    : null;
+  const getFormattedError = makeErrorFormatter(
+    getError,
+    formatNumber,
+    errorDimension?.unit
+  );
 
   return {
     type: "continuous",
@@ -259,47 +273,52 @@ const getContinousSymbolColors = (
       }
       return [0, 0, 0, 255 * 0.1];
     },
+    getFormattedError,
     domain,
   } as const;
 };
 
 const useSymbolColors = ({
   colors,
+  data,
   dimensions,
   measures,
-  data,
 }: {
   colors: MapSymbolLayer["colors"];
+  data: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  data: Observation[];
 }) => {
+  const formatNumber = useFormatNumber();
+
   return useMemo(() => {
-  switch (colors.type) {
-    case "fixed":
-      return getFixedSymbolColors(colors);
-    case "categorical":
-      return getCategoricalSymbolColors(
-        colors as {
-          type: "categorical";
-          componentIri: string;
-          palette: string;
-          colorMapping: ColorMapping;
-        },
-        dimensions
-      );
-    case "continuous":
-      return getContinousSymbolColors(
-        colors as {
-          type: "continuous";
-          componentIri: string;
-          palette: string;
-        },
-        measures,
-        data
-      );
-  }
-  }, [colors, data, dimensions, measures]);
+    switch (colors.type) {
+      case "fixed":
+        return getFixedSymbolColors(colors);
+      case "categorical":
+        return getCategoricalSymbolColors(
+          colors as {
+            type: "categorical";
+            componentIri: string;
+            palette: string;
+            colorMapping: ColorMapping;
+          },
+          dimensions
+        );
+      case "continuous":
+        return getContinousSymbolColors(
+          colors as {
+            type: "continuous";
+            componentIri: string;
+            palette: string;
+          },
+          data,
+          dimensions,
+          measures,
+          { formatNumber }
+        );
+    }
+  }, [colors, data, dimensions, measures, formatNumber]);
 };
 
 const makeErrorFormatter = (
@@ -464,11 +483,11 @@ const useMapState = (
   };
 
   const symbolColors = useSymbolColors({
-      colors: symbolLayer.colors,
+    colors: symbolLayer.colors,
     data: symbolData,
-      dimensions,
-      measures,
-    });
+    dimensions,
+    measures,
+  });
 
   const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
