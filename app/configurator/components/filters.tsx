@@ -339,22 +339,25 @@ const MultiFilterContent = ({
 
   // Recomputes color palette making sure that used values
   // are sorted first, so they have different colors
-  const handleRecomputeColorMapping = useEvent(() => {
-    const usedValues = new Set(values.map((v) => v.value));
-    dispatch({
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        dimensionIri,
-        values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
-      },
-    });
-  });
+  const handleRecomputeColorMapping = useEvent(
+    ({ random }: { random: boolean } = { random: false }) => {
+      const usedValues = new Set(values.map((v) => v.value));
+      dispatch({
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          dimensionIri,
+          values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+          random,
+        },
+      });
+    }
+  );
 
   const hasColorMapping = useMemo(() => {
     return !!getColorMapping(config, colorConfigPath);
   }, [colorConfigPath, config]);
 
-  // Initialize color mapping with all values.
+  // Initialize color mapping with all values, not randomizing the order.
   useEffect(() => {
     if (hasColorMapping) {
       handleRecomputeColorMapping();
@@ -409,7 +412,7 @@ const MultiFilterContent = ({
                 <IconButton
                   sx={{ ml: 1, my: -2 }}
                   size="small"
-                  onClick={handleRecomputeColorMapping}
+                  onClick={() => handleRecomputeColorMapping({ random: true })}
                 >
                   <SvgIcFormatting fontSize="inherit" />
                 </IconButton>

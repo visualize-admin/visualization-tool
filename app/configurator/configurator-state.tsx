@@ -170,7 +170,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
-      value: { dimensionIri: string; values: string[] };
+      value: { dimensionIri: string; values: string[]; random: boolean };
     }
   | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
@@ -942,7 +942,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values } = action.value;
+        const { dimensionIri, values, random } = action.value;
         if (
           isSegmentColorMappingInConfig(draft.chartConfig) &&
           draft.chartConfig.fields.segment &&
@@ -951,7 +951,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.segment.palette,
             dimensionValues: values.map((value) => ({ value })),
-            random: true,
+            random,
           });
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
         }
