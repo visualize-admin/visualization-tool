@@ -106,16 +106,14 @@ export interface MapState {
       | {
           type: "categorical";
           palette: string;
-          componentIri: string;
-          componentLabel: string;
+          component: DimensionMetadataFragment;
           domain: string[];
           getColor: (d: Observation) => number[];
         }
       | {
           type: "continuous";
           palette: string;
-          componentIri: string;
-          componentLabel: string;
+          component: DimensionMetadataFragment;
           domain: [number, number];
           getColor: (d: Observation) => number[];
         };
@@ -204,10 +202,11 @@ const getCategoricalSymbolColors = (
   },
   dimensions: DimensionMetadataFragment[]
 ) => {
-  const component = dimensions.find((d) => d.iri === componentIri);
-  const componentLabel = component?.label || "";
-  const componentValuesByLabel = keyBy(component?.values, (d) => d.label);
-  const domain: string[] = component?.values.map((d) => d.value) || [];
+  const component = dimensions.find(
+    (d) => d.iri === componentIri
+  ) as DimensionMetadataFragment;
+  const componentValuesByLabel = keyBy(component.values, (d) => d.label);
+  const domain: string[] = component.values.map((d) => d.value) || [];
   const rgbColorMapping = mapValues(colorMapping, (d) =>
     convertHexToRgbArray(d)
   );
@@ -215,8 +214,7 @@ const getCategoricalSymbolColors = (
   return {
     type: "categorical",
     palette,
-    componentIri,
-    componentLabel,
+    component,
     domain,
     getColor: (d: Observation) => {
       const label = d[componentIri] as string;
@@ -238,8 +236,9 @@ const getContinousSymbolColors = (
   measures: DimensionMetadataFragment[],
   data: Observation[]
 ) => {
-  const component = measures.find((d) => d.iri === componentIri);
-  const componentLabel = component?.label || "";
+  const component = measures.find(
+    (d) => d.iri === componentIri
+  ) as DimensionMetadataFragment;
   const domain = extent(
     data.map((d) => d[componentIri]),
     (d) => +d!
@@ -251,8 +250,7 @@ const getContinousSymbolColors = (
   return {
     type: "continuous",
     palette,
-    componentIri,
-    componentLabel,
+    component,
     getColor: (d: Observation) => {
       const color = colorScale(+d[componentIri]!);
       if (color) {
