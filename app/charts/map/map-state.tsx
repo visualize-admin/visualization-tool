@@ -14,7 +14,7 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { keyBy } from "lodash";
+import { keyBy, mapValues } from "lodash";
 import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
@@ -208,6 +208,9 @@ const getCategoricalSymbolColors = (
   const componentLabel = component?.label || "";
   const componentValuesByLabel = keyBy(component?.values, (d) => d.label);
   const domain: string[] = component?.values.map((d) => d.value) || [];
+  const rgbColorMapping = mapValues(colorMapping, (d) =>
+    convertHexToRgbArray(d)
+  );
 
   return {
     type: "categorical",
@@ -218,8 +221,7 @@ const getCategoricalSymbolColors = (
     getColor: (d: Observation) => {
       const label = d[componentIri] as string;
       const value = componentValuesByLabel[label].value;
-      const color = colorMapping?.[value];
-      return color ? convertHexToRgbArray(color) : [0, 0, 0, 255 * 0.1];
+      return rgbColorMapping[value];
     },
   } as const;
 };
