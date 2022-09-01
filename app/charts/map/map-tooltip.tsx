@@ -82,6 +82,42 @@ export const MapTooltip = () => {
       textColor,
     };
   }, [areaValue, areaLayer]);
+  const symbolColorProps = useMemo(() => {
+    const obs = interaction.d;
+    const colors = symbolLayer.colors;
+    const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+    const textColor = getTooltipTextColor(color);
+
+    switch (colors.type) {
+      case "fixed":
+        return {
+          type: "fixed",
+          color,
+          textColor,
+        } as const;
+      case "categorical":
+        return {
+          type: "categorical",
+          component: colors.component,
+          value: obs ? (obs[colors.component.iri] as string) : null,
+          color,
+          textColor,
+        } as const;
+      case "continuous":
+        const rawValue = obs ? (obs[colors.component.iri] as number) : null;
+        return {
+          type: "continuous",
+          component: colors.component,
+          value: formatNumberWithUnit(
+            rawValue,
+            formatNumber,
+            colors.component.unit
+          ),
+          color,
+          textColor,
+        } as const;
+    }
+  }, [interaction.d, symbolLayer.colors, formatNumber]);
 
   return (
     <>
@@ -135,12 +171,19 @@ export const MapTooltip = () => {
                   {showSymbolValue && (
                     <TooltipRow
                       title={symbolLayer.measureLabel}
-                      background={symbolColor || "#dedede"}
+                        background={
+                          symbolColorProps.type === "fixed"
+                            ? symbolColorProps.color
+                            : "#fff"
+                        }
+                        border={
+                          symbolColorProps.type === "fixed"
+                            ? undefined
+                            : "1px solid #ccc"
+                        }
                       color={
-                        symbolColor
-                          ? hcl(symbolColor).l < 55
-                            ? "#fff"
-                            : "#000"
+                          symbolColorProps.type === "fixed"
+                            ? symbolColorProps.textColor
                           : "#000"
                       }
                       value={formatNumberWithUnit(
