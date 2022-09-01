@@ -85,7 +85,7 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     padding: theme.spacing(2),
     opacity: 0,
-    color: theme.palette.muted.main,
+    color: theme.palette.secondary.main,
   },
   overlay: {
     position: "absolute",
