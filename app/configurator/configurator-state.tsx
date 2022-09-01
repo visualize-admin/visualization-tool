@@ -22,6 +22,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
+import { DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -689,7 +690,7 @@ const handleChartFieldChanged = (
         draft.chartConfig.fields.symbolLayer.colors = {
           type: "fixed",
           value: "#1f77b4",
-          opacity: 70,
+          opacity: DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY,
         };
       } else {
         const componentType = component?.__typename;

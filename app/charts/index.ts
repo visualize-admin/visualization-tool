@@ -2,6 +2,7 @@ import { ascending, group } from "d3";
 import produce from "immer";
 import { get, groupBy } from "lodash";
 
+import { DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY } from "@/charts/map/constants";
 import {
   AreaSegmentField,
   ChartConfig,
@@ -288,7 +289,7 @@ export const getInitialConfig = ({
             colors: {
               type: "fixed",
               value: "#1f77b4",
-              opacity: 70,
+              opacity: DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY,
             },
           },
         },
