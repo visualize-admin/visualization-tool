@@ -1,4 +1,3 @@
-import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import {
   Alert,
@@ -10,6 +9,7 @@ import {
   Typography,
   Link,
   Theme,
+  keyframes,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
