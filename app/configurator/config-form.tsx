@@ -463,7 +463,7 @@ export const isMultiFilterFieldChecked = (
 const MultiFilterContext = React.createContext({
   activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
-  dimensionIri: undefined as string | undefined,
+  dimensionIri: "",
   colorConfigPath: undefined as string | undefined,
   checkboxController: new CheckboxStateController([], []),
   getValueColor: (_: string) => "" as string,

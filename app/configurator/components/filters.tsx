@@ -259,22 +259,15 @@ const getColorMapping = (
     | undefined;
 };
 
-const MultiFilterContent = ({
-  tree,
-  dimensionIri,
-}: {
-  tree: HierarchyValue[];
-  depth: number;
-  classes: ReturnType<typeof useStyles>;
-  dimensionIri: string;
-}) => {
+const MultiFilterContent = ({ tree }: { tree: HierarchyValue[] }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
+  const { activeKeys, allValues, colorConfigPath, dimensionIri } =
+    useMultiFilterContext();
   const rawValues = config.chartConfig.filters[dimensionIri];
 
   const classes = useStyles();
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { activeKeys, allValues, colorConfigPath } = useMultiFilterContext();
 
   const { options, optionsByValue, optionsByParent } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
@@ -690,6 +683,20 @@ const DrawerContent = forwardRef<
   );
 });
 
+const getPathToColorConfigProperty = ({
+  field,
+  colorConfigPath,
+  propertyPath,
+}: {
+  field: string;
+  colorConfigPath?: string;
+  propertyPath: string;
+}) => {
+  return `fields["${field}"].${
+    colorConfigPath !== undefined ? `${colorConfigPath}.` : ""
+  }${propertyPath}`;
+};
+
 export const DimensionValuesMultiFilter = ({
   dataSetIri,
   dimensionIri,
@@ -702,16 +709,15 @@ export const DimensionValuesMultiFilter = ({
   field?: string;
 }) => {
   const locale = useLocale();
-  const classes = useStyles();
-  const [configuratorState] = useConfiguratorState();
+  const [{ dataSource, chartConfig }] = useConfiguratorState(isConfiguring);
 
   const [{ data }] = useDimensionValuesQuery({
     variables: {
-      dimensionIri,
-      sourceType: configuratorState.dataSource.type,
-      sourceUrl: configuratorState.dataSource.url,
-      locale,
       dataCubeIri: dataSetIri,
+      dimensionIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
     },
   });
 
@@ -719,30 +725,24 @@ export const DimensionValuesMultiFilter = ({
     useDimensionHierarchyQuery({
       variables: {
         cubeIri: dataSetIri,
-        sourceType: configuratorState.dataSource.type,
-        sourceUrl: configuratorState.dataSource.url,
-        locale,
         dimensionIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
       },
     });
 
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
-  const getValueColor = useCallback(
-    (value: string) => {
-      const path = colorConfigPath ? `${colorConfigPath}.` : "";
-      const chartConfig =
-        configuratorState.state === "CONFIGURING_CHART"
-          ? configuratorState.chartConfig
-          : null;
-
-      const fullpath = `fields["${field}"].${path}colorMapping["${value}"]`;
-      const color = chartConfig ? get(chartConfig, fullpath) : null;
-      return color;
-    },
-    [colorConfigPath, configuratorState, field]
-  );
+  const getValueColor = useEvent((value: string) => {
+    const colorPath = getPathToColorConfigProperty({
+      field,
+      colorConfigPath,
+      propertyPath: `colorMapping["${value}"]`,
+    });
+    return get(chartConfig, colorPath);
+  });
 
   if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
     return (
@@ -754,14 +754,11 @@ export const DimensionValuesMultiFilter = ({
         getValueColor={getValueColor}
       >
         <MultiFilterContent
-          dimensionIri={dimensionIri}
           tree={
             hierarchyTree && hierarchyTree.length > 0
               ? hierarchyTree
               : data.dataCubeByIri.dimensionByIri.values
           }
-          depth={0}
-          classes={classes}
         />
       </MultiFilterContextProvider>
     );
