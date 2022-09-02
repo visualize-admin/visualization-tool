@@ -33,6 +33,7 @@ import {
   isMapConfig,
   isSegmentColorMappingInConfig,
   isSegmentInConfig,
+  MapConfig,
 } from "@/configurator/config-types";
 import {
   ChartConfig,
@@ -601,16 +602,23 @@ export const canTransitionToPreviousStep = (_: ConfiguratorState): boolean => {
   return true;
 };
 
-export const getFiltersByMappingStatus = (
-  fields: ConfiguratorStateConfiguringChart["chartConfig"]["fields"],
-  filters: ConfiguratorStateConfiguringChart["chartConfig"]["filters"]
-) => {
-  const mappedIris = new Set(
-    Object.values(fields).map((fieldValue) => fieldValue.componentIri)
+export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
+  const genericFieldValues = Object.values(chartConfig.fields).map(
+    (d) => d.componentIri
   );
-  const unmapped = pickBy(filters, (_, iri) => !mappedIris.has(iri));
-  const mapped = pickBy(filters, (_, iri) => mappedIris.has(iri));
-  return { unmapped, mapped };
+  const nonGenericFieldValues =
+    isMapConfig(chartConfig) &&
+    chartConfig.fields.symbolLayer.colors.type === "categorical"
+      ? [chartConfig.fields.symbolLayer.colors.componentIri]
+      : [];
+  const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
+  const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
+  const unmappedFilters = pickBy(
+    chartConfig.filters,
+    (_, iri) => !iris.has(iri)
+  );
+
+  return { mappedFilters, mappedFiltersIris: iris, unmappedFilters };
 };
 
 const updateSymbolLayerColors = ({
@@ -790,12 +798,12 @@ const handleChartFieldChanged = (
       }
     }
 
-      // Remove this component from the interactive filter, if it is there
-      if (draft.chartConfig.interactiveFiltersConfig) {
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+    // Remove this component from the interactive filter, if it is there
+    if (draft.chartConfig.interactiveFiltersConfig) {
+      draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
           (c) => c !== componentIri
-          );
+        );
     }
   }
 
