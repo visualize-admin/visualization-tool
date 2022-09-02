@@ -1006,6 +1006,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             random,
           });
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
+        } else if (
+          isMapConfig(draft.chartConfig) &&
+          draft.chartConfig.fields.symbolLayer.colors.type === "categorical"
+        ) {
+          const colorMapping = mapValueIrisToColor({
+            palette: draft.chartConfig.fields.symbolLayer.colors.palette,
+            dimensionValues: values.map((value) => ({ value })),
+          });
+          draft.chartConfig.fields.symbolLayer.colors.colorMapping =
+            colorMapping;
         }
       }
       return draft;
