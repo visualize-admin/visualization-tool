@@ -489,7 +489,17 @@ export const SymbolLayerSettings = memo(
                   defaultValue={70}
                 />
               </>
-            ) : symbolLayer.colors.type === "categorical" ? null : (
+            ) : symbolLayer.colors.type === "categorical" ? (
+              symbolLayer.componentIri !== symbolLayer.colors.componentIri ? (
+                <DimensionValuesMultiFilter
+                  key={symbolLayer.componentIri}
+                  dataSetIri={metaData.iri}
+                  dimensionIri={symbolLayer.colors.componentIri}
+                  field={activeField}
+                  colorConfigPath="colors"
+                />
+              ) : null
+            ) : (
               <ColorRampField field={activeField} path="colors.palette" />
             )}
           </ControlSectionContent>
