@@ -761,14 +761,6 @@ const handleChartFieldChanged = (
           selectedValues.map((v) => v.value).map((x) => [x, true])
         ),
       };
-
-      // Remove this component from the interactive filter, if it is there
-      if (draft.chartConfig.interactiveFiltersConfig) {
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (c) => c !== componentIri
-          );
-      }
     } else {
       // Reset other field options
       (draft.chartConfig.fields as GenericFields)[field] = {
@@ -802,9 +794,8 @@ const handleChartFieldChanged = (
       if (draft.chartConfig.interactiveFiltersConfig) {
         draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
           draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (c) => c !== action.value.componentIri
+          (c) => c !== componentIri
           );
-      }
     }
   }
 
