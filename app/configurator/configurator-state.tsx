@@ -613,6 +613,46 @@ export const getFiltersByMappingStatus = (
   return { unmapped, mapped };
 };
 
+const updateSymbolLayerColors = ({
+  chartConfig,
+  component,
+  reset,
+}: {
+  chartConfig: MapConfig;
+  component: DimensionMetadataFragment | undefined;
+  reset: boolean;
+}) => {
+  if (reset) {
+    chartConfig.fields.symbolLayer.colors = {
+      type: "fixed",
+      value: "#1f77b4",
+      opacity: DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY,
+    };
+  } else {
+    if (component && canDimensionBeMultiFiltered(component)) {
+      chartConfig.fields.symbolLayer.colors = {
+        type: "categorical",
+        componentIri: component.iri,
+        palette: "blues",
+        colorMapping: mapValueIrisToColor({
+          palette: "blues",
+          dimensionValues: component.values,
+        }),
+      };
+
+      if (chartConfig.fields.symbolLayer.componentIri === component.iri) {
+        delete chartConfig.filters[component.iri];
+      }
+    } else if (component && component.__typename === "Measure") {
+      chartConfig.fields.symbolLayer.colors = {
+        type: "continuous",
+        componentIri: component.iri,
+        palette: "blues",
+      };
+    }
+  }
+};
+
 export const getChartOptionField = (
   state: ConfiguratorStateConfiguringChart,
   field: string | null,
@@ -689,33 +729,11 @@ const handleChartFieldChanged = (
           );
       }
     } else if (isMapConfig(draft.chartConfig) && field === "colors") {
-      if (componentIri === FIELD_VALUE_NONE) {
-        draft.chartConfig.fields.symbolLayer.colors = {
-          type: "fixed",
-          value: "#1f77b4",
-          opacity: DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY,
-        };
-      } else {
-        const componentType = component?.__typename;
-
-        if (component && canDimensionBeMultiFiltered(component)) {
-          draft.chartConfig.fields.symbolLayer.colors = {
-            type: "categorical",
-            componentIri,
-            palette: "default",
-            colorMapping: mapValueIrisToColor({
-              palette: "blues",
-              dimensionValues: component.values,
-            }),
-          };
-        } else if (component && componentType === "Measure") {
-          draft.chartConfig.fields.symbolLayer.colors = {
-            type: "continuous",
-            componentIri,
-            palette: "blues",
-          };
-        }
-      }
+      updateSymbolLayerColors({
+        chartConfig: draft.chartConfig,
+        component,
+        reset: componentIri === FIELD_VALUE_NONE,
+      });
     }
   } else {
     // The field is being updated
