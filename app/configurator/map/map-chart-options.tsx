@@ -357,7 +357,9 @@ export const AreaLayerSettings = memo(
 
 export const SymbolLayerSettings = memo(
   ({
-    chartConfig,
+    chartConfig: {
+      fields: { symbolLayer },
+    },
     metaData,
   }: {
     chartConfig: MapConfig;
@@ -392,7 +394,7 @@ export const SymbolLayerSettings = memo(
     }, [metaData.dimensions, measuresOptions]);
 
     const isAvailable = geoDimensions.length > 0;
-    const isHidden = !chartConfig.fields.symbolLayer.show;
+    const isHidden = !symbolLayer.show;
 
     return !isAvailable ? (
       <NoGeoDimensionsWarning />
@@ -462,7 +464,7 @@ export const SymbolLayerSettings = memo(
               options={colorDimensionsOptions}
               disabled={isHidden}
             />
-            {chartConfig.fields.symbolLayer.colors.type === "fixed" ? (
+            {symbolLayer.colors.type === "fixed" ? (
               <>
                 <ColorPickerField
                   label={t({
@@ -487,8 +489,7 @@ export const SymbolLayerSettings = memo(
                   defaultValue={70}
                 />
               </>
-            ) : chartConfig.fields.symbolLayer.colors.type ===
-              "categorical" ? null : (
+            ) : symbolLayer.colors.type === "categorical" ? null : (
               <ColorRampField field={activeField} path="colors.palette" />
             )}
           </ControlSectionContent>
@@ -498,9 +499,9 @@ export const SymbolLayerSettings = memo(
           {!isHidden && (
             <ControlSectionContent>
               <DimensionValuesMultiFilter
-                key={chartConfig.fields.symbolLayer.componentIri}
+                key={symbolLayer.componentIri}
                 dataSetIri={metaData.iri}
-                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
+                dimensionIri={symbolLayer.componentIri}
                 field={activeField}
                 colorConfigPath="colors"
               />
