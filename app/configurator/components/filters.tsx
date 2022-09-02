@@ -259,7 +259,13 @@ const getColorMapping = (
     | undefined;
 };
 
-const MultiFilterContent = ({ tree }: { tree: HierarchyValue[] }) => {
+const MultiFilterContent = ({
+  colorDimensionIri,
+  tree,
+}: {
+  colorDimensionIri: string | undefined;
+  tree: HierarchyValue[];
+}) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const { activeKeys, allValues, colorConfigPath, dimensionIri } =
     useMultiFilterContext();
@@ -347,14 +353,18 @@ const MultiFilterContent = ({ tree }: { tree: HierarchyValue[] }) => {
   );
 
   const hasColorMapping = useMemo(() => {
-    return !!getColorMapping(config, colorConfigPath);
-  }, [colorConfigPath, config]);
+    return (
+      !!getColorMapping(config, colorConfigPath) &&
+      dimensionIri === colorDimensionIri
+    );
+  }, [colorConfigPath, config, dimensionIri, colorDimensionIri]);
 
   // Initialize color mapping with all values, not randomizing the order.
   useEffect(() => {
     if (hasColorMapping) {
       handleRecomputeColorMapping();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasColorMapping]);
 
   return (
@@ -735,6 +745,15 @@ export const DimensionValuesMultiFilter = ({
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
+  const colorDimensionIri: string | undefined = useMemo(() => {
+    const colorComponentIriPath = getPathToColorConfigProperty({
+      field,
+      colorConfigPath,
+      propertyPath: "componentIri",
+    });
+    return get(chartConfig, colorComponentIriPath);
+  }, [chartConfig, field, colorConfigPath]);
+
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
       field,
@@ -754,6 +773,7 @@ export const DimensionValuesMultiFilter = ({
         getValueColor={getValueColor}
       >
         <MultiFilterContent
+          colorDimensionIri={colorDimensionIri}
           tree={
             hierarchyTree && hierarchyTree.length > 0
               ? hierarchyTree
