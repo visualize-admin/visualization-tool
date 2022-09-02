@@ -681,7 +681,7 @@ const handleChartFieldChanged = (
     dataSetMetadata,
     selectedValues: actionSelectedValues,
   } = action.value;
-  const f = (draft.chartConfig.fields as GenericFields)[field];
+  const f = get(draft.chartConfig.fields, field);
   const component = [
     ...dataSetMetadata.dimensions,
     ...dataSetMetadata.measures,
@@ -728,7 +728,10 @@ const handleChartFieldChanged = (
             (c) => c !== componentIri
           );
       }
-    } else if (isMapConfig(draft.chartConfig) && field === "colors") {
+    } else if (
+      isMapConfig(draft.chartConfig) &&
+      field === "symbolLayer.colors"
+    ) {
       updateSymbolLayerColors({
         chartConfig: draft.chartConfig,
         component,
@@ -785,6 +788,16 @@ const handleChartFieldChanged = (
           Object
         );
       }
+
+      if (isMapConfig(draft.chartConfig) && field === "symbolLayer.colors") {
+        updateSymbolLayerColors({
+          chartConfig: draft.chartConfig,
+          component,
+          reset: componentIri === FIELD_VALUE_NONE,
+        });
+      }
+    }
+
       // Remove this component from the interactive filter, if it is there
       if (draft.chartConfig.interactiveFiltersConfig) {
         draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =

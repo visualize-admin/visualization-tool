@@ -563,7 +563,7 @@ const SymbolColorSelect = ({
     dispatch({
       type: "CHART_FIELD_CHANGED",
       value: {
-        field: "colors",
+        field: "symbolLayer.colors",
         componentIri: e.target.value as string,
         dataSetMetadata: metaData,
       },
