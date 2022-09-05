@@ -311,6 +311,7 @@ export const MapComponent = () => {
               position: "absolute",
             }}
             dragPan={!locked}
+            dragRotate={false}
             scrollZoom={!locked}
             doubleClickZoom={!locked}
             touchZoomRotate={!locked}
