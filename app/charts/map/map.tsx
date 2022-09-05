@@ -2,10 +2,10 @@ import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
-import { orderBy } from "lodash";
+import { debounce, orderBy } from "lodash";
 import maplibregl from "maplibre-gl";
 import React from "react";
-import Map, { LngLatLike, MapRef } from "react-map-gl";
+import Map, { LngLatLike, MapboxEvent, MapRef } from "react-map-gl";
 
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { BBox } from "@/configurator";
@@ -61,6 +61,15 @@ const useStyles = makeStyles<Theme>((theme) => ({
     },
   },
 }));
+
+// Debounced function fixes the problem of maximizing window or opening a console,
+// when map was not resized initially.
+const resize = debounce((e: MapboxEvent, bbox: BBox) => {
+  if (e.originalEvent) {
+    e.target.resize();
+    e.target.fitBounds(bbox, { duration: 0 });
+  }
+}, 0);
 
 export const MapComponent = () => {
   const classes = useStyles();
@@ -303,11 +312,9 @@ export const MapComponent = () => {
             onViewStateChange(e);
           }}
           onResize={(e) => {
-            if (currentBBox.current && locked) {
-              e.target.fitBounds(currentBBox.current, { duration: 0 });
-            }
-
-            currentBBox.current = e.target.getBounds().toArray() as BBox;
+            const bbox = e.target.getBounds().toArray() as BBox;
+            currentBBox.current = bbox;
+            resize(e, lockedBBox || bbox);
           }}
           {...viewState}
         >
