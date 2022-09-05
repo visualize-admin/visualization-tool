@@ -1,5 +1,5 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
-import { MapboxLayer } from "@deck.gl/mapbox";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import { MapboxLayer } from "@deck.gl/mapbox/typed";
 import { Box, Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3";
@@ -134,9 +134,10 @@ export const MapComponent = () => {
       ...features.areaLayer?.shapes,
       features: sortedFeatures,
     };
-    const geoJsonLayer = new MapboxLayer({
+    const geoJsonLayer = new MapboxLayer<GeoJsonLayer>({
       type: GeoJsonLayer,
       id: "shapes" + geoJsonLayerId,
+      // @ts-ignore - FIXME: properly type data & getFillColor fields
       data: shapes,
       pickable: true,
       autoHighlight: true,
@@ -150,7 +151,7 @@ export const MapComponent = () => {
       }: {
         x: number;
         y: number;
-        object: GeoFeature;
+        object?: GeoFeature;
       }) => {
         if (object) {
           setMapTooltipType("area");
@@ -170,6 +171,7 @@ export const MapComponent = () => {
           });
         }
       },
+      // @ts-ignore
       getFillColor: (d: GeoFeature) => {
         const { observation } = d.properties;
 
@@ -218,7 +220,7 @@ export const MapComponent = () => {
     const sortedPoints = features.symbolLayer?.points
       ? orderBy([...features.symbolLayer?.points], getRadius, "asc")
       : [];
-    return new MapboxLayer({
+    return new MapboxLayer<ScatterplotLayer>({
       type: ScatterplotLayer,
       id: "scatterplot" + scatterplotLayerId,
       data: sortedPoints,
@@ -232,6 +234,7 @@ export const MapComponent = () => {
       lineWidthMinPixels: 1,
       getPosition: ({ coordinates }: GeoPoint) => coordinates,
       getRadius,
+      // @ts-ignore
       getFillColor: (d: GeoPoint) => {
         const { observation } = d.properties;
         if (observation) {
@@ -248,7 +251,7 @@ export const MapComponent = () => {
       }: {
         x: number;
         y: number;
-        object: GeoPoint;
+        object?: GeoPoint;
       }) => {
         if (object) {
           setMapTooltipType("symbol");
@@ -333,14 +336,16 @@ export const MapComponent = () => {
             }}
             {...viewState}
           >
-            {areaLayer.show ? (
+            {geoJsonLayer ? (
               <Layer
                 key={geoJsonLayer.id}
+                // @ts-ignore
                 layer={geoJsonLayer}
                 beforeId={mapStyle === emptyStyle ? undefined : "water_polygon"}
               />
             ) : null}
-            {symbolLayer.show ? (
+            {scatterplotLayer ? (
+              // @ts-ignore
               <Layer key={scatterplotLayer.id} layer={scatterplotLayer} />
             ) : null}
           </ReactMap>

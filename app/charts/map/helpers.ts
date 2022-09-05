@@ -1,4 +1,4 @@
-import { WebMercatorViewport } from "@deck.gl/core";
+import { WebMercatorViewport } from "@deck.gl/core/typed";
 import { extent, geoBounds } from "d3";
 import { useMemo, useState } from "react";
 import { ViewState } from "react-map-gl";
