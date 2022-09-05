@@ -20,7 +20,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 
-type HoverObjectType = "area" | "symbol";
+export type HoverObjectType = "area" | "symbol";
 
 const MapTooltipStateContext = createContext<
   [HoverObjectType, Dispatch<HoverObjectType>] | undefined

@@ -10,9 +10,7 @@ import ReactMap, { LngLatLike, MapRef } from "react-map-gl";
 
 import { emptyStyle, useMapStyle } from "@/charts/map/get-base-layer-style";
 import { MapState } from "@/charts/map/map-state";
-import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { useChartState } from "@/charts/shared/use-chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator/config-types";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
@@ -22,7 +20,7 @@ import useEvent from "@/utils/use-event";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { FLY_TO_DURATION, RESET_DURATION } from "./constants";
-import { useViewState } from "./helpers";
+import { useOnHover, useViewState } from "./helpers";
 import Layer from "./layer";
 import { setMap } from "./ref";
 
@@ -43,9 +41,6 @@ export const MapComponent = () => {
     featuresBBox,
   } = useChartState() as MapState;
   const classes = useStyles();
-
-  const [, dispatchInteraction] = useInteraction();
-  const [, setMapTooltipType] = useMapTooltip();
 
   const { defaultViewState, viewState, onViewStateChange } = useViewState({
     width,
@@ -111,6 +106,9 @@ export const MapComponent = () => {
     showBaseLayer,
     showLabels: !areaLayer.show,
   });
+
+  const onHover = useOnHover();
+
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,25 +145,7 @@ export const MapComponent = () => {
         x: number;
         y: number;
         object?: GeoFeature;
-      }) => {
-        if (object) {
-          setMapTooltipType("area");
-          dispatchInteraction({
-            type: "INTERACTION_UPDATE",
-            value: {
-              interaction: {
-                visible: true,
-                mouse: { x, y },
-                d: object.properties.observation,
-              },
-            },
-          });
-        } else {
-          dispatchInteraction({
-            type: "INTERACTION_HIDE",
-          });
-        }
-      },
+      }) => onHover({ type: "area", x, y, object }),
       // @ts-ignore
       getFillColor: (d: GeoFeature) => {
         const { observation } = d.properties;
@@ -182,13 +162,7 @@ export const MapComponent = () => {
       },
     });
     return geoJsonLayer;
-  }, [
-    areaLayer,
-    dispatchInteraction,
-    features.areaLayer?.shapes,
-    setMapTooltipType,
-    geoJsonLayerId,
-  ]);
+  }, [areaLayer, geoJsonLayerId, features.areaLayer?.shapes, onHover]);
 
   const scatterplotLayerId = useMemo(() => {
     return globalScatterplotLayerId++;
@@ -247,33 +221,14 @@ export const MapComponent = () => {
         x: number;
         y: number;
         object?: GeoPoint;
-      }) => {
-        if (object) {
-          setMapTooltipType("symbol");
-          dispatchInteraction({
-            type: "INTERACTION_UPDATE",
-            value: {
-              interaction: {
-                visible: true,
-                mouse: { x, y },
-                d: object.properties.observation,
-              },
-            },
-          });
-        } else {
-          dispatchInteraction({
-            type: "INTERACTION_HIDE",
-          });
-        }
-      },
+      }) => onHover({ type: "symbol", x, y, object }),
     });
   }, [
     areaLayer.show,
-    dispatchInteraction,
     features.symbolLayer?.points,
     identicalLayerComponentIris,
+    onHover,
     scatterplotLayerId,
-    setMapTooltipType,
     symbolLayer,
   ]);
 
