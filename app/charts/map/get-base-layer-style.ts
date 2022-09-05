@@ -33,17 +33,17 @@ export const emptyStyle = {
       },
     },
   ],
-} as MapOptions["style"];
-
-interface Props {
-  locale: Locale;
-  showLabels: boolean;
-}
+} as MapboxStyle;
 
 type AnyLayer = MapboxStyle["layers"][number];
 
-export const getBaseLayerStyle = (props: Props) => {
-  const { locale, showLabels } = props;
+const getBaseLayerStyle = ({
+  locale,
+  showLabels,
+}: {
+  locale: Locale;
+  showLabels: boolean;
+}): MapboxStyle => {
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
   const textOpacity = showLabels ? 1 : 0;
   const textLayersVisibility = showLabels ? "visible" : "none";
