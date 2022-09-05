@@ -24,15 +24,13 @@ import useEvent from "@/utils/use-event";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
+import { FLY_TO_DURATION, RESET_DURATION } from "./constants";
 import { useViewState } from "./helpers";
 import Layer from "./layer";
 import { setMap } from "./ref";
 
 let globalGeoJsonLayerId = 0;
 let globalScatterplotLayerId = 0;
-
-const FLY_TO_DURATION = 500;
-const RESET_DURATION = 1500;
 
 export const MapComponent = () => {
   const locale = useLocale();
