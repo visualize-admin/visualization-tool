@@ -8,10 +8,7 @@ import maplibregl from "maplibre-gl";
 import React, { useEffect, useMemo, useRef } from "react";
 import ReactMap, { LngLatLike, MapRef } from "react-map-gl";
 
-import {
-  emptyStyle,
-  getBaseLayerStyle,
-} from "@/charts/map/get-base-layer-style";
+import { emptyStyle, useMapStyle } from "@/charts/map/get-base-layer-style";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
 import { useChartState } from "@/charts/shared/use-chart-state";
@@ -109,11 +106,11 @@ export const MapComponent = () => {
     mapNodeRef.current?.flyTo(newViewState);
   };
 
-  const baseLayerStyle = useMemo(() => {
-    return getBaseLayerStyle({ locale, showLabels: !areaLayer.show });
-  }, [locale, areaLayer.show]);
-
-  const mapStyle = showBaseLayer ? baseLayerStyle : emptyStyle;
+  const mapStyle = useMapStyle({
+    locale,
+    showBaseLayer,
+    showLabels: !areaLayer.show,
+  });
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps

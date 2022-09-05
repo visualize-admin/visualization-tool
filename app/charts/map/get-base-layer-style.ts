@@ -1,5 +1,5 @@
 import merge from "lodash/merge";
-import { MapOptions } from "maplibre-gl";
+import React from "react";
 import { MapboxStyle } from "react-map-gl";
 
 import { BASE_VECTOR_TILE_URL, MAPTILER_STYLE_KEY } from "@/domain/env";
@@ -70,4 +70,24 @@ const getBaseLayerStyle = ({
   });
 
   return greyStyleTextAdjusted as MapboxStyle;
+};
+
+export const useMapStyle = ({
+  locale,
+  showBaseLayer,
+  showLabels,
+}: {
+  locale: Locale;
+  showBaseLayer: boolean;
+  showLabels: boolean;
+}): MapboxStyle => {
+  const style = React.useMemo(() => {
+    if (showBaseLayer) {
+      return getBaseLayerStyle({ locale, showLabels });
+    } else {
+      return emptyStyle;
+    }
+  }, [locale, showBaseLayer, showLabels]);
+
+  return style;
 };
