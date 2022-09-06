@@ -94,6 +94,7 @@ export const MapTooltip = () => {
           type: "fixed",
           color,
           textColor,
+          sameAsValue: false,
         } as const;
       case "categorical":
         return {
@@ -103,6 +104,7 @@ export const MapTooltip = () => {
           error: null,
           color,
           textColor,
+          sameAsValue: false,
         } as const;
       case "continuous":
         const rawValue = obs ? (obs[colors.component.iri] as number) : null;
@@ -118,9 +120,16 @@ export const MapTooltip = () => {
           error: rawError ? ` ± ${rawError}` : null,
           color,
           textColor,
+          sameAsValue:
+            colors.component.iri === symbolLayer.measureDimension?.iri,
         } as const;
     }
-  }, [interaction.d, symbolLayer.colors, formatNumber]);
+  }, [
+    interaction.d,
+    symbolLayer.colors,
+    symbolLayer.measureDimension?.iri,
+    formatNumber,
+  ]);
 
   return (
     <>
@@ -171,37 +180,39 @@ export const MapTooltip = () => {
                     />
                   )}
 
-                  {showSymbolValue && (
+                  {showSymbolValue ? (
                     <>
-                      <TooltipRow
-                        title={symbolLayer.measureLabel}
-                        background={
-                          symbolColorProps.type === "fixed"
-                            ? symbolColorProps.color
-                            : "#fff"
-                        }
-                        border={
-                          symbolColorProps.type === "fixed"
-                            ? undefined
-                            : "1px solid #ccc"
-                        }
-                        color={
-                          symbolColorProps.type === "fixed"
-                            ? symbolColorProps.textColor
-                            : "#000"
-                        }
-                        value={formatNumberWithUnit(
-                          symbolValue,
-                          formatNumber,
-                          symbolLayer?.measureDimension?.unit
-                        )}
-                        error={
-                          formatSymbolError
-                            ? ` ± ${formatSymbolError(interaction.d)}`
-                            : null
-                        }
-                      />
-                      {symbolColorProps.type !== "fixed" ? (
+                      {!symbolColorProps.sameAsValue && (
+                        <TooltipRow
+                          title={symbolLayer.measureLabel}
+                          background={
+                            symbolColorProps.type === "fixed"
+                              ? symbolColorProps.color
+                              : "#fff"
+                          }
+                          border={
+                            symbolColorProps.type === "fixed"
+                              ? undefined
+                              : "1px solid #ccc"
+                          }
+                          color={
+                            symbolColorProps.type === "fixed"
+                              ? symbolColorProps.textColor
+                              : "#000"
+                          }
+                          value={formatNumberWithUnit(
+                            symbolValue,
+                            formatNumber,
+                            symbolLayer?.measureDimension?.unit
+                          )}
+                          error={
+                            formatSymbolError
+                              ? ` ± ${formatSymbolError(interaction.d)}`
+                              : null
+                          }
+                        />
+                      )}
+                      {symbolColorProps.type !== "fixed" && (
                         <TooltipRow
                           title={symbolColorProps.component.label}
                           background={symbolColorProps.color}
@@ -209,9 +220,9 @@ export const MapTooltip = () => {
                           value={symbolColorProps.value ?? ""}
                           error={symbolColorProps.error}
                         />
-                      ) : null}
+                      )}
                     </>
-                  )}
+                  ) : null}
                 </>
               }
             </Box>
