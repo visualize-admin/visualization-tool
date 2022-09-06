@@ -10,7 +10,10 @@ export const flashes = {
   CANNOT_FIND_CUBE: "CANNOT_FIND_CUBE",
 } as const;
 
-export const getQueryParams = (errorId: keyof typeof flashes, options: any) => {
+export const getErrorQueryParams = (
+  errorId: keyof typeof flashes,
+  options: any
+) => {
   return `errorId=${errorId}&errorOptions=${encodeURIComponent(
     JSON.stringify(options)
   )}`;

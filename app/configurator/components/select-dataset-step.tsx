@@ -5,8 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
-import ParsingClient from "sparql-http-client/ParsingClient";
+import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import { Footer } from "@/components/footer";
@@ -32,9 +31,9 @@ import {
 } from "@/configurator/components/presence";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
-import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { useConfiguratorState, useLocale } from "@/src";
-import { getQueryParams } from "@/utils/flashes";
+
+import { useRedirectToVersionedCube } from "./use-redirect-to-versioned-cube";
 
 const softJSONParse = (v: string) => {
   try {
@@ -81,14 +80,6 @@ export const formatBackLink = (
   return buildURLFromBrowseState(backParameters);
 };
 
-/**
- * Heuristic to check if a dataset IRI is versioned.
- * Versioned iris look like https://blabla/<number/
- */
-const isDatasetIriVersioned = (iri: string) => {
-  return iri.match(/\/\d+\/?$/) !== null;
-};
-
 const SelectDatasetStepContent = () => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
@@ -121,32 +112,9 @@ const SelectDatasetStepContent = () => {
     },
   });
 
-  useEffect(() => {
-    const run = async () => {
-      if (
-        dataset !== null &&
-        !Array.isArray(dataset) &&
-        !isDatasetIriVersioned(dataset)
-      ) {
-        const sparqlClient = new ParsingClient({
-          endpointUrl: configState.dataSource.url,
-        });
-        const resp = await queryLatestPublishedCubeFromUnversionedIri(
-          sparqlClient,
-          dataset
-        );
-
-        if (!resp) {
-          router.replace({
-            pathname: `/?${getQueryParams("CANNOT_FIND_CUBE", {
-              iri: dataset,
-            })}`,
-          });
-        }
-      }
-    };
-
-    run();
+  useRedirectToVersionedCube({
+    dataSource: configState.dataSource,
+    datasetIri: dataset,
   });
 
   if (configState.state !== "SELECTING_DATASET") {

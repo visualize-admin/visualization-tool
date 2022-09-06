@@ -182,6 +182,7 @@ export const ChartPublishedInner = ({
             >
               {isTablePreview ? (
                 <DataSetTable
+                  sx={{ maxHeight: "100%" }}
                   dataSetIri={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}

@@ -8,7 +8,7 @@ import {
   sourceToLabel,
 } from "@/domain/datasource";
 import { isRunningInBrowser } from "@/utils/is-running-in-browser";
-import { getURLParam } from "@/utils/router/helpers";
+import { getURLParam, setURLParam } from "@/utils/router/helpers";
 
 export type DataSourceStore = {
   dataSource: DataSource;
@@ -33,18 +33,12 @@ const shouldKeepSourceInURL = (pathname: string) => {
   return !pathname.includes("__test");
 };
 
-const updateRouterDataSourceParam = (
-  router: SingletonRouter,
-  dataSource: DataSource
-) => {
+const saveToURL = (dataSource: DataSource) => {
   const urlDataSourceLabel = getURLParam(PARAM_KEY);
   const dataSourceLabel = sourceToLabel(dataSource);
 
   if (urlDataSourceLabel !== dataSourceLabel) {
-    router.replace({
-      pathname: router.pathname,
-      query: { ...router.query, [PARAM_KEY]: dataSourceLabel },
-    });
+    setURLParam(PARAM_KEY, dataSourceLabel);
   }
 };
 
@@ -68,7 +62,7 @@ export const dataSourceStoreMiddleware =
 
         if (isRunningInBrowser()) {
           saveToLocalStorage(payload.dataSource);
-          updateRouterDataSourceParam(router, payload.dataSource);
+          saveToURL(payload.dataSource);
         }
       },
       get,
@@ -99,11 +93,10 @@ export const dataSourceStoreMiddleware =
     }
 
     const callback = () => {
-      // Theoretically get().dataSource shouldn't fail, but when testing it does.
       const newSource = get()?.dataSource;
 
       if (newSource && shouldKeepSourceInURL(router.pathname)) {
-        updateRouterDataSourceParam(router, newSource);
+        saveToURL(newSource);
       }
     };
 
