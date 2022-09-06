@@ -93,6 +93,7 @@ import { default as RightAligned } from "@/icons/components/IcRightAligned";
 import { default as Search } from "@/icons/components/IcSearch";
 import { default as Segments } from "@/icons/components/IcSegments";
 import { default as Settings } from "@/icons/components/IcSettings";
+import { default as Size } from "@/icons/components/IcSize";
 import { default as SkipNext } from "@/icons/components/IcSkipNext";
 import { default as SkipPrevious } from "@/icons/components/IcSkipPrevious";
 import { default as Sort } from "@/icons/components/IcSort";
@@ -225,6 +226,7 @@ export const Icons = {
   search: Search,
   segments: Segments,
   settings: Settings,
+  size: Size,
   skipNext: SkipNext,
   skipPrevious: SkipPrevious,
   sort: Sort,
