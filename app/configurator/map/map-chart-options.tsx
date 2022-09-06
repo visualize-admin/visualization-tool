@@ -430,7 +430,7 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">
+          <SectionTitle iconName="size">
             {t({
               id: "controls.size",
               message: "Size",
