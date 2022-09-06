@@ -43,7 +43,11 @@ const useStyles = makeStyles<Theme>(() => ({
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
-  legendGroup: {},
+  legendGroup: {
+    display: "flex",
+    flexWrap: "wrap",
+    columnGap: "1rem",
+  },
 }));
 
 const useItemStyles = makeStyles<
