@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { convertRgbArrayToHex } from "@/charts/shared/colors";
+import { MapLegendColor } from "@/charts/shared/legend-color";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -83,6 +84,13 @@ export const MapLegend = () => {
 
   return (
     <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
+      {symbolLayer.colors.type === "categorical" && (
+        <MapLegendColor
+          component={symbolLayer.colors.component}
+          getColor={symbolLayer.colors.getColor}
+        />
+      )}
+
       {showAreaLegend && (
         <Box>
           {areaLayer.measureLabel && (
