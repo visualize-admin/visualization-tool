@@ -261,22 +261,21 @@ const LegendColorContent = ({
     <Flex className={classes.legendContainer}>
       {groups
         ? Array.from(groups.entries()).map(([g, colorValues]) => {
+            const headerLabelsArray = g.map((n) => n.label);
+
             return (
               <div
                 className={classes.legendGroup}
                 key={g.map((n) => n.label).join(" > ")}
               >
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  display="flex"
-                  alignItems="center"
-                >
-                  {interlace(
-                    g.map((n) => n.label),
-                    <SvgIcChevronRight />
-                  )}
-                </Typography>
+                {headerLabelsArray.length > 0 ? (
+                  <Typography variant="h5" display="flex" alignItems="center">
+                    {interlace(
+                      g.map((n) => n.label),
+                      <SvgIcChevronRight />
+                    )}
+                  </Typography>
+                ) : null}
                 {colorValues.map((d) => (
                   <LegendItem
                     key={d}
