@@ -226,8 +226,8 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">
-            {t({ id: "controls.measure", message: "Measure" })}
+          <SectionTitle iconName="color">
+            {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent>
             <ChartOptionSelectField
@@ -241,13 +241,6 @@ export const AreaLayerSettings = memo(
               options={measuresOptions}
               disabled={isHidden}
             />
-          </ControlSectionContent>
-        </ControlSection>
-        <ControlSection>
-          <SectionTitle iconName="color">
-            {t({ id: "controls.color", message: "Color" })}
-          </SectionTitle>
-          <ControlSectionContent>
             <div>
               <FieldSetLegend
                 legendTitle={t({
