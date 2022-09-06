@@ -207,8 +207,8 @@ export const AreaLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="chartMap">
             {t({
-              id: "controls.dimension.geographical",
-              message: "Geographical dimension",
+              id: "controls.location",
+              message: "Location",
             })}
           </SectionTitle>
           <ControlSectionContent>
@@ -418,8 +418,8 @@ export const SymbolLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="chartMap">
             {t({
-              id: "controls.dimension.geographical",
-              message: "Geographical dimension",
+              id: "controls.location",
+              message: "Location",
             })}
           </SectionTitle>
           <ControlSectionContent>
@@ -438,7 +438,10 @@ export const SymbolLayerSettings = memo(
         </ControlSection>
         <ControlSection>
           <SectionTitle iconName="chartBar">
-            {t({ id: "controls.measure", message: "Measure" })}
+            {t({
+              id: "controls.size",
+              message: "Size",
+            })}
           </SectionTitle>
           <ControlSectionContent>
             <ChartOptionSelectField
