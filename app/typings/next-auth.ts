@@ -9,10 +9,12 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
+      /** The user's id (from our database). */
+      id: number;
       /** The user's id (comes from the "sub" property of the JWT token). */
-      id: string;
+      sub: string;
       /** The user's name (comes from the "sub" property of the JWT token). */
-      name: string;
+      name?: string | null;
     };
   }
 }

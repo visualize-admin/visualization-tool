@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
+import { ensureUserFromSub } from "@/db/user";
 import { KEYCLOAK_ID, KEYCLOAK_SECRET, KEYCLOAK_ISSUER } from "@/domain/env";
 import { truthy } from "@/domain/types";
 
@@ -20,9 +21,15 @@ const nextAuthConfig = {
   // Configure one or more authentication providers
   providers,
   callbacks: {
+    /**
+     * When the is logged in, ensures it creates on our side and save its id
+     * on the session.
+     */
     session: async ({ session, token }) => {
       if (session.user && token.sub) {
-        session.user.id = token.sub;
+        session.user.sub = token.sub;
+        const user = await ensureUserFromSub(token.sub, token.name);
+        session.user.id = user.id;
       }
       return session;
     },
@@ -35,7 +42,7 @@ const nextAuthConfig = {
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   try {
-    await NextAuth(req, res, nextAuthConfig);
+    await NextAuth(req, res, nextAuthOptions);
   } catch (e) {
     console.error(e);
     throw e;
