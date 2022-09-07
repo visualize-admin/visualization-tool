@@ -754,7 +754,8 @@ msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo g
 
 #: app/configurator/components/dataset-browse.tsx:364
 msgid "dataset.results"
-msgstr "Risultate"
+msgstr "{0, plural, zero {Nessun risultato} one {# resultato} other {# risultate}}"
+
 
 #: app/configurator/components/dataset-browse.tsx:315
 msgid "dataset.search.label"
