@@ -107,7 +107,7 @@ export const searchCubes = async ({
   sparqlClient: ParsingClient;
   sparqlClientStream: StreamClient;
 }) => {
-  const queries = [] as RequestQueryMeta[];
+  const queriesMeta = [] as RequestQueryMeta[];
 
   const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
 
@@ -123,8 +123,11 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?scoreName ?scoreDescription ?scoreTheme ?scorePublisher ?scoreCreator`
-    .WHERE`
+  const words = query?.split(" ");
+
+  const makeSearchQuery = (q?: string) =>
+    SELECT.DISTINCT`?cube ?versionHistory ?scoreName ?scoreDescription ?scoreTheme ?scorePublisher ?scoreCreator`
+      .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
     
@@ -146,26 +149,26 @@ export const searchCubes = async ({
     ${makeInFilter("creator", creatorValues)}
 
     ${
-      query && query.length > 0
+      q && q.length > 0
         ? sparql`
-      { (?name ?scoreName) <tag:stardog:api:property:textMatch> "${query}". }
+      { (?name ?scoreName) <tag:stardog:api:property:textMatch> "${q}". }
       UNION {
         OPTIONAL {
           ?cube ${ns.schema.description} ?description.
-          (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${query}" .
+          (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${q}" .
         }
       }
       UNION  {
         OPTIONAL {
           ?cube ${ns.dcterms.publisher} ?publisher.
-          (?publisher ?scorePublisher) <tag:stardog:api:property:textMatch> "${query}"  .
+          (?publisher ?scorePublisher) <tag:stardog:api:property:textMatch> "${q}"  .
         }
       }
       UNION  {
         OPTIONAL {
           ?theme ${ns.schema.name} ?themeName.   
           (?themeName ?scoreTheme)
-            <tag:stardog:api:property:textMatch> "${query}"  .
+            <tag:stardog:api:property:textMatch> "${q}"  .
         }
       }
       UNION  {
@@ -173,7 +176,7 @@ export const searchCubes = async ({
 
           ?creator ${ns.schema.name} ?creatorLabel.
           (?creatorLabel ?scoreCreator)
-            <tag:stardog:api:property:textMatch> "${query}"  .
+            <tag:stardog:api:property:textMatch> "${q}"  .
         }
       }
       `
@@ -182,18 +185,33 @@ export const searchCubes = async ({
 
   `;
 
-  const { meta: scoresMeta, data: scoresRaw } = await executeAndMeasure(
-    sparqlClient,
-    scoresQuery
-  );
-  queries.push({
-    ...scoresMeta,
-    label: "scores",
-  });
+  const queries = words
+    ? words.map((w) => makeSearchQuery(w))
+    : [makeSearchQuery()];
 
-  const infoPerCube = computeScores(scoresRaw, {
-    keepZeros: !query || query.length === 0,
-  });
+  const infoPerCube: ReturnType<typeof computeScores> = {};
+  const resultsPerWord = await Promise.all(
+    queries.map((scoresQuery) => executeAndMeasure(sparqlClient, scoresQuery))
+  );
+
+  for (const { meta: scoresMeta, data: scoresRaw } of resultsPerWord) {
+    queriesMeta.push({
+      ...scoresMeta,
+      label: "scores",
+    });
+    const infoPerCubeForWord = computeScores(scoresRaw, {
+      keepZeros: !query || query.length === 0,
+    });
+    for (const [cubeIri, { score, highlights }] of Object.entries(
+      infoPerCubeForWord
+    )) {
+      if (infoPerCube[cubeIri]) {
+        infoPerCube[cubeIri].score += score;
+      } else {
+        infoPerCube[cubeIri] = { score, highlights };
+      }
+    }
+  }
 
   // Find information on cubes
   // Potential optimisation: filter out cubes that are below some threshold
@@ -210,7 +228,7 @@ export const searchCubes = async ({
     sparqlClientStream,
     cubesQuery
   );
-  queries.push({
+  queriesMeta.push({
     ...cubesMeta,
     label: "cubes",
   });
@@ -256,7 +274,7 @@ export const searchCubes = async ({
   return {
     candidates: results,
     meta: {
-      queries,
+      queries: queriesMeta,
     },
   };
 };
