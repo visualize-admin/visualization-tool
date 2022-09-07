@@ -2,6 +2,7 @@ import { I18nProvider } from "@lingui/react";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "core-js/features/array/flat-map";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -25,7 +26,10 @@ const pageLaunchedWithDebug =
   (process.env.NODE_ENV === "development" ||
     new URL(window.location.toString()).searchParams?.get("debug") === "true");
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const { events: routerEvents, asPath, locale: routerLocale } = useRouter();
 
   useNProgress();
@@ -80,22 +84,24 @@ export default function App({ Component, pageProps }: AppProps) {
         ))}
       </Head>
 
-      <LocaleProvider value={locale}>
-        <I18nProvider i18n={i18n}>
-          <GraphqlProvider>
-            <ThemeProvider theme={federalTheme.theme}>
-              <CssBaseline />
-              <Flashes />
-              {shouldShowDebug ? <GqlDebug /> : null}
-              <ContentMDXProvider>
-                <AsyncLocalizationProvider locale={locale}>
-                  <Component {...pageProps} />
-                </AsyncLocalizationProvider>
-              </ContentMDXProvider>
-            </ThemeProvider>
-          </GraphqlProvider>
-        </I18nProvider>
-      </LocaleProvider>
+      <SessionProvider session={session}>
+        <LocaleProvider value={locale}>
+          <I18nProvider i18n={i18n}>
+            <GraphqlProvider>
+              <ThemeProvider theme={federalTheme.theme}>
+                <CssBaseline />
+                <Flashes />
+                {shouldShowDebug ? <GqlDebug /> : null}
+                <ContentMDXProvider>
+                  <AsyncLocalizationProvider locale={locale}>
+                    <Component {...pageProps} />
+                  </AsyncLocalizationProvider>
+                </ContentMDXProvider>
+              </ThemeProvider>
+            </GraphqlProvider>
+          </I18nProvider>
+        </LocaleProvider>
+      </SessionProvider>
     </>
   );
 }
