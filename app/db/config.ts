@@ -1,28 +1,31 @@
+/**
+ * Server side methods to connect to the database
+ */
+
+import { Prisma, Config, User } from "@prisma/client";
+
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 import { createChartId } from "../utils/create-chart-id";
 
-import { pool } from "./pg-pool";
+import prisma from "./client";
 
 /**
  * Store data in the DB.
- * Do not try to use on client-side! Use /api/config instead.
  *
  * @param data Data to be stored as configuration
  */
 export const createConfig = async (
-  data: $Unexpressable
+  data: Prisma.ConfigCreateInput["data"]
 ): Promise<{ key: string }> => {
-  const result = await pool.query<{ key: string }>(
-    `INSERT INTO config(key, data) VALUES ($1, $2) RETURNING key`,
-    [createChartId(), data]
-  );
+  const result = await prisma.config.create({
+    data: {
+      key: createChartId(),
+      data: data,
+    },
+  });
 
-  if (result.rows.length < 1) {
-    throw Error("No result after insert!");
-  }
-
-  return result.rows[0];
+  return result;
 };
 
 const migrateDataSet = (dataSet: string): string => {
@@ -33,51 +36,47 @@ const migrateDataSet = (dataSet: string): string => {
   return dataSet;
 };
 
+type ChartJsonConfig = {
+  dataSet: string;
+  chartConfig: Prisma.JsonObject;
+};
+
+const parseDbConfig = (conf: Config) => {
+  const data = conf.data as ChartJsonConfig;
+  return {
+    ...conf,
+    data: {
+      ...data,
+      dataSet: migrateDataSet(data.dataSet as string),
+      chartConfig: migrateChartConfig(data.chartConfig),
+    },
+  };
+};
+
 /**
  * Get data from DB.
- * Do not try to use on client-side! Use /api/config instead.
  *
  * @param key Get data from DB with this key
  */
-export const getConfig = async (
-  key: string
-): Promise<undefined | { key: string; data: $Unexpressable }> => {
-  const result = await pool.query<{ key: string; data: $Unexpressable }>(
-    `SELECT key, data FROM config WHERE key = $1 LIMIT 1`,
-    [key]
-  );
+export const getConfig = async (key: string) => {
+  const config = await prisma.config.findFirst({
+    where: {
+      key: key,
+    },
+  });
 
-  const config = result.rows[0];
-
-  if (config && config.data) {
-    return {
-      ...config,
-      data: {
-        ...config.data,
-        dataSet: migrateDataSet(config.data.dataSet),
-        chartConfig: migrateChartConfig(config.data.chartConfig),
-      },
-    };
+  if (!config) {
+    return;
   }
 
-  return config;
+  return parseDbConfig(config);
 };
 
 /**
  * Get all keys from DB.
- * Do not try to use on client-side! Use /api/config instead.
- *
- * @param key Get data from DB with this key
  */
-export const getAllConfigs = async (): Promise<
-  {
-    key: string;
-    data: $Unexpressable;
-  }[]
-> => {
-  const result = await pool.query<{ key: string; data: $Unexpressable }>(
-    `SELECT key,data FROM config ORDER BY created_at DESC`
-  );
+export const getAllConfigs = async () => {
+  const configs = await prisma.config.findMany();
+  return configs.map((c) => parseDbConfig(c));
 
-  return result.rows;
 };
