@@ -177,7 +177,7 @@ const Search = ({
 };
 
 const DebugSearch = () => {
-  const [includeDrafts, setIncludeDrafts] = useState(false);
+  const [includeDrafts, setIncludeDrafts] = useState(true);
   const [sourceUrl, setSourceUrl] = useState(
     "https://int.lindas.admin.ch/query"
   );
