@@ -16,6 +16,8 @@ import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 
+import LoginMenu from "./login-menu";
+
 const DEFAULT_HEADER_PROGRESS = 100;
 
 export const useHeaderProgressContext = () => {
@@ -137,6 +139,7 @@ const MetadataMenu = ({ contentId }: { contentId?: string }) => {
       }}
     >
       <LanguageMenu contentId={contentId} />
+      <LoginMenu />
     </Flex>
   );
 };
