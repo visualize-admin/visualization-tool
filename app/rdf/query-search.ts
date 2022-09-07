@@ -86,6 +86,7 @@ const enhanceQuery = (rawQuery: string) => {
     rawQuery
       .toLowerCase()
       .split(" ")
+      .filter((x) => x.toUpperCase() === x || x.length > 2)
       // Wildcard Searches on each term
       .map((t) => `${t}*`)
       .join(" ")
