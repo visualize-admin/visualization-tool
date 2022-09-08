@@ -10,6 +10,7 @@ import {
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { ascending } from "d3";
 import { isEmpty, isEqual, sortBy } from "lodash";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
@@ -103,13 +104,15 @@ const DataFilterSelectGeneric = ({
 
   const optionGroups = useMemo(() => {
     if (hierarchyParents) {
-      return hierarchyParents.map(
-        ([parents, dfsRes]) =>
-          [asGroup(parents), dfsRes.map((d) => d.node)] as [
-            OptionGroup,
-            Option[]
-          ]
-      );
+      return hierarchyParents
+        .map(
+          ([parents, dfsRes]) =>
+            [asGroup(parents), dfsRes.map((d) => d.node)] as [
+              OptionGroup,
+              (Option & { depth: number })[]
+            ]
+        )
+        .sort((a, b) => ascending(a[1][0].depth, b[1][0].depth));
     } else {
       return undefined;
     }
