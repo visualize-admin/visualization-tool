@@ -22,7 +22,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "@/charts";
-import { DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY } from "@/charts/map/constants";
+import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -631,11 +631,7 @@ const updateSymbolLayerColors = ({
   reset: boolean;
 }) => {
   if (reset) {
-    chartConfig.fields.symbolLayer.colors = {
-      type: "fixed",
-      value: "#1f77b4",
-      opacity: DEFAULT_SYMBOL_LAYER_FIXED_COLOR_OPACITY,
-    };
+    chartConfig.fields.symbolLayer.colors = DEFAULT_SYMBOL_LAYER_COLORS;
   } else {
     if (component && canDimensionBeMultiFiltered(component)) {
       chartConfig.fields.symbolLayer.colors = {
