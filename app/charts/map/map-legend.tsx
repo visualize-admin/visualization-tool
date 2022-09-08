@@ -83,49 +83,42 @@ export const MapLegend = () => {
   const { colors: symbolLayerColors } = symbolLayer;
 
   return (
-    <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
-      {symbolLayer.colors.type === "categorical" && (
-        <MapLegendColor
-          component={symbolLayer.colors.component}
-          getColor={symbolLayer.colors.getColor}
-        />
-      )}
+    <>
+      <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
+        {showAreaLegend && (
+          <Box>
+            {areaLayer.measureLabel && (
+              <Typography
+                component="div"
+                variant="caption"
+                sx={{ marginLeft: `${MARGIN.left}px` }}
+              >
+                {areaLayer.measureLabel}
+              </Typography>
+            )}
+            {areaLayer.colorScaleInterpolationType === "linear" && (
+              <ContinuousColorLegend
+                palette={areaLayer.palette}
+                domain={areaLayer.dataDomain}
+                getValue={areaLayer.getValue}
+              />
+            )}
+            {areaLayer.colorScaleInterpolationType === "quantize" && (
+              <QuantizeColorLegend />
+            )}
+            {areaLayer.colorScaleInterpolationType === "quantile" && (
+              <QuantileColorLegend />
+            )}
+            {areaLayer.colorScaleInterpolationType === "jenks" && (
+              <JenksColorLegend />
+            )}
+          </Box>
+        )}
 
-      {showAreaLegend && (
-        <Box>
-          {areaLayer.measureLabel && (
-            <Typography
-              component="div"
-              variant="caption"
-              sx={{ marginLeft: `${MARGIN.left}px` }}
-            >
-              {areaLayer.measureLabel}
-            </Typography>
-          )}
-          {areaLayer.colorScaleInterpolationType === "linear" && (
-            <ContinuousColorLegend
-              palette={areaLayer.palette}
-              domain={areaLayer.dataDomain}
-              getValue={areaLayer.getValue}
-            />
-          )}
-          {areaLayer.colorScaleInterpolationType === "quantize" && (
-            <QuantizeColorLegend />
-          )}
-          {areaLayer.colorScaleInterpolationType === "quantile" && (
-            <QuantileColorLegend />
-          )}
-          {areaLayer.colorScaleInterpolationType === "jenks" && (
-            <JenksColorLegend />
-          )}
-        </Box>
-      )}
-
-      {symbolLayer.show && (
-        <Flex>
-          <Box sx={{ p: 4 }}>
+        {symbolLayer.show && (
+          <Flex sx={{ gap: 4 }}>
             {symbolLayerColors.type === "continuous" && (
-              <>
+              <Box>
                 <Typography component="div" variant="caption">
                   {symbolLayerColors.component.label}
                 </Typography>
@@ -136,18 +129,25 @@ export const MapLegend = () => {
                     d[symbolLayerColors.component.iri] as number
                   }
                 />
-              </>
+              </Box>
             )}
-          </Box>
-          <Box>
-            <Typography component="div" variant="caption">
-              {symbolLayer.measureLabel}
-            </Typography>
-            <CircleLegend />
-          </Box>
-        </Flex>
+            <Box>
+              <Typography component="div" variant="caption">
+                {symbolLayer.measureLabel}
+              </Typography>
+              <CircleLegend />
+            </Box>
+          </Flex>
+        )}
+      </Flex>
+
+      {symbolLayer.colors.type === "categorical" && (
+        <MapLegendColor
+          component={symbolLayer.colors.component}
+          getColor={symbolLayer.colors.getColor}
+        />
       )}
-    </Flex>
+    </>
   );
 };
 
