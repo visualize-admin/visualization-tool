@@ -7,15 +7,7 @@ import { useControl, ViewState } from "react-map-gl";
 import { BBox } from "@/configurator/config-types";
 import useEvent from "@/utils/use-event";
 
-import {
-  AreaLayer,
-  GeoFeature,
-  GeoPoint,
-  SymbolLayer,
-} from "../../domain/data";
-import { useInteraction } from "../shared/use-interaction";
-
-import { HoverObjectType, useMapTooltip } from "./map-tooltip";
+import { AreaLayer, SymbolLayer } from "../../domain/data";
 
 export type MinMaxZoomViewState = Pick<
   ViewState,
@@ -191,38 +183,3 @@ export function DeckGLOverlay(
 
   return null;
 }
-
-export const useOnHover = () => {
-  const [, dispatchInteraction] = useInteraction();
-  const [, setMapTooltipType] = useMapTooltip();
-
-  return useEvent(
-    ({
-      type,
-      x,
-      y,
-      object,
-    }: {
-      type: HoverObjectType;
-      x: number;
-      y: number;
-      object?: GeoFeature | GeoPoint;
-    }) => {
-      if (object) {
-        const { observation } = object.properties;
-
-        setMapTooltipType(type);
-        dispatchInteraction({
-          type: "INTERACTION_UPDATE",
-          value: {
-            interaction: { visible: true, mouse: { x, y }, d: observation },
-          },
-        });
-      } else {
-        dispatchInteraction({
-          type: "INTERACTION_HIDE",
-        });
-      }
-    }
-  );
-};

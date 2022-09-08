@@ -8,6 +8,7 @@ import React from "react";
 import Map, { LngLatLike, MapboxEvent, MapRef } from "react-map-gl";
 
 import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
@@ -18,8 +19,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import { DEFAULT_COLOR, FLY_TO_DURATION, RESET_DURATION } from "./constants";
 import { useMapStyle } from "./get-base-layer-style";
-import { DeckGLOverlay, useOnHover, useViewState } from "./helpers";
+import { DeckGLOverlay, useViewState } from "./helpers";
 import { MapState } from "./map-state";
+import { HoverObjectType, useMapTooltip } from "./map-tooltip";
 import { setMap } from "./ref";
 
 const useStyles = makeStyles<Theme>((theme) => ({
@@ -74,6 +76,10 @@ const resize = debounce((e: MapboxEvent, bbox: BBox) => {
 export const MapComponent = () => {
   const classes = useStyles();
   const locale = useLocale();
+
+  const [, dispatchInteraction] = useInteraction();
+  const [, setMapTooltipType] = useMapTooltip();
+
   const {
     showBaseLayer,
     locked,
@@ -153,7 +159,35 @@ export const MapComponent = () => {
     showLabels: !areaLayer.show,
   });
 
-  const onHover = useOnHover();
+  const onHover = useEvent(
+    ({
+      type,
+      x,
+      y,
+      object,
+    }: {
+      type: HoverObjectType;
+      x: number;
+      y: number;
+      object?: GeoFeature | GeoPoint;
+    }) => {
+      if (object) {
+        const { observation } = object.properties;
+
+        setMapTooltipType(type);
+        dispatchInteraction({
+          type: "INTERACTION_UPDATE",
+          value: {
+            interaction: { visible: true, mouse: { x, y }, d: observation },
+          },
+        });
+      } else {
+        dispatchInteraction({
+          type: "INTERACTION_HIDE",
+        });
+      }
+    }
+  );
 
   const geoJsonLayer = React.useMemo(() => {
     if (!areaLayer.show) {
