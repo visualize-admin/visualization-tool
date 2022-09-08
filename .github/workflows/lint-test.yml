@@ -68,13 +68,13 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
-      - name: Set argos upload branch on master branch
-        run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
-        if: github.ref == 'refs/heads/main'
-      - name: Set argos upload branch on PR branches
-        run: echo "ARGOS_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
-        if: github.ref != 'refs/heads/main'
-      - name: Upload screenshots
-        env:
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: yarn run argos upload --commit $GITHUB_SHA --branch $ARGOS_BRANCH  cypress/screenshots
+      # - name: Set argos upload branch on master branch
+      #   run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
+      #   if: github.ref == 'refs/heads/main'
+      # - name: Set argos upload branch on PR branches
+      #   run: echo "ARGOS_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+      #   if: github.ref != 'refs/heads/main'
+      # - name: Upload screenshots
+      #   env:
+      #     ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+      #   run: yarn run argos upload --commit $GITHUB_SHA --branch $ARGOS_BRANCH  cypress/screenshots
