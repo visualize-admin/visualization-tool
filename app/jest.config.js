@@ -1,4 +1,5 @@
-module.exports = {
+/** @type {import('jest').Config} */
+const config = {
   preset: "ts-jest",
   testEnvironment: "jsdom",
   globals: {
@@ -12,3 +13,5 @@ module.exports = {
     "\\.(css)$": "<rootDir>/test/style-mock.js",
   },
 };
+
+module.exports = config;
