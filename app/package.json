@@ -44,7 +44,7 @@
     "@types/react-inspector": "^4.0.2",
     "@types/topojson-client": "^3.0.0",
     "@urql/devtools": "^2.0.3",
-    "@zazuko/cube-hierarchy-query": "^1.0.1",
+    "@zazuko/cube-hierarchy-query": "^1.0.2",
     "apollo-server-micro": "^2.25.2",
     "catalog": "^4.0.1-canary.2",
     "clipboard-polyfill": "^3.0.1",
