@@ -1,7 +1,8 @@
 import { WebMercatorViewport } from "@deck.gl/core/typed";
+import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent, geoBounds } from "d3";
 import { useMemo, useState } from "react";
-import { ViewState } from "react-map-gl";
+import { useControl, ViewState } from "react-map-gl";
 
 import { BBox } from "@/configurator/config-types";
 import useEvent from "@/utils/use-event";
@@ -178,6 +179,18 @@ export const getBBox = (
   }
 };
 
+// Used to render DeckGL layers in synchronization with base map layers.
+export function DeckGLOverlay(
+  props: MapboxOverlayProps & {
+    interleaved?: boolean;
+  }
+) {
+  // @ts-ignore
+  const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
+  overlay.setProps(props);
+
+  return null;
+}
 
 export const useOnHover = () => {
   const [, dispatchInteraction] = useInteraction();
