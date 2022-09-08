@@ -754,7 +754,7 @@ msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour 
 
 #: app/configurator/components/dataset-browse.tsx:364
 msgid "dataset.results"
-msgstr "Résultats"
+msgstr "{0, plural, zero {Aucun résultat} one {# résultat} other {# résultats}}"
 
 #: app/configurator/components/dataset-browse.tsx:315
 msgid "dataset.search.label"
