@@ -28,11 +28,9 @@ describe("Editing a chart", () => {
     cy.findByText("Filters", {
       selector: "button",
     }).click();
-    cy.findByText("Military defence").click();
-    cy.findByText("Civil defence").click();
-    cy.findByText("Mining, manufacturing and construction").click();
-    cy.findByText("Transport").click();
-    cy.findByText("Communication").click();
+    cy.findByText("Economic affairs").click();
+    cy.findByText("Social protection").click();
+    cy.findByText("Health").click();
     cy.findByText("Apply filters").click();
 
     cy.get('[data-name="panel-middle"]').scrollTo(0, 200, {
