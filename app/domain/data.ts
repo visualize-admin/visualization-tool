@@ -27,7 +27,6 @@ export type Observation = Record<string, ObservationValue>;
 export type GeoProperties = {
   iri: string;
   label: string;
-  hierarchyLevel: number;
   observation?: Observation;
 };
 

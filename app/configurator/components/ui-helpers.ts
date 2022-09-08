@@ -12,6 +12,9 @@ import {
   interpolatePRGn,
   interpolatePuOr,
   interpolatePurples,
+  interpolateRdBu,
+  interpolateRdYlBu,
+  interpolateRdYlGn,
   interpolateReds,
   NumberValue,
   scaleOrdinal,
@@ -426,17 +429,24 @@ export const formatNumberWithUnit = (
   return `${formatter(nb)}${unit ? ` ${unit}` : ""}`;
 };
 
+export const getErrorMeasure = (
+  { measures, dimensions }: Pick<ChartProps, "measures" | "dimensions">,
+  valueIri: string
+) => {
+  return [...measures, ...dimensions].find((m) => {
+    return m.related?.some(
+      (r) => r.type === "StandardError" && r.iri === valueIri
+    );
+  });
+};
+
 export const useErrorMeasure = (
   chartState: Pick<ChartProps, "measures" | "dimensions">,
   valueIri: string
 ) => {
   const { measures, dimensions } = chartState;
   return useMemo(() => {
-    return [...measures, ...dimensions].find((m) => {
-      return m.related?.some(
-        (r) => r.type === "StandardError" && r.iri === valueIri
-      );
-    });
+    return getErrorMeasure({ measures, dimensions }, valueIri);
   }, [dimensions, measures, valueIri]);
 };
 
@@ -475,14 +485,14 @@ export const useErrorRange = (
 
 export const useFormatNumber = () => {
   const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale();
-    const formatter = format(",.2~f");
-    return (x: NumberValue | null | undefined) => {
-      if (x === null || x === undefined) {
-        return "–";
-      }
-      return `${formatter(x)}`;
-    };
+  const { format } = getD3FormatLocale();
+  const formatter = format(",.2~f");
+  return (x: NumberValue | null | undefined) => {
+    if (x === null || x === undefined) {
+      return "–";
+    }
+    return `${formatter(x)}`;
+  };
   }, []);
   return formatter;
 };
@@ -925,7 +935,7 @@ export const categoricalPalettes: Array<{
 
 export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
 
-type Palette<T> = {
+export type Palette<T> = {
   label: string;
   value: T;
   interpolator: (t: number) => string;
@@ -938,6 +948,9 @@ type SteppedPalette<T> = Omit<Palette<T>, "interpolator"> & {
 const steppedPaletteSteps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
 
 const divergingPaletteKeys = [
+  "RdBu",
+  "RdYlBu",
+  "RdYlGn",
   "BrBG",
   "PRGn",
   "PiYG",
@@ -954,6 +967,9 @@ const sequentialPaletteKeys = [
 ] as SequentialPaletteType[];
 
 const interpolatorByName = {
+  RdBu: interpolateRdBu,
+  RdYlBu: interpolateRdYlBu,
+  RdYlGn: interpolateRdYlGn,
   BrBG: interpolateBrBG,
   PRGn: interpolatePRGn,
   PiYG: interpolatePiYG,

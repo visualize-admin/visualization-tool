@@ -10,7 +10,11 @@ import {
   SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
-import { sequentialPalettes } from "@/configurator/components/ui-helpers";
+import {
+  divergingPalettes,
+  Palette,
+  sequentialPalettes,
+} from "@/configurator/components/ui-helpers";
 import { Icon } from "@/icons";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
@@ -56,15 +60,11 @@ export const ColorRamp = ({
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
 
-type MapField = "areaLayer";
-type MapPath = "palette";
-
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
-  field: MapField;
-  path: MapPath;
+  field: "areaLayer" | "symbolLayer";
+  path: string;
 };
 
-// Currently only usable in areaLayer (map chart)!
 export const ColorRampField = ({
   field,
   path,
@@ -74,13 +74,10 @@ export const ColorRampField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const { palettes, defaultPalette } = useMemo(() => {
-    const palettes = [
-      // ...divergingPalettes,
-      ...sequentialPalettes,
-    ];
+    const palettes = [...sequentialPalettes, ...divergingPalettes];
     const defaultPalette = sequentialPalettes.find(
       (d) => d.value === "oranges"
-    );
+    ) as Palette<"oranges">;
 
     return { palettes, defaultPalette };
   }, []);
@@ -91,8 +88,7 @@ export const ColorRampField = ({
   ) as DivergingPaletteType | SequentialPaletteType;
 
   const currentPalette =
-    palettes.find((d) => d.value === currentPaletteName) ||
-    sequentialPalettes[0];
+    palettes.find((d) => d.value === currentPaletteName) || defaultPalette;
 
   const onSelectedItemChange = useCallback(
     ({ selectedItem }) => {
@@ -119,7 +115,7 @@ export const ColorRampField = ({
     getItemProps,
   } = useSelect({
     items: palettes,
-    defaultSelectedItem: defaultPalette,
+    defaultSelectedItem: currentPalette,
     onSelectedItemChange,
   });
 
@@ -147,19 +143,6 @@ export const ColorRampField = ({
       <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen && (
           <>
-            {/* <Typography component="div" variant="caption" sx={{ p: 1 }}>
-              <Trans id="controls.color.palette.diverging">Diverging</Trans>
-            </Typography>
-            {divergingPalettes.map((d, i) => (
-              <PaletteRamp
-                key={`diverging-${i}`}
-                palette={d}
-                itemProps={getItemProps({ item: d, index: i })}
-                highlighted={i === highlightedIndex}
-                nbClass={nbClass}
-              />
-            ))} */}
-
             <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
             </Typography>
@@ -169,12 +152,24 @@ export const ColorRampField = ({
                 palette={d}
                 itemProps={getItemProps({
                   item: d,
-                  index: i, // + divergingPalettes.length,
+                  index: i,
                 })}
-                highlighted={
-                  // i + divergingPalettes.length === highlightedIndex
-                  i === highlightedIndex
-                }
+                highlighted={i === highlightedIndex}
+                nbClass={nbClass}
+              />
+            ))}
+            <Typography component="div" variant="caption" sx={{ p: 1 }}>
+              <Trans id="controls.color.palette.diverging">Diverging</Trans>
+            </Typography>
+            {divergingPalettes.map((d, i) => (
+              <PaletteRamp
+                key={`diverging-${i}`}
+                palette={d}
+                itemProps={getItemProps({
+                  item: d,
+                  index: i + sequentialPalettes.length,
+                })}
+                highlighted={i + sequentialPalettes.length === highlightedIndex}
                 nbClass={nbClass}
               />
             ))}

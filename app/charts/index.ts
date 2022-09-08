@@ -2,6 +2,7 @@ import { ascending, group } from "d3";
 import produce from "immer";
 import { get, groupBy } from "lodash";
 
+import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
 import {
   AreaSegmentField,
   ChartConfig,
@@ -276,7 +277,6 @@ export const getInitialConfig = ({
             show: geoShapes.length > 0,
             componentIri: geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
-            hierarchyLevel: 1,
             colorScaleType: "continuous",
             colorScaleInterpolationType: "linear",
             palette: "oranges",
@@ -286,8 +286,7 @@ export const getInitialConfig = ({
             show: geoShapes.length === 0,
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
-            hierarchyLevel: 1,
-            color: "#1f77b4",
+            colors: DEFAULT_SYMBOL_LAYER_COLORS,
           },
         },
         baseLayer: {

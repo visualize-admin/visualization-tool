@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { geoCentroid } from "d3";
+import { keyBy } from "lodash";
 import React, { memo, useMemo } from "react";
 import {
   feature as topojsonFeature,
@@ -158,19 +159,24 @@ export const ChartMapVisualization = ({
       geoCoordinates &&
       observations
     ) {
-      const points = geoCoordinates.map(
-        (d) =>
-          ({
-            coordinates: [d.longitude, d.latitude],
+      const points: GeoPoint[] = [];
+      const geoCoordinatesByLabel = keyBy(geoCoordinates, (d) => d.label);
+      observations.forEach((observation) => {
+        const label = observation[symbolDimensionIri] as string;
+        const coords = geoCoordinatesByLabel[label];
+
+        if (coords) {
+          const { iri, label, latitude, longitude } = coords;
+          points.push({
+            coordinates: [longitude, latitude] as [number, number],
             properties: {
-              iri: d.iri,
-              label: d.label,
-              observation: observations.find(
-                (o) => o[symbolDimensionIri] === d.label
-              ),
+              iri,
+              label,
+              observation,
             },
-          } as GeoPoint)
-      );
+          });
+        }
+      });
 
       return { points };
     } else {
