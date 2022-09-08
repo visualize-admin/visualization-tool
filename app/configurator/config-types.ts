@@ -186,6 +186,7 @@ const BarFields = t.intersection([
 ]);
 const BarConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("bar"),
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
@@ -212,6 +213,7 @@ const ColumnFields = t.intersection([
 ]);
 const ColumnConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("column"),
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
@@ -236,6 +238,7 @@ const LineFields = t.intersection([
 ]);
 const LineConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("line"),
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
@@ -272,6 +275,7 @@ const AreaFields = t.intersection([
 ]);
 const AreaConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("area"),
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
@@ -296,6 +300,7 @@ const ScatterPlotFields = t.intersection([
 ]);
 const ScatterPlotConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("scatterplot"),
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
@@ -316,6 +321,7 @@ const PieFields = t.type({
 });
 const PieConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("pie"),
     interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
@@ -427,6 +433,7 @@ export type TableSortingOption = t.TypeOf<typeof TableSortingOption>;
 
 const TableConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("table"),
     fields: TableFields,
     filters: Filters,
@@ -504,6 +511,7 @@ const MapFields = t.type({
 
 const MapConfig = t.type(
   {
+    version: t.string,
     chartType: t.literal("map"),
     interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,

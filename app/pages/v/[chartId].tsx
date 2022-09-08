@@ -15,6 +15,7 @@ import { PublishActions } from "@/components/publish-actions";
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { useLocale } from "@/locales/use-locale";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 type PageProps =
   | {
@@ -36,7 +37,18 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   if (config && config.data) {
     // TODO validate configuration
-    return { props: { status: "found", config } };
+    return {
+      props: {
+        status: "found",
+        config: {
+          ...config,
+          data: {
+            ...config.data,
+            chartConfig: migrateChartConfig(config.data.chartConfig),
+          },
+        },
+      },
+    };
   }
 
   res.statusCode = 404;
