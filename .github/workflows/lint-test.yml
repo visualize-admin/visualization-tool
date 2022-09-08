@@ -55,6 +55,19 @@ jobs:
           start: "env PORT=3333 npm run start"
           wait-on: "http://localhost:3333"
           record: false
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
       - name: Set argos upload branch on master branch
         run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
         if: github.ref == 'refs/heads/main'
