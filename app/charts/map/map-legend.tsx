@@ -82,9 +82,9 @@ export const MapLegend = () => {
   const { colors: symbolLayerColors } = symbolLayer;
 
   return (
-    <Flex sx={{ minHeight: 100, flexWrap: "wrap" }}>
+    <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
       {showAreaLegend && (
-        <Box sx={{ p: 4 }}>
+        <Box>
           {areaLayer.measureLabel && (
             <Typography
               component="div"
@@ -119,25 +119,23 @@ export const MapLegend = () => {
             {symbolLayerColors.type === "continuous" && (
               <>
                 <Typography component="div" variant="caption">
-                  {symbolLayerColors.componentLabel}
+                  {symbolLayerColors.component.label}
                 </Typography>
                 <ContinuousColorLegend
                   palette={symbolLayerColors.palette}
                   domain={symbolLayerColors.domain}
                   getValue={(d: Observation) =>
-                    d[symbolLayerColors.componentIri] as number
+                    d[symbolLayerColors.component.iri] as number
                   }
                 />
               </>
             )}
           </Box>
-          <Box sx={{ p: 4 }}>
-            <>
-              <Typography component="div" variant="caption">
-                {symbolLayer.measureLabel}
-              </Typography>
-              <CircleLegend />
-            </>
+          <Box>
+            <Typography component="div" variant="caption">
+              {symbolLayer.measureLabel}
+            </Typography>
+            <CircleLegend />
           </Box>
         </Flex>
       )}
