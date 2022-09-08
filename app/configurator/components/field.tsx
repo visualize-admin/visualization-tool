@@ -11,6 +11,7 @@ import {
   Label,
   Radio,
   Select,
+  Slider,
   Switch,
 } from "@/components/form";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
@@ -31,6 +32,7 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
+  useChartOptionSliderField,
   useMetaField,
   useSingleFilterField,
 } from "@/configurator/config-form";
@@ -717,6 +719,45 @@ export const ChartOptionRadioField = ({
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
     ></Radio>
+  );
+};
+
+export const ChartOptionSliderField = ({
+  label,
+  field,
+  path,
+  disabled = false,
+  min = 0,
+  max = 1,
+  step = 0.1,
+  defaultValue,
+}: {
+  label: string;
+  field: string | null;
+  path: string;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  defaultValue: number;
+}) => {
+  const fieldProps = useChartOptionSliderField({
+    path,
+    field,
+    min,
+    max,
+    defaultValue,
+  });
+
+  return (
+    <Slider
+      disabled={disabled}
+      label={label}
+      min={min}
+      max={max}
+      step={step}
+      {...fieldProps}
+    />
   );
 };
 

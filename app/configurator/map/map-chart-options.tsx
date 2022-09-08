@@ -1,10 +1,12 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Stack } from "@mui/material";
+import { Box, SelectChangeEvent, Stack } from "@mui/material";
+import { get } from "lodash";
 import React, { memo, useEffect, useMemo } from "react";
 
 import { getMap } from "@/charts/map/ref";
 import Flex from "@/components/flex";
-import { FieldSetLegend } from "@/components/form";
+import { FieldSetLegend, Select } from "@/components/form";
+import { Option } from "@/configurator";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
 import { ColorRampField } from "@/configurator/components/chart-controls/color-ramp";
 import {
@@ -16,6 +18,7 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
+  ChartOptionSliderField,
   ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
@@ -23,6 +26,7 @@ import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
 import { DataSource } from "@/configurator/config-types";
 import { isConfiguring } from "@/configurator/configurator-state";
 import {
+  canDimensionBeMultiFiltered,
   GeoFeature,
   getGeoDimensions,
   getGeoShapesDimensions,
@@ -30,6 +34,9 @@ import {
 import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useConfiguratorState, useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
+
+import { FIELD_VALUE_NONE } from "../constants";
 
 export const MapColumnOptions = ({
   state,
@@ -200,8 +207,8 @@ export const AreaLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="chartMap">
             {t({
-              id: "controls.dimension.geographical",
-              message: "Geographical dimension",
+              id: "controls.location",
+              message: "Location",
             })}
           </SectionTitle>
           <ControlSectionContent>
@@ -219,8 +226,8 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">
-            {t({ id: "controls.measure", message: "Measure" })}
+          <SectionTitle iconName="color">
+            {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent>
             <ChartOptionSelectField
@@ -234,13 +241,6 @@ export const AreaLayerSettings = memo(
               options={measuresOptions}
               disabled={isHidden}
             />
-          </ControlSectionContent>
-        </ControlSection>
-        <ControlSection>
-          <SectionTitle iconName="color">
-            {t({ id: "controls.color", message: "Color" })}
-          </SectionTitle>
-          <ControlSectionContent>
             <div>
               <FieldSetLegend
                 legendTitle={t({
@@ -350,7 +350,9 @@ export const AreaLayerSettings = memo(
 
 export const SymbolLayerSettings = memo(
   ({
-    chartConfig,
+    chartConfig: {
+      fields: { symbolLayer },
+    },
     metaData,
   }: {
     chartConfig: MapConfig;
@@ -375,8 +377,17 @@ export const SymbolLayerSettings = memo(
       }));
     }, [metaData.measures]);
 
+    const colorDimensionsOptions = useMemo(() => {
+      return [
+        ...metaData.dimensions
+          .filter(canDimensionBeMultiFiltered)
+          .map((d) => ({ label: d.label, value: d.iri })),
+        ...measuresOptions,
+      ];
+    }, [metaData.dimensions, measuresOptions]);
+
     const isAvailable = geoDimensions.length > 0;
-    const isHidden = !chartConfig.fields.symbolLayer.show;
+    const isHidden = !symbolLayer.show;
 
     return !isAvailable ? (
       <NoGeoDimensionsWarning />
@@ -400,8 +411,8 @@ export const SymbolLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="chartMap">
             {t({
-              id: "controls.dimension.geographical",
-              message: "Geographical dimension",
+              id: "controls.location",
+              message: "Location",
             })}
           </SectionTitle>
           <ControlSectionContent>
@@ -419,8 +430,11 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">
-            {t({ id: "controls.measure", message: "Measure" })}
+          <SectionTitle iconName="size">
+            {t({
+              id: "controls.size",
+              message: "Size",
+            })}
           </SectionTitle>
           <ControlSectionContent>
             <ChartOptionSelectField
@@ -441,15 +455,49 @@ export const SymbolLayerSettings = memo(
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent>
-            <ColorPickerField
-              label={t({
-                id: "controls.color.select",
-                message: "Select a color",
-              })}
-              field={activeField}
-              path="color"
+            <SymbolColorSelect
+              metaData={metaData}
+              options={colorDimensionsOptions}
               disabled={isHidden}
             />
+            {symbolLayer.colors.type === "fixed" ? (
+              <>
+                <ColorPickerField
+                  label={t({
+                    id: "controls.color.select",
+                    message: "Select a color",
+                  })}
+                  field={activeField}
+                  path="colors.value"
+                  disabled={isHidden}
+                />
+                <ChartOptionSliderField
+                  field={activeField}
+                  path="colors.opacity"
+                  label={t({
+                    id: "controls.color.opacity",
+                    message: "Opacity",
+                  })}
+                  min={0}
+                  max={100}
+                  step={10}
+                  disabled={isHidden}
+                  defaultValue={70}
+                />
+              </>
+            ) : symbolLayer.colors.type === "categorical" ? (
+              symbolLayer.componentIri !== symbolLayer.colors.componentIri ? (
+                <DimensionValuesMultiFilter
+                  key={symbolLayer.componentIri}
+                  dataSetIri={metaData.iri}
+                  dimensionIri={symbolLayer.colors.componentIri}
+                  field={activeField}
+                  colorConfigPath="colors"
+                />
+              ) : null
+            ) : (
+              <ColorRampField field={activeField} path="colors.palette" />
+            )}
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -457,9 +505,11 @@ export const SymbolLayerSettings = memo(
           {!isHidden && (
             <ControlSectionContent>
               <DimensionValuesMultiFilter
-                key={chartConfig.fields.symbolLayer.componentIri}
+                key={symbolLayer.componentIri}
                 dataSetIri={metaData.iri}
-                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
+                dimensionIri={symbolLayer.componentIri}
+                field={activeField}
+                colorConfigPath="colors"
               />
             </ControlSectionContent>
           )}
@@ -476,5 +526,63 @@ const NoGeoDimensionsWarning = () => {
         In this dataset there are no geographical dimensions to display.
       </Trans>
     </Box>
+  );
+};
+
+const SymbolColorSelect = ({
+  metaData,
+  options,
+  disabled,
+}: {
+  metaData: DataCubeMetadata;
+  options: Option[];
+  disabled?: boolean;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const noneLabel = t({
+    id: "controls.dimension.none",
+    message: `No dimension selected`,
+  });
+  const optionsWithNoneValue = useMemo(() => {
+    return [
+      {
+        label: noneLabel,
+        value: FIELD_VALUE_NONE,
+        isNoneValue: true,
+      },
+      ...options,
+    ];
+  }, [options, noneLabel]);
+
+  const handleChange = useEvent((e: SelectChangeEvent<unknown>) => {
+    dispatch({
+      type: "CHART_FIELD_CHANGED",
+      value: {
+        field: "symbolLayer.colors",
+        componentIri: e.target.value as string,
+        dataSetMetadata: metaData,
+      },
+    });
+  });
+
+  const value = get(
+    state,
+    `chartConfig.fields.symbolLayer.colors.componentIri`,
+    FIELD_VALUE_NONE
+  );
+
+  return (
+    <Select
+      id="symbol-color-select"
+      label={t({
+        id: "controls.select.dimension",
+        message: "Select a dimension",
+      })}
+      options={optionsWithNoneValue}
+      onChange={handleChange}
+      value={value}
+      disabled={disabled}
+    />
   );
 };

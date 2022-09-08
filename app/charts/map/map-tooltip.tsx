@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { MapState } from "@/charts/map/map-state";
+import { convertRgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -19,7 +20,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 
-type HoverObjectType = "area" | "symbol";
+export type HoverObjectType = "area" | "symbol";
 
 const MapTooltipStateContext = createContext<
   [HoverObjectType, Dispatch<HoverObjectType>] | undefined
@@ -72,10 +73,63 @@ export const MapTooltip = () => {
   const showSymbolValue =
     symbolLayer.show &&
     (identicalLayerComponentIris || hoverObjectType === "symbol");
-  const areaColor = useMemo(
-    () => (areaValue !== null ? areaLayer.colorScale(areaValue) : null),
-    [areaValue, areaLayer]
-  );
+  const areaColorProps = useMemo(() => {
+    const color =
+      areaValue !== null ? areaLayer.colorScale(areaValue) : "#dedede";
+    const textColor = getTooltipTextColor(color);
+    return {
+      color,
+      textColor,
+    };
+  }, [areaValue, areaLayer]);
+  const symbolColorProps = useMemo(() => {
+    const obs = interaction.d;
+    const colors = symbolLayer.colors;
+    const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+    const textColor = getTooltipTextColor(color);
+
+    switch (colors.type) {
+      case "fixed":
+        return {
+          type: "fixed",
+          color,
+          textColor,
+          sameAsValue: false,
+        } as const;
+      case "categorical":
+        return {
+          type: "categorical",
+          component: colors.component,
+          value: obs ? (obs[colors.component.iri] as string) : null,
+          error: null,
+          color,
+          textColor,
+          sameAsValue: false,
+        } as const;
+      case "continuous":
+        const rawValue = obs ? (obs[colors.component.iri] as number) : null;
+        const rawError = obs ? colors.getFormattedError?.(obs) : null;
+        return {
+          type: "continuous",
+          component: colors.component,
+          value: formatNumberWithUnit(
+            rawValue,
+            formatNumber,
+            colors.component.unit
+          ),
+          error: rawError ? ` ± ${rawError}` : null,
+          color,
+          textColor,
+          sameAsValue:
+            colors.component.iri === symbolLayer.measureDimension?.iri,
+        } as const;
+    }
+  }, [
+    interaction.d,
+    symbolLayer.colors,
+    symbolLayer.measureDimension?.iri,
+    formatNumber,
+  ]);
 
   return (
     <>
@@ -111,14 +165,8 @@ export const MapTooltip = () => {
                   {showAreaValue && (
                     <TooltipRow
                       title={areaLayer.measureLabel}
-                      background={areaColor || "#dedede"}
-                      color={
-                        areaColor
-                          ? hcl(areaColor).l < 55
-                            ? "#fff"
-                            : "#000"
-                          : "#000"
-                      }
+                      background={areaColorProps.color}
+                      color={areaColorProps.textColor}
                       value={formatNumberWithUnit(
                         areaValue,
                         formatNumber,
@@ -132,23 +180,49 @@ export const MapTooltip = () => {
                     />
                   )}
 
-                  {showSymbolValue && (
-                    <TooltipRow
-                      title={symbolLayer.measureLabel}
-                      background={symbolLayer.color}
-                      color={hcl(symbolLayer.color).l < 55 ? "#fff" : "#000"}
-                      value={formatNumberWithUnit(
-                        symbolValue,
-                        formatNumber,
-                        symbolLayer?.measureDimension?.unit
+                  {showSymbolValue ? (
+                    <>
+                      {!symbolColorProps.sameAsValue && (
+                        <TooltipRow
+                          title={symbolLayer.measureLabel}
+                          background={
+                            symbolColorProps.type === "fixed"
+                              ? symbolColorProps.color
+                              : "#fff"
+                          }
+                          border={
+                            symbolColorProps.type === "fixed"
+                              ? undefined
+                              : "1px solid #ccc"
+                          }
+                          color={
+                            symbolColorProps.type === "fixed"
+                              ? symbolColorProps.textColor
+                              : "#000"
+                          }
+                          value={formatNumberWithUnit(
+                            symbolValue,
+                            formatNumber,
+                            symbolLayer?.measureDimension?.unit
+                          )}
+                          error={
+                            formatSymbolError
+                              ? ` ± ${formatSymbolError(interaction.d)}`
+                              : null
+                          }
+                        />
                       )}
-                      error={
-                        formatSymbolError
-                          ? ` ± ${formatSymbolError(interaction.d)}`
-                          : null
-                      }
-                    />
-                  )}
+                      {symbolColorProps.type !== "fixed" && (
+                        <TooltipRow
+                          title={symbolColorProps.component.label}
+                          background={symbolColorProps.color}
+                          color={symbolColorProps.textColor}
+                          value={symbolColorProps.value ?? ""}
+                          error={symbolColorProps.error}
+                        />
+                      )}
+                    </>
+                  ) : null}
                 </>
               }
             </Box>
@@ -165,10 +239,11 @@ type TooltipRowProps = {
   color: string;
   value: string;
   error: string | null;
+  border?: string;
 };
 
 const TooltipRow = (props: TooltipRowProps) => {
-  const { title, background, color, value, error } = props;
+  const { title, background, color, value, error, border = "none" } = props;
   return (
     <>
       <Typography component="div" variant="caption">
@@ -181,7 +256,11 @@ const TooltipRow = (props: TooltipRowProps) => {
           display: "inline-block",
           textAlign: "center",
         }}
-        style={{ background, color }}
+        style={{
+          background,
+          color,
+          border,
+        }}
       >
         <Typography component="div" variant="caption">
           {value}
@@ -190,4 +269,8 @@ const TooltipRow = (props: TooltipRowProps) => {
       </Box>
     </>
   );
+};
+
+const getTooltipTextColor = (color: string) => {
+  return hcl(color).l < 55 ? "#fff" : "#000";
 };

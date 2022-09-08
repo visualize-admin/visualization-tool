@@ -55,7 +55,6 @@
           "show": true,
           "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
           "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-          "hierarchyLevel": 1,
           "colorScaleType": "continuous",
           "colorScaleInterpolationType": "linear",
           "palette": "oranges",
@@ -65,8 +64,11 @@
           "show": false,
           "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
           "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-          "hierarchyLevel": 1,
-          "color": "#1f77b4"
+          "color": {
+            "type": "single",
+            "value": "#1f77b4",
+            "opacity": 70
+          }
         }
       },
       "baseLayer": { "show": true }

@@ -432,6 +432,8 @@ theme.components = {
       sizeSmall: {
         height: 40,
         minHeight: 40,
+        fontSize: `${theme.typography.body2.fontSize} !important`,
+        lineHeight: `${theme.typography.body2.lineHeight} !important`,
       },
       focused: {
         outline: "3px solid #333333",
@@ -574,6 +576,28 @@ theme.components = {
       },
       disabled: {
         color: theme.palette.grey[500],
+      },
+    },
+  },
+  MuiSlider: {
+    styleOverrides: {
+      root: {
+        height: 3,
+
+        "& .MuiSlider-rail": {
+          backgroundColor: theme.palette.grey[500],
+        },
+        "& .MuiSlider-thumb": {
+          width: 20,
+          height: 20,
+
+          "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+            boxShadow: "inherit",
+          },
+          "&:before": {
+            display: "none",
+          },
+        },
       },
     },
   },

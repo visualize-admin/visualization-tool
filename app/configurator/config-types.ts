@@ -449,7 +449,6 @@ const MapAreaLayer = t.intersection([
   t.type({
     componentIri: t.string,
     measureIri: t.string,
-    hierarchyLevel: t.number,
     show: t.boolean,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
     nbClass: t.number,
@@ -471,13 +470,24 @@ const MapAreaLayer = t.intersection([
 ]);
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.type({
-  componentIri: t.string,
-  measureIri: t.string,
-  hierarchyLevel: t.number,
-  color: t.string,
-  show: t.boolean,
-});
+const MapSymbolLayer = t.intersection([
+  t.type({
+    componentIri: t.string,
+    measureIri: t.string,
+    show: t.boolean,
+  }),
+  t.type({
+    colors: t.union([
+      t.type({ type: t.literal("fixed"), value: t.string, opacity: t.number }),
+      t.intersection([
+        t.type({
+          type: t.union([t.literal("categorical"), t.literal("continuous")]),
+        }),
+        GenericSegmentField,
+      ]),
+    ]),
+  }),
+]);
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({

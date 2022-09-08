@@ -10,6 +10,7 @@ import {
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { ascending } from "d3";
 import { isEmpty, isEqual, sortBy } from "lodash";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
@@ -20,7 +21,6 @@ import {
 } from "react-beautiful-dnd";
 import { useClient } from "urql";
 
-import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -104,13 +104,15 @@ const DataFilterSelectGeneric = ({
 
   const optionGroups = useMemo(() => {
     if (hierarchyParents) {
-      return hierarchyParents.map(
-        ([parents, dfsRes]) =>
-          [asGroup(parents), dfsRes.map((d) => d.node)] as [
-            OptionGroup,
-            Option[]
-          ]
-      );
+      return hierarchyParents
+        .map(
+          ([parents, dfsRes]) =>
+            [asGroup(parents), dfsRes.map((d) => d.node)] as [
+              OptionGroup,
+              (Option & { depth: number })[]
+            ]
+        )
+        .sort((a, b) => ascending(a[1][0].depth, b[1][0].depth));
     } else {
       return undefined;
     }
@@ -192,11 +194,9 @@ const useEnsurePossibleFilters = ({
 
   useEffect(() => {
     const run = async () => {
-      const { mapped: mappedFilters, unmapped: unmappedFilters } =
-        getFiltersByMappingStatus(
-          state.chartConfig.fields,
-          state.chartConfig.filters
-        );
+      const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
+        state.chartConfig
+      );
       if (
         lastFilters.current &&
         orderedIsEqual(lastFilters.current, unmappedFilters)
@@ -276,11 +276,10 @@ const useFilterReorder = ({
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
 
-  const { fields, filters } = state.chartConfig;
-  const { unmapped: unmappedFilters } = useMemo(
-    () => getFiltersByMappingStatus(fields, filters),
-    [fields, filters]
-  );
+  const { filters } = state.chartConfig;
+  const { unmappedFilters, mappedFiltersIris } = useMemo(() => {
+    return getFiltersByMappingStatus(state.chartConfig);
+  }, [state.chartConfig]);
 
   const variables = useMemo(
     () => ({
@@ -390,19 +389,19 @@ const useFilterReorder = ({
   const fetching = possibleFiltersFetching || dataFetching;
 
   const { filterDimensions, addableDimensions } = useMemo(() => {
-    const mappedIris = getFieldComponentIris(fields);
     const keysOrder = Object.fromEntries(
       Object.keys(filters).map((k, i) => [k, i])
     );
     const filterDimensions = sortBy(
       dimensions.filter(
-        (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
+        (dim) =>
+          !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
       ) || [],
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
     const addableDimensions = dimensions.filter(
       (dim) =>
-        !mappedIris.has(dim.iri) &&
+        !mappedFiltersIris.has(dim.iri) &&
         keysOrder[dim.iri] === undefined &&
         !isStandardErrorDimension(dim)
     );
@@ -410,7 +409,7 @@ const useFilterReorder = ({
       filterDimensions,
       addableDimensions,
     };
-  }, [dimensions, fields, filters]);
+  }, [dimensions, filters, mappedFiltersIris]);
 
   return {
     handleRemoveDimensionFilter,

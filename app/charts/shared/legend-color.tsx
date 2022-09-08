@@ -13,7 +13,9 @@ import {
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
+import { Observation } from "@/domain/data";
 import {
+  DimensionMetadataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
@@ -23,6 +25,8 @@ import { useLocale } from "@/src";
 import { dfs } from "@/utils/dfs";
 import { interlace } from "@/utils/interlace";
 import useEvent from "@/utils/use-event";
+
+import { convertRgbArrayToHex } from "./colors";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -39,7 +43,11 @@ const useStyles = makeStyles<Theme>(() => ({
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
-  legendGroup: {},
+  legendGroup: {
+    display: "flex",
+    flexWrap: "wrap",
+    columnGap: "1rem",
+  },
 }));
 
 const useItemStyles = makeStyles<
@@ -196,32 +204,83 @@ export const LegendColor = memo(function LegendColor({
   // @ts-ignore
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
   const groups = useLegendGroups(colors.domain());
+
+  return (
+    <LegendColorContent
+      groups={groups}
+      getColor={(v) => colors(v)}
+      getLabel={getSegmentLabel}
+      symbol={symbol}
+    />
+  );
+});
+
+export const MapLegendColor = memo(function LegendColor({
+  component: { iri, values },
+  getColor,
+}: {
+  component: DimensionMetadataFragment;
+  getColor: (d: Observation) => number[];
+}) {
+  const sortedValues = values.sort((a, b) => a.label.localeCompare(b.label));
+  const groups = useLegendGroups(sortedValues.map((d) => d.value));
+  const getLabel = (d: string) => {
+    return values.find((v) => v.value === d).label as string;
+  };
+
+  return (
+    <LegendColorContent
+      groups={groups}
+      getColor={(v) => {
+        const label = getLabel(v);
+        const rgb = getColor({ [iri]: label });
+        const hex = convertRgbArrayToHex(rgb);
+
+        return hex;
+      }}
+      getLabel={getLabel}
+      symbol="circle"
+    />
+  );
+});
+
+const LegendColorContent = ({
+  groups,
+  getColor,
+  getLabel,
+  symbol,
+}: {
+  groups: ReturnType<typeof useLegendGroups>;
+  getColor: (d: string) => string;
+  getLabel: (d: string) => string;
+  symbol: LegendSymbol;
+}) => {
   const classes = useStyles();
+
   return (
     <Flex className={classes.legendContainer}>
       {groups
         ? Array.from(groups.entries()).map(([g, colorValues]) => {
+            const headerLabelsArray = g.map((n) => n.label);
+
             return (
               <div
                 className={classes.legendGroup}
                 key={g.map((n) => n.label).join(" > ")}
               >
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  display="flex"
-                  alignItems="center"
-                >
-                  {interlace(
-                    g.map((n) => n.label),
-                    <SvgIcChevronRight />
-                  )}
-                </Typography>
-                {colorValues.map((item, i) => (
+                {headerLabelsArray.length > 0 ? (
+                  <Typography variant="h5" display="flex" alignItems="center">
+                    {interlace(
+                      g.map((n) => n.label),
+                      <SvgIcChevronRight />
+                    )}
+                  </Typography>
+                ) : null}
+                {colorValues.map((d) => (
                   <LegendItem
-                    key={i}
-                    item={getSegmentLabel(item)}
-                    color={colors(item)}
+                    key={d}
+                    item={getLabel(d)}
+                    color={getColor(d)}
                     symbol={symbol}
                   />
                 ))}
@@ -231,7 +290,7 @@ export const LegendColor = memo(function LegendColor({
         : null}
     </Flex>
   );
-});
+};
 
 export const LegendItem = ({
   item,
