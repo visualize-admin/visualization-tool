@@ -13,7 +13,6 @@ import {
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
-import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
   getChartConfigAdjustedToChartType,
   getFieldComponentIris,
@@ -62,6 +61,10 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
+import {
+  fetchChartConfig,
+  saveChartConfig,
+} from "@/utils/chart-config/exchange";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
