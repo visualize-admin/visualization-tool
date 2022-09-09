@@ -117,7 +117,9 @@ const useScatterplotState = ({
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segments = [...new Set(plottableSortedData.map(getSegment))]; // get *visible* segments
+  const segments = useMemo(() => {
+    return [...new Set(plottableSortedData.map(getSegment))];
+  }, [getSegment, plottableSortedData]); // get *visible* segments
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
