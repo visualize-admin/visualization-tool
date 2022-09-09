@@ -31,7 +31,7 @@ import * as api from "@/utils/chart-config/exchange";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-jest.mock("../api", () => ({
+jest.mock("@/utils/chart-config/exchange", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
