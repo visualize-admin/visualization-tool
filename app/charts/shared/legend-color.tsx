@@ -267,6 +267,7 @@ const LegendColorContent = ({
               <div
                 className={classes.legendGroup}
                 key={g.map((n) => n.label).join(" > ")}
+                data-testid="colorLegend"
               >
                 {headerLabelsArray.length > 0 ? (
                   <Typography variant="h5" display="flex" alignItems="center">
