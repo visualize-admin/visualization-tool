@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useRouter } from "next/router";
 import React, { ReactNode, useEffect } from "react";
 
 import Flex from "@/components/flex";
@@ -155,10 +156,17 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
     }
   });
 
+  const router = useRouter();
 
   const goPrevious = useEvent(() => {
     if (state.state === "CONFIGURING_CHART") {
-      history.back();
+      router.push(
+        {
+          pathname: `/browse/dataset/${encodeURIComponent(state.dataSet)}`,
+        },
+        undefined,
+        { shallow: true }
+      );
     } else {
       dispatch({
         type: "STEP_PREVIOUS",
