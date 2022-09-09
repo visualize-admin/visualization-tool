@@ -9,7 +9,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Added migrations of chart configs (breaking changes to schema will not break existing charts)
 
 ## [3.7.10] - 2022-08-26
 
@@ -22,7 +22,7 @@ Nothing yet.
   - For the table chart columns
 - Default state for area chart uses the hierarchy and selects
   bottommost children
-- Add cube checker to docs 
+- Add cube checker to docs
 - Font alignments with design
 - Table config uses data column order to order columns
 - Search handles wildcards ("bath" returns "bathing site" results)
