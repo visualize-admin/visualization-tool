@@ -11,6 +11,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [3.7.11] - 2022-09-09
+
+- 🚀 Maps
+  - Symbols can now be colored according to a measure
+  - Tilting /rotating is disabled
+- 🐛 Hierarchies: Fixes, better order in the left filters when there are multiple roots
+- 🐛 Table view: bug fix when switching from chart view on published view
+
 ## [3.7.10] - 2022-08-26
 
 - Font adjustment in filters menu
@@ -22,7 +30,7 @@ Nothing yet.
   - For the table chart columns
 - Default state for area chart uses the hierarchy and selects
   bottommost children
-- Add cube checker to docs 
+- Add cube checker to docs
 - Font alignments with design
 - Table config uses data column order to order columns
 - Search handles wildcards ("bath" returns "bathing site" results)
