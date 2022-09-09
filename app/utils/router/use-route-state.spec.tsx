@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 
-import { useRouteState } from "./router/use-route-state";
+import { useRouteState } from "./use-route-state";
 
 jest.mock("next/router", () => {
   return {
