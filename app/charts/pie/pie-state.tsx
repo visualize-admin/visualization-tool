@@ -13,6 +13,7 @@ import React, { ReactNode, useMemo, useCallback } from "react";
 
 import {
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
 } from "@/charts/shared/chart-helpers";
@@ -103,16 +104,18 @@ const usePieState = ({
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
+  const plottableSortedData = usePlottableData({ data: sortedData, getY });
+
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getSegment: getX,
   });
 
   // Map ordered segments to colors
-  const segments = Array.from(new Set(sortedData.map((d) => getX(d))));
+  const segments = Array.from(new Set(plottableSortedData.map((d) => getX(d))));
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri

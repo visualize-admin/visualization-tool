@@ -20,6 +20,7 @@ import {
   getLabelWithUnit,
   getWideData,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
   useStringVariable,
@@ -106,9 +107,15 @@ const useLinesState = ({
     [data, getX]
   );
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    getX,
+    getY,
+  });
+
   const dataGroupedByX = useMemo(
-    () => group(sortedData, getGroups),
-    [sortedData, getGroups]
+    () => group(plottableSortedData, getGroups),
+    [plottableSortedData, getGroups]
   );
 
   const allDataWide = getWideData({
@@ -122,7 +129,7 @@ const useLinesState = ({
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
     timeFilterActive: interactiveFiltersConfig?.time.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getX,
     getSegment,
@@ -150,8 +157,8 @@ const useLinesState = ({
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(sortedData, (d) => getX(d)) as [Date, Date],
-    [sortedData, getX]
+    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
+    [plottableSortedData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
@@ -165,7 +172,7 @@ const useLinesState = ({
   const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
-  const entireMaxValue = max(sortedData, getY) as number;
+  const entireMaxValue = max(plottableSortedData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -200,8 +207,8 @@ const useLinesState = ({
 
   // segments
   const segments = useMemo(() => {
-    const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
-      ascending(a, b)
+    const segments = [...new Set(plottableSortedData.map(getSegment))].sort(
+      (a, b) => ascending(a, b)
     );
     const dimension = dimensions.find(
       (d) => d.iri === fields?.segment?.componentIri
@@ -211,7 +218,12 @@ const useLinesState = ({
       return sortBy(segments, sorter);
     }
     return segments;
-  }, [dimensions, fields?.segment?.componentIri, getSegment, sortedData]);
+  }, [
+    dimensions,
+    fields?.segment?.componentIri,
+    getSegment,
+    plottableSortedData,
+  ]);
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();

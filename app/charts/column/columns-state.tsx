@@ -25,6 +25,7 @@ import {
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
   useStringVariable,
@@ -145,10 +146,16 @@ const useColumnsState = (
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    getX: getXAsDate,
+    getY,
+  });
+
   // Data for chart
   const preparedData = usePreparedData({
     timeFilterActive: interactiveFiltersConfig?.time.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,
   });
@@ -166,8 +173,8 @@ const useColumnsState = (
 
   // x as time, needs to be memoized!
   const xEntireDomainAsTime = useMemo(
-    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, sortedData]
+    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, plottableSortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
@@ -229,8 +236,8 @@ const useColumnsState = (
 
   // segments
   const segments = useMemo(() => {
-    return Array.from(new Set(sortedData.map(getSegment)));
-  }, [getSegment, sortedData]);
+    return Array.from(new Set(plottableSortedData.map(getSegment)));
+  }, [getSegment, plottableSortedData]);
   const sortedSegments = useMemo(() => {
     const rawSegments = getPalette(fields.segment?.palette);
     const segmentDimension = dimensions.find(
@@ -300,7 +307,7 @@ const useColumnsState = (
     chartType: "column",
     bounds,
     preparedData,
-    allData: sortedData,
+    allData: plottableSortedData,
     getX,
     getXAsDate,
     xScale,

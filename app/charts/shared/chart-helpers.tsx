@@ -69,6 +69,32 @@ export const useQueryFilters = ({
 
 type ValuePredicate = (v: any) => boolean;
 
+export const usePlottableData = ({
+  data,
+  getX,
+  getY,
+}: {
+  data: Observation[];
+  getX?: ((d: Observation) => Date) | ((d: Observation) => number | null);
+  getY?: (d: Observation) => number | null;
+}) => {
+  const filters = useMemo(() => {
+    const xFilter: ValuePredicate | null = getX
+      ? (d: Observation) => getX(d) !== null
+      : null;
+    const yFilter: ValuePredicate | null = getY
+      ? (d: Observation) => getY(d) !== null
+      : null;
+
+    return overEvery([xFilter, yFilter].filter(truthy));
+  }, [getX, getY]);
+  const plottableData = useMemo(() => {
+    return data.filter(filters);
+  }, [data, filters]);
+
+  return plottableData;
+};
+
 // Prepare data used in charts.
 // Different than the full dataset because
 // interactive filters may be applied (legend + brush)
