@@ -561,6 +561,21 @@ const ChartConfig = t.union([
 // t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
+export const decodeChartConfig = (
+  chartConfig: unknown
+): ChartConfig | undefined => {
+  return pipe(
+    ChartConfig.decode(chartConfig),
+    fold(
+      (err) => {
+        console.error("Error while decoding chart config", err);
+        return undefined;
+      },
+      (d) => d
+    )
+  );
+};
+
 export type ChartType = ChartConfig["chartType"];
 
 export const isAreaConfig = (
