@@ -1,7 +1,8 @@
 import { Trans } from "@lingui/macro";
 import { Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { ReactNode, useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
+import React, { ReactNode, useEffect } from "react";
 
 import Flex from "@/components/flex";
 import { useHeaderProgress } from "@/components/header";
@@ -14,6 +15,7 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -145,24 +147,32 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
       locale,
     },
   });
-  const goNext = useCallback(() => {
+  const goNext = useEvent(() => {
     if (data?.dataCubeByIri) {
       dispatch({
         type: "STEP_NEXT",
         dataSetMetadata: data?.dataCubeByIri,
       });
     }
-  }, [data, dispatch]);
+  });
 
-  const goPrevious = useCallback(() => {
+  const router = useRouter();
+
+  const goPrevious = useEvent(() => {
     if (state.state === "CONFIGURING_CHART") {
-      history.back();
+      router.push(
+        {
+          pathname: `/browse/dataset/${encodeURIComponent(state.dataSet)}`,
+        },
+        undefined,
+        { shallow: true }
+      );
     } else {
       dispatch({
         type: "STEP_PREVIOUS",
       });
     }
-  }, [dispatch, state.state]);
+  });
 
   return (
     <StepperDumb
