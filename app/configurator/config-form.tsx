@@ -26,7 +26,6 @@ import {
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
-import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
 import { dfs } from "@/utils/dfs";
 import useEvent from "@/utils/use-event";
 
@@ -465,7 +464,6 @@ const MultiFilterContext = React.createContext({
   allValues: [] as string[],
   dimensionIri: "",
   colorConfigPath: undefined as string | undefined,
-  checkboxController: new CheckboxStateController([], []),
   getValueColor: (_: string) => "" as string,
 });
 
@@ -484,7 +482,6 @@ export const MultiFilterContextProvider = ({
   dimensionIri,
   colorConfigPath,
   dimensionData,
-  hierarchyData,
   children,
   getValueColor,
 }: {
@@ -522,64 +519,20 @@ export const MultiFilterContextProvider = ({
   }, [dimensionData, activeFilter, allValues]);
 
   const ctx = useMemo(() => {
-    const tree =
-      hierarchyData && hierarchyData.length > 0
-        ? hierarchyData
-        : makeTreeFromValues(allValues, dimensionIri, { depth: 0 });
-
     return {
       allValues,
       activeKeys,
       dimensionIri,
       colorConfigPath,
       getValueColor,
-      checkboxController: new CheckboxStateController(tree, [...activeKeys]),
     };
-  }, [
-    hierarchyData,
-    allValues,
-    dimensionIri,
-    activeKeys,
-    colorConfigPath,
-    getValueColor,
-  ]);
+  }, [allValues, dimensionIri, activeKeys, colorConfigPath, getValueColor]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>
       {children}
     </MultiFilterContext.Provider>
   );
-};
-
-export const useMultiFilterCheckboxes = (
-  value: string,
-  onChangeProp?: () => void
-) => {
-  const [, dispatch] = useConfiguratorState();
-  const { dimensionIri, checkboxController } = useMultiFilterContext();
-
-  const onChange = useEvent(() => {
-    if (!dimensionIri) {
-      return;
-    }
-    checkboxController.toggle(value);
-    dispatch({
-      type: "CHART_CONFIG_FILTER_SET_MULTI",
-      value: {
-        dimensionIri,
-        values: checkboxController.getValues(),
-      },
-    });
-    onChangeProp?.();
-  });
-
-  const checkboxState = checkboxController.checkboxStates.get(value);
-  return {
-    onChange,
-    checked: checkboxState === "checked",
-    indeterminate: checkboxState === "indeterminate",
-    dimensionIri,
-  };
 };
 
 export const useMetaField = ({
