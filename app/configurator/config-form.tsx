@@ -49,19 +49,19 @@ export type FieldProps = Pick<
 >;
 
 const getLeaves = (tree: HierarchyValue[], limit?: number) => {
-  const leafs = tree ? ([] as HierarchyValue[]) : undefined;
-  if (tree && leafs) {
+  const leaves = tree ? ([] as HierarchyValue[]) : undefined;
+  if (tree && leaves) {
     dfs(tree, (node) => {
       if (
         (!node.children || node.children.length === 0) &&
         node.hasValue &&
-        (limit === undefined || leafs.length < limit)
+        (limit === undefined || leaves.length < limit)
       ) {
-        leafs?.push(node);
+        leaves?.push(node);
       }
     });
   }
-  return leafs;
+  return leaves;
 };
 
 // Generic ------------------------------------------------------------------
@@ -99,7 +99,7 @@ export const useChartFieldField = ({
         ?.hierarchy as HierarchyValue[];
 
       // If the dimension has a hierarchy, we select leaves
-      const leafs = getLeaves(tree);
+      const leaves = getLeaves(tree);
 
       dispatch({
         type: "CHART_FIELD_CHANGED",
@@ -107,7 +107,7 @@ export const useChartFieldField = ({
           field,
           dataSetMetadata,
           componentIri: dimensionIri,
-          selectedValues: leafs,
+          selectedValues: leaves,
         },
       });
     } else {

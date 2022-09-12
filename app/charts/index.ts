@@ -101,13 +101,13 @@ const DEFAULT_SORTING: {
 };
 
 const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
-  const leafs = [] as HierarchyValue[];
+  const leaves = [] as HierarchyValue[];
   visitHierarchy(dimension?.hierarchy as HierarchyValue[], (node) => {
     if ((!node.children || node.children.length === 0) && node.hasValue) {
-      leafs.push(node);
+      leaves.push(node);
     }
   });
-  return leafs;
+  return leaves;
 };
 
 const makeInitialFiltersForArea = (
@@ -117,11 +117,11 @@ const makeInitialFiltersForArea = (
   // Setting the filters so that bottommost areas are shown first
   // @ts-ignore
   if (dimension?.hierarchy) {
-    const leafs = findBottommostLayers(dimension);
-    if (leafs.length > 0) {
+    const leaves = findBottommostLayers(dimension);
+    if (leaves.length > 0) {
       filters[dimension.iri] = {
         type: "multi",
-        values: Object.fromEntries(leafs.map((x) => [x.value, true])),
+        values: Object.fromEntries(leaves.map((x) => [x.value, true])),
       };
     }
   }
