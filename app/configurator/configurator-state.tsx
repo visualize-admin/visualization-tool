@@ -13,7 +13,6 @@ import {
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
-import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
   getChartConfigAdjustedToChartType,
   getFieldComponentIris,
@@ -62,6 +61,11 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
+import {
+  fetchChartConfig,
+  saveChartConfig,
+} from "@/utils/chart-config/exchange";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
@@ -1167,6 +1171,7 @@ export const initChartStateFromChart = async (
   from: ChartId
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
+
   if (config && config.data) {
     const {
       dataSet,
@@ -1174,12 +1179,14 @@ export const initChartStateFromChart = async (
       meta,
       chartConfig,
     } = config.data;
+    const migratedChartConfig = migrateChartConfig(chartConfig);
+
     return {
       state: "CONFIGURING_CHART",
       dataSet,
       dataSource,
       meta,
-      chartConfig,
+      chartConfig: migratedChartConfig,
       activeField: undefined,
     };
   }
@@ -1223,7 +1230,13 @@ export const initChartStateFromLocalStorage = async (
   if (storedState) {
     let parsedState;
     try {
-      parsedState = decodeConfiguratorState(JSON.parse(storedState));
+      const rawParsedState = JSON.parse(storedState);
+      const chartConfig = rawParsedState.chartConfig;
+      const migratedChartConfig = migrateChartConfig(chartConfig);
+      parsedState = decodeConfiguratorState({
+        ...rawParsedState,
+        chartConfig: migratedChartConfig,
+      });
     } catch (e) {
       console.error("Error while parsing stored state", e);
       // Ignore errors since we are returning undefined and removing bad state from localStorage

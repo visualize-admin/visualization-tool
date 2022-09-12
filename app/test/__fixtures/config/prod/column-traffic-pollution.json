@@ -21,6 +21,7 @@
       "url": "https://lindas.admin.ch/query"
     },
     "chartConfig": {
+      "version": "1.0.2",
       "fields": {
         "x": {
           "sorting": {

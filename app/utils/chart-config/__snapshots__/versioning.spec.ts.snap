@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`config migrations should migrate to newest config 1`] = `
+Object {
+  "baseLayer": Object {
+    "bbox": undefined,
+    "locked": false,
+    "show": true,
+  },
+  "chartType": "map",
+  "fields": Object {
+    "areaLayer": Object {
+      "colorScaleInterpolationType": "linear",
+      "colorScaleType": "continuous",
+      "componentIri": "GeoShapesDimensionIri",
+      "measureIri": "MeasureIri",
+      "nbClass": 5,
+      "palette": "oranges",
+      "show": true,
+    },
+    "symbolLayer": Object {
+      "colors": Object {
+        "opacity": 80,
+        "type": "fixed",
+        "value": "blue",
+      },
+      "componentIri": "GeoCoordinatesDimensionIri",
+      "measureIri": "MeasureIri",
+      "show": true,
+    },
+  },
+  "filters": Object {},
+  "interactiveFiltersConfig": Object {
+    "dataFilters": Object {
+      "active": false,
+      "componentIris": Array [],
+    },
+    "legend": Object {
+      "active": false,
+      "componentIri": "",
+    },
+    "time": Object {
+      "active": false,
+      "componentIri": "",
+      "presets": Object {
+        "from": "",
+        "to": "",
+        "type": "range",
+      },
+    },
+  },
+  "version": "1.0.2",
+}
+`;
