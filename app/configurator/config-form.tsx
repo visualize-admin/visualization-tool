@@ -49,14 +49,14 @@ export type FieldProps = Pick<
   "onChange" | "id" | "name" | "value" | "checked" | "type"
 >;
 
-const getLeafs = (tree: HierarchyValue[], limit: number) => {
+const getLeafs = (tree: HierarchyValue[], limit?: number) => {
   const leafs = tree ? ([] as HierarchyValue[]) : undefined;
   if (tree && leafs) {
     dfs(tree, (node) => {
       if (
         (!node.children || node.children.length === 0) &&
         node.hasValue &&
-        leafs.length < limit
+        (limit === undefined || leafs.length < limit)
       ) {
         leafs?.push(node);
       }
@@ -100,7 +100,7 @@ export const useChartFieldField = ({
         ?.hierarchy as HierarchyValue[];
 
       // If the dimension has a hierarchy, we select 7 leaves
-      const leafs = getLeafs(tree, 7);
+      const leafs = getLeafs(tree);
 
       dispatch({
         type: "CHART_FIELD_CHANGED",
