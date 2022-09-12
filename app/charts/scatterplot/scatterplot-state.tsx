@@ -79,8 +79,7 @@ const useScatterplotState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    getX,
-    getY,
+    plotters: [getX, getY]
   });
 
   // Data for chart

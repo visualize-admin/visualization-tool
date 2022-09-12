@@ -71,28 +71,21 @@ type ValuePredicate = (v: any) => boolean;
 
 export const usePlottableData = ({
   data,
-  getX,
-  getY,
+  plotters
 }: {
   data: Observation[];
-  getX?: ((d: Observation) => Date) | ((d: Observation) => number | null);
-  getY?: (d: Observation) => number | null;
+  plotters: ((d: Observation) => unknown | null)[]
 }) => {
-  const filters = useMemo(() => {
-    const xFilter: ValuePredicate | null = getX
-      ? (d: Observation) => getX(d) !== null
-      : null;
-    const yFilter: ValuePredicate | null = getY
-      ? (d: Observation) => getY(d) !== null
-      : null;
-
-    return overEvery([xFilter, yFilter].filter(truthy));
-  }, [getX, getY]);
-  const plottableData = useMemo(() => {
-    return data.filter(filters);
-  }, [data, filters]);
-
-  return plottableData;
+  const isPlottable = useCallback((d: Observation) => {
+    for (let p of plotters) {
+      const v = p(d)
+      if (v === undefined || v === null) {
+        return false
+      }
+    }
+    return true
+  }, [plotters]);
+  return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
 // Prepare data used in charts.

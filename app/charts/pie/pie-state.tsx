@@ -104,7 +104,7 @@ const usePieState = ({
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  const plottableSortedData = usePlottableData({ data: sortedData, getY });
+  const plottableSortedData = usePlottableData({ data: sortedData, plotters: [getY] });
 
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({

@@ -148,8 +148,7 @@ const useColumnsState = (
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    getX: getXAsDate,
-    getY,
+    plotters: [getXAsDate, getY]
   });
 
   // Data for chart

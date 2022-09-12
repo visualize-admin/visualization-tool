@@ -109,8 +109,7 @@ const useLinesState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    getX,
-    getY,
+    plotters: [getX, getY]
   });
 
   const dataGroupedByX = useMemo(
