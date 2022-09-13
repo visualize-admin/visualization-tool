@@ -9,7 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Search
+  - Improve search time
+  - Input value is kept when URL is shared
 
 ## [3.7.11] - 2022-09-09
 
