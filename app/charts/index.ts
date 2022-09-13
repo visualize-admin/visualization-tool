@@ -26,6 +26,7 @@ import {
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { visitHierarchy } from "@/rdf/tree-utils";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -140,6 +141,7 @@ export const getInitialConfig = ({
   switch (chartType) {
     case "bar":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -156,6 +158,7 @@ export const getInitialConfig = ({
       };
     case "column":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -172,6 +175,7 @@ export const getInitialConfig = ({
       };
     case "line":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -182,6 +186,7 @@ export const getInitialConfig = ({
       };
     case "area":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -192,6 +197,7 @@ export const getInitialConfig = ({
       };
     case "scatterplot":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType: "scatterplot",
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -213,6 +219,7 @@ export const getInitialConfig = ({
       };
     case "pie":
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
@@ -234,6 +241,7 @@ export const getInitialConfig = ({
         ascending(a.order ?? Infinity, b.order ?? Infinity)
       );
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: undefined,
@@ -269,6 +277,7 @@ export const getInitialConfig = ({
 
       const areaDimension = geoShapes[0];
       return {
+        version: CHART_CONFIG_VERSION,
         chartType,
         filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,

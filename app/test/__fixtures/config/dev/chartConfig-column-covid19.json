@@ -1,4 +1,5 @@
 {
+  "version": "1.0.2",
   "chartType": "column",
   "filters": {
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion": {

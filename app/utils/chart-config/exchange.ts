@@ -1,4 +1,4 @@
-import { ConfiguratorStatePublishing } from "./configurator/config-types";
+import { ConfiguratorStatePublishing } from "../../configurator/config-types";
 
 export const fetchChartConfig = async (chartId: string) => {
   return await fetch(`/api/config/${chartId}`).then((result) => result.json());

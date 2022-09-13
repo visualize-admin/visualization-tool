@@ -11,6 +11,7 @@
       "url": "https://lindas.admin.ch/query"
     },
     "chartConfig": {
+      "version": "1.0.2",
       "fields": {
         "y": {
           "componentIri": "http://environment.ld.admin.ch/foen/px/0703010000_106/measure/0"
