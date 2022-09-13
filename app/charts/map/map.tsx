@@ -330,6 +330,7 @@ export const MapComponent = () => {
           dragPan={!locked}
           scrollZoom={!locked}
           doubleClickZoom={!locked}
+          dragRotate={false}
           touchZoomRotate={!locked}
           onLoad={(e) => {
             setMap(e.target);
