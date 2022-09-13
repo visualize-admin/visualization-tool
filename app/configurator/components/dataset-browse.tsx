@@ -203,13 +203,16 @@ export const useBrowseState = () => {
     },
   });
 
-  const [browseParams, setParams] = useQueryParamsState({} as BrowseParams, {
-    parse: getBrowseParamsFromQuery,
-    serialize: buildURLFromBrowseState,
-  });
+  const [browseParams, setParams] = useQueryParamsState(
+    {},
+    {
+      parse: getBrowseParamsFromQuery,
+      serialize: buildURLFromBrowseState,
+    }
+  );
 
   const { search, type, order, iri, includeDrafts } = browseParams;
-  const dataset = type === "dataset" ? iri : null;
+  const dataset = type === "dataset" ? iri : undefined;
   const filters = getFiltersFromParams(browseParams, {
     themes: themeData?.themes,
     organizations: orgData?.organizations,
@@ -219,7 +222,9 @@ export const useBrowseState = () => {
   const setIncludeDrafts = useEvent((v: boolean) =>
     setParams({ includeDrafts: v })
   );
-  const setOrder = useEvent((v: string) => setParams({ order: v }));
+  const setOrder = useEvent((v: DataCubeResultOrder) =>
+    setParams({ order: v })
+  );
   const setDataset = useEvent((v: string) => setParams({ dataset: v }));
 
   const previousOrderRef = useRef<DataCubeResultOrder>(
