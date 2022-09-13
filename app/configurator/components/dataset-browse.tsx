@@ -188,22 +188,12 @@ export const useBrowseState = () => {
     organizations: orgData?.organizations,
   });
 
-  const setSearch = useCallback(
-    (v: string) => setParams({ search: v }),
-    [setParams]
+  const setSearch = useEvent((v: string) => setParams({ search: v }));
+  const setIncludeDrafts = useEvent((v: boolean) =>
+    setParams({ includeDrafts: v })
   );
-  const setIncludeDrafts = useCallback(
-    (v: boolean) => setParams({ includeDrafts: v }),
-    [setParams]
-  );
-  const setOrder = useCallback(
-    (v: string) => setParams({ order: v }),
-    [setParams]
-  );
-  const setDataset = useCallback(
-    (v: string) => setParams({ dataset: v }),
-    [setParams]
-  );
+  const setOrder = useEvent((v: string) => setParams({ order: v }));
+  const setDataset = useEvent((v: string) => setParams({ dataset: v }));
 
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.Score
@@ -327,7 +317,7 @@ export const SearchDatasetBox = ({
 
   const isSearching = search !== "";
 
-  const onToggleIncludeDrafts = useCallback(() => {
+  const onToggleIncludeDrafts = useEvent(async () => {
     setIncludeDrafts(!includeDrafts);
   }, [includeDrafts, setIncludeDrafts]);
 
