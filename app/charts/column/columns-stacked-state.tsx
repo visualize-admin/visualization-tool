@@ -48,6 +48,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
@@ -55,6 +56,8 @@ import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+
+import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface StackedColumnsState {
   chartType: "column";
@@ -81,20 +84,23 @@ export interface StackedColumnsState {
   getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
 }
 
-const useColumnsStackedState = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): StackedColumnsState => {
+const useColumnsStackedState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): StackedColumnsState => {
+  const {
+    data,
+    fields,
+    measures,
+    dimensions,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -383,6 +389,8 @@ const useColumnsStackedState = ({
     [segmentValuesByValue]
   );
 
+  const formatters = useChartFormatters(chartProps);
+
   // Tooltips
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
@@ -436,6 +444,13 @@ const useColumnsStackedState = ({
       const xAnchor = getXAnchor();
       const rawSegment = fields.segment && getSegment(datum);
 
+      const yValueFormatter = (value: number | null) =>
+        formatNumberWithUnit(
+          value,
+          formatters[yMeasure.iri] || formatNumber,
+          yMeasure.unit
+        );
+
       return {
         xAnchor,
         yAnchor,
@@ -443,16 +458,12 @@ const useColumnsStackedState = ({
         xValue: getX(datum),
         datum: {
           label: rawSegment,
-          value: yMeasure.unit
-            ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-            : formatNumber(getY(datum)),
+          value: yValueFormatter(getY(datum)),
           color: colors(getSegment(datum)) as string,
         },
         values: sortedTooltipValues.map((td) => ({
           label: getSegmentLabel(getSegment(td)),
-          value: yMeasure.unit
-            ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-            : formatNumber(getY(td)),
+          value: yValueFormatter(getY(td)),
           color: colors(getSegment(td)) as string,
         })),
       };
@@ -462,6 +473,7 @@ const useColumnsStackedState = ({
       colors,
       fields.segment,
       formatNumber,
+      formatters,
       getSegment,
       getSegmentLabel,
       getX,
@@ -469,6 +481,7 @@ const useColumnsStackedState = ({
       preparedDataGroupedByX,
       segments,
       xScale,
+      yMeasure.iri,
       yMeasure.unit,
       yScale,
     ]

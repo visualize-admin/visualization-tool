@@ -446,14 +446,8 @@ const useMapState = (
   const identicalLayerComponentIris =
     areaLayer.componentIri === symbolLayer.componentIri;
 
-  const areaMeasureLabel = useMemo(
-    () => measures.find((m) => m.iri === areaLayer.measureIri)?.label || "",
-    [areaLayer.measureIri, measures]
-  );
-  const symbolMeasureLabel = useMemo(
-    () => measures.find((m) => m.iri === symbolLayer.measureIri)?.label || "",
-    [symbolLayer.measureIri, measures]
-  );
+  const areaMeasureLabel = areaMeasureDimension?.label || "";
+  const symbolMeasureLabel = symbolMeasureDimension?.label || "";
 
   const areaDataDomain = (extent(areaData, (d) => getAreaValue(d)) || [
     0, 100,
@@ -603,18 +597,16 @@ export const MapChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <MapTooltipProvider>
-          <MapChartProvider
-            data={data}
-            features={features}
-            fields={fields}
-            measures={measures}
-            dimensions={dimensions}
-            baseLayer={baseLayer}
-          >
-            {children}
-          </MapChartProvider>
-        </MapTooltipProvider>
+        <MapChartProvider
+          data={data}
+          features={features}
+          fields={fields}
+          measures={measures}
+          dimensions={dimensions}
+          baseLayer={baseLayer}
+        >
+          <MapTooltipProvider>{children}</MapTooltipProvider>
+        </MapChartProvider>
       </InteractionProvider>
     </Observer>
   );

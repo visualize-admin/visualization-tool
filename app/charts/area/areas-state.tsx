@@ -41,6 +41,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
   useTimeFormatUnit,
@@ -50,6 +51,8 @@ import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+
+import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface AreasState {
   chartType: "area";
@@ -71,20 +74,23 @@ export interface AreasState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useAreasState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: AreaFields;
-  aspectRatio: number;
-}): AreasState => {
+const useAreasState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: AreaFields;
+    aspectRatio: number;
+  }
+): AreasState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -161,7 +167,7 @@ const useAreasState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    plotters: [getX, getY]
+    plotters: [getX, getY],
   });
 
   // Data for chart
@@ -353,6 +359,8 @@ const useAreasState = ({
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const formatters = useChartFormatters(chartProps);
+
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
@@ -373,6 +381,13 @@ const useAreasState = ({
 
     const yPlacement = "top";
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(
+        value,
+        formatters[yMeasure.iri] || formatNumber,
+        yMeasure.unit
+      );
+
     return {
       xAnchor,
       yAnchor,
@@ -380,17 +395,13 @@ const useAreasState = ({
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: hasSegment ? getSegment(datum) : undefined,
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: hasSegment
         ? sortedTooltipValues.map((td) => ({
             label: getSegment(td),
-            value: yMeasure.unit
-              ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-              : formatNumber(getY(td)),
+            value: yValueFormatter(getY(td)),
             color: colors(getSegment(td)) as string,
           }))
         : undefined,

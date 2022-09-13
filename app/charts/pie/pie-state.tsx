@@ -24,10 +24,13 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { PieFields, SortingOrder, SortingType } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+
+import useChartFormatters from "../shared/use-chart-formatters";
 
 const sortData = ({
   data,
@@ -67,20 +70,23 @@ export interface PieState {
   getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
 }
 
-const usePieState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: PieFields;
-  aspectRatio: number;
-}): PieState => {
+const usePieState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: PieFields;
+    aspectRatio: number;
+  }
+): PieState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const [interactiveFilters] = useInteractiveFilters();
@@ -104,7 +110,10 @@ const usePieState = ({
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  const plottableSortedData = usePlottableData({ data: sortedData, plotters: [getY] });
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getY],
+  });
 
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({
@@ -199,6 +208,14 @@ const usePieState = ({
       }
     });
 
+  const formatters = useChartFormatters(chartProps);
+  const valueFormatter = (value: number | null) =>
+    formatNumberWithUnit(
+      value,
+      formatters[yMeasure.iri] || formatNumber,
+      yMeasure.unit
+    );
+
   // Tooltip
   const getAnnotationInfo = (
     arcDatum: PieArcDatum<Observation>
@@ -227,9 +244,7 @@ const usePieState = ({
       placement: { x: xPlacement, y: yPlacement },
       xValue: getX(datum),
       datum: {
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: valueFormatter(getY(datum)),
         color: colors(getX(datum)) as string,
       },
       values: undefined,

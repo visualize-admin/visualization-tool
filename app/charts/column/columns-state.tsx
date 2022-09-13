@@ -52,6 +52,8 @@ import { Observation } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
+import useChartFormatters from "../shared/use-chart-formatters";
+
 export interface ColumnsState {
   chartType: "column";
   bounds: Bounds;
@@ -98,7 +100,11 @@ const useColumnsState = (
   const timeFormatUnit = useTimeFormatUnit();
   const [interactiveFilters] = useInteractiveFilters();
 
-  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+  const dimensionsByIri = useMemo(
+    () => Object.fromEntries(dimensions.map((d) => [d.iri, d])),
+    [dimensions]
+  );
+  const xDimension = dimensionsByIri[fields.x.componentIri];
 
   if (!xDimension) {
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
@@ -148,7 +154,7 @@ const useColumnsState = (
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    plotters: [getXAsDate, getY]
+    plotters: [getXAsDate, getY],
   });
 
   // Data for chart
@@ -196,6 +202,7 @@ const useColumnsState = (
     .nice();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+  const formatters = useChartFormatters(chartProps);
 
   if (!yMeasure) {
     throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
@@ -280,7 +287,11 @@ const useColumnsState = (
     const xAnchor = getXAnchor();
 
     const yValueFormatter = (value: number | null) =>
-      formatNumberWithUnit(value, formatNumber, yMeasure.unit);
+      formatNumberWithUnit(
+        value,
+        formatters[yMeasure.iri] || formatNumber,
+        yMeasure.unit
+      );
 
     return {
       xAnchor,

@@ -33,6 +33,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
   useTimeFormatUnit,
@@ -42,6 +43,8 @@ import { useTheme } from "@/themes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+
+import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface LinesState {
   chartType: "line";
@@ -66,20 +69,23 @@ export interface LinesState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useLinesState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: LineFields;
-  aspectRatio: number;
-}): LinesState => {
+const useLinesState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: LineFields;
+    aspectRatio: number;
+  }
+): LinesState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const theme = useTheme();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -109,7 +115,7 @@ const useLinesState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    plotters: [getX, getY]
+    plotters: [getX, getY],
   });
 
   const dataGroupedByX = useMemo(
@@ -275,6 +281,8 @@ const useLinesState = ({
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const formatters = useChartFormatters(chartProps);
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
@@ -294,6 +302,13 @@ const useLinesState = ({
 
     const yPlacement = "top";
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(
+        value,
+        formatters[yMeasure.iri] || formatNumber,
+        yMeasure.unit
+      );
+
     return {
       xAnchor,
       yAnchor,
@@ -301,17 +316,13 @@ const useLinesState = ({
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
         hide: getY(td) === null,
         label: getSegment(td),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-          : formatNumber(getY(td)),
+        value: yValueFormatter(getY(td)),
         color:
           segments.length > 1
             ? (colors(getSegment(td)) as string)

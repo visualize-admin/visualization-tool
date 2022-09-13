@@ -43,6 +43,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   mkNumber,
   useErrorMeasure,
@@ -53,6 +54,8 @@ import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+
+import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface GroupedColumnsState {
   chartType: "column";
@@ -359,6 +362,8 @@ const useGroupedColumnsState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const formatters = useChartFormatters(chartProps);
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
@@ -395,6 +400,14 @@ const useGroupedColumnsState = (
         ? xRef + xOffset
         : xRef + xOffset * 2;
     };
+
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(
+        value,
+        formatters[yMeasure.iri] || formatNumber,
+        yMeasure.unit
+      );
+
     const xAnchor = getXAnchor();
 
     return {
@@ -404,9 +417,7 @@ const useGroupedColumnsState = (
       xValue: getX(datum),
       datum: {
         label: fields.segment && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
