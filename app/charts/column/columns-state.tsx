@@ -105,7 +105,6 @@ const useColumnsState = (
     [dimensions]
   );
   const xDimension = dimensionsByIri[fields.x.componentIri];
-
   if (!xDimension) {
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
@@ -152,12 +151,12 @@ const useColumnsState = (
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
+  // Data
   const plottableSortedData = usePlottableData({
     data: sortedData,
     plotters: [getXAsDate, getY],
   });
 
-  // Data for chart
   const preparedData = usePreparedData({
     timeFilterActive: interactiveFiltersConfig?.time.active,
     sortedData: plottableSortedData,
@@ -165,41 +164,53 @@ const useColumnsState = (
     getX: getXAsDate,
   });
 
-  // x
-  const bandDomain = [...new Set(preparedData.map(getX))];
-  const xScale = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
-  const xScaleInteraction = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
+  // Scales
+  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain } =
+    useMemo(() => {
+      // x
+      const bandDomain = [...new Set(preparedData.map(getX))];
+      const xScale = scaleBand()
+        .domain(bandDomain)
+        .paddingInner(PADDING_INNER)
+        .paddingOuter(PADDING_OUTER);
+      const xScaleInteraction = scaleBand()
+        .domain(bandDomain)
+        .paddingInner(0)
+        .paddingOuter(0);
 
-  // x as time, needs to be memoized!
-  const xEntireDomainAsTime = useMemo(
-    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, plottableSortedData]
-  );
-  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+      // x as time, needs to be memoized!
+      const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
+        getXAsDate(d)
+      ) as [Date, Date];
 
-  // y
-  const minValue = Math.min(
-    min(preparedData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-    ) ?? 0,
-    0
-  );
-  const maxValue = Math.max(
-    max(preparedData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
-    ) ?? 0,
-    0
-  );
+      const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
-  const yScale = scaleLinear()
-    .domain([mkNumber(minValue), mkNumber(maxValue)])
-    .nice();
+      // y
+      const minValue = Math.min(
+        min(preparedData, (d) =>
+          getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+        ) ?? 0,
+        0
+      );
+      const maxValue = Math.max(
+        max(preparedData, (d) =>
+          getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+        ) ?? 0,
+        0
+      );
+
+      const yScale = scaleLinear()
+        .domain([mkNumber(minValue), mkNumber(maxValue)])
+        .nice();
+      return { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain };
+    }, [
+      getX,
+      getXAsDate,
+      getY,
+      getYErrorRange,
+      plottableSortedData,
+      preparedData,
+    ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
   const formatters = useChartFormatters(chartProps);

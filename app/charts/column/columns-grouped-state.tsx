@@ -144,28 +144,25 @@ const useGroupedColumnsState = (
   const xSortingType = fields.x.sorting?.sortingType;
   const xSortingOrder = fields.x.sorting?.sortingOrder;
 
-  const xOrder = [
-    ...rollup(
-      data,
-      (v) => sum(v, (x) => getY(x)),
-      (x) => getX(x)
-    ),
-  ]
-    .sort((a, b) => ascending(a[1], b[1]))
-    .map((d) => d[0]);
-
   // All data
-  const sortedData = useMemo(
-    () =>
-      sortData({
+  const sortedData = useMemo(() => {
+    const xOrder = [
+      ...rollup(
         data,
-        getX,
-        xSortingType,
-        xSortingOrder,
-        xOrder,
-      }),
-    [data, getX, xSortingType, xSortingOrder, xOrder]
-  );
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getX(x)
+      ),
+    ]
+      .sort((a, b) => ascending(a[1], b[1]))
+      .map((d) => d[0]);
+    return sortData({
+      data,
+      getX,
+      xSortingType,
+      xSortingOrder,
+      xOrder,
+    });
+  }, [data, getX, xSortingType, xSortingOrder, getY]);
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
@@ -241,70 +238,98 @@ const useGroupedColumnsState = (
     plottableSortedData,
   ]);
 
-  // Map ordered segments to colors
-  const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
+  /* Scales */
+  const {
+    bandDomain,
+    colors,
+    yScale,
+    xEntireScale,
+    xScale,
+    xScaleIn,
+    xScaleInteraction,
+  } = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    );
 
-  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (s: { label: string; value: string }) =>
-          s.label === segment || s.value === segment
-      ).value;
+    if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+        const dvIri = segmentDimension.values.find(
+          (s: { label: string; value: string }) =>
+            s.label === segment || s.value === segment
+        ).value;
 
-      return {
-        label: segment,
-        color: fields.segment?.colorMapping![dvIri] || "#006699",
-      };
-    });
+        return {
+          label: segment,
+          color: fields.segment?.colorMapping![dvIri] || "#006699",
+        };
+      });
 
-    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
-    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-  } else {
-    colors.domain(segments);
-    colors.range(getPalette(fields.segment?.palette));
-  }
+      colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+      colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+    } else {
+      colors.domain(segments);
+      colors.range(getPalette(fields.segment?.palette));
+    }
 
-  // x
-  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
-  const xScale = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
-  const xScaleInteraction = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
-  const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
+    const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+    const xScale = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(PADDING_INNER)
+      .paddingOuter(PADDING_OUTER);
+    const xScaleInteraction = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(0)
+      .paddingOuter(0);
+    const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
-  // x as time, needs to be memoized!
-  const xEntireDomainAsTime = useMemo(
-    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, plottableSortedData]
-  );
-  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    // x as time, needs to be memoized!
+    const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
+    const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
-  // y
-  const minValue = Math.min(
-    mkNumber(
-      min(preparedData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
-      )
-    ),
-    0
-  );
-  const maxValue = Math.max(
-    max(preparedData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
-    ) as number,
-    0
-  );
+    // y
+    const minValue = Math.min(
+      mkNumber(
+        min(preparedData, (d) =>
+          getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
+        )
+      ),
+      0
+    );
+    const maxValue = Math.max(
+      max(preparedData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
+      ) as number,
+      0
+    );
 
-  const yScale = scaleLinear()
-    .domain([mkNumber(minValue), mkNumber(maxValue)])
-    .nice();
+    const yScale = scaleLinear()
+      .domain([mkNumber(minValue), mkNumber(maxValue)])
+      .nice();
+
+    return {
+      colors,
+      yScale,
+      xEntireScale,
+      xScale,
+      xScaleIn,
+      xScaleInteraction,
+      bandDomain,
+    };
+  }, [
+    dimensions,
+    fields.segment,
+    getX,
+    getXAsDate,
+    getY,
+    getYErrorRange,
+    plottableSortedData,
+    preparedData,
+    segments,
+  ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -315,21 +340,25 @@ const useGroupedColumnsState = (
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // Group
-  const groupedMap = group(preparedData, getX);
-  const grouped = [...groupedMap];
+  const grouped = useMemo(() => {
+    const groupedMap = group(preparedData, getX);
+    const grouped = [...groupedMap];
 
-  // sort by segments
-  grouped.forEach((group) => {
-    return [
-      group[0],
-      sortByIndex({
-        data: group[1],
-        order: segments,
-        getCategory: getSegment,
-        sortOrder: segmentSortingOrder,
-      }),
-    ];
-  });
+    // sort by segments
+    grouped.forEach((group) => {
+      return [
+        group[0],
+        sortByIndex({
+          data: group[1],
+          order: segments,
+          getCategory: getSegment,
+          sortOrder: segmentSortingOrder,
+        }),
+      ];
+    });
+
+    return grouped;
+  }, [getSegment, getX, preparedData, segmentSortingOrder, segments]);
 
   const { left, bottom } = useChartPadding(
     yScale,
@@ -356,6 +385,7 @@ const useGroupedColumnsState = (
     chartHeight,
   };
 
+  // Adjust of scales based on chart dimensions
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
