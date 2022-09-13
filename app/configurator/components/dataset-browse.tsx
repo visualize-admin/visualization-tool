@@ -347,6 +347,7 @@ export const SearchDatasetBox = ({
   const onToggleIncludeDrafts = useEvent(async () => {
     setIncludeDrafts(!includeDrafts);
     if (inputRef.current && inputRef.current.value.length > 0) {
+      // We need to wait here otherwise the includeDrafts is reset :/
       await new Promise((resolve) => setTimeout(resolve, 200));
       onSubmitSearch(inputRef.current.value);
     }
