@@ -65,14 +65,14 @@
           "show": false,
           "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
           "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-          "color": {
-            "type": "single",
+          "colors": {
+            "type": "fixed",
             "value": "#1f77b4",
             "opacity": 70
           }
         }
       },
-      "baseLayer": { "show": true }
+      "baseLayer": { "show": true, "locked": false }
     }
   }
 }
