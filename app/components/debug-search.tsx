@@ -298,6 +298,13 @@ const DebugSearch = () => {
         filters={[]}
         locale="en"
       />
+      <Search
+        sourceUrl={sourceUrl}
+        includeDrafts={includeDrafts}
+        query="émissions de gaz à effet de serre"
+        filters={[]}
+        locale="fr"
+      />
     </Box>
   );
 };

@@ -82,14 +82,15 @@ const makeVisualizeFilter = (includeDrafts: boolean) => {
 };
 
 const enhanceQuery = (rawQuery: string) => {
-  return (
-    rawQuery
-      .toLowerCase()
-      .split(" ")
-      // Wildcard Searches on each term
-      .map((t) => `${t}*`)
-      .join(" ")
-  );
+  const enhancedQuery = rawQuery
+    .toLowerCase()
+    .split(" ")
+    // Filter out lowercase, small tokens
+    .filter((t) => t.length > 2 || t.toLowerCase() !== t)
+    // Wildcard Searches on each term
+    .map((t) => `${t}*`)
+    .join(" ");
+  return enhancedQuery;
 };
 
 export const searchCubes = async ({
@@ -123,7 +124,7 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?scoreName ?scoreDescription ?scoreTheme ?scorePublisher ?scoreCreator`
+  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?scoreName ?scoreDescription`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
@@ -155,6 +156,37 @@ export const searchCubes = async ({
           (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${query}" .
         }
       }
+      `
+        : ""
+    }
+
+  `;
+
+  const scoresQuery2 = SELECT.DISTINCT`?cube ?versionHistory ?scoreTheme ?scorePublisher ?scoreCreator`
+    .WHERE`
+    ?cube a ${ns.cube.Cube}.
+    ?cube ${ns.schema.name} ?name.
+    
+    ?cube ${ns.dcat.theme} ?theme.
+    ?cube ${ns.dcterms.creator} ?creator.
+    
+    OPTIONAL {
+      ?cube ${ns.schema.about} ?about.
+    }
+
+    OPTIONAL {
+      ?versionHistory ${ns.schema.hasPart} ?cube.
+    }
+    
+    ${makeVisualizeFilter(!!includeDrafts)}
+
+    ${makeInFilter("about", aboutValues)}
+    ${makeInFilter("theme", themeValues)}
+    ${makeInFilter("creator", creatorValues)}
+
+    ${
+      query && query.length > 0
+        ? sparql`
       UNION  {
         OPTIONAL {
           ?cube ${ns.dcterms.publisher} ?publisher.
@@ -182,16 +214,21 @@ export const searchCubes = async ({
 
   `;
 
-  const { meta: scoresMeta, data: scoresRaw } = await executeAndMeasure(
-    sparqlClient,
-    scoresQuery
-  );
+  let scoreResults = await executeAndMeasure(sparqlClient, scoresQuery);
   queries.push({
-    ...scoresMeta,
-    label: "scores",
+    ...scoreResults.meta,
+    label: "scores1",
   });
 
-  const infoPerCube = computeScores(scoresRaw, {
+  if (scoreResults.data.length === 0) {
+    scoreResults = await executeAndMeasure(sparqlClient, scoresQuery2);
+    queries.push({
+      ...scoreResults.meta,
+      label: "scores2",
+    });
+  }
+
+  const infoPerCube = computeScores(scoreResults.data, {
     keepZeros: !query || query.length === 0,
   });
 
