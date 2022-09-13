@@ -26,7 +26,6 @@ import {
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
-import { CheckboxStateController, makeTreeFromValues } from "@/rdf/tree-utils";
 import { dfs } from "@/utils/dfs";
 import useEvent from "@/utils/use-event";
 
@@ -49,20 +48,20 @@ export type FieldProps = Pick<
   "onChange" | "id" | "name" | "value" | "checked" | "type"
 >;
 
-const getLeafs = (tree: HierarchyValue[], limit: number) => {
-  const leafs = tree ? ([] as HierarchyValue[]) : undefined;
-  if (tree && leafs) {
+const getLeaves = (tree: HierarchyValue[], limit?: number) => {
+  const leaves = tree ? ([] as HierarchyValue[]) : undefined;
+  if (tree && leaves) {
     dfs(tree, (node) => {
       if (
         (!node.children || node.children.length === 0) &&
         node.hasValue &&
-        leafs.length < limit
+        (limit === undefined || leaves.length < limit)
       ) {
-        leafs?.push(node);
+        leaves?.push(node);
       }
     });
   }
-  return leafs;
+  return leaves;
 };
 
 // Generic ------------------------------------------------------------------
@@ -99,8 +98,8 @@ export const useChartFieldField = ({
       const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
         ?.hierarchy as HierarchyValue[];
 
-      // If the dimension has a hierarchy, we select 7 leaves
-      const leafs = getLeafs(tree, 7);
+      // If the dimension has a hierarchy, we select leaves
+      const leaves = getLeaves(tree);
 
       dispatch({
         type: "CHART_FIELD_CHANGED",
@@ -108,7 +107,7 @@ export const useChartFieldField = ({
           field,
           dataSetMetadata,
           componentIri: dimensionIri,
-          selectedValues: leafs,
+          selectedValues: leaves,
         },
       });
     } else {
@@ -465,7 +464,6 @@ const MultiFilterContext = React.createContext({
   allValues: [] as string[],
   dimensionIri: "",
   colorConfigPath: undefined as string | undefined,
-  checkboxController: new CheckboxStateController([], []),
   getValueColor: (_: string) => "" as string,
 });
 
@@ -484,7 +482,6 @@ export const MultiFilterContextProvider = ({
   dimensionIri,
   colorConfigPath,
   dimensionData,
-  hierarchyData,
   children,
   getValueColor,
 }: {
@@ -522,64 +519,20 @@ export const MultiFilterContextProvider = ({
   }, [dimensionData, activeFilter, allValues]);
 
   const ctx = useMemo(() => {
-    const tree =
-      hierarchyData && hierarchyData.length > 0
-        ? hierarchyData
-        : makeTreeFromValues(allValues, dimensionIri, { depth: 0 });
-
     return {
       allValues,
       activeKeys,
       dimensionIri,
       colorConfigPath,
       getValueColor,
-      checkboxController: new CheckboxStateController(tree, [...activeKeys]),
     };
-  }, [
-    hierarchyData,
-    allValues,
-    dimensionIri,
-    activeKeys,
-    colorConfigPath,
-    getValueColor,
-  ]);
+  }, [allValues, dimensionIri, activeKeys, colorConfigPath, getValueColor]);
 
   return (
     <MultiFilterContext.Provider value={ctx}>
       {children}
     </MultiFilterContext.Provider>
   );
-};
-
-export const useMultiFilterCheckboxes = (
-  value: string,
-  onChangeProp?: () => void
-) => {
-  const [, dispatch] = useConfiguratorState();
-  const { dimensionIri, checkboxController } = useMultiFilterContext();
-
-  const onChange = useEvent(() => {
-    if (!dimensionIri) {
-      return;
-    }
-    checkboxController.toggle(value);
-    dispatch({
-      type: "CHART_CONFIG_FILTER_SET_MULTI",
-      value: {
-        dimensionIri,
-        values: checkboxController.getValues(),
-      },
-    });
-    onChangeProp?.();
-  });
-
-  const checkboxState = checkboxController.checkboxStates.get(value);
-  return {
-    onChange,
-    checked: checkboxState === "checked",
-    indeterminate: checkboxState === "indeterminate",
-    dimensionIri,
-  };
 };
 
 export const useMetaField = ({

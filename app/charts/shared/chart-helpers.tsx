@@ -69,6 +69,25 @@ export const useQueryFilters = ({
 
 type ValuePredicate = (v: any) => boolean;
 
+export const usePlottableData = ({
+  data,
+  plotters
+}: {
+  data: Observation[];
+  plotters: ((d: Observation) => unknown | null)[]
+}) => {
+  const isPlottable = useCallback((d: Observation) => {
+    for (let p of plotters) {
+      const v = p(d)
+      if (v === undefined || v === null) {
+        return false
+      }
+    }
+    return true
+  }, [plotters]);
+  return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
+};
+
 // Prepare data used in charts.
 // Different than the full dataset because
 // interactive filters may be applied (legend + brush)

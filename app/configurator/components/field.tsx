@@ -40,7 +40,6 @@ import {
   isMultiFilterFieldChecked,
   useChartOptionBooleanField,
   useChartOptionSelectField,
-  useMultiFilterCheckboxes,
   useMultiFilterContext,
   useSingleFilterSelect,
 } from "@/configurator/config-form";
@@ -529,42 +528,6 @@ export const MultiFilterFieldColorPicker = ({ value }: { value: string }) => {
       onChange={onChange}
     />
   ) : null;
-};
-
-export const MultiFilterFieldCheckbox = ({
-  label,
-  value,
-  disabled,
-  onChange: onChangeProp,
-}: {
-  label: string;
-  value: string;
-  disabled?: boolean;
-  onChange?: () => void;
-}) => {
-  const [state] = useConfiguratorState();
-  const {
-    onChange: onFieldChange,
-    checked,
-    indeterminate,
-    dimensionIri,
-  } = useMultiFilterCheckboxes(value, onChangeProp);
-
-  if (state.state !== "CONFIGURING_CHART") {
-    return null;
-  }
-
-  return (
-    <Checkbox
-      name={dimensionIri}
-      value={value}
-      label={label}
-      disabled={disabled}
-      onChange={onFieldChange}
-      checked={checked}
-      indeterminate={indeterminate}
-    />
-  );
 };
 
 export const SingleFilterField = ({

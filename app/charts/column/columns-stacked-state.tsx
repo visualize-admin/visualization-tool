@@ -34,6 +34,7 @@ import {
   getLabelWithUnit,
   getWideData,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
   useStringVariable,
@@ -150,11 +151,16 @@ const useColumnsStackedState = ({
     [data, getX, sortingType, sortingOrder, xOrder]
   );
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getXAsDate, getY],
+  });
+
   // Data for Chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
     timeFilterActive: interactiveFiltersConfig?.time.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,
     getSegment,
@@ -178,10 +184,11 @@ const useColumnsStackedState = ({
 
   const segments = useMemo(() => {
     const getSegmentsOrderedByName = () =>
-      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
-        segmentSortingOrder === "asc"
-          ? a.localeCompare(b, locale)
-          : b.localeCompare(a, locale)
+      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
+        (a, b) =>
+          segmentSortingOrder === "asc"
+            ? a.localeCompare(b, locale)
+            : b.localeCompare(a, locale)
       );
 
     const dimension = dimensions.find(
@@ -189,7 +196,7 @@ const useColumnsStackedState = ({
     );
     const getSegmentsOrderedByPosition = () => {
       const segments = Array.from(
-        new Set(sortedData.map((d) => getSegment(d)))
+        new Set(plottableSortedData.map((d) => getSegment(d)))
       );
       if (!dimension) {
         return segments;
@@ -201,7 +208,7 @@ const useColumnsStackedState = ({
     const getSegmentsOrderedByTotalValue = () =>
       [
         ...rollup(
-          sortedData,
+          plottableSortedData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
@@ -223,7 +230,7 @@ const useColumnsStackedState = ({
   }, [
     dimensions,
     segmentSortingType,
-    sortedData,
+    plottableSortedData,
     getSegment,
     segmentSortingOrder,
     locale,
@@ -288,8 +295,8 @@ const useColumnsStackedState = ({
 
   // x as time, needs to be memoized!
   const xEntireDomainAsTime = useMemo(
-    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, sortedData]
+    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, plottableSortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
@@ -470,7 +477,7 @@ const useColumnsStackedState = ({
   return {
     chartType: "column",
     preparedData,
-    allData: sortedData,
+    allData: plottableSortedData,
     bounds,
     getX,
     getXAsDate,

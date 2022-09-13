@@ -29,6 +29,7 @@ import {
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
   useStringVariable,
@@ -163,11 +164,16 @@ const useGroupedColumnsState = (
     [data, getX, xSortingType, xSortingOrder, xOrder]
   );
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getXAsDate, getY],
+  });
+
   // Data for chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
     timeFilterActive: interactiveFiltersConfig?.time.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,
     getSegment,
@@ -179,10 +185,11 @@ const useGroupedColumnsState = (
 
   const segments = useMemo(() => {
     const getSegmentsOrderedByName = () =>
-      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
-        segmentSortingOrder === "asc"
-          ? a.localeCompare(b, locale)
-          : b.localeCompare(a, locale)
+      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
+        (a, b) =>
+          segmentSortingOrder === "asc"
+            ? a.localeCompare(b, locale)
+            : b.localeCompare(a, locale)
       );
 
     const dimension = dimensions.find(
@@ -191,7 +198,7 @@ const useGroupedColumnsState = (
 
     const getSegmentsOrderedByPosition = () => {
       const segments = Array.from(
-        new Set(sortedData.map((d) => getSegment(d)))
+        new Set(plottableSortedData.map((d) => getSegment(d)))
       );
       if (!dimension) {
         return segments;
@@ -203,7 +210,7 @@ const useGroupedColumnsState = (
     const getSegmentsOrderedByTotalValue = () =>
       [
         ...rollup(
-          sortedData,
+          plottableSortedData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
@@ -228,7 +235,7 @@ const useGroupedColumnsState = (
     locale,
     segmentSortingOrder,
     segmentSortingType,
-    sortedData,
+    plottableSortedData,
   ]);
 
   // Map ordered segments to colors
@@ -271,8 +278,8 @@ const useGroupedColumnsState = (
 
   // x as time, needs to be memoized!
   const xEntireDomainAsTime = useMemo(
-    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, sortedData]
+    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, plottableSortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
@@ -415,7 +422,7 @@ const useGroupedColumnsState = (
   return {
     chartType: "column",
     preparedData,
-    allData: sortedData,
+    allData: plottableSortedData,
     bounds,
     getX,
     getXAsDate,

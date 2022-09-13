@@ -70,7 +70,6 @@ import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
 export const DEFAULT_PALETTE = "category10";
-const SEGMENT_CHILDREN_INITIAL_LIMIT = 7;
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -696,7 +695,7 @@ const handleChartFieldChanged = (
   ].find((dim) => dim.iri === componentIri);
   const selectedValues = actionSelectedValues
     ? actionSelectedValues
-    : component?.values.slice(0, SEGMENT_CHILDREN_INITIAL_LIMIT) || [];
+    : component?.values || [];
   if (!f) {
     // The field was not defined before
     if (field === "segment") {

@@ -28,6 +28,7 @@ import {
   getWideData,
   stackOffsetDivergingPositiveZeros,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
   useStringVariable,
@@ -158,11 +159,16 @@ const useAreasState = ({
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getX, getY]
+  });
+
   // Data for chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
     timeFilterActive: interactiveFiltersConfig?.time.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getX,
     getSegment,
@@ -207,16 +213,17 @@ const useAreasState = ({
 
   const segments = useMemo(() => {
     const getSegmentsOrderedByName = () =>
-      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
-        segmentSortingOrder === "asc"
-          ? a.localeCompare(b, locale)
-          : b.localeCompare(a, locale)
+      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
+        (a, b) =>
+          segmentSortingOrder === "asc"
+            ? a.localeCompare(b, locale)
+            : b.localeCompare(a, locale)
       );
 
     const getSegmentsOrderedByTotalValue = () =>
       [
         ...rollup(
-          sortedData,
+          plottableSortedData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
@@ -230,7 +237,7 @@ const useAreasState = ({
 
     const getSegmentsOrderedByPosition = () => {
       const segments = Array.from(
-        new Set(sortedData.map((d) => getSegment(d)))
+        new Set(plottableSortedData.map((d) => getSegment(d)))
       );
       const sorter = dimension ? makeOrdinalDimensionSorter(dimension) : null;
       return sorter ? sortBy(segments, sorter) : segments;
@@ -254,7 +261,7 @@ const useAreasState = ({
     locale,
     segmentSortingOrder,
     segmentSortingType,
-    sortedData,
+    plottableSortedData,
   ]);
 
   // Stack order
@@ -286,8 +293,8 @@ const useAreasState = ({
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(sortedData, (d) => getX(d)) as [Date, Date],
-    [sortedData, getX]
+    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
+    [plottableSortedData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
 

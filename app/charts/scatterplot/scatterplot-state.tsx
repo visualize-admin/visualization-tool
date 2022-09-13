@@ -14,6 +14,7 @@ import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
+  usePlottableData,
   usePreparedData,
   useSegment,
 } from "@/charts/shared/chart-helpers";
@@ -72,15 +73,19 @@ const useScatterplotState = ({
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
-  // All data, sort by segment
   const sortedData = data.sort((a, b) =>
     ascending(getSegment(a), getSegment(b))
   );
 
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getX, getY]
+  });
+
   // Data for chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    sortedData,
+    sortedData: plottableSortedData,
     interactiveFilters,
     getSegment,
   });
@@ -111,7 +116,9 @@ const useScatterplotState = ({
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segments = [...new Set(sortedData.map(getSegment))]; // get *all* segments
+  const segments = useMemo(() => {
+    return [...new Set(plottableSortedData.map(getSegment))];
+  }, [getSegment, plottableSortedData]); // get *visible* segments
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
