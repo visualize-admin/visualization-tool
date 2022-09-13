@@ -29,8 +29,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-
-import useChartFormatters from "../shared/use-chart-formatters";
+import useChartFormatters from "@/shared/use-chart-formatters";
 
 const sortData = ({
   data,

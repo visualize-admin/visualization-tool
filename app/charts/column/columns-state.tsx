@@ -50,9 +50,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
+import useChartFormatters from "@/shared/use-chart-formatters";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
-
-import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface ColumnsState {
   chartType: "column";

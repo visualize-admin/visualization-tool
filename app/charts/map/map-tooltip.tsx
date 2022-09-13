@@ -20,8 +20,7 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { truthy } from "@/domain/types";
-
-import useChartFormatters from "../shared/use-chart-formatters";
+import useChartFormatters from "@/shared/use-chart-formatters";
 
 export type HoverObjectType = "area" | "symbol";
 

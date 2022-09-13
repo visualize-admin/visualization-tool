@@ -39,12 +39,11 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import useChartFormatters from "@/shared/use-chart-formatters";
 import { useTheme } from "@/themes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
-
-import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface LinesState {
   chartType: "line";

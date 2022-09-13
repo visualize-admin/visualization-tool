@@ -54,10 +54,9 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
+import useChartFormatters from "@/shared/use-chart-formatters";
 import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
-
-import useChartFormatters from "../shared/use-chart-formatters";
 
 export interface StackedColumnsState {
   chartType: "column";
