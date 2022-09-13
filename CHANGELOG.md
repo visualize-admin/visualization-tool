@@ -9,6 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Search
+  - Improve search time
+  - Input value is kept when URL is shared
 - Added migrations of chart configs (breaking changes to schema will not break existing charts)
 
 ## [3.7.11] - 2022-09-09

@@ -1,3 +1,5 @@
+import { ParsedUrlQuery } from "querystring";
+
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
 import {
@@ -16,13 +18,7 @@ import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { stringify } from "qs";
-import React, {
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { UseQueryState } from "urql";
 
 import { BrowseParams } from "@/browser/dataset-browser";
@@ -150,10 +146,48 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
   } as React.ComponentProps<typeof Link>["href"];
 };
 
+const useQueryParamsState = <T extends object>(
+  initialState: T,
+  {
+    serialize,
+    parse,
+  }: {
+    serialize: (s: T) => Parameters<typeof router.replace>[0];
+    parse: (s: ParsedUrlQuery) => T;
+  }
+) => {
+  const router = useRouter();
+  const [state, rawSetState] = useState(() => {
+    // Rely directly on window instead of router since router takes a bit of time
+    // to be initialized
+    const sp =
+      typeof window !== "undefined"
+        ? new URL(window.location.href).searchParams
+        : undefined;
+    return sp ? parse(Object.fromEntries(sp.entries())) : initialState;
+  });
+  useEffect(() => {
+    if (router.isReady) {
+      rawSetState(parse(router.query));
+    }
+    // We only need the effect to run once the router is ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, rawSetState]);
+  const setState = useEvent((stateUpdate: T) => {
+    rawSetState((curState) => {
+      const newState = { ...curState, ...stateUpdate } as T;
+      router.replace(serialize(newState), undefined, {
+        shallow: true,
+      });
+      return newState;
+    });
+  });
+  return [state, setState] as const;
+};
+
 export const useBrowseState = () => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
-  const router = useRouter();
   const [{ data: themeData }] = useThemesQuery({
     variables: {
       sourceType: dataSource.type,
@@ -169,41 +203,29 @@ export const useBrowseState = () => {
     },
   });
 
-  const setParams = useCallback(
-    (params: BrowseParams) => {
-      const state = getBrowseParamsFromQuery(router.query);
-      const newState = { ...state, ...params } as BrowseParams;
-      router.replace(buildURLFromBrowseState(newState), undefined, {
-        shallow: true,
-      });
-    },
-    [router]
+  const [browseParams, setParams] = useQueryParamsState(
+    {},
+    {
+      parse: getBrowseParamsFromQuery,
+      serialize: buildURLFromBrowseState,
+    }
   );
 
-  const browseParams = getBrowseParamsFromQuery(router.query);
   const { search, type, order, iri, includeDrafts } = browseParams;
-  const dataset = type === "dataset" ? iri : null;
+  const dataset = type === "dataset" ? iri : undefined;
   const filters = getFiltersFromParams(browseParams, {
     themes: themeData?.themes,
     organizations: orgData?.organizations,
   });
 
-  const setSearch = useCallback(
-    (v: string) => setParams({ search: v }),
-    [setParams]
+  const setSearch = useEvent((v: string) => setParams({ search: v }));
+  const setIncludeDrafts = useEvent((v: boolean) =>
+    setParams({ includeDrafts: v })
   );
-  const setIncludeDrafts = useCallback(
-    (v: boolean) => setParams({ includeDrafts: v }),
-    [setParams]
+  const setOrder = useEvent((v: DataCubeResultOrder) =>
+    setParams({ order: v })
   );
-  const setOrder = useCallback(
-    (v: string) => setParams({ order: v }),
-    [setParams]
-  );
-  const setDataset = useCallback(
-    (v: string) => setParams({ dataset: v }),
-    [setParams]
-  );
+  const setDataset = useEvent((v: string) => setParams({ dataset: v }));
 
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.Score
@@ -211,7 +233,7 @@ export const useBrowseState = () => {
 
   return useMemo(
     () => ({
-      includeDrafts,
+      includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
         setParams({ search: "", order: previousOrderRef.current });
@@ -327,9 +349,14 @@ export const SearchDatasetBox = ({
 
   const isSearching = search !== "";
 
-  const onToggleIncludeDrafts = useCallback(() => {
+  const onToggleIncludeDrafts = useEvent(async () => {
     setIncludeDrafts(!includeDrafts);
-  }, [includeDrafts, setIncludeDrafts]);
+    if (inputRef.current && inputRef.current.value.length > 0) {
+      // We need to wait here otherwise the includeDrafts is reset :/
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      onSubmitSearch(inputRef.current.value);
+    }
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
   const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {

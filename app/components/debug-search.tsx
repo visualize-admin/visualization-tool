@@ -8,9 +8,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  KeyboardEventHandler,
+} from "react";
 
 import { DataCubeSearchFilter, useDataCubesQuery } from "@/graphql/query-hooks";
 
@@ -181,6 +186,17 @@ const DebugSearch = () => {
   const [sourceUrl, setSourceUrl] = useState(
     "https://int.lindas.admin.ch/query"
   );
+
+  const [customSearch, setCustomSearch] = useState("");
+  const handleKeyUp: KeyboardEventHandler<HTMLDivElement> = (ev) => {
+    if (ev.key === "Enter") {
+      if (!ev.target) {
+        return;
+      }
+      setCustomSearch((ev.target as HTMLInputElement).value);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -206,98 +222,122 @@ const DebugSearch = () => {
         <MenuItem value="https://int.lindas.admin.ch/query">int</MenuItem>
         <MenuItem value="https://lindas.admin.ch/query">prod</MenuItem>
       </Select>
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="bruit"
-        filters={[]}
-        locale="fr"
+      <TextField
+        defaultValue=""
+        placeholder="Search..."
+        onKeyUp={handleKeyUp}
       />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="Bathing"
-        filters={[territoryTheme]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="bath"
-        filters={[territoryTheme]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="Ausgaben"
-        filters={[]}
-        locale="de"
-      />
-
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query=""
-        filters={[territoryTheme]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="SFOE"
-        filters={[geographyTheme]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="National economy"
-        filters={[]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="Einmalvergütung"
-        filters={[]}
-        locale="de"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="zeitverzögert"
-        filters={[]}
-        locale="de"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="öffentlich"
-        filters={[]}
-        locale="de"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="WASTA"
-        filters={[]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="tari"
-        filters={[]}
-        locale="en"
-      />
-      <Search
-        sourceUrl={sourceUrl}
-        includeDrafts={includeDrafts}
-        query="SFA"
-        filters={[]}
-        locale="en"
-      />
+      {customSearch !== "" ? (
+        <Search
+          key={customSearch}
+          sourceUrl={sourceUrl}
+          includeDrafts={includeDrafts}
+          query={customSearch}
+          filters={[]}
+          locale="fr"
+        />
+      ) : (
+        <>
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="bruit"
+            filters={[]}
+            locale="fr"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="Bathing"
+            filters={[territoryTheme]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="bath"
+            filters={[territoryTheme]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="Ausgaben"
+            filters={[]}
+            locale="de"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query=""
+            filters={[territoryTheme]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="SFOE"
+            filters={[geographyTheme]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="National economy"
+            filters={[]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="Einmalvergütung"
+            filters={[]}
+            locale="de"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="zeitverzögert"
+            filters={[]}
+            locale="de"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="öffentlich"
+            filters={[]}
+            locale="de"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="WASTA"
+            filters={[]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="tari"
+            filters={[]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="SFA"
+            filters={[]}
+            locale="en"
+          />
+          <Search
+            sourceUrl={sourceUrl}
+            includeDrafts={includeDrafts}
+            query="émissions de gaz à effet de serre"
+            filters={[]}
+            locale="fr"
+          />
+        </>
+      )}
     </Box>
   );
 };

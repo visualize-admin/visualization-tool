@@ -196,7 +196,7 @@ export const Checkbox = ({
       <MUICheckbox
         data-name="checkbox-component"
         size={smaller ? "small" : "medium"}
-        id={`${name}-${label}`}
+        id={name}
         name={name}
         value={value}
         checked={checked}
