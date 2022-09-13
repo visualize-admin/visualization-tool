@@ -13,6 +13,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Improve search time
   - Input value is kept when URL is shared
 - Added migrations of chart configs (breaking changes to schema will not break existing charts)
+- Tech
+  - Diminish size of Javascript that is shipped to the client. Should improve page load performance
+- Better formatting of numbers inside chart tooltips (for example for currencies)
 
 ## [3.7.11] - 2022-09-09
 
