@@ -1,13 +1,56 @@
-import { ChartAreasVisualization } from "@/charts/area/chart-area";
-import { ChartBarsVisualization } from "@/charts/bar/chart-bar";
-import { ChartColumnsVisualization } from "@/charts/column/chart-column";
-import { ChartLinesVisualization } from "@/charts/line/chart-lines";
-import { ChartMapVisualization } from "@/charts/map/chart-map";
-import { ChartPieVisualization } from "@/charts/pie/chart-pie";
-import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatterplot";
+import dynamic from "next/dynamic";
+
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { ChartTableVisualization } from "@/charts/table/chart-table";
 import { ChartConfig, DataSource } from "@/configurator";
+
+const ChartAreasVisualization = dynamic(
+  import("@/charts/area/chart-area").then(
+    (mod) => mod.ChartAreasVisualization,
+    () => null as never
+  )
+);
+const ChartBarsVisualization = dynamic(
+  import("@/charts/bar/chart-bar").then(
+    (mod) => mod.ChartBarsVisualization,
+    () => null as never
+  )
+);
+const ChartColumnsVisualization = dynamic(
+  import("@/charts/column/chart-column").then(
+    (mod) => mod.ChartColumnsVisualization,
+    () => null as never
+  )
+);
+const ChartLinesVisualization = dynamic(
+  import("@/charts/line/chart-lines").then(
+    (mod) => mod.ChartLinesVisualization,
+    () => null as never
+  )
+);
+const ChartMapVisualization = dynamic(
+  import("@/charts/map/chart-map").then(
+    (mod) => mod.ChartMapVisualization,
+    () => null as never
+  )
+);
+const ChartPieVisualization = dynamic(
+  import("@/charts/pie/chart-pie").then(
+    (mod) => mod.ChartPieVisualization,
+    () => null as never
+  )
+);
+const ChartScatterplotVisualization = dynamic(
+  import("@/charts/scatterplot/chart-scatterplot").then(
+    (mod) => mod.ChartScatterplotVisualization,
+    () => null as never
+  )
+);
+const ChartTableVisualization = dynamic(
+  import("@/charts/table/chart-table").then(
+    (mod) => mod.ChartTableVisualization,
+    () => null as never
+  )
+);
 
 const GenericChart = ({
   dataSet,

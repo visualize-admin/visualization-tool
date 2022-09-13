@@ -19,6 +19,8 @@ import {
   formatNumberWithUnit,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
+import { truthy } from "@/domain/types";
+import useChartFormatters from "@/shared/use-chart-formatters";
 
 export type HoverObjectType = "area" | "symbol";
 
@@ -82,6 +84,30 @@ export const MapTooltip = () => {
       textColor,
     };
   }, [areaValue, areaLayer]);
+
+  const formatters = useChartFormatters({
+    dimensions: [],
+    measures: [areaLayer.measureDimension, symbolLayer.measureDimension].filter(
+      truthy
+    ),
+  });
+  const areaValueFormatter = (value: number | null) =>
+    formatNumberWithUnit(
+      value,
+      areaLayer.measureDimension?.iri
+        ? formatters[areaLayer.measureDimension?.iri] || formatNumber
+        : formatNumber,
+      areaLayer.measureDimension?.unit
+    );
+  const symbolValueFormatter = (value: number | null) =>
+    formatNumberWithUnit(
+      value,
+      symbolLayer.measureDimension?.iri
+        ? formatters[symbolLayer.measureDimension?.iri] || formatNumber
+        : formatNumber,
+      symbolLayer.measureDimension?.unit
+    );
+
   const symbolColorProps = useMemo(() => {
     const obs = interaction.d;
     const colors = symbolLayer.colors;
@@ -167,11 +193,7 @@ export const MapTooltip = () => {
                       title={areaLayer.measureLabel}
                       background={areaColorProps.color}
                       color={areaColorProps.textColor}
-                      value={formatNumberWithUnit(
-                        areaValue,
-                        formatNumber,
-                        areaLayer?.measureDimension?.unit
-                      )}
+                      value={areaValueFormatter(areaValue)}
                       error={
                         formatAreaError
                           ? ` ± ${formatAreaError(interaction.d)}`
@@ -200,11 +222,7 @@ export const MapTooltip = () => {
                               ? symbolColorProps.textColor
                               : "#000"
                           }
-                          value={formatNumberWithUnit(
-                            symbolValue,
-                            formatNumber,
-                            symbolLayer?.measureDimension?.unit
-                          )}
+                          value={symbolValueFormatter(symbolValue)}
                           error={
                             formatSymbolError
                               ? ` ± ${formatSymbolError(interaction.d)}`

@@ -48,11 +48,13 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
+import useChartFormatters from "@/shared/use-chart-formatters";
 import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
@@ -81,20 +83,23 @@ export interface StackedColumnsState {
   getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
 }
 
-const useColumnsStackedState = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): StackedColumnsState => {
+const useColumnsStackedState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): StackedColumnsState => {
+  const {
+    data,
+    fields,
+    measures,
+    dimensions,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -250,7 +255,14 @@ const useColumnsStackedState = ({
 
   // Scales
   // Map ordered segments labels to colors
-  const colors = useMemo(() => {
+  const {
+    colors,
+    xScale,
+    xScaleInteraction,
+    xEntireScale,
+    yStackDomain,
+    bandDomain,
+  } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
     if (fields.segment && segmentValuesByLabel && fields.segment.colorMapping) {
@@ -279,41 +291,58 @@ const useColumnsStackedState = ({
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
     }
-    return colors;
-  }, [fields.segment, segmentValuesByLabel, segmentValuesByValue, segments]);
 
-  // x
-  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
-  const xScale = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
-  const xScaleInteraction = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
+    // x
+    const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+    const xScale = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(PADDING_INNER)
+      .paddingOuter(PADDING_OUTER);
+    const xScaleInteraction = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(0)
+      .paddingOuter(0);
 
-  // x as time, needs to be memoized!
-  const xEntireDomainAsTime = useMemo(
-    () => extent(plottableSortedData, (d) => getXAsDate(d)) as [Date, Date],
-    [getXAsDate, plottableSortedData]
-  );
-  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    // x as time, needs to be memoized!
+    const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
+    const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
-  // y
-  const minTotal = min<$FixMe, number>(chartWideData, (d) =>
-    segments
-      .map((s) => d[s])
-      .filter((d) => d < 0)
-      .reduce((a, b) => a + b, 0)
-  );
-  const maxTotal = max<$FixMe, number>(chartWideData, (d) =>
-    segments
-      .map((s) => d[s])
-      .filter((d) => d >= 0)
-      .reduce((a, b) => a + b, 0)
-  );
-  const yStackDomain = [minTotal, maxTotal] as [number, number];
+    // y
+    const minTotal = min<$FixMe, number>(chartWideData, (d) =>
+      segments
+        .map((s) => d[s])
+        .filter((d) => d < 0)
+        .reduce((a, b) => a + b, 0)
+    );
+    const maxTotal = max<$FixMe, number>(chartWideData, (d) =>
+      segments
+        .map((s) => d[s])
+        .filter((d) => d >= 0)
+        .reduce((a, b) => a + b, 0)
+    );
+    const yStackDomain = [minTotal, maxTotal] as [number, number];
+
+    return {
+      colors,
+      yStackDomain,
+      xScale,
+      xEntireScale,
+      xScaleInteraction,
+      bandDomain,
+    };
+  }, [
+    chartWideData,
+    fields.segment,
+    getX,
+    getXAsDate,
+    plottableSortedData,
+    preparedData,
+    segmentValuesByLabel,
+    segmentValuesByValue,
+    segments,
+  ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -326,25 +355,29 @@ const useColumnsStackedState = ({
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
   // stack order
-  const stackOrder =
-    segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
-      ? stackOrderAscending
-      : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
-      ? stackOrderDescending
-      : // Reverse segments here, so they're sorted from top to bottom
-        stackOrderReverse;
+  const series = useMemo(() => {
+    const stackOrder =
+      segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
+        ? stackOrderAscending
+        : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
+        ? stackOrderDescending
+        : // Reverse segments here, so they're sorted from top to bottom
+          stackOrderReverse;
 
-  const stacked = stack()
-    .order(stackOrder)
-    .offset(stackOffsetDiverging)
-    .keys(segments);
+    const stacked = stack()
+      .order(stackOrder)
+      .offset(stackOffsetDiverging)
+      .keys(segments);
 
-  const series = stacked(
-    chartWideData as {
-      [key: string]: number;
-    }[]
-  );
+    const series = stacked(
+      chartWideData as {
+        [key: string]: number;
+      }[]
+    );
+    return series;
+  }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
+  /** Chart dimensions */
   const { left, bottom } = useChartPadding(
     yScale,
     width,
@@ -382,6 +415,8 @@ const useColumnsStackedState = ({
     },
     [segmentValuesByValue]
   );
+
+  const formatters = useChartFormatters(chartProps);
 
   // Tooltips
   const getAnnotationInfo = useCallback(
@@ -436,6 +471,13 @@ const useColumnsStackedState = ({
       const xAnchor = getXAnchor();
       const rawSegment = fields.segment && getSegment(datum);
 
+      const yValueFormatter = (value: number | null) =>
+        formatNumberWithUnit(
+          value,
+          formatters[yMeasure.iri] || formatNumber,
+          yMeasure.unit
+        );
+
       return {
         xAnchor,
         yAnchor,
@@ -443,16 +485,12 @@ const useColumnsStackedState = ({
         xValue: getX(datum),
         datum: {
           label: rawSegment,
-          value: yMeasure.unit
-            ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-            : formatNumber(getY(datum)),
+          value: yValueFormatter(getY(datum)),
           color: colors(getSegment(datum)) as string,
         },
         values: sortedTooltipValues.map((td) => ({
           label: getSegmentLabel(getSegment(td)),
-          value: yMeasure.unit
-            ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-            : formatNumber(getY(td)),
+          value: yValueFormatter(getY(td)),
           color: colors(getSegment(td)) as string,
         })),
       };
@@ -462,6 +500,7 @@ const useColumnsStackedState = ({
       colors,
       fields.segment,
       formatNumber,
+      formatters,
       getSegment,
       getSegmentLabel,
       getX,
@@ -469,6 +508,7 @@ const useColumnsStackedState = ({
       preparedDataGroupedByX,
       segments,
       xScale,
+      yMeasure.iri,
       yMeasure.unit,
       yScale,
     ]

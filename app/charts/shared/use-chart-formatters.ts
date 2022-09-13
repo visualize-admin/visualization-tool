@@ -1,0 +1,19 @@
+import { useMemo } from "react";
+
+import { useDimensionFormatters } from "@/configurator/components/ui-helpers";
+
+import { ChartProps } from "./use-chart-state";
+
+const useChartFormatters = (
+  chartProps: Pick<ChartProps, "measures" | "dimensions">
+) => {
+  const { measures, dimensions } = chartProps;
+  const allDimensions = useMemo(
+    () => [...measures, ...dimensions],
+    [measures, dimensions]
+  );
+  const formatters = useDimensionFormatters(allDimensions);
+  return formatters;
+};
+
+export default useChartFormatters;

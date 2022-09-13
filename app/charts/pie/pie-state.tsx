@@ -24,10 +24,12 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { PieFields, SortingOrder, SortingType } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import useChartFormatters from "@/shared/use-chart-formatters";
 
 const sortData = ({
   data,
@@ -67,20 +69,23 @@ export interface PieState {
   getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
 }
 
-const usePieState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: PieFields;
-  aspectRatio: number;
-}): PieState => {
+const usePieState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: PieFields;
+    aspectRatio: number;
+  }
+): PieState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const [interactiveFilters] = useInteractiveFilters();
@@ -104,7 +109,10 @@ const usePieState = ({
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  const plottableSortedData = usePlottableData({ data: sortedData, plotters: [getY] });
+  const plottableSortedData = usePlottableData({
+    data: sortedData,
+    plotters: [getY],
+  });
 
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({
@@ -114,38 +122,44 @@ const usePieState = ({
     getSegment: getX,
   });
 
-  // Map ordered segments to colors
-  const segments = Array.from(new Set(plottableSortedData.map((d) => getX(d))));
-  const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
-
-  const { segmentValuesByValue } = useMemo(() => {
+  const { segmentValuesByValue, segmentDimension } = useMemo(() => {
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as $FixMe;
     return {
+      segmentDimension,
       segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
       segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
     };
-  }, [segmentDimension.values]);
+  }, [dimensions, fields.segment?.componentIri]);
 
-  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
-      ).value;
+  // Map ordered segments to colors
+  const colors = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+    const segments = Array.from(
+      new Set(plottableSortedData.map((d) => getX(d)))
+    );
 
-      return {
-        label: segment,
-        color: fields.segment?.colorMapping![dvIri] || "#006699",
-      };
-    });
+    if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+        const dvIri = segmentDimension.values.find(
+          (s: $FixMe) => s.label === segment
+        ).value;
 
-    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
-    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-  } else {
-    colors.domain(segments);
-    colors.range(getPalette(fields.segment?.palette));
-  }
+        return {
+          label: segment,
+          color: fields.segment?.colorMapping![dvIri] || "#006699",
+        };
+      });
+
+      colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+      colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+    } else {
+      colors.domain(segments);
+      colors.range(getPalette(fields.segment?.palette));
+    }
+    return colors;
+  }, [fields.segment, getX, plottableSortedData, segmentDimension]);
 
   const getSegmentLabel = useCallback(
     (segment: string): string => {
@@ -199,6 +213,14 @@ const usePieState = ({
       }
     });
 
+  const formatters = useChartFormatters(chartProps);
+  const valueFormatter = (value: number | null) =>
+    formatNumberWithUnit(
+      value,
+      formatters[yMeasure.iri] || formatNumber,
+      yMeasure.unit
+    );
+
   // Tooltip
   const getAnnotationInfo = (
     arcDatum: PieArcDatum<Observation>
@@ -227,9 +249,7 @@ const usePieState = ({
       placement: { x: xPlacement, y: yPlacement },
       xValue: getX(datum),
       datum: {
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: valueFormatter(getY(datum)),
         color: colors(getX(datum)) as string,
       },
       values: undefined,

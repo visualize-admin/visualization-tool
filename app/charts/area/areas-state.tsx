@@ -41,12 +41,14 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
+import useChartFormatters from "@/shared/use-chart-formatters";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
@@ -71,20 +73,23 @@ export interface AreasState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useAreasState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: AreaFields;
-  aspectRatio: number;
-}): AreasState => {
+const useAreasState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: AreaFields;
+    aspectRatio: number;
+  }
+): AreasState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -161,7 +166,7 @@ const useAreasState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    plotters: [getX, getY]
+    plotters: [getX, getY],
   });
 
   // Data for chart
@@ -174,30 +179,25 @@ const useAreasState = ({
     getSegment,
   });
 
-  const preparedDataGroupedByX = useMemo(
-    () => group(preparedData, getGroups),
-    [preparedData, getGroups]
-  );
-
-  const chartWideData = useMemo(
-    () =>
-      getWideData({
-        dataGroupedByX: preparedDataGroupedByX,
-        xKey,
-        getY,
-        allSegments,
-        getSegment,
-        imputationType: fields.y.imputationType,
-      }),
-    [
-      preparedDataGroupedByX,
+  const chartWideData = useMemo(() => {
+    const preparedDataGroupedByX = group(preparedData, getGroups);
+    return getWideData({
+      dataGroupedByX: preparedDataGroupedByX,
       xKey,
       getY,
       allSegments,
       getSegment,
-      fields.y.imputationType,
-    ]
-  );
+      imputationType: fields.y.imputationType,
+    });
+  }, [
+    preparedData,
+    getGroups,
+    xKey,
+    getY,
+    allSegments,
+    getSegment,
+    fields.y.imputationType,
+  ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -264,66 +264,76 @@ const useAreasState = ({
     plottableSortedData,
   ]);
 
-  // Stack order
-  const stackOrder =
-    segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
-      ? stackOrderAscending
-      : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
-      ? stackOrderDescending
-      : stackOrderReverse;
+  /** Transform data  */
+  const series = useMemo(() => {
+    const stackOrder =
+      segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
+        ? stackOrderAscending
+        : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
+        ? stackOrderDescending
+        : stackOrderReverse;
 
-  const stacked = stack()
-    .order(stackOrder)
-    .offset(stackOffsetDivergingPositiveZeros)
-    .keys(segments);
-
-  const series = stacked(chartWideData as { [key: string]: number }[]);
+    const stacked = stack()
+      .order(stackOrder)
+      .offset(stackOffsetDivergingPositiveZeros)
+      .keys(segments);
+    return stacked(chartWideData as { [key: string]: number }[]);
+  }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
   /** Scales */
-  const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
-  const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
-  const yDomain = [minTotal, maxTotal];
-
   const entireMaxTotalValue = max<$FixMe>(
     allDataWide,
     (d) => d.total ?? 0
   ) as unknown as number;
 
-  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
-  const xScale = scaleTime().domain(xDomain);
+  const { colors, xScale, yScale, xEntireScale } = useMemo(() => {
+    const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
+    const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
+    const yDomain = [minTotal, maxTotal];
+    const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
+    const xScale = scaleTime().domain(xDomain);
 
-  const xEntireDomain = useMemo(
-    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
-    [plottableSortedData, getX]
-  );
-  const xEntireScale = scaleTime().domain(xEntireDomain);
+    const xEntireDomain = extent(plottableSortedData, (d) => getX(d)) as [
+      Date,
+      Date
+    ];
+    const xEntireScale = scaleTime().domain(xEntireDomain);
+    const yScale = scaleLinear().domain(yDomain).nice();
+    const colors = scaleOrdinal<string, string>();
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as $FixMe;
 
-  const yScale = scaleLinear().domain(yDomain).nice();
+    if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+        const dvIri =
+          segmentValuesByLabel[segment]?.value ||
+          segmentValuesByValue[segment]?.value;
 
-  // Map ordered segments to colors
-  const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
+        return {
+          label: segment,
+          color: fields.segment?.colorMapping![dvIri] || "#006699",
+        };
+      });
 
-  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri =
-        segmentValuesByLabel[segment]?.value ||
-        segmentValuesByValue[segment]?.value;
-
-      return {
-        label: segment,
-        color: fields.segment?.colorMapping![dvIri] || "#006699",
-      };
-    });
-
-    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
-    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-  } else {
-    colors.domain(segments);
-    colors.range(getPalette(fields.segment?.palette));
-  }
+      colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+      colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+    } else {
+      colors.domain(segments);
+      colors.range(getPalette(fields.segment?.palette));
+    }
+    return { colors, xScale, yScale, xEntireScale };
+  }, [
+    dimensions,
+    fields.segment,
+    getX,
+    plottableSortedData,
+    preparedData,
+    segmentValuesByLabel,
+    segmentValuesByValue,
+    segments,
+    series,
+  ]);
 
   /** Dimensions */
   const left = hasInteractiveTimeFilter
@@ -349,9 +359,13 @@ const useAreasState = ({
     chartWidth,
     chartHeight,
   };
+
+  /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
+
+  const formatters = useChartFormatters(chartProps);
 
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -373,6 +387,13 @@ const useAreasState = ({
 
     const yPlacement = "top";
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(
+        value,
+        formatters[yMeasure.iri] || formatNumber,
+        yMeasure.unit
+      );
+
     return {
       xAnchor,
       yAnchor,
@@ -380,17 +401,13 @@ const useAreasState = ({
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: hasSegment ? getSegment(datum) : undefined,
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: hasSegment
         ? sortedTooltipValues.map((td) => ({
             label: getSegment(td),
-            value: yMeasure.unit
-              ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-              : formatNumber(getY(td)),
+            value: yValueFormatter(getY(td)),
             color: colors(getSegment(td)) as string,
           }))
         : undefined,
