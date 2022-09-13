@@ -346,7 +346,11 @@ export const SearchDatasetBox = ({
 
   const onToggleIncludeDrafts = useEvent(async () => {
     setIncludeDrafts(!includeDrafts);
-  }, [includeDrafts, setIncludeDrafts]);
+    if (inputRef.current && inputRef.current.value.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      onSubmitSearch(inputRef.current.value);
+    }
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
   const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
