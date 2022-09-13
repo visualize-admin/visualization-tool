@@ -1,14 +1,9 @@
 import DataLoader from "dataloader";
 import { GraphQLResolveInfo } from "graphql";
-import { ReactNode } from "react";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
-import { createClient, defaultExchanges, Provider } from "urql";
 
-import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
-// @ts-ignore - dynamic package import based on NODE_ENV
-import { devtoolsExchanges } from "@/graphql/devtools";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -17,18 +12,6 @@ import {
 } from "../rdf/query-cube-metadata";
 import { createGeoCoordinatesLoader } from "../rdf/query-geo-coordinates";
 import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
-
-const client = createClient({
-  url: GRAPHQL_ENDPOINT,
-  exchanges:
-    process.env.NODE_ENV === "development"
-      ? [...devtoolsExchanges, ...defaultExchanges]
-      : [...defaultExchanges],
-});
-
-export const GraphqlProvider = ({ children }: { children: ReactNode }) => {
-  return <Provider value={client}>{children}</Provider>;
-};
 
 const MAX_BATCH_SIZE = 500;
 const createLoaders = async (locale: string, sparqlClient: ParsingClient) => {
