@@ -146,6 +146,9 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
   } as React.ComponentProps<typeof Link>["href"];
 };
 
+const extractParamFromPath = (path: string, param: string) =>
+  path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
+
 const useQueryParamsState = <T extends object>(
   initialState: T,
   {
@@ -157,6 +160,7 @@ const useQueryParamsState = <T extends object>(
   }
 ) => {
   const router = useRouter();
+
   const [state, rawSetState] = useState(() => {
     // Rely directly on window instead of router since router takes a bit of time
     // to be initialized
@@ -164,15 +168,18 @@ const useQueryParamsState = <T extends object>(
       typeof window !== "undefined"
         ? new URL(window.location.href).searchParams
         : undefined;
-    return sp ? parse(Object.fromEntries(sp.entries())) : initialState;
-  });
-  useEffect(() => {
-    if (router.isReady) {
-      rawSetState(parse(router.query));
+    const dataset = extractParamFromPath(router.asPath, "dataset");
+    const query = sp ? Object.fromEntries(sp.entries()) : undefined;
+    if (dataset && query) {
+      query.dataset = dataset[0];
     }
-    // We only need the effect to run once the router is ready
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady, rawSetState]);
+    return query ? parse(query) : initialState;
+  });
+
+  useEffect(() => {
+    rawSetState(parse(router.query));
+  }, [parse, router.query]);
+
   const setState = useEvent((stateUpdate: T) => {
     rawSetState((curState) => {
       const newState = { ...curState, ...stateUpdate } as T;
