@@ -112,14 +112,15 @@ export const ColorRampField = ({
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label smaller sx={{ mb: 1 }}>
+      <Label smaller sx={{ mb: 1 }} htmlFor="color-palette">
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
         value={currentPalette}
         disabled={disabled}
         sx={{
-          "& .MuiSelect-select": { height: "44px !important" },
+          width: "100%",
+          "& .MuiSelect-select": { height: "44px", width: "100%" },
         }}
         onChange={onSelectedItemChange}
         renderValue={(value) => {
@@ -129,6 +130,7 @@ export const ColorRampField = ({
                 colorInterpolator={value.interpolator}
                 nbClass={nbClass}
                 disabled={disabled}
+                width={220}
               />
             </Box>
           );
@@ -143,7 +145,11 @@ export const ColorRampField = ({
             key={`sequential-${i}`}
             value={d.value}
           >
-            <ColorRamp colorInterpolator={d.interpolator} nbClass={nbClass} />
+            <ColorRamp
+              colorInterpolator={d.interpolator}
+              nbClass={nbClass}
+              width={220}
+            />
           </MenuItem>
         ))}
         <ListSubheader>
@@ -155,7 +161,11 @@ export const ColorRampField = ({
             key={`diverging-${i}`}
             value={d.value}
           >
-            <ColorRamp colorInterpolator={d.interpolator} nbClass={nbClass} />
+            <ColorRamp
+              colorInterpolator={d.interpolator}
+              nbClass={nbClass}
+              width={220}
+            />
           </MenuItem>
         ))}
       </Select>
