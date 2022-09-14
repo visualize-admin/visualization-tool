@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
-import { keyBy } from "lodash";
 import get from "lodash/get";
+import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { getFieldComponentIri } from "@/charts";

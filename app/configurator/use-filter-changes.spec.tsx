@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { merge } from "lodash";
+import merge from "lodash/merge";
 
 import { ChartConfig } from "@/configurator/config-types";
 import useFilterChanges from "@/configurator/use-filter-changes";

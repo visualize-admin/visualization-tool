@@ -1,6 +1,7 @@
 import { ascending, group } from "d3";
 import produce from "immer";
-import { get, groupBy } from "lodash";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
 
 import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
 import {

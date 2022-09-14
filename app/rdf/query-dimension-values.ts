@@ -1,5 +1,6 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
-import { keyBy, mapValues } from "lodash";
+import keyBy from "lodash/keyBy";
+import mapValues from "lodash/mapValues";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";

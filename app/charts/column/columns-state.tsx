@@ -13,7 +13,9 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import { get, keyBy, sortBy } from "lodash";
+import get from "lodash/get";
+import keyBy from "lodash/keyBy";
+import sortBy from "lodash/sortBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import {

@@ -47,7 +47,8 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { keyBy, memoize } from "lodash";
+import keyBy from "lodash/keyBy";
+import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
@@ -485,14 +486,14 @@ export const useErrorRange = (
 
 export const useFormatNumber = () => {
   const formatter = useMemo(() => {
-  const { format } = getD3FormatLocale();
-  const formatter = format(",.2~f");
-  return (x: NumberValue | null | undefined) => {
-    if (x === null || x === undefined) {
-      return "–";
-    }
-    return `${formatter(x)}`;
-  };
+    const { format } = getD3FormatLocale();
+    const formatter = format(",.2~f");
+    return (x: NumberValue | null | undefined) => {
+      if (x === null || x === undefined) {
+        return "–";
+      }
+      return `${formatter(x)}`;
+    };
   }, []);
   return formatter;
 };

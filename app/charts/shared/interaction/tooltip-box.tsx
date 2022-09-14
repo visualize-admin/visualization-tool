@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { throttle } from "lodash";
+import throttle from "lodash/throttle";
 import React, {
   ReactNode,
   useCallback,

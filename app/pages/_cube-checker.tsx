@@ -3,7 +3,7 @@ import { Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { DESCRIBE } from "@tpluscode/sparql-builder";
 import clownface, { AnyPointer } from "clownface";
 import DataLoader from "dataloader";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import { GetServerSideProps, NextPage } from "next";
 import rdf from "rdf-ext";
 import React from "react";

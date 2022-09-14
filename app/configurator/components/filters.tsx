@@ -19,7 +19,10 @@ import {
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { ascending, groups } from "d3";
-import { get, keyBy, sortBy, groupBy } from "lodash";
+import get from "lodash/get";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
+import sortBy from "lodash/sortBy";
 import React, {
   forwardRef,
   MouseEventHandler,

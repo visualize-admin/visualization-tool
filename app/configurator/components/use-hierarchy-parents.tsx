@@ -1,5 +1,5 @@
 import { groups } from "d3-array";
-import { uniqBy } from "lodash";
+import uniqBy from "lodash/uniqBy";
 import { useMemo } from "react";
 
 import { DataSource } from "@/configurator/config-types";

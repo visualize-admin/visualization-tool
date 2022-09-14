@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import { merge } from "lodash";
+import merge from "lodash/merge";
 import { useState } from "react";
 
 import {

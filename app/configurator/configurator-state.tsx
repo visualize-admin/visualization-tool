@@ -1,5 +1,7 @@
 import { current, produce } from "immer";
-import { get, mapValues, pickBy } from "lodash";
+import get from "lodash/get";
+import mapValues from "lodash/mapValues";
+import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {

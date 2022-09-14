@@ -11,7 +11,8 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import { keyBy, sortBy } from "lodash";
+import keyBy from "lodash/keyBy";
+import sortBy from "lodash/sortBy"
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";

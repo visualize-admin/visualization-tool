@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
-import { GraphqlProvider } from "@/graphql/context";
+import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";

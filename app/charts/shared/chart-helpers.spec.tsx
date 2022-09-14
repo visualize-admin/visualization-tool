@@ -1,5 +1,5 @@
 import { InternMap } from "d3";
-import { merge } from "lodash";
+import merge from "lodash/merge";
 
 import {
   getWideData,

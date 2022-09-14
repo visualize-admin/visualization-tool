@@ -1,4 +1,4 @@
-import { mapValues } from "lodash";
+import mapValues from "lodash/mapValues";
 import { AnySourceData, MapboxStyle } from "react-map-gl/dist/esm/types";
 
 type AnyLayer = MapboxStyle["layers"][number];

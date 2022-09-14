@@ -1,6 +1,6 @@
 import { Client } from "@urql/core";
 import { createDraft, current } from "immer";
-import { get } from "lodash";
+import get from "lodash/get";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
 import {
