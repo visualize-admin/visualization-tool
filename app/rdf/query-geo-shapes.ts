@@ -1,5 +1,5 @@
 import { SELECT } from "@tpluscode/sparql-builder";
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";

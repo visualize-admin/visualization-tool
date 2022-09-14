@@ -1,4 +1,5 @@
-import { max, min } from "lodash";
+import max from "lodash/max";
+import min from "lodash/min";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { DimensionValue, Observation } from "@/domain/data";

@@ -1,4 +1,4 @@
-import { keyBy } from "lodash";
+import keyBy from "lodash/keyBy";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
 

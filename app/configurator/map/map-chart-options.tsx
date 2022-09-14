@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, SelectChangeEvent, Stack } from "@mui/material";
-import { get } from "lodash";
+import get from "lodash/get";
 import React, { memo, useEffect, useMemo } from "react";
 
 import { getMap } from "@/charts/map/ref";

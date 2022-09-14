@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import * as fs from "fs-extra";
-import { flatten } from "lodash";
+import flatten from "lodash/flatten";
 
 import intTestConfigs from "./__fixtures/config/int/configs";
 import prodTestConfigs from "./__fixtures/config/prod/configs";

@@ -1,5 +1,6 @@
 import { group, InternMap, sum } from "d3";
-import { omitBy, overEvery } from "lodash";
+import omitBy from "lodash/omitBy";
+import overEvery from "lodash/overEvery";
 import { useCallback, useMemo } from "react";
 
 import {
@@ -71,20 +72,23 @@ type ValuePredicate = (v: any) => boolean;
 
 export const usePlottableData = ({
   data,
-  plotters
+  plotters,
 }: {
   data: Observation[];
-  plotters: ((d: Observation) => unknown | null)[]
+  plotters: ((d: Observation) => unknown | null)[];
 }) => {
-  const isPlottable = useCallback((d: Observation) => {
-    for (let p of plotters) {
-      const v = p(d)
-      if (v === undefined || v === null) {
-        return false
+  const isPlottable = useCallback(
+    (d: Observation) => {
+      for (let p of plotters) {
+        const v = p(d);
+        if (v === undefined || v === null) {
+          return false;
+        }
       }
-    }
-    return true
-  }, [plotters]);
+      return true;
+    },
+    [plotters]
+  );
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 

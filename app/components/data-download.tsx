@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { saveAs } from "file-saver";
-import { keyBy } from "lodash";
+import keyBy from "lodash/keyBy";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
 import {
   bindHover,

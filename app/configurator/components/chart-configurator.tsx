@@ -11,7 +11,9 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3";
-import { isEmpty, isEqual, sortBy } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
   DragDropContext,

@@ -1,4 +1,4 @@
-import { mapValues } from "lodash";
+import mapValues from "lodash/mapValues";
 
 import { computeScores } from "./query-search-score-utils";
 

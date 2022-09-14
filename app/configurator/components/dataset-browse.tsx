@@ -14,7 +14,11 @@ import {
 import { Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Reorder } from "framer-motion";
-import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
+import mapValues from "lodash/mapValues";
+import orderBy from "lodash/orderBy";
+import pick from "lodash/pick";
+import pickBy from "lodash/pickBy";
+import sortBy from "lodash/sortBy";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { stringify } from "qs";

@@ -14,7 +14,8 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { keyBy, mapValues } from "lodash";
+import keyBy from "lodash/keyBy";
+import mapValues from "lodash/mapValues";
 import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 

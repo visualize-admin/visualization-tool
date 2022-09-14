@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import { keyBy } from "lodash";
+import keyBy from "lodash/keyBy";
 import React, { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";

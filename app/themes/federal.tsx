@@ -1,6 +1,7 @@
 import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
-import { merge, omit } from "lodash";
+import merge from "lodash/merge";
+import omit from "lodash/omit";
 
 import { Icon } from "@/icons";
 import shadows from "@/themes/shadows";

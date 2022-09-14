@@ -1,4 +1,4 @@
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 

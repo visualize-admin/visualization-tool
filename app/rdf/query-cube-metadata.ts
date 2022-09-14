@@ -1,6 +1,6 @@
 import RDF from "@rdfjs/data-model";
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
-import { keyBy } from "lodash";
+import keyBy from "lodash/keyBy";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";

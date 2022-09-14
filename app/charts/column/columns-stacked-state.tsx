@@ -21,7 +21,8 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import { keyBy, sortBy } from "lodash";
+import keyBy from "lodash/keyBy";
+import sortBy from "lodash/sortBy"
 import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {

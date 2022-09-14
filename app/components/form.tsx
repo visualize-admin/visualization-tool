@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
-import { flatten } from "lodash";
+import flatten from "lodash/flatten";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";

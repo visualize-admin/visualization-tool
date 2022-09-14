@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { geoCentroid } from "d3";
-import { keyBy } from "lodash";
+import keyBy from "lodash/keyBy";
 import React, { memo, useMemo } from "react";
 import {
   feature as topojsonFeature,
