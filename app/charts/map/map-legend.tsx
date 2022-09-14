@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import {
   axisBottom,
   NumberValue,
@@ -11,8 +12,7 @@ import {
   select,
   Selection,
 } from "d3";
-import * as React from "react";
-import { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { convertRgbArrayToHex } from "@/charts/shared/colors";
@@ -578,6 +578,12 @@ const ContinuousColorLegend = ({
   );
 };
 
+const useDataPointIndicatorStyles = makeStyles((theme: Theme) => ({
+  root: {
+    transition: `transform ${theme.transitions.duration.shorter}ms ease`,
+  },
+}));
+
 const DataPointIndicator = ({
   scale,
   getValue,
@@ -587,7 +593,7 @@ const DataPointIndicator = ({
 }) => {
   const [state] = useInteraction();
   const { labelColor } = useChartTheme();
-
+  const classes = useDataPointIndicatorStyles();
   return (
     <>
       {state.interaction.d &&
@@ -596,9 +602,12 @@ const DataPointIndicator = ({
           <polygon
             fill={labelColor}
             points="-4,0 4,0 0,4"
-            transform={`translate(${scale(
-              getValue(state.interaction.d) ?? 0
-            )}, 0)`}
+            className={classes.root}
+            style={{
+              transform: `translate(${scale(
+                getValue(state.interaction.d) ?? 0
+              )}px, 0)`,
+            }}
           />
         )}
     </>
