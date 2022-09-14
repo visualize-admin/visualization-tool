@@ -1,6 +1,6 @@
 let
   pkgs = import <nixpkgs> { };
-  nodejs = pkgs.nodejs-12_x;
+  nodejs = pkgs.nodejs-16_x;
 
 in pkgs.mkShell {
   buildInputs = [
