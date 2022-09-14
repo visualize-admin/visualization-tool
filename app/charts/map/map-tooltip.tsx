@@ -13,6 +13,7 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { convertRgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
+import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import {
@@ -20,7 +21,6 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { truthy } from "@/domain/types";
-import useChartFormatters from "@/shared/use-chart-formatters";
 
 export type HoverObjectType = "area" | "symbol";
 

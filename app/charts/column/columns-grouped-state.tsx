@@ -37,6 +37,7 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
+import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -52,7 +53,6 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
-import useChartFormatters from "@/shared/use-chart-formatters";
 import { sortByIndex } from "@/utils/array";
 import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 
