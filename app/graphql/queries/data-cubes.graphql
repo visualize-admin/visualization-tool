@@ -49,6 +49,7 @@ fragment dimensionMetadata on Dimension {
     iri
     type
   }
+  ...hierarchyMetadata
   ... on TemporalDimension {
     timeUnit
     timeFormat
