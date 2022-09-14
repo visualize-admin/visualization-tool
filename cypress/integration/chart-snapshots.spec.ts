@@ -18,7 +18,7 @@ describe("Chart Snapshots", () => {
         });
         cy.viewport(...viewportArgs);
         cy.visit(`/en/__test/${env}/${slug}`);
-        cy.get(`[data-chart-loaded="true"]`, { timeout: 40000 });
+        cy.get(`[data-chart-loaded="true"]`, { timeout: 90000 });
         cy.wait(100);
 
         if (slug.includes("map")) {
