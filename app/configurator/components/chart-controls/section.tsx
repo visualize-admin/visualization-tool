@@ -60,6 +60,7 @@ export const ControlSectionContent = ({
   gap = "default",
   px,
   sx,
+  ...props
 }: {
   component?: ElementType;
   role?: string;
@@ -71,12 +72,13 @@ export const ControlSectionContent = ({
   gap?: "large" | "default" | "none";
   px?: "small" | "default";
   sx?: BoxProps["sx"];
-}) => {
+} & BoxProps) => {
   return (
     <Box
       component={component}
       role={role}
       aria-labelledby={ariaLabelledBy}
+      {...props}
       sx={{
         display: "flex",
         flexDirection: "column",

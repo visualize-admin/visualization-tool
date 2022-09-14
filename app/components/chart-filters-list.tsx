@@ -69,6 +69,7 @@ export const ChartFiltersList = ({
             component="div"
             variant="body2"
             sx={{ color: "grey.800" }}
+            data-testid="chart-filters-list"
           >
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>

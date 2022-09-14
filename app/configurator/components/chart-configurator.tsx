@@ -567,7 +567,10 @@ export const ChartConfigurator = ({
             ) : null}
           </SectionTitle>
 
-          <ControlSectionContent aria-labelledby="controls-data">
+          <ControlSectionContent
+            aria-labelledby="controls-data"
+            data-testid="configurator-filters"
+          >
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
