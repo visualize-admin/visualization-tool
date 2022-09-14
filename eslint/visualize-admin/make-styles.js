@@ -59,10 +59,14 @@ module.exports = {
       'CallExpression[callee.name="makeStyles"]': function (node) {
         // Handle makeStyles({}) and makeStyles(theme => ({}))
         const classNames =
-          node.arguments[0].type === "ObjectExpression"
+          node.arguments[0] && node.arguments[0].type === "ObjectExpression"
             ? node.arguments[0]
             : node.arguments[0].body;
-        if (!classNames.properties || !classNames.properties.length) {
+        if (
+          !classNames ||
+          !classNames.properties ||
+          !classNames.properties.length
+        ) {
           return;
         }
 
