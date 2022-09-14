@@ -1,8 +1,13 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
-import { useSelect } from "downshift";
+import {
+  Box,
+  Select,
+  MenuItem,
+  ListSubheader,
+  SelectProps,
+} from "@mui/material";
 import get from "lodash/get";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Label } from "@/components/form";
 import {
@@ -15,7 +20,7 @@ import {
   Palette,
   sequentialPalettes,
 } from "@/configurator/components/ui-helpers";
-import { Icon } from "@/icons";
+import useEvent from "@/utils/use-event";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 
@@ -90,118 +95,70 @@ export const ColorRampField = ({
   const currentPalette =
     palettes.find((d) => d.value === currentPaletteName) || defaultPalette;
 
-  const onSelectedItemChange = useCallback(
-    ({ selectedItem }) => {
-      if (selectedItem) {
+  const onSelectedItemChange: SelectProps<typeof currentPalette>["onChange"] =
+    useEvent((ev) => {
+      const value = ev.target.value as typeof currentPalette["value"];
+      if (value) {
         dispatch({
           type: "CHART_OPTION_CHANGED",
           value: {
             field,
             path,
-            value: selectedItem.value,
+            value,
           },
         });
       }
-    },
-    [dispatch, field, path]
-  );
-
-  const {
-    isOpen,
-    getToggleButtonProps,
-    getLabelProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect({
-    items: palettes,
-    defaultSelectedItem: currentPalette,
-    onSelectedItemChange,
-  });
+    });
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label disabled={disabled} smaller {...getLabelProps()} sx={{ mb: 1 }}>
+      <Label smaller sx={{ mb: 1 }}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
-      <Button
-        variant="selectColorPicker"
-        {...getToggleButtonProps()}
-        sx={{ cursor: "pointer" }}
+      <Select
+        value={currentPalette}
+        disabled={disabled}
+        sx={{
+          "& .MuiSelect-select": { height: "44px !important" },
+        }}
+        onChange={onSelectedItemChange}
+        renderValue={(value) => {
+          return (
+            <Box mr={2}>
+              <ColorRamp
+                colorInterpolator={value.interpolator}
+                nbClass={nbClass}
+                disabled={disabled}
+              />
+            </Box>
+          );
+        }}
       >
-        {state.state === "CONFIGURING_CHART" && (
-          <>
-            <ColorRamp
-              colorInterpolator={currentPalette.interpolator}
-              nbClass={nbClass}
-              disabled={disabled}
-            />
-            <Icon name="unfold" />
-          </>
-        )}
-      </Button>
-      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
-        {isOpen && (
-          <>
-            <Typography component="div" variant="caption" sx={{ p: 1 }}>
-              <Trans id="controls.color.palette.sequential">Sequential</Trans>
-            </Typography>
-            {sequentialPalettes.map((d, i) => (
-              <PaletteRamp
-                key={`sequential-${i}`}
-                palette={d}
-                itemProps={getItemProps({
-                  item: d,
-                  index: i,
-                })}
-                highlighted={i === highlightedIndex}
-                nbClass={nbClass}
-              />
-            ))}
-            <Typography component="div" variant="caption" sx={{ p: 1 }}>
-              <Trans id="controls.color.palette.diverging">Diverging</Trans>
-            </Typography>
-            {divergingPalettes.map((d, i) => (
-              <PaletteRamp
-                key={`diverging-${i}`}
-                palette={d}
-                itemProps={getItemProps({
-                  item: d,
-                  index: i + sequentialPalettes.length,
-                })}
-                highlighted={i + sequentialPalettes.length === highlightedIndex}
-                nbClass={nbClass}
-              />
-            ))}
-          </>
-        )}
-      </Box>
-    </Box>
-  );
-};
-
-const PaletteRamp = (props: {
-  palette: {
-    label: string;
-    value: DivergingPaletteType | SequentialPaletteType;
-    interpolator: (t: number) => string;
-  };
-  itemProps: any;
-  highlighted?: boolean;
-  nbClass?: number;
-}) => {
-  const { palette, itemProps, highlighted, nbClass } = props;
-  const backgroundColor = highlighted ? "grey.200" : "grey.100";
-
-  return (
-    <Box sx={{ p: 1, cursor: "pointer", backgroundColor }}>
-      <Box sx={{ backgroundColor }} {...itemProps}>
-        <ColorRamp
-          key={`option-${palette.value}`}
-          colorInterpolator={palette.interpolator}
-          nbClass={nbClass}
-        />
-      </Box>
+        <ListSubheader>
+          <Trans id="controls.color.palette.sequential">Sequential</Trans>
+        </ListSubheader>
+        {sequentialPalettes.map((d, i) => (
+          <MenuItem
+            sx={{ flexDirection: "column", alignItems: "flex-start" }}
+            key={`sequential-${i}`}
+            value={d.value}
+          >
+            <ColorRamp colorInterpolator={d.interpolator} nbClass={nbClass} />
+          </MenuItem>
+        ))}
+        <ListSubheader>
+          <Trans id="controls.color.palette.diverging">Diverging</Trans>
+        </ListSubheader>
+        {divergingPalettes.map((d, i) => (
+          <MenuItem
+            sx={{ flexDirection: "column", alignItems: "flex-start" }}
+            key={`diverging-${i}`}
+            value={d.value}
+          >
+            <ColorRamp colorInterpolator={d.interpolator} nbClass={nbClass} />
+          </MenuItem>
+        ))}
+      </Select>
     </Box>
   );
 };
