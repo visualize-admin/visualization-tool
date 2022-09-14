@@ -184,7 +184,7 @@ export const Checkbox = ({
 } & FieldProps) => (
   <FormControlLabel
     label={label || "-"}
-    htmlFor={`${name}-${label}`}
+    htmlFor={`${name}`}
     disabled={disabled}
     componentsProps={{
       typography: {

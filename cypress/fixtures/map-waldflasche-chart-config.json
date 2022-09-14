@@ -20,6 +20,7 @@
     }
   },
   "chartConfig": {
+    "version": "1.0.2",
     "chartType": "map",
     "filters": {
       "https://environment.ld.admin.ch/foen/nfi/inventory": {

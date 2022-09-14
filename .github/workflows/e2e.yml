@@ -1,0 +1,73 @@
+name: E2E
+
+on: [deployment_status]
+jobs:
+  e2e:
+    # only runs this job on successful deploy
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Install dependencies
+        run: yarn install --immutable
+        shell: bash
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+        env:
+          CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+      # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#job-status-check-functions
+      - name: Cypress tests ✅
+        if: ${{ success() }}
+        # set the merge commit status check
+        # using GitHub REST API
+        # see https://docs.github.com/en/rest/reference/repos#create-a-commit-status
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "context": "e2e",
+            "state": "success",
+            "description": "Cypress tests passed"
+          }'
+      - name: Cypress tests 🚨
+        if: ${{ failure() }}
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "context": "e2e",
+            "state": "failure",
+            "description": "Cypress tests failed"
+          }'
+      # - name: Set argos upload branch on master branch
+      #   run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
+      #   if: github.ref == 'refs/heads/main'
+      # - name: Set argos upload branch on PR branches
+      #   run: echo "ARGOS_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+      #   if: github.ref != 'refs/heads/main'
+      # - name: Upload screenshots
+      #   env:
+      #     ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+      #   run: yarn run argos upload --commit $GITHUB_SHA --branch $ARGOS_BRANCH  cypress/screenshots

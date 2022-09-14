@@ -5,7 +5,7 @@ Cypress.on("uncaught:exception", (err) => {
 });
 
 describe("Searching for charts", () => {
-  it("should be possible to edit filters of a hierarchy", () => {
+  it("should be possible to open a search URL, and search state should be recovered", () => {
     cy.visit(
       `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int`
     );
