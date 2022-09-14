@@ -4,7 +4,7 @@ export const DEFAULT_SYMBOL_LAYER_COLORS = {
   opacity: 80,
 };
 
-export const DEFAULT_COLOR = [0, 0, 0, 255];
+export const DEFAULT_COLOR = [222, 222, 222, 125];
 
 export const FLY_TO_DURATION = 500;
 
