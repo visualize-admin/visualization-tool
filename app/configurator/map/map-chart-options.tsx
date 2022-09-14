@@ -243,6 +243,7 @@ export const AreaLayerSettings = memo(
             />
             <div>
               <FieldSetLegend
+                sx={{ mb: 1 }}
                 legendTitle={t({
                   id: "controls.scale.type",
                   message: "Scale type",
