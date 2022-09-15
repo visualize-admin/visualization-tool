@@ -222,6 +222,7 @@ export const MapComponent = () => {
 
     return new GeoJsonLayer({
       id: "areaLayer",
+      beforeId: "water_polygon",
       // @ts-ignore - FIXME: properly type data & getFillColor fields
       data: sortedShapes,
       pickable: true,
@@ -354,7 +355,10 @@ export const MapComponent = () => {
           }}
           {...viewState}
         >
-          <DeckGLOverlay layers={[geoJsonLayer, scatterplotLayer]} />
+          <DeckGLOverlay
+            interleaved={true}
+            layers={[geoJsonLayer, scatterplotLayer]}
+          />
         </Map>
       ) : null}
     </>
