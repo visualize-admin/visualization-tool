@@ -497,7 +497,11 @@ export const SymbolLayerSettings = memo(
                 />
               ) : null
             ) : (
-              <ColorRampField field={activeField} path="colors.palette" />
+              <ColorRampField
+                field={activeField}
+                path="colors.palette"
+                disabled={!symbolLayer.show}
+              />
             )}
           </ControlSectionContent>
         </ControlSection>
