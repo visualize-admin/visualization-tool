@@ -9,9 +9,10 @@ import {
   TableRow,
   TableSortLabel,
   Theme,
+  TooltipProps,
 } from "@mui/material";
 import { ascending, descending } from "d3";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
@@ -28,14 +29,16 @@ import { useDimensionFormatters } from "./ui-helpers";
 
 const DimensionLabel = ({
   dimension,
+  tooltipProps,
 }: {
   dimension: DimensionMetadataFragment;
+  tooltipProps?: Omit<TooltipProps, "title" | "children">;
 }) => {
   const label = dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;
   return dimension.description ? (
-    <Tooltip title={dimension.description} arrow>
+    <Tooltip title={dimension.description} arrow {...tooltipProps}>
       <span style={{ textDecoration: "underline" }}>{label}</span>
     </Tooltip>
   ) : (
@@ -72,8 +75,20 @@ export const PreviewTable = ({
     }
   }, [observations, sortBy, sortDirection]);
 
+  const tooltipContainerRef = useRef(null);
+
+  // Tooltip contained inside the table so as not to overflow when table is scrolled
+  const tooltipProps = useMemo(
+    () => ({
+      PopperProps: {
+        container: tooltipContainerRef.current,
+      },
+    }),
+    []
+  );
   return (
     <Table>
+      <div ref={tooltipContainerRef} />
       <caption style={{ display: "none" }}>{title}</caption>
       <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
         <TableRow sx={{ borderBottom: "none" }}>
@@ -101,7 +116,10 @@ export const PreviewTable = ({
                   active={sortBy?.iri === header.iri}
                   direction={sortDirection}
                 >
-                  <DimensionLabel dimension={header} />
+                  <DimensionLabel
+                    dimension={header}
+                    tooltipProps={tooltipProps}
+                  />
                 </TableSortLabel>
               </TableCell>
             );
