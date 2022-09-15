@@ -1,5 +1,6 @@
 import { Box, TableSortLabel, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 
@@ -55,6 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "0.875rem",
     backgroundColor: theme.palette.grey[100],
     color: theme.palette.grey[700],
+    minHeight: SORTING_ARROW_WIDTH,
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  headerGroupMeasure: {
+    justifyContent: "flex-end",
   },
 }));
 
@@ -85,28 +92,22 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
 
                 return (
                   // eslint-disable-next-line react/jsx-key
-                  <Box
-                    className={classes.headerGroup}
+                  <Flex
+                    className={clsx(
+                      classes.headerGroup,
+                      columnComponentType === "Measure"
+                        ? classes.headerGroupMeasure
+                        : undefined
+                    )}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                   >
-                    <Flex
-                      sx={{
-                        minHeight: SORTING_ARROW_WIDTH,
-                        alignItems: "center",
-                        justifyContent:
-                          columnComponentType === "Measure"
-                            ? "flex-end"
-                            : "flex-start",
-                      }}
+                    <TableSortLabel
+                      active={isCustomSorted}
+                      direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      <TableSortLabel
-                        active={isCustomSorted}
-                        direction={column.isSortedDesc ? "desc" : "asc"}
-                      >
-                        <Box>{column.render("Header")}</Box>
-                      </TableSortLabel>
-                    </Flex>
-                  </Box>
+                      {column.render("Header")}
+                    </TableSortLabel>
+                  </Flex>
                 );
               })}
             </Box>
