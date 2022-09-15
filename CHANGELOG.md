@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.8.0] - 2022-09-15
+
 - Search
   - Improve search time
   - Input value is kept when URL is shared
@@ -19,7 +23,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Better formatting of numbers inside chart tooltips (for example for currencies)
 - Filters
   - Initially, left filters are ordered so that dimension with hierarchy are at the top. Additionally, the topmost hierarchical value with a value is selected.
-- 
+  - Color palette field has nicer UI
+
+Note: We will try in the future to better follow semantic versioning.
+
 ## [3.7.11] - 2022-09-09
 
 - 🚀 Maps
