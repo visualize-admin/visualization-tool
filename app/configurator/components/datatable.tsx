@@ -3,6 +3,7 @@ import {
   SxProps,
   Table,
   TableBody,
+  Tooltip,
   TableCell,
   TableHead,
   TableRow,
@@ -24,6 +25,23 @@ import {
 import { useLocale } from "@/locales/use-locale";
 
 import { useDimensionFormatters } from "./ui-helpers";
+
+const DimensionLabel = ({
+  dimension,
+}: {
+  dimension: DimensionMetadataFragment;
+}) => {
+  const label = dimension.unit
+    ? `${dimension.label} (${dimension.unit})`
+    : dimension.label;
+  return dimension.description ? (
+    <Tooltip title={dimension.description} arrow>
+      <span style={{ textDecoration: "underline" }}>{label}</span>
+    </Tooltip>
+  ) : (
+    <>{label}</>
+  );
+};
 
 export const PreviewTable = ({
   title,
@@ -83,9 +101,7 @@ export const PreviewTable = ({
                   active={sortBy?.iri === header.iri}
                   direction={sortDirection}
                 >
-                  {header.unit
-                    ? `${header.label} (${header.unit})`
-                    : header.label}
+                  <DimensionLabel dimension={header} />
                 </TableSortLabel>
               </TableCell>
             );
