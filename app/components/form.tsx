@@ -49,7 +49,7 @@ export const Label = ({
   <Typography
     component="label"
     htmlFor={htmlFor}
-    variant={smaller ? "caption" : "body1"}
+    variant={smaller ? "caption" : "body2"}
     color="secondary"
     display="flex"
     sx={sx}
