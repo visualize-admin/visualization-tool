@@ -70,6 +70,7 @@ type HierarchyValue {
 interface Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int
@@ -94,6 +95,7 @@ type GeoCoordinates {
 type GeoCoordinatesDimension implements Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int
@@ -118,6 +120,7 @@ type ObservationFilter {
 type GeoShapesDimension implements Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int
@@ -136,6 +139,7 @@ type GeoShapesDimension implements Dimension {
 type NominalDimension implements Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int
@@ -153,6 +157,7 @@ type NominalDimension implements Dimension {
 type OrdinalDimension implements Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int
@@ -180,6 +185,7 @@ enum TimeUnit {
 type TemporalDimension implements Dimension {
   iri: String!
   label: String!
+  description: String
   timeUnit: TimeUnit!
   timeFormat: String!
   unit: String
@@ -199,6 +205,7 @@ type TemporalDimension implements Dimension {
 type Measure implements Dimension {
   iri: String!
   label: String!
+  description: String
   unit: String
   scaleType: String
   order: Int

@@ -548,6 +548,22 @@ theme.components = {
       },
     },
   },
+  MuiTooltip: {
+    styleOverrides: {
+      tooltip: {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        fontSize: theme.typography.body2.fontSize,
+        boxShadow: theme.shadows[18],
+        zIndex: 1,
+        position: "relative",
+        padding: theme.spacing(4),
+      },
+      arrow: {
+        color: theme.palette.background.paper,
+      },
+    },
+  },
   MuiNativeSelect: {
     styleOverrides: {
       root: {

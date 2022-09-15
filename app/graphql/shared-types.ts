@@ -57,6 +57,7 @@ export type ResolvedDimension = {
     dataType?: string;
     order?: number;
     name: string;
+    description?: string;
     dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
     related: Omit<RelatedDimension, "__typename">[];
     timeUnit?: TimeUnit;

@@ -238,6 +238,7 @@ export const parseCubeDimension = ({
   const order = rawOrder !== undefined ? parseInt(rawOrder, 10) : undefined;
 
   const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
+  const description = dim.out(ns.schema.description, outOpts).value;
   const resolution =
     dataType?.equals(ns.xsd.int) || dataType?.equals(ns.xsd.integer)
       ? 0
@@ -250,6 +251,8 @@ export const parseCubeDimension = ({
 
     data: {
       iri: dim.path?.value!,
+      name,
+      description,
       related,
       isLiteral,
       isNumerical,
@@ -263,8 +266,7 @@ export const parseCubeDimension = ({
       currencyExponent: dimensionUnit?.currencyExponent?.value
         ? parseInt(dimensionUnit?.currencyExponent?.value)
         : undefined,
-      name,
-      order: order,
+      order,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
         ? "Time"
         : dataKindTerm?.equals(ns.schema.GeoCoordinates)

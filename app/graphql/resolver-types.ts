@@ -122,6 +122,7 @@ export type DatasetCount = {
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -160,6 +161,7 @@ export type GeoCoordinatesDimension = Dimension & {
   __typename?: 'GeoCoordinatesDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -189,6 +191,7 @@ export type GeoShapesDimension = Dimension & {
   __typename?: 'GeoShapesDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -227,6 +230,7 @@ export type Measure = Dimension & {
   __typename?: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -257,6 +261,7 @@ export type NominalDimension = Dimension & {
   __typename?: 'NominalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -304,6 +309,7 @@ export type OrdinalDimension = Dimension & {
   __typename?: 'OrdinalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -410,6 +416,7 @@ export type TemporalDimension = Dimension & {
   __typename?: 'TemporalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   timeUnit: TimeUnit;
   timeFormat: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
@@ -631,6 +638,7 @@ export type DimensionResolvers<ContextType = GraphQLContext, ParentType extends 
   __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'Measure' | 'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>;
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -664,6 +672,7 @@ export type GeoCoordinatesResolvers<ContextType = GraphQLContext, ParentType ext
 export type GeoCoordinatesDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GeoCoordinatesDimension'] = ResolversParentTypes['GeoCoordinatesDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -683,6 +692,7 @@ export interface GeoShapesScalarConfig extends GraphQLScalarTypeConfig<Resolvers
 export type GeoShapesDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GeoShapesDimension'] = ResolversParentTypes['GeoShapesDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -708,6 +718,7 @@ export type HierarchyValueResolvers<ContextType = GraphQLContext, ParentType ext
 export type MeasureResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Measure'] = ResolversParentTypes['Measure']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -725,6 +736,7 @@ export type MeasureResolvers<ContextType = GraphQLContext, ParentType extends Re
 export type NominalDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['NominalDimension'] = ResolversParentTypes['NominalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -758,6 +770,7 @@ export type ObservationsQueryResolvers<ContextType = GraphQLContext, ParentType 
 export type OrdinalDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['OrdinalDimension'] = ResolversParentTypes['OrdinalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -792,6 +805,7 @@ export type RelatedDimensionResolvers<ContextType = GraphQLContext, ParentType e
 export type TemporalDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TemporalDimension'] = ResolversParentTypes['TemporalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timeUnit?: Resolver<ResolversTypes['TimeUnit'], ParentType, ContextType>;
   timeFormat?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

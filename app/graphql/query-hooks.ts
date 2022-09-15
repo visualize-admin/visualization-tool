@@ -116,6 +116,7 @@ export type DatasetCount = {
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -154,6 +155,7 @@ export type GeoCoordinatesDimension = Dimension & {
   __typename: 'GeoCoordinatesDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -183,6 +185,7 @@ export type GeoShapesDimension = Dimension & {
   __typename: 'GeoShapesDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -221,6 +224,7 @@ export type Measure = Dimension & {
   __typename: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -251,6 +255,7 @@ export type NominalDimension = Dimension & {
   __typename: 'NominalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -298,6 +303,7 @@ export type OrdinalDimension = Dimension & {
   __typename: 'OrdinalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
@@ -404,6 +410,7 @@ export type TemporalDimension = Dimension & {
   __typename: 'TemporalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   timeUnit: TimeUnit;
   timeFormat: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
@@ -453,32 +460,32 @@ export type DataCubesQueryVariables = Exact<{
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, workExamples?: Maybe<Array<Maybe<string>>>, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionMetadata_GeoCoordinatesDimension_Fragment = (
-  { __typename: 'GeoCoordinatesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'GeoCoordinatesDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_GeoCoordinatesDimension_Fragment
 );
 
 type DimensionMetadata_GeoShapesDimension_Fragment = (
-  { __typename: 'GeoShapesDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'GeoShapesDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_GeoShapesDimension_Fragment
 );
 
 type DimensionMetadata_Measure_Fragment = (
-  { __typename: 'Measure', isCurrency?: Maybe<boolean>, currencyExponent?: Maybe<number>, resolution?: Maybe<number>, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'Measure', isCurrency?: Maybe<boolean>, currencyExponent?: Maybe<number>, resolution?: Maybe<number>, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_Measure_Fragment
 );
 
 type DimensionMetadata_NominalDimension_Fragment = (
-  { __typename: 'NominalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'NominalDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_NominalDimension_Fragment
 );
 
 type DimensionMetadata_OrdinalDimension_Fragment = (
-  { __typename: 'OrdinalDimension', iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'OrdinalDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_OrdinalDimension_Fragment
 );
 
 type DimensionMetadata_TemporalDimension_Fragment = (
-  { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, order?: Maybe<number>, values: Array<any>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_TemporalDimension_Fragment
 );
 
@@ -882,6 +889,7 @@ export const DimensionMetadataFragmentDoc = gql`
     fragment dimensionMetadata on Dimension {
   iri
   label
+  description
   isNumerical
   isKeyDimension
   order

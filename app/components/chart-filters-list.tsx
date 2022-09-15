@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Tooltip } from "@mui/material";
 import { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -73,14 +73,21 @@ export const ChartFiltersList = ({
           >
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
-                <Box component="span">
-                  {dimension.label}
+                <Box component="span" fontWeight="bold">
+                  {dimension.description ? (
+                    <Tooltip arrow title={dimension.description}>
+                      <span style={{ textDecoration: "underline" }}>
+                        {dimension.label}
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    dimension.label
+                  )}
+
                   {": "}
                 </Box>
 
-                <Box component="span" sx={{ fontWeight: "bold" }}>
-                  {value && value.label}
-                </Box>
+                <Box component="span">{value && value.label}</Box>
                 {i < namedFilters.length - 1 && ", "}
               </Fragment>
             ))}

@@ -40,6 +40,7 @@ query DataCubes(
 fragment dimensionMetadata on Dimension {
   iri
   label
+  description
   isNumerical
   isKeyDimension
   order
