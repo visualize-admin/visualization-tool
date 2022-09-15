@@ -682,6 +682,8 @@ theme.components = {
         lineHeight: 1.5,
         borderBottom: "1px solid",
         borderBottomColor: theme.palette.grey[500],
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
       },
     },
   },

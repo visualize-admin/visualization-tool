@@ -243,6 +243,7 @@ export const AreaLayerSettings = memo(
             />
             <div>
               <FieldSetLegend
+                sx={{ mb: 1 }}
                 legendTitle={t({
                   id: "controls.scale.type",
                   message: "Scale type",
@@ -496,7 +497,11 @@ export const SymbolLayerSettings = memo(
                 />
               ) : null
             ) : (
-              <ColorRampField field={activeField} path="colors.palette" />
+              <ColorRampField
+                field={activeField}
+                path="colors.palette"
+                disabled={!symbolLayer.show}
+              />
             )}
           </ControlSectionContent>
         </ControlSection>

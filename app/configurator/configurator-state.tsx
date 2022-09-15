@@ -59,6 +59,7 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
+import { findInHierarchy } from "@/rdf/tree-utils";
 import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
@@ -350,7 +351,11 @@ export const deriveFiltersFromFields = produce(
       const fieldDimensionIris = getFieldComponentIris(fields);
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
-      dimensions.forEach((dimension) =>
+      // Apply hierarchical dimensions first
+      const sortedDimensions = [...dimensions].sort(
+        (a, b) => (a.hierarchy ? -1 : 1) - (b.hierarchy ? -1 : 1)
+      );
+      sortedDimensions.forEach((dimension) =>
         applyNonTableDimensionToFilters({
           filters,
           dimension,
@@ -466,9 +471,17 @@ export const applyNonTableDimensionToFilters = ({
       // If this scenario appears, it means that current filter is undefined -
       // which means it must be converted to a single-filter (if it's a keyDimension,
       // otherwise a 'No filter' option should be selected by default).
+
+      // Find the topmost hierarchy value
+      const hierarchyTopMost = dimension.hierarchy
+        ? findInHierarchy(dimension.hierarchy, (v) => !!v.hasValue)
+        : undefined;
+      const filterValue = hierarchyTopMost
+        ? hierarchyTopMost.value
+        : dimension.values[0].value;
       filters[dimension.iri] = {
         type: "single",
-        value: dimension.values[0].value,
+        value: filterValue,
       };
     }
   }

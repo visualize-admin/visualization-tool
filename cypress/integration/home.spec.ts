@@ -1,5 +1,11 @@
 import { ignoreUncaughtExceptions } from "./utils";
 
+Cypress.on("uncaught:exception", (err) => {
+  if (err.message.includes("> ResizeObserver loop")) {
+    return false;
+  }
+});
+
 describe("The Home Page", () => {
   it("default language (de) should render on /", () => {
     cy.request({

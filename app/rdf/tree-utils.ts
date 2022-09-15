@@ -90,18 +90,44 @@ export const getCheckboxStates = (
   return res;
 };
 
+/**
+ * Visits a hierarchy with depth first search
+ */
 export const visitHierarchy = (
   tree: HierarchyValue[],
-  cb: (node: HierarchyValue) => void
+  /** Will be run over all children. Return false to abort early */
+  visitor: (node: HierarchyValue) => void | false
 ) => {
   let q = [...tree];
   while (q.length > 0) {
     const node = q.pop()!;
-    cb(node);
+    const ret = visitor(node);
+    if (ret === false) {
+      break;
+    }
     for (let c of node.children || []) {
       q.push(c);
     }
   }
+};
+
+/**
+ * Visits a hierarchy with depth first search
+ */
+export const findInHierarchy = (
+  tree: HierarchyValue[],
+  /** Will be run over all children. Return false to abort early */
+  finder: (node: HierarchyValue) => boolean
+) => {
+  let res = undefined as HierarchyValue | undefined;
+  visitHierarchy(tree, (node) => {
+    const found = finder(node);
+    if (found) {
+      res = node;
+      return false;
+    }
+  });
+  return res;
 };
 
 export const makeTreeFromValues = (
