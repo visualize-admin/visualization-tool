@@ -2,6 +2,10 @@
   "extends": "next",
   "plugins": ["unused-imports", "import", "visualize-admin"],
   "rules": {
+    "no-restricted-imports": ["error", {
+      "name": "lodash",
+      "message": "Please use direct imports instead, ex: lodash/mapValues, lodash/groupBy."
+    }],
     "react/display-name": "off", 
     "visualize-admin/no-large-sx": "error",
     "visualize-admin/make-styles": "error",
