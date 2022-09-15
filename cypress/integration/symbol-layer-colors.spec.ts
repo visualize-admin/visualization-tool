@@ -4,6 +4,8 @@ import {
 } from "../charts-utils";
 import mapWaldflascheChartConfigFixture from "../fixtures/map-waldflasche-chart-config.json";
 
+import selectors from "./selectors";
+
 Cypress.on("uncaught:exception", (err) => {
   if (err.message.includes("> ResizeObserver loop")) {
     return false;
@@ -20,11 +22,17 @@ describe("Selecting SymbolLayer colors", () => {
     const config = mapWaldflascheChartConfigFixture;
     loadChartInLocalStorage(key, config);
     cy.visit(`/en/create/${key}`);
+
     waitForChartToBeLoaded();
 
     cy.waitForNetworkIdle(1000);
 
     cy.findByText("Symbols", { timeout: 15000 }).click();
+    selectors.edition
+      .findRightPanel(cy)
+      .get(".MuiSelect-select")
+      .should("have.class", "Mui-disabled");
+
     cy.findByText("Show layer").click();
     cy.findByText("None").click();
 
