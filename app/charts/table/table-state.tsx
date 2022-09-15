@@ -2,12 +2,16 @@ import {
   extent,
   max,
   min,
-  scaleDiverging,
+  ScaleDiverging,
   ScaleLinear,
-  scaleLinear,
-  scaleOrdinal,
   ScaleSequential,
+  ScaleOrdinal,
+  scaleOrdinal,
+  scaleDiverging,
+  scaleLinear,
 } from "d3";
+import mapKeys from "lodash/mapKeys";
+import mapValues from "lodash/mapValues";
 import { ReactNode, useMemo } from "react";
 import { Cell, Column } from "react-table";
 
@@ -36,22 +40,48 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
-export interface ColumnMeta {
+export type MKColumnMeta<T> = {
   iri: string;
   slugifiedIri: string;
   columnComponentType: ComponentType;
-  colorScale?: ScaleSequential<string>;
-  widthScale?: ScaleLinear<number, number>;
-  type: string;
-  textStyle: string;
-  textColor: string;
-  columnColor: string;
-  barColorPositive: string;
-  barColorNegative: string;
-  barColorBackground: string;
-  barShowBackground: boolean;
   formatter: (cell: Cell<Observation, any>) => string;
-}
+  textStyle?: string;
+  textColor?: string;
+  columnColor?: string;
+  barShowBackground?: boolean;
+  barColorBackground?: string;
+  barColorNegative?: string;
+  barColorPositive?: string;
+} & T;
+
+type BarColumnMeta = MKColumnMeta<{
+  type: "bar";
+  widthScale: ScaleLinear<number, number>;
+}>;
+
+type HeatmapColumnMeta = MKColumnMeta<{
+  type: "heatmap";
+  colorScale:
+    | ScaleSequential<string>
+    | ScaleDiverging<string>
+    | ScaleOrdinal<string, string, never>;
+}>;
+
+type CategoryColumnMeta = MKColumnMeta<{
+  type: "category";
+  colorScale: ScaleOrdinal<string, string, never>;
+}>;
+
+type TextColumnMeta = MKColumnMeta<{
+  type: "text";
+}>;
+
+export type ColumnMeta =
+  | BarColumnMeta
+  | HeatmapColumnMeta
+  | CategoryColumnMeta
+  | TextColumnMeta
+  | MKColumnMeta<{ type: "other" }>;
 
 export interface TableChartState {
   chartType: "table";
@@ -225,10 +255,9 @@ const useTableState = ({
    * tableColumnsMeta contains styles for columns/cell components.
    * It is not used by react-table, only for custom styling.
    */
-  const tableColumnsMeta = useMemo(
-    () =>
-      Object.keys(fields).reduce((acc, iri) => {
-        const columnMeta = fields[iri];
+  const tableColumnsMeta = useMemo<TableChartState["tableColumnsMeta"]>(() => {
+    return mapKeys(
+      mapValues(fields, (columnMeta, iri) => {
         const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
@@ -236,16 +265,15 @@ const useTableState = ({
         const formatter = formatters[iri];
         const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
 
+        const common = {
+          iri,
+          slugifiedIri,
+          columnComponentType,
+          formatter: cellFormatter,
+          ...columnStyle,
+        };
         if (columnStyleType === "text") {
-          return {
-            ...acc,
-            [slugifiedIri]: {
-              slugifiedIri,
-              columnComponentType,
-              formatter: cellFormatter,
-              ...columnStyle,
-            },
-          };
+          return common as TextColumnMeta;
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
           const dimension = dimensions.find(
@@ -253,7 +281,7 @@ const useTableState = ({
           ) as DimensionMetadataFragment;
 
           // Color scale (always from colorMappings)
-          const colorScale = scaleOrdinal();
+          const colorScale = scaleOrdinal<string>();
 
           // get label (translated) matched with color
           const labelsAndColor = Object.keys(colorMapping).map(
@@ -276,15 +304,9 @@ const useTableState = ({
           colorScale.range(labelsAndColor.map((s) => s.color));
 
           return {
-            ...acc,
-            [slugifiedIri]: {
-              slugifiedIri,
-              columnComponentType,
-              colorScale,
-              formatter: cellFormatter,
-              ...columnStyle,
-            },
-          };
+            ...common,
+            colorScale,
+          } as CategoryColumnMeta;
         } else if (columnStyleType === "heatmap") {
           const absMinValue =
             min(data, (d) =>
@@ -299,15 +321,9 @@ const useTableState = ({
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
           ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
           return {
-            ...acc,
-            [slugifiedIri]: {
-              slugifiedIri,
-              columnComponentType,
-              colorScale,
-              formatter: cellFormatter,
-              ...columnStyle,
-            },
-          };
+            ...common,
+            colorScale,
+          } as HeatmapColumnMeta;
         } else if (columnStyleType === "bar") {
           // The column width depends on the estimated width of the
           // longest value in the column, with a minimum of 150px.
@@ -332,30 +348,16 @@ const useTableState = ({
           const widthScale = scaleLinear().domain(domain).range([0, width]);
 
           return {
-            ...acc,
-            [slugifiedIri]: {
-              slugifiedIri,
-              columnComponentType,
-              widthScale,
-              formatter: cellFormatter,
-              ...columnStyle,
-            },
-          };
+            ...common,
+            widthScale,
+          } as BarColumnMeta;
         } else {
-          return {
-            ...acc,
-            [slugifiedIri]: {
-              slugifiedIri,
-              columnComponentType,
-              formatter: cellFormatter,
-              // @ts-ignore
-              ...columnStyle,
-            },
-          };
+          return null as never;
         }
-      }, {}),
-    [data, dimensions, fields, formatters, theme.palette.primary.main]
-  );
+      }),
+      (v) => v.slugifiedIri
+    );
+  }, [data, dimensions, fields, formatters, theme.palette.primary.main]);
 
   return {
     chartType: "table",

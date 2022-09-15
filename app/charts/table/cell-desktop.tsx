@@ -1,7 +1,7 @@
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hcl, ScaleLinear } from "d3";
-import * as React from "react";
+import React from "react";
 import { Cell } from "react-table";
 
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
@@ -50,20 +50,18 @@ export const CellDesktop = ({
 }) => {
   const {
     columnComponentType,
-    type,
+
     textStyle,
     textColor,
     columnColor,
-    colorScale,
     barColorPositive,
     barColorNegative,
     barColorBackground,
     barShowBackground,
-    widthScale,
   } = columnMeta;
   const classes = useStyles();
 
-  switch (type) {
+  switch (columnMeta.type) {
     case "text":
       return (
         <Flex
@@ -82,17 +80,19 @@ export const CellDesktop = ({
         </Flex>
       );
     case "category":
+      const { colorScale: cColorScale } = columnMeta;
       return (
         <Flex
           sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
           {...cell.getCellProps()}
         >
-          <Tag tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}>
+          <Tag tagColor={cColorScale(cell.value)}>
             {columnMeta.formatter(cell)}
           </Tag>
         </Flex>
       );
     case "heatmap":
+      const { colorScale: hColorScale } = columnMeta;
       const isNull = cell.value === null;
       return (
         <Flex
@@ -100,14 +100,10 @@ export const CellDesktop = ({
           sx={{
             color: isNull
               ? textColor
-              : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+              : hcl(hColorScale(cell.value)).l < 55
               ? "#fff"
               : "#000",
-            backgroundColor: isNull
-              ? "grey.100"
-              : colorScale
-              ? colorScale(cell.value)
-              : "grey.100",
+            backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
           }}
           {...cell.getCellProps()}
@@ -116,6 +112,7 @@ export const CellDesktop = ({
         </Flex>
       );
     case "bar":
+      const { widthScale } = columnMeta;
       return (
         <Flex
           sx={{
@@ -169,9 +166,9 @@ export const CellDesktop = ({
           sx={{
             justifyContent:
               columnComponentType === "Measure" ? "flex-end" : "flex-start",
+            textAlign: columnComponentType === "Measure" ? "right" : "left",
             color: textColor,
             backgroundColor: columnColor,
-            textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
           }}
           {...cell.getCellProps()}
