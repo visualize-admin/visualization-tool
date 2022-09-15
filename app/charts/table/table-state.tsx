@@ -43,6 +43,7 @@ import { estimateTextWidth } from "@/utils/estimate-text-width";
 export type MKColumnMeta<T> = {
   iri: string;
   slugifiedIri: string;
+  description?: string;
   columnComponentType: ComponentType;
   formatter: (cell: Cell<Observation, any>) => string;
   textStyle?: string;
@@ -256,6 +257,9 @@ const useTableState = ({
    * It is not used by react-table, only for custom styling.
    */
   const tableColumnsMeta = useMemo<TableChartState["tableColumnsMeta"]>(() => {
+    const allColumnsByIri = Object.fromEntries(
+      [...dimensions, ...measures].map((x) => [x.iri, x])
+    );
     return mapKeys(
       mapValues(fields, (columnMeta, iri) => {
         const slugifiedIri = getSlugifiedIri(iri);
@@ -264,11 +268,11 @@ const useTableState = ({
         const columnComponentType = columnMeta.componentType;
         const formatter = formatters[iri];
         const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
-
         const common = {
           iri,
           slugifiedIri,
           columnComponentType,
+          description: allColumnsByIri[iri]?.description || undefined,
           formatter: cellFormatter,
           ...columnStyle,
         };
@@ -357,7 +361,14 @@ const useTableState = ({
       }),
       (v) => v.slugifiedIri
     );
-  }, [data, dimensions, fields, formatters, theme.palette.primary.main]);
+  }, [
+    data,
+    dimensions,
+    fields,
+    formatters,
+    measures,
+    theme.palette.primary.main,
+  ]);
 
   return {
     chartType: "table",

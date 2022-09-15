@@ -1,7 +1,7 @@
-import { Box, TableSortLabel, Theme } from "@mui/material";
+import { Box, TableSortLabel, Theme, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import * as React from "react";
+import React, { useMemo, useContext } from "react";
 import { HeaderGroup } from "react-table";
 
 import Flex from "../../components/flex";
@@ -28,7 +28,7 @@ export const TableContentProvider = ({
   totalColumnsWidth,
   children,
 }: TableContentProps & { children: React.ReactNode }) => {
-  const value = React.useMemo(() => {
+  const value = useMemo(() => {
     return {
       headerGroups,
       tableColumnsMeta,
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const TableContent = ({ children }: { children: React.ReactNode }) => {
-  const ctx = React.useContext(TableContentContext);
+  const ctx = useContext(TableContentContext);
   const classes = useStyles();
 
   if (!ctx) {
@@ -85,8 +85,8 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
             // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => {
-                const { columnComponentType } = tableColumnsMeta[column.id];
-
+                const { columnComponentType, iri, description } =
+                  tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
 
@@ -105,7 +105,15 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       active={isCustomSorted}
                       direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      {column.render("Header")}
+                      {description ? (
+                        <Tooltip arrow title={description}>
+                          <span style={{ textDecoration: "underline" }}>
+                            {column.render("Header")}
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        column.render("Header")
+                      )}
                     </TableSortLabel>
                   </Flex>
                 );
