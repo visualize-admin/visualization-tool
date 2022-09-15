@@ -554,7 +554,7 @@ theme.components = {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.primary,
         fontSize: theme.typography.body2.fontSize,
-        boxShadow: theme.shadows[18],
+        filter: `drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25))`,
         zIndex: 1,
         position: "relative",
         padding: theme.spacing(4),
