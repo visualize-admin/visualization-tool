@@ -222,7 +222,7 @@ export const MapComponent = () => {
 
     return new GeoJsonLayer({
       id: "areaLayer",
-      beforeId: "water_polygon",
+      beforeId: showBaseLayer ? "water_polygon" : undefined,
       // @ts-ignore - FIXME: properly type data & getFillColor fields
       data: sortedShapes,
       pickable: true,
