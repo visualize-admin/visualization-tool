@@ -25,10 +25,11 @@ import Flex from "@/components/flex";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,
+  useDimensionFormatters,
   useFormatInteger,
-  useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 
 const MAX_WIDTH = 204;
 const HEIGHT = 80;
@@ -81,6 +82,11 @@ export const MapLegend = () => {
     (areaLayer.colorScaleInterpolationType === "linear" ||
       areaLayer.colorScale.range().length >= 3);
   const { colors: symbolLayerColors } = symbolLayer;
+  const measureDimensions = [
+    areaLayer.measureDimension,
+    symbolLayer.measureDimension,
+  ].filter(truthy);
+  const formatters = useDimensionFormatters(measureDimensions);
 
   return (
     <>
@@ -101,6 +107,7 @@ export const MapLegend = () => {
                 palette={areaLayer.palette}
                 domain={areaLayer.dataDomain}
                 getValue={areaLayer.getValue}
+                valueFormatter={formatters[areaLayer.measureDimension!.iri]}
               />
             )}
             {areaLayer.colorScaleInterpolationType === "quantize" && (
@@ -128,6 +135,7 @@ export const MapLegend = () => {
                   getValue={(d: Observation) =>
                     d[symbolLayerColors.component.iri] as number
                   }
+                  valueFormatter={formatters[symbolLayer.measureDimension!.iri]}
                 />
               </Box>
             )}
@@ -135,7 +143,9 @@ export const MapLegend = () => {
               <Typography component="div" variant="caption">
                 {symbolLayer.measureLabel}
               </Typography>
-              <CircleLegend />
+              <CircleLegend
+                valueFormatter={formatters[symbolLayer.measureDimension!.iri]}
+              />
             </Box>
           </Flex>
         )}
@@ -209,7 +219,11 @@ const Circle = (props: CircleProps) => {
   );
 };
 
-const CircleLegend = () => {
+const CircleLegend = ({
+  valueFormatter,
+}: {
+  valueFormatter: (d: Observation[string]) => string;
+}) => {
   const width = useLegendWidth();
 
   const [{ interaction }] = useInteraction();
@@ -224,7 +238,6 @@ const CircleLegend = () => {
       radiusScale,
     },
   } = useChartState() as MapState;
-  const formatNumber = useFormatInteger();
 
   const maybeValue = interaction.d && getValue(interaction.d);
   const value = typeof maybeValue === "number" ? maybeValue : undefined;
@@ -258,7 +271,7 @@ const CircleLegend = () => {
             return (
               <Circle
                 key={i}
-                value={formatNumber(d)}
+                value={valueFormatter(d)}
                 label={label}
                 fill="none"
                 stroke={axisLabelColor}
@@ -278,7 +291,7 @@ const CircleLegend = () => {
           radius !== undefined &&
           color !== undefined && (
             <Circle
-              value={formatNumber(value)}
+              value={valueFormatter(value)}
               label={getLabel(interaction.d)}
               fill={color}
               stroke={axisLabelColor}
@@ -528,14 +541,15 @@ const ContinuousColorLegend = ({
   palette,
   domain,
   getValue,
+  valueFormatter,
 }: {
   palette: string;
   domain: [number, number];
   getValue: (d: Observation) => number | null;
+  valueFormatter: (v: Observation[string]) => string;
 }) => {
   const width = useLegendWidth();
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
-  const formatNumber = useFormatNumber();
   const scale = scaleLinear()
     .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
@@ -568,10 +582,10 @@ const ContinuousColorLegend = ({
         fill={legendLabelColor}
       >
         <text textAnchor="start" fontSize={labelFontSize}>
-          {formatNumber(min)}
+          {valueFormatter(min)}
         </text>
         <text x={width - MARGIN.right - MARGIN.left} textAnchor="end">
-          {formatNumber(max)}
+          {valueFormatter(max)}
         </text>
       </g>
     </svg>
