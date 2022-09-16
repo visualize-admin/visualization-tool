@@ -24,8 +24,8 @@ export const GroupHeader = ({
     <>
       {/* Here we use `allCells` so that group headers are shown even if the column is hidden */}
       {row.allCells.map((cell, i) => {
-        const { type, colorScale, formatter } =
-          tableColumnsMeta[cell.column.id];
+        const colMeta = tableColumnsMeta[cell.column.id];
+        const { formatter } = colMeta;
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
           <React.Fragment key={i}>
@@ -47,12 +47,8 @@ export const GroupHeader = ({
                     name={row.isExpanded ? "chevronDown" : "chevronRight"}
                   />
                 </Box>
-                {type === "category" ? (
-                  <Tag
-                    tagColor={
-                      colorScale ? colorScale(cell.value) : "primaryLight"
-                    }
-                  >
+                {colMeta.type === "category" ? (
+                  <Tag tagColor={colMeta.colorScale(cell.value)}>
                     {formatter(cell)}
                   </Tag>
                 ) : (

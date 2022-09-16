@@ -1,6 +1,7 @@
-import { Box, TableSortLabel, Theme } from "@mui/material";
+import { Box, TableSortLabel, Theme, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import * as React from "react";
+import clsx from "clsx";
+import React, { useMemo, useContext } from "react";
 import { HeaderGroup } from "react-table";
 
 import Flex from "../../components/flex";
@@ -27,7 +28,7 @@ export const TableContentProvider = ({
   totalColumnsWidth,
   children,
 }: TableContentProps & { children: React.ReactNode }) => {
-  const value = React.useMemo(() => {
+  const value = useMemo(() => {
     return {
       headerGroups,
       tableColumnsMeta,
@@ -55,11 +56,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "0.875rem",
     backgroundColor: theme.palette.grey[100],
     color: theme.palette.grey[700],
+    minHeight: SORTING_ARROW_WIDTH,
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  headerGroupMeasure: {
+    justifyContent: "flex-end",
   },
 }));
 
 export const TableContent = ({ children }: { children: React.ReactNode }) => {
-  const ctx = React.useContext(TableContentContext);
+  const ctx = useContext(TableContentContext);
   const classes = useStyles();
 
   if (!ctx) {
@@ -78,35 +85,37 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
             // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => {
-                const { columnComponentType } = tableColumnsMeta[column.id];
-
+                const { columnComponentType, description } =
+                  tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
 
                 return (
                   // eslint-disable-next-line react/jsx-key
-                  <Box
-                    className={classes.headerGroup}
+                  <Flex
+                    className={clsx(
+                      classes.headerGroup,
+                      columnComponentType === "Measure"
+                        ? classes.headerGroupMeasure
+                        : undefined
+                    )}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                   >
-                    <Flex
-                      sx={{
-                        minHeight: SORTING_ARROW_WIDTH,
-                        alignItems: "center",
-                        justifyContent:
-                          columnComponentType === "Measure"
-                            ? "flex-end"
-                            : "flex-start",
-                      }}
+                    <TableSortLabel
+                      active={isCustomSorted}
+                      direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      <TableSortLabel
-                        active={isCustomSorted}
-                        direction={column.isSortedDesc ? "desc" : "asc"}
-                      >
-                        <Box>{column.render("Header")}</Box>
-                      </TableSortLabel>
-                    </Flex>
-                  </Box>
+                      {description ? (
+                        <Tooltip arrow title={description}>
+                          <span style={{ textDecoration: "underline" }}>
+                            {column.render("Header")}
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        column.render("Header")
+                      )}
+                    </TableSortLabel>
+                  </Flex>
                 );
               })}
             </Box>

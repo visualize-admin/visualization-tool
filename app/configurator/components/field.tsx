@@ -586,7 +586,6 @@ export const ColorPickerField = ({
       sx={{
         justifyContent: "space-between",
         alignItems: "center",
-        height: "2rem",
         width: "100%",
       }}
     >

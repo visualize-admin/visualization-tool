@@ -105,6 +105,7 @@ const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
   },
   iri: ({ data: { iri } }) => iri,
   label: ({ data: { name } }) => name,
+  description: ({ data: { description } }) => description || null,
   related: ({ data: { related } }) => related,
   order: ({ data: { order } }) => (order !== undefined ? order : null),
   isNumerical: ({ data: { isNumerical } }) => isNumerical,

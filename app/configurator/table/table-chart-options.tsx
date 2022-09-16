@@ -1,4 +1,5 @@
 import { t, Trans } from "@lingui/macro";
+import { Box } from "@mui/material";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
@@ -235,7 +236,7 @@ export const TableColumnOptions = ({
       </ControlSection>
       {(isGroup || !isHidden) && (
         <ControlSection>
-          <SectionTitle iconName="formatting">
+          <SectionTitle iconName="formatting" sx={{ mb: 1 }}>
             <Trans id="controls.section.columnstyle">Column Style</Trans>
           </SectionTitle>
           <ControlSectionContent>
@@ -429,7 +430,7 @@ const ColumnStyleSubOptions = ({
           />
         </>
       ) : type === "bar" ? (
-        <>
+        <Box my={2}>
           <ColorPickerField
             label={t({
               id: "controls.select.columnStyle.barColorPositive",
@@ -462,7 +463,7 @@ const ColumnStyleSubOptions = ({
             field={activeField}
             path="columnStyle.barShowBackground"
           />
-        </>
+        </Box>
       ) : null}
     </>
   );

@@ -108,19 +108,16 @@ export const DDContent = ({
 
   const {
     columnComponentType,
-    type,
-    textStyle,
     textColor,
-    colorScale,
     barShowBackground,
     barColorBackground,
     barColorNegative,
     barColorPositive,
-    widthScale,
   } = columnMeta;
 
-  switch (type) {
+  switch (columnMeta.type) {
     case "text":
+      const { textStyle } = columnMeta;
       return (
         <Box
           component="div"
@@ -136,29 +133,24 @@ export const DDContent = ({
         </Box>
       );
     case "category":
+      const { colorScale: cColorScale } = columnMeta;
       return (
-        <Tag
-          tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}
-          small
-        >
+        <Tag tagColor={cColorScale(cell.value)} small>
           {cell.render("Cell")}
         </Tag>
       );
     case "heatmap":
       const isNull = cell.value === null;
+      const hColorScale = columnMeta.colorScale;
       return (
         <Box
           sx={{
             color: isNull
               ? textColor
-              : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+              : hcl(hColorScale(cell.value)).l < 55
               ? "#fff"
               : "#000",
-            backgroundColor: isNull
-              ? "grey.100"
-              : colorScale
-              ? colorScale(cell.value)
-              : "grey.100",
+            backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
             px: 1,
             width: "fit-content",
@@ -169,6 +161,7 @@ export const DDContent = ({
         </Box>
       );
     case "bar":
+      const { widthScale } = columnMeta;
       // Reset widthscale range based on current viewport
       widthScale?.range([0, chartWidth / 2]);
 
