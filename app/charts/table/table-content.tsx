@@ -85,7 +85,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
             // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => {
-                const { columnComponentType, iri, description } =
+                const { columnComponentType, description } =
                   tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
