@@ -11,6 +11,17 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [3.9.0] - 2022-09-19
+
+Features
+
+- Dataset preview and chart edition: tooltips displaying dimension description are shown
+
+Fixes
+
+- Search: improve response times
+- Maps: Lakes are above dataviz layer
+
 ## [3.8.0] - 2022-09-15
 
 - Search
