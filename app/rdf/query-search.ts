@@ -88,9 +88,13 @@ const enhanceQuery = (rawQuery: string) => {
     // Filter out lowercase, small tokens
     .filter((t) => t.length > 2 || t.toLowerCase() !== t)
     // Wildcard Searches on each term
-    .map((t) => `${t}*`)
+    .map((t) => `${t}`)
     .join(" ");
   return enhancedQuery;
+};
+
+const contains = (left: string, right: string) => {
+  return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
 };
 
 export const searchCubes = async ({
@@ -124,10 +128,11 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?scoreName ?scoreDescription`
+  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?name ?description`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
+    ?cube ${ns.schema.description} ?description.
     
     ?cube ${ns.dcat.theme} ?theme.
     ?cube ${ns.dcterms.creator} ?creator.
@@ -146,23 +151,24 @@ export const searchCubes = async ({
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
 
-    ${
-      query && query.length > 0
-        ? sparql`
-      { (?name ?scoreName) <tag:stardog:api:property:textMatch> "${query}". }
-      UNION {
-        OPTIONAL {
-          ?cube ${ns.schema.description} ?description.
-          (?description ?scoreDescription) <tag:stardog:api:property:textMatch> "${query}" .
-        }
+      ${
+        query
+          ? `FILTER(
+        ${query
+          ?.split(" ")
+          .slice(0, 1)
+          .map(
+            (x) => `${contains("?name", x)} || ${contains("?description", x)}`
+          )
+          .join(" || ")}
+          
+          )`
+          : ""
       }
-      `
-        : ""
-    }
 
   `;
 
-  const scoresQuery2 = SELECT.DISTINCT`?cube ?versionHistory ?scoreTheme ?scorePublisher ?scoreCreator`
+  const scoresQuery2 = SELECT.DISTINCT`?cube ?versionHistory ?publisher ?themeName ?creatorLabel`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
@@ -187,27 +193,32 @@ export const searchCubes = async ({
     ${
       query && query.length > 0
         ? sparql`
-      UNION  {
+
         OPTIONAL {
           ?cube ${ns.dcterms.publisher} ?publisher.
-          (?publisher ?scorePublisher) <tag:stardog:api:property:textMatch> "${query}"  .
+          FILTER(${query
+            .split(" ")
+            .map((x) => contains("?publisher", x))
+            .join(" || ")})  .
         }
-      }
-      UNION  {
+
         OPTIONAL {
           ?theme ${ns.schema.name} ?themeName.   
-          (?themeName ?scoreTheme)
-            <tag:stardog:api:property:textMatch> "${query}"  .
+          FILTER(${query
+            .split(" ")
+            .map((x) => contains("?themeName", x))
+            .join(" || ")})  .
         }
-      }
-      UNION  {
+
+
         OPTIONAL {
 
           ?creator ${ns.schema.name} ?creatorLabel.
-          (?creatorLabel ?scoreCreator)
-            <tag:stardog:api:property:textMatch> "${query}"  .
+          FILTER(${query
+            .split(" ")
+            .map((x) => contains("?creatorLabel", x))
+            .join(" || ")})  .
         }
-      }
       `
         : ""
     }
@@ -229,7 +240,7 @@ export const searchCubes = async ({
   }
 
   const infoPerCube = computeScores(scoreResults.data, {
-    keepZeros: !query || query.length === 0,
+    query: query,
   });
 
   // Find information on cubes
