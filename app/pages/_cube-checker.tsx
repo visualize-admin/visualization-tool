@@ -11,7 +11,12 @@ import StreamClient from "sparql-http-client";
 
 import { ContentLayout } from "@/components/layout";
 import { DataSource } from "@/configurator";
-import { DEFAULT_DATA_SOURCE, parseDataSource } from "@/domain/datasource";
+import {
+  DEFAULT_DATA_SOURCE,
+  parseDataSource,
+  sourceToLabel,
+  useDataSourceState,
+} from "@/domain/datasource";
 import { SOURCES_BY_LABEL } from "@/domain/datasource/constants";
 import { fromStream } from "@/rdf/sparql-client";
 
@@ -151,6 +156,7 @@ const checks: Check[] = [
 ];
 
 const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
+  const [datasource] = useDataSourceState();
   return (
     <>
       <ContentLayout>
@@ -179,6 +185,11 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
                       message: "Cube IRI",
                     }),
                   }}
+                />
+                <input
+                  type="hidden"
+                  name="dataSource"
+                  value={sourceToLabel(datasource)}
                 />
                 <Button type="submit" variant="contained" size="large">
                   Check
