@@ -2,7 +2,6 @@ import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import Head from "next/head";
 import * as React from "react";
-import { useRef } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -58,17 +57,14 @@ export const ChartPreviewInner = ({
       locale,
     },
   });
-  const [isTablePreview, setIsChartTablePreview] = useChartTablePreview();
-  const lastHeight = useRef("auto" as "auto" | number);
-  const chartTableContainerRef = useRef<HTMLDivElement>();
-  const handleToggleTableView = useEvent(() => {
-    if (!chartTableContainerRef.current) {
-      return;
-    }
-    const bcr = chartTableContainerRef.current.getBoundingClientRect();
-    lastHeight.current = bcr.height;
-    return setIsChartTablePreview((c) => !c);
-  });
+  const {
+    state: isTablePreview,
+    setState: setIsTablePreview,
+    containerRef,
+    containerHeight,
+  } = useChartTablePreview();
+
+  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   return (
     <Flex
@@ -136,7 +132,7 @@ export const ChartPreviewInner = ({
               </Typography>
             </>
             <InteractiveFiltersProvider>
-              <Box ref={chartTableContainerRef} height={lastHeight.current}>
+              <Box ref={containerRef} height={containerHeight.current!}>
                 {isTablePreview ? (
                   <DataSetTable
                     sx={{
