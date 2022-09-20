@@ -96,6 +96,19 @@ const checks: Check[] = [
     },
   },
   {
+    name: "Has a description",
+    description: "Should have a description through schema:description",
+    run: async ({ cubeIri, loaders }) => {
+      const cube = await loaders.describeCubes.load(cubeIri);
+      const shape = cube.out(ns.schema.description).value;
+      if (shape) {
+        return { ok: true, message: "Has a description" };
+      } else {
+        return { ok: false, message: "No description" };
+      }
+    },
+  },
+  {
     name: "Is published",
     description:
       "Should have a status (schema:creativeWorkStatus: [Published, Draft])",
