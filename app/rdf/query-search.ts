@@ -132,10 +132,14 @@ export const searchCubes = async ({
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
-    ?cube ${ns.schema.description} ?description.
+
     
     ?cube ${ns.dcat.theme} ?theme.
     ?cube ${ns.dcterms.creator} ?creator.
+
+    OPTIONAL {
+      ?cube ${ns.schema.description} ?description.
+    }
     
     OPTIONAL {
       ?cube ${ns.schema.about} ?about.
