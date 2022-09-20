@@ -49,11 +49,13 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   configKey,
+  onToggleTableView,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   configKey?: string;
+  onToggleTableView: () => void;
 }) => {
   const classes = useStyles();
   const locale = useLocale();
@@ -150,7 +152,7 @@ export const ChartFootnotes = ({
                   }
                 />
               }
-              onClick={() => setIsChartTablePreview(!isChartTablePreview)}
+              onClick={onToggleTableView}
               sx={{ p: 0, typography: "caption" }}
             >
               {isChartTablePreview ? (

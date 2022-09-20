@@ -2,12 +2,13 @@ import {
   createContext,
   Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useState,
 } from "react";
 
 const ChartTablePreviewContext = createContext<
-  [boolean, Dispatch<boolean>] | undefined
+  [boolean, Dispatch<SetStateAction<boolean>>] | undefined
 >(undefined);
 
 export const useChartTablePreview = () => {

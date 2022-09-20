@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -35,7 +35,7 @@ import {
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useResizeObserver } from "@/utils/use-resize-observer";
+import useEvent from "@/utils/use-event";
 
 export const ChartPublished = ({
   dataSet,
@@ -102,14 +102,7 @@ export const ChartPublishedInner = ({
   });
   const [isTablePreview] = useChartTablePreview();
 
-  const [chartRef, _, height] = useResizeObserver<HTMLDivElement>();
-  const lastHeight = React.useRef(height);
-
-  React.useEffect(() => {
-    if (height !== 0) {
-      lastHeight.current = height;
-    }
-  }, [height]);
+  const lastHeight = React.useRef("auto" as "auto" | number);
 
   const publishedConfiguratorState = useMemo(() => {
     return {
@@ -118,6 +111,17 @@ export const ChartPublishedInner = ({
       chartConfig: chartConfig,
     } as ConfiguratorStatePublishing;
   }, [chartConfig, dataSource]);
+
+  const [, setIsChartTablePreview] = useChartTablePreview();
+  const chartTableContainerRef = useRef<HTMLDivElement>();
+  const handleToggleTableView = useEvent(() => {
+    if (!chartTableContainerRef.current) {
+      return;
+    }
+    const bcr = chartTableContainerRef.current.getBoundingClientRect();
+    lastHeight.current = bcr.height;
+    return setIsChartTablePreview((c) => !c);
+  });
 
   return (
     <Box className={classes.root}>
@@ -175,7 +179,7 @@ export const ChartPublishedInner = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          <Box height={height || lastHeight.current}>
+          <Box ref={chartTableContainerRef} height={lastHeight.current}>
             <PublishedConfiguratorStateProvider
               chartId={configKey}
               initialState={publishedConfiguratorState}
@@ -189,7 +193,6 @@ export const ChartPublishedInner = ({
                 />
               ) : (
                 <ChartWithInteractiveFilters
-                  ref={chartRef}
                   dataSet={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
@@ -203,6 +206,7 @@ export const ChartPublishedInner = ({
               dataSource={dataSource}
               chartConfig={chartConfig}
               configKey={configKey}
+              onToggleTableView={handleToggleTableView}
             />
           )}
         </InteractiveFiltersProvider>
