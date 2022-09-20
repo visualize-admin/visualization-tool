@@ -14,6 +14,7 @@ import {
 type Context = {
   state: boolean;
   setState: Dispatch<SetStateAction<boolean>>;
+  setStateRaw: Dispatch<SetStateAction<boolean>>;
   containerRef: RefObject<HTMLDivElement>;
   containerHeight: RefObject<"auto" | number>;
 };
@@ -21,6 +22,7 @@ type Context = {
 const ChartTablePreviewContext = createContext<Context>({
   state: true,
   setState: () => {},
+  setStateRaw: () => {},
   containerRef: { current: null },
   containerHeight: { current: "auto" },
 });
@@ -66,10 +68,11 @@ export const ChartTablePreviewProvider = ({
     return {
       state,
       setState,
+      setStateRaw,
       containerRef,
       containerHeight,
     };
-  }, [setState, state]);
+  }, [setState, state, containerRef, containerHeight, setStateRaw]);
   return (
     <ChartTablePreviewContext.Provider value={ctx}>
       {children}

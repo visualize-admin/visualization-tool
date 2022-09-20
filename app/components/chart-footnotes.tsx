@@ -60,7 +60,7 @@ export const ChartFootnotes = ({
   const classes = useStyles();
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
-  const { state: isTablePreview, setState: setIsTablePreview } =
+  const { state: isTablePreview, setStateRaw: setIsTablePreview } =
     useChartTablePreview();
   // Reset back to chart view when switching chart type.
   useEffect(() => {
