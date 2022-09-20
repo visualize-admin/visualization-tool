@@ -49,20 +49,23 @@ export const ChartFootnotes = ({
   dataSource,
   chartConfig,
   configKey,
+  onToggleTableView,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   configKey?: string;
+  onToggleTableView: () => void;
 }) => {
   const classes = useStyles();
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
-  const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
+  const { state: isTablePreview, setState: setIsTablePreview } =
+    useChartTablePreview();
   // Reset back to chart view when switching chart type.
   useEffect(() => {
-    setIsChartTablePreview(false);
-  }, [setIsChartTablePreview, chartConfig.chartType]);
+    setIsTablePreview(false);
+  }, [setIsTablePreview, chartConfig.chartType]);
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
@@ -144,16 +147,16 @@ export const ChartFootnotes = ({
               startIcon={
                 <Icon
                   name={
-                    isChartTablePreview
+                    isTablePreview
                       ? getChartIcon(chartConfig.chartType)
                       : "table"
                   }
                 />
               }
-              onClick={() => setIsChartTablePreview(!isChartTablePreview)}
+              onClick={onToggleTableView}
               sx={{ p: 0, typography: "caption" }}
             >
-              {isChartTablePreview ? (
+              {isTablePreview ? (
                 <Trans id="metadata.switch.chart">Switch to chart view</Trans>
               ) : (
                 <Trans id="metadata.switch.table">Switch to table view</Trans>

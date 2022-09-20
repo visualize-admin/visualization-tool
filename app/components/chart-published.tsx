@@ -35,7 +35,7 @@ import {
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useResizeObserver } from "@/utils/use-resize-observer";
+import useEvent from "@/utils/use-event";
 
 export const ChartPublished = ({
   dataSet,
@@ -100,16 +100,6 @@ export const ChartPublishedInner = ({
       locale,
     },
   });
-  const [isTablePreview] = useChartTablePreview();
-
-  const [chartRef, _, height] = useResizeObserver<HTMLDivElement>();
-  const lastHeight = React.useRef(height);
-
-  React.useEffect(() => {
-    if (height !== 0) {
-      lastHeight.current = height;
-    }
-  }, [height]);
 
   const publishedConfiguratorState = useMemo(() => {
     return {
@@ -118,6 +108,14 @@ export const ChartPublishedInner = ({
       chartConfig: chartConfig,
     } as ConfiguratorStatePublishing;
   }, [chartConfig, dataSource]);
+
+  const {
+    state: isTablePreview,
+    setState: setIsTablePreview,
+    containerRef,
+    containerHeight,
+  } = useChartTablePreview();
+  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   return (
     <Box className={classes.root}>
@@ -175,7 +173,7 @@ export const ChartPublishedInner = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          <Box height={height || lastHeight.current}>
+          <Box ref={containerRef} height={containerHeight.current!}>
             <PublishedConfiguratorStateProvider
               chartId={configKey}
               initialState={publishedConfiguratorState}
@@ -189,7 +187,6 @@ export const ChartPublishedInner = ({
                 />
               ) : (
                 <ChartWithInteractiveFilters
-                  ref={chartRef}
                   dataSet={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
@@ -203,6 +200,7 @@ export const ChartPublishedInner = ({
               dataSource={dataSource}
               chartConfig={chartConfig}
               configKey={configKey}
+              onToggleTableView={handleToggleTableView}
             />
           )}
         </InteractiveFiltersProvider>

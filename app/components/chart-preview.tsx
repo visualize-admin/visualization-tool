@@ -23,7 +23,7 @@ import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useResizeObserver } from "@/utils/use-resize-observer";
+import useEvent from "@/utils/use-event";
 
 export const ChartPreview = ({
   dataSetIri,
@@ -57,16 +57,14 @@ export const ChartPreviewInner = ({
       locale,
     },
   });
-  const [isTablePreview] = useChartTablePreview();
+  const {
+    state: isTablePreview,
+    setState: setIsTablePreview,
+    containerRef,
+    containerHeight,
+  } = useChartTablePreview();
 
-  const [chartRef, _, height] = useResizeObserver<HTMLDivElement>();
-  const lastHeight = React.useRef(height);
-
-  React.useEffect(() => {
-    if (height !== 0) {
-      lastHeight.current = height;
-    }
-  }, [height]);
+  const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   return (
     <Flex
@@ -134,29 +132,31 @@ export const ChartPreviewInner = ({
               </Typography>
             </>
             <InteractiveFiltersProvider>
-              {isTablePreview ? (
-                <DataSetTable
-                  sx={{
-                    height: height || lastHeight.current,
-                    width: "100%",
-                  }}
-                  dataSetIri={dataSetIri}
-                  dataSource={dataSource}
-                  chartConfig={state.chartConfig}
-                />
-              ) : (
-                <ChartWithInteractiveFilters
-                  ref={chartRef}
-                  dataSet={dataSetIri}
-                  dataSource={dataSource}
-                  chartConfig={state.chartConfig}
-                />
-              )}
+              <Box ref={containerRef} height={containerHeight.current!}>
+                {isTablePreview ? (
+                  <DataSetTable
+                    sx={{
+                      width: "100%",
+                      maxHeight: "100%",
+                    }}
+                    dataSetIri={dataSetIri}
+                    dataSource={dataSource}
+                    chartConfig={state.chartConfig}
+                  />
+                ) : (
+                  <ChartWithInteractiveFilters
+                    dataSet={dataSetIri}
+                    dataSource={dataSource}
+                    chartConfig={state.chartConfig}
+                  />
+                )}
+              </Box>
               {state.chartConfig && (
                 <ChartFootnotes
                   dataSetIri={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={state.chartConfig}
+                  onToggleTableView={handleToggleTableView}
                 />
               )}
               <DebugPanel configurator={true} interactiveFilters={true} />
