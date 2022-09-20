@@ -11,9 +11,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
-## [3.9.1] - 2022-09-20
+## [3.9.2] - 2022-09-20
 
 - Map: fix a layer offset problem on Windows Edge.
+- Search: Cubes without description were not returned
 
 ## [3.9.0] - 2022-09-19
 
