@@ -1,9 +1,7 @@
-import { Box } from "@mui/material";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
-import { A11yTable } from "@/charts/shared/a11y-table";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
@@ -20,12 +18,6 @@ import {
 } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "@/components/hint";
-import {
   DataSource,
   Filters,
   FilterValueSingle,
@@ -40,6 +32,8 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { ChartLoadingWrapper } from "./chart-loading-wrapper";
+
 export const ChartScatterplotVisualization = ({
   dataSetIri,
   dataSource,
@@ -52,7 +46,7 @@ export const ChartScatterplotVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [queryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -63,33 +57,13 @@ export const ChartScatterplotVisualization = ({
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-        />
-        <ChartScatterplot
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
-    );
-  } else if (error) {
-    return <LoadingDataError />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <ChartLoadingWrapper
+      query={queryResp}
+      Component={ChartScatterplot}
+      chartConfig={chartConfig}
+    />
+  );
 };
 
 export const ChartScatterplot = memo(

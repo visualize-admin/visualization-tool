@@ -1,9 +1,7 @@
-import { Box } from "@mui/material";
 import React, { memo } from "react";
 
 import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
-import { A11yTable } from "@/charts/shared/a11y-table";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
@@ -17,12 +15,6 @@ import {
 } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "@/components/hint";
-import {
   AreaConfig,
   AreaFields,
   DataSource,
@@ -34,6 +26,8 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartLoadingWrapper } from "../scatterplot/chart-loading-wrapper";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -47,7 +41,7 @@ export const ChartAreasVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [queryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -57,34 +51,13 @@ export const ChartAreasVisualization = ({
       filters: queryFilters,
     },
   });
-
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-        />
-        <ChartAreas
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
-    );
-  } else if (error) {
-    return <LoadingDataError />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <ChartLoadingWrapper
+      query={queryResp}
+      chartConfig={chartConfig}
+      Component={ChartAreas}
+    />
+  );
 };
 
 export const ChartAreas = memo(

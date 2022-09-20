@@ -1,9 +1,7 @@
-import { Box } from "@mui/material";
 import React, { memo } from "react";
 
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
-import { A11yTable } from "@/charts/shared/a11y-table";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
@@ -16,12 +14,6 @@ import {
   LegendColor,
 } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "@/components/hint";
 import {
   DataSource,
   Filters,
@@ -37,6 +29,8 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { ChartLoadingWrapper } from "../scatterplot/chart-loading-wrapper";
+
 export const ChartLinesVisualization = ({
   dataSetIri,
   dataSource,
@@ -49,7 +43,7 @@ export const ChartLinesVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [queryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -60,34 +54,13 @@ export const ChartLinesVisualization = ({
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-        />
-        <ChartLines
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
-    );
-  } else if (error) {
-    return <LoadingDataError />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <ChartLoadingWrapper
+      query={queryResp}
+      chartConfig={chartConfig}
+      Component={ChartLines}
+    />
+  );
 };
 
 export const ChartLines = memo(function ChartLines({
