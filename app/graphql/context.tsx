@@ -4,6 +4,7 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Awaited } from "@/domain/types";
+import { Timings } from "@/gql-flamegraph/resolvers";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -76,7 +77,7 @@ export const createContext = () => {
   const ctx = {
     // Stores meta information on queries that have been made during the request
     queries: [] as RequestQueryMeta[],
-
+    timings: undefined as Timings | undefined,
     setup: async ({
       variableValues: { locale, sourceUrl },
     }: GraphQLResolveInfo) => {

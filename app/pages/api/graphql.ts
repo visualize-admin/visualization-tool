@@ -3,12 +3,15 @@ import "global-agent/bootstrap";
 import configureCors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
 import { createContext, GraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../utils/run-middleware";
 
 export const cors = configureCors();
+
+setupFlamegraph(resolvers);
 
 const server = new ApolloServer({
   typeDefs,
@@ -18,8 +21,10 @@ const server = new ApolloServer({
     return err;
   },
   formatResponse: (response, reqCtx) => {
+    const context = reqCtx.context as GraphQLContext;
     response.extensions = {
-      queries: (reqCtx.context as GraphQLContext).queries,
+      queries: context.queries,
+      timings: context.timings,
     };
     return response;
   },

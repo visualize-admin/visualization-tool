@@ -9,6 +9,7 @@ import { useEffect } from "react";
 
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
+import GqlDebug from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
@@ -76,6 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <ThemeProvider theme={federalTheme.theme}>
               <CssBaseline />
               <Flashes />
+              <GqlDebug />
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
                   <Component {...pageProps} />
