@@ -20,24 +20,24 @@ export const weights: Record<string, number> = {
  */
 export const computeScores = (
   scoresRaw: any[],
-  { query }: { query?: string }
+  { query, identifierName }: { query?: string; identifierName: string }
 ) => {
   const infoPerCube = {} as Record<string, { score: number }>;
   if (query) {
     for (let scoreRow of scoresRaw) {
       let score = 0;
       for (let [field, weight] of Object.entries(weights)) {
-        const val = scoreRow[field]?.value;
+        const val = scoreRow[field];
         if (!val) {
           continue;
         }
         for (let tok of query.split(" ")) {
-          if (val.toLowerCase().includes(tok.toLowerCase())) {
+          if (val && val.toLowerCase().includes(tok.toLowerCase())) {
             score += weight;
           }
         }
       }
-      infoPerCube[scoreRow.cube.value] = { score };
+      infoPerCube[scoreRow[identifierName]] = { score };
     }
     for (let k of Object.keys(infoPerCube)) {
       if (infoPerCube[k]?.score === 0) {
@@ -46,7 +46,7 @@ export const computeScores = (
     }
   } else {
     for (let scoreRow of scoresRaw) {
-      infoPerCube[scoreRow.cube.value] = { score: 1 };
+      infoPerCube[scoreRow[identifierName]] = { score: 1 };
     }
   }
   return infoPerCube;

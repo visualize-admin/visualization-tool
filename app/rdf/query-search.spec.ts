@@ -1,5 +1,3 @@
-import mapValues from "lodash/mapValues";
-
 import { computeScores, weights } from "./query-search-score-utils";
 
 // jest.mock("rdf-ext", () => ({}));
@@ -17,11 +15,12 @@ describe("compute scores", () => {
     { cube: "b", name: "national", description: "economy" },
     { cube: "c", creatorLabel: "national" },
     { cube: "d", creatorLabel: "" },
-  ].map((x) => mapValues(x, (v) => ({ value: v })));
+  ];
 
   it("should compute weighted score per cube from score rows", () => {
     const reduced = computeScores(scores, {
       query: "national economy",
+      identifierName: "cube",
     });
     expect(reduced["a"].score).toEqual(weights.name);
     expect(reduced["b"].score).toEqual(weights.name + weights.description);
