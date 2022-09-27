@@ -11,6 +11,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [3.9.3] - 2022-09-27
+
+- Map: Retain filters when switching from another chart type to map
+
 ## [3.9.2] - 2022-09-20
 
 - Map: fix a layer offset problem on Windows Edge.

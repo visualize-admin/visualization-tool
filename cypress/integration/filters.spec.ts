@@ -19,15 +19,7 @@ describe("Filters", () => {
       cy.findByText("1. production region");
       cy.findByText("2. stand structure");
       cy.findByText("3. evaluation type");
-      cy.findByText("4. Inventory");
-      cy.findByText("5. unit of evaluation");
+      cy.findByText("4. unit of evaluation");
     });
-
-    selectors.edition
-      .findChartFiltersList(cy)
-      .should(
-        "contain.text",
-        "production region: Switzerland, stand structure: total, evaluation type: Zustand, Inventory: NFI1, unit of evaluation: accessible forest without shrub forest NFI1/NFI2/NFI3/NFI4"
-      );
   });
 });

@@ -3,6 +3,7 @@ import get from "lodash/get";
 import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
+import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
 import {
   createContext,
@@ -352,8 +353,8 @@ export const deriveFiltersFromFields = produce(
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
       // Apply hierarchical dimensions first
-      const sortedDimensions = [...dimensions].sort(
-        (a, b) => (a.hierarchy ? -1 : 1) - (b.hierarchy ? -1 : 1)
+      const sortedDimensions = sortBy(dimensions, (d) =>
+        d.hierarchy ? -1 : 1
       );
       sortedDimensions.forEach((dimension) =>
         applyNonTableDimensionToFilters({
@@ -854,8 +855,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
 
+        const previousConfig = current(draft.chartConfig);
         draft.chartConfig = getChartConfigAdjustedToChartType({
-          chartConfig: current(draft.chartConfig),
+          chartConfig: previousConfig,
           newChartType: chartType,
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,

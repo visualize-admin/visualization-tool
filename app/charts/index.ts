@@ -2,6 +2,7 @@ import { ascending, group } from "d3";
 import produce from "immer";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
+import sortBy from "lodash/sortBy";
 
 import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
 import {
@@ -34,6 +35,8 @@ import {
   getCategoricalDimensions,
   getGeoDimensions,
   getTimeDimensions,
+  isGeoCoordinatesDimension,
+  isGeoShapesDimension,
 } from "../domain/data";
 import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
@@ -166,7 +169,9 @@ export const getInitialConfig = ({
         fields: {
           x: {
             componentIri: findPreferredDimension(
-              dimensions,
+              sortBy(dimensions, (x) =>
+                isGeoCoordinatesDimension(x) || isGeoShapesDimension(x) ? 1 : -1
+              ),
               "TemporalDimension"
             ).iri,
             sorting: DEFAULT_SORTING,
@@ -798,8 +803,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        if (!oldValue) {
-          draft.filters = oldValue;
+        // Filters have been reset by the initial config of the map.
+        // We need to set them back to their old value, taking care not
+        // to override the filters that have been set by the initial config
+        // of the map.
+        for (const [iri, value] of Object.entries(oldValue)) {
+          if (draft.filters[iri] === undefined) {
+            draft.filters[iri] = value;
+          }
         }
       });
     },

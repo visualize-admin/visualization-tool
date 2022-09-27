@@ -457,6 +457,17 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
             newFieldGetterPath: "fields.areaLayer.componentIri",
             equal: false,
           },
+          {
+            oldFieldGetterPath: [
+              "filters",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+            ],
+            newFieldGetterPath: [
+              "filters",
+              "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/type",
+            ],
+            equal: true,
+          },
         ],
       },
     },
