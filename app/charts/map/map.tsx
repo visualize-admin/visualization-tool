@@ -67,11 +67,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 // Debounced function fixes the problem of maximizing window or opening a console,
 // when map was not resized initially.
-const resize = debounce((e: MapboxEvent, bbox: BBox) => {
-  if (e.originalEvent) {
-    e.target.resize();
-    e.target.fitBounds(bbox, { duration: 0 });
-  }
+const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
+  map.resize();
+  map.fitBounds(bbox, { duration: 0 });
 }, 0);
 
 export const MapComponent = () => {
@@ -306,6 +304,31 @@ export const MapComponent = () => {
 
   const dataLoaded = features.areaLayer || features.symbolLayer;
 
+  const redrawMap = useEvent(() => {
+    if (!mapNodeRef.current) {
+      return;
+    }
+    const map = mapNodeRef.current.getMap() as mapboxgl.Map;
+    const bbox = map.getBounds().toArray() as BBox;
+    currentBBox.current = bbox;
+    resizeAndFit(map, lockedBBox || bbox);
+  });
+
+  const handleResize = useEvent((e: MapboxEvent) => {
+    if (e.originalEvent) {
+      redrawMap();
+    }
+  });
+
+  /**
+   * Redraw the map when style data has been downloaded to solve an offset problem between the viz
+   * layer and the base layer happening in Edge under precise conditions (Windows 10, Edge 105,
+   * resolution 1440x900).
+   */
+  const handleStyleData = useEvent(() => {
+    redrawMap();
+  });
+
   return (
     <>
       {locked ? null : (
@@ -322,6 +345,7 @@ export const MapComponent = () => {
           initialViewState={defaultViewState}
           mapLib={maplibregl}
           mapStyle={mapStyle}
+          onStyleData={handleStyleData}
           style={{
             position: "absolute",
             left: 0,
@@ -348,11 +372,7 @@ export const MapComponent = () => {
 
             onViewStateChange(e);
           }}
-          onResize={(e) => {
-            const bbox = e.target.getBounds().toArray() as BBox;
-            currentBBox.current = bbox;
-            resize(e, lockedBBox || bbox);
-          }}
+          onResize={handleResize}
           {...viewState}
         >
           <DeckGLOverlay
