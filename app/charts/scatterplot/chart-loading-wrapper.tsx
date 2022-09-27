@@ -3,6 +3,7 @@ import React from "react";
 import { UseQueryResponse } from "urql";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
+import Flex from "@/components/flex";
 import {
   Loading,
   LoadingDataError,
@@ -69,8 +70,16 @@ export const ChartLoadingWrapper = <
       <NoDataHint />
     );
   } else if (error) {
-    return <LoadingDataError />;
+    return (
+      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
+        <LoadingDataError />
+      </Flex>
+    );
   } else {
-    return <Loading />;
+    return (
+      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
+        <Loading />
+      </Flex>
+    );
   }
 };

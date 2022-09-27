@@ -68,7 +68,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     flexGrow: 1,
     flexDirection: "column",
-    justifyContent: "space-between",
     padding: theme.spacing(5),
     color: theme.palette.grey[800],
     overflowX: "auto",
@@ -173,7 +172,12 @@ export const ChartPublishedInner = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          <Box ref={containerRef} height={containerHeight.current!}>
+          <Flex
+            flexDirection="column"
+            ref={containerRef}
+            height={containerHeight.current!}
+            flexGrow={1}
+          >
             <PublishedConfiguratorStateProvider
               chartId={configKey}
               initialState={publishedConfiguratorState}
@@ -193,7 +197,7 @@ export const ChartPublishedInner = ({
                 />
               )}
             </PublishedConfiguratorStateProvider>
-          </Box>
+          </Flex>
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
@@ -255,7 +259,6 @@ const ChartWithInteractiveFilters = React.forwardRef(
         ref={ref}
         sx={{
           flexDirection: "column",
-          justifyContent: "space-between",
           flexGrow: 1,
         }}
       >
