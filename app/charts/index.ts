@@ -798,8 +798,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        if (!oldValue) {
-          draft.filters = oldValue;
+        // Filters have been reset by the initial config of the map.
+        // We need to set them back to their old value, taking care not
+        // to override the filters that have been set by the initial config
+        // of the map.
+        for (const [iri, value] of Object.entries(oldValue)) {
+          if (draft.filters[iri] === undefined) {
+            draft.filters[iri] = value;
+          }
         }
       });
     },

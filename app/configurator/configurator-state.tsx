@@ -855,8 +855,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
 
+        const previousConfig = current(draft.chartConfig);
         draft.chartConfig = getChartConfigAdjustedToChartType({
-          chartConfig: current(draft.chartConfig),
+          chartConfig: previousConfig,
           newChartType: chartType,
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
