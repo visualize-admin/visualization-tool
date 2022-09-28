@@ -15,7 +15,7 @@ describe("Filters", () => {
     );
     waitForChartToBeLoaded();
 
-    selectors.edition.findConfiguratorFilters(cy).within(() => {
+    selectors.edition.configFilters(cy).within(() => {
       cy.findByText("1. production region");
       cy.findByText("2. stand structure");
       cy.findByText("3. evaluation type");

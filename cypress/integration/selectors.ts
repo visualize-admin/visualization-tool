@@ -2,15 +2,16 @@ type Cy = Cypress.Chainable;
 
 const selectors = {
   search: {
-    findSearchInput: (cy: Cy) => cy.get("#datasetSearch"),
-    findIncludeDraftsCheckbox: (cy: Cy) => cy.get("#dataset-include-drafts"),
+    searchInput: (cy: Cy) => cy.get("#datasetSearch"),
+    draftsCheckbox: (cy: Cy) => cy.get("#dataset-include-drafts"),
+  },
+  panels: {
+    left: (cy: Cy) => cy.get('[data-name="panel-left"]'),
+    right: (cy: Cy) => cy.get('[data-name="panel-right"]'),
   },
   edition: {
-    findLeftPanel: (cy: Cy) => cy.get('[data-name="panel-left"]'),
-    findRightPanel: (cy: Cy) => cy.get('[data-name="panel-right"]'),
-    findConfiguratorFilters: (cy: Cy) =>
-      cy.findByTestId("configurator-filters"),
-    findChartFiltersList: (cy: Cy) => cy.findByTestId("chart-filters-list"),
+    configFilters: (cy: Cy) => cy.findByTestId("configurator-filters"),
+    chartFilters: (cy: Cy) => cy.findByTestId("chart-filters-list"),
   },
 };
 
