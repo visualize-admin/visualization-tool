@@ -1,4 +1,4 @@
-import { DESCRIBE, SELECT, sparql } from "@tpluscode/sparql-builder";
+import { DESCRIBE, SELECT } from "@tpluscode/sparql-builder";
 import clownface from "clownface";
 import { descending } from "d3";
 import { Cube } from "rdf-cube-view-query";
@@ -14,6 +14,7 @@ import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
 
 import { computeScores, highlight } from "./query-search-score-utils";
+import { makeVisualizeDatasetFilter } from "./query-utils";
 
 const toNamedNode = (x: string) => {
   return `<${x}>`;
@@ -57,29 +58,6 @@ const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
     },
     data,
   };
-};
-
-const makeVisualizeFilter = (includeDrafts: boolean) => {
-  return sparql`
-    ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?cube ${ns.schema.creativeWorkStatus} ?workStatus.
-    
-    ${
-      !includeDrafts
-        ? `
-      FILTER (
-        ?workStatus IN (<https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)
-        )`
-        : ""
-    }
-
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/validThrough> ?validThrough . }
-    )
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/expires> ?expires . }
-    )
-  `;
 };
 
 const enhanceQuery = (rawQuery: string) => {
@@ -150,7 +128,10 @@ export const searchCubes = async ({
       ?versionHistory ${ns.schema.hasPart} ?cube.
     }
     
-    ${makeVisualizeFilter(!!includeDrafts)}
+    ${makeVisualizeDatasetFilter({
+      includeDrafts: !!includeDrafts,
+      cubeIriVar: "?cube",
+    })}
 
     ${makeInFilter("about", aboutValues)}
     ${makeInFilter("theme", themeValues)}

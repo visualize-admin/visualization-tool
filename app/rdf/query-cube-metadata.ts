@@ -7,6 +7,7 @@ import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 
 import { makeLocalesFilter } from "./query-labels";
+import { makeVisualizeDatasetFilter } from "./query-utils";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
@@ -127,20 +128,6 @@ export const queryDatasetCountByOrganization = async ({
       };
     })
     .filter((r) => r.iri);
-};
-
-const makeVisualizeDatasetFilter = (options?: { includeDrafts?: boolean }) => {
-  const includeDrafts = options?.includeDrafts || false;
-  return sparql`
-    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ${
-      includeDrafts
-        ? ""
-        : sparql`?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.`
-    }
-    FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
-    FILTER NOT EXISTS {?iri ${schema.validThrough} ?validThrough }
-    `;
 };
 
 export const queryDatasetCountByTheme = async ({
