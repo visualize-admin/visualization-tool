@@ -25,12 +25,12 @@ type ChartCommonProps<TChartConfig extends ChartConfig> = {
   interactiveFiltersConfig: TChartConfig["interactiveFiltersConfig"];
 };
 
+type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
+
 export const ChartLoadingWrapper = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType<
-    ChartCommonProps<TChartConfig> & TOtherProps
-  >
+  TChartComponent extends React.ElementType
 >({
   query,
   chartConfig,
@@ -43,7 +43,10 @@ export const ChartLoadingWrapper = <
   >;
   chartConfig: TChartConfig;
   Component: TChartComponent;
-  ComponentProps?: TOtherProps;
+  ComponentProps?: Omit<
+    ElementProps<TChartComponent>,
+    keyof ChartCommonProps<TChartConfig>
+  >;
 }) => {
   const { data, fetching, error } = query;
   if (data?.dataCubeByIri) {
