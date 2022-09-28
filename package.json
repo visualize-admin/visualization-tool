@@ -28,8 +28,8 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
-    "e2e:dev": "CYPRESS_BASE_URL=http://localhost:3000 cypress open",
-    "e2e": "start-test 'yarn dev -p 3333' 3333 'yarn cypress run'",
+    "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn e2e",
+    "e2e": "playwright test",
     "cube": "NODE_ENV=development ts-node app/scripts/cube.ts"
   },
   "dependencies": {
