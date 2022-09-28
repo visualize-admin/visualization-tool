@@ -400,6 +400,7 @@ export const SearchDatasetBox = ({
             lineHeight: "24px",
           }}
           aria-live="polite"
+          data-testid="search-results-count"
         >
           {searchResult && searchResult.dataCubes.length > 0 && (
             <Plural
@@ -518,6 +519,7 @@ const NavChip = ({
   const classes = useStyles();
   return (
     <Flex
+      data-testid="navChip"
       className={classes.navChip}
       sx={{
         typography: "tag",
@@ -621,6 +623,7 @@ const NavItem = ({
     <MotionBox
       {...accordionPresenceProps}
       className={classes.navItem}
+      data-testid="navItem"
       sx={{
         mb: 1,
         pl: 4,
@@ -646,7 +649,7 @@ const NavItem = ({
         <>
           <Link href={path} passHref>
             <MUILink sx={{ flexGrow: 1 }} underline="none" variant="body2">
-              {children}&nbsp;&nbsp;
+              {children}
             </MUILink>
           </Link>
           {countChip}
