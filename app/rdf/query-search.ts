@@ -8,11 +8,12 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
+import { ResolvedDataCube } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
 import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
 
-import { computeScores } from "./query-search-score-utils";
+import { computeScores, highlight } from "./query-search-score-utils";
 
 const toNamedNode = (x: string) => {
   return `<${x}>`;
@@ -290,7 +291,7 @@ export const searchCubes = async ({
 
   // Sort the cubes per score using previously queries scores
   const results = cubes
-    .filter((c) => !!c?.data)
+    .filter((c): c is ResolvedDataCube => !!c?.data)
     .sort((a, b) =>
       descending(
         infoPerCube[a?.data.iri!].score,
@@ -299,10 +300,10 @@ export const searchCubes = async ({
     )
     .map((c) => ({
       dataCube: c,
-
-      // TODO Retrieve highlights
-      highlightedTitle: c!.data.title,
-      highlightedDescription: c!.data.description,
+      highlightedTitle: query ? highlight(c.data.title, query) : c.data.title,
+      highlightedDescription: query
+        ? highlight(c.data.description, query)
+        : c.data.description,
     }));
 
   return {

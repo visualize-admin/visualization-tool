@@ -51,3 +51,8 @@ export const computeScores = (
   }
   return infoPerCube;
 };
+
+export const highlight = (text: string, query: string) => {
+  const re = new RegExp(query.toLowerCase().split(" ").join("|"), "gi");
+  return text.replace(re, (m) => `<b>${m}</b>`);
+};
