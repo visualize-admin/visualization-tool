@@ -13,13 +13,14 @@ Nothing yet.
 
 ## [3.9.4] - 2022-09-29
 
-- Metadata: Dimensions metadata is shown in more places within the UI
+- Metadata: fix dimension metadata display for Grouped and Stacked column charts
 
 ## [3.9.3] - 2022-09-29
 
 - Map: Retain filters when switching from another chart type to map
 - Charts: Tooltip describing dimensions shown at more places.
 - Search: Improvements concerning categories & themes.
+- Metadata: Dimensions metadata is shown in more places within the UI
 
 ## [3.9.2] - 2022-09-20
 
