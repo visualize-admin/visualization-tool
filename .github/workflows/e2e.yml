@@ -11,9 +11,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          cache: "yarn"
       - name: Install dependencies
         run: yarn install --immutable
-        shell: bash
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
