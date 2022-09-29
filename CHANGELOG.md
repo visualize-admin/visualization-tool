@@ -11,6 +11,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [3.9.4] - 2022-09-29
+
+- Metadata: Dimensions metadata is shown in more places within the UI
+
 ## [3.9.3] - 2022-09-29
 
 - Map: Retain filters when switching from another chart type to map
