@@ -1,4 +1,3 @@
-import { Tooltip } from "@mui/material";
 import { axisLeft } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
@@ -10,6 +9,7 @@ import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const TICK_MIN_HEIGHT = 50;
 
@@ -58,23 +58,17 @@ export const AxisHeightLinear = () => {
   return (
     <>
       <g>
-        {yAxisDescription ? (
-          <Tooltip arrow title={yAxisDescription}>
-            <text
-              x={0}
-              y={0}
-              dy={labelFontSize}
-              fontSize={labelFontSize}
-              textDecoration="underline"
-            >
-              {yAxisLabel}
-            </text>
-          </Tooltip>
-        ) : (
-          <text x={0} y={0} dy={labelFontSize} fontSize={labelFontSize}>
+        <MaybeTooltip text={yAxisDescription}>
+          <text
+            x={0}
+            y={0}
+            dy={labelFontSize}
+            fontSize={labelFontSize}
+            textDecoration={yAxisDescription ? "underline" : undefined}
+          >
             {yAxisLabel}
           </text>
-        )}
+        </MaybeTooltip>
       </g>
       <g
         ref={ref}

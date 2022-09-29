@@ -18,7 +18,6 @@ import {
   MenuItem,
   TypographyProps,
   Stack,
-  Tooltip,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
@@ -35,6 +34,7 @@ import {
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const Label = ({
   htmlFor,
@@ -49,32 +49,24 @@ export const Label = ({
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
-  return tooltipText ? (
-    <Tooltip arrow title={tooltipText}>
-      <div style={{ width: "max-content", textDecoration: "underline" }}>
-        <Typography
-          component="label"
-          htmlFor={htmlFor}
-          variant={smaller ? "caption" : "body2"}
-          color="secondary"
-          display="flex"
-          sx={sx}
-        >
-          {children}
-        </Typography>
-      </div>
-    </Tooltip>
-  ) : (
-    <Typography
-      component="label"
-      htmlFor={htmlFor}
-      variant={smaller ? "caption" : "body2"}
-      color="secondary"
-      display="flex"
-      sx={sx}
-    >
-      {children}
-    </Typography>
+  return (
+    <MaybeTooltip text={tooltipText}>
+      <Typography
+        component="label"
+        htmlFor={htmlFor}
+        variant={smaller ? "caption" : "body2"}
+        color="secondary"
+        display="flex"
+        sx={{
+          ...sx,
+          ...(tooltipText
+            ? { width: "max-content", textDecoration: "underline" }
+            : {}),
+        }}
+      >
+        {children}
+      </Typography>
+    </MaybeTooltip>
   );
 };
 

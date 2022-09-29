@@ -1,4 +1,3 @@
-import { Tooltip } from "@mui/material";
 import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
@@ -9,6 +8,7 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
@@ -62,30 +62,18 @@ export const AxisWidthLinear = () => {
   return (
     <>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        {xAxisDescription ? (
-          <Tooltip arrow title={xAxisDescription}>
-            <text
-              x={chartWidth}
-              y={chartHeight + margins.bottom}
-              dy={-labelFontSize}
-              fontSize={labelFontSize}
-              textAnchor="end"
-              textDecoration="underline"
-            >
-              {xAxisLabel}
-            </text>
-          </Tooltip>
-        ) : (
+        <MaybeTooltip text={xAxisDescription}>
           <text
             x={chartWidth}
             y={chartHeight + margins.bottom}
             dy={-labelFontSize}
             fontSize={labelFontSize}
             textAnchor="end"
+            textDecoration={xAxisDescription ? "underline" : undefined}
           >
             {xAxisLabel}
           </text>
-        )}
+        </MaybeTooltip>
       </g>
       <g
         ref={xAxisRef}
