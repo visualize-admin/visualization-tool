@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { axisLeft } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
@@ -5,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
@@ -19,10 +21,11 @@ export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const formatNumber = useFormatNumber();
 
-  const { yScale, yAxisLabel, bounds } = useChartState() as
+  const { yScale, yAxisLabel, yAxisDescription, bounds } = useChartState() as
+    | AreasState
     | ColumnsState
     | LinesState
-    | AreasState;
+    | ScatterplotState;
 
   const ticks = getTickNumber(bounds.chartHeight);
 
@@ -55,9 +58,23 @@ export const AxisHeightLinear = () => {
   return (
     <>
       <g>
-        <text x={0} y={0} dy={labelFontSize} fontSize={labelFontSize}>
-          {yAxisLabel}
-        </text>
+        {yAxisDescription ? (
+          <Tooltip arrow title={yAxisDescription}>
+            <text
+              x={0}
+              y={0}
+              dy={labelFontSize}
+              fontSize={labelFontSize}
+              textDecoration="underline"
+            >
+              {yAxisLabel}
+            </text>
+          </Tooltip>
+        ) : (
+          <text x={0} y={0} dy={labelFontSize} fontSize={labelFontSize}>
+            {yAxisLabel}
+          </text>
+        )}
       </g>
       <g
         ref={ref}

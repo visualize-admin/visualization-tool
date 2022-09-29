@@ -46,6 +46,7 @@ export interface ScatterplotState {
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   getSegmentLabel: (s: string) => string;
   getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
 }
@@ -79,7 +80,7 @@ const useScatterplotState = ({
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
-    plotters: [getX, getY]
+    plotters: [getX, getY],
   });
 
   // Data for chart
@@ -109,6 +110,7 @@ const useScatterplotState = ({
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   const yMinValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
   const yMaxValue = max(preparedData, getY) as number;
@@ -241,6 +243,7 @@ const useScatterplotState = ({
     colors,
     xAxisLabel,
     yAxisLabel,
+    yAxisDescription,
     getAnnotationInfo,
     getSegmentLabel,
   };
