@@ -1169,7 +1169,7 @@ export const DatasetResult = ({
           {highlightedDescription ? (
             <Box
               component="span"
-              sx={{ "& > strong": { backgroundColor: "primaryLight" } }}
+              sx={{ "& > b": { backgroundColor: "primary.light" } }}
               dangerouslySetInnerHTML={{ __html: highlightedDescription }}
             />
           ) : (
