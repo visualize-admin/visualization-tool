@@ -9,7 +9,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.9.3] - 2022-09-29
+
 - Map: Retain filters when switching from another chart type to map
+- Charts: Tooltip describing dimensions shown at more places.
+- Search: Improvements concerning categories & themes.
 
 ## [3.9.2] - 2022-09-20
 
