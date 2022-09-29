@@ -11,15 +11,15 @@ Cypress.on("uncaught:exception", (err) => {
 describe("Filters", () => {
   it("Initial state should have hierarchy dimensions first and topmost value selected", () => {
     cy.visit(
-      `/en/create/new?cube=https://environment.ld.admin.ch/foen/nfi/49-19-None-None-44/cube/1&dataSource=Int`
+      `/en/create/new?cube=https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1&dataSource=Int`
     );
     waitForChartToBeLoaded();
 
     selectors.edition.configFilters(cy).within(() => {
       cy.findByText("1. production region");
       cy.findByText("2. stand structure");
-      cy.findByText("3. evaluation type");
-      cy.findByText("4. unit of evaluation");
+      cy.findByText("3. Inventory");
+      cy.findByText("4. evaluation type");
     });
   });
 });

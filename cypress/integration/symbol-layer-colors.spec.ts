@@ -28,8 +28,8 @@ describe("Selecting SymbolLayer colors", () => {
     cy.waitForNetworkIdle(1000);
 
     cy.findByText("Symbols", { timeout: 15000 }).click();
-    selectors.edition
-      .findRightPanel(cy)
+    selectors.panels
+      .right(cy)
       .get(".MuiSelect-select")
       .should("have.class", "Mui-disabled");
 
