@@ -116,7 +116,7 @@ export const StepperDumb = ({
             stepState={steps[currentStepIndex] as StepState | undefined}
           />
         </Flex>
-        <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
+        <Flex sx={{ minWidth: 200, justifyContent: "flex-end", mr: 2 }}>
           <Button
             endIcon={
               state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
