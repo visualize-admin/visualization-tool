@@ -125,7 +125,6 @@
     "@playwright-testing-library/test": "^4.4.0",
     "@playwright/test": "^1.26.1",
     "@svgr/cli": "^5.5.0",
-    "@testing-library/cypress": "^8.0.3",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/clownface": "^1.0.3",
