@@ -58,11 +58,7 @@ export const ChartPieVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
 
-    const notAllNegative = observations.data.some(
-      (d) => d[chartConfig.fields.y.componentIri] > 0
-    );
-
-    return notAllNegative && observations.data.length > 0 ? (
+    return observations.data.length > 0 ? (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
@@ -79,8 +75,6 @@ export const ChartPieVisualization = ({
         />
         {fetching && <LoadingOverlay />}
       </Box>
-    ) : !notAllNegative && observations.data.length > 0 ? (
-      <OnlyNegativeDataHint />
     ) : (
       <NoDataHint />
     );
@@ -105,6 +99,14 @@ export const ChartPie = memo(
     fields: PieFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
+    const somePositive = observations.some(
+      (d) => d[fields?.y?.componentIri]! > 0
+    );
+
+    if (!somePositive) {
+      return <OnlyNegativeDataHint />;
+    }
+
     return (
       <PieChart
         data={observations}

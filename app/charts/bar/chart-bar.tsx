@@ -1,23 +1,15 @@
-import { Box } from "@mui/material";
 import React, { memo } from "react";
 
 import { BarsGrouped } from "@/charts/bar/bars-grouped";
 import { GroupedBarsChart } from "@/charts/bar/bars-grouped-state";
 import { Bars } from "@/charts/bar/bars-simple";
 import { BarChart } from "@/charts/bar/bars-state";
-import { A11yTable } from "@/charts/shared/a11y-table";
 import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import {
   InteractiveLegendColor,
   LegendColor,
 } from "@/charts/shared/legend-color";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "@/components/hint";
 import {
   Filters,
   BarConfig,
@@ -33,6 +25,8 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { ChartLoadingWrapper } from "../chart-loading-wrapper";
+
 export const ChartBarsVisualization = ({
   dataSetIri,
   dataSource,
@@ -45,7 +39,7 @@ export const ChartBarsVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [queryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -56,33 +50,13 @@ export const ChartBarsVisualization = ({
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-        />
-        <ChartBars
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
-    );
-  } else if (error) {
-    return <LoadingDataError />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <ChartLoadingWrapper
+      query={queryResp}
+      chartConfig={chartConfig}
+      Component={ChartBars}
+    />
+  );
 };
 
 export const ChartBars = memo(

@@ -1,7 +1,6 @@
-import { Box } from "@mui/material";
 import { geoCentroid } from "d3";
 import keyBy from "lodash/keyBy";
-import React, { memo, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
@@ -13,12 +12,6 @@ import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingGeoDimensionsError,
-  NoDataHint,
-} from "@/components/hint";
 import { BaseLayer, DataSource, MapConfig, MapFields } from "@/configurator";
 import {
   AreaLayer,
@@ -39,6 +32,8 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { ChartLoadingWrapper } from "../chart-loading-wrapper";
+
 export const ChartMapVisualization = ({
   dataSetIri,
   dataSource,
@@ -53,7 +48,7 @@ export const ChartMapVisualization = ({
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [observationsQueryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -63,6 +58,7 @@ export const ChartMapVisualization = ({
       filters: queryFilters,
     },
   });
+  const { data, fetching, error } = observationsQueryResp;
 
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
@@ -202,68 +198,61 @@ export const ChartMapVisualization = ({
       (geoShapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
     (symbolLayerPrepared && symbolLayer?.points.length);
 
-  if (
-    measures &&
-    dimensions &&
-    observations &&
-    areaLayerPrepared &&
-    symbolLayerPrepared &&
-    areasOrSymbolsLoaded
-  ) {
-    return (
-      <Box data-chart-loaded={!fetching} sx={{ m: 4, backgroundColor: "#fff" }}>
-        <ChartMap
-          observations={observations}
-          features={{ areaLayer, symbolLayer }}
-          fields={chartConfig.fields}
-          measures={measures}
-          dimensions={dimensions}
-          baseLayer={chartConfig.baseLayer}
-        />
-      </Box>
-    );
-  } else if (fetching || !areaLayerPrepared || !symbolLayerPrepared) {
-    return <Loading />;
-  } else if (error) {
-    return <LoadingDataError />;
-  } else if (!areasOrSymbolsLoaded) {
-    return <LoadingGeoDimensionsError />;
-  } else {
-    return <NoDataHint />;
-  }
+  const queryResp = {
+    fetching,
+    data:
+      measures &&
+      dimensions &&
+      observations &&
+      areaLayerPrepared &&
+      symbolLayerPrepared &&
+      areasOrSymbolsLoaded
+        ? observationsQueryResp["data"]
+        : undefined,
+    error,
+  };
+  return (
+    <ChartLoadingWrapper
+      query={queryResp}
+      Component={ChartMap}
+      ComponentProps={{
+        features: { areaLayer, symbolLayer },
+        baseLayer: chartConfig.baseLayer,
+      }}
+      chartConfig={chartConfig}
+    />
+  );
 };
 
-export const ChartMap = memo(
-  ({
-    observations,
-    features,
-    fields,
-    measures,
-    dimensions,
-    baseLayer,
-  }: {
-    features: GeoData;
-    observations: Observation[];
-    measures: DimensionMetadataFragment[];
-    dimensions: DimensionMetadataFragment[];
-    fields: MapFields;
-    baseLayer: BaseLayer;
-  }) => {
-    return (
-      <MapChart
-        data={observations}
-        features={features}
-        fields={fields}
-        measures={measures}
-        dimensions={dimensions}
-        baseLayer={baseLayer}
-      >
-        <ChartContainer>
-          <MapComponent />
-          <MapTooltip />
-        </ChartContainer>
-        <MapLegend />
-      </MapChart>
-    );
-  }
-);
+export const ChartMap = ({
+  observations,
+  features,
+  fields,
+  measures,
+  dimensions,
+  baseLayer,
+}: {
+  features: GeoData;
+  observations: Observation[];
+  measures: DimensionMetadataFragment[];
+  dimensions: DimensionMetadataFragment[];
+  fields: MapFields;
+  baseLayer: BaseLayer;
+}) => {
+  return (
+    <MapChart
+      data={observations}
+      features={features}
+      fields={fields}
+      measures={measures}
+      dimensions={dimensions}
+      baseLayer={baseLayer}
+    >
+      <ChartContainer>
+        <MapComponent />
+        <MapTooltip />
+      </ChartContainer>
+      <MapLegend />
+    </MapChart>
+  );
+};
