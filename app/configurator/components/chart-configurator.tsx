@@ -140,6 +140,7 @@ const DataFilterSelectGeneric = ({
     id: `select-single-filter-${index}`,
     disabled: disabled,
     isOptional: !dimension.isKeyDimension,
+    tooltipText: dimension.description || undefined,
   };
 
   if (dimension.__typename === "TemporalDimension") {

@@ -75,6 +75,7 @@ export interface ColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
   showStandardError: boolean;
 }
@@ -221,6 +222,7 @@ const useColumnsState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   const { left, bottom } = useChartPadding(
     yScale,
@@ -343,6 +345,7 @@ const useColumnsState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
+    yAxisDescription,
     segments,
     colors,
     getAnnotationInfo,

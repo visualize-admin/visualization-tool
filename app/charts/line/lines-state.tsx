@@ -12,7 +12,7 @@ import {
   scaleTime,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy"
+import sortBy from "lodash/sortBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
@@ -62,6 +62,7 @@ export interface LinesState {
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   grouped: Map<string, Observation[]>;
   chartWideData: ArrayLike<Observation>;
   allDataWide: ArrayLike<Observation>;
@@ -187,6 +188,7 @@ const useLinesState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   const segmentDimension = useMemo(() => {
     return (
@@ -344,6 +346,7 @@ const useLinesState = (
     getSegmentLabel,
     xAxisLabel,
     yAxisLabel,
+    yAxisDescription,
     segments,
     colors,
     grouped: preparedDataGroupedBySegment,

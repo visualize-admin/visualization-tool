@@ -1,8 +1,10 @@
-import { Box, TableSortLabel, Theme, Tooltip } from "@mui/material";
+import { Box, TableSortLabel, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { useMemo, useContext } from "react";
 import { HeaderGroup } from "react-table";
+
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 import Flex from "../../components/flex";
 import { Observation } from "../../domain/data";
@@ -105,15 +107,17 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       active={isCustomSorted}
                       direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      {description ? (
-                        <Tooltip arrow title={description}>
-                          <span style={{ textDecoration: "underline" }}>
-                            {column.render("Header")}
-                          </span>
-                        </Tooltip>
-                      ) : (
-                        column.render("Header")
-                      )}
+                      <MaybeTooltip text={description}>
+                        <span
+                          style={{
+                            textDecoration: description
+                              ? "underline"
+                              : undefined,
+                          }}
+                        >
+                          {column.render("Header")}
+                        </span>
+                      </MaybeTooltip>
                     </TableSortLabel>
                   </Flex>
                 );

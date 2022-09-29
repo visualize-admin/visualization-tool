@@ -8,12 +8,12 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatNumber } from "@/configurator/components/ui-helpers";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, chartType } = useChartState() as
-    | ScatterplotState
-    | BarsState;
+  const { xScale, bounds, xAxisLabel, xAxisDescription, chartType } =
+    useChartState() as ScatterplotState | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const { domainColor, labelColor, labelFontSize, gridColor, fontFamily } =
     useChartTheme();
@@ -62,15 +62,18 @@ export const AxisWidthLinear = () => {
   return (
     <>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <text
-          x={chartWidth}
-          y={chartHeight + margins.bottom}
-          dy={-labelFontSize}
-          fontSize={labelFontSize}
-          textAnchor="end"
-        >
-          {xAxisLabel}
-        </text>
+        <MaybeTooltip text={xAxisDescription}>
+          <text
+            x={chartWidth}
+            y={chartHeight + margins.bottom}
+            dy={-labelFontSize}
+            fontSize={labelFontSize}
+            textAnchor="end"
+            textDecoration={xAxisDescription ? "underline" : undefined}
+          >
+            {xAxisLabel}
+          </text>
+        </MaybeTooltip>
       </g>
       <g
         ref={xAxisRef}

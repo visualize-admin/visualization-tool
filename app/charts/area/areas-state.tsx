@@ -19,7 +19,7 @@ import {
   sum,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy"
+import sortBy from "lodash/sortBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
@@ -68,6 +68,7 @@ export interface AreasState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   chartWideData: ArrayLike<Observation>;
   allDataWide: ArrayLike<Observation>;
   series: $FixMe[];
@@ -207,6 +208,7 @@ const useAreasState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   /** Ordered segments */
   const segmentSortingType = fields.segment?.sorting?.sortingType;
@@ -426,6 +428,7 @@ const useAreasState = (
     yScale,
     getSegment,
     yAxisLabel,
+    yAxisDescription,
     segments,
     colors,
     chartWideData,

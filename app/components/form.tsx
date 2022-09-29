@@ -34,29 +34,41 @@ import {
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const Label = ({
   htmlFor,
+  tooltipText,
   smaller = false,
   children,
   sx,
 }: {
   htmlFor: string;
+  tooltipText?: string;
   smaller?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
-}) => (
-  <Typography
-    component="label"
-    htmlFor={htmlFor}
-    variant={smaller ? "caption" : "body2"}
-    color="secondary"
-    display="flex"
-    sx={sx}
-  >
-    {children}
-  </Typography>
-);
+}) => {
+  return (
+    <MaybeTooltip text={tooltipText}>
+      <Typography
+        component="label"
+        htmlFor={htmlFor}
+        variant={smaller ? "caption" : "body2"}
+        color="secondary"
+        display="flex"
+        sx={{
+          ...sx,
+          ...(tooltipText
+            ? { width: "max-content", textDecoration: "underline" }
+            : {}),
+        }}
+      >
+        {children}
+      </Typography>
+    </MaybeTooltip>
+  );
+};
 
 export const Radio = ({
   label,
@@ -250,6 +262,7 @@ export const Select = ({
   sortOptions = true,
   controls,
   optionGroups,
+  tooltipText,
 }: {
   id: string;
   options: Option[];
@@ -258,6 +271,7 @@ export const Select = ({
   sortOptions?: boolean;
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, Option[]][];
+  tooltipText?: string;
 } & SelectProps) => {
   const locale = useLocale();
 
@@ -276,10 +290,11 @@ export const Select = ({
       return getSelectOptions(options, sortOptions, locale);
     }
   }, [optionGroups, sortOptions, locale, options]);
+
   return (
     <Box>
       {label && (
-        <Label htmlFor={id} smaller sx={{ mb: 1 }}>
+        <Label htmlFor={id} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
           {label}
           {controls}
         </Label>
@@ -377,14 +392,16 @@ export const Input = ({
   name,
   value,
   disabled,
+  tooltipText,
   onChange,
 }: {
   label?: string | ReactNode;
+  tooltipText?: string;
   disabled?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
-      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+      <Label htmlFor={name} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
         {label}
       </Label>
     )}
