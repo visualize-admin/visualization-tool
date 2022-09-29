@@ -3,6 +3,8 @@ import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
@@ -24,6 +26,8 @@ export const AxisHeightLinear = () => {
   const { yScale, yAxisLabel, yAxisDescription, bounds } = useChartState() as
     | AreasState
     | ColumnsState
+    | GroupedColumnsState
+    | StackedColumnsState
     | LinesState
     | ScatterplotState;
 

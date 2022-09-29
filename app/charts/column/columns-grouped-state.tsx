@@ -78,6 +78,7 @@ export interface GroupedColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   grouped: [string, Observation[]][];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
   showStandardError: boolean;
@@ -339,6 +340,7 @@ const useGroupedColumnsState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   // Group
   const grouped = useMemo(() => {
@@ -478,6 +480,7 @@ const useGroupedColumnsState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
+    yAxisDescription,
     segments,
     colors,
     grouped,
