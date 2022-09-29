@@ -110,6 +110,7 @@ export const DataFilterSelect = ({
   isOptional,
   controls,
   optionGroups,
+  tooltipText,
 }: {
   dimensionIri: string;
   label: string;
@@ -119,6 +120,7 @@ export const DataFilterSelect = ({
   isOptional?: boolean;
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, Option[]][];
+  tooltipText?: string;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -152,6 +154,7 @@ export const DataFilterSelect = ({
       options={allOptions}
       controls={controls}
       optionGroups={optionGroups}
+      tooltipText={tooltipText}
       {...fieldProps}
     />
   );
@@ -262,6 +265,7 @@ export const DataFilterSelectTime = ({
   disabled,
   isOptional,
   controls,
+  tooltipText,
 }: {
   dimensionIri: string;
   label: string;
@@ -273,6 +277,7 @@ export const DataFilterSelectTime = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
+  tooltipText?: string;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
   const formatLocale = useTimeFormatLocale();
@@ -327,6 +332,7 @@ export const DataFilterSelectTime = ({
         options={allOptions}
         sortOptions={false}
         controls={controls}
+        tooltipText={tooltipText}
         {...fieldProps}
       />
     );
@@ -340,6 +346,7 @@ export const DataFilterSelectTime = ({
       timeFormat={timeFormat}
       formatLocale={formatLocale}
       isOptional={isOptional}
+      tooltipText={tooltipText}
       onChange={fieldProps.onChange}
     />
   );
@@ -352,6 +359,7 @@ export const TimeInput = ({
   timeFormat,
   formatLocale,
   isOptional,
+  tooltipText,
   onChange,
 }: {
   id: string;
@@ -360,6 +368,7 @@ export const TimeInput = ({
   timeFormat: string;
   formatLocale: TimeLocaleObject;
   isOptional: boolean | undefined;
+  tooltipText?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
@@ -399,8 +408,9 @@ export const TimeInput = ({
       name={id}
       label={label}
       value={inputValue}
+      tooltipText={tooltipText}
       onChange={onInputChange}
-    ></Input>
+    />
   );
 };
 
@@ -433,12 +443,14 @@ export const MetaInputField = ({
   locale,
   value,
   disabled,
+  tooltipText,
 }: {
   label: string | ReactNode;
   metaKey: string;
   locale: string;
   value?: string;
   disabled?: boolean;
+  tooltipText?: string;
 }) => {
   const field = useMetaField({
     metaKey,
@@ -446,7 +458,14 @@ export const MetaInputField = ({
     value,
   });
 
-  return <Input label={label} {...field} disabled={disabled} />;
+  return (
+    <Input
+      label={label}
+      {...field}
+      disabled={disabled}
+      tooltipText={tooltipText}
+    />
+  );
 };
 
 const useMultiFilterColorPicker = (value: string) => {
