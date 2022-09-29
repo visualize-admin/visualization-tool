@@ -64,7 +64,7 @@ const useStyles = makeStyles(() => ({
   },
   panelMiddle: {
     paddingTop: 0,
-    paddingLeft: 6,
+    paddingLeft: 18,
     gridColumnStart: "middle",
     gridColumnEnd: "right",
   },

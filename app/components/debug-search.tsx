@@ -127,10 +127,17 @@ const Search = ({
         {cubes.data?.dataCubes.map((c) => {
           return (
             <div key={c.dataCube.iri}>
-              <Typography variant="h6">{c.highlightedTitle}</Typography>
-              <Typography variant="caption">
-                {c?.highlightedDescription?.slice(0, 100) ?? "" + "..."}
-              </Typography>
+              <Typography
+                variant="h6"
+                dangerouslySetInnerHTML={{ __html: c.highlightedTitle! }}
+              />
+              <Typography
+                variant="caption"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    c?.highlightedDescription?.slice(0, 100) ?? "" + "...",
+                }}
+              />
               <br />
               <Typography variant="caption">{c?.dataCube?.iri}</Typography>
               <Stack spacing={2} direction="row">

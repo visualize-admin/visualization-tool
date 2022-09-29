@@ -1,3 +1,4 @@
+import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
 import { DESCRIBE, SELECT, sparql } from "@tpluscode/sparql-builder";
 import clownface from "clownface";
 import { descending } from "d3";
@@ -8,11 +9,13 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
+import { ResolvedDataCube } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
-import { parseCube, parseIri, parseVersionHistory } from "@/rdf/parse";
+import { parseCube, parseIri } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
 
-import { computeScores } from "./query-search-score-utils";
+import { computeScores, highlight } from "./query-search-score-utils";
+import { makeVisualizeDatasetFilter } from "./query-utils";
 
 const toNamedNode = (x: string) => {
   return `<${x}>`;
@@ -21,7 +24,7 @@ const makeInFilter = (varName: string, values: string[]) => {
   return `
     ${
       values.length > 0
-        ? `FILTER (
+        ? `FILTER (bound(?${varName}) &&
     ?${varName} IN (${values.map(toNamedNode)})
   )`
         : ""
@@ -58,29 +61,6 @@ const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
   };
 };
 
-const makeVisualizeFilter = (includeDrafts: boolean) => {
-  return sparql`
-    ?cube ${ns.schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?cube ${ns.schema.creativeWorkStatus} ?workStatus.
-    
-    ${
-      !includeDrafts
-        ? `
-      FILTER (
-        ?workStatus IN (<https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>)
-        )`
-        : ""
-    }
-
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/validThrough> ?validThrough . }
-    )
-    FILTER (
-      NOT EXISTS { ?cube <http://schema.org/expires> ?expires . }
-    )
-  `;
-};
-
 const enhanceQuery = (rawQuery: string) => {
   const enhancedQuery = rawQuery
     .toLowerCase()
@@ -93,9 +73,16 @@ const enhanceQuery = (rawQuery: string) => {
   return enhancedQuery;
 };
 
-const contains = (left: string, right: string) => {
+const icontains = (left: string, right: string) => {
   return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
 };
+
+type ResultRow = Record<string, { value: unknown }>;
+const parseResultRow = (row: ResultRow) =>
+  Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v.value]));
+
+const identity = <T>(str: TemplateResult<T>) => str;
+const optional = <T>(str: TemplateResult<T>) => sparql`OPTIONAL { ${str} }`;
 
 export const searchCubes = async ({
   query: rawQuery,
@@ -128,14 +115,10 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?name ?description`
+  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
-
-    
-    ?cube ${ns.dcat.theme} ?theme.
-    ?cube ${ns.dcterms.creator} ?creator.
 
     OPTIONAL {
       ?cube ${ns.schema.description} ?description.
@@ -148,8 +131,25 @@ export const searchCubes = async ({
     OPTIONAL {
       ?versionHistory ${ns.schema.hasPart} ?cube.
     }
+
+    OPTIONAL { ?cube ${ns.dcterms.publisher} ?publisher. }
     
-    ${makeVisualizeFilter(!!includeDrafts)}
+    ${(themeValues.length > 0 ? identity : optional)(sparql`
+      ?cube ${ns.dcat.theme} ?theme.
+      ?theme ${ns.schema.name} ?themeName.
+      `)}
+    
+    ${(creatorValues.length > 0 ? identity : optional)(
+      sparql`
+      ?cube ${ns.dcterms.creator} ?creator.
+      ?creator ${ns.schema.name} ?creatorLabel. 
+      `
+    )}
+    
+    ${makeVisualizeDatasetFilter({
+      includeDrafts: !!includeDrafts,
+      cubeIriVar: "?cube",
+    })}
 
     ${makeInFilter("about", aboutValues)}
     ${makeInFilter("theme", themeValues)}
@@ -162,89 +162,43 @@ export const searchCubes = async ({
           ?.split(" ")
           .slice(0, 1)
           .map(
-            (x) => `${contains("?name", x)} || ${contains("?description", x)}`
+            (x) => `${icontains("?name", x)} || ${icontains("?description", x)}`
           )
           .join(" || ")}
-          
+
+      || (bound(?publisher) && ${query
+        .split(" ")
+        .map((x) => icontains("?publisher", x))
+        .join(" || ")})
+        
+      ||  (bound(?themeName) && ${query
+        .split(" ")
+        .map((x) => icontains("?themeName", x))
+        .join(" || ")})
+        
+      ||  (bound(?creatorLabel) && ${query
+        .split(" ")
+        .map((x) => icontains("?creatorLabel", x))
+        .join(" || ")})  
+
           )`
           : ""
       }
-
   `;
 
-  const scoresQuery2 = SELECT.DISTINCT`?cube ?versionHistory ?publisher ?themeName ?creatorLabel`
-    .WHERE`
-    ?cube a ${ns.cube.Cube}.
-    ?cube ${ns.schema.name} ?name.
-    
-    ?cube ${ns.dcat.theme} ?theme.
-    ?cube ${ns.dcterms.creator} ?creator.
-    
-    OPTIONAL {
-      ?cube ${ns.schema.about} ?about.
-    }
-
-    OPTIONAL {
-      ?versionHistory ${ns.schema.hasPart} ?cube.
-    }
-    
-    ${makeVisualizeFilter(!!includeDrafts)}
-
-    ${makeInFilter("about", aboutValues)}
-    ${makeInFilter("theme", themeValues)}
-    ${makeInFilter("creator", creatorValues)}
-
-    ${
-      query && query.length > 0
-        ? sparql`
-
-        OPTIONAL {
-          ?cube ${ns.dcterms.publisher} ?publisher.
-          FILTER(${query
-            .split(" ")
-            .map((x) => contains("?publisher", x))
-            .join(" || ")})  .
-        }
-
-        OPTIONAL {
-          ?theme ${ns.schema.name} ?themeName.   
-          FILTER(${query
-            .split(" ")
-            .map((x) => contains("?themeName", x))
-            .join(" || ")})  .
-        }
-
-
-        OPTIONAL {
-
-          ?creator ${ns.schema.name} ?creatorLabel.
-          FILTER(${query
-            .split(" ")
-            .map((x) => contains("?creatorLabel", x))
-            .join(" || ")})  .
-        }
-      `
-        : ""
-    }
-
-  `;
-
-  let scoreResults = await executeAndMeasure(sparqlClient, scoresQuery);
+  const scoreResults = await executeAndMeasure(sparqlClient, scoresQuery);
   queries.push({
     ...scoreResults.meta,
     label: "scores1",
   });
 
-  if (scoreResults.data.length === 0) {
-    scoreResults = await executeAndMeasure(sparqlClient, scoresQuery2);
-    queries.push({
-      ...scoreResults.meta,
-      label: "scores2",
-    });
-  }
-
-  const infoPerCube = computeScores(scoreResults.data, {
+  const data = scoreResults.data.map((x) => parseResultRow(x as ResultRow));
+  const versionHistoryPerCube = Object.fromEntries(
+    data.map((d) => [d.cube, d.versionHistory])
+  );
+  const infoPerCube = computeScores(data, {
     query: query,
+    identifierName: "cube",
   });
 
   // Find information on cubes
@@ -252,7 +206,12 @@ export const searchCubes = async ({
   // under the maximum score and only retrieve those cubes
   // The query could also dedup directly the version of the cubes
   const cubeIris = Object.keys(infoPerCube);
-  const cubesQuery = DESCRIBE`${cubeIris.map((x) => `<${x}>`).join(" ")}`;
+
+  const sortedCubeIris = cubeIris.sort((a, b) =>
+    descending(infoPerCube[a].score, infoPerCube[b].score)
+  );
+
+  const cubesQuery = DESCRIBE`${sortedCubeIris.map((x) => `<${x}>`).join(" ")}`;
 
   if (!locale) {
     throw new Error("Must pass locale");
@@ -278,7 +237,7 @@ export const searchCubes = async ({
     .map((cubeNode) => {
       const cube = cubeNode as unknown as Cube;
       const iri = parseIri(cube);
-      const versionHistory = parseVersionHistory(cube);
+      const versionHistory = versionHistoryPerCube[iri];
       const dedupIdentifier = versionHistory || iri;
       if (seen.has(dedupIdentifier)) {
         return null;
@@ -290,7 +249,7 @@ export const searchCubes = async ({
 
   // Sort the cubes per score using previously queries scores
   const results = cubes
-    .filter((c) => !!c?.data)
+    .filter((c): c is ResolvedDataCube => !!c?.data)
     .sort((a, b) =>
       descending(
         infoPerCube[a?.data.iri!].score,
@@ -299,10 +258,10 @@ export const searchCubes = async ({
     )
     .map((c) => ({
       dataCube: c,
-
-      // TODO Retrieve highlights
-      highlightedTitle: c!.data.title,
-      highlightedDescription: c!.data.description,
+      highlightedTitle: query ? highlight(c.data.title, query) : c.data.title,
+      highlightedDescription: query
+        ? highlight(c.data.description, query)
+        : c.data.description,
     }));
 
   return {
