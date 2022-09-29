@@ -45,6 +45,7 @@ export interface ScatterplotState {
   getSegment: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
+  xAxisDescription: string | undefined;
   yAxisLabel: string;
   yAxisDescription: string | undefined;
   getSegmentLabel: (s: string) => string;
@@ -97,6 +98,7 @@ const useScatterplotState = ({
   }
 
   const xAxisLabel = getLabelWithUnit(xMeasure);
+  const xAxisDescription = xMeasure.description || undefined;
 
   const xMinValue = Math.min(mkNumber(min(preparedData, (d) => getX(d))), 0);
   const xMaxValue = max(preparedData, (d) => getX(d)) as number;
@@ -242,6 +244,7 @@ const useScatterplotState = ({
     getSegment,
     colors,
     xAxisLabel,
+    xAxisDescription,
     yAxisLabel,
     yAxisDescription,
     getAnnotationInfo,

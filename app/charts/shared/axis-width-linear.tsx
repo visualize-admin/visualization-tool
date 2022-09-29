@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
@@ -11,9 +12,8 @@ import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, chartType } = useChartState() as
-    | ScatterplotState
-    | BarsState;
+  const { xScale, bounds, xAxisLabel, xAxisDescription, chartType } =
+    useChartState() as ScatterplotState | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const { domainColor, labelColor, labelFontSize, gridColor, fontFamily } =
     useChartTheme();
@@ -62,15 +62,30 @@ export const AxisWidthLinear = () => {
   return (
     <>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <text
-          x={chartWidth}
-          y={chartHeight + margins.bottom}
-          dy={-labelFontSize}
-          fontSize={labelFontSize}
-          textAnchor="end"
-        >
-          {xAxisLabel}
-        </text>
+        {xAxisDescription ? (
+          <Tooltip arrow title={xAxisDescription}>
+            <text
+              x={chartWidth}
+              y={chartHeight + margins.bottom}
+              dy={-labelFontSize}
+              fontSize={labelFontSize}
+              textAnchor="end"
+              textDecoration="underline"
+            >
+              {xAxisLabel}
+            </text>
+          </Tooltip>
+        ) : (
+          <text
+            x={chartWidth}
+            y={chartHeight + margins.bottom}
+            dy={-labelFontSize}
+            fontSize={labelFontSize}
+            textAnchor="end"
+          >
+            {xAxisLabel}
+          </text>
+        )}
       </g>
       <g
         ref={xAxisRef}
