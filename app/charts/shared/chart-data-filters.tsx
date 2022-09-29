@@ -178,6 +178,7 @@ const DataFilter = ({
             label={dimension.label}
             options={dimension.values}
             value={value as string}
+            tooltipText={dimension.description || undefined}
             onChange={setDataFilter}
           />
         ) : dimension.timeUnit === TimeUnit.Year ? (
@@ -203,12 +204,14 @@ const DataFilterBaseDimension = ({
   label,
   options,
   value,
+  tooltipText,
   onChange,
 }: {
   isKeyDimension: boolean;
   label: string;
   options: Array<{ label: string; value: string }>;
   value: string;
+  tooltipText?: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const noneLabel = t({
@@ -234,6 +237,7 @@ const DataFilterBaseDimension = ({
       label={label}
       options={allOptions}
       value={value}
+      tooltipText={tooltipText}
       onChange={onChange}
     />
   );
@@ -246,6 +250,7 @@ const DataFilterTemporalDimension = ({
   timeUnit,
   timeFormat,
   value,
+  tooltipText,
   onChange,
 }: {
   isKeyDimension: boolean;
@@ -254,6 +259,7 @@ const DataFilterTemporalDimension = ({
   timeUnit: TimeUnit;
   timeFormat: string;
   value: string;
+  tooltipText?: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const formatLocale = useTimeFormatLocale();
@@ -279,6 +285,7 @@ const DataFilterTemporalDimension = ({
         label={label}
         options={timeIntervalOptions}
         value={value}
+        tooltipText={tooltipText}
         onChange={onChange}
       />
     );
@@ -289,6 +296,7 @@ const DataFilterTemporalDimension = ({
       id="dataFilterTemporalDimension"
       label={label}
       value={value}
+      tooltipText={tooltipText}
       timeFormat={timeFormat}
       formatLocale={formatLocale}
       isOptional={!isKeyDimension}
