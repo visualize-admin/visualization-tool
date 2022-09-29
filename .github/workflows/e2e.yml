@@ -42,7 +42,7 @@ jobs:
             "state": "success",
             "description": "E2E tests passed"
           }'
-      - name: Cypress tests 🚨
+      - name: E2E tests 🚨
         if: ${{ failure() }}
         run: |
           curl --request POST \
