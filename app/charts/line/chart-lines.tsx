@@ -29,7 +29,7 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartLoadingWrapper } from "../scatterplot/chart-loading-wrapper";
+import { ChartLoadingWrapper } from "../chart-loading-wrapper";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
