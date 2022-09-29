@@ -22,7 +22,7 @@ import {
   sum,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy"
+import sortBy from "lodash/sortBy";
 import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {
@@ -77,6 +77,7 @@ export interface StackedColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
+  yAxisDescription: string | undefined;
   chartWideData: ArrayLike<Observation>;
   allDataWide: ArrayLike<Observation>;
   grouped: [string, Observation[]][];
@@ -352,6 +353,7 @@ const useColumnsStackedState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
+  const yAxisDescription = yMeasure.description || undefined;
 
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
@@ -530,6 +532,7 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
+    yAxisDescription,
     segments,
     colors,
     chartWideData,
