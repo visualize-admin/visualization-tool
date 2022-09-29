@@ -1,6 +1,6 @@
 import { highlight } from "./query-search-score-utils";
 
-describe("highlighting search words in qquery", () => {
+describe("highlighting search words in query", () => {
   it("should work", () => {
     const tests = [
       ["Pollution is bad", "bad", "Pollution is <b>bad</b>"],
