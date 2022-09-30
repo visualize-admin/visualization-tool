@@ -202,7 +202,7 @@ export const getInitialConfig = ({
         },
       };
     case "scatterplot":
-      const segmentComponent =
+      const scatterplotSegmentComponent =
         getCategoricalDimensions(dimensions)[0] ||
         getGeoDimensions(dimensions)[0];
 
@@ -217,20 +217,20 @@ export const getInitialConfig = ({
             componentIri:
               measures.length > 1 ? measures[1].iri : measures[0].iri,
           },
-          ...(segmentComponent
+          ...(scatterplotSegmentComponent
             ? {
-                componentIri: segmentComponent.iri,
+                componentIri: scatterplotSegmentComponent.iri,
                 palette: DEFAULT_PALETTE,
                 colorMapping: mapValueIrisToColor({
                   palette: DEFAULT_PALETTE,
-                  dimensionValues: segmentComponent.values,
+                  dimensionValues: scatterplotSegmentComponent.values,
                 }),
               }
             : {}),
         },
       };
     case "pie":
-      const segmentComponent =
+      const pieSegmentComponent =
         getCategoricalDimensions(dimensions)[0] ||
         getGeoDimensions(dimensions)[0];
 
@@ -242,12 +242,12 @@ export const getInitialConfig = ({
         fields: {
           y: { componentIri: measures[0].iri },
           segment: {
-            componentIri: segmentComponent.iri,
+            componentIri: pieSegmentComponent.iri,
             palette: DEFAULT_PALETTE,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_PALETTE,
-              dimensionValues: segmentComponent.values,
+              dimensionValues: pieSegmentComponent.values,
             }),
           },
         },
