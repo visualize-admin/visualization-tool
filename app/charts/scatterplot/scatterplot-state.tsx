@@ -30,7 +30,7 @@ import {
   mkNumber,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
+import { DimensionValue, Observation } from "@/domain/data";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ScatterplotState {
@@ -128,19 +128,22 @@ const useScatterplotState = ({
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
+  );
 
   const getSegmentLabel = useMemo(() => {
-    const segmentValuesByValue = keyBy(segmentDimension.values, (x) => x.value);
+    const segmentValuesByValue = keyBy(
+      segmentDimension?.values,
+      (x) => x.value
+    );
     return (segment: string): string => {
       return segmentValuesByValue[segment]?.label || segment;
     };
-  }, [segmentDimension.values]);
+  }, [segmentDimension?.values]);
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
       const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
+        (d: DimensionValue) => d.label === segment
       )?.value;
 
       return {

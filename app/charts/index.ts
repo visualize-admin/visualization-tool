@@ -202,6 +202,10 @@ export const getInitialConfig = ({
         },
       };
     case "scatterplot":
+      const segmentComponent =
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType: "scatterplot",
@@ -213,14 +217,16 @@ export const getInitialConfig = ({
             componentIri:
               measures.length > 1 ? measures[1].iri : measures[0].iri,
           },
-          segment: {
-            componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: DEFAULT_PALETTE,
-            colorMapping: mapValueIrisToColor({
-              palette: DEFAULT_PALETTE,
-              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
-            }),
-          },
+          ...(segmentComponent
+            ? {
+                componentIri: segmentComponent.iri,
+                palette: DEFAULT_PALETTE,
+                colorMapping: mapValueIrisToColor({
+                  palette: DEFAULT_PALETTE,
+                  dimensionValues: segmentComponent.values,
+                }),
+              }
+            : {}),
         },
       };
     case "pie":
