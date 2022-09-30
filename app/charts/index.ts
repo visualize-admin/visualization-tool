@@ -941,32 +941,31 @@ export const getPossibleChartType = ({
 }): ChartType[] => {
   const { measures, dimensions } = meta;
 
-  const hasZeroQ = measures.length === 0;
-  const hasMultipleQ = measures.length > 1;
-  const hasGeo = getGeoDimensions(dimensions).length > 0;
-  const hasTime = getTimeDimensions(dimensions).length > 0;
+  const categoricalDimensions = getCategoricalDimensions(dimensions);
+  const geoDimensions = getGeoDimensions(dimensions);
+  const timeDimensions = getTimeDimensions(dimensions);
 
-  const geoBased: ChartType[] = ["map"];
-  const catBased: ChartType[] = ["bar", "column", "pie", "table"];
-  const multipleQ: ChartType[] = ["scatterplot"];
-  const timeBased: ChartType[] = ["line", "area"];
+  const categoricalEnabled: ChartType[] = ["column", "pie"];
+  const geoEnabled: ChartType[] = ["column", "map", "pie"];
+  const multipleMeasuresEnabled: ChartType[] = ["scatterplot"];
+  const timeEnabled: ChartType[] = ["area", "column", "line"];
 
-  let possibles: ChartType[] = [];
-  if (hasZeroQ) {
-    possibles = ["table"];
-  } else {
-    possibles.push(...catBased);
-
-    if (hasMultipleQ) {
-      possibles.push(...multipleQ);
+  let possibles: ChartType[] = ["table"];
+  if (measures.length > 0) {
+    if (categoricalDimensions.length > 0) {
+      possibles.push(...categoricalEnabled);
     }
 
-    if (hasTime) {
-      possibles.push(...timeBased);
+    if (geoDimensions.length > 0) {
+      possibles.push(...geoEnabled);
     }
 
-    if (hasGeo) {
-      possibles.push(...geoBased);
+    if (measures.length > 1) {
+      possibles.push(...multipleMeasuresEnabled);
+    }
+
+    if (timeDimensions.length > 0) {
+      possibles.push(...timeEnabled);
     }
   }
 
