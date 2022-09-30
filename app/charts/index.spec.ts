@@ -1,9 +1,11 @@
 import { TableFields } from "@/configurator";
 import { DataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
 
+import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
 
-import { getInitialConfig } from "./index";
+import { getInitialConfig, getPossibleChartType } from "./index";
 
 describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
@@ -31,5 +33,40 @@ describe("initial config", () => {
       ["https://environment.ld.admin.ch/foen/nfi/grid", 6],
       ["https://environment.ld.admin.ch/foen/nfi/evaluationType", 7],
     ]);
+  });
+});
+
+describe("possible chart types", () => {
+  it("should allow appropriate chart types based on available dimensions", () => {
+    const expectedChartTypes = ["area", "column", "line", "pie", "table"];
+    const possibleChartTypes = getPossibleChartType({
+      meta: bathingWaterData.data.dataCubeByIri as DataCubeMetadata,
+    }).sort();
+
+    expect(possibleChartTypes).toEqual(expectedChartTypes);
+  });
+
+  it("should only allow table if there are only measures available", () => {
+    const meta = {
+      dimensions: [],
+      measures: [{ __typename: "Measure" }],
+    };
+    const possibleChartTypes = getPossibleChartType({
+      meta: meta as any,
+    }).sort();
+
+    expect(possibleChartTypes).toEqual(["table"]);
+  });
+
+  it("should only allow column, map, pie and table if only geo dimensions are available", () => {
+    const meta = {
+      dimensions: [{ __typename: "GeoShapesDimension" }],
+      measures: [{ __typename: "Measure" }],
+    };
+    const possibleChartTypes = getPossibleChartType({
+      meta: meta as any,
+    }).sort();
+
+    expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
   });
 });
