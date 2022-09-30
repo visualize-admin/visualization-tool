@@ -224,6 +224,10 @@ export const getInitialConfig = ({
         },
       };
     case "pie":
+      const segmentComponent =
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
@@ -232,12 +236,12 @@ export const getInitialConfig = ({
         fields: {
           y: { componentIri: measures[0].iri },
           segment: {
-            componentIri: getCategoricalDimensions(dimensions)[0].iri,
+            componentIri: segmentComponent.iri,
             palette: DEFAULT_PALETTE,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_PALETTE,
-              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
+              dimensionValues: segmentComponent.values,
             }),
           },
         },
