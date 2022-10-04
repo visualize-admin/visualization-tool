@@ -10,6 +10,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Charts: fix bugs that caused scatterplot and pie charts to crash in case no categorical dimensions were present in a dataset
+- Embed: introduce chart config migrations to embed mode
 
 ## [3.9.4] - 2022-09-29
 
