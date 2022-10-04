@@ -1020,9 +1020,7 @@ const convertTableFieldsToSegmentField = ({
     // All the other dimension types can be used as a segment field.
     ?.filter(
       (d) =>
-        d.componentType !== "Attribute" &&
-        d.componentType !== "Measure" &&
-        d.componentType !== "TemporalDimension"
+        d.componentType !== "Measure" && d.componentType !== "TemporalDimension"
     )
     .sort((a, b) => a.index - b.index);
   const component = groupedColumns?.[0];

@@ -13,8 +13,7 @@ export type DimensionType =
   | "OrdinalDimension"
   | "GeoCoordinatesDimension"
   | "GeoShapesDimension"
-  | "Measure"
-  | "Attribute";
+  | "Measure";
 
 export type BaseEncodingField = "x" | "y" | "segment";
 export type GeoEncodingField = "baseLayer" | "areaLayer" | "symbolLayer";
@@ -307,23 +306,3 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
     interactiveFilters: [],
   },
 };
-
-// const tableOptions = {
-//   chartType: "table",
-//   settings: [
-//     { field: "showSearch", optional: false, type: "boolean", default: false },
-//     { field: "showAllRows", optional: false, type: "boolean", default: false },
-//   ],
-//   encodings: [
-//     {
-//       type: "section",
-//       title: "groups",
-//       encodings: [],
-//     },
-//     {
-//       type: "section",
-//       title: "columns",
-//       encodings: [],
-//     },
-//   ],
-// };
