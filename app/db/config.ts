@@ -1,3 +1,5 @@
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
+
 import { createChartId } from "../utils/create-chart-id";
 
 import { pool } from "./pg-pool";
@@ -37,7 +39,19 @@ export const getConfig = async (
     [key]
   );
 
-  return result.rows[0];
+  const config = result.rows[0];
+
+  if (config && config.data) {
+    return {
+      ...config,
+      data: {
+        ...config.data,
+        chartConfig: migrateChartConfig(config.data.chartConfig),
+      },
+    };
+  }
+
+  return config;
 };
 
 /**
