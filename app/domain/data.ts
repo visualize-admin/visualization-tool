@@ -6,6 +6,7 @@ import {
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NominalDimension,
+  NumericalMeasure,
   OrdinalDimension,
 } from "../graphql/query-hooks";
 import { ResolvedDimension } from "../graphql/shared-types";
@@ -202,6 +203,12 @@ export const isGeoShapesDimension = (
   dimension?: DimensionMetadataFragment
 ): dimension is GeoShapesDimension => {
   return dimension?.__typename === "GeoShapesDimension";
+};
+
+export const isNumericalMeasure = (
+  dimension?: DimensionMetadataFragment
+): dimension is NumericalMeasure => {
+  return dimension?.__typename === "NumericalMeasure";
 };
 
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

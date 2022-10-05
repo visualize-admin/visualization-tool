@@ -25,6 +25,7 @@ import {
   getPalette,
   mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
+import { isNumericalMeasure } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import useEvent from "@/utils/use-event";
 
@@ -58,10 +59,9 @@ export const ColorPalette = ({
   const [state, dispatch] = useConfiguratorState();
   const classes = useStyles();
 
-  const palettes =
-    component?.__typename === "NumericalMeasure"
-      ? divergingSteppedPalettes
-      : categoricalPalettes;
+  const palettes = isNumericalMeasure(component)
+    ? divergingSteppedPalettes
+    : categoricalPalettes;
 
   const currentPaletteName = get(
     state,

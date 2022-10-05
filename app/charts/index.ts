@@ -37,6 +37,7 @@ import {
   getTimeDimensions,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
+  isNumericalMeasure,
 } from "../domain/data";
 import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
@@ -142,9 +143,7 @@ export const getInitialConfig = ({
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
-  const numericalMeasures = measures.filter(
-    (d) => d.__typename === "NumericalMeasure"
-  );
+  const numericalMeasures = measures.filter(isNumericalMeasure);
 
   switch (chartType) {
     case "bar":
@@ -708,9 +707,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
         componentIri: ({ oldValue, newChartConfig, measures }) => {
-          const numericalMeasures = measures.filter(
-            (d) => d.__typename === "NumericalMeasure"
-          );
+          const numericalMeasures = measures.filter(isNumericalMeasure);
 
           // If there is only one numerical measure then x & y are already filled correctly.
           if (numericalMeasures.length > 1) {
@@ -962,9 +959,7 @@ export const getPossibleChartType = ({
 }): ChartType[] => {
   const { measures, dimensions } = meta;
 
-  const numericalMeasures = measures.filter(
-    (d) => d.__typename === "NumericalMeasure"
-  );
+  const numericalMeasures = measures.filter(isNumericalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
   const timeDimensions = getTimeDimensions(dimensions);

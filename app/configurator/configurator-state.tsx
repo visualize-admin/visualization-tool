@@ -50,7 +50,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { canDimensionBeMultiFiltered } from "@/domain/data";
+import { canDimensionBeMultiFiltered, isNumericalMeasure } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import {
   DataCubeMetadataWithComponentValuesDocument,
@@ -666,7 +666,7 @@ const updateSymbolLayerColors = ({
       if (chartConfig.fields.symbolLayer.componentIri === component.iri) {
         delete chartConfig.filters[component.iri];
       }
-    } else if (component && component.__typename === "NumericalMeasure") {
+    } else if (isNumericalMeasure(component)) {
       chartConfig.fields.symbolLayer.colors = {
         type: "continuous",
         componentIri: component.iri,

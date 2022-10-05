@@ -52,7 +52,7 @@ import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
-import { Observation } from "../../domain/data";
+import { isNumericalMeasure, Observation } from "../../domain/data";
 import {
   DimensionMetadataFragment,
   NumericalMeasure,
@@ -191,7 +191,7 @@ export const useDimensionFormatters = (
     return Object.fromEntries(
       dimensions.map((d) => {
         let formatter: (s: any) => string;
-        if (d.__typename === "NumericalMeasure") {
+        if (isNumericalMeasure(d)) {
           if (d.isCurrency) {
             formatter = currencyFormatter(d);
           } else {
