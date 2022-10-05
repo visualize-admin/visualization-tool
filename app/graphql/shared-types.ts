@@ -64,8 +64,6 @@ export type ResolvedDimension = {
     timeFormat?: string;
     scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
   };
-
-  // dimension: RDF.Dimension;
 };
 
 export type ResolvedMeasure = ResolvedDimension;

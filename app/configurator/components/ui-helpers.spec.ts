@@ -62,7 +62,7 @@ describe("useDimensionFormatters", () => {
           isKeyDimension: false,
           isCurrency: true,
           currencyExponent: 1,
-          __typename: "Measure",
+          __typename: "NumericalMeasure",
         } as DimensionMetadataFragment,
         {
           iri: "iri-currency-int",
@@ -71,7 +71,7 @@ describe("useDimensionFormatters", () => {
           isCurrency: true,
           currencyExponent: 1,
           resolution: 0,
-          __typename: "Measure",
+          __typename: "NumericalMeasure",
         } as DimensionMetadataFragment,
       ])
     );

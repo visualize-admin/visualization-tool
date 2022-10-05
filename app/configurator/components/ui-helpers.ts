@@ -52,10 +52,10 @@ import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
-import { Observation } from "../../domain/data";
+import { isNumericalMeasure, Observation } from "../../domain/data";
 import {
   DimensionMetadataFragment,
-  Measure,
+  NumericalMeasure,
   TemporalDimension,
   TimeUnit,
 } from "../../graphql/query-hooks";
@@ -152,7 +152,7 @@ const namedNodeFormatter = (d: DimensionMetadataFragment) => {
   };
 };
 
-const currencyFormatter = (d: Measure) => {
+const currencyFormatter = (d: NumericalMeasure) => {
   const formatLocale = getD3FormatLocale();
   const minDecimals = d.resolution ?? d.currencyExponent ?? 2;
   const maxDecimals = 8;
@@ -191,7 +191,7 @@ export const useDimensionFormatters = (
     return Object.fromEntries(
       dimensions.map((d) => {
         let formatter: (s: any) => string;
-        if (d.__typename === "Measure") {
+        if (isNumericalMeasure(d)) {
           if (d.isCurrency) {
             formatter = currencyFormatter(d);
           } else {
@@ -205,7 +205,13 @@ export const useDimensionFormatters = (
           );
         } else if (isNamedNodeDimension(d)) {
           formatter = namedNodeFormatter(d);
-        } else if (d.isNumerical) {
+        } else if (
+          // It makes no sense to format numeric values of ordinal dimensions
+          // as numbers.
+          d.isNumerical &&
+          d.__typename !== "OrdinalDimension" &&
+          d.__typename !== "OrdinalMeasure"
+        ) {
           formatter = formatNumber;
         } else {
           formatter = formatIdentity;

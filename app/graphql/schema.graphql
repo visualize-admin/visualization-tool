@@ -202,7 +202,9 @@ type TemporalDimension implements Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
-type Measure implements Dimension {
+union Measure = NumericalMeasure | OrdinalMeasure
+
+type NumericalMeasure implements Dimension {
   iri: String!
   label: String!
   description: String
@@ -214,6 +216,24 @@ type Measure implements Dimension {
   isCurrency: Boolean
   currencyExponent: Int
   resolution: Int
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
+  related: [RelatedDimension!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
+}
+
+type OrdinalMeasure implements Dimension {
+  iri: String!
+  label: String!
+  description: String
+  unit: String
+  scaleType: String
+  order: Int
+  isNumerical: Boolean!
+  isKeyDimension: Boolean!
   values(
     sourceType: String!
     sourceUrl: String!

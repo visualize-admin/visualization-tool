@@ -6,13 +6,13 @@ import * as t from "io-ts";
 import { DataCubeMetadata } from "@/graphql/types";
 
 const ComponentType = t.union([
-  t.literal("Attribute"),
-  t.literal("Measure"),
-  t.literal("TemporalDimension"),
-  t.literal("NominalDimension"),
-  t.literal("OrdinalDimension"),
+  t.literal("NumericalMeasure"),
+  t.literal("OrdinalMeasure"),
   t.literal("GeoCoordinatesDimension"),
   t.literal("GeoShapesDimension"),
+  t.literal("NominalDimension"),
+  t.literal("OrdinalDimension"),
+  t.literal("TemporalDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;

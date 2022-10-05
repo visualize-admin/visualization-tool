@@ -98,9 +98,11 @@ const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
     } else if (dataKind === "GeoShape") {
       return "GeoShapesDimension";
     }
+
     if (scaleType === "Ordinal") {
       return "OrdinalDimension";
     }
+
     return "NominalDimension";
   },
   iri: ({ data: { iri } }) => iri,
@@ -161,10 +163,7 @@ export const resolvers: Resolvers = {
       getSparqlEditorUrl({ query }),
   },
   Dimension: {
-    __resolveType({ data: { dataKind, scaleType, isMeasureDimension } }) {
-      if (isMeasureDimension) {
-        return "Measure";
-      }
+    __resolveType({ data: { dataKind, scaleType } }) {
       if (dataKind === "Time") {
         return "TemporalDimension";
       } else if (dataKind === "GeoCoordinates") {
@@ -172,9 +171,11 @@ export const resolvers: Resolvers = {
       } else if (dataKind === "GeoShape") {
         return "GeoShapesDimension";
       }
+
       if (scaleType === "Ordinal") {
         return "OrdinalDimension";
       }
+
       return "NominalDimension";
     },
   },
@@ -232,9 +233,21 @@ export const resolvers: Resolvers = {
     },
   },
   Measure: {
-    ...mkDimensionResolvers("Measure"),
+    __resolveType: ({ data: { scaleType } }) => {
+      if (scaleType === "Ordinal") {
+        return "OrdinalMeasure";
+      } else {
+        return "NumericalMeasure";
+      }
+    },
+  },
+  NumericalMeasure: {
+    ...mkDimensionResolvers("NumericalMeasure"),
     isCurrency: ({ data: { isCurrency } }) => isCurrency,
     currencyExponent: ({ data: { currencyExponent } }) => currencyExponent || 0,
     resolution: ({ data: { resolution } }) => resolution ?? null,
+  },
+  OrdinalMeasure: {
+    ...mkDimensionResolvers("OrdinalMeasure"),
   },
 };

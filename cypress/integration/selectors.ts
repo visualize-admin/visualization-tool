@@ -8,6 +8,7 @@ const selectors = {
   panels: {
     left: (cy: Cy) => cy.get('[data-name="panel-left"]'),
     right: (cy: Cy) => cy.get('[data-name="panel-right"]'),
+    chartTypeSelector: (cy: Cy) => cy.findByTestId("chart-type-selector"),
   },
   edition: {
     configFilters: (cy: Cy) => cy.findByTestId("configurator-filters"),

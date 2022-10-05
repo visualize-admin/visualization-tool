@@ -17,7 +17,7 @@ import { useMemo, useRef, useState } from "react";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
-import { Observation } from "@/domain/data";
+import { isNumericalMeasure, Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
   useDataCubeObservationsQuery,
@@ -61,8 +61,9 @@ export const PreviewTable = ({
   const sortedObservations = useMemo(() => {
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
-      const convert =
-        sortBy.__typename === "Measure" ? (d: string) => +d : (d: string) => d;
+      const convert = isNumericalMeasure(sortBy)
+        ? (d: string) => +d
+        : (d: string) => d;
 
       return [...observations].sort((a, b) =>
         compare(
@@ -110,8 +111,7 @@ export const PreviewTable = ({
                     }
                   }}
                   sx={{
-                    textAlign:
-                      header.__typename === "Measure" ? "right" : "left",
+                    textAlign: isNumericalMeasure(header) ? "right" : "left",
                     borderBottom: "none",
                     whiteSpace: "nowrap",
                   }}
@@ -135,18 +135,19 @@ export const PreviewTable = ({
           {sortedObservations.map((obs, i) => {
             return (
               <TableRow key={i}>
-                {headers.map(({ iri, __typename }) => {
-                  const formatter = formatters[iri];
+                {headers.map((header) => {
+                  const formatter = formatters[header.iri];
                   return (
                     <TableCell
-                      key={iri}
+                      key={header.iri}
                       component="td"
                       sx={{
-                        textAlign: __typename === "Measure" ? "right" : "left",
+                        textAlign: isNumericalMeasure(header)
+                          ? "right"
+                          : "left",
                       }}
                     >
-                      {/** @ts-ignore */}
-                      {formatter(obs[iri])}
+                      {formatter(obs[header.iri])}
                     </TableCell>
                   );
                 })}

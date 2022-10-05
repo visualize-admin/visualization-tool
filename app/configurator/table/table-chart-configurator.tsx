@@ -114,7 +114,7 @@ export const ChartConfiguratorTable = ({
     const currentDraggedField =
       currentDraggableId !== null ? fields[currentDraggableId] : null;
     const isGroupsDropDisabled =
-      currentDraggedField?.componentType === "Measure";
+      currentDraggedField?.componentType === "NumericalMeasure";
 
     return (
       <>
