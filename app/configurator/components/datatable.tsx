@@ -86,71 +86,76 @@ export const PreviewTable = ({
     }),
     []
   );
+
   return (
-    <Table>
-      <div ref={tooltipContainerRef} />
-      <caption style={{ display: "none" }}>{title}</caption>
-      <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
-        <TableRow sx={{ borderBottom: "none" }}>
-          {headers.map((header) => {
-            return (
-              <TableCell
-                key={header.iri}
-                component="th"
-                role="columnheader"
-                onClick={() => {
-                  if (sortBy?.iri === header.iri) {
-                    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-                  } else {
-                    setSortBy(header);
-                    setSortDirection("asc");
-                  }
-                }}
-                sx={{
-                  textAlign: header.__typename === "Measure" ? "right" : "left",
-                  borderBottom: "none",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <TableSortLabel
-                  active={sortBy?.iri === header.iri}
-                  direction={sortDirection}
+    <div ref={tooltipContainerRef}>
+      <Table>
+        <caption style={{ display: "none" }}>{title}</caption>
+        <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
+          <TableRow sx={{ borderBottom: "none" }}>
+            {headers.map((header) => {
+              return (
+                <TableCell
+                  key={header.iri}
+                  component="th"
+                  role="columnheader"
+                  onClick={() => {
+                    if (sortBy?.iri === header.iri) {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc"
+                      );
+                    } else {
+                      setSortBy(header);
+                      setSortDirection("asc");
+                    }
+                  }}
+                  sx={{
+                    textAlign:
+                      header.__typename === "Measure" ? "right" : "left",
+                    borderBottom: "none",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  <DimensionLabel
-                    dimension={header}
-                    tooltipProps={tooltipProps}
-                  />
-                </TableSortLabel>
-              </TableCell>
+                  <TableSortLabel
+                    active={sortBy?.iri === header.iri}
+                    direction={sortDirection}
+                  >
+                    <DimensionLabel
+                      dimension={header}
+                      tooltipProps={tooltipProps}
+                    />
+                  </TableSortLabel>
+                </TableCell>
+              );
+            })}
+          </TableRow>
+          <BackgroundRow nCells={headers.length} />
+        </TableHead>
+        <TableBody>
+          {sortedObservations.map((obs, i) => {
+            return (
+              <TableRow key={i}>
+                {headers.map(({ iri, __typename }) => {
+                  const formatter = formatters[iri];
+                  return (
+                    <TableCell
+                      key={iri}
+                      component="td"
+                      sx={{
+                        textAlign: __typename === "Measure" ? "right" : "left",
+                      }}
+                    >
+                      {/** @ts-ignore */}
+                      {formatter(obs[iri])}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
             );
           })}
-        </TableRow>
-        <BackgroundRow nCells={headers.length} />
-      </TableHead>
-      <TableBody>
-        {sortedObservations.map((obs, i) => {
-          return (
-            <TableRow key={i}>
-              {headers.map(({ iri, __typename }) => {
-                const formatter = formatters[iri];
-                return (
-                  <TableCell
-                    key={iri}
-                    component="td"
-                    sx={{
-                      textAlign: __typename === "Measure" ? "right" : "left",
-                    }}
-                  >
-                    {/** @ts-ignore */}
-                    {formatter(obs[iri])}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 
