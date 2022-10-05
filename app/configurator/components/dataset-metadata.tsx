@@ -68,11 +68,12 @@ export const DataSetMetadata = ({
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
             <Box
+              component="span"
               sx={{ "> a": { color: "grey.900" } }}
               dangerouslySetInnerHTML={{
                 __html: cube.publisher,
               }}
-            ></Box>
+            />
           </DatasetMetadataBody>
         </>
       )}
