@@ -1,5 +1,5 @@
-import { Typography, TypographyProps, styled, BoxProps } from "@mui/material";
-import React, { ReactNode } from "react";
+import { Typography, styled, BoxProps, TypographyProps } from "@mui/material";
+import React from "react";
 
 import { DataCubeOrganization, DataCubeTheme } from "@/graphql/resolver-types";
 
@@ -24,16 +24,21 @@ const TagTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const Tag = ({
-  children,
-  type,
-  ...props
-}: { children: ReactNode; type: TagType } & TypographyProps & {
-    component?: BoxProps["component"];
-  }) => {
+const Tag = React.forwardRef<
+  unknown,
+  {
+    children: React.ReactNode;
+    type: TagType;
+  } & TypographyProps & {
+      component?: BoxProps["component"];
+    }
+>(({ children, type, ...props }, ref) => {
   const { sx } = props;
+
   return (
     <TagTypography
+      // @ts-ignore
+      ref={ref}
       variant="caption"
       {...props}
       sx={{
@@ -45,6 +50,6 @@ const Tag = ({
       {children}
     </TagTypography>
   );
-};
+});
 
 export default Tag;
