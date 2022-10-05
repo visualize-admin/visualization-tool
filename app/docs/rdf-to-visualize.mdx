@@ -118,7 +118,7 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 | `?dimension cube:meta/dataKind schema:GeoCoordinates`           | `dim.dataKind = "GeoCoordinates"` |
 | `?dimension cube:meta/dataKind schema:GeoShape`                 | `dim.dataKind = "GeoShape"`       |
 
-ℹ️ Time dimensions can be interactively filtered with a _time range slider_
+ℹ️ Temporal dimensions can be interactively filtered with a _time range slider_
 
 ℹ️ GeoCoordinates dimensions can be shown on a map as _points_
 
@@ -152,7 +152,8 @@ A dimension can indicate that it is contains standard error values for another d
 After parsing, we can determine the type of our dimension. Conditions are checked
 one after the other.
 
-- **Numeric Measure** if `isMeasureDimension = true`, else
+- **Ordinal Measure** if `isMeasureDimension = true and scaleType = "Ordinal"`, else
+- **Numerical Measure** if `isMeasureDimension = true and scaleType != "Ordinal"`, else
 - **Temporal Dimension** if `dataKind = "Time"`, else
 - **GeoCoordinates Dimension** if `dataKind = "GeoCoordinates"`, else
 - **GeoShapes Dimension** if `dataKind = "GeoShape"`, else
@@ -161,32 +162,48 @@ one after the other.
 
 We can regroup some of these dimensions, for easier business logic:
 
-- **GeoCoordinates** and **GeoShapes** are **Geo** dimensions.
-- **Ordinal** and **Nominal** are **Categorical** dimensions.
+- **Ordinal Measure** and **Numerical Measure** are **Measures**.
+- **Ordinal** and **Nominal** are **Categorical Dimensions**.
+- **GeoCoordinates** and **GeoShapes** are **Geo Dimensions**.
 
-All chart types can handle **Categorical** dimensions but for particular chart types the following conditions have to be met:
+To enable particular chart types the following conditions have to be met:
 
 <TableSpecimen
   columns={["Chart Type", "Conditions"]}
   rows={[
-    { "Chart Type": "Table", Conditions: `- None` },
-    { "Chart Type": "Column", Conditions: `- 1 or more **Numeric Measures**` },
+    {
+      "Chart Type": "Table",
+      Conditions: `- None`,
+    },
+    {
+      "Chart Type": "Column",
+      Conditions: `- 1 or more **Numerical Measures**
+- 1 or more **Categorical** or **Geo** or **Temporal Dimensions**`,
+    },
     {
       "Chart Type": "Lines",
-      Conditions: `- 1 or more **Numeric Measures**
+      Conditions: `- 1 or more **Numerical Measures**
 - 1 or more **Temporal Dimensions**`,
     },
     {
       "Chart Type": "Areas",
-      Conditions: `- 1 or more **Numeric Measures**
+      Conditions: `- 1 or more **Numerical Measures**
 - 1 or more **Temporal Dimensions**`,
     },
-    { "Chart Type": "Pie", Conditions: "- 1 or more **Numeric Measures**" },
+    {
+      "Chart Type": "Pie",
+      Conditions: `- 1 or more **Numerical Measures**
+- 1 or more **Categorical** or **Geo Dimensions**`,
+    },
     {
       "Chart Type": "Scatterplot",
-      Conditions: "- 2 or more **Numeric Measures**",
+      Conditions: "- 2 or more **Numerical Measures**",
     },
-    { "Chart Type": "Maps", Conditions: "- 1 or more **Geo Dimensions**" },
+    {
+      "Chart Type": "Maps",
+      Conditions: `- 1 or more **Numerical Measures**
+- 1 or more **Geo Dimensions**`,
+    },
   ]}
 />
 
