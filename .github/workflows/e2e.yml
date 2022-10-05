@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: yarn e2e
         env:
@@ -52,7 +52,7 @@ jobs:
           --data '{
             "context": "e2e",
             "state": "failure",
-            "description": "Cypress tests failed"
+            "description": "E2E tests failed"
           }'
       # - name: Set argos upload branch on master branch
       #   run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
