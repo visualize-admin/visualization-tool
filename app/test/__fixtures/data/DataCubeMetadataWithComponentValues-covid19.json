@@ -1550,7 +1550,7 @@
           ],
           "unit": "#",
           "related": [],
-          "__typename": "Measure"
+          "__typename": "NumericalMeasure"
         },
         {
           "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal",
@@ -1569,7 +1569,7 @@
           ],
           "unit": "#",
           "related": [],
-          "__typename": "Measure"
+          "__typename": "NumericalMeasure"
         },
         {
           "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d",
@@ -1588,7 +1588,7 @@
           ],
           "unit": null,
           "related": [],
-          "__typename": "Measure"
+          "__typename": "NumericalMeasure"
         }
       ],
       "__typename": "DataCube"

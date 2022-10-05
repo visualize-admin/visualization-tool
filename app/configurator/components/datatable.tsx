@@ -62,7 +62,9 @@ export const PreviewTable = ({
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
       const convert =
-        sortBy.__typename === "Measure" ? (d: string) => +d : (d: string) => d;
+        sortBy.__typename === "NumericalMeasure"
+          ? (d: string) => +d
+          : (d: string) => d;
 
       return [...observations].sort((a, b) =>
         compare(
@@ -107,7 +109,8 @@ export const PreviewTable = ({
                   }
                 }}
                 sx={{
-                  textAlign: header.__typename === "Measure" ? "right" : "left",
+                  textAlign:
+                    header.__typename === "NumericalMeasure" ? "right" : "left",
                   borderBottom: "none",
                   whiteSpace: "nowrap",
                 }}
@@ -138,7 +141,8 @@ export const PreviewTable = ({
                     key={iri}
                     component="td"
                     sx={{
-                      textAlign: __typename === "Measure" ? "right" : "left",
+                      textAlign:
+                        __typename === "NumericalMeasure" ? "right" : "left",
                     }}
                   >
                     {/** @ts-ignore */}

@@ -55,7 +55,7 @@ import { ChartProps } from "../../charts/shared/use-chart-state";
 import { Observation } from "../../domain/data";
 import {
   DimensionMetadataFragment,
-  Measure,
+  NumericalMeasure,
   TemporalDimension,
   TimeUnit,
 } from "../../graphql/query-hooks";
@@ -152,7 +152,7 @@ const namedNodeFormatter = (d: DimensionMetadataFragment) => {
   };
 };
 
-const currencyFormatter = (d: Measure) => {
+const currencyFormatter = (d: NumericalMeasure) => {
   const formatLocale = getD3FormatLocale();
   const minDecimals = d.resolution ?? d.currencyExponent ?? 2;
   const maxDecimals = 8;
@@ -191,7 +191,7 @@ export const useDimensionFormatters = (
     return Object.fromEntries(
       dimensions.map((d) => {
         let formatter: (s: any) => string;
-        if (d.__typename === "Measure") {
+        if (d.__typename === "NumericalMeasure") {
           if (d.isCurrency) {
             formatter = currencyFormatter(d);
           } else {

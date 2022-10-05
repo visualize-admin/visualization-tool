@@ -101,82 +101,82 @@ const scatterplotMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
     label: "Anzahl Betriebe",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
     label: "Anzahl Waldeigentümer",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/2",
     label: "Gesamte Waldflächen in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/3",
     label: "Produktive Waldflächen in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/4",
     label: "Zertifizierte Waldflächen in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/5",
     label: "Bundeswälder in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/6",
     label: "Staatswälder in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/7",
     label: "Wälder der politischen Gemeinden in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/8",
     label: "Bürgerwälder in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/9",
     label: "Korporationswälder in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/10",
     label: "Übrige Wälder in ha",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/11",
     label: "Holzproduktion Total in m3",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/12",
     label: "Stammholz in m3",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/13",
     label: "Industrieholz in m3",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/14",
     label: "Energieholz in m3",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/15",
     label: "Übrige Sortimente in m3",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
 ] as DimensionMetadataFragment[];
 

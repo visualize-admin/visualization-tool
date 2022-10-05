@@ -59,7 +59,7 @@ export const ColorPalette = ({
   const classes = useStyles();
 
   const palettes =
-    component?.__typename === "Measure"
+    component?.__typename === "NumericalMeasure"
       ? divergingSteppedPalettes
       : categoricalPalettes;
 

@@ -152,12 +152,12 @@ A dimension can indicate that it is contains standard error values for another d
 After parsing, we can determine the type of our dimension. Conditions are checked
 one after the other.
 
-- **Measure** if `isMeasureDimension = true`, else
-- **Temporal** if `dataKind = "Time"`, else
-- **GeoCoordinates** if `dataKind = "GeoCoordinates"`, else
-- **GeoShapes** if `dataKind = "GeoShape"`, else
-- **Ordinal** if `scaleType = "Ordinal"`, else
-- **Nominal** if none of the above condition have been fullfilled
+- **Numeric Measure** if `isMeasureDimension = true`, else
+- **Temporal Dimension** if `dataKind = "Time"`, else
+- **GeoCoordinates Dimension** if `dataKind = "GeoCoordinates"`, else
+- **GeoShapes Dimension** if `dataKind = "GeoShape"`, else
+- **Ordinal Dimension** if `scaleType = "Ordinal"`, else
+- **Nominal Dimension** if none of the above condition have been fullfilled
 
 We can regroup some of these dimensions, for easier business logic:
 
@@ -170,20 +170,23 @@ All chart types can handle **Categorical** dimensions but for particular chart t
   columns={["Chart Type", "Conditions"]}
   rows={[
     { "Chart Type": "Table", Conditions: `- None` },
-    { "Chart Type": "Column", Conditions: `- 1 or more **Measure**` },
+    { "Chart Type": "Column", Conditions: `- 1 or more **Numeric Measures**` },
     {
       "Chart Type": "Lines",
-      Conditions: `- 1 or more **Measure**
-- 1 or more **Temporal Dimension**`,
+      Conditions: `- 1 or more **Numeric Measures**
+- 1 or more **Temporal Dimensions**`,
     },
     {
       "Chart Type": "Areas",
-      Conditions: `- 1 or more **Measure**
-- 1 or more **Temporal Dimension**`,
+      Conditions: `- 1 or more **Numeric Measures**
+- 1 or more **Temporal Dimensions**`,
     },
-    { "Chart Type": "Pie", Conditions: "- 1 or more **Measure**" },
-    { "Chart Type": "Scatterplot", Conditions: "- 2 or more **Measures**" },
-    { "Chart Type": "Maps", Conditions: "- 1 or more **Geo dimensions**" },
+    { "Chart Type": "Pie", Conditions: "- 1 or more **Numeric Measures**" },
+    {
+      "Chart Type": "Scatterplot",
+      Conditions: "- 2 or more **Numeric Measures**",
+    },
+    { "Chart Type": "Maps", Conditions: "- 1 or more **Geo Dimensions**" },
   ]}
 />
 

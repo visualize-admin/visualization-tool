@@ -666,7 +666,7 @@ const updateSymbolLayerColors = ({
       if (chartConfig.fields.symbolLayer.componentIri === component.iri) {
         delete chartConfig.filters[component.iri];
       }
-    } else if (component && component.__typename === "Measure") {
+    } else if (component && component.__typename === "NumericalMeasure") {
       chartConfig.fields.symbolLayer.colors = {
         type: "continuous",
         componentIri: component.iri,

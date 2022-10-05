@@ -127,7 +127,7 @@ export const DDContent = ({
             fontWeight: textStyle,
           }}
         >
-          {columnComponentType === "Measure"
+          {columnComponentType === "NumericalMeasure"
             ? formatNumber(cell.value)
             : cell.render("Cell")}
         </Box>
@@ -224,7 +224,7 @@ export const DDContent = ({
             fontWeight: textStyle,
           }}
         >
-          {columnComponentType === "Measure"
+          {columnComponentType === "NumericalMeasure"
             ? formatNumber(cell.value)
             : cell.render("Cell")}
         </Box>

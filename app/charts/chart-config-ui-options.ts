@@ -13,7 +13,7 @@ export type DimensionType =
   | "OrdinalDimension"
   | "GeoCoordinatesDimension"
   | "GeoShapesDimension"
-  | "Measure";
+  | "NumericalMeasure";
 
 export type BaseEncodingField = "x" | "y" | "segment";
 export type GeoEncodingField = "baseLayer" | "areaLayer" | "symbolLayer";
@@ -76,7 +76,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
         options: [{ field: "showStandardError", values: [true, false] }],
       },
@@ -136,7 +136,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
       {
@@ -164,7 +164,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   line: {
     chartType: "line",
     encodings: [
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "x",
         optional: false,
@@ -194,7 +199,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
     encodings: [
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "x",
         optional: false,
@@ -229,10 +239,15 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "segment",
         optional: true,
@@ -254,7 +269,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
       {
@@ -293,13 +308,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "areaLayer",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: true,
       },
       {
         field: "symbolLayer",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: true,
       },
     ],

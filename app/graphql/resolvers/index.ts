@@ -163,7 +163,7 @@ export const resolvers: Resolvers = {
   Dimension: {
     __resolveType({ data: { dataKind, scaleType, isMeasureDimension } }) {
       if (isMeasureDimension) {
-        return "Measure";
+        return "NumericalMeasure";
       }
       if (dataKind === "Time") {
         return "TemporalDimension";
@@ -231,8 +231,8 @@ export const resolvers: Resolvers = {
       return resolved;
     },
   },
-  Measure: {
-    ...mkDimensionResolvers("Measure"),
+  NumericalMeasure: {
+    ...mkDimensionResolvers("NumericalMeasure"),
     isCurrency: ({ data: { isCurrency } }) => isCurrency,
     currencyExponent: ({ data: { currencyExponent } }) => currencyExponent || 0,
     resolution: ({ data: { resolution } }) => resolution ?? null,

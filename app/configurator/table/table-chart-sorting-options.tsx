@@ -125,7 +125,9 @@ const TableSortingOptionItem = ({
   });
 
   const sortingType =
-    component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
+    component?.__typename === "NumericalMeasure"
+      ? "byMeasure"
+      : "byDimensionLabel";
 
   return component ? (
     <Box className={classes.sortingItemContainer}>

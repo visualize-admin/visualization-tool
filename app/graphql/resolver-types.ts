@@ -45,7 +45,7 @@ export type DataCube = {
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
-  measures: Array<Measure>;
+  measures: Array<NumericalMeasure>;
   themes: Array<DataCubeTheme>;
 };
 
@@ -226,37 +226,6 @@ export type HierarchyValue = {
   hasValue?: Maybe<Scalars['Boolean']>;
 };
 
-export type Measure = Dimension & {
-  __typename?: 'Measure';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
-  order?: Maybe<Scalars['Int']>;
-  isNumerical: Scalars['Boolean'];
-  isKeyDimension: Scalars['Boolean'];
-  isCurrency?: Maybe<Scalars['Boolean']>;
-  currencyExponent?: Maybe<Scalars['Int']>;
-  resolution?: Maybe<Scalars['Int']>;
-  values: Array<Scalars['DimensionValue']>;
-  related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
-};
-
-
-export type MeasureValuesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  filters?: Maybe<Scalars['Filters']>;
-};
-
-
-export type MeasureHierarchyArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-};
-
 export type NominalDimension = Dimension & {
   __typename?: 'NominalDimension';
   iri: Scalars['String'];
@@ -281,6 +250,37 @@ export type NominalDimensionValuesArgs = {
 
 
 export type NominalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
+export type NumericalMeasure = Dimension & {
+  __typename?: 'NumericalMeasure';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
+  isNumerical: Scalars['Boolean'];
+  isKeyDimension: Scalars['Boolean'];
+  isCurrency?: Maybe<Scalars['Boolean']>;
+  currencyExponent?: Maybe<Scalars['Int']>;
+  resolution?: Maybe<Scalars['Int']>;
+  values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
+};
+
+
+export type NumericalMeasureValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type NumericalMeasureHierarchyArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
 };
@@ -539,8 +539,8 @@ export type ResolversTypes = ResolversObject<{
   GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   GeoShapesDimension: ResolverTypeWrapper<ResolvedDimension>;
   HierarchyValue: ResolverTypeWrapper<HierarchyValue>;
-  Measure: ResolverTypeWrapper<ResolvedMeasure>;
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
+  NumericalMeasure: ResolverTypeWrapper<ResolvedMeasure>;
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
   ObservationFilter: ResolverTypeWrapper<ObservationFilter>;
   ObservationsQuery: ResolverTypeWrapper<ResolvedObservationsQuery>;
@@ -573,8 +573,8 @@ export type ResolversParentTypes = ResolversObject<{
   GeoShapes: Scalars['GeoShapes'];
   GeoShapesDimension: ResolvedDimension;
   HierarchyValue: HierarchyValue;
-  Measure: ResolvedMeasure;
   NominalDimension: ResolvedDimension;
+  NumericalMeasure: ResolvedMeasure;
   Observation: Scalars['Observation'];
   ObservationFilter: ObservationFilter;
   ObservationsQuery: ResolvedObservationsQuery;
@@ -603,7 +603,7 @@ export type DataCubeResolvers<ContextType = GraphQLContext, ParentType extends R
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, 'sourceType' | 'sourceUrl'>>;
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionsArgs, 'sourceType' | 'sourceUrl'>>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri' | 'sourceType' | 'sourceUrl'>>;
-  measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType, RequireFields<DataCubeMeasuresArgs, 'sourceType' | 'sourceUrl'>>;
+  measures?: Resolver<Array<ResolversTypes['NumericalMeasure']>, ParentType, ContextType, RequireFields<DataCubeMeasuresArgs, 'sourceType' | 'sourceUrl'>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -635,7 +635,7 @@ export type DatasetCountResolvers<ContextType = GraphQLContext, ParentType exten
 }>;
 
 export type DimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'Measure' | 'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>;
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -715,24 +715,6 @@ export type HierarchyValueResolvers<ContextType = GraphQLContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MeasureResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Measure'] = ResolversParentTypes['Measure']> = ResolversObject<{
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  isCurrency?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  currencyExponent?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  resolution?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
-  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
-  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<MeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type NominalDimensionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['NominalDimension'] = ResolversParentTypes['NominalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -745,6 +727,24 @@ export type NominalDimensionResolvers<ContextType = GraphQLContext, ParentType e
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
   related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<NominalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type NumericalMeasureResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['NumericalMeasure'] = ResolversParentTypes['NumericalMeasure']> = ResolversObject<{
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isCurrency?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  currencyExponent?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  resolution?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NumericalMeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<NumericalMeasureHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -834,8 +834,8 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   GeoShapes?: GraphQLScalarType;
   GeoShapesDimension?: GeoShapesDimensionResolvers<ContextType>;
   HierarchyValue?: HierarchyValueResolvers<ContextType>;
-  Measure?: MeasureResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;
+  NumericalMeasure?: NumericalMeasureResolvers<ContextType>;
   Observation?: GraphQLScalarType;
   ObservationFilter?: ObservationFilterResolvers<ContextType>;
   ObservationsQuery?: ObservationsQueryResolvers<ContextType>;
