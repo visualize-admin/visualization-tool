@@ -16,10 +16,10 @@ const viewports = {
   },
 };
 
-test("Chart Snapshots", async ({ page }) => {
-  test.setTimeout(5 * 60 * 1000);
-  for (let [viewportName, viewportSize] of Object.entries(viewports)) {
-    for (let { slug, env } of configs) {
+for (let [viewportName, viewportSize] of Object.entries(viewports)) {
+  for (let { slug, env } of configs) {
+    test(`Chart Snapshots ${slug} ${env} ${viewportName}`, async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
       await page.setViewportSize(viewportSize);
       await page.goto(`/en/__test/${env}/${slug}?dataSource=Int`);
       await page
@@ -35,6 +35,6 @@ test("Chart Snapshots", async ({ page }) => {
         path: `e2e-screenshots/chart-snapshot-${viewportName}-${slug}.png`,
         fullPage: true,
       });
-    }
+    });
   }
-});
+}

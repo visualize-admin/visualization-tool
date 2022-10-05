@@ -15,3 +15,6 @@ node_modules
 .env*.local
 
 __diff_output__
+
+e2e-screenshots
+playwright-report

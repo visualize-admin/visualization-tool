@@ -24,8 +24,10 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: cypress-screenshots
-          path: e2e-screenshots
+          name: e2e-screenshots
+          path: |
+            e2e-screenshots
+            playwright-report
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#job-status-check-functions
       - name: E2E tests ✅
         if: ${{ success() }}
