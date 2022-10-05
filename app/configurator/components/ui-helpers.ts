@@ -205,7 +205,13 @@ export const useDimensionFormatters = (
           );
         } else if (isNamedNodeDimension(d)) {
           formatter = namedNodeFormatter(d);
-        } else if (d.isNumerical) {
+        } else if (
+          // It makes no sense to format numeric values of ordinal dimensions
+          // as numbers.
+          d.isNumerical &&
+          d.__typename !== "OrdinalDimension" &&
+          d.__typename !== "OrdinalMeasure"
+        ) {
           formatter = formatNumber;
         } else {
           formatter = formatIdentity;

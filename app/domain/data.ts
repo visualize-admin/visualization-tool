@@ -225,6 +225,7 @@ export const shouldValuesBeLoadedForResolvedDimension = (
   dim: ResolvedDimension
 ) => {
   return !(
-    dim.data.isMeasureDimension || isStandardErrorResolvedDimension(dim)
+    (dim.data.isNumerical && dim.data.scaleType !== "Ordinal") ||
+    isStandardErrorResolvedDimension(dim)
   );
 };

@@ -7,11 +7,12 @@ import { DataCubeMetadata } from "@/graphql/types";
 
 const ComponentType = t.union([
   t.literal("NumericalMeasure"),
-  t.literal("TemporalDimension"),
-  t.literal("NominalDimension"),
-  t.literal("OrdinalDimension"),
+  t.literal("OrdinalMeasure"),
   t.literal("GeoCoordinatesDimension"),
   t.literal("GeoShapesDimension"),
+  t.literal("NominalDimension"),
+  t.literal("OrdinalDimension"),
+  t.literal("TemporalDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;

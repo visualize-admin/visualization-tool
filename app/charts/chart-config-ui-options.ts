@@ -8,12 +8,13 @@ import { imputationTypes } from "../configurator/config-types";
 
 // This should match graphQL Schema
 export type DimensionType =
-  | "TemporalDimension"
-  | "NominalDimension"
-  | "OrdinalDimension"
+  | "NumericalMeasure"
+  | "OrdinalMeasure"
   | "GeoCoordinatesDimension"
   | "GeoShapesDimension"
-  | "NumericalMeasure";
+  | "NominalDimension"
+  | "OrdinalDimension"
+  | "TemporalDimension";
 
 export type BaseEncodingField = "x" | "y" | "segment";
 export type GeoEncodingField = "baseLayer" | "areaLayer" | "symbolLayer";
