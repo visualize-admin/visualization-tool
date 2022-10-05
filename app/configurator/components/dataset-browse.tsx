@@ -29,13 +29,13 @@ import { BrowseParams } from "@/browser/dataset-browser";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
-import Tag from "@/configurator/components/Tag";
 import {
   smoothPresenceProps,
   MotionBox,
   MotionCard,
   accordionPresenceProps,
 } from "@/configurator/components/presence";
+import Tag from "@/configurator/components/tag";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { truthy } from "@/domain/types";
