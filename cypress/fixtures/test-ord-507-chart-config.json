@@ -1,0 +1,86 @@
+{
+  "state": "CONFIGURING_CHART",
+  "dataSet": "https://environment.ld.admin.ch/foen/test_ordinal_507/7",
+  "dataSource": {
+    "type": "sparql",
+    "url": "https://int.lindas.admin.ch/query"
+  },
+  "meta": {
+    "title": {
+      "de": "",
+      "fr": "",
+      "it": "",
+      "en": ""
+    },
+    "description": {
+      "de": "",
+      "fr": "",
+      "it": "",
+      "en": ""
+    }
+  },
+  "chartConfig": {
+    "version": "1.0.2",
+    "chartType": "table",
+    "filters": {},
+    "settings": {
+      "showSearch": true,
+      "showAllRows": false
+    },
+    "sorting": [],
+    "fields": {
+      "http://schema.org/identifier": {
+        "componentIri": "http://schema.org/identifier",
+        "componentType": "GeoShapesDimension",
+        "index": 0,
+        "isGroup": false,
+        "isHidden": false,
+        "columnStyle": {
+          "textStyle": "regular",
+          "type": "text",
+          "textColor": "#000",
+          "columnColor": "#fff"
+        }
+      },
+      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord1": {
+        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord1",
+        "componentType": "OrdinalMeasure",
+        "index": 1,
+        "isGroup": false,
+        "isHidden": false,
+        "columnStyle": {
+          "textStyle": "regular",
+          "type": "text",
+          "textColor": "#000",
+          "columnColor": "#fff"
+        }
+      },
+      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord2": {
+        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord2",
+        "componentType": "OrdinalMeasure",
+        "index": 2,
+        "isGroup": false,
+        "isHidden": false,
+        "columnStyle": {
+          "textStyle": "regular",
+          "type": "text",
+          "textColor": "#000",
+          "columnColor": "#fff"
+        }
+      },
+      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord3": {
+        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord3",
+        "componentType": "OrdinalMeasure",
+        "index": 3,
+        "isGroup": false,
+        "isHidden": false,
+        "columnStyle": {
+          "textStyle": "regular",
+          "type": "text",
+          "textColor": "#000",
+          "columnColor": "#fff"
+        }
+      }
+    }
+  }
+}
