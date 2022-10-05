@@ -12,11 +12,11 @@ import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
-import Tag from "@/configurator/components/Tag";
 import {
   MotionBox,
   smoothPresenceProps,
 } from "@/configurator/components/presence";
+import Tag from "@/configurator/components/tag";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import { DataSource } from "@/configurator/config-types";
 import { truthy } from "@/domain/types";
@@ -114,7 +114,9 @@ export const DataSetMetadata = ({
             href={cube.landingPage}
             external
             label={
-              <Trans id="dataset.metadata.learnmore">Learn more about the dataset</Trans>
+              <Trans id="dataset.metadata.learnmore">
+                Learn more about the dataset
+              </Trans>
             }
           />
         ) : (
