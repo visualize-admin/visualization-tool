@@ -1,46 +1,54 @@
 import { LocatorFixtures } from "@playwright-testing-library/test/fixture";
-import { Page } from "@playwright/test";
+
+import { TestContext } from "./types";
 
 type Screen = LocatorFixtures["screen"];
 
 const selectors = {
   search: {
-    searchInput: (_sc: Screen, page: Page) => page.locator("#datasetSearch"),
-    draftsCheckbox: (_sc: Screen, page: Page) =>
-      page.locator("#dataset-include-drafts"),
-    navItem: (sc: Screen) => sc.findByTestId("navItem"),
-    navChip: (sc: Screen) => sc.findByTestId("navChip"),
-    resultsCount: (sc: Screen) =>
-      sc.findByTestId("search-results-count", undefined, { timeout: 5000 }),
+    searchInput: (ctx: TestContext) => ctx.page.locator("#datasetSearch"),
+    draftsCheckbox: (ctx: TestContext) =>
+      ctx.page.locator("#dataset-include-drafts"),
+    navItem: (ctx: TestContext) => ctx.screen.findByTestId("navItem"),
+    navChip: (ctx: TestContext) => ctx.screen.findByTestId("navChip"),
+    resultsCount: (ctx: TestContext) =>
+      ctx.screen.findByTestId("search-results-count", undefined, {
+        timeout: 5000,
+      }),
   },
   datasetPreview: {
-    loaded: (sc: Screen, page: Page) =>
-      page
+    loaded: (ctx: TestContext) =>
+      ctx.page
         .locator("table td")
         .first()
         .waitFor({ timeout: 20 * 1000 }),
-    cells: (sc: Screen, page: Page) => page.locator("table td"),
+    cells: (ctx: TestContext) => ctx.page.locator("table td"),
   },
   panels: {
-    left: (sc: Screen) => sc.findByTestId("panel-left"),
-    right: (sc: Screen) => sc.findByTestId("panel-right"),
-    middle: (sc: Screen) => sc.findByTestId("panel-middle"),
+    left: (ctx: TestContext) => ctx.screen.findByTestId("panel-left"),
+    right: (ctx: TestContext) => ctx.screen.findByTestId("panel-right"),
+    middle: (ctx: TestContext) => ctx.screen.findByTestId("panel-middle"),
   },
   edition: {
-    configFilters: (sc: Screen) =>
-      sc.findByTestId("configurator-filters", undefined, {
+    configFilters: (ctx: TestContext) =>
+      ctx.screen.findByTestId("configurator-filters", undefined, {
         timeout: 20 * 1000,
       }),
-    chartFilters: (sc: Screen) => sc.findByTestId("chart-filters-list"),
-    filterDrawer: (sc: Screen) => sc.findByTestId("edition-filters-drawer"),
-    filterCheckbox: (_sc: Screen, page: Page, value: string) =>
-      page.locator(`[data-value="${value}"]`),
-    chartTypeSelector: (sc: Screen) => sc.findByTestId("chart-type-selector"),
+    chartFilters: (ctx: TestContext) =>
+      ctx.screen.findByTestId("chart-filters-list"),
+    filterDrawer: (ctx: TestContext) =>
+      ctx.screen.findByTestId("edition-filters-drawer"),
+    filterCheckbox: (ctx, value: string) =>
+      ctx.page.locator(`[data-value="${value}"]`),
+    chartTypeSelector: (ctx: TestContext) =>
+      ctx.screen.findByTestId("chart-type-selector"),
   },
   chart: {
-    colorLegend: (sc: Screen) => sc.findByTestId("colorLegend"),
-    loaded: (_sc: Screen, page: Page) =>
-      page.locator(`[data-chart-loaded="true"]`).waitFor({ timeout: 20000 }),
+    colorLegend: (ctx: TestContext) => ctx.screen.findByTestId("colorLegend"),
+    loaded: (ctx: TestContext) =>
+      ctx.page
+        .locator(`[data-chart-loaded="true"]`)
+        .waitFor({ timeout: 40 * 1000 }),
   },
 };
 

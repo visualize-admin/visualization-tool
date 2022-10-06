@@ -1,9 +1,9 @@
 import { URL } from "url";
 
-import { describe, it, expect } from "./common";
+import { describe, test, expect } from "./common";
 
 describe("The Home Page", () => {
-  it("default language (de) should render on /", async ({ page, screen }) => {
+  test("default language (de) should render on /", async ({ page, screen }) => {
     await page.setExtraHTTPHeaders({
       "Accept-Language": "de",
     });
@@ -13,7 +13,7 @@ describe("The Home Page", () => {
     expect(await page.locator("html").getAttribute("lang")).toEqual("de");
   });
 
-  it("Accept-Language header for alternative language (fr) should display French", async ({
+  test("Accept-Language header for alternative language (fr) should display French", async ({
     page,
     screen,
   }) => {
@@ -28,7 +28,7 @@ describe("The Home Page", () => {
     expect(await page.locator("html").getAttribute("lang")).toEqual("fr");
   });
 
-  it("language switch should work", async ({ page, screen }) => {
+  test("language switch should work", async ({ page, screen }) => {
     await page.goto("/");
     await page.locator('a[hreflang="fr"]').click();
     await screen.findByText(
