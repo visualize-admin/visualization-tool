@@ -60,7 +60,7 @@ jobs:
         run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
         if: github.ref == 'refs/heads/main'
       - name: Set argos upload branch on PR branches
-        run: echo "ARGOS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        run: echo "ARGOS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
         if: github.ref != 'refs/heads/main'
       - name: Upload screenshots
         env:
