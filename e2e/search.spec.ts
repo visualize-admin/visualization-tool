@@ -4,25 +4,29 @@ import { test, expect } from "./common";
 import selectors from "./selectors";
 
 test("should be possible to open a search URL, and search state should be recovered", async ({
-  screen,
   page,
+  screen,
 }) => {
+  const ctx = { page, screen };
+
   test.slow();
 
   page.goto(
     `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int`
   );
 
-  expect(
-    await selectors.search.searchInput(screen, page).getAttribute("value")
-  ).toEqual("category");
+  expect(await selectors.search.searchInput(ctx).getAttribute("value")).toEqual(
+    "category"
+  );
 
   expect(
-    await selectors.search.draftsCheckbox(screen, page).getAttribute("checked")
+    await selectors.search.draftsCheckbox(ctx).getAttribute("checked")
   ).toBe("");
 });
 
-test("search results count coherence", async ({ screen, page }) => {
+test("search results count coherence", async ({ page, screen }) => {
+  const ctx = { page, screen };
+
   test.slow();
 
   const categories = [
@@ -40,7 +44,7 @@ test("search results count coherence", async ({ screen, page }) => {
 
   for (let t of [...categories, ...themes]) {
     await page.goto("/en/browse?dataSource=Int");
-    await selectors.search.resultsCount(screen);
+    await selectors.search.resultsCount(ctx);
 
     const panelLeft = await screen.findByTestId("panel-left");
     await within(panelLeft).findByText(t, undefined, { timeout: 5000 });

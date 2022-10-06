@@ -7,19 +7,21 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   page,
   screen,
 }) => {
+  const ctx = { page, screen };
+
   const key = "jky5IEw6poT3";
   const config = mapWaldflascheChartConfigFixture;
   await loadChartInLocalStorage(page, key, config);
   await page.goto(`/en/create/${key}`);
 
-  await selectors.chart.loaded(screen, page);
+  await selectors.chart.loaded(ctx);
 
   await (
     await screen.findByText("Symbols", undefined, { timeout: 15000 })
   ).click();
 
   const selects = await (
-    await selectors.panels.right(screen)
+    await selectors.panels.right(ctx)
   ).locator(".MuiSelect-select");
 
   const count = await selects.count();
@@ -32,14 +34,10 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await (await screen.findByText("None")).click();
 
   await selectors.edition
-    .filterCheckbox(
-      screen,
-      page,
-      "https://environment.ld.admin.ch/foen/nfi/inventory"
-    )
+    .filterCheckbox(ctx, "https://environment.ld.admin.ch/foen/nfi/inventory")
     .click();
 
   expect(
-    await (await selectors.chart.colorLegend(screen)).locator("div").count()
+    await (await selectors.chart.colorLegend(ctx)).locator("div").count()
   ).toBe(4);
 });
