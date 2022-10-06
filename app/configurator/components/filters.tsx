@@ -653,7 +653,11 @@ const DrawerContent = forwardRef<
     ]
   );
   return (
-    <div className={classes.autocompleteMenuContent} ref={ref}>
+    <div
+      className={classes.autocompleteMenuContent}
+      ref={ref}
+      data-testid="edition-filters-drawer"
+    >
       <Box className={classes.autocompleteHeader}>
         <Flex alignItems="center" justifyContent="space-between">
           <Typography variant="h5" gutterBottom>

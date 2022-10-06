@@ -9,7 +9,7 @@ variables:
   RELEASE_IMAGE_TAG: $CI_REGISTRY_IMAGE:release
 
 lint:
-  image: node:12
+  image: node:16
   stage: lint
   script:
     - yarn --frozen-lockfile
