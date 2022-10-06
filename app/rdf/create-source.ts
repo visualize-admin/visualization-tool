@@ -2,7 +2,7 @@ import { sparql } from "@tpluscode/sparql-builder";
 import { Source } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 
-const pragmas = `#pragma describe.strategy cbd
+export const pragmas = `#pragma describe.strategy cbd
 #pragma join.hash off
 `;
 
