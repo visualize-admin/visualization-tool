@@ -14,8 +14,6 @@ test("should be possible to edit filters of a hierarchy", async ({
   await page.goto(`/en/create/${key}`);
   await selectors.chart.loaded(screen, page);
 
-  // await page.waitForLoadState("networkidle");
-
   const selectNone = await screen.findByText("Select none", undefined, {
     timeout: 10 * 1000,
   });
