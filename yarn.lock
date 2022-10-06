@@ -3873,6 +3873,18 @@
     "@tpluscode/rdf-string" "^0.2.26"
     debug "^4.1.1"
 
+"@tpluscode/sparql-builder@^0.3.24":
+  version "0.3.24"
+  resolved "https://registry.yarnpkg.com/@tpluscode/sparql-builder/-/sparql-builder-0.3.24.tgz#8fccd8f1323597ca3ad11b7a86c469529ed774f6"
+  integrity sha512-5DjQafLbdAOn3BwHv6eianSfO8jV54IJDy8usY6rO8Rz81e+BkpdUcqzx9gHoghISVgffgq2hwSLL44Fa/PG+Q==
+  dependencies:
+    "@rdf-esm/data-model" "^0.5.4"
+    "@rdf-esm/term-set" "^0.5.0"
+    "@rdfjs/types" "*"
+    "@tpluscode/rdf-ns-builders" "^2.0.0"
+    "@tpluscode/rdf-string" "^0.2.26"
+    debug "^4.1.1"
+
 "@types/accepts@*":
   version "1.3.5"
   resolved "https://registry.npmjs.org/@types/accepts/-/accepts-1.3.5.tgz"
@@ -15220,6 +15232,23 @@ sparql-http-client@^2.2.2:
   version "2.4.0"
   resolved "https://registry.npmjs.org/sparql-http-client/-/sparql-http-client-2.4.0.tgz"
   integrity sha512-/mOs4l2tfXJ2DnjmXMe3Gzihp68JGT239OZLiO678xSXU2g6ZZbcCmImkCy9zs6hw3ft6exFo4NIJn6sIDMoIA==
+  dependencies:
+    "@rdfjs/data-model" "^1.1.2"
+    "@rdfjs/parser-n3" "^1.1.3"
+    "@rdfjs/to-ntriples" "^1.0.2"
+    get-stream "^5.1.0"
+    jsonstream2 "^3.0.0"
+    lodash "^4.17.15"
+    nodeify-fetch "^2.2.0"
+    promise-the-world "^1.0.1"
+    rdf-transform-triple-to-quad "^1.0.2"
+    readable-stream "^3.5.0"
+    separate-stream "^1.0.0"
+
+sparql-http-client@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/sparql-http-client/-/sparql-http-client-2.4.1.tgz#7181eed360fc777f3263b0e00777e9e789f433e5"
+  integrity sha512-w1rsSZW/0/byHml/veP4A1IZjEzjzphPr/iee1c20aG+RDEJC+2lAefXGTKZH58E7SSUoXqFW+hfwjVl5K2ecQ==
   dependencies:
     "@rdfjs/data-model" "^1.1.2"
     "@rdfjs/parser-n3" "^1.1.3"
