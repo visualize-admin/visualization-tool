@@ -13,6 +13,14 @@ const selectors = {
     resultsCount: (sc: Screen) =>
       sc.findByTestId("search-results-count", undefined, { timeout: 5000 }),
   },
+  datasetPreview: {
+    loaded: (sc: Screen, page: Page) =>
+      page
+        .locator("table td")
+        .first()
+        .waitFor({ timeout: 20 * 1000 }),
+    cells: (sc: Screen, page: Page) => page.locator("table td"),
+  },
   panels: {
     left: (sc: Screen) => sc.findByTestId("panel-left"),
     right: (sc: Screen) => sc.findByTestId("panel-right"),
@@ -27,6 +35,7 @@ const selectors = {
     filterDrawer: (sc: Screen) => sc.findByTestId("edition-filters-drawer"),
     filterCheckbox: (_sc: Screen, page: Page, value: string) =>
       page.locator(`[data-value="${value}"]`),
+    chartTypeSelector: (sc: Screen) => sc.findByTestId("chart-type-selector"),
   },
   chart: {
     colorLegend: (sc: Screen) => sc.findByTestId("colorLegend"),

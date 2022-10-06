@@ -150,7 +150,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     label: "Investitionen: Einnahmen - Total",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -158,7 +158,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/1",
     label: "Investitionen: Einnahmen aus Beiträgen Bund und Kantone",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -166,7 +166,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/2",
     label: "Investitionen: Einnahmen aus Beiträgen von Gemeinden und Dritten",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -174,7 +174,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/3",
     label: "Investitionen: übrige Einnahmen",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -182,7 +182,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/4",
     label: "Investitionen - Total",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -190,7 +190,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/5",
     label: "Investitionen für Wirtschaftsgebäude",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -198,7 +198,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/6",
     label: "Investitionen für Maschinen",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -206,7 +206,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/7",
     label: "Übrige Ausgaben für Investitionen",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -214,7 +214,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/8",
     label: "Investitionen für Erschliessungsanlagen",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -222,7 +222,7 @@ export const measures: DimensionMetadataFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/9",
     label: "Netto-Investitionen",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
     isNumerical: true,
     isKeyDimension: false,
     values: [],
@@ -443,47 +443,47 @@ export const tableMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
     label: "Anzahl Betriebe",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
     label: "Anzahl Waldeigentümer",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
     label: "Gesamte Waldflächen (ha)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
     label: "Produktive Waldflächen (ha)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
     label: "Holzernte Total (m3)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
     label: "Stammholz (m3)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
     label: "Industrieholz (m3)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
     label: "Energieholz (m3)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
     label: "Übrige Sortimente (m3)",
-    __typename: "Measure",
+    __typename: "NumericalMeasure",
   },
 ];
 
@@ -838,7 +838,7 @@ export const tableConfig: TableConfig = {
     {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       sortingOrder: "asc",
     },
   ],
@@ -932,7 +932,7 @@ export const tableConfig: TableConfig = {
       index: 6,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -946,7 +946,7 @@ export const tableConfig: TableConfig = {
       index: 2,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "heatmap",
         palette: "BrBG",
@@ -959,7 +959,7 @@ export const tableConfig: TableConfig = {
       index: 8,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -973,7 +973,7 @@ export const tableConfig: TableConfig = {
       index: 9,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -987,7 +987,7 @@ export const tableConfig: TableConfig = {
       index: 10,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "bar",
         textStyle: "regular",
@@ -1003,7 +1003,7 @@ export const tableConfig: TableConfig = {
       index: 11,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: { type: "heatmap", palette: "PRGn", textStyle: "regular" },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
@@ -1012,7 +1012,7 @@ export const tableConfig: TableConfig = {
       index: 12,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "heatmap",
         textStyle: "regular",
@@ -1025,7 +1025,7 @@ export const tableConfig: TableConfig = {
       index: 13,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -1039,7 +1039,7 @@ export const tableConfig: TableConfig = {
       index: 14,
       isGroup: false,
       isHidden: false,
-      componentType: "Measure",
+      componentType: "NumericalMeasure",
       columnStyle: {
         type: "text",
         textStyle: "regular",

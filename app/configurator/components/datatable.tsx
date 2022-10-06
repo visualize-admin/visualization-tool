@@ -17,7 +17,7 @@ import { useMemo, useRef, useState } from "react";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
-import { Observation } from "@/domain/data";
+import { isNumericalMeasure, Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
   useDataCubeObservationsQuery,
@@ -61,8 +61,9 @@ export const PreviewTable = ({
   const sortedObservations = useMemo(() => {
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
-      const convert =
-        sortBy.__typename === "Measure" ? (d: string) => +d : (d: string) => d;
+      const convert = isNumericalMeasure(sortBy)
+        ? (d: string) => +d
+        : (d: string) => d;
 
       return [...observations].sort((a, b) =>
         compare(
@@ -86,71 +87,76 @@ export const PreviewTable = ({
     }),
     []
   );
+
   return (
-    <Table>
-      <div ref={tooltipContainerRef} />
-      <caption style={{ display: "none" }}>{title}</caption>
-      <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
-        <TableRow sx={{ borderBottom: "none" }}>
-          {headers.map((header) => {
-            return (
-              <TableCell
-                key={header.iri}
-                component="th"
-                role="columnheader"
-                onClick={() => {
-                  if (sortBy?.iri === header.iri) {
-                    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-                  } else {
-                    setSortBy(header);
-                    setSortDirection("asc");
-                  }
-                }}
-                sx={{
-                  textAlign: header.__typename === "Measure" ? "right" : "left",
-                  borderBottom: "none",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <TableSortLabel
-                  active={sortBy?.iri === header.iri}
-                  direction={sortDirection}
+    <div ref={tooltipContainerRef}>
+      <Table>
+        <caption style={{ display: "none" }}>{title}</caption>
+        <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
+          <TableRow sx={{ borderBottom: "none" }}>
+            {headers.map((header) => {
+              return (
+                <TableCell
+                  key={header.iri}
+                  component="th"
+                  role="columnheader"
+                  onClick={() => {
+                    if (sortBy?.iri === header.iri) {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc"
+                      );
+                    } else {
+                      setSortBy(header);
+                      setSortDirection("asc");
+                    }
+                  }}
+                  sx={{
+                    textAlign: isNumericalMeasure(header) ? "right" : "left",
+                    borderBottom: "none",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  <DimensionLabel
-                    dimension={header}
-                    tooltipProps={tooltipProps}
-                  />
-                </TableSortLabel>
-              </TableCell>
+                  <TableSortLabel
+                    active={sortBy?.iri === header.iri}
+                    direction={sortDirection}
+                  >
+                    <DimensionLabel
+                      dimension={header}
+                      tooltipProps={tooltipProps}
+                    />
+                  </TableSortLabel>
+                </TableCell>
+              );
+            })}
+          </TableRow>
+          <BackgroundRow nCells={headers.length} />
+        </TableHead>
+        <TableBody>
+          {sortedObservations.map((obs, i) => {
+            return (
+              <TableRow key={i}>
+                {headers.map((header) => {
+                  const formatter = formatters[header.iri];
+                  return (
+                    <TableCell
+                      key={header.iri}
+                      component="td"
+                      sx={{
+                        textAlign: isNumericalMeasure(header)
+                          ? "right"
+                          : "left",
+                      }}
+                    >
+                      {formatter(obs[header.iri])}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
             );
           })}
-        </TableRow>
-        <BackgroundRow nCells={headers.length} />
-      </TableHead>
-      <TableBody>
-        {sortedObservations.map((obs, i) => {
-          return (
-            <TableRow key={i}>
-              {headers.map(({ iri, __typename }) => {
-                const formatter = formatters[iri];
-                return (
-                  <TableCell
-                    key={iri}
-                    component="td"
-                    sx={{
-                      textAlign: __typename === "Measure" ? "right" : "left",
-                    }}
-                  >
-                    {/** @ts-ignore */}
-                    {formatter(obs[iri])}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

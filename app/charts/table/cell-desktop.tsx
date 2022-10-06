@@ -68,7 +68,9 @@ export const CellDesktop = ({
           sx={{
             alignItems: "center",
             justifyContent:
-              columnComponentType === "Measure" ? "flex-end" : "flex-start",
+              columnComponentType === "NumericalMeasure"
+                ? "flex-end"
+                : "flex-start",
             color: textColor,
             backgroundColor: columnColor,
             fontWeight: textStyle,
@@ -165,8 +167,11 @@ export const CellDesktop = ({
           className={classes.defaultCell}
           sx={{
             justifyContent:
-              columnComponentType === "Measure" ? "flex-end" : "flex-start",
-            textAlign: columnComponentType === "Measure" ? "right" : "left",
+              columnComponentType === "NumericalMeasure"
+                ? "flex-end"
+                : "flex-start",
+            textAlign:
+              columnComponentType === "NumericalMeasure" ? "right" : "left",
             color: textColor,
             backgroundColor: columnColor,
             fontWeight: textStyle,

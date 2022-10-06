@@ -223,7 +223,8 @@ export const getCubeDimensionValues = async (
     typeof dimension.minInclusive !== "undefined" &&
     typeof dimension.maxInclusive !== "undefined" &&
     data.timeUnit !== "Day" &&
-    data.timeUnit !== "Month"
+    data.timeUnit !== "Month" &&
+    data.scaleType !== "Ordinal"
   ) {
     const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
     const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;

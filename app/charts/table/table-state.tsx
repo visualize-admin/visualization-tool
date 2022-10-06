@@ -156,7 +156,7 @@ const useTableState = ({
         // This is run often, so let's optimize it
         for (let i = 0; i < keys.length; i++) {
           o[slugifiedKeys[i]] =
-            types[slugifiedKeys[i]] !== "Measure"
+            types[slugifiedKeys[i]] !== "NumericalMeasure"
               ? d[keys[i]]
               : d[keys[i]] !== null
               ? +d[keys[i]]!
@@ -186,7 +186,9 @@ const useTableState = ({
       const columnItemSizes = [
         ...columnItems.map((item) => {
           const itemAsString =
-            c.componentType === "Measure" ? formatNumber(item as number) : item;
+            c.componentType === "NumericalMeasure"
+              ? formatNumber(item as number)
+              : item;
           return estimateTextWidth(`${itemAsString}`, 16) + 20;
         }),
       ];

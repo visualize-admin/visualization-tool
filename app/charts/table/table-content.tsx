@@ -97,7 +97,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                   <Flex
                     className={clsx(
                       classes.headerGroup,
-                      columnComponentType === "Measure"
+                      columnComponentType === "NumericalMeasure"
                         ? classes.headerGroupMeasure
                         : undefined
                     )}

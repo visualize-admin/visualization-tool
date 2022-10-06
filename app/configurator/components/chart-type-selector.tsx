@@ -161,6 +161,7 @@ export const ChartTypeSelector = ({
         ) : (
           <Flex sx={{ flexDirection: "column", gap: 5 }}>
             <Box
+              data-testid="chart-type-selector"
               display="grid"
               sx={{
                 gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],

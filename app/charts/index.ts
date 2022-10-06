@@ -37,6 +37,7 @@ import {
   getTimeDimensions,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
+  isNumericalMeasure,
 } from "../domain/data";
 import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
@@ -142,6 +143,8 @@ export const getInitialConfig = ({
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
+  const numericalMeasures = measures.filter(isNumericalMeasure);
+
   switch (chartType) {
     case "bar":
       return {
@@ -176,7 +179,7 @@ export const getInitialConfig = ({
             ).iri,
             sorting: DEFAULT_SORTING,
           },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
         },
       };
     case "line":
@@ -187,7 +190,7 @@ export const getInitialConfig = ({
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: getTimeDimensions(dimensions)[0].iri },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
         },
       };
     case "area":
@@ -198,46 +201,58 @@ export const getInitialConfig = ({
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: getTimeDimensions(dimensions)[0].iri },
-          y: { componentIri: measures[0].iri, imputationType: "none" },
+          y: { componentIri: numericalMeasures[0].iri, imputationType: "none" },
         },
       };
     case "scatterplot":
+      const scatterplotSegmentComponent =
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType: "scatterplot",
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          x: { componentIri: measures[0].iri },
+          x: { componentIri: numericalMeasures[0].iri },
           y: {
             componentIri:
-              measures.length > 1 ? measures[1].iri : measures[0].iri,
+              numericalMeasures.length > 1
+                ? numericalMeasures[1].iri
+                : numericalMeasures[0].iri,
           },
-          segment: {
-            componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: DEFAULT_PALETTE,
-            colorMapping: mapValueIrisToColor({
-              palette: DEFAULT_PALETTE,
-              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
-            }),
-          },
+          ...(scatterplotSegmentComponent
+            ? {
+                componentIri: scatterplotSegmentComponent.iri,
+                palette: DEFAULT_PALETTE,
+                colorMapping: mapValueIrisToColor({
+                  palette: DEFAULT_PALETTE,
+                  dimensionValues: scatterplotSegmentComponent.values,
+                }),
+              }
+            : {}),
         },
       };
     case "pie":
+      const pieSegmentComponent =
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
           segment: {
-            componentIri: getCategoricalDimensions(dimensions)[0].iri,
+            componentIri: pieSegmentComponent.iri,
             palette: DEFAULT_PALETTE,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
               palette: DEFAULT_PALETTE,
-              dimensionValues: getCategoricalDimensions(dimensions)[0]?.values,
+              dimensionValues: pieSegmentComponent.values,
             }),
           },
         },
@@ -246,6 +261,7 @@ export const getInitialConfig = ({
       const allDimensionsSorted = [...dimensions, ...measures].sort((a, b) =>
         ascending(a.order ?? Infinity, b.order ?? Infinity)
       );
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
@@ -291,7 +307,7 @@ export const getInitialConfig = ({
           areaLayer: {
             show: geoShapes.length > 0,
             componentIri: geoShapes[0]?.iri || "",
-            measureIri: measures[0].iri,
+            measureIri: numericalMeasures[0].iri,
             colorScaleType: "continuous",
             colorScaleInterpolationType: "linear",
             palette: "oranges",
@@ -300,7 +316,7 @@ export const getInitialConfig = ({
           symbolLayer: {
             show: geoShapes.length === 0,
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
-            measureIri: measures[0].iri,
+            measureIri: numericalMeasures[0].iri,
             colors: DEFAULT_SYMBOL_LAYER_COLORS,
           },
         },
@@ -691,8 +707,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
         componentIri: ({ oldValue, newChartConfig, measures }) => {
-          // If there is only one measure then x & y are already filled correctly.
-          if (measures.length > 1) {
+          const numericalMeasures = measures.filter(isNumericalMeasure);
+
+          // If there is only one numerical measure then x & y are already filled correctly.
+          if (numericalMeasures.length > 1) {
             if (newChartConfig.fields.x.componentIri !== oldValue) {
               return produce(newChartConfig, (draft) => {
                 draft.fields.y.componentIri = oldValue;
@@ -941,32 +959,32 @@ export const getPossibleChartType = ({
 }): ChartType[] => {
   const { measures, dimensions } = meta;
 
-  const hasZeroQ = measures.length === 0;
-  const hasMultipleQ = measures.length > 1;
-  const hasGeo = getGeoDimensions(dimensions).length > 0;
-  const hasTime = getTimeDimensions(dimensions).length > 0;
+  const numericalMeasures = measures.filter(isNumericalMeasure);
+  const categoricalDimensions = getCategoricalDimensions(dimensions);
+  const geoDimensions = getGeoDimensions(dimensions);
+  const timeDimensions = getTimeDimensions(dimensions);
 
-  const geoBased: ChartType[] = ["map"];
-  const catBased: ChartType[] = ["bar", "column", "pie", "table"];
-  const multipleQ: ChartType[] = ["scatterplot"];
-  const timeBased: ChartType[] = ["line", "area"];
+  const categoricalEnabled: ChartType[] = ["column", "pie"];
+  const geoEnabled: ChartType[] = ["column", "map", "pie"];
+  const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
+  const timeEnabled: ChartType[] = ["area", "column", "line"];
 
-  let possibles: ChartType[] = [];
-  if (hasZeroQ) {
-    possibles = ["table"];
-  } else {
-    possibles.push(...catBased);
-
-    if (hasMultipleQ) {
-      possibles.push(...multipleQ);
+  let possibles: ChartType[] = ["table"];
+  if (numericalMeasures.length > 0) {
+    if (categoricalDimensions.length > 0) {
+      possibles.push(...categoricalEnabled);
     }
 
-    if (hasTime) {
-      possibles.push(...timeBased);
+    if (geoDimensions.length > 0) {
+      possibles.push(...geoEnabled);
     }
 
-    if (hasGeo) {
-      possibles.push(...geoBased);
+    if (numericalMeasures.length > 1) {
+      possibles.push(...multipleNumericalMeasuresEnabled);
+    }
+
+    if (timeDimensions.length > 0) {
+      possibles.push(...timeEnabled);
     }
   }
 
@@ -1011,8 +1029,7 @@ const convertTableFieldsToSegmentField = ({
     // All the other dimension types can be used as a segment field.
     ?.filter(
       (d) =>
-        d.componentType !== "Attribute" &&
-        d.componentType !== "Measure" &&
+        d.componentType !== "NumericalMeasure" &&
         d.componentType !== "TemporalDimension"
     )
     .sort((a, b) => a.index - b.index);

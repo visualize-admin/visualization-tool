@@ -39,6 +39,7 @@ import {
   moveSortingOptions,
   removeSortingOption,
 } from "@/configurator/table/table-config-state";
+import { isNumericalMeasure } from "@/domain/data";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
@@ -124,8 +125,9 @@ const TableSortingOptionItem = ({
     });
   });
 
-  const sortingType =
-    component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
+  const sortingType = isNumericalMeasure(component)
+    ? "byMeasure"
+    : "byDimensionLabel";
 
   return component ? (
     <Box className={classes.sortingItemContainer}>
