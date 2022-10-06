@@ -1,5 +1,5 @@
 import { ChartType, SortingOrder } from "../configurator";
-import { imputationTypes } from "../configurator/config-types";
+import { imputationTypes, SortingType } from "../configurator/config-types";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -36,7 +36,7 @@ export type EncodingOptions =
         | { field: string; values?: string | string[] }[];
     }[];
 export type EncodingSortingOption = {
-  sortingType: "byDimensionLabel" | "byTotalSize" | "byMeasure";
+  sortingType: SortingType;
   sortingOrder: SortingOrder[];
 };
 type InteractiveFilterType = "legend" | "time";

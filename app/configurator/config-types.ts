@@ -533,21 +533,13 @@ export type ChartFields =
   | TableFields
   | MapFields;
 
-// interface IriBrand {
-//   readonly IRI: unique symbol;
-// }
-// const Iri = t.brand(
-//   t.string,
-//   (s): s is t.Branded<string, IriBrand> => true,
-//   "IRI"
-// );
+export type ChartSegmentField =
+  | AreaSegmentField
+  | ColumnSegmentField
+  | LineSegmentField
+  | PieSegmentField
+  | ScatterPlotSegmentField;
 
-// const ChartConfig = t.intersection([
-//   t.union([AreaConfig, BarConfig, ColumnConfig, LineConfig, ScatterPlotConfig]),
-//   t.type({
-//     fields: GenericFields
-//   })
-// ]);
 const ChartConfig = t.union([
   AreaConfig,
   BarConfig,
