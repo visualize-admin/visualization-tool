@@ -56,6 +56,14 @@ jobs:
             "state": "failure",
             "description": "E2E tests failed"
           }'
+      - name: Set argos upload branch on master branch
+        run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
+        if: github.ref == 'refs/heads/main'
+      - name: Set argos upload branch on PR branches
+        run: echo "ARGOS_BRANCH=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+        if: github.ref != 'refs/heads/main'
+      - name: Set argos upload commit
+        run: echo "ARGOS_COMMIT=$GITHUB_SHA" >> $GITHUB_ENV
       - name: Upload screenshots
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
