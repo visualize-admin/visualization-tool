@@ -77,6 +77,19 @@ const SEGMENT_DIMENSION_TYPES: DimensionType[] = [
   "GeoShapesDimension",
 ];
 
+export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+  { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+];
+
+export const COLUMN_SEGMENT_SORTING: EncodingSortingOption[] =
+  AREA_SEGMENT_SORTING;
+
+export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
+  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+];
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   column: {
     chartType: "column",
@@ -109,10 +122,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
@@ -204,10 +214,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: AREA_SEGMENT_SORTING,
         options: [
           { field: "color", values: ["palette"] },
           { field: "imputationType", values: imputationTypes },
@@ -255,10 +262,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: PIE_SEGMENT_SORTING,
         options: [{ field: "color", values: ["palette"] }],
       },
     ],

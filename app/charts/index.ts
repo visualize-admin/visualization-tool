@@ -9,6 +9,7 @@ import {
   AreaSegmentField,
   ChartConfig,
   ChartConfigsAdjusters,
+  ChartSegmentField,
   ChartType,
   ColumnSegmentField,
   FieldAdjuster,
@@ -41,6 +42,12 @@ import {
 import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
+
+import {
+  AREA_SEGMENT_SORTING,
+  COLUMN_SEGMENT_SORTING,
+  PIE_SEGMENT_SORTING,
+} from "./chart-config-ui-options";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -97,10 +104,12 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
   },
 };
 
-const DEFAULT_SORTING: {
+type SortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder;
-} = {
+};
+
+const DEFAULT_SORTING: SortingOption = {
   sortingType: "byDimensionLabel",
   sortingOrder: "asc",
 };
@@ -561,7 +570,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            // We could encouner byMeasure sorting type (Pie chart); we should
+            // switch to byTotalSize sorting then.
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byTotalSize",
+            }),
             type: "stacked",
           };
         }
@@ -684,8 +699,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentIri: oldSegment.componentIri,
             palette: oldSegment.palette,
             colorMapping: oldSegment.colorMapping,
-            // Line & ScatterPlot do not have sorting field.
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byTotalSize",
+            }),
           };
         }
 
@@ -789,8 +807,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentIri: oldSegment.componentIri,
             palette: oldSegment.palette,
             colorMapping: oldSegment.colorMapping,
-            // Line & ScatterPlot do not have sorting field.
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: PIE_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byMeasure",
+            }),
           };
         }
 
@@ -953,6 +974,26 @@ const chartConfigsPathOverrides: {
 };
 type ChartConfigPathOverrides =
   typeof chartConfigsPathOverrides[ChartType][ChartType];
+
+const adjustSegmentSorting = ({
+  segment,
+  acceptedValues,
+  defaultValue,
+}: {
+  segment: ChartSegmentField;
+  acceptedValues: SortingType[];
+  defaultValue: SortingType;
+}): SortingOption | undefined => {
+  const sorting = (segment as any).sorting as SortingOption | undefined;
+  const sortingType = sorting?.sortingType;
+  const newSorting = sorting
+    ? sortingType && acceptedValues.includes(sortingType)
+      ? sorting
+      : { ...sorting, sortingType: defaultValue }
+    : DEFAULT_SORTING;
+
+  return newSorting;
+};
 
 // Helpers
 export const getPossibleChartType = ({
