@@ -50,6 +50,7 @@ import { MapColumnOptions } from "@/configurator/map/map-chart-options";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
+  isDimensionSortable,
   isStandardErrorDimension,
 } from "@/domain/data";
 import {
@@ -278,15 +279,11 @@ const EncodingOptionsPanel = ({
           )}
         </ControlSectionContent>
       </ControlSection>
-      {/* Only nominal dimensions are sortable!
-          Temporal and Ordinal dimensions already have a defined order. */}
-      {encoding.sorting && component?.__typename === "NominalDimension" && (
+      {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
           state={state}
-          disabled={!component}
           field={encoding.field}
           encodingSortingOptions={encoding.sorting}
-          // chartType={chartType}
         />
       )}
       {optionsByField["showStandardError"] && hasStandardError && (
