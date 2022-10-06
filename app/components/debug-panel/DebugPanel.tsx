@@ -115,6 +115,8 @@ const DebugConfigurator = () => {
             size="small"
             href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
+              #pragma join.hash off
+              
 DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
             target="_blank"
