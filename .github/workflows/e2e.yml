@@ -23,7 +23,7 @@ jobs:
         run: yarn e2e
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
-      - name: Upload screenshots
+      - name: Upload E2E artifacts to job
         uses: actions/upload-artifact@v2
         if: failure()
         with:
@@ -65,7 +65,7 @@ jobs:
       - name: Set argos upload branch on PR branches
         run: echo "ARGOS_BRANCH=$(git name-rev --name-only $GITHUB_SHA | sed 's-remotes/origin/--')" >> $GITHUB_ENV
         if: github.ref != 'refs/heads/main'
-      - name: Upload screenshots
+      - name: Upload screenshots to Argos
         env:
           ARGOS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
