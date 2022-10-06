@@ -60,9 +60,7 @@ export const Columns = () => {
             y={yScale(Math.max(y, 0))}
             height={Math.abs(yScale(y) - yScale(0))}
             color={
-              (getY(d) ?? NaN) <= 0
-                ? theme.palette.secondary.main
-                : theme.palette.primary.main
+              y <= 0 ? theme.palette.secondary.main : theme.palette.primary.main
             }
           />
         );
