@@ -9,7 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Charts:
+  - Enable sorting of Geo dimensions
+  - Maintain segment sorting type correctly when switching from / to Pie chart
+  - Fix sorting by measure when undefined values are present in the data
 
 ## [3.9.5] - 2022-10-04
 
