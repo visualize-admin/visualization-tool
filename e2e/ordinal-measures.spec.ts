@@ -1,3 +1,4 @@
+import actions from "./actions";
 import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect, describe } from "./common";
 import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
@@ -12,11 +13,8 @@ describe("viewing a dataset with only ordinal measures", () => {
     screen,
   }) => {
     const ctx = { page, screen };
-    ctx.page.goto(
-      `en/browse/dataset/${encodeURIComponent(config.dataSet)}?dataSource=Int`
-    );
 
-    await selectors.datasetPreview.loaded(ctx);
+    await actions.loadDatasetPreview(ctx, config.dataSet, "Int");
     const cells = await selectors.datasetPreview.cells(ctx);
     const texts = await cells.allInnerTexts();
     expect(texts).not.toContain("NaN");
