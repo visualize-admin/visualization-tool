@@ -106,6 +106,7 @@ declare module "rdf-cube-view-query" {
         user?: string;
         password?: string;
         queryOperation?: "get" | "postUrlencoded" | "postDirect";
+        queryPrefix?: string;
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;

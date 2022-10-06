@@ -16,9 +16,9 @@ import {
 } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
 import { parseLocaleString } from "@/locales/locales";
+import { createSource } from "@/rdf/create-source";
 import {
   createCubeDimensionValuesLoader,
-  createSource,
   getCube,
   getCubeDimensions,
   getCubeObservations,
