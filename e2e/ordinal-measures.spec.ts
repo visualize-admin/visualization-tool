@@ -3,11 +3,11 @@ import { test, expect, describe } from "./common";
 import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
 import selectors from "./selectors";
 
-describe.only("viewing a dataset with only ordinal measures", () => {
+describe("viewing a dataset with only ordinal measures", () => {
   const key = "ePUgYyo622qS";
   const config = testOrd507;
 
-  test.only("should retrieve dimension values properly", async ({
+  test("should retrieve dimension values properly", async ({
     screen,
     page,
   }) => {
@@ -21,7 +21,7 @@ describe.only("viewing a dataset with only ordinal measures", () => {
     expect(texts).not.toContain("NaN");
   });
 
-  test.only("should be possible to only select table chart", async ({
+  test("should be possible to only select table chart", async ({
     page,
     screen,
   }) => {
