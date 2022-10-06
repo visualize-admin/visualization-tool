@@ -147,6 +147,16 @@ export const canDimensionBeMultiFiltered = (d: DimensionMetadataFragment) => {
   );
 };
 
+export const isDimensionSortable = (
+  d?: DimensionMetadataFragment
+): d is NominalDimension | GeoCoordinatesDimension | GeoShapesDimension => {
+  return (
+    isNominalDimension(d) ||
+    isGeoCoordinatesDimension(d) ||
+    isGeoShapesDimension(d)
+  );
+};
+
 /**
  * @fixme use metadata to filter categorical dimension!
  */
