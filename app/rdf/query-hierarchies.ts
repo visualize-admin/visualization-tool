@@ -11,9 +11,9 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { createSource } from "@/rdf/create-source";
 
 import * as ns from "./namespace";
-import { createSource } from "./queries";
 import { pruneTree, mapTree } from "./tree-utils";
 
 const queryDimensionValues = async (

@@ -28,9 +28,10 @@ jest.mock("../rdf/query-search", () => ({
 }));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
+}));
+jest.mock("../rdf/create-source", () => ({
   createSource: jest.fn(),
 }));
-
 jest.mock("../rdf/query-cube-metadata", () => ({}));
 jest.mock("../rdf/query-hierarchies", () => ({}));
 
