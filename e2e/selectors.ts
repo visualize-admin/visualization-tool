@@ -1,55 +1,72 @@
-import { LocatorFixtures } from "@playwright-testing-library/test/fixture";
+import { Locator } from "@playwright/test";
 
-import { TestContext } from "./types";
+import { TestContext as Ctx } from "./types";
 
-type Screen = LocatorFixtures["screen"];
+type SelectorFunction = (
+  ctx: Ctx,
+  arg1?: any,
+  arg2?: any
+) => Promise<Locator> | Locator | Promise<void>;
 
-const selectors = {
+type CheckSelector<T> = T extends Record<
+  string,
+  Record<string, SelectorFunction>
+>
+  ? T
+  : never;
+
+/**
+ * Constrains what we can put in selectors.
+ *
+ * We use this so that we cannot put anything we want inside the selectors.
+ * At the same time, T is returned so that downstream has the correct types.
+ */
+const makeSelectors = <T>(selectors: CheckSelector<T>): T => selectors;
+
+const selectors = makeSelectors({
   search: {
-    searchInput: (ctx: TestContext) => ctx.page.locator("#datasetSearch"),
-    draftsCheckbox: (ctx: TestContext) =>
-      ctx.page.locator("#dataset-include-drafts"),
-    navItem: (ctx: TestContext) => ctx.screen.findByTestId("navItem"),
-    navChip: (ctx: TestContext) => ctx.screen.findByTestId("navChip"),
-    resultsCount: (ctx: TestContext) =>
+    searchInput: (ctx: Ctx) => ctx.page.locator("#datasetSearch"),
+    draftsCheckbox: (ctx: Ctx) => ctx.page.locator("#dataset-include-drafts"),
+    navItem: (ctx: Ctx) => ctx.screen.findByTestId("navItem"),
+    navChip: (ctx: Ctx) => ctx.screen.findByTestId("navChip"),
+    resultsCount: (ctx: Ctx) =>
       ctx.screen.findByTestId("search-results-count", undefined, {
         timeout: 5000,
       }),
   },
   datasetPreview: {
-    loaded: (ctx: TestContext) =>
+    loaded: (ctx: Ctx) =>
       ctx.page
         .locator("table td")
         .first()
         .waitFor({ timeout: 20 * 1000 }),
-    cells: (ctx: TestContext) => ctx.page.locator("table td"),
+    cells: (ctx: Ctx) => ctx.page.locator("table td"),
   },
   panels: {
-    left: (ctx: TestContext) => ctx.screen.findByTestId("panel-left"),
-    right: (ctx: TestContext) => ctx.screen.findByTestId("panel-right"),
-    middle: (ctx: TestContext) => ctx.screen.findByTestId("panel-middle"),
+    left: (ctx: Ctx) => ctx.screen.findByTestId("panel-left"),
+    right: (ctx: Ctx) => ctx.screen.findByTestId("panel-right"),
+    middle: (ctx: Ctx) => ctx.screen.findByTestId("panel-middle"),
   },
   edition: {
-    configFilters: (ctx: TestContext) =>
+    configFilters: (ctx: Ctx) =>
       ctx.screen.findByTestId("configurator-filters", undefined, {
         timeout: 20 * 1000,
       }),
-    chartFilters: (ctx: TestContext) =>
-      ctx.screen.findByTestId("chart-filters-list"),
-    filterDrawer: (ctx: TestContext) =>
+    chartFilters: (ctx: Ctx) => ctx.screen.findByTestId("chart-filters-list"),
+    filterDrawer: (ctx: Ctx) =>
       ctx.screen.findByTestId("edition-filters-drawer"),
-    filterCheckbox: (ctx, value: string) =>
+    filterCheckbox: (ctx: Ctx, value: string) =>
       ctx.page.locator(`[data-value="${value}"]`),
-    chartTypeSelector: (ctx: TestContext) =>
+    chartTypeSelector: (ctx: Ctx) =>
       ctx.screen.findByTestId("chart-type-selector"),
   },
   chart: {
-    colorLegend: (ctx: TestContext) => ctx.screen.findByTestId("colorLegend"),
-    loaded: (ctx: TestContext) =>
+    colorLegend: (ctx: Ctx) => ctx.screen.findByTestId("colorLegend"),
+    loaded: (ctx: Ctx) =>
       ctx.page
         .locator(`[data-chart-loaded="true"]`)
         .waitFor({ timeout: 40 * 1000 }),
   },
-};
+});
 
 export default selectors;
