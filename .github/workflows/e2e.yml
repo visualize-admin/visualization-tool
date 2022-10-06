@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          # fetch all commits so we can find the branch
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -60,7 +63,7 @@ jobs:
         run: echo "ARGOS_BRANCH=master" >> $GITHUB_ENV
         if: github.ref == 'refs/heads/main'
       - name: Set argos upload branch on PR branches
-        run: echo "ARGOS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: echo "ARGOS_BRANCH=$(git name-rev --name-only $GITHUB_SHA | sed 's-remotes/origin/--')" >> $GITHUB_ENV
         if: github.ref != 'refs/heads/main'
       - name: Upload screenshots
         env:
