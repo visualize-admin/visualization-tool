@@ -1,27 +1,4 @@
-import { Locator } from "@playwright/test";
-
-import { TestContext as Ctx } from "./types";
-
-type SelectorFunction = (
-  ctx: Ctx,
-  arg1?: any,
-  arg2?: any
-) => Promise<Locator> | Locator | Promise<void>;
-
-type CheckSelector<T> = T extends Record<
-  string,
-  Record<string, SelectorFunction>
->
-  ? T
-  : never;
-
-/**
- * Constrains what we can put in selectors.
- *
- * We use this so that we cannot put anything we want inside the selectors.
- * At the same time, T is returned so that downstream has the correct types.
- */
-const makeSelectors = <T>(selectors: CheckSelector<T>): T => selectors;
+import { makeSelectors, TestContext as Ctx } from "./types";
 
 const selectors = makeSelectors({
   search: {

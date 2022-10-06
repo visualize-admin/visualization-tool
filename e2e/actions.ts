@@ -1,5 +1,5 @@
 import selectors from "./selectors";
-import { TestContext } from "./types";
+import { makeActions, TestContext } from "./types";
 
 export const loadDatasetPreview = async (
   ctx: TestContext,
@@ -14,8 +14,10 @@ export const loadDatasetPreview = async (
   await selectors.datasetPreview.loaded(ctx);
 };
 
-const actions = {
-  loadDatasetPreview,
-};
+const actions = makeActions({
+  datasetPreview: {
+    load: loadDatasetPreview,
+  },
+});
 
 export default actions;
