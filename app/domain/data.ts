@@ -182,13 +182,13 @@ export const getDimensionsByDimensionType = ({
 
 export const isNominalDimension = (
   dimension?: DimensionMetadataFragment
-): dimension is GeoCoordinatesDimension => {
+): dimension is NominalDimension => {
   return dimension?.__typename === "NominalDimension";
 };
 
 export const isOrdinalDimension = (
   dimension?: DimensionMetadataFragment
-): dimension is GeoCoordinatesDimension => {
+): dimension is OrdinalDimension => {
   return dimension?.__typename === "OrdinalDimension";
 };
 
