@@ -60,7 +60,7 @@ export const PanelLeftWrapper = ({
   return (
     <Box
       component="section"
-      data-name="panel-left"
+      data-testid="panel-left"
       className={clsx(classes.panelLeft, className)}
       sx={sx}
     >
@@ -86,7 +86,7 @@ export const PanelRightWrapper = ({
   return (
     <Box
       component="section"
-      data-name="panel-right"
+      data-testid="panel-right"
       className={clsx(classes.panelRight, className)}
       sx={sx}
     >
@@ -148,7 +148,7 @@ export const PanelMiddleWrapper = ({
     <Box
       className={clsx(classes.panelMiddle, className)}
       component="section"
-      data-name="panel-middle"
+      data-testid="panel-middle"
       sx={sx}
     >
       {children}

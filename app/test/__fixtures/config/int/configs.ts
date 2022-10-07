@@ -28,11 +28,11 @@ const configs: TestConfig[] = [
     slug: "line-state-accounts",
   },
   { chartId: "Z6Re21LHbOoP", name: "Pie - Red list", slug: "pie-red-list" },
-  // {
-  //   chartId: "jky5IEw6poT3",
-  //   name: "Map - Waldfläsche (areas)",
-  //   slug: "map-waldflasche",
-  // },
+  {
+    chartId: "jky5IEw6poT3",
+    name: "Map - Waldfläsche (areas)",
+    slug: "map-waldflasche",
+  },
 ];
 
 export default configs;
