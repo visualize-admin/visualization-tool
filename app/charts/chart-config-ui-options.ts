@@ -222,13 +222,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "areaLayer",
         optional: true,
-        componentTypes: ["NumericalMeasure"],
+        componentTypes: ["GeoShapesDimension"],
         filters: true,
       },
       {
         field: "symbolLayer",
         optional: true,
-        componentTypes: ["NumericalMeasure"],
+        componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
         filters: true,
       },
     ],
