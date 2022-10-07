@@ -1,10 +1,7 @@
 import { geoCentroid } from "d3";
 import keyBy from "lodash/keyBy";
 import React, { useMemo } from "react";
-import {
-  feature as topojsonFeature,
-  mesh as topojsonMesh,
-} from "topojson-client";
+import { mesh as topojsonMesh } from "topojson-client";
 
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
@@ -16,7 +13,6 @@ import { BaseLayer, DataSource, MapConfig, MapFields } from "@/configurator";
 import {
   AreaLayer,
   GeoData,
-  GeoFeature,
   GeoPoint,
   GeoShapes,
   isGeoCoordinatesDimension,
@@ -33,6 +29,8 @@ import {
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartLoadingWrapper } from "../chart-loading-wrapper";
+
+import { prepareTopojson } from "./helpers";
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -77,7 +75,7 @@ export const ChartMapVisualization = ({
       },
     });
 
-  const geoCoordinates =
+  const geoCoordinatesDimension =
     fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoCoordinatesDimension"
       ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
@@ -93,7 +91,7 @@ export const ChartMapVisualization = ({
     },
   });
 
-  const geoShapes =
+  const geoShapesDimension =
     fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoShapesDimension"
       ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as GeoShapes)
@@ -102,36 +100,13 @@ export const ChartMapVisualization = ({
   const areaLayer: AreaLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
-    if (isGeoShapesDimension(dimension) && geoShapes && observations) {
-      const activeFilters = chartConfig.filters[areaDimensionIri];
-      const activeFiltersIris = activeFilters
-        ? activeFilters.type === "single"
-          ? [activeFilters.value]
-          : activeFilters.type === "multi"
-          ? Object.keys(activeFilters.values)
-          : undefined
-        : undefined;
-
-      const { topology } = geoShapes;
-      const topojson = topojsonFeature(
+    if (isGeoShapesDimension(dimension) && geoShapesDimension && observations) {
+      const { topology } = geoShapesDimension;
+      const topojson = prepareTopojson({
+        dimensionIri: areaDimensionIri,
         topology,
-        topology.objects.shapes
-      ) as AreaLayer["shapes"];
-
-      // Completely hide unselected shapes (so they don't affect the legend, etc)
-      if (activeFiltersIris) {
-        topojson.features = topojson.features.filter((d) =>
-          activeFiltersIris.includes(d.properties.iri)
-        );
-      }
-
-      topojson.features.forEach((d: GeoFeature) => {
-        // Should we match by labels?
-        const observation = observations.find(
-          (o) => o[areaDimensionIri] === d.properties.label
-        );
-
-        d.properties = { ...d.properties, observation };
+        filters: chartConfig.filters[areaDimensionIri],
+        observations,
       });
 
       return {
@@ -144,7 +119,7 @@ export const ChartMapVisualization = ({
     dimensions,
     chartConfig.filters,
     observations,
-    geoShapes,
+    geoShapesDimension,
   ]);
 
   const symbolLayer: SymbolLayer | undefined = useMemo(() => {
@@ -152,14 +127,15 @@ export const ChartMapVisualization = ({
 
     if (
       isGeoCoordinatesDimension(dimension) &&
-      geoCoordinates &&
+      geoCoordinatesDimension &&
       observations
     ) {
       const points: GeoPoint[] = [];
-      const geoCoordinatesByLabel = keyBy(geoCoordinates, (d) => d.label);
+      const coordsByLabel = keyBy(geoCoordinatesDimension, (d) => d.label);
+
       observations.forEach((observation) => {
         const label = observation[symbolDimensionIri] as string;
-        const coords = geoCoordinatesByLabel[label];
+        const coords = coordsByLabel[label];
 
         if (coords) {
           const { iri, label, latitude, longitude } = coords;
@@ -176,8 +152,20 @@ export const ChartMapVisualization = ({
 
       return { points };
     } else {
-      if (areaLayer) {
-        const points = areaLayer.shapes.features.map((d) => ({
+      if (
+        isGeoShapesDimension(dimension) &&
+        geoShapesDimension &&
+        observations
+      ) {
+        const { topology } = geoShapesDimension;
+        const topojson = prepareTopojson({
+          dimensionIri: symbolDimensionIri,
+          topology,
+          filters: chartConfig.filters[symbolDimensionIri],
+          observations,
+        });
+
+        const points = topojson.features.map((d) => ({
           ...d,
           coordinates: geoCentroid(d),
         }));
@@ -185,7 +173,14 @@ export const ChartMapVisualization = ({
         return { points };
       }
     }
-  }, [areaLayer, dimensions, observations, symbolDimensionIri, geoCoordinates]);
+  }, [
+    symbolDimensionIri,
+    chartConfig.filters,
+    dimensions,
+    geoShapesDimension,
+    observations,
+    geoCoordinatesDimension,
+  ]);
 
   const areaLayerPrepared =
     areaDimensionIri !== "" ? areaLayer !== undefined : true;
@@ -195,7 +190,8 @@ export const ChartMapVisualization = ({
   const ready =
     (areaLayerPrepared &&
       // check if original, unfiltered number of shapes is bigger than 0
-      (geoShapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
+      (geoShapesDimension?.topology?.objects?.shapes as any)?.geometries
+        ?.length) ||
     (symbolLayerPrepared && symbolLayer?.points.length) ||
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
