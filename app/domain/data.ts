@@ -174,10 +174,9 @@ export const getGeoShapesDimensions = (
   dimensions: DimensionMetadataFragment[]
 ) => dimensions.filter((d) => d.__typename === "GeoShapesDimension");
 
-export const getGeoDimensions = (dimensions: DimensionMetadataFragment[]) =>
-  dimensions.filter((d) =>
-    ["GeoCoordinatesDimension", "GeoShapesDimension"].includes(d.__typename)
-  );
+export const getGeoDimensions = (dimensions: DimensionMetadataFragment[]) => {
+  return dimensions.filter(isGeoDimension);
+};
 
 export const getDimensionsByDimensionType = ({
   dimensionTypes,
@@ -202,6 +201,14 @@ export const isOrdinalDimension = (
   dimension?: DimensionMetadataFragment
 ): dimension is OrdinalDimension => {
   return dimension?.__typename === "OrdinalDimension";
+};
+
+export const isGeoDimension = (
+  dimension?: DimensionMetadataFragment
+): dimension is GeoCoordinatesDimension | GeoShapesDimension => {
+  return (
+    isGeoCoordinatesDimension(dimension) || isGeoShapesDimension(dimension)
+  );
 };
 
 export const isGeoCoordinatesDimension = (
