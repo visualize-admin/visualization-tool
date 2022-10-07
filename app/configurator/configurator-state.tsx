@@ -21,7 +21,9 @@ import {
   getFieldComponentIris,
   getGroupedFieldIris,
   getHiddenFieldIris,
+  getInitialAreaLayer,
   getInitialConfig,
+  getInitialSymbolLayer,
   getPossibleChartType,
 } from "@/charts";
 import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
@@ -50,7 +52,12 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { canDimensionBeMultiFiltered, isNumericalMeasure } from "@/domain/data";
+import {
+  canDimensionBeMultiFiltered,
+  isGeoDimension,
+  isGeoShapesDimension,
+  isNumericalMeasure,
+} from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import {
   DataCubeMetadataWithComponentValuesDocument,
@@ -698,6 +705,7 @@ const handleChartFieldChanged = (
   if (draft.state !== "CONFIGURING_CHART") {
     return draft;
   }
+
   const {
     field,
     componentIri,
@@ -712,8 +720,11 @@ const handleChartFieldChanged = (
   const selectedValues = actionSelectedValues
     ? actionSelectedValues
     : component?.values || [];
+  // The field was not defined before
   if (!f) {
-    // The field was not defined before
+    // FIXME?
+    // optionalFields = ['segment', 'areaLayer', 'symbolLayer'],
+    // should be reflected in chart encodings
     if (field === "segment") {
       const colorMapping =
         component?.values &&
@@ -751,16 +762,32 @@ const handleChartFieldChanged = (
             (c) => c !== componentIri
           );
       }
-    } else if (
-      isMapConfig(draft.chartConfig) &&
-      field === "symbolLayer.colors" &&
-      draft.chartConfig.fields.symbolLayer
-    ) {
-      updateSymbolLayerColors({
-        chartConfig: draft.chartConfig,
-        component,
-        reset: componentIri === FIELD_VALUE_NONE,
-      });
+    } else if (isMapConfig(draft.chartConfig)) {
+      if (field === "areaLayer") {
+        draft.chartConfig.fields.areaLayer = getInitialAreaLayer({
+          component: dataSetMetadata.dimensions
+            .filter(isGeoShapesDimension)
+            .find((d) => d.iri === componentIri)!,
+          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+        });
+      } else if (field === "symbolLayer") {
+        draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+          component: dataSetMetadata.dimensions
+            .filter(isGeoDimension)
+            .find((d) => d.iri === componentIri)!,
+          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+        });
+      } else if (
+        // FIXME: should be chart option, not field
+        field === "symbolLayer.colors" &&
+        draft.chartConfig.fields.symbolLayer
+      ) {
+        updateSymbolLayerColors({
+          chartConfig: draft.chartConfig,
+          component,
+          reset: componentIri === FIELD_VALUE_NONE,
+        });
+      }
     }
   } else {
     // The field is being updated
@@ -831,6 +858,7 @@ const handleChartFieldChanged = (
     draft.chartConfig,
     action.value.dataSetMetadata
   );
+
   return draft;
 };
 

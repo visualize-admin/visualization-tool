@@ -18,6 +18,7 @@ import {
   InteractiveFiltersConfig,
   isSegmentInConfig,
   LineSegmentField,
+  MapAreaLayer,
   PieSegmentField,
   ScatterPlotSegmentField,
   SortingOrder,
@@ -39,7 +40,12 @@ import {
   isGeoShapesDimension,
   isNumericalMeasure,
 } from "../domain/data";
-import { DimensionMetadataFragment } from "../graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+  NumericalMeasure,
+} from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
 
@@ -140,6 +146,37 @@ const makeInitialFiltersForArea = (
     }
   }
   return filters;
+};
+
+export const getInitialAreaLayer = ({
+  component,
+  measure,
+}: {
+  component: GeoShapesDimension;
+  measure: NumericalMeasure;
+}): MapAreaLayer => {
+  return {
+    componentIri: component.iri,
+    measureIri: measure.iri,
+    colorScaleType: "continuous",
+    colorScaleInterpolationType: "linear",
+    palette: "oranges",
+    nbClass: 5,
+  };
+};
+
+export const getInitialSymbolLayer = ({
+  component,
+  measure,
+}: {
+  component: GeoShapesDimension | GeoCoordinatesDimension;
+  measure: NumericalMeasure;
+}) => {
+  return {
+    componentIri: component.iri,
+    measureIri: measure.iri,
+    colors: DEFAULT_SYMBOL_LAYER_COLORS,
+  };
 };
 
 export const getInitialConfig = ({
@@ -319,23 +356,18 @@ export const getInitialConfig = ({
         fields: {
           ...(showAreaLayer
             ? {
-                areaLayer: {
-                  componentIri: areaDimension.iri,
-                  measureIri: numericalMeasures[0].iri,
-                  colorScaleType: "continuous",
-                  colorScaleInterpolationType: "linear",
-                  palette: "oranges",
-                  nbClass: 5,
-                },
+                areaLayer: getInitialAreaLayer({
+                  component: areaDimension,
+                  measure: numericalMeasures[0],
+                }),
               }
             : {}),
           ...(showSymbolLayer
             ? {
-                symbolLayer: {
-                  componentIri: geoDimensions[0].iri,
-                  measureIri: numericalMeasures[0].iri,
-                  colors: DEFAULT_SYMBOL_LAYER_COLORS,
-                },
+                symbolLayer: getInitialSymbolLayer({
+                  component: geoDimensions[0],
+                  measure: numericalMeasures[0],
+                }),
               }
             : {}),
         },
