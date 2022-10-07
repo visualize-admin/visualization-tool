@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
-  EncodingOptions,
+  EncodingOption,
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
@@ -142,6 +142,7 @@ const ActiveFieldSwitch = ({
   if (!activeField) {
     return null;
   }
+
   const activeFieldComponentIri = getFieldComponentIri(
     state.chartConfig.fields,
     activeField
@@ -211,7 +212,7 @@ const EncodingOptionsPanel = ({
 
   const options = useMemo(() => {
     return getDimensionsByDimensionType({
-      dimensionTypes: encoding.values,
+      dimensionTypes: encoding.componentTypes,
       dimensions,
       measures,
     }).map((dimension) => ({
@@ -221,7 +222,7 @@ const EncodingOptionsPanel = ({
         otherFieldsIris.includes(dimension.iri) ||
         isStandardErrorDimension(dimension),
     }));
-  }, [dimensions, encoding.values, measures, otherFieldsIris]);
+  }, [dimensions, encoding.componentTypes, measures, otherFieldsIris]);
 
   const hasStandardError = useMemo(() => {
     return [...measures, ...dimensions].find((m) =>
@@ -340,7 +341,7 @@ const ChartFieldOptions = ({
 }: {
   field: string;
   chartType: ChartType;
-  encodingOptions: EncodingOptions;
+  encodingOptions?: EncodingOption[];
   disabled?: boolean;
 }) => {
   return (

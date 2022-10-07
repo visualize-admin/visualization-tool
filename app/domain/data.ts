@@ -1,6 +1,7 @@
 import { Literal, NamedNode } from "rdf-js";
 
-import { DimensionType } from "../charts/chart-config-ui-options";
+import { ComponentType } from "@/configurator/config-types";
+
 import {
   DimensionMetadataFragment,
   GeoCoordinatesDimension,
@@ -183,7 +184,7 @@ export const getDimensionsByDimensionType = ({
   dimensions,
   measures,
 }: {
-  dimensionTypes: DimensionType[];
+  dimensionTypes: ComponentType[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
 }) =>
