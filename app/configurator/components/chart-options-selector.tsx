@@ -20,7 +20,6 @@ import {
   ImputationType,
   imputationTypes,
   isAreaConfig,
-  isMapConfig,
   isTableConfig,
   SortingType,
   useConfiguratorState,
@@ -46,7 +45,6 @@ import {
   getFieldLabel,
   getIconName,
 } from "@/configurator/components/ui-helpers";
-import { MapColumnOptions } from "@/configurator/map/map-chart-options";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
@@ -102,8 +100,6 @@ export const ChartOptionsSelector = ({
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
             <TableColumnOptions state={state} metaData={meta} />
-          ) : isMapConfig(state.chartConfig) ? (
-            <MapColumnOptions state={state} metaData={meta} />
           ) : (
             <ActiveFieldSwitch
               state={state}
@@ -192,8 +188,7 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    // FIXME: encoding types, so we don't need these there (chart options are
-    // handled in a separate file)
+    // Empty strings for optional encodings.
     baseLayer: "",
     areaLayer: "",
     symbolLayer: "",
