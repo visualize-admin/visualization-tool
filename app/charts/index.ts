@@ -1,7 +1,6 @@
 import { ascending, group } from "d3";
 import produce from "immer";
 import get from "lodash/get";
-import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
 
 import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
@@ -301,38 +300,44 @@ export const getInitialConfig = ({
         ) as TableFields,
       };
     case "map":
-      const {
-        GeoShapesDimension: geoShapes = [],
-        GeoCoordinatesDimension: geoCoordinates = [],
-      } = groupBy(getGeoDimensions(dimensions), (d) => d.__typename);
+      const geoDimensions = getGeoDimensions(dimensions);
+      const geoShapesDimensions = geoDimensions.filter(isGeoShapesDimension);
+      const areaDimension = geoShapesDimensions[0];
+      const showAreaLayer = geoShapesDimensions.length > 0;
+      const showSymbolLayer = !showAreaLayer;
 
-      const areaDimension = geoShapes[0];
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
         filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
-        fields: {
-          areaLayer: {
-            show: geoShapes.length > 0,
-            componentIri: geoShapes[0]?.iri || "",
-            measureIri: numericalMeasures[0].iri,
-            colorScaleType: "continuous",
-            colorScaleInterpolationType: "linear",
-            palette: "oranges",
-            nbClass: 5,
-          },
-          symbolLayer: {
-            show: geoShapes.length === 0,
-            componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
-            measureIri: numericalMeasures[0].iri,
-            colors: DEFAULT_SYMBOL_LAYER_COLORS,
-          },
-        },
         baseLayer: {
           show: true,
           locked: false,
           bbox: undefined,
+        },
+        fields: {
+          ...(showAreaLayer
+            ? {
+                areaLayer: {
+                  componentIri: areaDimension.iri,
+                  measureIri: numericalMeasures[0].iri,
+                  colorScaleType: "continuous",
+                  colorScaleInterpolationType: "linear",
+                  palette: "oranges",
+                  nbClass: 5,
+                },
+              }
+            : {}),
+          ...(showSymbolLayer
+            ? {
+                symbolLayer: {
+                  componentIri: geoDimensions[0].iri,
+                  measureIri: numericalMeasures[0].iri,
+                  colors: DEFAULT_SYMBOL_LAYER_COLORS,
+                },
+              }
+            : {}),
         },
       };
 
@@ -862,7 +867,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
           if (areaDimension) {
             return produce(newChartConfig, (draft) => {
-              draft.fields.areaLayer.componentIri = oldValue;
+              if (draft.fields.areaLayer) {
+                draft.fields.areaLayer.componentIri = oldValue;
+              }
             });
           }
 
@@ -870,8 +877,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
         measureIri: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
-            draft.fields.areaLayer.measureIri = oldValue;
-            draft.fields.symbolLayer.measureIri = oldValue;
+            if (draft.fields.areaLayer) {
+              draft.fields.areaLayer.measureIri = oldValue;
+            }
+
+            if (draft.fields.symbolLayer) {
+              draft.fields.symbolLayer.measureIri = oldValue;
+            }
           });
         },
       },

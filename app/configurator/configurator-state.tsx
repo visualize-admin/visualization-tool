@@ -627,7 +627,7 @@ export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
   );
   const nonGenericFieldValues =
     isMapConfig(chartConfig) &&
-    chartConfig.fields.symbolLayer.colors.type === "categorical"
+    chartConfig.fields.symbolLayer?.colors.type === "categorical"
       ? [chartConfig.fields.symbolLayer.colors.componentIri]
       : [];
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
@@ -650,10 +650,10 @@ const updateSymbolLayerColors = ({
   reset: boolean;
 }) => {
   if (reset) {
-    chartConfig.fields.symbolLayer.colors = DEFAULT_SYMBOL_LAYER_COLORS;
+    chartConfig.fields.symbolLayer!.colors = DEFAULT_SYMBOL_LAYER_COLORS;
   } else {
     if (component && canDimensionBeMultiFiltered(component)) {
-      chartConfig.fields.symbolLayer.colors = {
+      chartConfig.fields.symbolLayer!.colors = {
         type: "categorical",
         componentIri: component.iri,
         palette: "blues",
@@ -663,11 +663,11 @@ const updateSymbolLayerColors = ({
         }),
       };
 
-      if (chartConfig.fields.symbolLayer.componentIri === component.iri) {
+      if (chartConfig.fields.symbolLayer!.componentIri === component.iri) {
         delete chartConfig.filters[component.iri];
       }
     } else if (isNumericalMeasure(component)) {
-      chartConfig.fields.symbolLayer.colors = {
+      chartConfig.fields.symbolLayer!.colors = {
         type: "continuous",
         componentIri: component.iri,
         palette: "blues",
@@ -753,7 +753,8 @@ const handleChartFieldChanged = (
       }
     } else if (
       isMapConfig(draft.chartConfig) &&
-      field === "symbolLayer.colors"
+      field === "symbolLayer.colors" &&
+      draft.chartConfig.fields.symbolLayer
     ) {
       updateSymbolLayerColors({
         chartConfig: draft.chartConfig,
@@ -804,7 +805,11 @@ const handleChartFieldChanged = (
         );
       }
 
-      if (isMapConfig(draft.chartConfig) && field === "symbolLayer.colors") {
+      if (
+        isMapConfig(draft.chartConfig) &&
+        field === "symbolLayer.colors" &&
+        draft.chartConfig.fields.symbolLayer
+      ) {
         updateSymbolLayerColors({
           chartConfig: draft.chartConfig,
           component,
@@ -1032,7 +1037,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
         } else if (
           isMapConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.symbolLayer.colors.type === "categorical"
+          draft.chartConfig.fields.symbolLayer?.colors.type === "categorical"
         ) {
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.symbolLayer.colors.palette,

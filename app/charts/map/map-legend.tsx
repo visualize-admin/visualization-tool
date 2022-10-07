@@ -77,21 +77,20 @@ const makeAxis = (
 export const MapLegend = () => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
-    areaLayer.show &&
+    areaLayer &&
     areaLayer.data.length >= 3 &&
     (areaLayer.colorScaleInterpolationType === "linear" ||
       areaLayer.colorScale.range().length >= 3);
-  const { colors: symbolLayerColors } = symbolLayer;
   const measureDimensions = [
-    areaLayer.measureDimension,
-    symbolLayer.measureDimension,
+    areaLayer?.measureDimension,
+    symbolLayer?.measureDimension,
   ].filter(truthy);
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
     <>
       <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
-        {showAreaLegend && (
+        {areaLayer && showAreaLegend && (
           <Box>
             {areaLayer.measureLabel && (
               <Typography
@@ -122,19 +121,20 @@ export const MapLegend = () => {
           </Box>
         )}
 
-        {symbolLayer.show && (
+        {symbolLayer && (
           <Flex sx={{ gap: 4 }}>
-            {symbolLayerColors.type === "continuous" && (
+            {symbolLayer.colors.type === "continuous" && (
               <Box>
                 <Typography component="div" variant="caption">
-                  {symbolLayerColors.component.label}
+                  {symbolLayer.colors.component.label}
                 </Typography>
                 <ContinuousColorLegend
-                  palette={symbolLayerColors.palette}
-                  domain={symbolLayerColors.domain}
-                  getValue={(d: Observation) =>
-                    d[symbolLayerColors.component.iri] as number
-                  }
+                  palette={symbolLayer.colors.palette}
+                  domain={symbolLayer.colors.domain}
+                  getValue={(d: Observation) => {
+                    // @ts-ignore
+                    return d[symbolLayer.colors.component.iri] as number;
+                  }}
                   valueFormatter={formatters[symbolLayer.measureDimension!.iri]}
                 />
               </Box>
@@ -151,7 +151,7 @@ export const MapLegend = () => {
         )}
       </Flex>
 
-      {symbolLayer.colors.type === "categorical" && (
+      {symbolLayer?.colors.type === "categorical" && (
         <MapLegendColor
           component={symbolLayer.colors.component}
           getColor={symbolLayer.colors.getColor}
@@ -228,16 +228,15 @@ const CircleLegend = ({
 
   const [{ interaction }] = useInteraction();
   const { axisLabelColor, legendFontSize } = useChartTheme();
+  const { symbolLayer } = useChartState() as MapState;
   const {
-    symbolLayer: {
-      data,
-      dataDomain,
-      getLabel,
-      getValue,
-      colors: { getColor },
-      radiusScale,
-    },
-  } = useChartState() as MapState;
+    data,
+    dataDomain,
+    getLabel,
+    getValue,
+    colors: { getColor },
+    radiusScale,
+  } = symbolLayer as NonNullable<MapState["symbolLayer"]>;
 
   const maybeValue = interaction.d && getValue(interaction.d);
   const value = typeof maybeValue === "number" ? maybeValue : undefined;
@@ -311,9 +310,10 @@ const JenksColorLegend = () => {
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const {
-    areaLayer: { dataDomain, colorScale, getValue },
-  } = useChartState() as MapState;
+  const { areaLayer } = useChartState() as MapState;
+  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
+    MapState["areaLayer"]
+  >;
   const formatNumber = useFormatInteger();
   const thresholds = useMemo(
     () => (colorScale.domain ? colorScale.domain() : []),
@@ -390,9 +390,10 @@ const QuantileColorLegend = () => {
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const {
-    areaLayer: { dataDomain, colorScale, getValue },
-  } = useChartState() as MapState;
+  const { areaLayer } = useChartState() as MapState;
+  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
+    MapState["areaLayer"]
+  >;
   const formatNumber = useFormatInteger();
 
   const thresholds = useMemo(
@@ -469,9 +470,10 @@ const QuantizeColorLegend = () => {
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const {
-    areaLayer: { dataDomain, colorScale, getValue },
-  } = useChartState() as MapState;
+  const { areaLayer } = useChartState() as MapState;
+  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
+    MapState["areaLayer"]
+  >;
   const formatNumber = useFormatInteger();
 
   const classesScale = scaleLinear()

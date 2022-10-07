@@ -46,8 +46,8 @@ export const ChartMapVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
-  const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
+  const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
+  const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
   const [observationsQueryResp] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
@@ -88,7 +88,7 @@ export const ChartMapVisualization = ({
       dataCubeIri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      dimensionIri: areaDimensionIri,
+      dimensionIri: areaDimensionIri || symbolDimensionIri,
       locale,
     },
   });
@@ -192,11 +192,13 @@ export const ChartMapVisualization = ({
   const symbolLayerPrepared =
     symbolDimensionIri !== "" ? symbolLayer !== undefined : true;
 
-  const areasOrSymbolsLoaded =
+  const ready =
     (areaLayerPrepared &&
       // check if original, unfiltered number of shapes is bigger than 0
       (geoShapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
-    (symbolLayerPrepared && symbolLayer?.points.length);
+    (symbolLayerPrepared && symbolLayer?.points.length) ||
+    // Raw map without any data layer.
+    (areaDimensionIri === "" && symbolDimensionIri === "");
 
   const queryResp = {
     fetching,
@@ -206,7 +208,7 @@ export const ChartMapVisualization = ({
       observations &&
       areaLayerPrepared &&
       symbolLayerPrepared &&
-      areasOrSymbolsLoaded
+      ready
         ? observationsQueryResp["data"]
         : undefined,
     error,

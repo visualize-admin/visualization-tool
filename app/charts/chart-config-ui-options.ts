@@ -284,13 +284,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "areaLayer",
-        optional: false,
+        optional: true,
         values: ["NumericalMeasure"],
         filters: true,
       },
       {
         field: "symbolLayer",
-        optional: false,
+        optional: true,
         values: ["NumericalMeasure"],
         filters: true,
       },

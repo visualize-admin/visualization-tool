@@ -155,7 +155,7 @@ export const MapComponent = () => {
   const mapStyle = useMapStyle({
     locale,
     showBaseLayer,
-    showLabels: !areaLayer.show,
+    showLabels: !areaLayer,
   });
 
   const onHover = useEvent(
@@ -189,7 +189,7 @@ export const MapComponent = () => {
   );
 
   const geoJsonLayer = React.useMemo(() => {
-    if (!areaLayer.show) {
+    if (!areaLayer) {
       return;
     }
 
@@ -240,10 +240,10 @@ export const MapComponent = () => {
         object?: GeoFeature;
       }) => onHover({ type: "area", x, y, object }),
     });
-  }, [areaLayer, features.areaLayer?.shapes, onHover]);
+  }, [areaLayer, features.areaLayer?.shapes, onHover, showBaseLayer]);
 
   const scatterplotLayer = React.useMemo(() => {
-    if (!symbolLayer.show) {
+    if (!symbolLayer) {
       return;
     }
 
@@ -272,7 +272,7 @@ export const MapComponent = () => {
 
     return new ScatterplotLayer({
       id: "symbolLayer",
-      pickable: identicalLayerComponentIris ? !areaLayer.show : true,
+      pickable: identicalLayerComponentIris ? !areaLayer : true,
       autoHighlight: true,
       filled: true,
       stroked: false,
@@ -295,14 +295,18 @@ export const MapComponent = () => {
       }) => onHover({ type: "symbol", x, y, object }),
     });
   }, [
-    areaLayer.show,
+    areaLayer,
     features.symbolLayer,
     identicalLayerComponentIris,
     onHover,
     symbolLayer,
   ]);
 
-  const dataLoaded = features.areaLayer || features.symbolLayer;
+  const dataLoaded =
+    features.areaLayer ||
+    features.symbolLayer ||
+    // Raw map without data layers.
+    (areaLayer === undefined && symbolLayer === undefined);
 
   const redrawMap = useEvent(() => {
     if (!mapNodeRef.current) {

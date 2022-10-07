@@ -456,7 +456,6 @@ const MapAreaLayer = t.intersection([
   t.type({
     componentIri: t.string,
     measureIri: t.string,
-    show: t.boolean,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
     nbClass: t.number,
   }),
@@ -481,7 +480,6 @@ const MapSymbolLayer = t.intersection([
   t.type({
     componentIri: t.string,
     measureIri: t.string,
-    show: t.boolean,
   }),
   t.type({
     colors: t.union([
@@ -504,10 +502,10 @@ const BaseLayer = t.type({
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
-const MapFields = t.type({
-  areaLayer: MapAreaLayer,
-  symbolLayer: MapSymbolLayer,
-});
+const MapFields = t.intersection([
+  t.partial({ areaLayer: MapAreaLayer }),
+  t.partial({ symbolLayer: MapSymbolLayer }),
+]);
 
 const MapConfig = t.type(
   {
