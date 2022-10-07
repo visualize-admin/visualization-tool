@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.0.2";
+export const CHART_CONFIG_VERSION = "1.1.0";
 
 type Migration = {
   description: string;
@@ -98,6 +98,94 @@ const migrations: Migration[] = [
             measureIri,
             color: colors.value,
           };
+        });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `MAP
+    areaLayer? {
+      - show
+    }
+    
+    symbolLayer? {
+      - show
+    }`,
+    from: "1.0.2",
+    to: "1.1.0",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.1.0" };
+
+      if (newConfig.chartType === "map") {
+        const { fields } = newConfig;
+        const { areaLayer, symbolLayer } = fields;
+        const { show: showAreaLayer, ...newAreaLayer } = areaLayer;
+        const { show: showSymbolLayer, ...newSymbolLayer } = symbolLayer;
+        newConfig = produce(newConfig, (draft: any) => {
+          if (showAreaLayer) {
+            draft.fields.areaLayer = {
+              ...newAreaLayer,
+            };
+          } else {
+            delete draft.fields.areaLayer;
+          }
+
+          if (showSymbolLayer) {
+            draft.fields.symbolLayer = {
+              ...newSymbolLayer,
+            };
+          } else {
+            delete draft.fields.symbolLayer;
+          }
+        });
+      }
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.0.2" };
+
+      if (newConfig.chartType === "map") {
+        const { fields } = newConfig;
+        const { areaLayer, symbolLayer } = fields;
+        newConfig = produce(newConfig, (draft: any) => {
+          if (areaLayer) {
+            draft.fields.areaLayer = {
+              ...areaLayer,
+              show: true,
+            };
+          } else {
+            draft.fields.areaLayer = {
+              show: false,
+              componentIri: "",
+              measureIri: symbolLayer?.measureIri || "",
+              colorScaleType: "continuous",
+              colorScaleInterpolationType: "linear",
+              palette: "oranges",
+              nbClass: 5,
+            };
+          }
+
+          if (symbolLayer) {
+            draft.fields.symbolLayer = {
+              ...symbolLayer,
+              show: true,
+            };
+          } else {
+            draft.fields.symbolLayer = {
+              show: false,
+              // GeoShapes dimensions (Area Layer) can be used in Symbol Layer.
+              componentIri: areaLayer?.componentIri || "",
+              measureIri: areaLayer?.measureIri || "",
+              colors: {
+                type: "fixed",
+                value: "#1f77b4",
+                opacity: 80,
+              },
+            };
+          }
         });
       }
 
