@@ -41,6 +41,8 @@ export interface EncodingSpec {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
+  /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
+  exclusive?: boolean;
   filters: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
@@ -223,12 +225,14 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         field: "areaLayer",
         optional: true,
         componentTypes: ["GeoShapesDimension"],
+        exclusive: false,
         filters: true,
       },
       {
         field: "symbolLayer",
         optional: true,
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
+        exclusive: false,
         filters: true,
       },
     ],

@@ -219,10 +219,17 @@ const EncodingOptionsPanel = ({
       value: dimension.iri,
       label: dimension.label,
       disabled:
-        otherFieldsIris.includes(dimension.iri) ||
+        ((encoding.exclusive === undefined || encoding.exclusive === true) &&
+          otherFieldsIris.includes(dimension.iri)) ||
         isStandardErrorDimension(dimension),
     }));
-  }, [dimensions, encoding.componentTypes, measures, otherFieldsIris]);
+  }, [
+    dimensions,
+    encoding.componentTypes,
+    encoding.exclusive,
+    measures,
+    otherFieldsIris,
+  ]);
 
   const hasStandardError = useMemo(() => {
     return [...measures, ...dimensions].find((m) =>
