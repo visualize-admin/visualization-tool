@@ -273,7 +273,8 @@ const EncodingOptionsPanel = ({
               chartType={chartType}
             />
           )}
-          {optionsByField["color"] && (
+          {optionsByField["color"]?.field === "color" &&
+            optionsByField["color"].type === "palette" && (
             <ColorPalette
               disabled={!component}
               field={field}

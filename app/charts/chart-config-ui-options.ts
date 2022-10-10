@@ -14,19 +14,12 @@ type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
 type XYEncodingFieldType = "x" | "y" | "segment";
 export type EncodingFieldType = MapEncodingFieldType | XYEncodingFieldType;
 
-export type EncodingOptionType =
-  // Generic.
-  | "sorting"
-  | "color"
-  // Area.
-  | "imputationType"
-  // Column.
-  | "chartSubType"
-  | "showStandardError";
-
-export type EncodingOption = {
-  field: EncodingOptionType;
-};
+export type EncodingOption =
+  | { field: "chartSubType" }
+  | { field: "color"; type: "palette" | "measure" }
+  | { field: "imputationType" }
+  | { field: "showStandardError" }
+  | { field: "sorting" };
 
 /**
  * @todo
@@ -110,7 +103,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
-        options: [{ field: "color" }, { field: "imputationType" }],
+        options: [
+          { field: "color", type: "palette" },
+          { field: "imputationType" },
+        ],
       },
     ],
     interactiveFilters: ["legend", "time"],
@@ -145,7 +141,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
           { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
-        options: [{ field: "chartSubType" }, { field: "color" }],
+        options: [
+          { field: "chartSubType" },
+          { field: "color", type: "palette" },
+        ],
       },
     ],
     interactiveFilters: ["legend", "time"],
@@ -182,7 +181,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
-        options: [{ field: "chartSubType" }, { field: "color" }],
+        options: [
+          { field: "chartSubType" },
+          { field: "color", type: "palette" },
+        ],
       },
     ],
     interactiveFilters: ["legend", "time"],
@@ -207,7 +209,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
-        options: [{ field: "color" }],
+        options: [{ field: "color", type: "palette" }],
       },
     ],
     interactiveFilters: ["legend", "time"],
@@ -215,6 +217,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   map: {
     chartType: "map",
     encodings: [
+      // Should this even be an encoding when it's not mapped to a component?
       {
         field: "baseLayer",
         optional: true,
@@ -253,7 +256,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
-        options: [{ field: "color" }],
+        options: [{ field: "color", type: "palette" }],
       },
     ],
     interactiveFilters: ["legend"],
@@ -278,7 +281,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
-        options: [{ field: "color" }],
+        options: [{ field: "color", type: "palette" }],
       },
     ],
     interactiveFilters: ["legend"],
