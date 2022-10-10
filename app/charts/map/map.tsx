@@ -324,15 +324,6 @@ export const MapComponent = () => {
     }
   });
 
-  /**
-   * Redraw the map when style data has been downloaded to solve an offset problem between the viz
-   * layer and the base layer happening in Edge under precise conditions (Windows 10, Edge 105,
-   * resolution 1440x900).
-   */
-  const handleStyleData = useEvent(() => {
-    redrawMap();
-  });
-
   return (
     <>
       {locked ? null : (
@@ -349,7 +340,6 @@ export const MapComponent = () => {
           initialViewState={defaultViewState}
           mapLib={maplibregl}
           mapStyle={mapStyle}
-          onStyleData={handleStyleData}
           style={{
             position: "absolute",
             left: 0,
@@ -365,6 +355,14 @@ export const MapComponent = () => {
           onLoad={(e) => {
             setMap(e.target);
             currentBBox.current = e.target.getBounds().toArray() as BBox;
+
+            /**
+             * Redraw the map on load, when style data has been downloaded
+             * to solve an offset problem between the viz layer and the base layer
+             * happening in Edge under precise conditions (Windows 10, Edge 105,
+             * resolution 1440x900).
+             */
+            redrawMap();
           }}
           onMove={(e) => {
             const userTriggered =
