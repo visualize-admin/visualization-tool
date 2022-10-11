@@ -52,7 +52,10 @@ const visit = (
 
 type FlatTiming = Omit<Timings[string], "children"> & { path: string[] };
 
-const flattenTimings = (timings: Timings) => {
+/**
+ * Flatten the tree in a list, adding the path to every item
+ */
+const flatten = (timings: Timings) => {
   const all: FlatTiming[] = [];
   visit(timings, (c, parents) => {
     if (c.start && c.end) {
@@ -62,8 +65,7 @@ const flattenTimings = (timings: Timings) => {
       } as unknown as FlatTiming);
     }
   });
-  const sorted = all.sort((a, b) => (a.start < b.start ? -1 : 1));
-  return sorted;
+  return all;
 };
 
 /**
@@ -77,7 +79,9 @@ const Flamegraph = ({
   timings: Timings;
 }) => {
   const rects = useMemo(() => {
-    const sorted = flattenTimings(timings);
+    const sorted = flatten(timings).sort((a, b) =>
+      a.start < b.start ? -1 : 1
+    );
     const begin = sorted[0].start;
 
     // normalize so that there is the same amount of seconds per pixels
