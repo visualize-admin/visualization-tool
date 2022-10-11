@@ -77,7 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <ThemeProvider theme={federalTheme.theme}>
               <CssBaseline />
               <Flashes />
-              <GqlDebug />
+              {typeof window === "undefined" ? null : <GqlDebug />}
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
                   <Component {...pageProps} />

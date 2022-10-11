@@ -242,6 +242,9 @@ function GqlDebugDev() {
   });
   const { isOpen, open, close } = useDisclosure();
   const classes = useStyles();
+  if (typeof window === "undefined") {
+    return null;
+  }
   return (
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
