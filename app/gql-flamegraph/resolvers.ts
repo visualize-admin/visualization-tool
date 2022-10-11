@@ -57,8 +57,8 @@ const setTimingInContext = (
  * Modifies in place the resolvers so that they console log their
  * duration if it exceeds threshold.
  */
-export const setupFlamegraph = (resolvers: Resolvers, threshold = 250) => {
-  for (const [type, typeResolvers] of Object.entries(resolvers)) {
+export const setupFlamegraph = (resolvers: Resolvers) => {
+  for (const [, typeResolvers] of Object.entries(resolvers)) {
     if (typeof typeResolvers === "object") {
       for (const [field, fieldResolver] of Object.entries(typeResolvers)) {
         if (
@@ -68,7 +68,7 @@ export const setupFlamegraph = (resolvers: Resolvers, threshold = 250) => {
           typeResolvers[field] = timed(
             fieldResolver as Resolver,
             (timing, ...resolverArgs: Parameters<Resolver>) => {
-              const [root, args, context, info] = resolverArgs;
+              const [, , context, info] = resolverArgs;
               const path = info
                 ? getPathFromInfo(info as unknown as GraphQLResolveInfo)
                 : [];
