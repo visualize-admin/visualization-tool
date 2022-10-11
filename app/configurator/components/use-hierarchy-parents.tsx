@@ -11,7 +11,8 @@ const useHierarchyParents = (
   dataSet: string,
   dataSource: DataSource,
   dimension: DataCubeMetadata["dimensions"][number],
-  locale: string
+  locale: string,
+  pause?: boolean
 ) => {
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
@@ -21,6 +22,7 @@ const useHierarchyParents = (
       sourceUrl: dataSource.url,
       locale: locale,
     },
+    pause: pause,
   });
   const hierarchy =
     hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;

@@ -263,6 +263,7 @@ export const Select = ({
   controls,
   optionGroups,
   tooltipText,
+  onOpen,
 }: {
   id: string;
   options: Option[];
@@ -308,6 +309,7 @@ export const Select = ({
         onChange={onChange}
         value={value}
         disabled={disabled}
+        onOpen={onOpen}
       >
         {sortedOptions.map((opt) => {
           if (!opt.value) {
