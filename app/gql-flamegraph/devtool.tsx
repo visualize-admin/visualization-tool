@@ -19,6 +19,8 @@ import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
 import { OperationDefinitionNode } from "graphql";
 import { print } from "graphql";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
@@ -68,6 +70,8 @@ const flatten = (timings: Timings) => {
   return all;
 };
 
+const byStart = (a: FlatTiming, b: FlatTiming) => (a.start < b.start ? -1 : 1);
+
 /**
  * Shows a SVG flamegraph for resolver field timings recorded on the
  * server
@@ -79,9 +83,7 @@ const Flamegraph = ({
   timings: Timings;
 }) => {
   const rects = useMemo(() => {
-    const sorted = flatten(timings).sort((a, b) =>
-      a.start < b.start ? -1 : 1
-    );
+    const sorted = flatten(timings).sort(byStart);
     const begin = sorted[0].start;
 
     // normalize so that there is the same amount of seconds per pixels
@@ -89,13 +91,12 @@ const Flamegraph = ({
     const MAX_REQUEST_TIME = 10 * 1000;
     const pixelScale = scaleLinear([begin, begin + MAX_REQUEST_TIME], [0, 500]);
 
-    const normalized = sorted.map((x) => ({
+    return sorted.map((x) => ({
       ...x,
       x0: pixelScale(x.start),
       x1: pixelScale(x.end),
       duration: Math.round(x.end - x.start),
     }));
-    return normalized;
   }, [timings]);
 
   const barHeight = 15;
@@ -142,7 +143,13 @@ const AccordionTimings = ({
   start: number;
   end: number;
 } & Omit<AccordionProps, "children">) => {
-  const duration = end - start;
+  const duration = useMemo(() => {
+    const all = flatten(result?.extensions?.timings).sort(byStart);
+    if (all.length === 0) {
+      return 0;
+    }
+    return maxBy(all, (x) => x.end)?.end! - minBy(all, (x) => x.start)?.start!;
+  }, [result?.extensions?.timings]);
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary>
