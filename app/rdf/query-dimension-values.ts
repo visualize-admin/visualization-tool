@@ -5,13 +5,14 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { pragmas } from "@/rdf/create-source";
+
 import { Filters } from "../configurator";
 
 import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
-
 interface DimensionValue {
   value: Literal | NamedNode<string>;
 }
@@ -76,7 +77,7 @@ export async function unversionObservation({
   const versionedDimensions = Object.keys(observation).filter((x) =>
     dimensionIsVersioned(dimensionsByPath[x])
   );
-  let query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
+  const query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
     VALUES (?versioned) {
       ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
     }
@@ -129,7 +130,7 @@ export async function loadDimensionValues(
     allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
   );
 
-  let query = SELECT.DISTINCT`?value`.WHERE`
+  const query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
     ?observationSet ${cubeNs.observation} ?observation .
     ?observation ${dimensionIri} ?value .
@@ -165,7 +166,7 @@ export async function loadDimensionValues(
           })
         : ""
     }
-  `;
+  `.prologue`${pragmas}`;
 
   let result: Array<DimensionValue> = [];
 
