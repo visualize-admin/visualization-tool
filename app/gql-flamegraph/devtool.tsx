@@ -9,6 +9,8 @@ import {
   IconButton,
   Grow,
   IconButtonProps,
+  Link,
+  Button,
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -16,6 +18,7 @@ import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
 import { OperationDefinitionNode } from "graphql";
+import { print } from "graphql";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
@@ -132,12 +135,22 @@ const AccordionTimings = ({
   result: OperationResult | undefined;
   operation: Operation;
   start: number;
-  end?: number;
+  end: number;
 } & Omit<AccordionProps, "children">) => {
+  const duration = end - start;
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary>
-        <div>
+        <Box
+          sx={{
+            "& > * + *:not(:last-child)": {
+              marginRight: "0.5rem",
+              paddingRight: "0.5rem",
+              borderRight: "1px solid",
+              borderRightColor: "divider",
+            },
+          }}
+        >
           <Typography variant="body2" sx={{ mb: 0 }}>
             {operation.key}{" "}
             {
@@ -146,22 +159,40 @@ const AccordionTimings = ({
                   d.kind === "OperationDefinition"
               )?.name?.value
             }
-            {result ? "✅" : "🔄"}
+            <Box component="span" sx={{ ml: 2 }}>
+              {result ? "✅" : "🔄"}
+            </Box>
           </Typography>
-          <Typography variant="caption">
-            {new Date(start).toISOString().slice(11, 19)}
-            {end ? `-${new Date(end).toISOString().slice(11, 19)}` : null}
-          </Typography>
-          <Box
-            component="pre"
-            maxWidth="100%"
+          <Typography variant="caption">{duration}ms</Typography>
+          <Link
             fontSize="small"
             whiteSpace="break-spaces"
+            color="primary"
+            href={`http://localhost:3000/api/graphql?query=${encodeURIComponent(
+              print(operation.query)
+            )}`}
             sx={{ my: 0 }}
+            target="_blank"
+            rel="noreferrer"
           >
-            {JSON.stringify(operation.variables, null, 0)}
-          </Box>
-        </div>
+            See in graphql editor
+          </Link>
+          <span>
+            <Button
+              size="small"
+              color="secondary"
+              variant="inline"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                navigator.clipboard.writeText(
+                  JSON.stringify(operation.variables, null, 2)
+                );
+              }}
+            >
+              Copy variables
+            </Button>
+          </span>
+        </Box>
       </AccordionSummary>
       {accordionProps.expanded ? (
         <AccordionDetails>
@@ -207,27 +238,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 function GqlDebugDev() {
-  const [operations, setOperations] = useState([] as Operation[]);
   const [results, setResults] = useState([] as OperationResult[]);
   const opsStartMapRef = useRef(new Map<Operation["key"], number>());
   const opsEndMapRef = useRef(new Map<Operation["key"], number>());
   useEffect(() => {
     const handleOperation = (operation: Operation) => {
       opsStartMapRef.current.set(operation.key, Date.now());
-      opsEndMapRef.current.delete(operation.key);
-      setTimeout(() => {
-        setOperations((operations) =>
-          uniqBy([...operations, operation], (op) => op.key)
-        );
-      }, 0);
+      opsEndMapRef.current.set(operation.key, Date.now());
     };
     const handleResult = (result: OperationResult) => {
       opsEndMapRef.current.set(result.operation.key, Date.now());
       setResults((results) =>
         uniqBy([...results, result], (x) => x.operation.key)
-      );
-      setOperations((operations) =>
-        operations.filter((op) => result.operation.key !== op.key)
       );
     };
     urqlEE.on("urql-received-operation", handleOperation);
@@ -241,7 +263,6 @@ function GqlDebugDev() {
     useState<OperationResult["operation"]["key"]>();
   const handleReset = useEvent(() => {
     setResults([]);
-    setOperations([]);
   });
   const { isOpen, open, close } = useDisclosure();
   const classes = useStyles();
@@ -270,24 +291,6 @@ function GqlDebugDev() {
             <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
           </Box>
           <Box sx={{ maxHeight: "500px" }}>
-            {sortBy(
-              operations.filter(
-                (o) => opsEndMapRef.current.get(o.key) === undefined
-              ),
-              (o) => opsStartMapRef.current.get(o.key)
-            ).map((operation, i) => (
-              <AccordionTimings
-                key={i}
-                result={undefined}
-                operation={operation}
-                expanded={expandedId === operation.key}
-                start={opsStartMapRef.current.get(operation.key)!}
-                end={opsEndMapRef.current.get(operation.key)!}
-                onChange={(_e, expanded) =>
-                  setExpandedId(expanded ? operation.key : undefined)
-                }
-              />
-            ))}
             {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
               .filter((x) => x?.extensions?.timings)
               .map((result, i) => (
