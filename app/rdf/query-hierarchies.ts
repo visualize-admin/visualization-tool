@@ -24,7 +24,7 @@ const queryDimensionValues = async (
       ?cube <https://cube.link/observationSet> ?observationSet .
       ?observationSet <https://cube.link/observation> ?observation .
       ?observation <${dimension}> ?value .
-    `;
+    `.prologue`${pragmas}`;
   const rows = await query.execute(sparqlClient.query);
   return rows.map((r) => r.value.value);
 };

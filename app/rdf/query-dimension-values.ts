@@ -82,7 +82,7 @@ export async function unversionObservation({
       ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
     }
     ?versioned ${ns.schema.sameAs} ?unversioned.
-  `;
+  `.prologue`${pragmas}`;
 
   const result = (await query.execute(sparqlClient.query, {
     operation: "postUrlencoded",
