@@ -1,8 +1,8 @@
 import { GraphQLResolveInfo } from "graphql";
 
-import { getCubeObservations as getCubeObservations_ } from "../rdf/queries";
-import { createSource as createSource_ } from "../rdf/createSource";
-import { unversionObservation as unversionObservation_ } from "../rdf/query-dimension-values";
+import { createSource as createSource_ } from "@/rdf/create-source";
+import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
+import { unversionObservation as unversionObservation_ } from "@/rdf/query-dimension-values";
 
 import { GraphQLContext } from "./context";
 import { Query } from "./resolvers";

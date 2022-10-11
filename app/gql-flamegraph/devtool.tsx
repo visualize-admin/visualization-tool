@@ -16,7 +16,7 @@ import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
 import { OperationDefinitionNode } from "graphql";
-import { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
 import React, { useEffect, useRef, useState } from "react";
