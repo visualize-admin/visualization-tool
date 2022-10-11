@@ -93,6 +93,7 @@ const Flamegraph = ({
       ...x,
       x0: pixelScale(x.start),
       x1: pixelScale(x.end),
+      duration: Math.round(x.end - x.start),
     }));
     return normalized;
   }, [timings]);
@@ -113,7 +114,7 @@ const Flamegraph = ({
                   fill="#ccc"
                 />
                 <Text verticalAnchor="start" y={2}>
-                  {`${Math.round(r.end - r.start)}ms - ${r.path.join(">")}
+                  {`${r.duration}ms - ${r.path.join(">")}
           `}
                 </Text>
               </Group>
