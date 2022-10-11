@@ -76,13 +76,16 @@ const Flamegraph = ({
   const rects = useMemo(() => {
     const sorted = flattenTimings(timings);
     const begin = sorted[0].start;
-    const end = sorted[sorted.length - 1].end;
-    const scale = scaleLinear([begin, end], [0, 500]);
+
+    // normalize so that there is the same amount of seconds per pixels
+    // across timelines
+    const MAX_REQUEST_TIME = 10 * 1000;
+    const pixelScale = scaleLinear([begin, begin + MAX_REQUEST_TIME], [0, 500]);
 
     const normalized = sorted.map((x) => ({
       ...x,
-      start: scale(x.start),
-      end: scale(x.end),
+      x0: pixelScale(x.start),
+      x1: pixelScale(x.end),
     }));
     return normalized;
   }, [timings]);
@@ -94,12 +97,12 @@ const Flamegraph = ({
         <svg width={900} height={50 + rects.length * barHeight}>
           <g>
             {rects.map((r, i) => (
-              <Group left={r.start} top={i * barHeight} key={i}>
+              <Group left={r.x0} top={i * barHeight} key={i}>
                 <rect
                   x={0}
                   y={0}
                   height={barHeight}
-                  width={r.end - r.start}
+                  width={r.x1 - r.x0}
                   fill="#ccc"
                 />
                 <Text verticalAnchor="start" y={2}>
