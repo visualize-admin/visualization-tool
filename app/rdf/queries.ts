@@ -12,7 +12,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { PromiseValue, truthy } from "@/domain/types";
-import { createSource } from "@/rdf/create-source";
+import { createSource, pragmas } from "@/rdf/create-source";
 import { makeCubeFilters } from "@/rdf/cube-filters";
 
 import { Filters } from "../configurator";
@@ -418,6 +418,8 @@ export const getCubeObservations = async ({
   );
 
   const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
+
   // Override sourceGraph from cube source, so lookups also work outside of that graph
   lookupSource.ptr.deleteOut(ns.cubeView.graph);
   lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
@@ -525,6 +527,7 @@ const buildFilters = ({
   locale: string;
 }): Filter[] => {
   const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
 
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);

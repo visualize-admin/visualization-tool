@@ -120,6 +120,7 @@ declare module "rdf-cube-view-query" {
   }
   export class LookupSource extends Source {
     static fromSource(source: Source): LookupSource;
+    queryPrefix?: string;
   }
   export class CubeSource extends Source {}
 }
