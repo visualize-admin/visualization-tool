@@ -16,7 +16,13 @@ export type EncodingFieldType = MapEncodingFieldType | XYEncodingFieldType;
 
 export type EncodingOption =
   | { field: "chartSubType" }
-  | { field: "color"; type: "palette" | "measure" }
+  | { field: "color"; type: "palette" }
+  | {
+      field: "color";
+      type: "component";
+      optional: boolean;
+      componentTypes: ComponentType[];
+    }
   | { field: "imputationType" }
   | { field: "showStandardError" }
   | { field: "sorting" };
@@ -230,6 +236,14 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoShapesDimension"],
         exclusive: false,
         filters: true,
+        options: [
+          {
+            field: "color",
+            type: "component",
+            componentTypes: ["NumericalMeasure"],
+            optional: false,
+          },
+        ],
       },
       {
         field: "symbolLayer",
@@ -237,6 +251,14 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
         exclusive: false,
         filters: true,
+        options: [
+          {
+            field: "color",
+            type: "component",
+            componentTypes: ["NumericalMeasure", "GeoShapesDimension"],
+            optional: true,
+          },
+        ],
       },
     ],
     interactiveFilters: [],
