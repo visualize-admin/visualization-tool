@@ -320,6 +320,14 @@ const EncodingOptionsPanel = ({
         />
       )}
 
+      {optionsByField["size"]?.field === "size" && component && (
+        <ChartFieldSize
+          field={field}
+          componentTypes={optionsByField["size"].componentTypes}
+          dataSetMetadata={metaData}
+        />
+      )}
+
       {optionsByField["color"]?.field === "color" &&
         optionsByField["color"].type === "component" &&
         component && (
@@ -593,6 +601,48 @@ const ChartFieldSorting = ({
               );
             })}
         </Flex>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartFieldSize = ({
+  field,
+  componentTypes,
+  dataSetMetadata,
+}: {
+  field: string;
+  componentTypes: ComponentType[];
+  dataSetMetadata: DataCubeMetadata;
+}) => {
+  const measuresOptions = useMemo(() => {
+    return getDimensionsByDimensionType({
+      dimensionTypes: componentTypes,
+      dimensions: dataSetMetadata.dimensions,
+      measures: dataSetMetadata.measures,
+    }).map(({ iri, label }) => ({ value: iri, label }));
+  }, [dataSetMetadata.dimensions, dataSetMetadata.measures, componentTypes]);
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="size">
+        {t({
+          id: "controls.size",
+          message: "Size",
+        })}
+      </SectionTitle>
+      <ControlSectionContent>
+        <ChartOptionSelectField
+          id="size-measure"
+          label={t({
+            id: "controls.select.measure",
+            message: "Select a measure",
+          })}
+          field={field}
+          path="measureIri"
+          options={measuresOptions}
+          dataSetMetadata={dataSetMetadata}
+        />
       </ControlSectionContent>
     </ControlSection>
   );
