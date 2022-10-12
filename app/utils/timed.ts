@@ -1,4 +1,4 @@
-type Timing = {
+export type Timing = {
   start: number;
   end: number;
 };

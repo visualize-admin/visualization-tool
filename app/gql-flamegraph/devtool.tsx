@@ -321,7 +321,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function GqlDebugDev() {
+function GqlDebug() {
   const [results, setResults] = useState([] as OperationResult[]);
   const opsStartMapRef = useRef(new Map<Operation["key"], number>());
   const opsEndMapRef = useRef(new Map<Operation["key"], number>());
@@ -397,11 +397,6 @@ function GqlDebugDev() {
   );
 }
 
-const GqlDebugProd = () => null;
-
-const GqlDebug =
-  process.env.NODE_ENV === "development" ? GqlDebugDev : GqlDebugProd;
-
 /**
  * Used to communicate between urql and the flamegraph
  * component
@@ -430,4 +425,5 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
       );
   }
 };
+
 export default GqlDebug;

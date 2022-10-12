@@ -20,6 +20,11 @@ import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import { useNProgress } from "@/utils/use-nprogress";
 
+const pageLaunchedWithDebug =
+  typeof window !== "undefined" &&
+  (process.env.NODE_ENV === "development" ||
+    new URL(window.location.toString()).searchParams?.get("debug") === "true");
+
 export default function App({ Component, pageProps }: AppProps) {
   const { events: routerEvents, asPath, locale: routerLocale } = useRouter();
 
@@ -53,6 +58,10 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [routerEvents]);
 
+  const shouldShowDebug =
+    typeof window !== "undefined" &&
+    (process.env.NODE_ENV === "development" || pageLaunchedWithDebug);
+
   return (
     <>
       <Head>
@@ -77,7 +86,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <ThemeProvider theme={federalTheme.theme}>
               <CssBaseline />
               <Flashes />
-              {typeof window === "undefined" ? null : <GqlDebug />}
+              {shouldShowDebug ? <GqlDebug /> : null}
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
                   <Component {...pageProps} />
