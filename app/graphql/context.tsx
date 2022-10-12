@@ -5,6 +5,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { timed } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -43,9 +44,11 @@ export type Loaders = Awaited<ReturnType<typeof createLoaders>>;
 const createContextContent = async ({
   sourceUrl,
   locale,
+  ctx,
 }: {
   sourceUrl: string;
   locale: string;
+  ctx: GraphQLContext;
 }) => {
   const sparqlClient = new ParsingClient({
     endpointUrl: sourceUrl,
@@ -54,6 +57,18 @@ const createContextContent = async ({
     endpointUrl: sourceUrl,
   });
   const loaders = await createLoaders(locale, sparqlClient);
+
+  sparqlClient.query.select = timed(
+    sparqlClient.query.select,
+    (t, ...args: Parameters<typeof sparqlClient.query.select>) => {
+      ctx.queries.push({
+        startTime: t.start,
+        endTime: t.end,
+        text: args[0],
+      });
+    }
+  );
+
   return new Proxy(
     { loaders, sparqlClient, sparqlClientStream },
     {
@@ -81,8 +96,9 @@ export const createContext = () => {
     setup: async ({
       variableValues: { locale, sourceUrl },
     }: GraphQLResolveInfo) => {
-      setupping = setupping || createContextContent({ locale, sourceUrl });
-      return await setupping;
+      setupping = setupping || createContextContent({ locale, sourceUrl, ctx });
+      const res = await setupping;
+      return res;
     },
   };
 

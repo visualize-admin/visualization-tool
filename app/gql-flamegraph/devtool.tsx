@@ -11,6 +11,7 @@ import {
   IconButtonProps,
   Link,
   Theme,
+  LinkProps,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Group } from "@visx/group";
@@ -79,10 +80,10 @@ const Flamegraph = ({
   timings,
 }: {
   /** Sorted timings */
-  timings: Timings;
+  timings: FlatTiming[];
 }) => {
   const rects = useMemo(() => {
-    const sorted = flatten(timings).sort(byStart);
+    const sorted = timings.sort(byStart);
     const begin = sorted[0].start;
 
     // normalize so that there is the same amount of seconds per pixels
@@ -101,7 +102,12 @@ const Flamegraph = ({
   const barHeight = 15;
   return (
     <>
-      <Box sx={{ position: "relative", "& svg text": { fontSize: "10px" } }}>
+      <Box
+        sx={{
+          position: "relative",
+          "& svg text": { fontSize: "10px" },
+        }}
+      >
         <svg width={900} height={50 + rects.length * barHeight}>
           <g>
             {rects.map((r, i) => (
@@ -127,16 +133,22 @@ const Flamegraph = ({
 };
 
 const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
-  const { children, onClick } = props;
+  const { children, onClick, sx } = props;
   const [hasCopied, setHasCopied] = useState(false);
-  const enhancedOnClick = useEvent((ev: MouseEvent) => {
-    onClick(ev);
-    navigator.clipboard.writeText(toCopy);
-    setHasCopied(true);
-    setTimeout(() => setHasCopied(false), 1000);
-  });
+  const enhancedOnClick = useEvent(
+    (ev: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.(ev);
+      navigator.clipboard.writeText(toCopy);
+      setHasCopied(true);
+      setTimeout(() => setHasCopied(false), 1000);
+    }
+  );
   return (
-    <Link {...props} onClick={enhancedOnClick}>
+    <Link
+      {...props}
+      onClick={enhancedOnClick}
+      sx={{ cursor: "pointer", ...sx }}
+    >
       {children} {hasCopied ? "✓" : null}
     </Link>
   );
@@ -146,7 +158,7 @@ const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
  * Collapsible according showing for each request that has been made
  * a accordion with name
  */
-const AccordionTimings = ({
+const AccordionOperation = ({
   result,
   operation,
   start,
@@ -209,7 +221,6 @@ const AccordionTimings = ({
             <CopyLink
               fontSize="small"
               color="primary"
-              variant="inline"
               toCopy={JSON.stringify(operation.variables, null, 2)}
               onClick={(ev) => {
                 ev.stopPropagation();
@@ -222,12 +233,59 @@ const AccordionTimings = ({
       </AccordionSummary>
       {accordionProps.expanded ? (
         <AccordionDetails>
-          {result?.extensions?.timings ? (
-            <Flamegraph timings={result.extensions.timings} />
-          ) : null}
+          <Box sx={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
+            <Box sx={{ overflowX: "scroll" }}>
+              <Typography variant="h5" gutterBottom>
+                Resolvers
+              </Typography>
+              <>
+                {result?.extensions?.timings ? (
+                  <Flamegraph timings={flatten(result.extensions.timings)} />
+                ) : null}
+              </>
+            </Box>
+            <div>
+              <Typography variant="h5" gutterBottom>
+                SPARQL queries
+              </Typography>
+              <Queries queries={result?.extensions?.queries} />
+            </div>
+          </Box>
         </AccordionDetails>
       ) : null}
     </Accordion>
+  );
+};
+
+const Queries = ({
+  queries,
+}: {
+  queries: { startTime: number; endTime: number; text: string }[];
+}) => {
+  return (
+    <div>
+      {queries.map((q, i) => {
+        const text = q.text.replace(/\n\n/gm, "\n");
+        return (
+          <div key={i}>
+            <Typography variant="caption">
+              {q.endTime - q.startTime}ms
+            </Typography>{" "}
+            -{" "}
+            <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
+              Copy
+            </CopyLink>
+            <Box
+              cols={100}
+              rows={10}
+              component="textarea"
+              fontSize="small"
+              value={text}
+            />
+          </div>
+        );
+      })}
+    </div>
   );
 };
 
@@ -320,7 +378,7 @@ function GqlDebugDev() {
             {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
               .filter((x) => x?.extensions?.timings)
               .map((result, i) => (
-                <AccordionTimings
+                <AccordionOperation
                   key={i}
                   result={result}
                   operation={result.operation}
