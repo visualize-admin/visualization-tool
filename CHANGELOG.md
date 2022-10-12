@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.9.6] - 2022-10-12
+
 - Fix: IRIs of NFI cubes (previously there was None-None- includes in IRI; it was removed recently and we now migrate old IRIs to new IRIs)
 
 ## [3.9.5] - 2022-10-04

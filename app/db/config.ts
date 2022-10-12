@@ -27,7 +27,7 @@ export const createConfig = async (
 
 const migrateDataSet = (dataSet: string): string => {
   if (dataSet.includes("https://environment.ld.admin.ch/foen/nfi")) {
-    return dataSet.replace(/None-None-/, dataSet);
+    return dataSet.replace(/None-None-/, "");
   }
 
   return dataSet;
