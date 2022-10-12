@@ -1,24 +1,7 @@
 import { Resolver, Resolvers } from "@apollo/client/core";
 import { GraphQLResolveInfo } from "graphql";
 
-type Timing = {
-  start: number;
-  end: number;
-};
-
-const timed = <T extends unknown[]>(
-  fn: Function,
-  cb: ({ start, end }: Timing, ...args: T) => void
-) => {
-  const wrapped: Function = async function (...args: T) {
-    const start = Date.now();
-    const res = await fn(...args);
-    const end = Date.now();
-    cb({ start, end }, ...args);
-    return res;
-  };
-  return wrapped;
-};
+import { Timing, timed } from "@/utils/timed";
 
 export type Timings = Record<
   string,
