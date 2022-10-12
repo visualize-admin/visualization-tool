@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.1.0";
+export const CHART_CONFIG_VERSION = "1.1.1";
 
 type Migration = {
   description: string;
@@ -187,6 +187,177 @@ const migrations: Migration[] = [
             };
           }
         });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `MAP
+    areaLayer {
+      - measureIri
+      - palette
+      - colorScaleType
+      - colorScaleInterpolationType
+      - nbClass
+      + color {
+        + type: "numerical"
+        + componentIri
+        + palette
+        + scaleType: "continuous"
+        + interpolationType: "linear"
+      } | {
+        + type: "numerical"
+        + componentIri
+        + palette
+        + scaleType: "discrete"
+        + nbClass
+      }
+    }
+  
+    symbolLayer {
+      - colors {
+        - type: "fixed"
+        - value
+        - opacity
+      } | {
+        - type: "categorical"
+        - componentIri
+        - palette
+        - ?colorMapping
+      } | {
+        type: "continuous"
+        - componentIri
+        - palette
+        - ?colorMapping
+      }
+      + color {
+        + type: "fixed"
+        + value
+        + opacity
+      } | {
+        + type: "categorical"
+        + componentIri
+        + palette
+        + colorMapping
+      } | {
+        + type: "numerical"
+        + componentIri
+        + palette
+        + scaleType: "continuous"
+        + interpolationType: "linear"
+      } | {
+        + type: "numerical"
+        + componentIri
+        + palette
+        + scaleType: "discrete"
+        + nbClass
+      }
+    }`,
+    from: "1.1.0",
+    to: "1.1.1",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.1.1" };
+
+      if (newConfig.chartType === "map") {
+        const { fields } = newConfig;
+        const { areaLayer, symbolLayer } = fields;
+
+        if (areaLayer) {
+          const {
+            componentIri,
+            measureIri,
+            palette,
+            colorScaleType,
+            colorScaleInterpolationType,
+            nbClass,
+          } = areaLayer;
+
+          newConfig = produce(newConfig, (draft: any) => {
+            draft.fields.areaLayer = {
+              componentIri,
+              color: {
+                type: "numerical",
+                componentIri: measureIri,
+                palette,
+                ...(colorScaleType === "discrete"
+                  ? {
+                      scaleType: colorScaleType,
+                      interpolationType: colorScaleInterpolationType,
+                      nbClass,
+                    }
+                  : {
+                      scaleType: colorScaleType,
+                      interpolationType: colorScaleInterpolationType,
+                    }),
+              },
+            };
+          });
+        }
+
+        if (symbolLayer) {
+          const { componentIri, measureIri, colors } = symbolLayer;
+
+          newConfig = produce(newConfig, (draft: any) => {
+            draft.fields.symbolLayer = {
+              componentIri,
+              measureIri,
+              color:
+                colors.type === "fixed" || colors.type === "categorical"
+                  ? colors
+                  : {
+                      type: "numerical",
+                      componentIri: colors.componentIri,
+                      palette: colors.palette,
+                      scaleType: "continuous",
+                      interpolationType: "linear",
+                    },
+            };
+          });
+        }
+      }
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.1.0" };
+
+      if (newConfig.chartType === "map") {
+        const { fields } = newConfig;
+        const { areaLayer, symbolLayer } = fields;
+
+        if (areaLayer) {
+          const { componentIri, color } = areaLayer;
+
+          newConfig = produce(newConfig, (draft: any) => {
+            draft.fields.areaLayer = {
+              componentIri,
+              measureIri: color.componentIri,
+              palette: color.palette,
+              colorScaleType: color.scaleType,
+              colorInterpolationType: color.interpolationType,
+              nbClass: color.nbClass || 3,
+            };
+          });
+        }
+
+        if (symbolLayer) {
+          const { componentIri, measureIri, color } = symbolLayer;
+
+          newConfig = produce(newConfig, (draft: any) => {
+            draft.fields.symbolLayer = {
+              componentIri,
+              measureIri,
+              ...(color.type === "fixed" || color.type === "categorical"
+                ? color
+                : {
+                    type: "continuous",
+                    componentIri: color.componentIri,
+                    palette: color.palette,
+                  }),
+            };
+          });
+        }
       }
 
       return newConfig;

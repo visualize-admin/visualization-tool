@@ -20,7 +20,7 @@
     }
   },
   "chartConfig": {
-    "version": "1.1.0",
+    "version": "1.1.1",
     "chartType": "map",
     "filters": {
       "https://environment.ld.admin.ch/foen/nfi/inventory": {
@@ -52,11 +52,13 @@
     "fields": {
       "areaLayer": {
         "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
-        "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
-        "colorScaleType": "continuous",
-        "colorScaleInterpolationType": "linear",
-        "palette": "oranges",
-        "nbClass": 5
+        "color": {
+          "type": "numerical",
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
+          "palette": "oranges",
+          "scaleType": "continuous",
+          "interpolationType": "linear"
+        }
       }
     },
     "baseLayer": { "show": true, "locked": false }

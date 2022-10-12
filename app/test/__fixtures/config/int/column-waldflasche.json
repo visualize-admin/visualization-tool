@@ -12,7 +12,7 @@
       "description": { "de": "", "fr": "", "it": "", "en": "" }
     },
     "chartConfig": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "chartType": "column",
       "filters": {
         "https://environment.ld.admin.ch/foen/nfi/inventory": {

@@ -30,7 +30,7 @@ export const states: ConfiguratorState[] = [
     dataSet: "foo",
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfig: {
-      version: "1.1.0",
+      version: "1.1.1",
       chartType: "column",
       fields: {
         x: {
@@ -823,7 +823,7 @@ export const tableDimensions = [
   },
 ];
 export const tableConfig: TableConfig = {
-  version: "1.1.0",
+  version: "1.1.1",
   chartType: "table",
   filters: {},
   interactiveFiltersConfig: undefined,
