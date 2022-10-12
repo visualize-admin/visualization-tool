@@ -1,4 +1,4 @@
-export type Timing = {
+type Timing = {
   start: number;
   end: number;
 };
@@ -9,7 +9,7 @@ export const timed = <T extends unknown[]>(
 ) => {
   const wrapped: Function = async function (...args: T) {
     const start = Date.now();
-    const res = await fn(...args);
+    const res = await fn.apply(this, args);
     const end = Date.now();
     cb({ start, end } as Timing, ...args);
     return res;
