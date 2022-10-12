@@ -12,6 +12,7 @@ import {
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
+import { getMap } from "@/charts/map/ref";
 import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
@@ -25,7 +26,9 @@ import {
   ImputationType,
   imputationTypes,
   isAreaConfig,
+  isConfiguring,
   isTableConfig,
+  MapConfig,
   SortingType,
   useConfiguratorState,
 } from "@/configurator";
@@ -43,6 +46,7 @@ import {
   ChartOptionRadioField,
   ChartOptionSelectField,
   ChartOptionSliderField,
+  ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
 import {
@@ -298,14 +302,20 @@ const EncodingOptionsPanel = ({
             )}
         </ControlSectionContent>
       </ControlSection>
+      {/* FIXME: should be generic or shouldn't be a field at all */}
+      {field === "baseLayer" ? (
+        <ChartMapBaseLayerSettings state={state} dataSetMetadata={metaData} />
+      ) : null}
+
       {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
           state={state}
-          field={encoding.field}
+          field={field}
           encodingSortingOptions={encoding.sorting}
           dataSetMetadata={metaData}
         />
       )}
+
       {optionsByField["color"]?.field === "color" &&
         optionsByField["color"].type === "component" &&
         component && (
@@ -868,6 +878,75 @@ const ChartImputationType = ({
             }}
           />
         </Box>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartMapBaseLayerSettings = ({
+  state,
+  dataSetMetadata,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  dataSetMetadata: DataCubeMetadata;
+}) => {
+  const chartConfig = state.chartConfig as MapConfig;
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+
+  useEffect(() => {
+    const map = getMap();
+
+    if (chartConfig.baseLayer.locked) {
+      if (map !== null) {
+        dispatch({
+          type: "CHART_OPTION_CHANGED",
+          value: {
+            field: null,
+            // FIXME: shouldn't be a field if not mapped
+            // to a component
+            path: "baseLayer.bbox",
+            value: map.getBounds().toArray(),
+            dataSetMetadata,
+          },
+        });
+      }
+    } else {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field: null,
+          path: "baseLayer.bbox",
+          value: undefined,
+          dataSetMetadata,
+        },
+      });
+    }
+  }, [chartConfig.baseLayer.locked, dispatch, dataSetMetadata]);
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="mapMaptype">
+        <Trans id="chart.map.layers.base">Map Display</Trans>
+      </SectionTitle>
+      <ControlSectionContent gap="large">
+        <ChartOptionCheckboxField
+          label={t({
+            id: "chart.map.layers.base.show",
+            message: "Show",
+          })}
+          field={null}
+          path="baseLayer.show"
+          dataSetMetadata={dataSetMetadata}
+        />
+        <ChartOptionSwitchField
+          label={t({
+            id: "chart.map.layers.base.view.locked",
+            message: "Locked view",
+          })}
+          field={null}
+          path="baseLayer.locked"
+          dataSetMetadata={dataSetMetadata}
+        />
       </ControlSectionContent>
     </ControlSection>
   );
