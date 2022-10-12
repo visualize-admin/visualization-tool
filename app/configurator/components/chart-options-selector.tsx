@@ -271,6 +271,7 @@ const EncodingOptionsPanel = ({
               field={encoding.field}
               encodingOptions={encoding.options}
               chartType={chartType}
+              dataSetMetadata={metaData}
             />
           )}
           {optionsByField["color"]?.field === "color" &&
@@ -288,6 +289,7 @@ const EncodingOptionsPanel = ({
           state={state}
           field={encoding.field}
           encodingSortingOptions={encoding.sorting}
+          dataSetMetadata={metaData}
         />
       )}
       {optionsByField["showStandardError"] && hasStandardError && (
@@ -303,6 +305,7 @@ const EncodingOptionsPanel = ({
               field={encoding.field}
               defaultValue={true}
               label={t({ id: "controls.section.show-standard-error" })}
+              dataSetMetadata={metaData}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -346,11 +349,13 @@ const ChartFieldOptions = ({
   chartType,
   encodingOptions,
   disabled = false,
+  dataSetMetadata,
 }: {
   field: string;
   chartType: ChartType;
   encodingOptions?: EncodingOption[];
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   return (
     <>
@@ -370,6 +375,7 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
+                dataSetMetadata={dataSetMetadata}
               />
               <ChartOptionRadioField
                 label={getFieldLabel("grouped")}
@@ -377,6 +383,7 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"grouped"}
                 disabled={disabled}
+                dataSetMetadata={dataSetMetadata}
               />
             </Flex>
           </Box>
@@ -389,11 +396,13 @@ const ChartFieldSorting = ({
   state,
   field,
   encodingSortingOptions,
+  dataSetMetadata,
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
   field: string;
   encodingSortingOptions: EncodingSortingOption[];
+  dataSetMetadata: DataCubeMetadata;
   disabled?: boolean;
 }) => {
   const [, dispatch] = useConfiguratorState();
@@ -424,11 +433,12 @@ const ChartFieldSorting = ({
         value: {
           field,
           path: "sorting",
+          dataSetMetadata,
           value: { sortingType, sortingOrder },
         },
       });
     },
-    [dispatch, field]
+    [dispatch, field, dataSetMetadata]
   );
 
   const activeSortingType = get(

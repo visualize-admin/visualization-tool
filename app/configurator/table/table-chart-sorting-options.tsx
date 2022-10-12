@@ -335,10 +335,10 @@ const useTableSortingOptionsStyles = makeStyles({
 
 export const TableSortingOptions = ({
   state,
-  metaData,
+  dataSetMetadata,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const { activeField, chartConfig } = state;
@@ -349,7 +349,7 @@ export const TableSortingOptions = ({
       if (
         !destination ||
         state.chartConfig.chartType !== "table" ||
-        !metaData
+        !dataSetMetadata
       ) {
         return;
       }
@@ -361,11 +361,11 @@ export const TableSortingOptions = ({
             source,
             destination,
           }),
-          dataSetMetadata: metaData,
+          dataSetMetadata,
         },
       });
     },
-    [state, dispatch, metaData]
+    [state, dispatch, dataSetMetadata]
   );
 
   if (!activeField || chartConfig.chartType !== "table") {
@@ -411,7 +411,7 @@ export const TableSortingOptions = ({
                               <TableSortingOptionItem
                                 {...option}
                                 index={i}
-                                metaData={metaData}
+                                metaData={dataSetMetadata}
                                 chartConfig={chartConfig}
                               />
                               <Box
@@ -446,7 +446,7 @@ export const TableSortingOptions = ({
                   }}
                 >
                   <AddTableSortingOption
-                    metaData={metaData}
+                    metaData={dataSetMetadata}
                     chartConfig={chartConfig}
                   />
                 </Box>

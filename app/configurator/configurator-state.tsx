@@ -119,6 +119,7 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string | null;
+        dataSetMetadata: DataCubeMetadata;
         value:
           | string
           | number

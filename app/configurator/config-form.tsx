@@ -139,11 +139,13 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
   path,
   getValue,
   getKey,
+  dataSetMetadata,
 }: {
   field: string;
   path: string;
   getValue?: (key: string) => ValueType | undefined;
   getKey?: (value: ValueType) => string;
+  dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -155,16 +157,21 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
         value: {
           field,
           path,
+          dataSetMetadata,
           value: getValue ? getValue(value) : value,
         },
       });
     },
-    [dispatch, field, path, getValue]
+    [dispatch, field, path, getValue, dataSetMetadata]
   );
 
   let value: ValueType | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(state, `chartConfig.fields["${field}"].${path}`);
+    value = get(
+      state,
+      `chartConfig.fields["${field}"].${path}`,
+      FIELD_VALUE_NONE
+    );
   }
   return {
     name: path,
@@ -202,12 +209,14 @@ export const useChartOptionSliderField = ({
   min,
   max,
   defaultValue,
+  dataSetMetadata,
 }: {
   field: string | null;
   path: string;
   min: number;
   max: number;
   defaultValue: number;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -221,6 +230,7 @@ export const useChartOptionSliderField = ({
         value: {
           field,
           path,
+          dataSetMetadata,
           value: Math.max(min, Math.min(+value, max)),
         },
       });
@@ -243,10 +253,12 @@ export const useChartOptionRadioField = ({
   field,
   path,
   value,
+  dataSetMetadata,
 }: {
   field: string | null;
   path: string;
   value: string;
+  dataSetMetadata: DataCubeMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -256,10 +268,11 @@ export const useChartOptionRadioField = ({
       value: {
         field,
         path,
+        dataSetMetadata,
         value,
       },
     });
-  }, [dispatch, field, path, value]);
+  }, [dispatch, field, path, value, dataSetMetadata]);
   const stateValue =
     state.state === "CONFIGURING_CHART"
       ? getChartOptionField(state, field, path)
@@ -278,10 +291,12 @@ export const useChartOptionBooleanField = ({
   path,
   field,
   defaultValue = "",
+  dataSetMetadata,
 }: {
   path: string;
   field: string | null;
   defaultValue: boolean | string;
+  dataSetMetadata: DataCubeMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -292,11 +307,12 @@ export const useChartOptionBooleanField = ({
         value: {
           path,
           field,
+          dataSetMetadata,
           value: e.currentTarget.checked,
         },
       });
     },
-    [dispatch, path, field]
+    [dispatch, path, field, dataSetMetadata]
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
