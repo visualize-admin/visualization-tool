@@ -25,6 +25,14 @@ export const createConfig = async (
   return result.rows[0];
 };
 
+const migrateDataSet = (dataSet: string): string => {
+  if (dataSet.includes("https://environment.ld.admin.ch/foen/nfi")) {
+    return dataSet.replace(/None-None-/, "");
+  }
+
+  return dataSet;
+};
+
 /**
  * Get data from DB.
  * Do not try to use on client-side! Use /api/config instead.
@@ -46,6 +54,7 @@ export const getConfig = async (
       ...config,
       data: {
         ...config.data,
+        dataSet: migrateDataSet(config.data.dataSet),
         chartConfig: migrateChartConfig(config.data.chartConfig),
       },
     };
