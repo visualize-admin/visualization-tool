@@ -90,15 +90,19 @@ export const ChartOptionsSelector = ({
     data: data?.dataCubeByIri?.observations.data,
   });
 
+  const metaData = useMemo(() => {
   if (data?.dataCubeByIri) {
-    const meta = {
+      return {
       ...data.dataCubeByIri,
       dimensions: [
         // There are no fields that make use of numeric dimensions at the moment.
         ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
       ],
     };
+    }
+  }, [data?.dataCubeByIri]);
 
+  if (metaData) {
     return (
       <Box
         sx={{
@@ -109,11 +113,11 @@ export const ChartOptionsSelector = ({
       >
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
-            <TableColumnOptions state={state} metaData={meta} />
+            <TableColumnOptions state={state} metaData={metaData} />
           ) : (
             <ActiveFieldSwitch
               state={state}
-              metaData={meta}
+              metaData={metaData}
               imputationNeeded={imputationNeeded}
             />
           )
