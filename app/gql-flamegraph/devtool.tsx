@@ -246,7 +246,7 @@ const AccordionOperation = ({
             </Box>
             <div>
               <Typography variant="h5" gutterBottom>
-                SPARQL queries
+                SPARQL queries ({result?.extensions?.queries.length})
               </Typography>
               <Queries queries={result?.extensions?.queries} />
             </div>
