@@ -794,6 +794,7 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   getValue,
   getKey,
   dataSetMetadata,
+  isOptional,
 }: {
   id: string;
   label: string | ReactNode;
@@ -804,6 +805,7 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   getValue?: (x: string) => ValueType | undefined;
   getKey?: (x: ValueType) => string;
   dataSetMetadata: DataCubeMetadata;
+  isOptional?: boolean;
 }) => {
   const fieldProps = useChartOptionSelectField({
     field,
@@ -812,15 +814,37 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     getKey,
     dataSetMetadata,
   });
+  const noneLabel = t({
+    id: "controls.dimension.none",
+    message: "None",
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: "optional",
+  });
+
+  const allOptions = useMemo(() => {
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [isOptional, options, noneLabel]);
 
   return (
     <Select
       id={id}
       disabled={disabled}
-      label={label}
-      options={options}
+      label={isOptional ? `${label} (${optionalLabel})` : label}
+      options={allOptions}
       {...fieldProps}
-    ></Select>
+    />
   );
 };
 
