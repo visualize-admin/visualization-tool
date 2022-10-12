@@ -3,16 +3,18 @@ type Timing = {
   end: number;
 };
 
-export const timed = <T extends unknown[]>(
-  fn: Function,
-  cb: ({ start, end }: Timing, ...args: T) => void
+export const timed = <T extends (...args: any) => any>(
+  fn: T,
+  cb: ({ start, end }: Timing, ...args: Parameters<T>) => void
 ) => {
-  const wrapped: Function = async function (...args: T) {
+  const wrapped = async function (...args: Parameters<T>) {
     const start = Date.now();
-    const res = await fn.apply(this, args);
+    // @ts-ignore I do not know why TS complains here
+    const self = this;
+    const res = await fn.apply(self, args);
     const end = Date.now();
     cb({ start, end } as Timing, ...args);
     return res;
-  };
+  } as unknown as T;
   return wrapped;
 };
