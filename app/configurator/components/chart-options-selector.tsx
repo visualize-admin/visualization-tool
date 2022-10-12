@@ -95,14 +95,14 @@ export const ChartOptionsSelector = ({
   });
 
   const metaData = useMemo(() => {
-  if (data?.dataCubeByIri) {
+    if (data?.dataCubeByIri) {
       return {
-      ...data.dataCubeByIri,
-      dimensions: [
-        // There are no fields that make use of numeric dimensions at the moment.
-        ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
-      ],
-    };
+        ...data.dataCubeByIri,
+        dimensions: [
+          // There are no fields that make use of numeric dimensions at the moment.
+          ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
+        ],
+      };
     }
   }, [data?.dataCubeByIri]);
 
@@ -271,37 +271,41 @@ const EncodingOptionsPanel = ({
       ref={panelRef}
       tabIndex={-1}
     >
-      <ControlSection>
-        <SectionTitle iconName={getIconName(encoding.field)}>
-          {getFieldLabel(encoding.field)}
-        </SectionTitle>
-        <ControlSectionContent gap="none">
-          <ChartFieldField
-            field={encoding.field}
-            label={getFieldLabelHint[encoding.field]}
-            optional={encoding.optional}
-            options={options}
-            dataSetMetadata={metaData}
-          />
-          {encoding.options && (
-            <ChartFieldOptions
-              disabled={!component}
+      {/* Only show component select if necessary */}
+      {encoding.componentTypes.length > 0 ? (
+        <ControlSection>
+          <SectionTitle iconName={getIconName(encoding.field)}>
+            {getFieldLabel(encoding.field)}
+          </SectionTitle>
+          <ControlSectionContent gap="none">
+            <ChartFieldField
               field={encoding.field}
-              encodingOptions={encoding.options}
-              chartType={chartType}
+              label={getFieldLabelHint[encoding.field]}
+              optional={encoding.optional}
+              options={options}
               dataSetMetadata={metaData}
             />
-          )}
-          {optionsByField["color"]?.field === "color" &&
-            optionsByField["color"].type === "palette" && (
-              <ColorPalette
+            {encoding.options && (
+              <ChartFieldOptions
                 disabled={!component}
-                field={field}
-                component={component}
+                field={encoding.field}
+                encodingOptions={encoding.options}
+                chartType={chartType}
+                dataSetMetadata={metaData}
               />
             )}
-        </ControlSectionContent>
-      </ControlSection>
+            {optionsByField["color"]?.field === "color" &&
+              optionsByField["color"].type === "palette" && (
+                <ColorPalette
+                  disabled={!component}
+                  field={field}
+                  component={component}
+                />
+              )}
+          </ControlSectionContent>
+        </ControlSection>
+      ) : null}
+
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" ? (
         <ChartMapBaseLayerSettings state={state} dataSetMetadata={metaData} />
