@@ -1,5 +1,7 @@
-export const DEFAULT_SYMBOL_LAYER_COLORS = {
-  type: "fixed" as "fixed",
+import { FixedColorField } from "@/configurator/config-types";
+
+export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
+  type: "fixed",
   value: "#1f77b4",
   opacity: 80,
 };

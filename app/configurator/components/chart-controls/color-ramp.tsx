@@ -67,7 +67,7 @@ export const ColorRamp = ({
 };
 
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
-  field: "areaLayer" | "symbolLayer";
+  field: string;
   path: string;
   dataSetMetadata: DataCubeMetadata;
 };

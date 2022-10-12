@@ -452,47 +452,65 @@ const BBox = t.tuple([
 ]);
 export type BBox = t.TypeOf<typeof BBox>;
 
-const MapAreaLayer = t.intersection([
+const ColorFieldType = t.union([
+  t.literal("fixed"),
+  t.literal("categorical"),
+  t.literal("numerical"),
+]);
+export type ColorFieldType = t.TypeOf<typeof ColorFieldType>;
+
+const FixedColorField = t.type({
+  type: t.literal("fixed"),
+  value: t.string,
+  opacity: t.number,
+});
+export type FixedColorField = t.TypeOf<typeof FixedColorField>;
+
+const CategoricalColorField = t.type({
+  type: t.literal("categorical"),
+  componentIri: t.string,
+  palette: t.string,
+  colorMapping: ColorMapping,
+});
+
+export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
+
+const NumericalColorField = t.intersection([
   t.type({
+    type: t.literal("numerical"),
     componentIri: t.string,
-    measureIri: t.string,
     palette: t.union([DivergingPaletteType, SequentialPaletteType]),
-    nbClass: t.number,
   }),
   t.union([
     t.type({
-      colorScaleType: t.literal("continuous"),
-      colorScaleInterpolationType: t.literal("linear"),
+      scaleType: t.literal("continuous"),
+      interpolationType: t.literal("linear"),
     }),
     t.type({
-      colorScaleType: t.literal("discrete"),
-      colorScaleInterpolationType: t.union([
+      scaleType: t.literal("discrete"),
+      interpolationType: t.union([
         t.literal("quantize"),
         t.literal("quantile"),
         t.literal("jenks"),
       ]),
+      nbClass: t.number,
     }),
   ]),
 ]);
+export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
+
+const MapAreaLayer = t.type({
+  componentIri: t.string,
+  color: NumericalColorField,
+});
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.intersection([
-  t.type({
-    componentIri: t.string,
-    measureIri: t.string,
-  }),
-  t.type({
-    colors: t.union([
-      t.type({ type: t.literal("fixed"), value: t.string, opacity: t.number }),
-      t.intersection([
-        t.type({
-          type: t.union([t.literal("categorical"), t.literal("continuous")]),
-        }),
-        GenericSegmentField,
-      ]),
-    ]),
-  }),
-]);
+const MapSymbolLayer = t.type({
+  componentIri: t.string,
+  // symbol radius (size)
+  measureIri: t.string,
+  color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
+});
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({
@@ -772,7 +790,9 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
   fields: {
     areaLayer: {
       componentIri: FieldAdjuster<MapConfig, string>;
-      measureIri: FieldAdjuster<MapConfig, string>;
+      color: {
+        componentIri: FieldAdjuster<MapConfig, string>;
+      };
     };
   };
 };

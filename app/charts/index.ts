@@ -3,7 +3,7 @@ import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
 
-import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
+import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   AreaSegmentField,
   ChartConfig,
@@ -19,6 +19,7 @@ import {
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
+  MapSymbolLayer,
   PieSegmentField,
   ScatterPlotSegmentField,
   SortingOrder,
@@ -157,11 +158,13 @@ export const getInitialAreaLayer = ({
 }): MapAreaLayer => {
   return {
     componentIri: component.iri,
-    measureIri: measure.iri,
-    colorScaleType: "continuous",
-    colorScaleInterpolationType: "linear",
-    palette: "oranges",
-    nbClass: 5,
+    color: {
+      type: "numerical",
+      componentIri: measure.iri,
+      scaleType: "continuous",
+      interpolationType: "linear",
+      palette: "oranges",
+    },
   };
 };
 
@@ -171,11 +174,11 @@ export const getInitialSymbolLayer = ({
 }: {
   component: GeoShapesDimension | GeoCoordinatesDimension;
   measure: NumericalMeasure;
-}) => {
+}): MapSymbolLayer => {
   return {
     componentIri: component.iri,
     measureIri: measure.iri,
-    colors: DEFAULT_SYMBOL_LAYER_COLORS,
+    color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
 
@@ -907,16 +910,18 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
           return newChartConfig;
         },
-        measureIri: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            if (draft.fields.areaLayer) {
-              draft.fields.areaLayer.measureIri = oldValue;
-            }
+        color: {
+          componentIri: ({ oldValue, newChartConfig }) => {
+            return produce(newChartConfig, (draft) => {
+              if (draft.fields.areaLayer) {
+                draft.fields.areaLayer.color.componentIri = oldValue;
+              }
 
-            if (draft.fields.symbolLayer) {
-              draft.fields.symbolLayer.measureIri = oldValue;
-            }
-          });
+              if (draft.fields.symbolLayer) {
+                draft.fields.symbolLayer.measureIri = oldValue;
+              }
+            });
+          },
         },
       },
     },
@@ -937,7 +942,7 @@ const chartConfigsPathOverrides: {
   column: {
     map: {
       "fields.areaLayer.componentIri": "fields.x.componentIri",
-      "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -945,7 +950,7 @@ const chartConfigsPathOverrides: {
   },
   line: {
     map: {
-      "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -953,7 +958,7 @@ const chartConfigsPathOverrides: {
   },
   area: {
     map: {
-      "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -961,7 +966,7 @@ const chartConfigsPathOverrides: {
   },
   scatterplot: {
     map: {
-      "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -970,7 +975,7 @@ const chartConfigsPathOverrides: {
   pie: {
     map: {
       "fields.areaLayer.componentIri": "fields.x.componentIri",
-      "fields.areaLayer.measureIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
     },
     table: {
       fields: "fields.segment",
@@ -996,20 +1001,20 @@ const chartConfigsPathOverrides: {
   map: {
     column: {
       "fields.x.componentIri": "fields.areaLayer.componentIri",
-      "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
     line: {
-      "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
     area: {
-      "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
     scatterplot: {
-      "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
     pie: {
       "fields.x.componentIri": "fields.areaLayer.componentIri",
-      "fields.y.componentIri": "fields.areaLayer.measureIri",
+      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
   },
 };

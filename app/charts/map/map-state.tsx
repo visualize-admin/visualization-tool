@@ -2,7 +2,6 @@ import {
   color as makeColor,
   extent,
   ScaleLinear,
-  scaleLinear,
   ScalePower,
   ScaleQuantile,
   scaleQuantile,
@@ -31,7 +30,6 @@ import {
   formatNumberWithUnit,
   getColorInterpolator,
   getErrorMeasure,
-  getSingleHueSequentialPalette,
   useErrorMeasure,
   useErrorVariable,
   useFormatNumber,
@@ -39,11 +37,13 @@ import {
 import {
   BaseLayer,
   BBox,
-  ColorMapping,
+  CategoricalColorField,
   ColorScaleInterpolationType,
   DivergingPaletteType,
+  FixedColorField,
   MapFields,
   MapSymbolLayer,
+  NumericalColorField,
   SequentialPaletteType,
 } from "@/configurator/config-types";
 import {
@@ -87,7 +87,6 @@ export interface MapState {
           | ScaleThreshold<number, string>;
         colorScaleInterpolationType: ColorScaleInterpolationType;
         palette: DivergingPaletteType | SequentialPaletteType;
-        nbClass: number;
       }
     | undefined;
   symbolLayer:
@@ -118,6 +117,15 @@ export interface MapState {
               palette: string;
               component: DimensionMetadataFragment;
               domain: [number, number];
+              // Needed for the legend.
+              scale:
+                | ScaleSequential<string>
+                | ScaleQuantize<string>
+                | ScaleQuantile<string>
+                | ScaleLinear<string, string>
+                | ScaleThreshold<number, string>;
+              interpolationType: ColorScaleInterpolationType;
+              getValue: (d: Observation) => number | null;
               getColor: (d: Observation) => number[];
               getFormattedError: null | ((d: Observation) => string);
             };
@@ -125,136 +133,114 @@ export interface MapState {
     | undefined;
 }
 
-const getAreaColorScale = ({
-  scaleInterpolationType,
-  palette,
+const getNumericalColorScale = ({
+  color,
   getValue,
   data,
   dataDomain,
-  nbClass,
 }: {
-  scaleInterpolationType: ColorScaleInterpolationType;
-  palette: DivergingPaletteType | SequentialPaletteType;
-  getValue: (x: Observation) => number | null;
+  color: NumericalColorField;
+  getValue: (d: Observation) => number | null;
   data: Observation[];
   dataDomain: [number, number];
-  nbClass: number;
 }) => {
-  const interpolator = getColorInterpolator(palette);
-  const getDiscreteRange = () => {
-    return Array.from({ length: nbClass }, (_, i) =>
-      interpolator(i / (nbClass - 1))
-    );
-  };
+  const interpolator = getColorInterpolator(color.palette);
 
-  switch (scaleInterpolationType) {
-    case "linear":
-      return scaleSequential(interpolator).domain(dataDomain);
-    case "quantize":
-      return scaleQuantize<string>()
-        .domain(dataDomain)
-        .range(getDiscreteRange());
-    case "quantile":
-      return scaleQuantile<string>()
-        .domain(data.map((d) => getValue(d)))
-        .range(getDiscreteRange());
-    case "jenks":
-      const ckMeansThresholds = ckmeans(
-        data.map((d) => getValue(d) ?? NaN),
-        Math.min(nbClass, data.length)
-      ).map((v) => v.pop() || 0);
+  switch (color.scaleType) {
+    case "continuous":
+      switch (color.interpolationType) {
+        case "linear":
+          return scaleSequential(interpolator).domain(dataDomain);
+      }
+    case "discrete":
+      const range = Array.from({ length: color.nbClass }, (_, i) =>
+        interpolator(i / (color.nbClass - 1))
+      );
 
-      return scaleThreshold<number, string>()
-        .domain(ckMeansThresholds)
-        .range(getDiscreteRange());
+      switch (color.interpolationType) {
+        case "jenks":
+          const ckMeansThresholds = ckmeans(
+            data.map((d) => getValue(d) ?? NaN),
+            Math.min(color.nbClass, data.length)
+          ).map((v) => v.pop() || 0);
+
+          return scaleThreshold<number, string>()
+            .domain(ckMeansThresholds)
+            .range(range);
+        case "quantile":
+          return scaleQuantile<string>()
+            .domain(data.map((d) => getValue(d)))
+            .range(range);
+        case "quantize":
+          return scaleQuantize<string>().domain(dataDomain).range(range);
+      }
     default:
-      const paletteDomain = getSingleHueSequentialPalette({
-        palette,
-        nbClass: 9,
-      });
-
-      return scaleLinear<string>()
-        .domain(dataDomain)
-        .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
+      const _exhaustiveCheck: never = color;
+      return _exhaustiveCheck;
   }
 };
 
-const getFixedSymbolColors = ({
-  value,
-  opacity,
-}: {
-  type: "fixed";
-  value: string;
-  opacity: number;
-}) => {
-  const color = convertHexToRgbArray(value, opacity * 2.55);
-  return {
-    type: "fixed",
-    getColor: (_: Observation) => color,
-  } as const;
+const getFixedColors = (color: FixedColorField) => {
+  const c = convertHexToRgbArray(color.value, color.opacity * 2.55);
+  return { type: "fixed", getColor: (_: Observation) => c } as const;
 };
 
-const getCategoricalSymbolColors = (
-  {
-    palette,
-    componentIri,
-    colorMapping,
-  }: {
-    type: "categorical";
-    palette: string;
-    componentIri: string;
-    colorMapping: ColorMapping;
-  },
+const getCategoricalColors = (
+  color: CategoricalColorField,
   dimensions: DimensionMetadataFragment[]
 ) => {
   const component = dimensions.find(
-    (d) => d.iri === componentIri
+    (d) => d.iri === color.componentIri
   ) as DimensionMetadataFragment;
   const componentValuesByLabel = keyBy(component.values, (d) => d.label);
   const domain: string[] = component.values.map((d) => d.value) || [];
-  const rgbColorMapping = mapValues(colorMapping, (d) =>
+  const rgbColorMapping = mapValues(color.colorMapping, (d) =>
     convertHexToRgbArray(d)
   );
 
   return {
     type: "categorical",
-    palette,
+    palette: color.palette,
     component,
     domain,
     getColor: (d: Observation) => {
-      const label = d[componentIri] as string;
+      const label = d[color.componentIri] as string;
       const value = componentValuesByLabel[label].value;
       return rgbColorMapping[value];
     },
   } as const;
 };
 
-const getContinousSymbolColors = (
-  {
-    palette,
-    componentIri,
-  }: {
-    type: "continuous";
-    palette: string;
-    componentIri: string;
-  },
+const getNumericalColors = (
+  color: NumericalColorField,
   data: Observation[],
   dimensions: DimensionMetadataFragment[],
   measures: DimensionMetadataFragment[],
   { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
   const component = measures.find(
-    (d) => d.iri === componentIri
+    (d) => d.iri === color.componentIri
   ) as DimensionMetadataFragment;
   const domain = extent(
-    data.map((d) => d[componentIri]),
+    data.map((d) => d[color.componentIri]),
     (d) => +d!
   ) as [number, number];
-  const colorScale = scaleSequential(
-    getColorInterpolator(palette as any)
-  ).domain(domain);
-  const errorDimension = findRelatedErrorDimension(componentIri, dimensions);
-  const errorMeasure = getErrorMeasure({ dimensions, measures }, componentIri);
+  const getValue = (d: Observation) =>
+    d[color.componentIri] !== null ? Number(d[color.componentIri]) : null;
+  const colorScale = getNumericalColorScale({
+    color,
+    getValue,
+    data,
+    dataDomain: domain,
+  });
+  const errorDimension = findRelatedErrorDimension(
+    color.componentIri,
+    dimensions
+  );
+  const errorMeasure = getErrorMeasure(
+    { dimensions, measures },
+    color.componentIri
+  );
   const getError = errorMeasure
     ? (d: Observation) => d[errorMeasure.iri]
     : null;
@@ -266,14 +252,19 @@ const getContinousSymbolColors = (
 
   return {
     type: "continuous",
-    palette,
+    palette: color.palette,
     component,
+    scale: colorScale,
+    interpolationType: color.interpolationType,
+    getValue,
     getColor: (d: Observation) => {
-      const color = colorScale(+d[componentIri]!);
-      if (color) {
-        const rgb = makeColor(color)?.rgb();
+      const c = colorScale(+d[color.componentIri]!);
+
+      if (c) {
+        const rgb = makeColor(c)?.rgb();
         return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
       }
+
       return [0, 0, 0, 255 * 0.1];
     },
     getFormattedError,
@@ -282,12 +273,12 @@ const getContinousSymbolColors = (
 };
 
 const useSymbolColors = ({
-  colors,
+  color,
   data,
   dimensions,
   measures,
 }: {
-  colors?: MapSymbolLayer["colors"];
+  color?: MapSymbolLayer["color"];
   data: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
@@ -295,37 +286,21 @@ const useSymbolColors = ({
   const formatNumber = useFormatNumber();
 
   return useMemo(() => {
-    if (!colors) {
+    if (!color) {
       return undefined;
     }
 
-    switch (colors.type) {
+    switch (color.type) {
       case "fixed":
-        return getFixedSymbolColors(colors);
+        return getFixedColors(color);
       case "categorical":
-        return getCategoricalSymbolColors(
-          colors as {
-            type: "categorical";
-            componentIri: string;
-            palette: string;
-            colorMapping: ColorMapping;
-          },
-          dimensions
-        );
-      case "continuous":
-        return getContinousSymbolColors(
-          colors as {
-            type: "continuous";
-            componentIri: string;
-            palette: string;
-          },
-          data,
-          dimensions,
-          measures,
-          { formatNumber }
-        );
+        return getCategoricalColors(color, dimensions);
+      case "numerical":
+        return getNumericalColors(color, data, dimensions, measures, {
+          formatNumber,
+        });
     }
-  }, [colors, data, dimensions, measures, formatNumber]);
+  }, [color, data, dimensions, measures, formatNumber]);
 };
 
 const makeErrorFormatter = (
@@ -455,7 +430,7 @@ const useMapState = (
 
   const areaLayerState = useLayerState({
     componentIri: areaLayer?.componentIri,
-    measureIri: areaLayer?.measureIri,
+    measureIri: areaLayer?.color.componentIri,
     data,
     features,
     dimensions,
@@ -467,13 +442,11 @@ const useMapState = (
       return;
     }
 
-    return getAreaColorScale({
-      scaleInterpolationType: areaLayer.colorScaleInterpolationType,
-      palette: areaLayer.palette,
+    return getNumericalColorScale({
+      color: areaLayer.color,
       getValue: areaLayerState.getValue,
       data: areaLayerState.data,
       dataDomain: areaLayerState.dataDomain,
-      nbClass: areaLayer.nbClass,
     });
   }, [areaLayer, areaLayerState]);
 
@@ -500,9 +473,8 @@ const useMapState = (
       ...areaLayerState,
       colorScale: areaColorScale!,
       getColor: getAreaColor,
-      colorScaleInterpolationType: areaLayer.colorScaleInterpolationType,
-      palette: areaLayer.palette,
-      nbClass: areaLayer.nbClass,
+      colorScaleInterpolationType: areaLayer.color.interpolationType,
+      palette: areaLayer.color.palette,
     };
   }, [areaLayer, areaLayerState, areaColorScale, getAreaColor]);
 
@@ -516,7 +488,7 @@ const useMapState = (
   });
 
   const symbolColors = useSymbolColors({
-    colors: symbolLayer?.colors,
+    color: symbolLayer?.color,
     data: symbolLayerState.data,
     dimensions,
     measures,

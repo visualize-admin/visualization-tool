@@ -84,6 +84,9 @@ export const MapLegend = () => {
   const measureDimensions = [
     areaLayer?.measureDimension,
     symbolLayer?.measureDimension,
+    symbolLayer?.colors.type === "continuous"
+      ? symbolLayer.colors.component
+      : undefined,
   ].filter(truthy);
   const formatters = useDimensionFormatters(measureDimensions);
 
@@ -101,23 +104,34 @@ export const MapLegend = () => {
                 {areaLayer.measureLabel}
               </Typography>
             )}
-            {areaLayer.colorScaleInterpolationType === "linear" && (
+            {areaLayer.colorScaleInterpolationType === "linear" ? (
               <ContinuousColorLegend
                 palette={areaLayer.palette}
                 domain={areaLayer.dataDomain}
                 getValue={areaLayer.getValue}
                 valueFormatter={formatters[areaLayer.measureDimension!.iri]}
               />
-            )}
-            {areaLayer.colorScaleInterpolationType === "quantize" && (
-              <QuantizeColorLegend />
-            )}
-            {areaLayer.colorScaleInterpolationType === "quantile" && (
-              <QuantileColorLegend />
-            )}
-            {areaLayer.colorScaleInterpolationType === "jenks" && (
-              <JenksColorLegend />
-            )}
+            ) : areaLayer.colorScaleInterpolationType === "quantize" ? (
+              <QuantizeColorLegend
+                colorScale={areaLayer.colorScale as ScaleQuantize<string>}
+                domain={areaLayer.dataDomain}
+                getValue={areaLayer.getValue}
+              />
+            ) : areaLayer.colorScaleInterpolationType === "quantile" ? (
+              <QuantileColorLegend
+                colorScale={areaLayer.colorScale as ScaleQuantile<string>}
+                domain={areaLayer.dataDomain}
+                getValue={areaLayer.getValue}
+              />
+            ) : areaLayer.colorScaleInterpolationType === "jenks" ? (
+              <JenksColorLegend
+                colorScale={
+                  areaLayer.colorScale as ScaleThreshold<number, string>
+                }
+                domain={areaLayer.dataDomain}
+                getValue={areaLayer.getValue}
+              />
+            ) : null}
           </Box>
         )}
 
@@ -128,15 +142,43 @@ export const MapLegend = () => {
                 <Typography component="div" variant="caption">
                   {symbolLayer.colors.component.label}
                 </Typography>
-                <ContinuousColorLegend
-                  palette={symbolLayer.colors.palette}
-                  domain={symbolLayer.colors.domain}
-                  getValue={(d: Observation) => {
-                    // @ts-ignore
-                    return d[symbolLayer.colors.component.iri] as number;
-                  }}
-                  valueFormatter={formatters[symbolLayer.measureDimension!.iri]}
-                />
+                {symbolLayer.colors.interpolationType === "linear" ? (
+                  <ContinuousColorLegend
+                    palette={symbolLayer.colors.palette}
+                    domain={symbolLayer.colors.domain}
+                    getValue={(d: Observation) => {
+                      // @ts-ignore
+                      return d[symbolLayer.colors.component.iri] as number;
+                    }}
+                    valueFormatter={
+                      formatters[symbolLayer.colors.component.iri]
+                    }
+                  />
+                ) : symbolLayer.colors.interpolationType === "quantize" ? (
+                  <QuantizeColorLegend
+                    colorScale={
+                      symbolLayer.colors.scale as ScaleQuantize<string>
+                    }
+                    domain={symbolLayer.colors.domain}
+                    getValue={symbolLayer.colors.getValue}
+                  />
+                ) : symbolLayer.colors.interpolationType === "quantile" ? (
+                  <QuantileColorLegend
+                    colorScale={
+                      symbolLayer.colors.scale as ScaleQuantile<string>
+                    }
+                    domain={symbolLayer.colors.domain}
+                    getValue={symbolLayer.colors.getValue}
+                  />
+                ) : symbolLayer.colors.interpolationType === "jenks" ? (
+                  <JenksColorLegend
+                    colorScale={
+                      symbolLayer.colors.scale as ScaleThreshold<number, string>
+                    }
+                    domain={symbolLayer.colors.domain}
+                    getValue={symbolLayer.colors.getValue}
+                  />
+                ) : null}
               </Box>
             )}
             <Box>
@@ -304,23 +346,27 @@ const CircleLegend = ({
   );
 };
 
-const JenksColorLegend = () => {
+const JenksColorLegend = ({
+  colorScale,
+  domain,
+  getValue,
+}: {
+  colorScale: ScaleThreshold<number, string>;
+  domain: [number, number];
+  getValue: (d: Observation) => number | null;
+}) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const { areaLayer } = useChartState() as MapState;
-  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
-    MapState["areaLayer"]
-  >;
   const formatNumber = useFormatInteger();
   const thresholds = useMemo(
     () => (colorScale.domain ? colorScale.domain() : []),
     [colorScale]
   );
 
-  const [min, max] = dataDomain;
+  const [min, max] = domain;
 
   // From color index to threshold value
   const thresholdsScale = scaleLinear()
@@ -384,16 +430,20 @@ const JenksColorLegend = () => {
   );
 };
 
-const QuantileColorLegend = () => {
+const QuantileColorLegend = ({
+  colorScale,
+  domain,
+  getValue,
+}: {
+  colorScale: ScaleQuantile<string>;
+  domain: [number, number];
+  getValue: (d: Observation) => number | null;
+}) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const { areaLayer } = useChartState() as MapState;
-  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
-    MapState["areaLayer"]
-  >;
   const formatNumber = useFormatInteger();
 
   const thresholds = useMemo(
@@ -402,7 +452,7 @@ const QuantileColorLegend = () => {
     [colorScale]
   );
 
-  const [min, max] = dataDomain;
+  const [min, max] = domain;
 
   // From color index to threshold value
   const thresholdsScale = scaleLinear()
@@ -464,16 +514,20 @@ const QuantileColorLegend = () => {
   );
 };
 
-const QuantizeColorLegend = () => {
+const QuantizeColorLegend = ({
+  colorScale,
+  domain,
+  getValue,
+}: {
+  colorScale: ScaleQuantize<string>;
+  domain: [number, number];
+  getValue: (d: Observation) => number | null;
+}) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
 
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
-  const { areaLayer } = useChartState() as MapState;
-  const { dataDomain, colorScale, getValue } = areaLayer as NonNullable<
-    MapState["areaLayer"]
-  >;
   const formatNumber = useFormatInteger();
 
   const classesScale = scaleLinear()
@@ -481,7 +535,7 @@ const QuantizeColorLegend = () => {
     .range([MARGIN.left, width - MARGIN.right]);
 
   const scale = scaleLinear()
-    .domain(dataDomain)
+    .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
 
   const thresholds = useMemo(
