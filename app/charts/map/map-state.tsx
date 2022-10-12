@@ -160,7 +160,7 @@ const getNumericalColorScale = ({
       switch (color.interpolationType) {
         case "jenks":
           const ckMeansThresholds = ckmeans(
-            data.map((d) => getValue(d) ?? NaN),
+            [...(data.length ? data : [{}])].map((d) => getValue(d) ?? NaN),
             Math.min(color.nbClass, data.length)
           ).map((v) => v.pop() || 0);
 
