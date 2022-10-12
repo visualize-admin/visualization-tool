@@ -10,7 +10,6 @@ import {
   Grow,
   IconButtonProps,
   Link,
-  Button,
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -127,6 +126,22 @@ const Flamegraph = ({
   );
 };
 
+const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
+  const { children, onClick } = props;
+  const [hasCopied, setHasCopied] = useState(false);
+  const enhancedOnClick = useEvent((ev: MouseEvent) => {
+    onClick(ev);
+    navigator.clipboard.writeText(toCopy);
+    setHasCopied(true);
+    setTimeout(() => setHasCopied(false), 1000);
+  });
+  return (
+    <Link {...props} onClick={enhancedOnClick}>
+      {children} {hasCopied ? "✓" : null}
+    </Link>
+  );
+};
+
 /**
  * Collapsible according showing for each request that has been made
  * a accordion with name
@@ -186,23 +201,22 @@ const AccordionTimings = ({
             sx={{ my: 0 }}
             target="_blank"
             rel="noreferrer"
+            onClick={(ev) => ev.stopPropagation()}
           >
             See in graphql editor
           </Link>
           <span>
-            <Button
-              size="small"
-              color="secondary"
+            <CopyLink
+              fontSize="small"
+              color="primary"
               variant="inline"
+              toCopy={JSON.stringify(operation.variables, null, 2)}
               onClick={(ev) => {
                 ev.stopPropagation();
-                navigator.clipboard.writeText(
-                  JSON.stringify(operation.variables, null, 2)
-                );
               }}
             >
               Copy variables
-            </Button>
+            </CopyLink>
           </span>
         </Box>
       </AccordionSummary>
