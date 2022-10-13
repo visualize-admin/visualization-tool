@@ -3,13 +3,13 @@ import { I18nProvider } from "@lingui/react";
 import "core-js/features/array/flat-map";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
-import GqlDebug from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
@@ -19,6 +19,8 @@ import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import { useNProgress } from "@/utils/use-nprogress";
+
+const GqlDebug = dynamic(() => import("@/gql-flamegraph/devtool"));
 
 const pageLaunchedWithDebug =
   typeof window !== "undefined" &&
