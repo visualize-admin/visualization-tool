@@ -390,6 +390,9 @@ const ChartFieldMultiFilter = ({
     state.chartConfig,
     `fields.${field}.color.componentIri`
   );
+  const colorComponent = [...metaData.dimensions, ...metaData.measures].find(
+    (d) => d.iri === colorComponentIri
+  );
   const colorType = get(
     state.chartConfig,
     `fields.${field}.color.type`
@@ -421,7 +424,7 @@ const ChartFieldMultiFilter = ({
               // matches component iri.
               {...(colorType === "categorical" &&
               colorComponentIri === component.iri
-                ? { colorConfigPath: "color" }
+                ? { colorConfigPath: "color", colorComponent }
                 : {})}
             />
           )
@@ -688,6 +691,10 @@ const ChartFieldColorComponent = ({
     "color",
     "componentIri",
   ]) as string | undefined;
+  const colorComponent = [
+    ...dataSetMetadata.dimensions,
+    ...dataSetMetadata.measures,
+  ].find((d) => d.iri === colorComponentIri);
   const colorType = get(chartConfig, [
     "fields",
     field,
@@ -757,6 +764,7 @@ const ChartFieldColorComponent = ({
               dimensionIri={colorComponentIri}
               field={field}
               colorConfigPath="color"
+              colorComponent={colorComponent}
             />
           ) : null
         ) : colorType === "numerical" ? (

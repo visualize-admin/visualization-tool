@@ -54,6 +54,7 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   canDimensionBeMultiFiltered,
+  DimensionValue,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
@@ -189,7 +190,11 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
-      value: { dimensionIri: string; values: string[]; random: boolean };
+      value: {
+        dimensionIri: string;
+        values: DimensionValue[];
+        random: boolean;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
@@ -1081,7 +1086,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.segment.palette,
-            dimensionValues: values.map((value) => ({ value })),
+            dimensionValues: values,
             random,
           });
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
@@ -1091,7 +1096,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.symbolLayer.color.palette,
-            dimensionValues: values.map((value) => ({ value })),
+            dimensionValues: values,
           });
           draft.chartConfig.fields.symbolLayer.color.colorMapping =
             colorMapping;
