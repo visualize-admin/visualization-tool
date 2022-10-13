@@ -315,7 +315,7 @@ const getCubeDimensionValuesWithLabels = async ({
    */
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
-    const [labels, positions, unversioned] = await Promise.all([
+    const [labels, positions, colors, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
       scaleType === "Ordinal"
         ? loadResourceLiterals({
@@ -324,12 +324,19 @@ const getCubeDimensionValuesWithLabels = async ({
             predicate: schema.position,
           })
         : [],
+      scaleType === "Ordinal"
+        ? loadResourceLiterals({
+            ids: namedNodes,
+            sparqlClient,
+            predicate: schema.color,
+          })
+        : [],
       dimensionIsVersioned(dimension)
         ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
         : [],
     ]);
 
-    const labelLookup = new Map(
+    const labelsLookup = new Map(
       labels.map(({ iri, label }) => [iri.value, label?.value])
     );
 
@@ -337,16 +344,22 @@ const getCubeDimensionValuesWithLabels = async ({
       positions.map(({ iri, value }) => [iri.value, value?.value])
     );
 
+    const colorsLookup = new Map(
+      colors.map(({ iri, value }) => [iri.value, value?.value])
+    );
+
     const unversionedLookup = new Map(
       unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
     );
 
     return namedNodes.map((iri) => {
-      const pos = positionsLookup.get(iri.value);
+      const position = positionsLookup.get(iri.value);
+
       return {
-        position: pos !== undefined ? parseInt(pos, 10) : undefined,
         value: unversionedLookup.get(iri.value) ?? iri.value,
-        label: labelLookup.get(iri.value) ?? "",
+        label: labelsLookup.get(iri.value) ?? "",
+        position: position !== undefined ? parseInt(position, 10) : undefined,
+        color: colorsLookup.get(iri.value) ?? undefined,
       };
     });
   } else if (literals.length > 0) {
