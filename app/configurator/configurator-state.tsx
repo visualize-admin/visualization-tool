@@ -57,6 +57,7 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetadataFragment,
+  HierarchyMetadataFragment,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
@@ -427,7 +428,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetadataFragment;
+  dimension: DimensionMetadataFragment & HierarchyMetadataFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
