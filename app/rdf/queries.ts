@@ -5,7 +5,6 @@ import {
   CubeDimension,
   Filter,
   LookupSource,
-  Source,
   View,
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
@@ -13,6 +12,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { PromiseValue, truthy } from "@/domain/types";
+import { createSource, pragmas } from "@/rdf/create-source";
 import { makeCubeFilters } from "@/rdf/cube-filters";
 
 import { Filters } from "../configurator";
@@ -44,9 +44,6 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
-
-export const createSource = ({ endpointUrl }: { endpointUrl: string }) =>
-  new Source({ endpointUrl, queryOperation: "postUrlencoded" });
 
 const getLatestCube = async (cube: Cube): Promise<Cube> => {
   const source = cube.source;
@@ -421,6 +418,8 @@ export const getCubeObservations = async ({
   );
 
   const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
+
   // Override sourceGraph from cube source, so lookups also work outside of that graph
   lookupSource.ptr.deleteOut(ns.cubeView.graph);
   lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
@@ -528,6 +527,7 @@ const buildFilters = ({
   locale: string;
 }): Filter[] => {
   const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
 
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);

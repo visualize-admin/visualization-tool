@@ -146,6 +146,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
       sourceUrl: state.dataSource.url,
       locale,
     },
+    pause: !dataSetIri,
   });
   const goNext = useEvent(() => {
     if (data?.dataCubeByIri) {

@@ -6,6 +6,7 @@ import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
+import { pragmas } from "./create-source";
 import { getQueryLocales } from "./parse";
 
 interface ResourceLabel {
@@ -49,7 +50,7 @@ const buildResourceLabelsQuery = (
         ${values}
       }
       ${localesFilter}
-    `;
+    `.prologue`${pragmas}`;
 };
 
 /**

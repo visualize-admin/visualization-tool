@@ -1,10 +1,8 @@
 import { GraphQLResolveInfo } from "graphql";
 
-import {
-  getCubeObservations as getCubeObservations_,
-  createSource as createSource_,
-} from "../rdf/queries";
-import { unversionObservation as unversionObservation_ } from "../rdf/query-dimension-values";
+import { createSource as createSource_ } from "@/rdf/create-source";
+import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
+import { unversionObservation as unversionObservation_ } from "@/rdf/query-dimension-values";
 
 import { GraphQLContext } from "./context";
 import { Query } from "./resolvers";
@@ -28,9 +26,10 @@ jest.mock("../rdf/query-search", () => ({
 }));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
+}));
+jest.mock("../rdf/create-source", () => ({
   createSource: jest.fn(),
 }));
-
 jest.mock("../rdf/query-cube-metadata", () => ({}));
 jest.mock("../rdf/query-hierarchies", () => ({}));
 

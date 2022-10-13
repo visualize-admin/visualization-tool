@@ -3,6 +3,7 @@ import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
+import { pragmas } from "./create-source";
 import * as ns from "./namespace";
 
 interface ResourceLabel {
@@ -28,7 +29,7 @@ const buildUnitsQuery = (values: Term[], locale: string) => {
         BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
         
         FILTER ( lang(?rdfsLabel) = "${locale}" )
-      `;
+      `.prologue`${pragmas}`;
 };
 
 /**

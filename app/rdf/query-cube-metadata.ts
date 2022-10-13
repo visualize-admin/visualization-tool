@@ -6,6 +6,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { schema, dcat, dcterms, cube } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 
+import { pragmas } from "./create-source";
 import { makeLocalesFilter } from "./query-labels";
 import { makeVisualizeDatasetFilter } from "./query-utils";
 
@@ -40,7 +41,7 @@ export const createThemeLoader =
           schema.inDefinedTermSet
         } <https://register.ld.admin.ch/opendataswiss/category>; 
         ${makeLocalesFilter("?theme", schema.name, "?name", locale)}
-    }`;
+    }`.prologue`${pragmas}`;
     const results = await query.execute(sparqlClient.query, {
       operation: "postUrlencoded",
     });
@@ -66,7 +67,7 @@ export const createOrganizationLoader =
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.Organization} ;
       ${makeLocalesFilter("?theme", schema.name, "?name", locale)}
-    }`;
+    }`.prologue`${pragmas}`;
     const results = await query.execute(sparqlClient.query, {
       operation: "postUrlencoded",
     });

@@ -95,12 +95,16 @@ const DataFilterSelectGeneric = ({
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
+  const [pause, setPause] = useState(true);
   const hierarchyParents = useHierarchyParents(
     state.dataSet,
     state.dataSource,
     dimension,
-    locale
+    locale,
+    pause
   );
+
+  const handleOpen = useEvent(() => setPause(false));
 
   const values = dimension.values;
 
@@ -165,6 +169,7 @@ const DataFilterSelectGeneric = ({
         {...sharedProps}
         options={values}
         optionGroups={optionGroups}
+        onOpen={handleOpen}
       />
     );
   }
