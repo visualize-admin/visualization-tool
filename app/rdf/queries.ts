@@ -397,19 +397,6 @@ export const getCubeObservations = async ({
 }> => {
   const cubeView = View.fromCube(cube);
 
-  // Only choose dimensions that we really want
-  let observationDimensions = cubeView.dimensions.filter((d) =>
-    d.cubeDimensions.every(
-      (cd) =>
-        isObservationDimension(cd) &&
-        (dimensions ? dimensions.includes(cd.path.value) : true)
-    )
-  );
-
-  let observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters, locale })
-    : [];
-
   /**
    * Add labels to named dimensions
    */
@@ -422,34 +409,20 @@ export const getCubeObservations = async ({
     dimensions ? dimensions.includes(d.data.iri) : true
   );
 
-  // Find dimensions which are NOT literal
-  const namedDimensions = cubeDimensions.filter(
-    ({ data: { isLiteral } }) => !isLiteral
-  );
+  let observationFilters = filters
+    ? buildFilters({ cube, view: cubeView, filters, locale })
+    : [];
 
-  const lookupSource = LookupSource.fromSource(cube.source);
-  lookupSource.queryPrefix = pragmas;
-
-  // Override sourceGraph from cube source, so lookups also work outside of that graph
-  lookupSource.ptr.deleteOut(ns.cubeView.graph);
-  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
-
-  for (const dimension of namedDimensions) {
-    if (raw) {
-      continue;
-    }
-    const labelDimension = cubeView.createDimension({
-      source: lookupSource,
-      path: ns.schema.name,
-      join: cubeView.dimension({ cubeDimension: dimension.data.iri }),
-      as: labelDimensionIri(dimension.data.iri),
-    });
-
-    observationDimensions.push(labelDimension);
-    observationFilters.push(
-      labelDimension.filter.lang(getQueryLocales(locale))
-    );
-  }
+  // Only choose dimensions that we really want
+  const observationDimensions = buildDimensions({
+    cubeView,
+    dimensions,
+    cubeDimensions,
+    cube,
+    locale,
+    observationFilters,
+    raw,
+  });
 
   const observationsView = new View({
     dimensions: observationDimensions,
@@ -637,3 +610,60 @@ export const getSparqlEditorUrl = ({
     ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}&requestMethod=POST`
     : null;
 };
+
+function buildDimensions({
+  cubeView,
+  dimensions,
+  cubeDimensions,
+  cube,
+  locale,
+  observationFilters,
+  raw,
+}: {
+  cubeView: View;
+  dimensions: Maybe<string[]>;
+  cubeDimensions: ResolvedDimension[];
+  cube: Cube;
+  locale: string;
+  observationFilters: Filter[];
+  raw?: boolean;
+}) {
+  const observationDimensions = cubeView.dimensions.filter((d) =>
+    d.cubeDimensions.every(
+      (cd) =>
+        isObservationDimension(cd) &&
+        (dimensions ? dimensions.includes(cd.path.value) : true)
+    )
+  );
+
+  // Find dimensions which are NOT literal
+  const namedDimensions = cubeDimensions.filter(
+    ({ data: { isLiteral } }) => !isLiteral
+  );
+
+  const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
+
+  // Override sourceGraph from cube source, so lookups also work outside of that graph
+  lookupSource.ptr.deleteOut(ns.cubeView.graph);
+  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
+
+  for (const dimension of namedDimensions) {
+    if (raw) {
+      continue;
+    }
+    const labelDimension = cubeView.createDimension({
+      source: lookupSource,
+      path: ns.schema.name,
+      join: cubeView.dimension({ cubeDimension: dimension.data.iri }),
+      as: labelDimensionIri(dimension.data.iri),
+    });
+
+    observationDimensions.push(labelDimension);
+    observationFilters.push(
+      labelDimension.filter.lang(getQueryLocales(locale))
+    );
+  }
+
+  return observationDimensions;
+}
