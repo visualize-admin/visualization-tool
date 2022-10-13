@@ -27,6 +27,7 @@ import {
   getInitialSymbolLayer,
   getPossibleChartType,
 } from "@/charts";
+import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -904,7 +905,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               setWith(
                 draft,
                 `chartConfig.fields.${action.value.field}.color`,
-                { type: "fixed", value: "salmon", opacity: 80 },
+                DEFAULT_FIXED_COLOR_FIELD,
                 Object
               );
             } else {
