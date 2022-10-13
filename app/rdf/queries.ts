@@ -397,15 +397,13 @@ export const getCubeObservations = async ({
 }> => {
   const cubeView = View.fromCube(cube);
 
-  /**
-   * Add labels to named dimensions
-   */
-  const allCubeDimensions = await getCubeDimensions({
+  const allResolvedDimensions = await getCubeDimensions({
     cube,
     locale,
     sparqlClient,
   });
-  const cubeDimensions = allCubeDimensions.filter((d) =>
+
+  const cubeDimensions = allResolvedDimensions.filter((d) =>
     dimensions ? dimensions.includes(d.data.iri) : true
   );
 
