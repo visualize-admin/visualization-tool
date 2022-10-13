@@ -162,13 +162,7 @@ export const getCubeDimensions = async ({
   sparqlClient: ParsingClient;
 }): Promise<ResolvedDimension[]> => {
   try {
-    const dimensions = cube.dimensions.filter(
-      (dim) =>
-        dim.path &&
-        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
-          dim.path.value ?? ""
-        )
-    );
+    const dimensions = cube.dimensions.filter(isObservationDimension);
     const dimensionUnits = dimensions.flatMap(getDimensionUnits);
 
     const dimensionUnitIndex = index(
@@ -360,6 +354,23 @@ const getCubeDimensionValuesWithLabels = async ({
   return [];
 };
 
+type NonNullableValues<T, K extends keyof T> = Omit<T, K> &
+  {
+    [P in K]-?: NonNullable<T[P]>;
+  };
+
+type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
+
+const isObservationDimension = (
+  dim: CubeDimension
+): dim is CubeDimensionWithPath =>
+  !!(
+    dim.path &&
+    ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
+      dim.path.value ?? ""
+    )
+  );
+
 export const getCubeObservations = async ({
   cube,
   locale,
@@ -390,10 +401,7 @@ export const getCubeObservations = async ({
   let observationDimensions = cubeView.dimensions.filter((d) =>
     d.cubeDimensions.every(
       (cd) =>
-        cd.path &&
-        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
-          cd.path.value ?? ""
-        ) &&
+        isObservationDimension(cd) &&
         (dimensions ? dimensions.includes(cd.path.value) : true)
     )
   );
