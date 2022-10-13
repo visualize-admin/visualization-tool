@@ -27,6 +27,7 @@ import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
+import { schema } from "./namespace";
 import {
   getQueryLocales,
   getScaleType,
@@ -36,7 +37,7 @@ import {
 } from "./parse";
 import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
-import { loadResourcePositions } from "./query-positions";
+import { loadResourceLiterals } from "./query-literals";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnits } from "./query-unit-labels";
 
@@ -317,7 +318,11 @@ const getCubeDimensionValuesWithLabels = async ({
     const [labels, positions, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
       scaleType === "Ordinal"
-        ? loadResourcePositions({ ids: namedNodes, sparqlClient })
+        ? loadResourceLiterals({
+            ids: namedNodes,
+            sparqlClient,
+            predicate: schema.position,
+          })
         : [],
       dimensionIsVersioned(dimension)
         ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
@@ -329,7 +334,7 @@ const getCubeDimensionValuesWithLabels = async ({
     );
 
     const positionsLookup = new Map(
-      positions.map(({ iri, position }) => [iri.value, position?.value])
+      positions.map(({ iri, value }) => [iri.value, value?.value])
     );
 
     const unversionedLookup = new Map(
