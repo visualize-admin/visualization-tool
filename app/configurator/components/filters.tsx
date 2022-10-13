@@ -28,7 +28,6 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -255,9 +254,11 @@ const getColorMapping = (
   if (!config.activeField) {
     return;
   }
+
   const colorMappingPath = `${config.activeField}.${
     colorConfigPath ? `${colorConfigPath}.` : ""
   }colorMapping`;
+
   return get(config.chartConfig.fields, colorMappingPath) as
     | ColorMapping
     | undefined;
@@ -361,24 +362,11 @@ const MultiFilterContent = ({
   const hasColorMapping = useMemo(() => {
     return (
       !!getColorMapping(config, colorConfigPath) &&
-      dimensionIri === colorComponent?.iri
+      (colorComponent !== undefined
+        ? dimensionIri === colorComponent.iri
+        : true)
     );
-  }, [colorConfigPath, config, dimensionIri, colorComponent?.iri]);
-
-  // Initialize color mapping with all values, not randomizing the order.
-  useEffect(() => {
-    if (hasColorMapping) {
-      handleRecomputeColorMapping();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasColorMapping]);
-
-  // Initialize color mapping with all values, not randomizing the order.
-  useEffect(() => {
-    if (hasColorMapping) {
-      handleRecomputeColorMapping();
-    }
-  }, [hasColorMapping]);
+  }, [colorConfigPath, config, dimensionIri, colorComponent]);
 
   return (
     <Box sx={{ position: "relative" }}>

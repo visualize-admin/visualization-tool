@@ -393,10 +393,9 @@ const ChartFieldMultiFilter = ({
   const colorComponent = [...metaData.dimensions, ...metaData.measures].find(
     (d) => d.iri === colorComponentIri
   );
-  const colorType = get(
-    state.chartConfig,
-    `fields.${field}.color.type`
-  ) as ColorFieldType;
+  const colorType = get(state.chartConfig, `fields.${field}.color.type`) as
+    | ColorFieldType
+    | undefined;
 
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-right-filters">
@@ -420,12 +419,10 @@ const ChartFieldMultiFilter = ({
               dimensionIri={component.iri}
               dataSetIri={metaData.iri}
               field={field}
-              // Allow setting the colors when color field is used and its iri
-              // matches component iri.
-              {...(colorType === "categorical" &&
-              colorComponentIri === component.iri
-                ? { colorConfigPath: "color", colorComponent }
-                : {})}
+              colorComponent={colorComponent || component}
+              // If colorType is defined, we are dealing with color field and
+              // not segment.
+              colorConfigPath={colorType ? "color" : undefined}
             />
           )
         )}
