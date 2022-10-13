@@ -325,6 +325,7 @@ const EncodingOptionsPanel = ({
           field={field}
           componentTypes={optionsByField["size"].componentTypes}
           dataSetMetadata={metaData}
+          optional={optionsByField["size"].optional}
         />
       )}
 
@@ -610,10 +611,12 @@ const ChartFieldSize = ({
   field,
   componentTypes,
   dataSetMetadata,
+  optional,
 }: {
   field: string;
   componentTypes: ComponentType[];
   dataSetMetadata: DataCubeMetadata;
+  optional: boolean;
 }) => {
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -641,6 +644,7 @@ const ChartFieldSize = ({
           field={field}
           path="measureIri"
           options={measuresOptions}
+          isOptional={optional}
           dataSetMetadata={dataSetMetadata}
         />
       </ControlSectionContent>

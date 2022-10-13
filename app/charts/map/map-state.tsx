@@ -495,10 +495,16 @@ const useMapState = (
   });
 
   const radiusScale = useMemo(() => {
-    return scaleSqrt()
-      .domain([0, symbolLayerState.dataDomain[1]])
-      .range([0, 24]);
-  }, [symbolLayerState.dataDomain]);
+    // Measure dimension is undefined. Can be useful when the user want to
+    // encode only the color of symbols, and the size is irrelevant.
+    if (symbolLayerState.dataDomain[1] === undefined) {
+      return scaleSqrt().range([0, 12]).unknown(12);
+    } else {
+      return scaleSqrt()
+        .domain([0, symbolLayerState.dataDomain[1]])
+        .range([0, 24]);
+    }
+  }, [symbolLayerState.dataDomain]) as ScalePower<number, number>;
 
   const preparedSymbolLayerState: MapState["symbolLayer"] = useMemo(() => {
     if (symbolLayer?.componentIri === undefined) {

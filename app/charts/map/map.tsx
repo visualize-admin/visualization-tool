@@ -261,7 +261,8 @@ export const MapComponent = () => {
 
     const getRadius = ({ properties: { observation } }: GeoPoint) => {
       const value = observation ? symbolLayer.getValue(observation) : null;
-      const radius = value ? symbolLayer.radiusScale(value) : 0;
+      // @ts-ignore - value can be undefined, D3 types are wrong here
+      const radius = symbolLayer.radiusScale(value) ?? 0;
 
       return radius;
     };

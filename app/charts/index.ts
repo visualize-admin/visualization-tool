@@ -28,6 +28,7 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
@@ -173,11 +174,11 @@ export const getInitialSymbolLayer = ({
   measure,
 }: {
   component: GeoShapesDimension | GeoCoordinatesDimension;
-  measure: NumericalMeasure;
+  measure: NumericalMeasure | undefined;
 }): MapSymbolLayer => {
   return {
     componentIri: component.iri,
-    measureIri: measure.iri,
+    measureIri: measure?.iri || FIELD_VALUE_NONE,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };

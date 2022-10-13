@@ -181,14 +181,16 @@ export const MapLegend = () => {
                 ) : null}
               </Box>
             )}
-            <Box>
-              <Typography component="div" variant="caption">
-                {symbolLayer.measureLabel}
-              </Typography>
-              <CircleLegend
-                valueFormatter={formatters[symbolLayer.measureDimension!.iri]}
-              />
-            </Box>
+            {symbolLayer.measureDimension && (
+              <Box>
+                <Typography component="div" variant="caption">
+                  {symbolLayer.measureLabel}
+                </Typography>
+                <CircleLegend
+                  valueFormatter={formatters[symbolLayer.measureDimension.iri]}
+                />
+              </Box>
+            )}
           </Flex>
         )}
       </Flex>
@@ -283,7 +285,8 @@ const CircleLegend = ({
   const maybeValue = interaction.d && getValue(interaction.d);
   const value = typeof maybeValue === "number" ? maybeValue : undefined;
 
-  const radius = value && radiusScale(value);
+  // @ts-ignore - value can be undefined, D3 types are wrong here
+  const radius = radiusScale(value);
   const maxRadius = radiusScale.range()[1];
 
   const color = interaction.d

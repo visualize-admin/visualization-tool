@@ -26,7 +26,7 @@ export type EncodingOption =
   | { field: "imputationType" }
   | { field: "showStandardError" }
   | { field: "sorting" }
-  | { field: "size"; componentTypes: ComponentType[] };
+  | { field: "size"; componentTypes: ComponentType[]; optional: boolean };
 
 /**
  * @todo
@@ -253,7 +253,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         exclusive: false,
         filters: true,
         options: [
-          { field: "size", componentTypes: ["NumericalMeasure"] },
+          {
+            field: "size",
+            componentTypes: ["NumericalMeasure"],
+            optional: true,
+          },
           {
             field: "color",
             type: "component",
