@@ -197,10 +197,10 @@ export const MapComponent = () => {
       const { observation } = d.properties;
 
       if (observation) {
-        const value = areaLayer.getValue(observation);
+        const value = areaLayer.colors.getValue(observation);
 
         if (value !== null) {
-          return areaLayer.getColor(value);
+          return areaLayer.colors.getColor(observation);
         }
       }
 

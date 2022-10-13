@@ -79,10 +79,11 @@ export const MapLegend = () => {
   const showAreaLegend =
     areaLayer &&
     areaLayer.data.length >= 3 &&
-    (areaLayer.colorScaleInterpolationType === "linear" ||
-      areaLayer.colorScale.range().length >= 3);
+    areaLayer.colors.type === "continuous" &&
+    (areaLayer.colors.interpolationType === "linear" ||
+      areaLayer.colors.scale.range().length >= 3);
   const measureDimensions = [
-    areaLayer?.measureDimension,
+    areaLayer?.colors.component,
     symbolLayer?.measureDimension,
     symbolLayer?.colors.type === "continuous"
       ? symbolLayer.colors.component
@@ -95,42 +96,42 @@ export const MapLegend = () => {
       <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>
-            {areaLayer.measureLabel && (
-              <Typography
-                component="div"
-                variant="caption"
-                sx={{ marginLeft: `${MARGIN.left}px` }}
-              >
-                {areaLayer.measureLabel}
-              </Typography>
-            )}
-            {areaLayer.colorScaleInterpolationType === "linear" ? (
-              <ContinuousColorLegend
-                palette={areaLayer.palette}
-                domain={areaLayer.dataDomain}
-                getValue={areaLayer.getValue}
-                valueFormatter={formatters[areaLayer.measureDimension!.iri]}
-              />
-            ) : areaLayer.colorScaleInterpolationType === "quantize" ? (
-              <QuantizeColorLegend
-                colorScale={areaLayer.colorScale as ScaleQuantize<string>}
-                domain={areaLayer.dataDomain}
-                getValue={areaLayer.getValue}
-              />
-            ) : areaLayer.colorScaleInterpolationType === "quantile" ? (
-              <QuantileColorLegend
-                colorScale={areaLayer.colorScale as ScaleQuantile<string>}
-                domain={areaLayer.dataDomain}
-                getValue={areaLayer.getValue}
-              />
-            ) : areaLayer.colorScaleInterpolationType === "jenks" ? (
-              <JenksColorLegend
-                colorScale={
-                  areaLayer.colorScale as ScaleThreshold<number, string>
-                }
-                domain={areaLayer.dataDomain}
-                getValue={areaLayer.getValue}
-              />
+            <Typography
+              component="div"
+              variant="caption"
+              sx={{ marginLeft: `${MARGIN.left}px` }}
+            >
+              {areaLayer.colors.component.label}
+            </Typography>
+            {areaLayer.colors.type === "continuous" ? (
+              areaLayer.colors.interpolationType === "linear" ? (
+                <ContinuousColorLegend
+                  palette={areaLayer.colors.palette}
+                  domain={areaLayer.dataDomain}
+                  getValue={areaLayer.colors.getValue}
+                  valueFormatter={formatters[areaLayer.colors.component.iri]}
+                />
+              ) : areaLayer.colors.interpolationType === "quantize" ? (
+                <QuantizeColorLegend
+                  colorScale={areaLayer.colors.scale as ScaleQuantize<string>}
+                  domain={areaLayer.dataDomain}
+                  getValue={areaLayer.colors.getValue}
+                />
+              ) : areaLayer.colors.interpolationType === "quantile" ? (
+                <QuantileColorLegend
+                  colorScale={areaLayer.colors.scale as ScaleQuantile<string>}
+                  domain={areaLayer.dataDomain}
+                  getValue={areaLayer.colors.getValue}
+                />
+              ) : areaLayer.colors.interpolationType === "jenks" ? (
+                <JenksColorLegend
+                  colorScale={
+                    areaLayer.colors.scale as ScaleThreshold<number, string>
+                  }
+                  domain={areaLayer.dataDomain}
+                  getValue={areaLayer.colors.getValue}
+                />
+              ) : null
             ) : null}
           </Box>
         )}
@@ -195,12 +196,21 @@ export const MapLegend = () => {
         )}
       </Flex>
 
-      {symbolLayer?.colors.type === "categorical" && (
+      {areaLayer?.colors.type === "categorical" && (
         <MapLegendColor
-          component={symbolLayer.colors.component}
-          getColor={symbolLayer.colors.getColor}
+          component={areaLayer.colors.component}
+          getColor={areaLayer.colors.getColor}
         />
       )}
+
+      {symbolLayer?.colors.type === "categorical" &&
+        symbolLayer.colors.component.iri !==
+          areaLayer?.colors.component.iri && (
+          <MapLegendColor
+            component={symbolLayer.colors.component}
+            getColor={symbolLayer.colors.getColor}
+          />
+        )}
     </>
   );
 };
