@@ -11,7 +11,8 @@ export type TestContext = {
 type SelectorOrActionFunction = (
   ctx: TestContext,
   arg1?: any,
-  arg2?: any
+  arg2?: any,
+  arg3?: any
 ) => Promise<Locator> | Locator | Promise<void>;
 
 export type SelectorOrActionGuard<T> = T extends Record<
