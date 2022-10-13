@@ -147,6 +147,11 @@ export const getCube = async ({
   return parseCube({ cube: latestCube, locale });
 };
 
+const getDimensionUnits = (d: CubeDimension) => {
+  const t = d.out(ns.qudt.unit).term;
+  return t ? [t] : [];
+};
+
 export const getCubeDimensions = async ({
   cube,
   locale,
@@ -164,10 +169,7 @@ export const getCubeDimensions = async ({
           dim.path.value ?? ""
         )
     );
-    const dimensionUnits = dimensions.flatMap((d) => {
-      const t = d.out(ns.qudt.unit).term;
-      return t ? [t] : [];
-    });
+    const dimensionUnits = dimensions.flatMap(getDimensionUnits);
 
     const dimensionUnitIndex = index(
       await loadUnits({
