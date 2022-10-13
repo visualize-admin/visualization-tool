@@ -55,6 +55,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   canDimensionBeMultiFiltered,
   DimensionValue,
+  isOrdinalMeasure,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
@@ -738,7 +739,7 @@ const handleChartFieldChanged = (
           component: dataSetMetadata.dimensions
             .filter(isGeoShapesDimension)
             .find((d) => d.iri === componentIri)!,
-          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+          measure: dataSetMetadata.measures[0],
         });
       } else if (field === "symbolLayer") {
         draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
@@ -923,7 +924,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 `chartConfig.fields.${action.value.field}.componentIri`
               );
 
-              if (canDimensionBeMultiFiltered(component)) {
+              if (
+                canDimensionBeMultiFiltered(component) ||
+                isOrdinalMeasure(component)
+              ) {
                 setWith(
                   draft,
                   `chartConfig.fields.${action.value.field}.color`,

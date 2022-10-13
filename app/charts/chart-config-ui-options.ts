@@ -241,7 +241,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           {
             field: "color",
             type: "component",
-            componentTypes: ["NumericalMeasure"],
+            componentTypes: ["NumericalMeasure", "OrdinalMeasure"],
             optional: false,
           },
         ],
@@ -261,7 +261,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           {
             field: "color",
             type: "component",
-            componentTypes: ["NumericalMeasure", "GeoShapesDimension"],
+            componentTypes: [
+              "NumericalMeasure",
+              "OrdinalMeasure",
+              "GeoShapesDimension",
+            ],
             optional: true,
           },
         ],
