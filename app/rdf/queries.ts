@@ -19,6 +19,7 @@ import { Filters } from "../configurator";
 import {
   DimensionValue,
   Observation,
+  ObservationValue,
   parseObservationValue,
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
@@ -407,8 +408,27 @@ export const getCubeObservations = async ({
     dimensions ? dimensions.includes(d.data.iri) : true
   );
 
+  const serverFilters: typeof filters = {};
+  let dbFilters: typeof filters = {};
+
+  for (const [k, v] of Object.entries(filters || {})) {
+    if (v.type !== "multi") {
+      dbFilters[k] = v;
+    } else {
+      const count = Object.keys(v.values).length;
+      if (count > 100) {
+        console.log(
+          `Will apply server side filter since filter values count is too high, iri: ${k}, count: ${count}`
+        );
+        serverFilters[k] = v;
+      } else {
+        dbFilters[k] = v;
+      }
+    }
+  }
+
   let observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters, locale })
+    ? buildFilters({ cube, view: cubeView, filters: dbFilters, locale })
     : [];
 
   // Only choose dimensions that we really want
@@ -433,14 +453,45 @@ export const getCubeObservations = async ({
     disableDistinct: !!(!filters || Object.keys(filters).length === 0),
   });
 
-  const observations = observationsRaw.map(
-    parseObservations(cubeDimensions, raw)
-  );
+  const serverFilter =
+    Object.keys(serverFilters).length > 0
+      ? makeServerFilter(serverFilters)
+      : null;
+  const filteredObservationsRaw: typeof observationsRaw = [];
+  const observations: Observation[] = [];
+  const observationParser = parseObservation(cubeDimensions, raw);
+  for (let or of observationsRaw) {
+    if (!serverFilter || serverFilter(or)) {
+      const obs = observationParser(or);
+      observations.push(obs);
+      filteredObservationsRaw.push(or);
+    }
+  }
 
   return {
     query,
-    observationsRaw,
+    observationsRaw: serverFilter ? filteredObservationsRaw : observationsRaw,
     observations,
+  };
+};
+
+const makeServerFilter = (filters: Filters) => {
+  const sets = new Map<string, Set<ObservationValue>>();
+  for (const [iri, filter] of Object.entries(filters)) {
+    if (filter.type !== "multi") {
+      continue;
+    }
+    const valueSet = new Set(Object.keys(filter.values));
+    sets.set(iri, valueSet);
+  }
+
+  return (or: RDFObservation) => {
+    for (const [iri, valueSet] of sets.entries()) {
+      if (!valueSet.has(or[iri]?.value)) {
+        return false;
+      }
+    }
+    return true;
   };
 };
 
@@ -608,14 +659,12 @@ async function fetchViewObservations({
   return { query, observationsRaw };
 }
 
-function parseObservations(
+type RDFObservation = Record<string, Literal | NamedNode<string>>;
+
+function parseObservation(
   cubeDimensions: ResolvedDimension[],
   raw: boolean | undefined
-): (
-  value: Record<string, Literal | NamedNode<string>>,
-  index: number,
-  array: Record<string, Literal | NamedNode<string>>[]
-) => Observation {
+): (value: RDFObservation) => Observation {
   return (obs) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
