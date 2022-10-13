@@ -429,73 +429,21 @@ export const getCubeObservations = async ({
     filters: observationFilters,
   });
 
-  /**
-   * Add LIMIT to query
-   */
-  if (limit !== undefined) {
-    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(
-      ns.cubeView.projection,
-      (projection: $FixMe) => {
-        // const order = projection
-        //   .blankNode()
-        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
-        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
-
-        // projection.addList(ns.cubeView.orderBy, order)
-        projection.addOut(ns.cubeView.limit, limit);
-        // projection.addOut(ns.cubeView.offset, offset)
-      }
-    );
-  }
-
-  const queryOptions = {
-    disableDistinct: !filters || Object.keys(filters).length === 0,
-  };
-
-  const query = observationsView
-    .observationsQuery(queryOptions)
-    .query.toString();
-
-  let observationsRaw:
-    | PromiseValue<ReturnType<typeof observationsView.observations>>
-    | undefined;
-  try {
-    observationsRaw = await observationsView.observations(queryOptions);
-  } catch (e) {
-    console.warn("Query failed", query);
-    throw new Error(
-      `Could not retrieve data: ${e instanceof Error ? e.message : e}`
-    );
-  }
-  const observations = observationsRaw.map((obs) => {
-    return Object.fromEntries(
-      cubeDimensions.map((d) => {
-        const label = obs[labelDimensionIri(d.data.iri)]?.value;
-
-        const value =
-          obs[d.data.iri]?.termType === "Literal" &&
-          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
-            ? null
-            : obs[d.data.iri]?.value;
-
-        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-        return [
-          d.data.iri,
-          raw ? rawValue : label ?? value ?? null,
-          // v !== undefined ? parseObservationValue({ value: v }) : null,
-        ];
-      })
-    );
+  const { query, observationsRaw } = await fetchViewObservations({
+    limit,
+    observationsView,
+    disableDistinct: !!(!filters || Object.keys(filters).length === 0),
   });
 
-  const result = {
-    query,
-    observations,
-    observationsRaw,
-  };
+  const observations = observationsRaw.map(
+    parseObservations(cubeDimensions, raw)
+  );
 
-  return result;
+  return {
+    query,
+    observationsRaw,
+    observations,
+  };
 };
 
 const buildFilters = ({
@@ -610,6 +558,83 @@ export const getSparqlEditorUrl = ({
     ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}&requestMethod=POST`
     : null;
 };
+
+async function fetchViewObservations({
+  limit,
+  observationsView,
+  disableDistinct,
+}: {
+  limit: number | undefined;
+  observationsView: View;
+  disableDistinct: boolean;
+}) {
+  /**
+   * Add LIMIT to query
+   */
+  if (limit !== undefined) {
+    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
+    observationsView.ptr.addOut(
+      ns.cubeView.projection,
+      (projection: $FixMe) => {
+        // const order = projection
+        //   .blankNode()
+        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
+        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
+        // projection.addList(ns.cubeView.orderBy, order)
+        projection.addOut(ns.cubeView.limit, limit);
+        // projection.addOut(ns.cubeView.offset, offset)
+      }
+    );
+  }
+
+  const queryOptions = {
+    disableDistinct,
+  };
+
+  const query = observationsView
+    .observationsQuery(queryOptions)
+    .query.toString();
+
+  let observationsRaw:
+    | PromiseValue<ReturnType<typeof observationsView.observations>>
+    | undefined;
+  try {
+    observationsRaw = await observationsView.observations(queryOptions);
+  } catch (e) {
+    console.warn("Query failed", query);
+    throw new Error(
+      `Could not retrieve data: ${e instanceof Error ? e.message : e}`
+    );
+  }
+
+  return { query, observationsRaw };
+}
+
+function parseObservations(
+  cubeDimensions: ResolvedDimension[],
+  raw: boolean | undefined
+): (
+  value: Record<string, Literal | NamedNode<string>>,
+  index: number,
+  array: Record<string, Literal | NamedNode<string>>[]
+) => Observation {
+  return (obs) => {
+    return Object.fromEntries(
+      cubeDimensions.map((d) => {
+        const label = obs[labelDimensionIri(d.data.iri)]?.value;
+
+        const value =
+          obs[d.data.iri]?.termType === "Literal" &&
+          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+            ? null
+            : obs[d.data.iri]?.value;
+
+        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
+        return [d.data.iri, raw ? rawValue : label ?? value ?? null];
+      })
+    );
+  };
+}
 
 function buildDimensions({
   cubeView,
