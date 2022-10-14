@@ -221,6 +221,7 @@ export type HierarchyValue = {
   __typename?: 'HierarchyValue';
   value: Scalars['String'];
   label: Scalars['String'];
+  position?: Maybe<Scalars['String']>;
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;
@@ -744,6 +745,7 @@ export type GeoShapesDimensionResolvers<ContextType = GraphQLContext, ParentType
 export type HierarchyValueResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['HierarchyValue'] = ResolversParentTypes['HierarchyValue']> = ResolversObject<{
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  position?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   dimensionIri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   children?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
