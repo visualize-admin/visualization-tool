@@ -92,8 +92,8 @@ export const MapLegend = () => {
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
-    <>
-      <Flex sx={{ minHeight: 100, flexWrap: "wrap", gap: 4, mt: 4 }}>
+    <Box sx={{ minHeight: 100 }}>
+      <Flex sx={{ flexWrap: "wrap", gap: 4, mt: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>
             <Typography
@@ -182,6 +182,7 @@ export const MapLegend = () => {
                 ) : null}
               </Box>
             )}
+
             {symbolLayer.measureDimension && (
               <Box>
                 <Typography component="div" variant="caption">
@@ -211,7 +212,7 @@ export const MapLegend = () => {
             getColor={symbolLayer.colors.getColor}
           />
         )}
-    </>
+    </Box>
   );
 };
 
