@@ -27,9 +27,7 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await (await within(panelRight).findByText("None")).click();
 
   // Select options open in portal
-  await screen
-    .locator('li[role="option"]:has-text("production region")')
-    .click();
+  await (await selectors.mui.popover().findByText("production region")).click();
 
   // allow select options to disappear to prevent re-selecting none
   await sleep(3000);
@@ -38,10 +36,9 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await selectors.chart.loaded();
 
   await (await within(panelRight).findByText("None")).click();
+
   // re-select preduction region for color mapping
-  await screen
-    .locator('li[role="option"]:has-text("production region")')
-    .click();
+  await (await selectors.mui.popover().findByText("production region")).click();
 
   expect(
     await (await selectors.chart.colorLegend()).locator("div").count()
