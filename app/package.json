@@ -126,7 +126,7 @@
     "@lingui/cli": "^3.2.3",
     "@lingui/macro": "^3.2.3",
     "@mdx-js/loader": "^1.6.22",
-    "@playwright-testing-library/test": "^4.4.0",
+    "@playwright-testing-library/test": "^4.5.0",
     "@playwright/test": "^1.26.1",
     "@svgr/cli": "^5.5.0",
     "@testing-library/react": "^12.1.2",
