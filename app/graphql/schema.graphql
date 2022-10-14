@@ -34,6 +34,7 @@ type DataCube {
   publisher: String
   description: String
   datePublished: String
+  dateModified: String
   expires: String
   publicationStatus: DataCubePublicationStatus!
   observations(
