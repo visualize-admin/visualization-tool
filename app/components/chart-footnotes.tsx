@@ -108,7 +108,7 @@ export const ChartFootnotes = ({
       dataCubeByIri.dateModified
         ? t({
             id: "dataset.metadata.date.footnotes.updated",
-            message: `, latest update: ${formatLocale.format("%x %X")(
+            message: `, latest update: ${formatLocale.format("%x %H:%M")(
               new Date(dataCubeByIri.dateModified)
             )}`,
           })
