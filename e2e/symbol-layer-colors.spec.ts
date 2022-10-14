@@ -1,7 +1,7 @@
 import { within } from "@playwright-testing-library/test";
 
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect, sleep } from "./common";
+import { test, expect } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
 
 test("Selecting SymbolLayer colors> should be possible to select nominal dimension and see a legend", async ({
@@ -19,18 +19,12 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await actions.editor.selectActiveField("Symbols");
 
   const panelRight = await selectors.panels.right();
-  const selects = panelRight.locator(".MuiSelect-select");
+  const selects = selectors.mui.select();
 
   const count = await selects.count();
-  expect(count).toEqual(1);
+  expect(count).toEqual(7);
 
-  await (await within(panelRight).findByText("None")).click();
-
-  // Select options open in portal
-  await (await selectors.mui.popover().findByText("production region")).click();
-
-  // allow select options to disappear to prevent re-selecting none
-  await sleep(3000);
+  await (await within(panelRight).findByText("Show layer")).click();
 
   // chart needs to re-load when symbol layer is selected
   await selectors.chart.loaded();
@@ -38,9 +32,10 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await (await within(panelRight).findByText("None")).click();
 
   // re-select preduction region for color mapping
-  await (await selectors.mui.popover().findByText("production region")).click();
+  await actions.mui.selectOption("production region");
 
-  expect(
-    await (await selectors.chart.colorLegend()).locator("div").count()
-  ).toBe(6);
+  const legendItems = (await selectors.chart.colorLegendItems())
+  expect(await legendItems.count()).toBe(6);
+  const legendTexts = await legendItems.allTextContents()
+  expect(legendTexts).toEqual(['Alps', 'Jura', 'Plateau', 'Pre-Alps', 'Southern Alps', 'Switzerland'])
 });

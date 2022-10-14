@@ -47,6 +47,12 @@ export const createActions = ({
       await selectors.chart.loaded(chartLoadedOptions);
     },
   },
+  mui: {
+    selectOption: async (optionText: string) => {
+      const locator = await selectors.mui.popover().findByText(optionText);
+      await locator.click();
+    },
+  },
   editor: {
     changeChartType: async (
       type:
