@@ -1,43 +1,49 @@
+import { within } from "@playwright-testing-library/test";
+
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect } from "./common";
+import { test, expect, sleep } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
-import selectors from "./selectors";
 
 test("Selecting SymbolLayer colors> should be possible to select nominal dimension and see a legend", async ({
   page,
   screen,
+  selectors,
+  actions,
 }) => {
-  const ctx = { page, screen };
-
   const key = "jky5IEw6poT3";
   const config = mapWaldflascheChartConfigFixture;
   await loadChartInLocalStorage(page, key, config);
   await page.goto(`/en/create/${key}`);
 
-  await selectors.chart.loaded(ctx);
+  await selectors.chart.loaded();
+  await actions.editor.selectActiveField("Symbols");
 
-  await (
-    await screen.findByText("Symbols", undefined, { timeout: 15000 })
-  ).click();
-
-  const selects = await (
-    await selectors.panels.right(ctx)
-  ).locator(".MuiSelect-select");
+  const panelRight = await selectors.panels.right();
+  const selects = panelRight.locator(".MuiSelect-select");
 
   const count = await selects.count();
-  for (let i = 0; i < count; i++) {
-    const select = await selects.nth(i);
-    expect(await select.getAttribute("class")).toContain("Mui-disabled");
-  }
+  expect(count).toEqual(1);
 
-  await (await screen.findByText("Show layer")).click();
-  await (await screen.findByText("None")).click();
+  await (await within(panelRight).findByText("None")).click();
 
-  await selectors.edition
-    .filterCheckbox(ctx, "https://environment.ld.admin.ch/foen/nfi/inventory")
+  // Select options open in portal
+  await screen
+    .locator('li[role="option"]:has-text("production region")')
+    .click();
+
+  // allow select options to disappear to prevent re-selecting none
+  await sleep(3000);
+
+  // chart needs to re-load when symbol layer is selected
+  await selectors.chart.loaded();
+
+  await (await within(panelRight).findByText("None")).click();
+  // re-select preduction region for color mapping
+  await screen
+    .locator('li[role="option"]:has-text("production region")')
     .click();
 
   expect(
-    await (await selectors.chart.colorLegend(ctx)).locator("div").count()
-  ).toBe(4);
+    await (await selectors.chart.colorLegend()).locator("div").count()
+  ).toBe(6);
 });

@@ -1,52 +1,52 @@
-import { makeSelectors, TestContext as Ctx } from "./types";
+import { TestContext as Ctx } from "./types";
 
-const selectors = makeSelectors({
+/**
+ * Creates a fixture for Playwright
+ */
+export const createSelectors = ({ screen, page, within }: Ctx) => ({
   mui: {
-    popover: (ctx: Ctx) => ctx.page.locator(".MuiPopover-paper"),
+    popover: () => within(page.locator(".MuiPopover-paper")),
   },
   search: {
-    searchInput: (ctx: Ctx) => ctx.page.locator("#datasetSearch"),
-    draftsCheckbox: (ctx: Ctx) => ctx.page.locator("#dataset-include-drafts"),
-    navItem: (ctx: Ctx) => ctx.screen.findByTestId("navItem"),
-    navChip: (ctx: Ctx) => ctx.screen.findByTestId("navChip"),
-    resultsCount: (ctx: Ctx) =>
-      ctx.screen.findByTestId("search-results-count", undefined, {
+    searchInput: () => page.locator("#datasetSearch"),
+    draftsCheckbox: () => page.locator("#dataset-include-drafts"),
+    navItem: () => screen.findByTestId("navItem"),
+    navChip: () => screen.findByTestId("navChip"),
+    resultsCount: () =>
+      screen.findByTestId("search-results-count", undefined, {
         timeout: 5000,
       }),
   },
   datasetPreview: {
-    loaded: (ctx: Ctx) =>
-      ctx.page
+    loaded: () =>
+      page
         .locator("table td")
         .first()
         .waitFor({ timeout: 20 * 1000 }),
-    cells: (ctx: Ctx) => ctx.page.locator("table td"),
+    cells: () => page.locator("table td"),
   },
   panels: {
-    left: (ctx: Ctx) => ctx.screen.findByTestId("panel-left"),
-    right: (ctx: Ctx) => ctx.screen.findByTestId("panel-right"),
-    middle: (ctx: Ctx) => ctx.screen.findByTestId("panel-middle"),
+    left: () => screen.findByTestId("panel-left"),
+    right: () => screen.findByTestId("panel-right"),
+    middle: () => screen.findByTestId("panel-middle"),
   },
   edition: {
-    configFilters: (ctx: Ctx) =>
-      ctx.screen.findByTestId("configurator-filters", undefined, {
+    configFilters: () =>
+      screen.findByTestId("configurator-filters", undefined, {
         timeout: 20 * 1000,
       }),
-    chartFilters: (ctx: Ctx) => ctx.screen.findByTestId("chart-filters-list"),
-    filterDrawer: (ctx: Ctx) =>
-      ctx.screen.findByTestId("edition-filters-drawer"),
-    filterCheckbox: (ctx: Ctx, value: string) =>
-      ctx.page.locator(`[data-value="${value}"]`),
-    chartTypeSelector: (ctx: Ctx) =>
-      ctx.screen.findByTestId("chart-type-selector"),
+    chartFilters: () => screen.findByTestId("chart-filters-list"),
+    filterDrawer: () => screen.findByTestId("edition-filters-drawer"),
+    filterCheckbox: (value: string) => page.locator(`[data-value="${value}"]`),
+    chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
   },
   chart: {
-    colorLegend: (ctx: Ctx) => ctx.screen.findByTestId("colorLegend"),
-    loaded: (ctx: Ctx, options: { timeout?: number } = {}) =>
-      ctx.page
+    colorLegend: () => screen.findByTestId("colorLegend"),
+    loaded: (options: { timeout?: number } = {}) =>
+      page
         .locator(`[data-chart-loaded="true"]`)
         .waitFor({ timeout: 40 * 1000, ...options }),
   },
 });
 
-export default selectors;
+export type Selectors = ReturnType<typeof createSelectors>;
