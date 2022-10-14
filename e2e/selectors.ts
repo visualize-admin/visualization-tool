@@ -1,6 +1,9 @@
 import { makeSelectors, TestContext as Ctx } from "./types";
 
 const selectors = makeSelectors({
+  mui: {
+    popover: (ctx: Ctx) => ctx.page.locator(".MuiPopover-paper"),
+  },
   search: {
     searchInput: (ctx: Ctx) => ctx.page.locator("#datasetSearch"),
     draftsCheckbox: (ctx: Ctx) => ctx.page.locator("#dataset-include-drafts"),
