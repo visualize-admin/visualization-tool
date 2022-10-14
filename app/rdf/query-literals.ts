@@ -3,6 +3,7 @@ import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
+import { pragmas } from "./create-source";
 
 type ResourceLiteral = {
   iri: NamedNode;
@@ -22,7 +23,7 @@ const buildResourceLiteralQuery = ({
       }
 
       ?iri ${predicate} ?value .
-    `;
+    `.prologue`${pragmas}`;
 };
 
 /**
