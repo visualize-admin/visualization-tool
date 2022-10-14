@@ -52,7 +52,7 @@ export const Examples = ({
             },
           }}
           chartConfig={{
-            version: "1.1.1",
+            version: "1.2.0",
             fields: {
               x: {
                 sorting: {
@@ -151,7 +151,7 @@ export const Examples = ({
             },
           }}
           chartConfig={{
-            version: "1.1.1",
+            version: "1.2.0",
             fields: {
               x: {
                 componentIri: "http://www.w3.org/2006/time#Year",
