@@ -79,8 +79,8 @@ const checks: Check[] = [
     description: "Should have a shape through dcterms:creator",
     run: async ({ cubeIri, loaders }) => {
       const cube = await loaders.describeCubes.load(cubeIri);
-      const shape = cube.out(ns.dcterms.creator).value;
-      if (shape) {
+      const creator = cube.out(ns.dcterms.creator).values;
+      if (creator) {
         return { ok: true, message: "Has creator" };
       } else {
         return { ok: false, message: "No creator" };
@@ -92,8 +92,8 @@ const checks: Check[] = [
     description: "Should have a shape through dcat:theme",
     run: async ({ cubeIri, loaders }) => {
       const cube = await loaders.describeCubes.load(cubeIri);
-      const shape = cube.out(ns.dcat.theme).value;
-      if (shape) {
+      const themes = cube.out(ns.dcat.theme).values;
+      if (themes) {
         return { ok: true, message: "Has a theme" };
       } else {
         return { ok: false, message: "No theme" };
@@ -105,8 +105,8 @@ const checks: Check[] = [
     description: "Should have a description through schema:description",
     run: async ({ cubeIri, loaders }) => {
       const cube = await loaders.describeCubes.load(cubeIri);
-      const shape = cube.out(ns.schema.description).value;
-      if (shape) {
+      const desc = cube.out(ns.schema.description).values;
+      if (desc) {
         return { ok: true, message: "Has a description" };
       } else {
         return { ok: false, message: "No description" };

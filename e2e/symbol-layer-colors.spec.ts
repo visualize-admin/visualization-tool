@@ -1,5 +1,6 @@
 import { within } from "@playwright-testing-library/test";
 
+import actions from "./actions";
 import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect, sleep } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
@@ -17,14 +18,11 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   await page.goto(`/en/create/${key}`);
 
   await selectors.chart.loaded(ctx);
+  await actions.editor.selectActiveField(ctx, "Symbols");
 
-  await (
-    await screen.findByText("Symbols", undefined, { timeout: 15000 })
-  ).click();
-
-  const selects = await (
-    await selectors.panels.right(ctx)
-  ).locator(".MuiSelect-select");
+  const selects = (await selectors.panels.right(ctx)).locator(
+    ".MuiSelect-select"
+  );
 
   const count = await selects.count();
   expect(count).toEqual(1);

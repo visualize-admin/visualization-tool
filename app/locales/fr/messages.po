@@ -13,19 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:642
+#: app/configurator/components/chart-configurator.tsx:647
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
-#: app/configurator/components/chart-configurator.tsx:615
+#: app/configurator/components/chart-configurator.tsx:620
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
 
-#: app/configurator/components/chart-configurator.tsx:612
+#: app/configurator/components/chart-configurator.tsx:617
 msgid "Move filter down"
 msgstr "Déplacer le filtre vers le bas"
 
-#: app/configurator/components/chart-configurator.tsx:609
+#: app/configurator/components/chart-configurator.tsx:614
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
@@ -124,21 +124,42 @@ msgstr "Partager"
 msgid "chart.map.layers.area"
 msgstr "Zones"
 
-#: app/configurator/components/chart-configurator.tsx:691
+#: app/configurator/map/map-chart-options.tsx:254
+#~ msgid "chart.map.layers.area.discretization.continuous"
+#~ msgstr "Continue"
+
+#: app/configurator/map/map-chart-options.tsx:267
+#~ msgid "chart.map.layers.area.discretization.discrete"
+#~ msgstr "Discrète"
+
+#: app/configurator/map/map-chart-options.tsx:312
+#~ msgid "chart.map.layers.area.discretization.jenks"
+#~ msgstr "Jenks (intervalles naturels)"
+
+#: app/configurator/map/map-chart-options.tsx:305
+#~ msgid "chart.map.layers.area.discretization.quantiles"
+#~ msgstr "Quantiles (distribution homogène des valeurs)"
+
+#: app/configurator/map/map-chart-options.tsx:298
+#~ msgid "chart.map.layers.area.discretization.quantize"
+#~ msgstr "Intervalles égaux"
+
+#: app/configurator/components/chart-configurator.tsx:696
+#: app/configurator/components/chart-options-selector.tsx:983
 #: app/configurator/components/ui-helpers.ts:610
 msgid "chart.map.layers.base"
 msgstr "Affichage de la carte"
 
-#: app/configurator/map/map-chart-options.tsx:108
-#~ msgid "chart.map.layers.base.show"
-#~ msgstr "Afficher la carte du monde"
+#: app/configurator/components/chart-options-selector.tsx:987
+msgid "chart.map.layers.base.show"
+msgstr "Afficher la carte du monde"
 
-#: app/configurator/map/map-chart-options.tsx:116
-#~ msgid "chart.map.layers.base.view.locked"
-#~ msgstr "Carte verrouillée"
+#: app/configurator/components/chart-options-selector.tsx:996
+msgid "chart.map.layers.base.view.locked"
+msgstr "Carte verrouillée"
 
 #: app/configurator/map/map-chart-options.tsx:198
-#: app/configurator/map/map-chart-options.tsx:409
+#: app/configurator/map/map-chart-options.tsx:403
 #~ msgid "chart.map.layers.show"
 #~ msgstr "Afficher la couche"
 
@@ -146,7 +167,7 @@ msgstr "Affichage de la carte"
 msgid "chart.map.layers.symbol"
 msgstr "Symboles"
 
-#: app/configurator/map/map-chart-options.tsx:529
+#: app/configurator/map/map-chart-options.tsx:530
 #~ msgid "chart.map.warning.noGeoDimensions"
 #~ msgstr "Dans cet ensemble de données, il n'y a pas de dimensions géographiques à afficher!"
 
@@ -227,7 +248,7 @@ msgstr "Nuage de points"
 msgid "controls.chart.type.table"
 msgstr "Tableau"
 
-#: app/configurator/components/chart-options-selector.tsx:636
+#: app/configurator/components/chart-options-selector.tsx:706
 #: app/configurator/components/ui-helpers.ts:596
 msgid "controls.color"
 msgstr "Couleur"
@@ -236,7 +257,7 @@ msgstr "Couleur"
 msgid "controls.color.add"
 msgstr "Ajouter…"
 
-#: app/configurator/components/chart-options-selector.tsx:667
+#: app/configurator/components/chart-options-selector.tsx:737
 msgid "controls.color.opacity"
 msgstr "Transparence"
 
@@ -257,35 +278,35 @@ msgstr "Réinitialiser la palette de couleurs"
 msgid "controls.color.palette.sequential"
 msgstr "Séquentielle"
 
-#: app/configurator/components/chart-options-selector.tsx:757
+#: app/configurator/components/chart-options-selector.tsx:827
 msgid "controls.color.scale.discretization.jenks"
 msgstr "Jenks (intervalles naturels)"
 
-#: app/configurator/components/chart-options-selector.tsx:750
+#: app/configurator/components/chart-options-selector.tsx:820
 msgid "controls.color.scale.discretization.quantiles"
 msgstr "Quantiles (distribution homogène des valeurs)"
 
-#: app/configurator/components/chart-options-selector.tsx:743
+#: app/configurator/components/chart-options-selector.tsx:813
 msgid "controls.color.scale.discretization.quantize"
 msgstr "Intervalles égaux"
 
-#: app/configurator/components/chart-options-selector.tsx:735
+#: app/configurator/components/chart-options-selector.tsx:805
 msgid "controls.color.scale.interpolation"
 msgstr "Interpolation"
 
-#: app/configurator/components/chart-options-selector.tsx:768
+#: app/configurator/components/chart-options-selector.tsx:838
 msgid "controls.color.scale.number.of.classes"
 msgstr "Nombre de classes"
 
-#: app/configurator/components/chart-options-selector.tsx:705
+#: app/configurator/components/chart-options-selector.tsx:775
 msgid "controls.color.scale.type.continuous"
 msgstr "Continue"
 
-#: app/configurator/components/chart-options-selector.tsx:717
+#: app/configurator/components/chart-options-selector.tsx:787
 msgid "controls.color.scale.type.discrete"
 msgstr "Discrète"
 
-#: app/configurator/components/chart-options-selector.tsx:656
+#: app/configurator/components/chart-options-selector.tsx:726
 msgid "controls.color.select"
 msgstr "Sélectionner une couleur"
 
@@ -310,7 +331,8 @@ msgstr "Description"
 #~ msgid "controls.dimension.geographical"
 #~ msgstr "Dimension géographique"
 
-#: app/configurator/components/field.tsx:646
+#: app/configurator/components/field.tsx:645
+#: app/configurator/map/map-chart-options.tsx:548
 #~ msgid "controls.dimension.none"
 #~ msgstr "Aucune"
 
@@ -372,18 +394,18 @@ msgstr "Sélectionnez une des annotations proposées pour la modifier."
 msgid "controls.imputation"
 msgstr "Type d'imputation"
 
-#: app/configurator/components/chart-options-selector.tsx:804
+#: app/configurator/components/chart-options-selector.tsx:874
 #: app/configurator/components/ui-helpers.ts:670
 msgid "controls.imputation.type.linear"
 msgstr "Interpolation linéaire"
 
-#: app/configurator/components/chart-options-selector.tsx:797
-#: app/configurator/components/chart-options-selector.tsx:809
+#: app/configurator/components/chart-options-selector.tsx:867
+#: app/configurator/components/chart-options-selector.tsx:879
 #: app/configurator/components/ui-helpers.ts:662
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:799
+#: app/configurator/components/chart-options-selector.tsx:869
 #: app/configurator/components/ui-helpers.ts:666
 msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
@@ -425,7 +447,7 @@ msgid "controls.language.italian"
 msgstr "Italien"
 
 #: app/configurator/map/map-chart-options.tsx:209
-#: app/configurator/map/map-chart-options.tsx:420
+#: app/configurator/map/map-chart-options.tsx:414
 #~ msgid "controls.location"
 #~ msgstr "Localisation"
 
@@ -435,7 +457,7 @@ msgstr "Variable mesurée"
 
 #: app/configurator/components/field.tsx:817
 #~ msgid "controls.none"
-#~ msgstr ""
+#~ msgstr "Aucun"
 
 #: app/configurator/components/chart-controls/control-tab.tsx:314
 msgid "controls.option.isActive"
@@ -445,19 +467,19 @@ msgstr "Actif"
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
 
-#: app/configurator/components/chart-options-selector.tsx:698
+#: app/configurator/components/chart-options-selector.tsx:768
 msgid "controls.scale.type"
 msgstr "Type d'échelle"
 
-#: app/components/form.tsx:561
+#: app/components/form.tsx:563
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
-#: app/configurator/components/chart-options-selector.tsx:320
+#: app/configurator/components/chart-options-selector.tsx:346
 msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
-#: app/configurator/components/chart-configurator.tsx:544
+#: app/configurator/components/chart-configurator.tsx:549
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
 
@@ -469,7 +491,7 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
-#: app/configurator/components/chart-configurator.tsx:562
+#: app/configurator/components/chart-configurator.tsx:567
 msgid "controls.section.data.filters"
 msgstr "Filtres"
 
@@ -477,8 +499,8 @@ msgstr "Filtres"
 msgid "controls.section.description"
 msgstr "Titre & description"
 
-#: app/configurator/components/chart-options-selector.tsx:374
-#: app/configurator/components/chart-options-selector.tsx:378
+#: app/configurator/components/chart-options-selector.tsx:400
+#: app/configurator/components/chart-options-selector.tsx:404
 #: app/configurator/table/table-chart-options.tsx:310
 #: app/configurator/table/table-chart-options.tsx:314
 #: app/configurator/table/table-chart-options.tsx:334
@@ -490,11 +512,11 @@ msgstr "Filtre"
 msgid "controls.section.groups"
 msgstr "Groupes"
 
-#: app/configurator/components/chart-options-selector.tsx:838
+#: app/configurator/components/chart-options-selector.tsx:908
 msgid "controls.section.imputation"
 msgstr "Valeurs manquantes"
 
-#: app/configurator/components/chart-options-selector.tsx:843
+#: app/configurator/components/chart-options-selector.tsx:913
 msgid "controls.section.imputation.explanation"
 msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."
 
@@ -506,11 +528,11 @@ msgstr "Filtres interactifs"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtres de données"
 
-#: app/configurator/components/chart-options-selector.tsx:329
+#: app/configurator/components/chart-options-selector.tsx:355
 msgid "controls.section.show-standard-error"
 msgstr "Afficher l'erreur type"
 
-#: app/configurator/components/chart-options-selector.tsx:521
+#: app/configurator/components/chart-options-selector.tsx:549
 msgid "controls.section.sorting"
 msgstr "Trier"
 
@@ -526,13 +548,13 @@ msgstr "Tri du tableau"
 msgid "controls.section.tableoptions"
 msgstr "Options du tableau"
 
-#: app/configurator/components/chart-configurator.tsx:537
+#: app/configurator/components/chart-configurator.tsx:542
 #: app/configurator/components/chart-type-selector.tsx:139
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/chart-options-selector.tsx:426
+#: app/configurator/components/chart-options-selector.tsx:454
 msgid "controls.select.column.layout"
 msgstr "Mise en forme de la colonne"
 
@@ -568,20 +590,20 @@ msgstr "Couleur du texte"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Style du texte"
 
-#: app/configurator/components/chart-options-selector.tsx:200
+#: app/configurator/components/chart-options-selector.tsx:208
 msgid "controls.select.dimension"
 msgstr "Sélectionner une dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:201
-#: app/configurator/components/chart-options-selector.tsx:641
+#: app/configurator/components/chart-options-selector.tsx:209
+#: app/configurator/components/chart-options-selector.tsx:637
+#: app/configurator/components/chart-options-selector.tsx:711
 msgid "controls.select.measure"
 msgstr "Sélectionner une variable"
 
-#: app/configurator/components/field.tsx:132
-#: app/configurator/components/field.tsx:189
-#: app/configurator/components/field.tsx:291
-#: app/configurator/components/field.tsx:651
-#: app/configurator/components/field.tsx:822
+#: app/configurator/components/field.tsx:134
+#: app/configurator/components/field.tsx:191
+#: app/configurator/components/field.tsx:293
+#: app/configurator/components/field.tsx:650
 #~ msgid "controls.select.optional"
 #~ msgstr "optionnel"
 
@@ -597,17 +619,16 @@ msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dan
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
-#: app/configurator/map/map-chart-options.tsx:235
-#: app/configurator/map/map-chart-options.tsx:446
-#~ msgid "controls.size"
-#~ msgstr "Taille"
+#: app/configurator/components/chart-options-selector.tsx:629
+msgid "controls.size"
+msgstr "Taille"
 
 #: app/configurator/table/table-chart-sorting-options.tsx:248
 msgid "controls.sorting.addDimension"
 msgstr "Ajouter une dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:471
-#: app/configurator/components/chart-options-selector.tsx:477
+#: app/configurator/components/chart-options-selector.tsx:499
+#: app/configurator/components/chart-options-selector.tsx:505
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Nom"
 
@@ -619,7 +640,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:473
+#: app/configurator/components/chart-options-selector.tsx:501
 msgid "controls.sorting.byMeasure"
 msgstr "Mesure"
 
@@ -631,7 +652,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:475
+#: app/configurator/components/chart-options-selector.tsx:503
 msgid "controls.sorting.byTotalSize"
 msgstr "Taille totale"
 
@@ -728,6 +749,10 @@ msgstr "Inclure les brouillons"
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
+#: app/components/chart-footnotes.tsx:109
+msgid "dataset.metadata.date.footnotes.updated"
+msgstr ", mise à jour : {0}"
+
 #: app/configurator/components/dataset-metadata.tsx:94
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
@@ -736,7 +761,7 @@ msgstr "Points de contact"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Informations complémentaires"
 
-#: app/components/chart-footnotes.tsx:177
+#: app/components/chart-footnotes.tsx:190
 #: app/configurator/components/dataset-metadata.tsx:118
 msgid "dataset.metadata.learnmore"
 msgstr "En savoir plus sur le jeu de données"
@@ -892,23 +917,23 @@ msgstr "Afficher les filtres"
 msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
-#: app/components/chart-footnotes.tsx:108
+#: app/components/chart-footnotes.tsx:121
 msgid "metadata.dataset"
 msgstr "Jeu de données"
 
-#: app/components/chart-footnotes.tsx:196
+#: app/components/chart-footnotes.tsx:209
 msgid "metadata.link.created.with.visualize"
 msgstr "Créé avec visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:124
+#: app/components/chart-footnotes.tsx:137
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/chart-footnotes.tsx:160
+#: app/components/chart-footnotes.tsx:173
 msgid "metadata.switch.chart"
 msgstr "Passer à la vue graphique"
 
-#: app/components/chart-footnotes.tsx:162
+#: app/components/chart-footnotes.tsx:175
 msgid "metadata.switch.table"
 msgstr "Passer à la vue en tableau"
 
@@ -952,11 +977,11 @@ msgstr "visualize.admin.ch"
 msgid "select.controls.filters.search"
 msgstr "Chercher"
 
-#: app/configurator/components/stepper.tsx:208
+#: app/configurator/components/stepper.tsx:209
 msgid "step.annotate"
 msgstr "Avant de publier, ajoutez un titre et une description à votre tableau et choisissez quels éléments doivent être interactifs."
 
-#: app/configurator/components/stepper.tsx:197
+#: app/configurator/components/stepper.tsx:198
 msgid "step.visualize"
 msgstr "Personnalisez votre visualisation en utilisant les options de filtrage et de segmentation des couleurs dans les barres latérales."
 

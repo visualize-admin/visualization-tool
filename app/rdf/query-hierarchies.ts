@@ -11,9 +11,9 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { createSource, pragmas } from "@/rdf/create-source";
 
 import * as ns from "./namespace";
-import { createSource } from "./queries";
 import { pruneTree, mapTree } from "./tree-utils";
 
 const queryDimensionValues = async (
@@ -24,7 +24,7 @@ const queryDimensionValues = async (
       ?cube <https://cube.link/observationSet> ?observationSet .
       ?observationSet <https://cube.link/observation> ?observation .
       ?observation <${dimension}> ?value .
-    `;
+    `.prologue`${pragmas}`;
   const rows = await query.execute(sparqlClient.query);
   return rows.map((r) => r.value.value);
 };
@@ -96,7 +96,7 @@ export const queryHierarchy = async (
   ?dimension ${ns.sh.path} <${dimensionIri}>.
   
   FILTER NOT EXISTS { ?cube ${ns.schema.expires} ?any . }
-  `;
+  `.prologue`${pragmas}`;
   const cubeResults = await cubeQuery.execute(sparqlClient.query);
   if (cubeResults.length === 0) {
     throw new Error("Could not find cube");

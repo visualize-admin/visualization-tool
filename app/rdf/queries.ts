@@ -5,7 +5,6 @@ import {
   CubeDimension,
   Filter,
   LookupSource,
-  Source,
   View,
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
@@ -13,12 +12,14 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { PromiseValue, truthy } from "@/domain/types";
+import { createSource, pragmas } from "@/rdf/create-source";
 import { makeCubeFilters } from "@/rdf/cube-filters";
 
 import { Filters } from "../configurator";
 import {
   DimensionValue,
   Observation,
+  ObservationValue,
   parseObservationValue,
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
@@ -45,9 +46,6 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
-
-export const createSource = ({ endpointUrl }: { endpointUrl: string }) =>
-  new Source({ endpointUrl, queryOperation: "postUrlencoded" });
 
 const getLatestCube = async (cube: Cube): Promise<Cube> => {
   const source = cube.source;
@@ -151,6 +149,11 @@ export const getCube = async ({
   return parseCube({ cube: latestCube, locale });
 };
 
+const getDimensionUnits = (d: CubeDimension) => {
+  const t = d.out(ns.qudt.unit).term;
+  return t ? [t] : [];
+};
+
 export const getCubeDimensions = async ({
   cube,
   locale,
@@ -161,17 +164,8 @@ export const getCubeDimensions = async ({
   sparqlClient: ParsingClient;
 }): Promise<ResolvedDimension[]> => {
   try {
-    const dimensions = cube.dimensions.filter(
-      (dim) =>
-        dim.path &&
-        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
-          dim.path.value ?? ""
-        )
-    );
-    const dimensionUnits = dimensions.flatMap((d) => {
-      const t = d.out(ns.qudt.unit).term;
-      return t ? [t] : [];
-    });
+    const dimensions = cube.dimensions.filter(isObservationDimension);
+    const dimensionUnits = dimensions.flatMap(getDimensionUnits);
 
     const dimensionUnitIndex = index(
       await loadUnits({
@@ -379,6 +373,23 @@ const getCubeDimensionValuesWithLabels = async ({
   return [];
 };
 
+type NonNullableValues<T, K extends keyof T> = Omit<T, K> &
+  {
+    [P in K]-?: NonNullable<T[P]>;
+  };
+
+type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
+
+const isObservationDimension = (
+  dim: CubeDimension
+): dim is CubeDimensionWithPath =>
+  !!(
+    dim.path &&
+    ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
+      dim.path.value ?? ""
+    )
+  );
+
 export const getCubeObservations = async ({
   cube,
   locale,
@@ -405,133 +416,101 @@ export const getCubeObservations = async ({
 }> => {
   const cubeView = View.fromCube(cube);
 
-  // Only choose dimensions that we really want
-  let observationDimensions = cubeView.dimensions.filter((d) =>
-    d.cubeDimensions.every(
-      (cd) =>
-        cd.path &&
-        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
-          cd.path.value ?? ""
-        ) &&
-        (dimensions ? dimensions.includes(cd.path.value) : true)
-    )
-  );
-
-  let observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters, locale })
-    : [];
-
-  /**
-   * Add labels to named dimensions
-   */
-  const allCubeDimensions = await getCubeDimensions({
+  const allResolvedDimensions = await getCubeDimensions({
     cube,
     locale,
     sparqlClient,
   });
-  const cubeDimensions = allCubeDimensions.filter((d) =>
+
+  const cubeDimensions = allResolvedDimensions.filter((d) =>
     dimensions ? dimensions.includes(d.data.iri) : true
   );
 
-  // Find dimensions which are NOT literal
-  const namedDimensions = cubeDimensions.filter(
-    ({ data: { isLiteral } }) => !isLiteral
-  );
+  const serverFilters: typeof filters = {};
+  let dbFilters: typeof filters = {};
 
-  const lookupSource = LookupSource.fromSource(cube.source);
-  // Override sourceGraph from cube source, so lookups also work outside of that graph
-  lookupSource.ptr.deleteOut(ns.cubeView.graph);
-  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
-
-  for (const dimension of namedDimensions) {
-    if (raw) {
-      continue;
+  for (const [k, v] of Object.entries(filters || {})) {
+    if (v.type !== "multi") {
+      dbFilters[k] = v;
+    } else {
+      const count = Object.keys(v.values).length;
+      if (count > 100) {
+        console.log(
+          `Will apply server side filter since filter values count is too high, iri: ${k}, count: ${count}`
+        );
+        serverFilters[k] = v;
+      } else {
+        dbFilters[k] = v;
+      }
     }
-    const labelDimension = cubeView.createDimension({
-      source: lookupSource,
-      path: ns.schema.name,
-      join: cubeView.dimension({ cubeDimension: dimension.data.iri }),
-      as: labelDimensionIri(dimension.data.iri),
-    });
-
-    observationDimensions.push(labelDimension);
-    observationFilters.push(
-      labelDimension.filter.lang(getQueryLocales(locale))
-    );
   }
+
+  let observationFilters = filters
+    ? buildFilters({ cube, view: cubeView, filters: dbFilters, locale })
+    : [];
+
+  // Only choose dimensions that we really want
+  const observationDimensions = buildDimensions({
+    cubeView,
+    dimensions,
+    cubeDimensions,
+    cube,
+    locale,
+    observationFilters,
+    raw,
+  });
 
   const observationsView = new View({
     dimensions: observationDimensions,
     filters: observationFilters,
   });
 
-  /**
-   * Add LIMIT to query
-   */
-  if (limit !== undefined) {
-    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(
-      ns.cubeView.projection,
-      (projection: $FixMe) => {
-        // const order = projection
-        //   .blankNode()
-        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
-        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
-
-        // projection.addList(ns.cubeView.orderBy, order)
-        projection.addOut(ns.cubeView.limit, limit);
-        // projection.addOut(ns.cubeView.offset, offset)
-      }
-    );
-  }
-
-  const queryOptions = {
-    disableDistinct: !filters || Object.keys(filters).length === 0,
-  };
-
-  const query = observationsView
-    .observationsQuery(queryOptions)
-    .query.toString();
-
-  let observationsRaw:
-    | PromiseValue<ReturnType<typeof observationsView.observations>>
-    | undefined;
-  try {
-    observationsRaw = await observationsView.observations(queryOptions);
-  } catch (e) {
-    console.warn("Query failed", query);
-    throw new Error(
-      `Could not retrieve data: ${e instanceof Error ? e.message : e}`
-    );
-  }
-  const observations = observationsRaw.map((obs) => {
-    return Object.fromEntries(
-      cubeDimensions.map((d) => {
-        const label = obs[labelDimensionIri(d.data.iri)]?.value;
-
-        const value =
-          obs[d.data.iri]?.termType === "Literal" &&
-          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
-            ? null
-            : obs[d.data.iri]?.value;
-
-        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-        return [
-          d.data.iri,
-          raw ? rawValue : label ?? value ?? null,
-          // v !== undefined ? parseObservationValue({ value: v }) : null,
-        ];
-      })
-    );
+  const { query, observationsRaw } = await fetchViewObservations({
+    limit,
+    observationsView,
+    disableDistinct: !!(!filters || Object.keys(filters).length === 0),
   });
 
-  const result = {
-    query,
-    observations,
-    observationsRaw,
-  };
+  const serverFilter =
+    Object.keys(serverFilters).length > 0
+      ? makeServerFilter(serverFilters)
+      : null;
+  const filteredObservationsRaw: typeof observationsRaw = [];
+  const observations: Observation[] = [];
+  const observationParser = parseObservation(cubeDimensions, raw);
+  for (let or of observationsRaw) {
+    if (!serverFilter || serverFilter(or)) {
+      const obs = observationParser(or);
+      observations.push(obs);
+      filteredObservationsRaw.push(or);
+    }
+  }
 
-  return result;
+  return {
+    query,
+    observationsRaw: serverFilter ? filteredObservationsRaw : observationsRaw,
+    observations,
+  };
+};
+
+const makeServerFilter = (filters: Filters) => {
+  const sets = new Map<string, Set<ObservationValue>>();
+  for (const [iri, filter] of Object.entries(filters)) {
+    if (filter.type !== "multi") {
+      continue;
+    }
+    const valueSet = new Set(Object.keys(filter.values));
+    sets.set(iri, valueSet);
+  }
+
+  return (or: RDFObservation) => {
+    for (const [iri, valueSet] of sets.entries()) {
+      if (!valueSet.has(or[iri]?.value)) {
+        return false;
+      }
+    }
+    return true;
+  };
 };
 
 const buildFilters = ({
@@ -546,6 +525,7 @@ const buildFilters = ({
   locale: string;
 }): Filter[] => {
   const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
 
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
@@ -645,3 +625,135 @@ export const getSparqlEditorUrl = ({
     ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}&requestMethod=POST`
     : null;
 };
+
+async function fetchViewObservations({
+  limit,
+  observationsView,
+  disableDistinct,
+}: {
+  limit: number | undefined;
+  observationsView: View;
+  disableDistinct: boolean;
+}) {
+  /**
+   * Add LIMIT to query
+   */
+  if (limit !== undefined) {
+    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
+    observationsView.ptr.addOut(
+      ns.cubeView.projection,
+      (projection: $FixMe) => {
+        // const order = projection
+        //   .blankNode()
+        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
+        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
+        // projection.addList(ns.cubeView.orderBy, order)
+        projection.addOut(ns.cubeView.limit, limit);
+        // projection.addOut(ns.cubeView.offset, offset)
+      }
+    );
+  }
+
+  const queryOptions = {
+    disableDistinct,
+  };
+
+  const query = observationsView
+    .observationsQuery(queryOptions)
+    .query.toString();
+
+  let observationsRaw:
+    | PromiseValue<ReturnType<typeof observationsView.observations>>
+    | undefined;
+  try {
+    observationsRaw = await observationsView.observations(queryOptions);
+  } catch (e) {
+    console.warn("Query failed", query);
+    throw new Error(
+      `Could not retrieve data: ${e instanceof Error ? e.message : e}`
+    );
+  }
+
+  return { query, observationsRaw };
+}
+
+type RDFObservation = Record<string, Literal | NamedNode<string>>;
+
+function parseObservation(
+  cubeDimensions: ResolvedDimension[],
+  raw: boolean | undefined
+): (value: RDFObservation) => Observation {
+  return (obs) => {
+    return Object.fromEntries(
+      cubeDimensions.map((d) => {
+        const label = obs[labelDimensionIri(d.data.iri)]?.value;
+
+        const value =
+          obs[d.data.iri]?.termType === "Literal" &&
+          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+            ? null
+            : obs[d.data.iri]?.value;
+
+        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
+        return [d.data.iri, raw ? rawValue : label ?? value ?? null];
+      })
+    );
+  };
+}
+
+function buildDimensions({
+  cubeView,
+  dimensions,
+  cubeDimensions,
+  cube,
+  locale,
+  observationFilters,
+  raw,
+}: {
+  cubeView: View;
+  dimensions: Maybe<string[]>;
+  cubeDimensions: ResolvedDimension[];
+  cube: Cube;
+  locale: string;
+  observationFilters: Filter[];
+  raw?: boolean;
+}) {
+  const observationDimensions = cubeView.dimensions.filter((d) =>
+    d.cubeDimensions.every(
+      (cd) =>
+        isObservationDimension(cd) &&
+        (dimensions ? dimensions.includes(cd.path.value) : true)
+    )
+  );
+
+  // Find dimensions which are NOT literal
+  const namedDimensions = cubeDimensions.filter(
+    ({ data: { isLiteral } }) => !isLiteral
+  );
+
+  const lookupSource = LookupSource.fromSource(cube.source);
+  lookupSource.queryPrefix = pragmas;
+
+  // Override sourceGraph from cube source, so lookups also work outside of that graph
+  lookupSource.ptr.deleteOut(ns.cubeView.graph);
+  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
+
+  for (const dimension of namedDimensions) {
+    if (raw) {
+      continue;
+    }
+    const labelDimension = cubeView.createDimension({
+      source: lookupSource,
+      path: ns.schema.name,
+      join: cubeView.dimension({ cubeDimension: dimension.data.iri }),
+      as: labelDimensionIri(dimension.data.iri),
+    });
+
+    observationDimensions.push(labelDimension);
+    observationFilters.push(
+      labelDimension.filter.lang(getQueryLocales(locale))
+    );
+  }
+
+  return observationDimensions;
+}

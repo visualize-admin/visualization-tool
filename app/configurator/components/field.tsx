@@ -111,6 +111,7 @@ export const DataFilterSelect = ({
   controls,
   optionGroups,
   tooltipText,
+  onOpen,
 }: {
   dimensionIri: string;
   label: string;
@@ -121,6 +122,7 @@ export const DataFilterSelect = ({
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, Option[]][];
   tooltipText?: string;
+  onOpen?: () => void;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -156,6 +158,7 @@ export const DataFilterSelect = ({
       controls={controls}
       optionGroups={optionGroups}
       tooltipText={tooltipText}
+      onOpen={onOpen}
       {...fieldProps}
     />
   );
@@ -672,7 +675,7 @@ export const ChartFieldField = ({
           : options
       }
       {...fieldProps}
-    ></Select>
+    />
   );
 };
 

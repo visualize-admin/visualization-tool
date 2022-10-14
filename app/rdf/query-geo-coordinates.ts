@@ -1,6 +1,8 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { pragmas } from "@/rdf/create-source";
+
 import { ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
@@ -50,7 +52,7 @@ export const createGeoCoordinatesLoader =
         ns.schema.name
       } ?label .
         }
-      `;
+      `.prologue`${pragmas}`;
 
       let fetchedGeoCoordinates: any[] = [];
 

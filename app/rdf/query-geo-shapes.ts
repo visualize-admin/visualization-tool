@@ -2,6 +2,8 @@ import { SELECT } from "@tpluscode/sparql-builder";
 import groupBy from "lodash/groupBy";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { pragmas } from "@/rdf/create-source";
+
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
 
 import * as ns from "./namespace";
@@ -36,7 +38,7 @@ export const createGeoShapesLoader =
       OPTIONAL {
         ?iri ${ns.schema.name} ?label .
       }
-    `;
+    `.prologue`${pragmas}`;
 
       let labels: any[] = [];
 

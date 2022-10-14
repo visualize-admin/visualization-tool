@@ -13,6 +13,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Enable sorting of Geo dimensions
   - Maintain segment sorting type correctly when switching from / to Pie chart
   - Fix sorting by measure when undefined values are present in the data
+- Map:
+  - area & symbol layers now use the same approach as for segment field (optional select element), to be more consistent across the app
+  - it's now possible to use discrete color mapping in symbol layer
+
+## [3.9.6] - 2022-10-12
+
+- Fix: IRIs of NFI cubes (previously there was None-None- includes in IRI; it was removed recently and we now migrate old IRIs to new IRIs)
 
 ## [3.9.5] - 2022-10-04
 

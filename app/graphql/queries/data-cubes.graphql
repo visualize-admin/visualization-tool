@@ -143,6 +143,7 @@ query DataCubeMetadata(
     landingPage
     expires
     datePublished
+    dateModified
     publicationStatus
     themes {
       iri

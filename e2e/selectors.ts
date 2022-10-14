@@ -39,10 +39,10 @@ const selectors = makeSelectors({
   },
   chart: {
     colorLegend: (ctx: Ctx) => ctx.screen.findByTestId("colorLegend"),
-    loaded: (ctx: Ctx) =>
+    loaded: (ctx: Ctx, options: { timeout?: number } = {}) =>
       ctx.page
         .locator(`[data-chart-loaded="true"]`)
-        .waitFor({ timeout: 40 * 1000 }),
+        .waitFor({ timeout: 40 * 1000, ...options }),
   },
 });
 
