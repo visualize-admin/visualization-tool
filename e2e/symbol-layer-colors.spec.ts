@@ -5,7 +5,7 @@ import { test, expect, sleep } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
 import selectors from "./selectors";
 
-test("Selecting SymbolLayer colors> should be possible to select nominal dimension and see a legend", async ({
+test("Selecting SymbolLayer colors> should be possible to select geo dimension and see a legend", async ({
   page,
   screen,
 }) => {
