@@ -1,7 +1,7 @@
 import selectors from "./selectors";
 import { makeActions, TestContext } from "./types";
 
-export const loadDatasetPreview = async (
+const loadDatasetPreview = async (
   ctx: TestContext,
   iri: string,
   dataSource: "Int" | "Prod"
@@ -12,6 +12,18 @@ export const loadDatasetPreview = async (
   );
 
   await selectors.datasetPreview.loaded(ctx);
+};
+
+const waitForPanelRightToLoad = async (ctx: TestContext, field: string) =>
+  (await selectors.panels.right(ctx))
+    .locator(`h5 >> text=${field}`)
+    .waitFor({ timeout: 3000 });
+
+const selectActiveEditorField = async (ctx: TestContext, field: string) => {
+  await (await selectors.panels.left(ctx))
+    .locator(`button >> text=${field}`)
+    .click();
+  return waitForPanelRightToLoad(ctx, field);
 };
 
 const actions = makeActions({
@@ -50,6 +62,8 @@ const actions = makeActions({
       const btns = await selectors.edition.chartTypeSelector(ctx);
       await btns.locator("button", { hasText: type }).click();
     },
+    waitForPanelRightToLoad,
+    selectActiveField: selectActiveEditorField,
   },
 });
 

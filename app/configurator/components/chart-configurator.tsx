@@ -701,7 +701,7 @@ const ChartFields = ({
             key={field}
             component={
               isMapConfig(chartConfig) && field === "symbolLayer"
-                ? chartConfig.fields.symbolLayer.show
+                ? chartConfig.fields.symbolLayer
                   ? component
                   : undefined
                 : component

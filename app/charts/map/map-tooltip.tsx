@@ -55,29 +55,30 @@ export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
   const { identicalLayerComponentIris, areaLayer, symbolLayer } =
     useChartState() as MapState;
-  const { getFormattedError: formatAreaError } = areaLayer;
-  const { getFormattedError: formatSymbolError } = symbolLayer;
+  const { getFormattedError: formatAreaError } = areaLayer || {};
+  const { getFormattedError: formatSymbolError } = symbolLayer || {};
 
   const formatNumber = useFormatNumber();
-  const areaValue = useMemo(
-    () =>
-      interaction.d !== undefined ? areaLayer.getValue(interaction.d) : null,
-    [areaLayer, interaction.d]
-  );
-  const symbolValue = useMemo(
-    () =>
-      interaction.d !== undefined ? symbolLayer.getValue(interaction.d) : null,
-    [symbolLayer, interaction.d]
-  );
+  const areaValue = useMemo(() => {
+    return areaLayer && interaction.d !== undefined
+      ? areaLayer.getValue(interaction.d)
+      : null;
+  }, [areaLayer, interaction.d]);
+  const symbolValue = useMemo(() => {
+    return symbolLayer && interaction.d !== undefined
+      ? symbolLayer.getValue(interaction.d)
+      : null;
+  }, [symbolLayer, interaction.d]);
   const showAreaValue =
-    areaLayer.show &&
-    (identicalLayerComponentIris || hoverObjectType === "area");
+    areaLayer && (identicalLayerComponentIris || hoverObjectType === "area");
   const showSymbolValue =
-    symbolLayer.show &&
+    symbolLayer &&
     (identicalLayerComponentIris || hoverObjectType === "symbol");
   const areaColorProps = useMemo(() => {
     const color =
-      areaValue !== null ? areaLayer.colorScale(areaValue) : "#dedede";
+      areaLayer && areaValue !== null
+        ? areaLayer.colorScale(areaValue)
+        : "#dedede";
     const textColor = getTooltipTextColor(color);
     return {
       color,
@@ -87,30 +88,36 @@ export const MapTooltip = () => {
 
   const formatters = useChartFormatters({
     dimensions: [],
-    measures: [areaLayer.measureDimension, symbolLayer.measureDimension].filter(
-      truthy
-    ),
+    measures: [
+      areaLayer?.measureDimension,
+      symbolLayer?.measureDimension,
+    ].filter(truthy),
   });
   const areaValueFormatter = (value: number | null) =>
     formatNumberWithUnit(
       value,
-      areaLayer.measureDimension?.iri
-        ? formatters[areaLayer.measureDimension?.iri] || formatNumber
+      areaLayer?.measureDimension?.iri
+        ? formatters[areaLayer?.measureDimension?.iri] || formatNumber
         : formatNumber,
-      areaLayer.measureDimension?.unit
+      areaLayer?.measureDimension?.unit
     );
   const symbolValueFormatter = (value: number | null) =>
     formatNumberWithUnit(
       value,
-      symbolLayer.measureDimension?.iri
-        ? formatters[symbolLayer.measureDimension?.iri] || formatNumber
+      symbolLayer?.measureDimension?.iri
+        ? formatters[symbolLayer?.measureDimension?.iri] || formatNumber
         : formatNumber,
-      symbolLayer.measureDimension?.unit
+      symbolLayer?.measureDimension?.unit
     );
 
   const symbolColorProps = useMemo(() => {
+    const colors = symbolLayer?.colors;
+
+    if (colors === undefined) {
+      return undefined;
+    }
+
     const obs = interaction.d;
-    const colors = symbolLayer.colors;
     const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
     const textColor = getTooltipTextColor(color);
 
@@ -147,13 +154,13 @@ export const MapTooltip = () => {
           color,
           textColor,
           sameAsValue:
-            colors.component.iri === symbolLayer.measureDimension?.iri,
+            colors.component.iri === symbolLayer?.measureDimension?.iri,
         } as const;
     }
   }, [
     interaction.d,
-    symbolLayer.colors,
-    symbolLayer.measureDimension?.iri,
+    symbolLayer?.colors,
+    symbolLayer?.measureDimension?.iri,
     formatNumber,
   ]);
 
@@ -173,8 +180,8 @@ export const MapTooltip = () => {
               sx={{ fontWeight: "bold" }}
             >
               {hoverObjectType === "area"
-                ? areaLayer.getLabel(interaction.d)
-                : symbolLayer.getLabel(interaction.d)}
+                ? areaLayer?.getLabel(interaction.d)
+                : symbolLayer?.getLabel(interaction.d)}
             </Typography>
             <Box
               display="grid"
@@ -188,7 +195,7 @@ export const MapTooltip = () => {
             >
               {
                 <>
-                  {showAreaValue && (
+                  {areaLayer && showAreaValue && (
                     <TooltipRow
                       title={areaLayer.measureLabel}
                       background={areaColorProps.color}
@@ -202,7 +209,7 @@ export const MapTooltip = () => {
                     />
                   )}
 
-                  {showSymbolValue ? (
+                  {symbolLayer && symbolColorProps && showSymbolValue ? (
                     <>
                       {!symbolColorProps.sameAsValue && (
                         <TooltipRow

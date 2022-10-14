@@ -20,6 +20,7 @@ import {
   Palette,
   sequentialPalettes,
 } from "@/configurator/components/ui-helpers";
+import { DataCubeMetadata } from "@/graphql/types";
 import useEvent from "@/utils/use-event";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
@@ -66,8 +67,9 @@ export const ColorRamp = ({
 };
 
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
-  field: "areaLayer" | "symbolLayer";
+  field: string;
   path: string;
+  dataSetMetadata: DataCubeMetadata;
 };
 
 export const ColorRampField = ({
@@ -75,6 +77,7 @@ export const ColorRampField = ({
   path,
   disabled,
   nbClass,
+  dataSetMetadata,
 }: ColorRampFieldProps) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -104,6 +107,7 @@ export const ColorRampField = ({
           value: {
             field,
             path,
+            dataSetMetadata,
             value,
           },
         });

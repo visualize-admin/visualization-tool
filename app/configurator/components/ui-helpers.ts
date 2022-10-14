@@ -749,10 +749,13 @@ export function getFieldLabel(field: string): string {
     case "pie.segment":
     case "segment":
       return i18n._(fieldLabels["controls.color"]);
+    case "baseLayer":
     case "map.baseLayer":
       return i18n._(fieldLabels["chart.map.layers.base"]);
+    case "areaLayer":
     case "map.areaLayer":
       return i18n._(fieldLabels["chart.map.layers.area"]);
+    case "symbolLayer":
     case "map.symbolLayer":
       return i18n._(fieldLabels["chart.map.layers.symbol"]);
     case "title":

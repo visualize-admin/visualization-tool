@@ -4,6 +4,7 @@ import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
+import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import {
   createContext,
@@ -21,10 +22,11 @@ import {
   getFieldComponentIris,
   getGroupedFieldIris,
   getHiddenFieldIris,
+  getInitialAreaLayer,
   getInitialConfig,
+  getInitialSymbolLayer,
   getPossibleChartType,
 } from "@/charts";
-import { DEFAULT_SYMBOL_LAYER_COLORS } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -35,7 +37,7 @@ import {
   isMapConfig,
   isSegmentColorMappingInConfig,
   isSegmentInConfig,
-  MapConfig,
+  NumericalColorField,
 } from "@/configurator/config-types";
 import {
   ChartConfig,
@@ -50,7 +52,12 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { canDimensionBeMultiFiltered, isNumericalMeasure } from "@/domain/data";
+import {
+  canDimensionBeMultiFiltered,
+  isGeoDimension,
+  isGeoShapesDimension,
+  isNumericalMeasure,
+} from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import {
   DataCubeMetadataWithComponentValuesDocument,
@@ -112,6 +119,7 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string | null;
+        dataSetMetadata: DataCubeMetadata;
         value:
           | string
           | number
@@ -627,8 +635,8 @@ export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
   );
   const nonGenericFieldValues =
     isMapConfig(chartConfig) &&
-    chartConfig.fields.symbolLayer.colors.type === "categorical"
-      ? [chartConfig.fields.symbolLayer.colors.componentIri]
+    chartConfig.fields.symbolLayer?.color.type === "categorical"
+      ? [chartConfig.fields.symbolLayer.color.componentIri]
       : [];
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
   const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
@@ -638,42 +646,6 @@ export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
   );
 
   return { mappedFilters, mappedFiltersIris: iris, unmappedFilters };
-};
-
-const updateSymbolLayerColors = ({
-  chartConfig,
-  component,
-  reset,
-}: {
-  chartConfig: MapConfig;
-  component: DimensionMetadataFragment | undefined;
-  reset: boolean;
-}) => {
-  if (reset) {
-    chartConfig.fields.symbolLayer.colors = DEFAULT_SYMBOL_LAYER_COLORS;
-  } else {
-    if (component && canDimensionBeMultiFiltered(component)) {
-      chartConfig.fields.symbolLayer.colors = {
-        type: "categorical",
-        componentIri: component.iri,
-        palette: "blues",
-        colorMapping: mapValueIrisToColor({
-          palette: "blues",
-          dimensionValues: component.values,
-        }),
-      };
-
-      if (chartConfig.fields.symbolLayer.componentIri === component.iri) {
-        delete chartConfig.filters[component.iri];
-      }
-    } else if (isNumericalMeasure(component)) {
-      chartConfig.fields.symbolLayer.colors = {
-        type: "continuous",
-        componentIri: component.iri,
-        palette: "blues",
-      };
-    }
-  }
 };
 
 export const getChartOptionField = (
@@ -698,6 +670,7 @@ const handleChartFieldChanged = (
   if (draft.state !== "CONFIGURING_CHART") {
     return draft;
   }
+
   const {
     field,
     componentIri,
@@ -712,8 +685,11 @@ const handleChartFieldChanged = (
   const selectedValues = actionSelectedValues
     ? actionSelectedValues
     : component?.values || [];
+  // The field was not defined before
   if (!f) {
-    // The field was not defined before
+    // FIXME?
+    // optionalFields = ['segment', 'areaLayer', 'symbolLayer'],
+    // should be reflected in chart encodings
     if (field === "segment") {
       const colorMapping =
         component?.values &&
@@ -751,15 +727,22 @@ const handleChartFieldChanged = (
             (c) => c !== componentIri
           );
       }
-    } else if (
-      isMapConfig(draft.chartConfig) &&
-      field === "symbolLayer.colors"
-    ) {
-      updateSymbolLayerColors({
-        chartConfig: draft.chartConfig,
-        component,
-        reset: componentIri === FIELD_VALUE_NONE,
-      });
+    } else if (isMapConfig(draft.chartConfig)) {
+      if (field === "areaLayer") {
+        draft.chartConfig.fields.areaLayer = getInitialAreaLayer({
+          component: dataSetMetadata.dimensions
+            .filter(isGeoShapesDimension)
+            .find((d) => d.iri === componentIri)!,
+          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+        });
+      } else if (field === "symbolLayer") {
+        draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+          component: dataSetMetadata.dimensions
+            .filter(isGeoDimension)
+            .find((d) => d.iri === componentIri)!,
+          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+        });
+      }
     }
   } else {
     // The field is being updated
@@ -803,14 +786,6 @@ const handleChartFieldChanged = (
           Object
         );
       }
-
-      if (isMapConfig(draft.chartConfig) && field === "symbolLayer.colors") {
-        updateSymbolLayerColors({
-          chartConfig: draft.chartConfig,
-          component,
-          reset: componentIri === FIELD_VALUE_NONE,
-        });
-      }
     }
 
     // Remove this component from the interactive filter, if it is there
@@ -826,6 +801,7 @@ const handleChartFieldChanged = (
     draft.chartConfig,
     action.value.dataSetMetadata
   );
+
   return draft;
 };
 
@@ -895,6 +871,99 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_OPTION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
+        // Side effects of changing an option.
+        // Maybe they could be defined in UI encodings?
+        if (action.value.field) {
+          if (action.value.path === "color.scaleType") {
+            const interpolationTypePath = `chartConfig.fields.${action.value.field}.color.interpolationType`;
+            const nbClassPath = `chartConfig.fields.${action.value.field}.color.nbClass`;
+
+            if (action.value.value === "continuous") {
+              setWith(draft, interpolationTypePath, "linear", Object);
+              unset(draft, nbClassPath);
+            } else if (action.value.value === "discrete") {
+              setWith(draft, interpolationTypePath, "jenks", Object);
+              setWith(draft, nbClassPath, 3, Object);
+            }
+          } else if (action.value.path === "color.componentIri") {
+            const allComponents = [
+              ...action.value.dataSetMetadata.dimensions,
+              ...action.value.dataSetMetadata.measures,
+            ];
+            const component = allComponents.find(
+              (d) => d.iri === action.value.value
+            );
+
+            if (!component) {
+              setWith(
+                draft,
+                `chartConfig.fields.${action.value.field}.color`,
+                { type: "fixed", value: "salmon", opacity: 80 },
+                Object
+              );
+            } else {
+              const previousComponentIri = get(
+                draft,
+                `chartConfig.fields.${action.value.field}.color.componentIri`
+              );
+              const previousComponent = allComponents.find(
+                (d) => d.iri === previousComponentIri
+              );
+              const previousPalette = get(
+                draft,
+                `chartConfig.fields.${action.value.field}.color.palette`
+              );
+              const fieldIri = get(
+                draft,
+                `chartConfig.fields.${action.value.field}.componentIri`
+              );
+
+              if (canDimensionBeMultiFiltered(component)) {
+                setWith(
+                  draft,
+                  `chartConfig.fields.${action.value.field}.color`,
+                  {
+                    type: "categorical",
+                    componentIri: component.iri,
+                    // TODO: Have proper categorical palettes here.
+                    palette: previousPalette || "blues",
+                    colorMapping: mapValueIrisToColor({
+                      palette: previousPalette || "blues",
+                      dimensionValues: component.values,
+                    }),
+                  },
+                  Object
+                );
+
+                if (fieldIri === component.iri) {
+                  unset(draft, `chartConfig.filters["${component.iri}"]`);
+                }
+              } else if (isNumericalMeasure(component)) {
+                if (
+                  (previousComponent &&
+                    !isNumericalMeasure(previousComponent)) ||
+                  !previousComponent
+                ) {
+                  const newField: NumericalColorField = {
+                    type: "numerical",
+                    componentIri: component.iri,
+                    palette: previousPalette || "oranges",
+                    scaleType: "continuous",
+                    interpolationType: "linear",
+                  };
+
+                  setWith(
+                    draft,
+                    `chartConfig.fields.${action.value.field}.color`,
+                    newField,
+                    Object
+                  );
+                }
+              }
+            }
+          }
+        }
+
         setWith(
           draft,
           action.value.field === null
@@ -903,20 +972,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.value,
           Object
         );
-
-        if (
-          isMapConfig(draft.chartConfig) &&
-          action.value.field === "areaLayer" &&
-          action.value.path === "colorScaleType"
-        ) {
-          const path = `chartConfig.fields.areaLayer.colorScaleInterpolationType`;
-
-          if (action.value.value === "continuous") {
-            setWith(draft, path, "linear", Object);
-          } else if (action.value.value === "discrete") {
-            setWith(draft, path, "jenks", Object);
-          }
-        }
       }
 
       return draft;
@@ -1032,13 +1087,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
         } else if (
           isMapConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.symbolLayer.colors.type === "categorical"
+          draft.chartConfig.fields.symbolLayer?.color.type === "categorical"
         ) {
           const colorMapping = mapValueIrisToColor({
-            palette: draft.chartConfig.fields.symbolLayer.colors.palette,
+            palette: draft.chartConfig.fields.symbolLayer.color.palette,
             dimensionValues: values.map((value) => ({ value })),
           });
-          draft.chartConfig.fields.symbolLayer.colors.colorMapping =
+          draft.chartConfig.fields.symbolLayer.color.colorMapping =
             colorMapping;
         }
       }

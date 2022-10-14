@@ -135,6 +135,7 @@ export const DataFilterSelect = ({
     id: "controls.select.optional",
     message: `optional`,
   });
+
   const allOptions = useMemo(() => {
     return isOptional
       ? [
@@ -576,11 +577,13 @@ export const ColorPickerField = ({
   path,
   label,
   disabled,
+  dataSetMetadata,
 }: {
   field: string;
   path: string;
   label: ReactNode;
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -591,10 +594,11 @@ export const ColorPickerField = ({
         value: {
           field,
           path,
+          dataSetMetadata,
           value,
         },
       }),
-    [dispatch, field, path]
+    [dispatch, field, path, dataSetMetadata]
   );
 
   if (state.state !== "CONFIGURING_CHART") {
@@ -682,6 +686,7 @@ export const ChartOptionRadioField = ({
   value,
   defaultChecked,
   disabled = false,
+  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
@@ -689,11 +694,13 @@ export const ChartOptionRadioField = ({
   value: string;
   defaultChecked?: boolean;
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionRadioField({
     path,
     field,
     value,
+    dataSetMetadata,
   });
 
   return (
@@ -715,6 +722,7 @@ export const ChartOptionSliderField = ({
   max = 1,
   step = 0.1,
   defaultValue,
+  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
@@ -724,6 +732,7 @@ export const ChartOptionSliderField = ({
   max?: number;
   step?: number;
   defaultValue: number;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionSliderField({
     path,
@@ -731,6 +740,7 @@ export const ChartOptionSliderField = ({
     min,
     max,
     defaultValue,
+    dataSetMetadata,
   });
 
   return (
@@ -751,17 +761,20 @@ export const ChartOptionCheckboxField = ({
   path,
   defaultValue = false,
   disabled = false,
+  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
     defaultValue,
+    dataSetMetadata,
   });
 
   return (
@@ -783,6 +796,8 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   options,
   getValue,
   getKey,
+  dataSetMetadata,
+  isOptional,
 }: {
   id: string;
   label: string | ReactNode;
@@ -792,22 +807,47 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   options: Option[];
   getValue?: (x: string) => ValueType | undefined;
   getKey?: (x: ValueType) => string;
+  dataSetMetadata: DataCubeMetadata;
+  isOptional?: boolean;
 }) => {
   const fieldProps = useChartOptionSelectField({
     field,
     path,
     getValue,
     getKey,
+    dataSetMetadata,
   });
+  const noneLabel = t({
+    id: "controls.dimension.none",
+    message: "None",
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: "optional",
+  });
+
+  const allOptions = useMemo(() => {
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [isOptional, options, noneLabel]);
 
   return (
     <Select
       id={id}
       disabled={disabled}
-      label={label}
-      options={options}
+      label={isOptional ? `${label} (${optionalLabel})` : label}
+      options={allOptions}
       {...fieldProps}
-    ></Select>
+    />
   );
 };
 
@@ -817,17 +857,20 @@ export const ChartOptionSwitchField = ({
   path,
   defaultValue = false,
   disabled = false,
+  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
     defaultValue,
+    dataSetMetadata,
   });
 
   return (

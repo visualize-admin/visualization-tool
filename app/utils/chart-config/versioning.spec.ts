@@ -37,7 +37,7 @@ describe("config migrations", () => {
         nbClass: 5,
       },
       symbolLayer: {
-        show: true,
+        show: false,
         componentIri: "GeoCoordinatesDimensionIri",
         measureIri: "MeasureIri",
         color: "blue",
@@ -48,15 +48,31 @@ describe("config migrations", () => {
     },
   };
 
-  it("should migrate to newest config", () => {
+  it("should migrate to newest config and back (but might lost some info for major version changes", () => {
     const migratedConfig = migrateChartConfig(oldConfig);
     const decodedConfig = decodeChartConfig(migratedConfig);
 
-    expect(decodedConfig).toMatchSnapshot();
+    expect(decodedConfig).toBeDefined();
+
+    const migratedOldConfig = migrateChartConfig(decodedConfig, {
+      toVersion: "1.0.0",
+    });
+    expect(migratedOldConfig.version).toEqual("1.0.0");
+    expect(migratedOldConfig.fields.symbolLayer.show).toEqual(false);
+    // Should migrate "GeoCoordinatesDimensionIri" to iri defined in Area Layer.
+    expect(migratedOldConfig.fields.symbolLayer.componentIri).toEqual(
+      oldConfig.fields.areaLayer.componentIri
+    );
+    expect(migratedOldConfig.fields.symbolLayer.measureIri).toEqual(
+      oldConfig.fields.areaLayer.measureIri
+    );
+    expect(migratedOldConfig.fields.symbolLayer.color).toEqual("#1f77b4");
   });
 
-  it("should migrate to initial config from migrated config", () => {
-    const migratedConfig = migrateChartConfig(oldConfig);
+  it("should migrate to initial config from migrated config for minor version changes", () => {
+    const migratedConfig = migrateChartConfig(oldConfig, {
+      toVersion: "1.0.2",
+    });
     const migratedOldConfig = migrateChartConfig(migratedConfig, {
       toVersion: "1.0.0",
     });
