@@ -20,7 +20,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     expect(texts).not.toContain("NaN");
   });
 
-  test("should be possible to only select table chart", async ({
+  test("should be possible to only select table & map", async ({
     page,
     screen,
   }) => {
@@ -34,6 +34,6 @@ describe("viewing a dataset with only ordinal measures", () => {
       await selectors.edition.chartTypeSelector(ctx)
     ).locator("button:not(.Mui-disabled)");
 
-    expect(await enabledButtons.count()).toEqual(1);
+    expect(await enabledButtons.count()).toEqual(2);
   });
 });
