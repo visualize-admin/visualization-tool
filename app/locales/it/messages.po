@@ -726,6 +726,10 @@ msgstr "Includere le bozze"
 msgid "dataset.metadata.date.created"
 msgstr "Data di creazione"
 
+#: app/components/chart-footnotes.tsx:109
+msgid "dataset.metadata.date.footnotes.updated"
+msgstr ", ultimo aggiornamento: {0}"
+
 #: app/configurator/components/dataset-metadata.tsx:94
 msgid "dataset.metadata.email"
 msgstr "Punti di contatto"
@@ -734,7 +738,7 @@ msgstr "Punti di contatto"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Addizionali informazioni"
 
-#: app/components/chart-footnotes.tsx:177
+#: app/components/chart-footnotes.tsx:190
 #: app/configurator/components/dataset-metadata.tsx:118
 msgid "dataset.metadata.learnmore"
 msgstr "Ulteriori informazioni sul set di dati"
@@ -890,23 +894,23 @@ msgstr "Mostra i filtri"
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
-#: app/components/chart-footnotes.tsx:108
+#: app/components/chart-footnotes.tsx:121
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:196
+#: app/components/chart-footnotes.tsx:209
 msgid "metadata.link.created.with.visualize"
 msgstr "Creato con visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:124
+#: app/components/chart-footnotes.tsx:137
 msgid "metadata.source"
 msgstr "Fonte"
 
-#: app/components/chart-footnotes.tsx:160
+#: app/components/chart-footnotes.tsx:173
 msgid "metadata.switch.chart"
 msgstr "Passare alla visualizzazione del grafico"
 
-#: app/components/chart-footnotes.tsx:162
+#: app/components/chart-footnotes.tsx:175
 msgid "metadata.switch.table"
 msgstr "Passare alla vista tabella"
 

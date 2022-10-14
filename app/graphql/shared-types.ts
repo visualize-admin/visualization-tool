@@ -23,6 +23,7 @@ export type ResolvedDataCube = {
     description: string;
     version?: string;
     datePublished?: string;
+    dateModified?: string;
     publicationStatus: DataCubePublicationStatus;
     themes?: DataCubeTheme[];
     creator?: DataCubeOrganization;
