@@ -2,7 +2,7 @@ import actions from "./actions";
 import { test } from "./common";
 import selectors from "./selectors";
 
-test.only("should be able to load a map with a dimension with a large number of values", async ({
+test("should be able to load a map with a dimension with a large number of values", async ({
   page,
   screen,
 }) => {
