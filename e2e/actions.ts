@@ -17,7 +17,7 @@ const loadDatasetPreview = async (
 const waitForPanelRightToLoad = async (ctx: TestContext, field: string) =>
   (await selectors.panels.right(ctx))
     .locator(`h5 >> text=${field}`)
-    .waitFor({ timeout: 3000 });
+    .waitFor({ timeout: 15000 });
 
 const selectActiveEditorField = async (ctx: TestContext, field: string) => {
   await (await selectors.panels.left(ctx))
