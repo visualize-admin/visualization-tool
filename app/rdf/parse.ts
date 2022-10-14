@@ -69,6 +69,7 @@ export const parseCube = ({
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
       datePublished: cube.out(ns.schema.datePublished)?.value,
+      dateModified: cube.out(ns.schema.dateModified)?.value,
       themes: cube
         .out(ns.dcat.theme)
         ?.values.filter(truthy)

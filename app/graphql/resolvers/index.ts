@@ -66,6 +66,7 @@ const DataCube: DataCubeResolvers = {
   landingPage: ({ data: { landingPage } }) => landingPage ?? null,
   expires: ({ data: { expires } }) => expires ?? null,
   description: ({ data: { description } }) => description ?? null,
+  dateModified: ({ data: { dateModified } }) => dateModified ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes || [],
   creator: ({ data: { creator } }) => creator ?? null,

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useState, useMemo } from "react";
@@ -6,8 +6,9 @@ import { useEffect, useState, useMemo } from "react";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
+import { useTimeFormatLocale } from "@/configurator/components/ui-helpers";
 import {
-  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
@@ -71,7 +72,7 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -95,6 +96,7 @@ export const ChartFootnotes = ({
   const sparqlEditorUrl =
     visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
 
+  const formatLocale = useTimeFormatLocale();
   const cubeLink = useMemo(() => {
     return makeOpenDataLink(locale, data?.dataCubeByIri);
   }, [locale, data?.dataCubeByIri]);
@@ -102,13 +104,24 @@ export const ChartFootnotes = ({
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
+    const titleContent = `${dataCubeByIri.title}${
+      dataCubeByIri.dateModified
+        ? t({
+            id: "dataset.metadata.date.footnotes.updated",
+            message: `, latest update: ${formatLocale.format("%x %H:%M")(
+              new Date(dataCubeByIri.dateModified)
+            )}`,
+          })
+        : ""
+    }`;
+
     return (
       <Box sx={{ mt: 2 }}>
         <Typography component="div" variant="caption" color="grey.600">
           <Trans id="metadata.dataset">Dataset</Trans>:{" "}
           {cubeLink ? (
             <Link target="_blank" href={cubeLink} rel="noreferrer">
-              {dataCubeByIri.title}{" "}
+              {titleContent}{" "}
               <Icon
                 name="linkExternal"
                 size={12}
@@ -116,7 +129,7 @@ export const ChartFootnotes = ({
               />
             </Link>
           ) : (
-            dataCubeByIri.title
+            titleContent
           )}
         </Typography>
 
