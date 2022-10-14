@@ -14,6 +14,7 @@ import * as ns from "@/rdf/namespace";
 import { parseCube, parseIri } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
 
+import { pragmas } from "./create-source";
 import { computeScores, highlight } from "./query-search-score-utils";
 import { makeVisualizeDatasetFilter } from "./query-utils";
 
@@ -184,7 +185,7 @@ export const searchCubes = async ({
           )`
           : ""
       }
-  `;
+  `.prologue`${pragmas}`;
 
   const scoreResults = await executeAndMeasure(sparqlClient, scoresQuery);
   queries.push({

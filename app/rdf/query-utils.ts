@@ -1,6 +1,6 @@
 import { sparql } from "@tpluscode/sparql-builder";
 
-import { schema } from "../../app/rdf/namespace";
+import { cube, schema } from "../../app/rdf/namespace";
 
 export const makeVisualizeDatasetFilter = (options?: {
   includeDrafts?: boolean;
@@ -17,6 +17,7 @@ export const makeVisualizeDatasetFilter = (options?: {
         ? ""
         : sparql`${cubeIriVar} ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.`
     }
+    ${cubeIriVar} ${cube.observationConstraint} ?shape.
     FILTER NOT EXISTS {${cubeIriVar} ${schema.expires} ?expiryDate }
     FILTER NOT EXISTS {${cubeIriVar} ${schema.validThrough} ?validThrough }
     `;

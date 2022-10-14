@@ -1,6 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
-import { Stack } from "@mui/material";
-import React from "react";
+import { AccordionProps, Box, Button, Typography } from "@mui/material";
+import {
+  Stack,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  CircularProgress,
+} from "@mui/material";
+import React, { useState } from "react";
 import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -9,6 +15,7 @@ import { SPARQL_EDITOR } from "@/domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
+import useEvent from "@/utils/use-event";
 
 const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
@@ -32,26 +39,43 @@ const CubeMetadata = ({
   dataSource: DataSource;
 }) => {
   const locale = useLocale();
-  const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: datasetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale: locale,
-    },
-  });
+  const [expanded, setExpanded] = useState(false);
+  const [{ data: metadata, fetching }] =
+    useDataCubeMetadataWithComponentValuesQuery({
+      variables: {
+        iri: datasetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale: locale,
+      },
+      pause: expanded === false,
+    });
+  const handleChange: AccordionProps["onChange"] = useEvent((_ev, expanded) =>
+    setExpanded(expanded)
+  );
 
-  return metadata ? (
+  return (
     <Stack direction="row" spacing={2}>
-      <Icon name="column" display="inline" size={16} />
-      <Typography variant="body2">Dimensions</Typography>
-      <Inspector
-        data={Object.fromEntries(
-          metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) || []
-        )}
-      />
+      <Accordion onChange={handleChange} expanded={expanded}>
+        <AccordionSummary>
+          <Icon name="column" display="inline" size={16} />{" "}
+          <Typography variant="body2">Dimensions</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {fetching ? <CircularProgress size={12} color="secondary" /> : null}
+
+          {expanded && metadata ? (
+            <Inspector
+              data={Object.fromEntries(
+                metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) ||
+                  []
+              )}
+            />
+          ) : null}
+        </AccordionDetails>
+      </Accordion>
     </Stack>
-  ) : null;
+  );
 };
 
 const DebugConfigurator = () => {
@@ -91,6 +115,8 @@ const DebugConfigurator = () => {
             size="small"
             href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
+              #pragma join.hash off
+              
 DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
             target="_blank"
