@@ -20,7 +20,9 @@ const waitForPanelRightToLoad = async (ctx: TestContext, field: string) =>
     .waitFor({ timeout: 3000 });
 
 const selectActiveEditorField = async (ctx: TestContext, field: string) => {
-  (await selectors.panels.left(ctx)).locator(`button >> text=${field}`).click();
+  await (await selectors.panels.left(ctx))
+    .locator(`button >> text=${field}`)
+    .click();
   return waitForPanelRightToLoad(ctx, field);
 };
 
