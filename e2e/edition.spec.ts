@@ -5,7 +5,6 @@ import offentlicheAusgabenChartConfigFixture from "./fixtures/offentliche-ausgab
 test("should be possible to edit filters of a hierarchy", async ({
   page,
   screen,
-  within,
   selectors,
 }) => {
   const key = "WtHYbmsehQKo";

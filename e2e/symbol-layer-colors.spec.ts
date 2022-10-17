@@ -4,10 +4,9 @@ import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-c
 
 test("Selecting SymbolLayer colors> should be possible to select geo dimension and see a legend", async ({
   page,
-  screen,
   selectors,
   actions,
-  within
+  within,
 }) => {
   const key = "jky5IEw6poT3";
   const config = mapWaldflascheChartConfigFixture;
@@ -17,20 +16,31 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   await selectors.chart.loaded();
   await actions.editor.selectActiveField("Symbols");
 
-  await within(selectors.edition.controlSection('Symbols')).getByText("None").click();
+  await within(selectors.edition.controlSection("Symbols"))
+    .getByText("None")
+    .click();
 
   // Select production region as origin for symbols
   await actions.mui.selectOption("production region");
 
-  await selectors.chart.loaded()
-  
-  await within(selectors.edition.controlSection('Color')).getByText('None').click()
+  await selectors.chart.loaded();
+
+  await within(selectors.edition.controlSection("Color"))
+    .getByText("None")
+    .click();
 
   // Selects production region for color mapping
   await actions.mui.selectOption("production region");
 
-  const legendItems = (await selectors.chart.colorLegendItems())
+  const legendItems = await selectors.chart.colorLegendItems();
   expect(await legendItems.count()).toBe(6);
-  const legendTexts = await legendItems.allTextContents()
-  expect(legendTexts).toEqual(['Alps', 'Jura', 'Plateau', 'Pre-Alps', 'Southern Alps', 'Switzerland'])
+  const legendTexts = await legendItems.allTextContents();
+  expect(legendTexts).toEqual([
+    "Alps",
+    "Jura",
+    "Plateau",
+    "Pre-Alps",
+    "Southern Alps",
+    "Switzerland",
+  ]);
 });
