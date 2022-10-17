@@ -264,7 +264,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             componentTypes: [
               "NumericalMeasure",
               "OrdinalMeasure",
+              "GeoCoordinatesDimension",
               "GeoShapesDimension",
+              "NominalDimension",
+              "OrdinalDimension",
             ],
             optional: true,
           },
