@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -7,21 +7,28 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
-  EncodingOptions,
+  EncodingFieldType,
+  EncodingOption,
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
+import { getMap } from "@/charts/map/ref";
 import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import {
+  ChartConfig,
   ChartType,
+  ColorFieldType,
+  ColorScaleType,
+  ComponentType,
   ConfiguratorStateConfiguringChart,
   ImputationType,
   imputationTypes,
   isAreaConfig,
-  isMapConfig,
+  isConfiguring,
   isTableConfig,
+  MapConfig,
   SortingType,
   useConfiguratorState,
 } from "@/configurator";
@@ -37,6 +44,10 @@ import {
   ChartFieldField,
   ChartOptionCheckboxField,
   ChartOptionRadioField,
+  ChartOptionSelectField,
+  ChartOptionSliderField,
+  ChartOptionSwitchField,
+  ColorPickerField,
 } from "@/configurator/components/field";
 import {
   DimensionValuesMultiFilter,
@@ -46,7 +57,6 @@ import {
   getFieldLabel,
   getIconName,
 } from "@/configurator/components/ui-helpers";
-import { MapColumnOptions } from "@/configurator/map/map-chart-options";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
@@ -59,6 +69,8 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
+
+import { ColorRampField } from "./chart-controls/color-ramp";
 
 export const ChartOptionsSelector = ({
   state,
@@ -82,15 +94,19 @@ export const ChartOptionsSelector = ({
     data: data?.dataCubeByIri?.observations.data,
   });
 
-  if (data?.dataCubeByIri) {
-    const meta = {
-      ...data.dataCubeByIri,
-      dimensions: [
-        // There are no fields that make use of numeric dimensions at the moment.
-        ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
-      ],
-    };
+  const metaData = useMemo(() => {
+    if (data?.dataCubeByIri) {
+      return {
+        ...data.dataCubeByIri,
+        dimensions: [
+          // There are no fields that make use of numeric dimensions at the moment.
+          ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
+        ],
+      };
+    }
+  }, [data?.dataCubeByIri]);
 
+  if (metaData) {
     return (
       <Box
         sx={{
@@ -101,13 +117,11 @@ export const ChartOptionsSelector = ({
       >
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
-            <TableColumnOptions state={state} metaData={meta} />
-          ) : isMapConfig(state.chartConfig) ? (
-            <MapColumnOptions state={state} metaData={meta} />
+            <TableColumnOptions state={state} metaData={metaData} />
           ) : (
             <ActiveFieldSwitch
               state={state}
-              metaData={meta}
+              metaData={metaData}
               imputationNeeded={imputationNeeded}
             />
           )
@@ -146,6 +160,7 @@ const ActiveFieldSwitch = ({
   if (!activeField) {
     return null;
   }
+
   const activeFieldComponentIri = getFieldComponentIri(
     state.chartConfig.fields,
     activeField
@@ -192,8 +207,7 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    // FIXME: encoding types, so we don't need these there (chart options are
-    // handled in a separate file)
+    // Empty strings for optional encodings.
     baseLayer: "",
     areaLayer: "",
     symbolLayer: "",
@@ -216,17 +230,24 @@ const EncodingOptionsPanel = ({
 
   const options = useMemo(() => {
     return getDimensionsByDimensionType({
-      dimensionTypes: encoding.values,
+      dimensionTypes: encoding.componentTypes,
       dimensions,
       measures,
     }).map((dimension) => ({
       value: dimension.iri,
       label: dimension.label,
       disabled:
-        otherFieldsIris.includes(dimension.iri) ||
+        ((encoding.exclusive === undefined || encoding.exclusive === true) &&
+          otherFieldsIris.includes(dimension.iri)) ||
         isStandardErrorDimension(dimension),
     }));
-  }, [dimensions, encoding.values, measures, otherFieldsIris]);
+  }, [
+    dimensions,
+    encoding.componentTypes,
+    encoding.exclusive,
+    measures,
+    otherFieldsIris,
+  ]);
 
   const hasStandardError = useMemo(() => {
     return [...measures, ...dimensions].find((m) =>
@@ -250,42 +271,75 @@ const EncodingOptionsPanel = ({
       ref={panelRef}
       tabIndex={-1}
     >
-      <ControlSection>
-        <SectionTitle iconName={getIconName(encoding.field)}>
-          {getFieldLabel(encoding.field)}
-        </SectionTitle>
-        <ControlSectionContent gap="none">
-          <ChartFieldField
-            field={encoding.field}
-            label={getFieldLabelHint[encoding.field]}
-            optional={encoding.optional}
-            options={options}
-            dataSetMetadata={metaData}
-          />
-          {encoding.options && (
-            <ChartFieldOptions
-              disabled={!component}
+      {/* Only show component select if necessary */}
+      {encoding.componentTypes.length > 0 ? (
+        <ControlSection>
+          <SectionTitle iconName={getIconName(encoding.field)}>
+            {getFieldLabel(encoding.field)}
+          </SectionTitle>
+          <ControlSectionContent gap="none">
+            <ChartFieldField
               field={encoding.field}
-              encodingOptions={encoding.options}
-              chartType={chartType}
+              label={getFieldLabelHint[encoding.field]}
+              optional={encoding.optional}
+              options={options}
+              dataSetMetadata={metaData}
             />
-          )}
-          {optionsByField["color"] && (
-            <ColorPalette
-              disabled={!component}
-              field={field}
-              component={component}
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
+            {encoding.options && (
+              <ChartFieldOptions
+                disabled={!component}
+                field={encoding.field}
+                encodingOptions={encoding.options}
+                chartType={chartType}
+                dataSetMetadata={metaData}
+              />
+            )}
+            {optionsByField["color"]?.field === "color" &&
+              optionsByField["color"].type === "palette" && (
+                <ColorPalette
+                  disabled={!component}
+                  field={field}
+                  component={component}
+                />
+              )}
+          </ControlSectionContent>
+        </ControlSection>
+      ) : null}
+
+      {/* FIXME: should be generic or shouldn't be a field at all */}
+      {field === "baseLayer" ? (
+        <ChartMapBaseLayerSettings state={state} dataSetMetadata={metaData} />
+      ) : null}
+
       {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
           state={state}
-          field={encoding.field}
+          field={field}
           encodingSortingOptions={encoding.sorting}
+          dataSetMetadata={metaData}
         />
       )}
+
+      {optionsByField["size"]?.field === "size" && component && (
+        <ChartFieldSize
+          field={field}
+          componentTypes={optionsByField["size"].componentTypes}
+          dataSetMetadata={metaData}
+        />
+      )}
+
+      {optionsByField["color"]?.field === "color" &&
+        optionsByField["color"].type === "component" &&
+        component && (
+          <ChartFieldColorComponent
+            chartConfig={state.chartConfig}
+            field={encoding.field}
+            component={component}
+            componentTypes={optionsByField["color"].componentTypes}
+            dataSetMetadata={metaData}
+            optional={optionsByField["color"].optional}
+          />
+        )}
       {optionsByField["showStandardError"] && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
@@ -299,6 +353,7 @@ const EncodingOptionsPanel = ({
               field={encoding.field}
               defaultValue={true}
               label={t({ id: "controls.section.show-standard-error" })}
+              dataSetMetadata={metaData}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -306,35 +361,73 @@ const EncodingOptionsPanel = ({
       {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
-      {encoding.filters && component && (
-        <ControlSection data-testid="chart-edition-right-filters">
-          <SectionTitle disabled={!component} iconName="filter">
-            <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
-          <ControlSectionContent component="fieldset" gap="none">
-            <legend style={{ display: "none" }}>
-              <Trans id="controls.section.filter">Filter</Trans>
-            </legend>
-            {component && component.__typename === "TemporalDimension" ? (
-              <TimeFilter
-                key={component.iri}
-                dimensionIri={component.iri}
-                dataSetIri={metaData.iri}
-              />
-            ) : (
-              component && (
-                <DimensionValuesMultiFilter
-                  key={component.iri}
-                  dimensionIri={component.iri}
-                  dataSetIri={metaData.iri}
-                />
-              )
-            )}
-          </ControlSectionContent>
-        </ControlSection>
-      )}
+      <ChartFieldMultiFilter
+        state={state}
+        component={component}
+        encoding={encoding}
+        field={field}
+        metaData={metaData}
+      />
     </div>
   );
+};
+
+const ChartFieldMultiFilter = ({
+  state,
+  component,
+  encoding,
+  field,
+  metaData,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  component: DimensionMetadataFragment | undefined;
+  encoding: EncodingSpec;
+  field: string;
+  metaData: DataCubeMetadata;
+}) => {
+  const colorComponentIri = get(
+    state.chartConfig,
+    `fields.${field}.color.componentIri`
+  );
+  const colorType = get(
+    state.chartConfig,
+    `fields.${field}.color.type`
+  ) as ColorFieldType;
+
+  return encoding.filters && component ? (
+    <ControlSection data-testid="chart-edition-right-filters">
+      <SectionTitle disabled={!component} iconName="filter">
+        <Trans id="controls.section.filter">Filter</Trans>
+      </SectionTitle>
+      <ControlSectionContent component="fieldset" gap="none">
+        <legend style={{ display: "none" }}>
+          <Trans id="controls.section.filter">Filter</Trans>
+        </legend>
+        {component && component.__typename === "TemporalDimension" ? (
+          <TimeFilter
+            key={component.iri}
+            dimensionIri={component.iri}
+            dataSetIri={metaData.iri}
+          />
+        ) : (
+          component && (
+            <DimensionValuesMultiFilter
+              key={component.iri}
+              dimensionIri={component.iri}
+              dataSetIri={metaData.iri}
+              field={field}
+              // Allow setting the colors when color field is used and its iri
+              // matches component iri.
+              {...(colorType === "categorical" &&
+              colorComponentIri === component.iri
+                ? { colorConfigPath: "color" }
+                : {})}
+            />
+          )
+        )}
+      </ControlSectionContent>
+    </ControlSection>
+  ) : null;
 };
 
 const ChartFieldOptions = ({
@@ -342,11 +435,13 @@ const ChartFieldOptions = ({
   chartType,
   encodingOptions,
   disabled = false,
+  dataSetMetadata,
 }: {
   field: string;
   chartType: ChartType;
-  encodingOptions: EncodingOptions;
+  encodingOptions?: EncodingOption[];
   disabled?: boolean;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   return (
     <>
@@ -366,6 +461,7 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
+                dataSetMetadata={dataSetMetadata}
               />
               <ChartOptionRadioField
                 label={getFieldLabel("grouped")}
@@ -373,6 +469,7 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"grouped"}
                 disabled={disabled}
+                dataSetMetadata={dataSetMetadata}
               />
             </Flex>
           </Box>
@@ -385,11 +482,13 @@ const ChartFieldSorting = ({
   state,
   field,
   encodingSortingOptions,
+  dataSetMetadata,
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
   field: string;
   encodingSortingOptions: EncodingSortingOption[];
+  dataSetMetadata: DataCubeMetadata;
   disabled?: boolean;
 }) => {
   const [, dispatch] = useConfiguratorState();
@@ -420,11 +519,12 @@ const ChartFieldSorting = ({
         value: {
           field,
           path: "sorting",
+          dataSetMetadata,
           value: { sortingType, sortingOrder },
         },
       });
     },
-    [dispatch, field]
+    [dispatch, field, dataSetMetadata]
   );
 
   const activeSortingType = get(
@@ -501,6 +601,252 @@ const ChartFieldSorting = ({
               );
             })}
         </Flex>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartFieldSize = ({
+  field,
+  componentTypes,
+  dataSetMetadata,
+}: {
+  field: string;
+  componentTypes: ComponentType[];
+  dataSetMetadata: DataCubeMetadata;
+}) => {
+  const measuresOptions = useMemo(() => {
+    return getDimensionsByDimensionType({
+      dimensionTypes: componentTypes,
+      dimensions: dataSetMetadata.dimensions,
+      measures: dataSetMetadata.measures,
+    }).map(({ iri, label }) => ({ value: iri, label }));
+  }, [dataSetMetadata.dimensions, dataSetMetadata.measures, componentTypes]);
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="size">
+        {t({
+          id: "controls.size",
+          message: "Size",
+        })}
+      </SectionTitle>
+      <ControlSectionContent>
+        <ChartOptionSelectField
+          id="size-measure"
+          label={t({
+            id: "controls.select.measure",
+            message: "Select a measure",
+          })}
+          field={field}
+          path="measureIri"
+          options={measuresOptions}
+          dataSetMetadata={dataSetMetadata}
+        />
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartFieldColorComponent = ({
+  chartConfig,
+  field,
+  component,
+  componentTypes,
+  dataSetMetadata,
+  optional,
+}: {
+  chartConfig: ChartConfig;
+  field: EncodingFieldType;
+  component: DimensionMetadataFragment;
+  componentTypes: ComponentType[];
+  dataSetMetadata: DataCubeMetadata;
+  optional: boolean;
+}) => {
+  const nbOptions = component.values.length;
+  const measuresOptions = useMemo(() => {
+    return getDimensionsByDimensionType({
+      dimensionTypes: componentTypes,
+      dimensions: dataSetMetadata.dimensions,
+      measures: dataSetMetadata.measures,
+    }).map(({ iri, label }) => ({ value: iri, label }));
+  }, [dataSetMetadata.dimensions, dataSetMetadata.measures, componentTypes]);
+  const nbColorOptions = useMemo(() => {
+    return Array.from(
+      { length: Math.min(7, Math.max(0, nbOptions - 2)) },
+      (_, i) => i + 3
+    ).map((d) => ({ value: d, label: `${d}` }));
+  }, [nbOptions]);
+
+  const colorComponentIri = get(chartConfig, [
+    "fields",
+    field,
+    "color",
+    "componentIri",
+  ]) as string | undefined;
+  const colorType = get(chartConfig, [
+    "fields",
+    field,
+    "color",
+    "type",
+  ]) as ColorFieldType;
+  const colorScaleType = get(chartConfig, [
+    "fields",
+    field,
+    "color",
+    "scaleType",
+  ]) as ColorScaleType | undefined;
+  const nbClass = get(chartConfig, ["fields", field, "color", "nbClass"]) as
+    | number
+    | undefined;
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="color">
+        {t({ id: "controls.color", message: "Color" })}
+      </SectionTitle>
+      <ControlSectionContent>
+        <ChartOptionSelectField
+          id="color-component"
+          label={t({
+            id: "controls.select.measure",
+            message: "Select a measure",
+          })}
+          // FIXME: how to handle nested fields & options?
+          field={field}
+          path="color.componentIri"
+          options={measuresOptions}
+          dataSetMetadata={dataSetMetadata}
+          isOptional={optional}
+        />
+
+        {colorType === "fixed" ? (
+          <>
+            <ColorPickerField
+              label={t({
+                id: "controls.color.select",
+                message: "Select a color",
+              })}
+              field={field}
+              path="color.value"
+              dataSetMetadata={dataSetMetadata}
+            />
+            <ChartOptionSliderField
+              field={field}
+              path="color.opacity"
+              label={t({
+                id: "controls.color.opacity",
+                message: "Opacity",
+              })}
+              min={0}
+              max={100}
+              step={10}
+              defaultValue={80}
+              dataSetMetadata={dataSetMetadata}
+            />
+          </>
+        ) : colorType === "categorical" ? (
+          colorComponentIri && component.iri !== colorComponentIri ? (
+            <DimensionValuesMultiFilter
+              key={component.iri}
+              dataSetIri={dataSetMetadata.iri}
+              dimensionIri={colorComponentIri}
+              field={field}
+              colorConfigPath="color"
+            />
+          ) : null
+        ) : colorType === "numerical" ? (
+          <div>
+            <ColorRampField
+              field={field}
+              path="color.palette"
+              nbClass={nbClass}
+              dataSetMetadata={dataSetMetadata}
+            />
+            <FieldSetLegend
+              sx={{ mb: 1 }}
+              legendTitle={t({
+                id: "controls.scale.type",
+                message: "Scale type",
+              })}
+            />
+            <Flex sx={{ justifyContent: "flex-start" }}>
+              <ChartOptionRadioField
+                label={t({
+                  id: "controls.color.scale.type.continuous",
+                  message: "Continuous",
+                })}
+                field={field}
+                path="color.scaleType"
+                value="continuous"
+                dataSetMetadata={dataSetMetadata}
+              />
+
+              {nbOptions >= 3 && (
+                <ChartOptionRadioField
+                  label={t({
+                    id: "controls.color.scale.type.discrete",
+                    message: "Discrete",
+                  })}
+                  field={field}
+                  path="color.scaleType"
+                  value="discrete"
+                  dataSetMetadata={dataSetMetadata}
+                />
+              )}
+            </Flex>
+          </div>
+        ) : null}
+
+        {colorScaleType === "discrete" && nbOptions >= 3 ? (
+          <Stack spacing={2}>
+            <ChartOptionSelectField
+              id="color-scale-interpolation"
+              label={t({
+                id: "controls.color.scale.interpolation",
+                message: "Interpolation",
+              })}
+              field={field}
+              path="color.interpolationType"
+              options={[
+                {
+                  label: t({
+                    id: "controls.color.scale.discretization.quantize",
+                    message: "Quantize (equal intervals)",
+                  }),
+                  value: "quantize",
+                },
+                {
+                  label: t({
+                    id: "controls.color.scale.discretization.quantiles",
+                    message: "Quantiles (equal distribution of values)",
+                  }),
+                  value: "quantile",
+                },
+                {
+                  label: t({
+                    id: "controls.color.scale.discretization.jenks",
+                    message: "Jenks (natural breaks)",
+                  }),
+                  value: "jenks",
+                },
+              ]}
+              dataSetMetadata={dataSetMetadata}
+            />
+            <ChartOptionSelectField<number>
+              id="number-of-colors"
+              label={t({
+                id: "controls.color.scale.number.of.classes",
+                message: "Number of classes",
+              })}
+              field={field}
+              path="color.nbClass"
+              options={nbColorOptions}
+              getValue={(d) => +d}
+              dataSetMetadata={dataSetMetadata}
+            />
+          </Stack>
+        ) : null}
       </ControlSectionContent>
     </ControlSection>
   );
@@ -586,6 +932,75 @@ const ChartImputationType = ({
             }}
           />
         </Box>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartMapBaseLayerSettings = ({
+  state,
+  dataSetMetadata,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  dataSetMetadata: DataCubeMetadata;
+}) => {
+  const chartConfig = state.chartConfig as MapConfig;
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+
+  useEffect(() => {
+    const map = getMap();
+
+    if (chartConfig.baseLayer.locked) {
+      if (map !== null) {
+        dispatch({
+          type: "CHART_OPTION_CHANGED",
+          value: {
+            field: null,
+            // FIXME: shouldn't be a field if not mapped
+            // to a component
+            path: "baseLayer.bbox",
+            value: map.getBounds().toArray(),
+            dataSetMetadata,
+          },
+        });
+      }
+    } else {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field: null,
+          path: "baseLayer.bbox",
+          value: undefined,
+          dataSetMetadata,
+        },
+      });
+    }
+  }, [chartConfig.baseLayer.locked, dispatch, dataSetMetadata]);
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="mapMaptype">
+        <Trans id="chart.map.layers.base">Map Display</Trans>
+      </SectionTitle>
+      <ControlSectionContent gap="large">
+        <ChartOptionCheckboxField
+          label={t({
+            id: "chart.map.layers.base.show",
+            message: "Show",
+          })}
+          field={null}
+          path="baseLayer.show"
+          dataSetMetadata={dataSetMetadata}
+        />
+        <ChartOptionSwitchField
+          label={t({
+            id: "chart.map.layers.base.view.locked",
+            message: "Locked view",
+          })}
+          field={null}
+          path="baseLayer.locked"
+          dataSetMetadata={dataSetMetadata}
+        />
       </ControlSectionContent>
     </ControlSection>
   );

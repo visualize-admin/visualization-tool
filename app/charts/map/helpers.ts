@@ -3,11 +3,18 @@ import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent, geoBounds } from "d3";
 import { useMemo, useState } from "react";
 import { useControl, ViewState } from "react-map-gl";
+import { feature as topojsonFeature } from "topojson-client";
 
-import { BBox } from "@/configurator/config-types";
+import { BBox, Filters } from "@/configurator/config-types";
 import useEvent from "@/utils/use-event";
 
-import { AreaLayer, SymbolLayer } from "../../domain/data";
+import {
+  AreaLayer,
+  GeoFeature,
+  GeoShapes,
+  Observation,
+  SymbolLayer,
+} from "../../domain/data";
 
 export type MinMaxZoomViewState = Pick<
   ViewState,
@@ -169,6 +176,49 @@ export const getBBox = (
   } else {
     return symbolsBbox;
   }
+};
+
+export const prepareTopojson = ({
+  dimensionIri,
+  topology,
+  filters,
+  observations,
+}: {
+  dimensionIri: string;
+  topology: GeoShapes["topology"];
+  filters: Filters[string];
+  observations: Observation[];
+}) => {
+  const activeFiltersIris = filters
+    ? filters.type === "single"
+      ? [filters.value]
+      : filters.type === "multi"
+      ? Object.keys(filters.values)
+      : undefined
+    : undefined;
+
+  const topojson = topojsonFeature(
+    topology,
+    topology.objects.shapes
+  ) as AreaLayer["shapes"];
+
+  // Completely hide unselected shapes (so they don't affect the legend, etc)
+  if (activeFiltersIris) {
+    topojson.features = topojson.features.filter((d) =>
+      activeFiltersIris.includes(d.properties.iri)
+    );
+  }
+
+  topojson.features.forEach((d: GeoFeature) => {
+    // Should we match by labels?
+    const observation = observations.find(
+      (o) => o[dimensionIri] === d.properties.label
+    );
+
+    d.properties = { ...d.properties, observation };
+  });
+
+  return topojson;
 };
 
 // Used to render DeckGL layers in synchronization with base map layers.

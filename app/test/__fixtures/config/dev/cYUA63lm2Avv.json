@@ -7,7 +7,7 @@
     },
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703030000_112/dataset",
     "chartConfig": {
-      "version": "1.0.2",
+      "version": "1.1.1",
       "fields": {
         "x": {
           "componentIri": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/2"
