@@ -215,6 +215,7 @@ export type HierarchyValue = {
   __typename: 'HierarchyValue';
   value: Scalars['String'];
   label: Scalars['String'];
+  position?: Maybe<Scalars['String']>;
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;

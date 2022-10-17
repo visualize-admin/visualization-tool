@@ -40,6 +40,7 @@ export const ControlSection = forwardRef<
     <Box
       ref={ref}
       role={role}
+      data-testid='controlSection'
       sx={{
         backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
         ...sx,
