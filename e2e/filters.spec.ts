@@ -1,4 +1,4 @@
-import { test } from "./common";
+import { test, expect } from "./common";
 
 test("Filters initial state should have hierarchy dimensions first and topmost value selected", async ({
   page,
@@ -10,12 +10,17 @@ test("Filters initial state should have hierarchy dimensions first and topmost v
   );
   await selectors.chart.loaded();
 
-  const filters = await selectors.edition.configFilters();
+  const filters = await selectors.edition.controlSection('Filters');
+  
+  const label = await filters.locator('label').first().waitFor({ timeout: 30_000 })
 
-  await within(filters).findByText("1. production region", undefined, {
-    timeout: 30 * 1000,
-  });
-  await within(filters).findByText("2. stand structure");
-  await within(filters).findByText("3. Inventory");
-  await within(filters).findByText("4. evaluation type");
+  const labels =  filters.locator('label')
+
+  const texts = await labels.allTextContents()
+  expect(texts).toEqual([
+    "1. production region",
+    "2. stand structure",
+    "3. Inventory",
+    "4. evaluation type"
+  ])
 });
