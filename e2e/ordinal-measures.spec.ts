@@ -37,7 +37,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     screen,
     selectors,
     actions,
-    within
+    within,
   }) => {
     const ctx = { page, screen };
     await loadChartInLocalStorage(page, key, config);
@@ -45,17 +45,21 @@ describe("viewing a dataset with only ordinal measures", () => {
 
     await selectors.chart.loaded();
 
-    await actions.editor.changeChartType( "Map");
-    await actions.editor.selectActiveField( "Symbols");
+    await actions.editor.changeChartType("Map");
 
     await selectors.chart.loaded();
 
+    await actions.editor.selectActiveField("Symbols");
+
+    await selectors.chart.loaded();
 
     const panelRight = await selectors.panels.right();
-    await within(selectors.edition.controlSection('Symbols')).getByText("None").click();
+    await within(selectors.edition.controlSection("Symbols"))
+      .getByText("None")
+      .click();
 
     // Select options open in portal
-    await actions.mui.selectOption('area');
+    await actions.mui.selectOption("area");
 
     // Allow select options to disappear to prevent re-selecting none
     await sleep(3000);
@@ -63,15 +67,13 @@ describe("viewing a dataset with only ordinal measures", () => {
     // Chart needs to re-load when symbol layer is selected
     await selectors.chart.loaded();
 
-    // FIXME: second select is for color, should be handled better
-    await panelRight.locator("text=None >> nth=1").click();
+    await within(selectors.edition.controlSection("Color"))
+      .getByText("None")
+      .click();
 
-    // Re-select production region for color mapping
-    const selects = await screen.locator('li[role="option"]');
+    const options = await selectors.mui.options();
+    const dimensionLabels = await options.allInnerTexts();
 
-    const expectedDimensions = ["ord1", "ord2", "ord3"];
-    const dimensionLabels = await selects.allInnerTexts();
-
-    expect(expectedDimensions).toEqual(['ord1', 'ord2', 'ord3']);
+    expect(dimensionLabels).toEqual(["None", "area", "ord1", "ord2", "ord3"]);
   });
 });
