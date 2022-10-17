@@ -1,5 +1,3 @@
-import { within } from "@playwright-testing-library/test";
-
 import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
@@ -9,6 +7,7 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   screen,
   selectors,
   actions,
+  within
 }) => {
   const key = "jky5IEw6poT3";
   const config = mapWaldflascheChartConfigFixture;
@@ -18,17 +17,14 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await selectors.chart.loaded();
   await actions.editor.selectActiveField("Symbols");
 
-  const panelRight = await selectors.panels.right();
-
-  await (await within(panelRight).findByText("None")).click();
+  await within(selectors.edition.controlSection('Symbols')).getByText("None").click();
 
   // Select production region as origin for symbols
   await actions.mui.selectOption("production region");
 
   await selectors.chart.loaded()
   
-  const colorSectionLocator = selectors.edition.controlSection('Color')
-  await (await within(colorSectionLocator).getByText('None')).click()
+  await within(selectors.edition.controlSection('Color')).getByText('None').click()
 
   // Selects production region for color mapping
   await actions.mui.selectOption("production region");

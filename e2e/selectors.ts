@@ -28,9 +28,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       cells: () => page.locator("table td"),
     },
     panels: {
-      left: () => screen.findByTestId("panel-left"),
-      right: () => screen.findByTestId("panel-right"),
-      middle: () => screen.findByTestId("panel-middle"),
+      left: () => screen.getByTestId("panel-left"),
+      right: () => screen.getByTestId("panel-right"),
+      middle: () => screen.getByTestId("panel-middle"),
     },
     edition: {
       configFilters: () =>
