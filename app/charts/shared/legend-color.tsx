@@ -132,7 +132,13 @@ export const InteractiveLegendColor = () => {
   );
 };
 
-const useLegendGroups = (labels: string[]) => {
+const useLegendGroups = ({
+  labels,
+  title,
+}: {
+  labels: string[];
+  title?: string;
+}) => {
   const configState = useReadOnlyConfiguratorState();
 
   if (
@@ -145,6 +151,7 @@ const useLegendGroups = (labels: string[]) => {
   }
 
   const locale = useLocale();
+  // FIXME: should color field also be included here?
   const segment = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
@@ -177,7 +184,7 @@ const useLegendGroups = (labels: string[]) => {
 
   const groups = useMemo(() => {
     if (!hierarchy) {
-      return new Map([[[], labels]]);
+      return new Map([[title ? [{ label: title }] : [], labels]]);
     }
     const labelSet = new Set(labels);
     const groups = new Map<HierarchyValue[], string[]>();
@@ -191,7 +198,7 @@ const useLegendGroups = (labels: string[]) => {
       }),
     ];
     return groups;
-  }, [hierarchy, labels]);
+  }, [hierarchy, labels, title]);
 
   return groups;
 };
@@ -203,7 +210,7 @@ export const LegendColor = memo(function LegendColor({
 }) {
   // @ts-ignore
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups(colors.domain());
+  const groups = useLegendGroups({ labels: colors.domain() });
 
   return (
     <LegendColorContent
@@ -215,17 +222,23 @@ export const LegendColor = memo(function LegendColor({
   );
 });
 
+// TODO: add metadata to legend titles?
 export const MapLegendColor = memo(function LegendColor({
-  component: { iri, values },
+  component,
   getColor,
 }: {
   component: DimensionMetadataFragment;
   getColor: (d: Observation) => number[];
 }) {
-  const sortedValues = values.sort((a, b) => a.label.localeCompare(b.label));
-  const groups = useLegendGroups(sortedValues.map((d) => d.value));
+  const sortedValues = component.values.sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
+  const groups = useLegendGroups({
+    labels: sortedValues.map((d) => d.value),
+    title: component.label,
+  });
   const getLabel = (d: string) => {
-    return values.find((v) => v.value === d).label as string;
+    return component.values.find((v) => v.value === d).label as string;
   };
 
   return (
@@ -233,7 +246,7 @@ export const MapLegendColor = memo(function LegendColor({
       groups={groups}
       getColor={(v) => {
         const label = getLabel(v);
-        const rgb = getColor({ [iri]: label });
+        const rgb = getColor({ [component.iri]: label });
         const hex = convertRgbArrayToHex(rgb);
 
         return hex;

@@ -197,10 +197,10 @@ export const MapComponent = () => {
       const { observation } = d.properties;
 
       if (observation) {
-        const value = areaLayer.getValue(observation);
+        const value = areaLayer.colors.getValue(observation);
 
         if (value !== null) {
-          return areaLayer.getColor(value);
+          return areaLayer.colors.getColor(observation);
         }
       }
 
@@ -261,7 +261,8 @@ export const MapComponent = () => {
 
     const getRadius = ({ properties: { observation } }: GeoPoint) => {
       const value = observation ? symbolLayer.getValue(observation) : null;
-      const radius = value ? symbolLayer.radiusScale(value) : 0;
+      // @ts-ignore - value can be undefined, D3 types are wrong here
+      const radius = symbolLayer.radiusScale(value) ?? 0;
 
       return radius;
     };

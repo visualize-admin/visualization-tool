@@ -27,6 +27,7 @@ import {
   getInitialSymbolLayer,
   getPossibleChartType,
 } from "@/charts";
+import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -54,6 +55,8 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   canDimensionBeMultiFiltered,
+  DimensionValue,
+  isOrdinalMeasure,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
@@ -189,7 +192,11 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
-      value: { dimensionIri: string; values: string[]; random: boolean };
+      value: {
+        dimensionIri: string;
+        values: DimensionValue[];
+        random: boolean;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
@@ -361,7 +368,7 @@ export const deriveFiltersFromFields = produce(
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
       // Apply hierarchical dimensions first
-      const sortedDimensions = sortBy(dimensions, (d) =>
+      const sortedDimensions = sortBy(dimensions, d => isGeoDimension(d) ? -1 : 1, (d) =>
         d.hierarchy ? -1 : 1
       );
       sortedDimensions.forEach((dimension) =>
@@ -733,7 +740,7 @@ const handleChartFieldChanged = (
           component: dataSetMetadata.dimensions
             .filter(isGeoShapesDimension)
             .find((d) => d.iri === componentIri)!,
-          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+          measure: dataSetMetadata.measures[0],
         });
       } else if (field === "symbolLayer") {
         draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
@@ -898,7 +905,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               setWith(
                 draft,
                 `chartConfig.fields.${action.value.field}.color`,
-                { type: "fixed", value: "salmon", opacity: 80 },
+                DEFAULT_FIXED_COLOR_FIELD,
                 Object
               );
             } else {
@@ -918,7 +925,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 `chartConfig.fields.${action.value.field}.componentIri`
               );
 
-              if (canDimensionBeMultiFiltered(component)) {
+              if (
+                canDimensionBeMultiFiltered(component) ||
+                isOrdinalMeasure(component)
+              ) {
                 setWith(
                   draft,
                   `chartConfig.fields.${action.value.field}.color`,
@@ -1081,7 +1091,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.segment.palette,
-            dimensionValues: values.map((value) => ({ value })),
+            dimensionValues: values,
             random,
           });
           draft.chartConfig.fields.segment.colorMapping = colorMapping;
@@ -1091,7 +1101,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ) {
           const colorMapping = mapValueIrisToColor({
             palette: draft.chartConfig.fields.symbolLayer.color.palette,
-            dimensionValues: values.map((value) => ({ value })),
+            dimensionValues: values,
           });
           draft.chartConfig.fields.symbolLayer.color.colorMapping =
             colorMapping;

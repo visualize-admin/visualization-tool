@@ -28,6 +28,7 @@ import {
   TableFields,
 } from "@/configurator/config-types";
 import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
@@ -40,12 +41,14 @@ import {
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
+  isOrdinalMeasure,
 } from "../domain/data";
 import {
   DimensionMetadataFragment,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NumericalMeasure,
+  OrdinalMeasure,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
@@ -154,17 +157,28 @@ export const getInitialAreaLayer = ({
   measure,
 }: {
   component: GeoShapesDimension;
-  measure: NumericalMeasure;
+  // color
+  measure: NumericalMeasure | OrdinalMeasure;
 }): MapAreaLayer => {
   return {
     componentIri: component.iri,
-    color: {
-      type: "numerical",
-      componentIri: measure.iri,
-      scaleType: "continuous",
-      interpolationType: "linear",
-      palette: "oranges",
-    },
+    color: isNumericalMeasure(measure)
+      ? {
+          type: "numerical",
+          componentIri: measure.iri,
+          scaleType: "continuous",
+          interpolationType: "linear",
+          palette: "oranges",
+        }
+      : {
+          type: "categorical",
+          componentIri: measure.iri,
+          palette: "oranges",
+          colorMapping: mapValueIrisToColor({
+            palette: DEFAULT_PALETTE,
+            dimensionValues: measure.values,
+          }),
+        },
   };
 };
 
@@ -173,11 +187,12 @@ export const getInitialSymbolLayer = ({
   measure,
 }: {
   component: GeoShapesDimension | GeoCoordinatesDimension;
-  measure: NumericalMeasure;
+  // size, probably should be extracted to a field
+  measure: NumericalMeasure | undefined;
 }): MapSymbolLayer => {
   return {
     componentIri: component.iri,
-    measureIri: measure.iri,
+    measureIri: measure?.iri || FIELD_VALUE_NONE,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
@@ -361,7 +376,7 @@ export const getInitialConfig = ({
             ? {
                 areaLayer: getInitialAreaLayer({
                   component: areaDimension,
-                  measure: numericalMeasures[0],
+                  measure: measures[0],
                 }),
               }
             : {}),
@@ -1050,6 +1065,7 @@ export const getPossibleChartType = ({
   const { measures, dimensions } = meta;
 
   const numericalMeasures = measures.filter(isNumericalMeasure);
+  const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
   const timeDimensions = getTimeDimensions(dimensions);
@@ -1076,6 +1092,10 @@ export const getPossibleChartType = ({
     if (timeDimensions.length > 0) {
       possibles.push(...timeEnabled);
     }
+  }
+
+  if (ordinalMeasures.length > 0 && geoDimensions.length > 0) {
+    possibles.push("map");
   }
 
   return enabledChartTypes.filter((type) => possibles.includes(type));

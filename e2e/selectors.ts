@@ -1,49 +1,64 @@
-import { makeSelectors, TestContext as Ctx } from "./types";
+import { TestContext as Ctx } from "./types";
 
-const selectors = makeSelectors({
-  search: {
-    searchInput: (ctx: Ctx) => ctx.page.locator("#datasetSearch"),
-    draftsCheckbox: (ctx: Ctx) => ctx.page.locator("#dataset-include-drafts"),
-    navItem: (ctx: Ctx) => ctx.screen.findByTestId("navItem"),
-    navChip: (ctx: Ctx) => ctx.screen.findByTestId("navChip"),
-    resultsCount: (ctx: Ctx) =>
-      ctx.screen.findByTestId("search-results-count", undefined, {
-        timeout: 5000,
-      }),
-  },
-  datasetPreview: {
-    loaded: (ctx: Ctx) =>
-      ctx.page
-        .locator("table td")
-        .first()
-        .waitFor({ timeout: 20 * 1000 }),
-    cells: (ctx: Ctx) => ctx.page.locator("table td"),
-  },
-  panels: {
-    left: (ctx: Ctx) => ctx.screen.findByTestId("panel-left"),
-    right: (ctx: Ctx) => ctx.screen.findByTestId("panel-right"),
-    middle: (ctx: Ctx) => ctx.screen.findByTestId("panel-middle"),
-  },
-  edition: {
-    configFilters: (ctx: Ctx) =>
-      ctx.screen.findByTestId("configurator-filters", undefined, {
-        timeout: 20 * 1000,
-      }),
-    chartFilters: (ctx: Ctx) => ctx.screen.findByTestId("chart-filters-list"),
-    filterDrawer: (ctx: Ctx) =>
-      ctx.screen.findByTestId("edition-filters-drawer"),
-    filterCheckbox: (ctx: Ctx, value: string) =>
-      ctx.page.locator(`[data-value="${value}"]`),
-    chartTypeSelector: (ctx: Ctx) =>
-      ctx.screen.findByTestId("chart-type-selector"),
-  },
-  chart: {
-    colorLegend: (ctx: Ctx) => ctx.screen.findByTestId("colorLegend"),
-    loaded: (ctx: Ctx, options: { timeout?: number } = {}) =>
-      ctx.page
-        .locator(`[data-chart-loaded="true"]`)
-        .waitFor({ timeout: 40 * 1000, ...options }),
-  },
-});
+/**
+ * Creates a fixture for Playwright
+ */
+export const createSelectors = ({ screen, page, within }: Ctx) => {
+  const selectors = {
+    mui: {
+      select: () => page.locator(".MuiSelect-select"),
+      popover: () => within(page.locator(".MuiPopover-paper")),
+      options: () => page.locator('li[role="option"]'),
+    },
+    search: {
+      searchInput: () => page.locator("#datasetSearch"),
+      draftsCheckbox: () => page.locator("#dataset-include-drafts"),
+      navItem: () => screen.findByTestId("navItem"),
+      navChip: () => screen.findByTestId("navChip"),
+      resultsCount: () =>
+        screen.findByTestId("search-results-count", undefined, {
+          timeout: 5000,
+        }),
+    },
+    datasetPreview: {
+      loaded: () =>
+        page
+          .locator("table td")
+          .first()
+          .waitFor({ timeout: 20 * 1000 }),
+      cells: () => page.locator("table td"),
+    },
+    panels: {
+      left: () => screen.getByTestId("panel-left"),
+      right: () => screen.getByTestId("panel-right"),
+      middle: () => screen.getByTestId("panel-middle"),
+    },
+    edition: {
+      configFilters: () =>
+        screen.findByTestId("configurator-filters", undefined, {
+          timeout: 20 * 1000,
+        }),
+      chartFilters: () => screen.findByTestId("chart-filters-list"),
+      filterDrawer: () => screen.findByTestId("edition-filters-drawer"),
+      filterCheckbox: (value: string) =>
+        page.locator(`[data-value="${value}"]`),
+      chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
+      controlSection: (title: string) =>
+        page.locator("[data-testid=controlSection]", {
+          has: page.locator(`h5:text-is("${title}")`),
+        }),
+    },
+    chart: {
+      colorLegend: () => screen.findByTestId("colorLegend"),
+      colorLegendItems: async () =>
+        (await selectors.chart.colorLegend()).locator("div"),
+      loaded: (options: { timeout?: number } = {}) =>
+        page
+          .locator(`[data-chart-loaded="true"]`)
+          .waitFor({ timeout: 40 * 1000, ...options }),
+    },
+  };
+  return selectors;
+};
 
-export default selectors;
+export type Selectors = ReturnType<typeof createSelectors>;

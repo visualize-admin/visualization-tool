@@ -28,6 +28,7 @@ import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
+import { schema } from "./namespace";
 import {
   getQueryLocales,
   getScaleType,
@@ -37,7 +38,7 @@ import {
 } from "./parse";
 import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
-import { loadResourcePositions } from "./query-positions";
+import { loadResourceLiterals } from "./query-literals";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnits } from "./query-unit-labels";
 
@@ -317,22 +318,37 @@ const getCubeDimensionValuesWithLabels = async ({
 
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
-    const [labels, positions, unversioned] = await Promise.all([
+    const [labels, positions, colors, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
       scaleType === "Ordinal"
-        ? loadResourcePositions({ ids: namedNodes, sparqlClient })
+        ? loadResourceLiterals({
+            ids: namedNodes,
+            sparqlClient,
+            predicate: schema.position,
+          })
+        : [],
+      scaleType === "Ordinal"
+        ? loadResourceLiterals({
+            ids: namedNodes,
+            sparqlClient,
+            predicate: schema.color,
+          })
         : [],
       dimensionIsVersioned(dimension)
         ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
         : [],
     ]);
 
-    const labelLookup = new Map(
+    const labelsLookup = new Map(
       labels.map(({ iri, label }) => [iri.value, label?.value])
     );
 
     const positionsLookup = new Map(
-      positions.map(({ iri, position }) => [iri.value, position?.value])
+      positions.map(({ iri, value }) => [iri.value, value?.value])
+    );
+
+    const colorsLookup = new Map(
+      colors.map(({ iri, value }) => [iri.value, value?.value])
     );
 
     const unversionedLookup = new Map(
@@ -340,12 +356,13 @@ const getCubeDimensionValuesWithLabels = async ({
     );
 
     namedNodes.forEach((iri) => {
-      const pos = positionsLookup.get(iri.value);
+      const position = positionsLookup.get(iri.value);
 
       result.push({
-        position: pos !== undefined ? parseInt(pos, 10) : undefined,
         value: unversionedLookup.get(iri.value) ?? iri.value,
-        label: labelLookup.get(iri.value) ?? "",
+        label: labelsLookup.get(iri.value) ?? "",
+        position: position !== undefined ? parseInt(position, 10) : undefined,
+        color: colorsLookup.get(iri.value) ?? undefined,
       });
     });
   } else if (literals.length > 0) {

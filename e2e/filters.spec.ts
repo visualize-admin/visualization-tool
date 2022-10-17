@@ -1,24 +1,21 @@
-import { test } from "./common";
-import selectors from "./selectors";
+import { test, expect } from "./common";
 
 test("Filters initial state should have hierarchy dimensions first and topmost value selected", async ({
   page,
-  screen,
   within,
+  selectors,
 }) => {
-  const ctx = { page, screen };
-
   await page.goto(
     `/en/create/new?cube=https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1&dataSource=Int`
   );
-  await selectors.chart.loaded(ctx);
+  await selectors.chart.loaded();
 
-  const filters = await selectors.edition.configFilters(ctx);
+  const filters = await selectors.edition.controlSection('Filters');
+  
+  const label = await filters.locator('label').first().waitFor({ timeout: 30_000 })
 
-  await within(filters).findByText("1. production region", undefined, {
-    timeout: 30 * 1000,
-  });
-  await within(filters).findByText("2. stand structure");
-  await within(filters).findByText("3. Inventory");
-  await within(filters).findByText("4. evaluation type");
+  const labels =  filters.locator('label')
+
+  const texts = await labels.allTextContents()
+  expect(texts).toEqual(['1. production region', '2. stand structure', '3. evaluation type', '4. unit of evaluation', '5. grid'])
 });

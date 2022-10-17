@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.1.1";
+export const CHART_CONFIG_VERSION = "1.2.0";
 
 type Migration = {
   description: string;
@@ -356,6 +356,34 @@ const migrations: Migration[] = [
                     palette: color.palette,
                   }),
             };
+          });
+        }
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `MAP
+    areaLayer - color can be categorical
+    `,
+    from: "1.1.1",
+    to: "1.2.0",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.2.0" };
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.1.1" };
+
+      if (newConfig.chartType === "map") {
+        const { fields } = newConfig;
+        const { areaLayer } = fields;
+
+        if (areaLayer && areaLayer.color.type === "categorical") {
+          newConfig = produce(newConfig, (draft: any) => {
+            delete draft.fields.areaLayer;
           });
         }
       }
