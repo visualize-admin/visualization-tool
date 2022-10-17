@@ -1,5 +1,5 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect, describe } from "./common";
+import { test, expect, describe, sleep } from "./common";
 import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
 
 describe("viewing a dataset with only ordinal measures", () => {
@@ -16,7 +16,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     expect(texts).not.toContain("NaN");
   });
 
-  test("should be possible to only select table chart", async ({
+  test("should be possible to only select table & map", async ({
     page,
     selectors,
   }) => {
@@ -29,6 +29,51 @@ describe("viewing a dataset with only ordinal measures", () => {
       await selectors.edition.chartTypeSelector()
     ).locator("button:not(.Mui-disabled)");
 
-    expect(await enabledButtons.count()).toEqual(1);
+    expect(await enabledButtons.count()).toEqual(2);
+  });
+
+  test("should be possible to select ordinal measure as area color", async ({
+    page,
+    screen,
+    selectors,
+    actions,
+    within,
+  }) => {
+    const ctx = { page, screen };
+    await loadChartInLocalStorage(page, key, config);
+    page.goto(`/en/create/${key}`);
+
+    await selectors.chart.loaded();
+
+    await actions.editor.changeChartType("Map");
+
+    await selectors.chart.loaded();
+
+    await actions.editor.selectActiveField("Symbols");
+
+    await selectors.chart.loaded();
+
+    const panelRight = await selectors.panels.right();
+    await within(selectors.edition.controlSection("Symbols"))
+      .getByText("None")
+      .click();
+
+    // Select options open in portal
+    await actions.mui.selectOption("area");
+
+    // Allow select options to disappear to prevent re-selecting none
+    await sleep(3000);
+
+    // Chart needs to re-load when symbol layer is selected
+    await selectors.chart.loaded();
+
+    await within(selectors.edition.controlSection("Color"))
+      .getByText("None")
+      .click();
+
+    const options = await selectors.mui.options();
+    const dimensionLabels = await options.allInnerTexts();
+
+    expect(dimensionLabels).toEqual(["None", "area", "ord1", "ord2", "ord3"]);
   });
 });

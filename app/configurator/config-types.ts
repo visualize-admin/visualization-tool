@@ -501,7 +501,7 @@ export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 
 const MapAreaLayer = t.type({
   componentIri: t.string,
-  color: NumericalColorField,
+  color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 

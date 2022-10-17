@@ -28,7 +28,6 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -55,6 +54,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import {
+  DimensionMetadataFragment,
   useDimensionHierarchyQuery,
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
@@ -254,19 +254,21 @@ const getColorMapping = (
   if (!config.activeField) {
     return;
   }
+
   const colorMappingPath = `${config.activeField}.${
     colorConfigPath ? `${colorConfigPath}.` : ""
   }colorMapping`;
+
   return get(config.chartConfig.fields, colorMappingPath) as
     | ColorMapping
     | undefined;
 };
 
 const MultiFilterContent = ({
-  colorDimensionIri,
+  colorComponent,
   tree,
 }: {
-  colorDimensionIri: string | undefined;
+  colorComponent: DimensionMetadataFragment | undefined;
   tree: HierarchyValue[];
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
@@ -352,7 +354,9 @@ const MultiFilterContent = ({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           dimensionIri,
-          values: sortBy(allValues, (v) => (usedValues.has(v) ? 0 : 1)),
+          values: sortBy(colorComponent?.values, (d) =>
+            usedValues.has(d.value) ? 0 : 1
+          ),
           random,
         },
       });
@@ -362,24 +366,11 @@ const MultiFilterContent = ({
   const hasColorMapping = useMemo(() => {
     return (
       !!getColorMapping(config, colorConfigPath) &&
-      dimensionIri === colorDimensionIri
+      (colorComponent !== undefined
+        ? dimensionIri === colorComponent.iri
+        : true)
     );
-  }, [colorConfigPath, config, dimensionIri, colorDimensionIri]);
-
-  // Initialize color mapping with all values, not randomizing the order.
-  useEffect(() => {
-    if (hasColorMapping) {
-      handleRecomputeColorMapping();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasColorMapping]);
-
-  // Initialize color mapping with all values, not randomizing the order.
-  useEffect(() => {
-    if (hasColorMapping) {
-      handleRecomputeColorMapping();
-    }
-  }, [hasColorMapping, handleRecomputeColorMapping]);
+  }, [colorConfigPath, config, dimensionIri, colorComponent]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -733,11 +724,13 @@ export const DimensionValuesMultiFilter = ({
   dataSetIri,
   dimensionIri,
   colorConfigPath,
+  colorComponent,
   field = "segment",
 }: {
   dataSetIri: string;
   dimensionIri: string;
   colorConfigPath?: string;
+  colorComponent?: DimensionMetadataFragment;
   field?: string;
 }) => {
   const locale = useLocale();
@@ -767,15 +760,6 @@ export const DimensionValuesMultiFilter = ({
   const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
-  const colorDimensionIri: string | undefined = useMemo(() => {
-    const colorComponentIriPath = getPathToColorConfigProperty({
-      field,
-      colorConfigPath,
-      propertyPath: "componentIri",
-    });
-    return get(chartConfig, colorComponentIriPath);
-  }, [chartConfig, field, colorConfigPath]);
-
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
       field,
@@ -795,7 +779,7 @@ export const DimensionValuesMultiFilter = ({
         getValueColor={getValueColor}
       >
         <MultiFilterContent
-          colorDimensionIri={colorDimensionIri}
+          colorComponent={colorComponent}
           tree={
             hierarchyTree && hierarchyTree.length > 0
               ? hierarchyTree

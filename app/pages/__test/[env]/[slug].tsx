@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { ChartConfig, DataSource, Meta } from "@/configurator";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 type DbConfig = {
   dataSet: string;
@@ -29,12 +30,13 @@ const Page: NextPage = () => {
 
   if (config) {
     const { dataSet, dataSource, meta, chartConfig } = config.data;
+    const migratedConfig = migrateChartConfig(chartConfig);
 
     return (
       <ChartPublished
         dataSet={dataSet}
         dataSource={dataSource}
-        chartConfig={chartConfig}
+        chartConfig={migratedConfig}
         meta={meta}
         configKey={config.key}
       />

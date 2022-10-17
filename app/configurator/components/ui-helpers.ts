@@ -52,7 +52,11 @@ import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
 import { ChartProps } from "../../charts/shared/use-chart-state";
-import { isNumericalMeasure, Observation } from "../../domain/data";
+import {
+  DimensionValue,
+  isNumericalMeasure,
+  Observation,
+} from "../../domain/data";
 import {
   DimensionMetadataFragment,
   NumericalMeasure,
@@ -1043,21 +1047,25 @@ export const mapValueIrisToColor = ({
   random,
 }: {
   palette: string;
-  dimensionValues: DimensionMetadataFragment["values"];
+  dimensionValues: DimensionValue[];
   random?: boolean;
 }) => {
   if (!dimensionValues) {
     return {};
   }
-  const paletteValues = getPalette(palette);
-  const colorScale = scaleOrdinal()
-    .domain(dimensionValues.map((dv) => dv.value))
-    .range(random ? [...paletteValues].sort(randomComparator) : paletteValues);
-  const colorMapping = {} as { [x: string]: string };
 
-  dimensionValues.forEach((dv) => {
-    colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
+  const paletteValues = getPalette(palette);
+  const colors = dimensionValues.map(
+    (d, i) => d.color || paletteValues[i % paletteValues.length]
+  );
+  const colorScale = scaleOrdinal<string, string>()
+    .domain(dimensionValues.map((d) => `${d.value}`))
+    .range(random ? [...colors].sort(randomComparator) : colors);
+  const colorMapping = {} as { [k: string]: string };
+  dimensionValues.forEach((d) => {
+    colorMapping[`${d.value}`] = colorScale(`${d.value}`);
   });
+
   return colorMapping;
 };
 

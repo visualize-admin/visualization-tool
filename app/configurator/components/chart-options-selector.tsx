@@ -325,6 +325,7 @@ const EncodingOptionsPanel = ({
           field={field}
           componentTypes={optionsByField["size"].componentTypes}
           dataSetMetadata={metaData}
+          optional={optionsByField["size"].optional}
         />
       )}
 
@@ -389,10 +390,12 @@ const ChartFieldMultiFilter = ({
     state.chartConfig,
     `fields.${field}.color.componentIri`
   );
-  const colorType = get(
-    state.chartConfig,
-    `fields.${field}.color.type`
-  ) as ColorFieldType;
+  const colorComponent = [...metaData.dimensions, ...metaData.measures].find(
+    (d) => d.iri === colorComponentIri
+  );
+  const colorType = get(state.chartConfig, `fields.${field}.color.type`) as
+    | ColorFieldType
+    | undefined;
 
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-right-filters">
@@ -416,12 +419,10 @@ const ChartFieldMultiFilter = ({
               dimensionIri={component.iri}
               dataSetIri={metaData.iri}
               field={field}
-              // Allow setting the colors when color field is used and its iri
-              // matches component iri.
-              {...(colorType === "categorical" &&
-              colorComponentIri === component.iri
-                ? { colorConfigPath: "color" }
-                : {})}
+              colorComponent={colorComponent || component}
+              // If colorType is defined, we are dealing with color field and
+              // not segment.
+              colorConfigPath={colorType ? "color" : undefined}
             />
           )
         )}
@@ -610,10 +611,12 @@ const ChartFieldSize = ({
   field,
   componentTypes,
   dataSetMetadata,
+  optional,
 }: {
   field: string;
   componentTypes: ComponentType[];
   dataSetMetadata: DataCubeMetadata;
+  optional: boolean;
 }) => {
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -641,6 +644,7 @@ const ChartFieldSize = ({
           field={field}
           path="measureIri"
           options={measuresOptions}
+          isOptional={optional}
           dataSetMetadata={dataSetMetadata}
         />
       </ControlSectionContent>
@@ -684,6 +688,10 @@ const ChartFieldColorComponent = ({
     "color",
     "componentIri",
   ]) as string | undefined;
+  const colorComponent = [
+    ...dataSetMetadata.dimensions,
+    ...dataSetMetadata.measures,
+  ].find((d) => d.iri === colorComponentIri);
   const colorType = get(chartConfig, [
     "fields",
     field,
@@ -753,6 +761,7 @@ const ChartFieldColorComponent = ({
               dimensionIri={colorComponentIri}
               field={field}
               colorConfigPath="color"
+              colorComponent={colorComponent}
             />
           ) : null
         ) : colorType === "numerical" ? (

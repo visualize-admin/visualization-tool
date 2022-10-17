@@ -55,94 +55,95 @@ export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
   const { identicalLayerComponentIris, areaLayer, symbolLayer } =
     useChartState() as MapState;
-  const { getFormattedError: formatAreaError } = areaLayer || {};
-  const { getFormattedError: formatSymbolError } = symbolLayer || {};
-
   const formatNumber = useFormatNumber();
-  const areaValue = useMemo(() => {
-    return areaLayer && interaction.d !== undefined
-      ? areaLayer.getValue(interaction.d)
-      : null;
-  }, [areaLayer, interaction.d]);
-  const symbolValue = useMemo(() => {
-    return symbolLayer && interaction.d !== undefined
-      ? symbolLayer.getValue(interaction.d)
-      : null;
-  }, [symbolLayer, interaction.d]);
-  const showAreaValue =
-    areaLayer && (identicalLayerComponentIris || hoverObjectType === "area");
-  const showSymbolValue =
-    symbolLayer &&
-    (identicalLayerComponentIris || hoverObjectType === "symbol");
-  const areaColorProps = useMemo(() => {
-    const color =
-      areaLayer && areaValue !== null
-        ? areaLayer.colorScale(areaValue)
-        : "#dedede";
-    const textColor = getTooltipTextColor(color);
-    return {
-      color,
-      textColor,
-    };
-  }, [areaValue, areaLayer]);
 
+  const { getFormattedError: formatSymbolError } = symbolLayer || {};
   const formatters = useChartFormatters({
     dimensions: [],
     measures: [
-      areaLayer?.measureDimension,
+      areaLayer?.colors.component,
       symbolLayer?.measureDimension,
     ].filter(truthy),
   });
-  const areaValueFormatter = (value: number | null) =>
-    formatNumberWithUnit(
-      value,
-      areaLayer?.measureDimension?.iri
-        ? formatters[areaLayer?.measureDimension?.iri] || formatNumber
-        : formatNumber,
-      areaLayer?.measureDimension?.unit
-    );
-  const symbolValueFormatter = (value: number | null) =>
-    formatNumberWithUnit(
-      value,
-      symbolLayer?.measureDimension?.iri
-        ? formatters[symbolLayer?.measureDimension?.iri] || formatNumber
-        : formatNumber,
-      symbolLayer?.measureDimension?.unit
-    );
 
-  const symbolColorProps = useMemo(() => {
-    const colors = symbolLayer?.colors;
+  const areaTooltipState = useMemo(() => {
+    if (areaLayer) {
+      const obs = interaction.d;
+      const { colors } = areaLayer;
 
-    if (colors === undefined) {
-      return undefined;
+      const value = colors.getValue(obs || {}) ?? null;
+      const show = identicalLayerComponentIris || hoverObjectType === "area";
+      const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+      const textColor = getTooltipTextColor(color);
+      const valueFormatter = (d: number | null) =>
+        formatNumberWithUnit(
+          d,
+          formatters[colors.component.iri] || formatNumber,
+          colors.component.unit
+        );
+      const formattedValue =
+        typeof value === "number" ? valueFormatter(value) : value;
+
+      return { value: formattedValue, show, color, textColor };
+    } else {
+      return {
+        value: null,
+        show: false,
+        color: "#fff",
+        textColor: getTooltipTextColor("#fff"),
+      };
     }
+  }, [
+    areaLayer,
+    interaction.d,
+    identicalLayerComponentIris,
+    hoverObjectType,
+    formatNumber,
+    formatters,
+  ]);
 
-    const obs = interaction.d;
-    const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
-    const textColor = getTooltipTextColor(color);
+  const symbolTooltipState = useMemo(() => {
+    if (symbolLayer) {
+      const obs = interaction.d;
+      const { colors } = symbolLayer;
 
-    switch (colors.type) {
-      case "fixed":
-        return {
-          type: "fixed",
+      const value = symbolLayer.getValue(interaction.d || {}) ?? null;
+      const show = identicalLayerComponentIris || hoverObjectType === "symbol";
+      const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+      const textColor = getTooltipTextColor(color);
+      const valueFormatter = (d: number | null) =>
+        formatNumberWithUnit(
+          d,
+          symbolLayer.measureDimension?.iri
+            ? formatters[symbolLayer.measureDimension.iri] || formatNumber
+            : formatNumber,
+          symbolLayer.measureDimension?.unit
+        );
+      const formattedValue = valueFormatter(value);
+
+      let preparedColors;
+
+      if (colors.type === "fixed") {
+        preparedColors = {
+          type: "fixed" as "fixed",
           color,
           textColor,
           sameAsValue: false,
-        } as const;
-      case "categorical":
-        return {
-          type: "categorical",
+        };
+      } else if (colors.type === "categorical") {
+        preparedColors = {
+          type: "categorical" as "categorical",
           component: colors.component,
           value: obs ? (obs[colors.component.iri] as string) : null,
           error: null,
           color,
           textColor,
           sameAsValue: false,
-        } as const;
-      case "continuous":
+        };
+      } else {
         const rawValue = obs ? (obs[colors.component.iri] as number) : null;
         const rawError = obs ? colors.getFormattedError?.(obs) : null;
-        return {
+        preparedColors = {
           type: "continuous",
           component: colors.component,
           value: formatNumberWithUnit(
@@ -154,14 +155,32 @@ export const MapTooltip = () => {
           color,
           textColor,
           sameAsValue:
-            colors.component.iri === symbolLayer?.measureDimension?.iri,
-        } as const;
+            colors.component.iri === symbolLayer.measureDimension?.iri,
+        };
+      }
+
+      return {
+        value: formattedValue,
+        show,
+        color,
+        textColor,
+        colors: preparedColors,
+      };
+    } else {
+      return {
+        value: null,
+        show: false,
+        color: "#fff",
+        textColor: getTooltipTextColor("#fff"),
+      };
     }
   }, [
+    symbolLayer,
     interaction.d,
-    symbolLayer?.colors,
-    symbolLayer?.measureDimension?.iri,
+    identicalLayerComponentIris,
+    hoverObjectType,
     formatNumber,
+    formatters,
   ]);
 
   return (
@@ -195,57 +214,64 @@ export const MapTooltip = () => {
             >
               {
                 <>
-                  {areaLayer && showAreaValue && (
-                    <TooltipRow
-                      title={areaLayer.measureLabel}
-                      background={areaColorProps.color}
-                      color={areaColorProps.textColor}
-                      value={areaValueFormatter(areaValue)}
-                      error={
-                        formatAreaError
-                          ? ` ± ${formatAreaError(interaction.d)}`
-                          : null
-                      }
-                    />
-                  )}
+                  {areaLayer &&
+                    areaTooltipState.show &&
+                    areaTooltipState.value !== null && (
+                      <TooltipRow
+                        title={areaLayer.colors.component.label}
+                        background={areaTooltipState.color}
+                        color={areaTooltipState.textColor}
+                        value={areaTooltipState.value}
+                        error={
+                          areaLayer.colors.type === "continuous" &&
+                          areaLayer.colors.getFormattedError
+                            ? ` ± ${areaLayer.colors.getFormattedError(
+                                interaction.d
+                              )}`
+                            : null
+                        }
+                      />
+                    )}
 
-                  {symbolLayer && symbolColorProps && showSymbolValue ? (
+                  {symbolLayer &&
+                  symbolTooltipState.show &&
+                  symbolTooltipState.value !== null ? (
                     <>
-                      {!symbolColorProps.sameAsValue && (
-                        <TooltipRow
-                          title={symbolLayer.measureLabel}
-                          background={
-                            symbolColorProps.type === "fixed"
-                              ? symbolColorProps.color
-                              : "#fff"
-                          }
-                          border={
-                            symbolColorProps.type === "fixed"
-                              ? undefined
-                              : "1px solid #ccc"
-                          }
-                          color={
-                            symbolColorProps.type === "fixed"
-                              ? symbolColorProps.textColor
-                              : "#000"
-                          }
-                          value={symbolValueFormatter(symbolValue)}
-                          error={
-                            formatSymbolError
-                              ? ` ± ${formatSymbolError(interaction.d)}`
-                              : null
-                          }
-                        />
-                      )}
-                      {symbolColorProps.type !== "fixed" && (
-                        <TooltipRow
-                          title={symbolColorProps.component.label}
-                          background={symbolColorProps.color}
-                          color={symbolColorProps.textColor}
-                          value={symbolColorProps.value ?? ""}
-                          error={symbolColorProps.error}
-                        />
-                      )}
+                      {!symbolTooltipState.colors.sameAsValue &&
+                        symbolLayer.measureDimension && (
+                          <TooltipRow
+                            title={symbolLayer.measureLabel}
+                            {...(symbolTooltipState.colors.type === "fixed"
+                              ? {
+                                  background: symbolTooltipState.color,
+                                  border: undefined,
+                                  color: symbolTooltipState.textColor,
+                                }
+                              : {
+                                  background: "#fff",
+                                  border: "1px solid #ccc",
+                                  color: "#000",
+                                })}
+                            value={symbolTooltipState.value}
+                            error={
+                              formatSymbolError
+                                ? ` ± ${formatSymbolError(interaction.d)}`
+                                : null
+                            }
+                          />
+                        )}
+                      {symbolTooltipState.colors.type !== "fixed" &&
+                        areaLayer &&
+                        areaLayer.colors.component.iri !==
+                          symbolTooltipState.colors.component?.iri && (
+                          <TooltipRow
+                            title={symbolTooltipState.colors.component!.label}
+                            background={symbolTooltipState.color}
+                            color={symbolTooltipState.textColor}
+                            value={symbolTooltipState.colors.value ?? ""}
+                            error={symbolTooltipState.colors.error ?? null}
+                          />
+                        )}
                     </>
                   ) : null}
                 </>

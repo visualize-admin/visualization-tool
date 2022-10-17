@@ -2,7 +2,7 @@ import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
 
-test("Selecting SymbolLayer colors> should be possible to select nominal dimension and see a legend", async ({
+test("Selecting SymbolLayer colors> should be possible to select geo dimension and see a legend", async ({
   page,
   screen,
   selectors,
