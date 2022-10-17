@@ -19,19 +19,18 @@ test("Selecting SymbolLayer colors> should be possible to select nominal dimensi
   await actions.editor.selectActiveField("Symbols");
 
   const panelRight = await selectors.panels.right();
-  const selects = selectors.mui.select();
-
-  const count = await selects.count();
-  expect(count).toEqual(7);
-
-  await (await within(panelRight).findByText("Show layer")).click();
-
-  // chart needs to re-load when symbol layer is selected
-  await selectors.chart.loaded();
 
   await (await within(panelRight).findByText("None")).click();
 
-  // re-select preduction region for color mapping
+  // Select production region as origin for symbols
+  await actions.mui.selectOption("production region");
+
+  await selectors.chart.loaded()
+  
+  const colorSectionLocator = selectors.edition.controlSection('Color')
+  await (await within(colorSectionLocator).getByText('None')).click()
+
+  // Selects production region for color mapping
   await actions.mui.selectOption("production region");
 
   const legendItems = (await selectors.chart.colorLegendItems())

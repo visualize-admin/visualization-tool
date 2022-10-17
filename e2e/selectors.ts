@@ -42,6 +42,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       filterCheckbox: (value: string) =>
         page.locator(`[data-value="${value}"]`),
       chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
+      controlSection: (title: string) => page.locator('[data-testid=controlSection]', {
+        has: page.locator(`h5:text-is("${title}")`)
+      })
     },
     chart: {
       colorLegend: () => screen.findByTestId("colorLegend"),
