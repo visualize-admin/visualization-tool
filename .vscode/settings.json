@@ -12,5 +12,8 @@
   "search.exclude": {
     "**/.yarn": true,
     "yarn.lock": true
+  },
+  "playwright.env": {
+    "E2E_BASE_URL": "http://localhost:3000"
   }
 }
