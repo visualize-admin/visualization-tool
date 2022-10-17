@@ -72,6 +72,8 @@ import {
   TableFields,
 } from "../config-types";
 
+const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
+
 export type DateFormatter = (d: string | Date | null) => string;
 
 // FIXME: We should cover more time format
@@ -137,7 +139,7 @@ const dateFormatterFromDimension = (
 };
 
 const formatIdentity = (x: string | Date | null) => {
-  return `${x}`;
+  return x !== DIMENSION_VALUE_UNDEFINED ? `${x}` : "–";
 };
 
 const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
