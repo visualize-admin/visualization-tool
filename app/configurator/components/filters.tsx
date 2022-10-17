@@ -303,7 +303,11 @@ const MultiFilterContent = ({
       .map(([parent, group]) => {
         return [
           parent,
-          group.sort((a, b) => ascending(a.label, b.label)),
+          group.sort(
+            (a, b) =>
+              ascending(a.position ?? 0, b.position ?? 0) ||
+              ascending(a.label, b.label)
+          ),
         ] as const;
       });
     return {
@@ -375,7 +379,7 @@ const MultiFilterContent = ({
     if (hasColorMapping) {
       handleRecomputeColorMapping();
     }
-  }, [hasColorMapping]);
+  }, [hasColorMapping, handleRecomputeColorMapping]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -450,7 +454,11 @@ const MultiFilterContent = ({
             </Typography>
             {children.map((v) => {
               return (
-                <Flex key={v.value} className={classes.selectedValueRow}>
+                <Flex
+                  key={v.value}
+                  className={classes.selectedValueRow}
+                  data-testid="chart-filters-value"
+                >
                   {hasColorMapping ? (
                     <MultiFilterFieldColorPicker value={v.value} />
                   ) : null}

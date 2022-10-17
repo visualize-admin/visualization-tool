@@ -62,6 +62,7 @@ type RelatedDimension {
 type HierarchyValue {
   value: String!
   label: String!
+  position: String
   dimensionIri: String!
   depth: Int!
   children: [HierarchyValue!]
