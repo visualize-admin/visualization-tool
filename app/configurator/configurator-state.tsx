@@ -368,7 +368,7 @@ export const deriveFiltersFromFields = produce(
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
       // Apply hierarchical dimensions first
-      const sortedDimensions = sortBy(dimensions, (d) =>
+      const sortedDimensions = sortBy(dimensions, d => isGeoDimension(d) ? -1 : 1, (d) =>
         d.hierarchy ? -1 : 1
       );
       sortedDimensions.forEach((dimension) =>

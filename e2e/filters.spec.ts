@@ -17,10 +17,5 @@ test("Filters initial state should have hierarchy dimensions first and topmost v
   const labels =  filters.locator('label')
 
   const texts = await labels.allTextContents()
-  expect(texts).toEqual([
-    "1. production region",
-    "2. stand structure",
-    "3. Inventory",
-    "4. evaluation type"
-  ])
+  expect(texts).toEqual(['1. production region', '2. stand structure', '3. evaluation type', '4. unit of evaluation', '5. grid'])
 });
