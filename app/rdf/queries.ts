@@ -272,21 +272,27 @@ const getCubeDimensionValuesWithLabels = async ({
       const dimensionValues = await loader();
 
       if (dimensionValues.length) {
-        const grouped = group(dimensionValues, (d) => d.termType);
+        const grouped = group(dimensionValues, (d) => {
+          if (d.equals(ns.cube.Undefined)) {
+            return "undefined";
+          }
+          return d.termType;
+        });
 
         const namedNodes = (grouped.get("NamedNode") || []) as Array<NamedNode>;
         const literals = (grouped.get("Literal") || []) as Array<Literal>;
+        const undValues = (grouped.get("undefined") || []) as Array<NamedNode>;
 
         if (namedNodes?.length || literals?.length) {
-          return { namedNodes, literals };
+          return { namedNodes, literals, undValues };
         }
       }
     }
 
-    return { namedNodes: [], literals: [] };
+    return { namedNodes: [], literals: [], undValues: [] };
   };
 
-  const { namedNodes, literals } = await load();
+  const { namedNodes, literals, undValues } = await load();
 
   if (namedNodes.length > 0 && literals.length > 0) {
     console.warn(
@@ -306,6 +312,9 @@ const getCubeDimensionValuesWithLabels = async ({
    * If the dimension is versioned, we're loading the "unversioned" values to store in the config,
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
+
+  const result: DimensionValue[] = [];
+
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
     const [labels, positions, unversioned] = await Promise.all([
@@ -330,29 +339,32 @@ const getCubeDimensionValuesWithLabels = async ({
       unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
     );
 
-    return namedNodes.map((iri) => {
+    namedNodes.forEach((iri) => {
       const pos = positionsLookup.get(iri.value);
-      return {
+
+      result.push({
         position: pos !== undefined ? parseInt(pos, 10) : undefined,
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelLookup.get(iri.value) ?? "",
-      };
+      });
     });
   } else if (literals.length > 0) {
-    return literals.map((v) => {
-      return ns.cube.Undefined.equals(v.datatype)
-        ? {
-            value: DIMENSION_VALUE_UNDEFINED, // We use a known string here because actual null does not work as value in UI inputs.
-            label: "–",
-          }
-        : {
-            value: v.value,
-            label: v.value,
-          };
+    literals.forEach((v) => {
+      result.push({
+        value: v.value,
+        label: v.value,
+      });
     });
   }
 
-  return [];
+  if (undValues.length > 0) {
+    result.push({
+      value: DIMENSION_VALUE_UNDEFINED, // We use a known string here because actual null does not work as value in UI inputs.
+      label: "–",
+    });
+  }
+
+  return result;
 };
 
 type NonNullableValues<T, K extends keyof T> = Omit<T, K> &
