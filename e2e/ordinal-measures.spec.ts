@@ -53,7 +53,6 @@ describe("viewing a dataset with only ordinal measures", () => {
 
     await selectors.chart.loaded();
 
-    const panelRight = await selectors.panels.right();
     await within(selectors.edition.controlSection("Symbols"))
       .getByText("None")
       .click();

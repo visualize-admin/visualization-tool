@@ -2,7 +2,6 @@ import { test, expect } from "./common";
 
 test("Filters initial state should have hierarchy dimensions first and topmost value selected", async ({
   page,
-  within,
   selectors,
 }) => {
   await page.goto(
@@ -10,12 +9,18 @@ test("Filters initial state should have hierarchy dimensions first and topmost v
   );
   await selectors.chart.loaded();
 
-  const filters = await selectors.edition.controlSection('Filters');
-  
-  const label = await filters.locator('label').first().waitFor({ timeout: 30_000 })
+  const filters = selectors.edition.controlSection("Filters");
 
-  const labels =  filters.locator('label')
+  await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
-  const texts = await labels.allTextContents()
-  expect(texts).toEqual(['1. production region', '2. stand structure', '3. evaluation type', '4. unit of evaluation', '5. grid'])
+  const labels = filters.locator("label");
+
+  const texts = await labels.allTextContents();
+  expect(texts).toEqual([
+    "1. production region",
+    "2. stand structure",
+    "3. evaluation type",
+    "4. unit of evaluation",
+    "5. grid",
+  ]);
 });
