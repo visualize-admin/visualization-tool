@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useState, useMemo } from "react";
@@ -104,24 +104,16 @@ export const ChartFootnotes = ({
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
-    const titleContent = `${dataCubeByIri.title}${
-      dataCubeByIri.dateModified
-        ? t({
-            id: "dataset.metadata.date.footnotes.updated",
-            message: `, latest update: ${formatLocale.format("%x %H:%M")(
-              new Date(dataCubeByIri.dateModified)
-            )}`,
-          })
-        : ""
-    }`;
-
     return (
       <Box sx={{ mt: 2 }}>
-        <Typography component="div" variant="caption" color="grey.600">
-          <Trans id="metadata.dataset">Dataset</Trans>:{" "}
+        <Typography component="span" variant="caption" color="grey.600">
+          <strong>
+            <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+          </strong>
+          <Trans id="typography.colon">: </Trans>
           {cubeLink ? (
             <Link target="_blank" href={cubeLink} rel="noreferrer">
-              {titleContent}{" "}
+              {dataCubeByIri.title}
               <Icon
                 name="linkExternal"
                 size={12}
@@ -129,12 +121,28 @@ export const ChartFootnotes = ({
               />
             </Link>
           ) : (
-            titleContent
+            dataCubeByIri.title
           )}
         </Typography>
 
+        {dataCubeByIri.dateModified ? (
+          <Typography component="span" variant="caption" color="grey.600">
+            ,&nbsp;
+            <strong>
+              <Trans id="dataset.footnotes.updated">Latest update</Trans>
+            </strong>
+            <Trans id="typography.colon">: </Trans>
+            {formatLocale.format("%x %H:%M")(
+              new Date(dataCubeByIri.dateModified)
+            )}
+          </Typography>
+        ) : null}
+
         <Typography component="div" variant="caption" color="grey.600">
-          <Trans id="metadata.source">Source</Trans>:{" "}
+          <strong>
+            <Trans id="metadata.source">Source</Trans>
+          </strong>
+          <Trans id="typography.colon">: </Trans>
           {dataCubeByIri.publisher && (
             <Box
               component="span"
