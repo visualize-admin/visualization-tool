@@ -318,26 +318,40 @@ const getCubeDimensionValuesWithMetadata = async ({
 
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
-    const [labels, positions, colors, unversioned] = await Promise.all([
-      loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
-      scaleType === "Ordinal"
-        ? loadResourceLiterals({
-            ids: namedNodes,
-            sparqlClient,
-            predicate: schema.position,
-          })
-        : [],
-      scaleType === "Ordinal"
-        ? loadResourceLiterals({
-            ids: namedNodes,
-            sparqlClient,
-            predicate: schema.color,
-          })
-        : [],
-      dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
-        : [],
-    ]);
+    const [labels, positions, identifiers, colors, unversioned] =
+      await Promise.all([
+        loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+        scaleType === "Ordinal"
+          ? loadResourceLiterals({
+              ids: namedNodes,
+              sparqlClient,
+              predicate: schema.position,
+            })
+          : [],
+        scaleType === "Ordinal" || scaleType === "Nominal"
+          ? loadResourceLiterals({
+              ids: namedNodes,
+              sparqlClient,
+              predicate: schema.identifier,
+            })
+          : [],
+        scaleType === "Ordinal"
+          ? loadResourceLiterals({
+              ids: namedNodes,
+              sparqlClient,
+              predicate: schema.color,
+            })
+          : [],
+        dimensionIsVersioned(dimension)
+          ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
+          : [],
+      ]);
+
+    const identifiersLookup = new Map(
+      identifiers.map(({ iri, value }) => [iri.value, value?.value])
+    );
+
+    console.log({ identifiers });
 
     const labelsLookup = new Map(
       labels.map(({ iri, label }) => [iri.value, label?.value])
@@ -362,6 +376,7 @@ const getCubeDimensionValuesWithMetadata = async ({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
         position: position !== undefined ? parseInt(position, 10) : undefined,
+        identifier: identifiersLookup.get(iri.value) ?? undefined,
         color: colorsLookup.get(iri.value) ?? undefined,
       });
     });
