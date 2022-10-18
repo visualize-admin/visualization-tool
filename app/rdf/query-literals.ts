@@ -1,46 +1,56 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
 
-type ResourceLiteral = {
+type PredicateOption = Record<string, NamedNode<string> | null>;
+
+type ResourceLiteral<T extends PredicateOption> = {
   iri: NamedNode;
-  value?: Literal;
+} & {
+  [P in keyof T]?: Literal;
 };
 
 const buildResourceLiteralQuery = ({
   values,
-  predicate,
+  predicates,
 }: {
   values: NamedNode<string>[];
-  predicate: NamedNode<string>;
+  predicates: PredicateOption;
 }) => {
-  return SELECT.DISTINCT`?iri ?value`.WHERE`
+  const q = SELECT.DISTINCT`?iri ${Object.keys(predicates).map((x) => `?${x}`)}`
+    .WHERE`
       values ?iri {
         ${values}
       }
 
-      ?iri ${predicate} ?value .
+      ${Object.entries(predicates)
+        .filter((x) => x[1])
+        .map(([attr, namedNode]) => {
+          return sparql`OPTIONAL { ?iri ${namedNode} ?${attr}. }`;
+        })}
     `.prologue`${pragmas}`;
+
+  return q;
 };
 
 /**
  * Load literals for a list of IDs (e.g. dimension values, positions, colors)
  */
-export async function loadResourceLiterals({
+export const loadResourceLiterals = async <Predicates extends PredicateOption>({
   ids,
   sparqlClient,
-  predicate,
+  predicates,
 }: {
   ids: NamedNode[];
   sparqlClient: ParsingClient;
-  predicate: NamedNode<string>;
-}) {
-  return batchLoad<ResourceLiteral, NamedNode>({
+  predicates: Predicates;
+}) => {
+  return batchLoad<ResourceLiteral<Predicates>, NamedNode>({
     ids,
     sparqlClient,
-    buildQuery: (values) => buildResourceLiteralQuery({ values, predicate }),
+    buildQuery: (values) => buildResourceLiteralQuery({ values, predicates }),
   });
-}
+};

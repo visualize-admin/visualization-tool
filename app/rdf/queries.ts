@@ -318,51 +318,39 @@ const getCubeDimensionValuesWithMetadata = async ({
 
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
-    const [labels, positions, identifiers, colors, unversioned] =
-      await Promise.all([
-        loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
-        scaleType === "Ordinal"
-          ? loadResourceLiterals({
-              ids: namedNodes,
-              sparqlClient,
-              predicate: schema.position,
-            })
-          : [],
-        scaleType === "Ordinal" || scaleType === "Nominal"
-          ? loadResourceLiterals({
-              ids: namedNodes,
-              sparqlClient,
-              predicate: schema.identifier,
-            })
-          : [],
-        scaleType === "Ordinal"
-          ? loadResourceLiterals({
-              ids: namedNodes,
-              sparqlClient,
-              predicate: schema.color,
-            })
-          : [],
-        dimensionIsVersioned(dimension)
-          ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
-          : [],
-      ]);
+    const [labels, literals, unversioned] = await Promise.all([
+      loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+      loadResourceLiterals({
+        ids: namedNodes,
+        sparqlClient,
+        predicates: {
+          identifier:
+            scaleType === "Ordinal" || scaleType === "Nominal"
+              ? schema.identifier
+              : null,
+          position: scaleType === "Ordinal" ? schema.position : null,
+          color: scaleType === "Ordinal" ? schema.color : null,
+        },
+      }),
+      dimensionIsVersioned(dimension)
+        ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
+        : [],
+    ]);
 
     const identifiersLookup = new Map(
-      identifiers.map(({ iri, value }) => [iri.value, value?.value])
+      literals.map(({ iri, identifier }) => [iri.value, identifier?.value])
     );
-
-    console.log({ identifiers });
 
     const labelsLookup = new Map(
       labels.map(({ iri, label }) => [iri.value, label?.value])
     );
 
     const positionsLookup = new Map(
-      positions.map(({ iri, value }) => [iri.value, value?.value])
+      literals.map(({ iri, position }) => [iri.value, position?.value])
     );
 
     const colorsLookup = new Map(
-      colors.map(({ iri, value }) => [iri.value, value?.value])
+      literals.map(({ iri, color }) => [iri.value, color?.value])
     );
 
     const unversionedLookup = new Map(
