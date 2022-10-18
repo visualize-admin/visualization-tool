@@ -234,7 +234,7 @@ export const getCubeDimensionValues = async (
     return [];
   }
 
-  return await getCubeDimensionValuesWithLabels({
+  return await getCubeDimensionValuesWithMetadata({
     dimension,
     cube,
     sparqlClient,
@@ -246,7 +246,7 @@ export const getCubeDimensionValues = async (
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
-const getCubeDimensionValuesWithLabels = async ({
+const getCubeDimensionValuesWithMetadata = async ({
   dimension,
   cube,
   sparqlClient,
