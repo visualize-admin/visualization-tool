@@ -1,4 +1,5 @@
 import {
+  ascending,
   extent,
   group,
   max,
@@ -42,7 +43,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields } from "@/configurator";
+import { ColumnFields, SortingField } from "@/configurator";
 import {
   formatNumberWithUnit,
   getPalette,
@@ -141,7 +142,7 @@ const useGroupedColumnsState = (
   );
 
   // Sort
-  const xSortingType = fields.x.sorting?.sortingType;
+  const xSorting = fields.x.sorting;
   const xSortingOrder = fields.x.sorting?.sortingOrder;
 
   // Group by X
@@ -158,11 +159,10 @@ const useGroupedColumnsState = (
     return sortData({
       data,
       getX,
-      xSortingType,
-      xSortingOrder,
+      xSorting,
       xOrder,
     });
-  }, [data, getX, xSortingType, xSortingOrder, getY]);
+  }, [data, getX, xSorting, getY]);
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
@@ -533,30 +533,27 @@ export const GroupedColumnChart = ({
 const sortData = ({
   data,
   getX,
-  xSortingType,
-  xSortingOrder,
   xOrder,
+  xSorting,
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  xSortingType: SortingType | undefined;
-  xSortingOrder: SortingOrder | undefined;
   xOrder: string[];
+  xSorting: SortingField["sorting"];
 }) => {
-  if (xSortingOrder === "desc" && xSortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (xSortingOrder === "asc" && xSortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (xSortingType === "byMeasure") {
+  const { sortingType, sortingOrder } = xSorting || {};
+  if (sortingType === "byDimensionLabel") {
+    return orderBy(data, getX, sortingOrder);
+  } else if (sortingType === "byMeasure") {
     const sd = sortByIndex({
       data,
       order: xOrder,
       getCategory: getX,
-      sortOrder: xSortingOrder,
+      sortOrder: sortingOrder,
     });
     return sd;
   } else {
     // default to scending alphabetical
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+    return orderBy(data, getX, "asc");
   }
 };
