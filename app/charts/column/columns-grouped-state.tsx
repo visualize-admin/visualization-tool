@@ -1,6 +1,4 @@
 import {
-  ascending,
-  descending,
   extent,
   group,
   max,
@@ -18,7 +16,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {
@@ -44,7 +42,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnFields } from "@/configurator";
 import {
   formatNumberWithUnit,
   getPalette,
@@ -56,7 +54,7 @@ import {
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface GroupedColumnsState {
   chartType: "column";
@@ -146,7 +144,7 @@ const useGroupedColumnsState = (
   const xSortingType = fields.x.sorting?.sortingType;
   const xSortingOrder = fields.x.sorting?.sortingOrder;
 
-  // All data
+  // Group by X
   const sortedData = useMemo(() => {
     const xOrder = [
       ...rollup(
@@ -185,59 +183,37 @@ const useGroupedColumnsState = (
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
-  const segments = useMemo(() => {
-    const getSegmentsOrderedByName = () =>
-      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
-        (a, b) =>
-          segmentSortingOrder === "asc"
-            ? a.localeCompare(b, locale)
-            : b.localeCompare(a, locale)
-      );
+  const sumsBySegment = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        plottableSortedData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
+  }, [plottableSortedData, getY, getSegment]);
 
+  const segments = useMemo(() => {
+    const uniqueSegments = Array.from(
+      new Set(plottableSortedData.map((d) => getSegment(d)))
+    );
     const dimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
     );
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting: fields?.segment?.sorting,
+      sumsBySegment,
+    });
 
-    const getSegmentsOrderedByPosition = () => {
-      const segments = Array.from(
-        new Set(plottableSortedData.map((d) => getSegment(d)))
-      );
-      if (!dimension) {
-        return segments;
-      }
-      const sorter = makeOrdinalDimensionSorter(dimension);
-      return sortBy(segments, sorter);
-    };
-
-    const getSegmentsOrderedByTotalValue = () =>
-      [
-        ...rollup(
-          plottableSortedData,
-          (v) => sum(v, (x) => getY(x)),
-          (x) => getSegment(x)
-        ),
-      ]
-        .sort((a, b) =>
-          segmentSortingOrder === "asc"
-            ? ascending(a[1], b[1])
-            : descending(a[1], b[1])
-        )
-        .map((d) => d[0]);
-    if (dimension?.__typename === "OrdinalDimension") {
-      return getSegmentsOrderedByPosition();
-    }
-    return segmentSortingType === "byDimensionLabel"
-      ? getSegmentsOrderedByName()
-      : getSegmentsOrderedByTotalValue();
+    return orderBy(uniqueSegments, sorters, xSortingOrder || "asc");
   }, [
-    dimensions,
-    fields.segment?.componentIri,
-    getSegment,
-    getY,
-    locale,
-    segmentSortingOrder,
-    segmentSortingType,
     plottableSortedData,
+    dimensions,
+    fields.segment?.sorting,
+    fields.segment?.componentIri,
+    sumsBySegment,
+    xSortingOrder,
+    getSegment,
   ]);
 
   /* Scales */
@@ -287,9 +263,10 @@ const useGroupedColumnsState = (
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
-      getXAsDate(d)
-    ) as [Date, Date];
+    const xEntireDomainAsTime = extent(sortedData, (d) => getXAsDate(d)) as [
+      Date,
+      Date
+    ];
     const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
     // y
@@ -328,7 +305,7 @@ const useGroupedColumnsState = (
     getXAsDate,
     getY,
     getYErrorRange,
-    plottableSortedData,
+    sortedData,
     preparedData,
     segments,
   ]);
@@ -466,7 +443,7 @@ const useGroupedColumnsState = (
   return {
     chartType: "column",
     preparedData,
-    allData: plottableSortedData,
+    allData: sortedData,
     bounds,
     getX,
     getXAsDate,
