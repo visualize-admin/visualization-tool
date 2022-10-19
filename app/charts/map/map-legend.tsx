@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
-import { convertRgbArrayToHex } from "@/charts/shared/colors";
+import { rgbArrayToHex } from "@/charts/shared/colors";
 import { MapLegendColor } from "@/charts/shared/legend-color";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
@@ -301,7 +301,7 @@ const CircleLegend = ({
   const maxRadius = radiusScale.range()[1];
 
   const color = interaction.d
-    ? convertRgbArrayToHex(getColor(interaction.d))
+    ? rgbArrayToHex(getColor(interaction.d))
     : undefined;
 
   const domainObservations = useMemo(

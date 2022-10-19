@@ -11,7 +11,7 @@ import {
 } from "react";
 
 import { MapState } from "@/charts/map/map-state";
-import { convertRgbArrayToHex } from "@/charts/shared/colors";
+import { rgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartState } from "@/charts/shared/use-chart-state";
@@ -73,7 +73,7 @@ export const MapTooltip = () => {
 
       const value = colors.getValue(obs || {}) ?? null;
       const show = identicalLayerComponentIris || hoverObjectType === "area";
-      const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+      const color = obs ? rgbArrayToHex(colors.getColor(obs)) : "#fff";
       const textColor = getTooltipTextColor(color);
       const valueFormatter = (d: number | null) =>
         formatNumberWithUnit(
@@ -109,7 +109,7 @@ export const MapTooltip = () => {
 
       const value = symbolLayer.getValue(interaction.d || {}) ?? null;
       const show = identicalLayerComponentIris || hoverObjectType === "symbol";
-      const color = obs ? convertRgbArrayToHex(colors.getColor(obs)) : "#fff";
+      const color = obs ? rgbArrayToHex(colors.getColor(obs)) : "#fff";
       const textColor = getTooltipTextColor(color);
       const valueFormatter = (d: number | null) =>
         formatNumberWithUnit(

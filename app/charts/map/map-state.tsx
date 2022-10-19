@@ -53,7 +53,7 @@ import {
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
-import { convertHexToRgbArray } from "../shared/colors";
+import { colorToRgbArray } from "../shared/colors";
 
 import { getBBox } from "./helpers";
 
@@ -169,7 +169,7 @@ const getNumericalColorScale = ({
 };
 
 const getFixedColors = (color: FixedColorField) => {
-  const c = convertHexToRgbArray(color.value, color.opacity * 2.55);
+  const c = colorToRgbArray(color.value, color.opacity * 2.55);
   return { type: "fixed" as "fixed", getColor: (_: Observation) => c };
 };
 
@@ -183,9 +183,7 @@ const getCategoricalColors = (
   ) as DimensionMetadataFragment;
   const componentValuesByLabel = keyBy(component.values, (d) => d.label);
   const domain: string[] = component.values.map((d) => d.value) || [];
-  const rgbColorMapping = mapValues(color.colorMapping, (d) =>
-    convertHexToRgbArray(d)
-  );
+  const rgbColorMapping = mapValues(color.colorMapping, colorToRgbArray);
   const getValue = (d: Observation) =>
     d[color.componentIri] !== null ? `${d[color.componentIri]}` : "";
 
