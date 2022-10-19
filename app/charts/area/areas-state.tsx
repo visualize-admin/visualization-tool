@@ -48,7 +48,6 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -91,7 +90,6 @@ const useAreasState = (
     interactiveFiltersConfig,
     aspectRatio,
   } = chartProps;
-  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
