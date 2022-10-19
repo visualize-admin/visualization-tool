@@ -12,7 +12,7 @@ import {
   scaleTime,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
@@ -44,7 +44,7 @@ import { Observation } from "@/domain/data";
 import { useTheme } from "@/themes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface LinesState {
   chartType: "line";
@@ -214,17 +214,12 @@ const useLinesState = (
 
   // segments
   const segments = useMemo(() => {
-    const segments = [...new Set(plottableSortedData.map(getSegment))].sort(
-      (a, b) => ascending(a, b)
-    );
+    const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
     const dimension = dimensions.find(
       (d) => d.iri === fields?.segment?.componentIri
     );
-    if (dimension?.__typename === "OrdinalDimension") {
-      const sorter = makeOrdinalDimensionSorter(dimension);
-      return sortBy(segments, sorter);
-    }
-    return segments;
+    const sorters = makeDimensionValueSorters(dimension);
+    return orderBy(uniqueSegments, sorters, "asc");
   }, [
     dimensions,
     fields?.segment?.componentIri,
