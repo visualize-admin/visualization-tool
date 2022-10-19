@@ -1,7 +1,6 @@
 import {
   arc,
   ascending,
-  descending,
   pie,
   Pie,
   PieArcDatum,
@@ -9,6 +8,7 @@ import {
   scaleOrdinal,
 } from "d3";
 import keyBy from "lodash/keyBy";
+import orderBy from "lodash/orderBy";
 import React, { ReactNode, useMemo, useCallback } from "react";
 
 import {
@@ -23,41 +23,14 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { PieFields, SortingOrder, SortingType } from "@/configurator";
+import { PieFields } from "@/configurator";
 import {
   formatNumberWithUnit,
   getPalette,
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-
-const sortData = ({
-  data,
-  getX,
-  getY,
-  sortingType,
-  sortingOrder,
-}: {
-  data: Observation[];
-  getX: (d: Observation) => string;
-  getY: (d: Observation) => number | null;
-  sortingType?: SortingType;
-  sortingOrder?: SortingOrder;
-}) => {
-  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a) ?? -1, getY(b) ?? -1));
-  } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a) ?? -1, getY(b) ?? -1));
-  } else {
-    // default to ascending byDimensionLabel
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
-};
-
+import { DimensionValue, Observation } from "@/domain/data";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 export interface PieState {
   bounds: Bounds;
   data: Observation[];
@@ -100,51 +73,64 @@ const usePieState = (
   const getX = useSegment(fields.segment.componentIri);
 
   // Sort data
-  const sortingType = fields.segment.sorting?.sortingType;
   const sortingOrder = fields.segment.sorting?.sortingOrder;
 
   // Data actually sorted in pie(),
-  // Sorting here only useful to legend items.
-  const sortedData = useMemo(() => {
-    return sortData({ data, sortingType, sortingOrder, getX, getY });
-  }, [data, getX, getY, sortingType, sortingOrder]);
-
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
+  const plottableData = usePlottableData({
+    data: data,
     plotters: [getY],
   });
 
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    sortedData: plottableSortedData,
+    sortedData: data,
     interactiveFilters,
     getSegment: getX,
   });
 
-  const { segmentValuesByValue, segmentDimension } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) as $FixMe;
-    return {
-      segmentDimension,
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
+  const { segmentValuesByValue, segmentDimension, segmentValuesByLabel } =
+    useMemo(() => {
+      const segmentDimension = dimensions.find(
+        (d) => d.iri === fields.segment?.componentIri
+      ) as $FixMe;
+      return {
+        segmentDimension,
+        segmentValuesByValue: keyBy(
+          segmentDimension.values as DimensionValue[] as DimensionValue[],
+          (x) => x.value
+        ),
+        segmentValuesByLabel: keyBy(
+          segmentDimension.values as DimensionValue[],
+          (x) => x.label
+        ),
+      };
+    }, [dimensions, fields.segment?.componentIri]);
 
   // Map ordered segments to colors
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
-    const segments = Array.from(
-      new Set(plottableSortedData.map((d) => getX(d)))
+    const measureBySegment = Object.fromEntries(
+      plottableData.map((d) => [getX(d), getY(d)])
+    );
+    const uniqueSegments = Object.entries(measureBySegment)
+      .filter((x) => x[1])
+      .map((x) => x[0]);
+
+    const sorters = makeDimensionValueSorters(segmentDimension, {
+      sorting: fields.segment.sorting,
+      measureBySegment,
+    });
+
+    const segments = orderBy(
+      uniqueSegments,
+      sorters,
+      sortingOrder === "desc" ? "desc" : "asc"
     );
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = segments.map((segment) => {
-        const dvIri = segmentDimension.values.find(
-          (s: $FixMe) => s.label === segment
-        ).value;
+        const dvIri = segmentValuesByLabel[segment]?.value;
 
         return {
           label: segment,
@@ -158,8 +144,19 @@ const usePieState = (
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
     }
+    // Do not let the scale be implicitly extended by children calling it
+    // on unknown values
+    colors.unknown(() => undefined);
     return colors;
-  }, [fields.segment, getX, plottableSortedData, segmentDimension]);
+  }, [
+    fields.segment,
+    getX,
+    getY,
+    plottableData,
+    segmentDimension,
+    segmentValuesByLabel,
+    sortingOrder,
+  ]);
 
   const getSegmentLabel = useCallback(
     (segment: string): string => {
@@ -196,22 +193,22 @@ const usePieState = (
     .outerRadius(outerRadius);
 
   // Pie data
+  // Sort the pie according to the segments
+  const pieSorter = useMemo(() => {
+    const segments = colors.domain();
+    const segmentIndex = Object.fromEntries(segments.map((s, i) => [s, i]));
+    return (a: Observation, b: Observation) => {
+      // We do not actually use segment sort order here, because the ascending/descending
+      // has already been done when segments where sorted
+      return ascending(
+        segmentIndex[getX(a)] ?? -1,
+        segmentIndex[getX(b)] ?? -1
+      );
+    };
+  }, [colors, getX]);
   const getPieData = pie<Observation>()
     .value((d) => getY(d) ?? NaN)
-    .sort((a, b) => {
-      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-        return descending(getX(a), getX(b));
-      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-        return ascending(getX(a), getX(b));
-      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-        return descending(getY(a) ?? -1, getY(b) ?? -1);
-      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-        return ascending(getY(a) ?? -1, getY(b) ?? -1);
-      } else {
-        // default to ascending byDimensionLabel
-        return ascending(getX(a), getX(b));
-      }
-    });
+    .sort(pieSorter);
 
   const formatters = useChartFormatters(chartProps);
   const valueFormatter = (value: number | null) =>
