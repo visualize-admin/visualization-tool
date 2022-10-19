@@ -1,5 +1,6 @@
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clsx from "clsx";
 import React, { memo, useMemo } from "react";
 
 import {
@@ -42,6 +43,9 @@ const useStyles = makeStyles<Theme>(() => ({
     gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
     gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
+  },
+  legendContainerNoGroups: {
+    gridTemplateColumns: "1fr",
   },
   legendGroup: {
     display: "flex",
@@ -107,7 +111,12 @@ export const InteractiveLegendColor = () => {
   }, [colors]);
   const classes = useStyles();
   return (
-    <Flex className={classes.legendContainer}>
+    <Flex
+      className={clsx(
+        classes.legendContainer,
+        groups.length === 1 ? classes.legendContainerNoGroups : undefined
+      )}
+    >
       {groups.map((group) => {
         return (
           <div key={group.value}>
@@ -269,11 +278,16 @@ const LegendColorContent = ({
   symbol: LegendSymbol;
 }) => {
   const classes = useStyles();
-
+  const groupList = Array.from(groups.entries());
   return (
-    <Flex className={classes.legendContainer}>
+    <Flex
+      className={clsx(
+        classes.legendContainer,
+        groupList.length === 1 ? classes.legendContainerNoGroups : undefined
+      )}
+    >
       {groups
-        ? Array.from(groups.entries()).map(([g, colorValues]) => {
+        ? groupList.map(([g, colorValues]) => {
             const headerLabelsArray = g.map((n) => n.label);
 
             return (
