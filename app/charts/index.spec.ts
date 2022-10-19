@@ -49,7 +49,7 @@ describe("possible chart types", () => {
   it("should only allow table if there are only measures available", () => {
     const meta = {
       dimensions: [],
-      measures: [{ __typename: "Measure" }],
+      measures: [{ __typename: "NumericalMeasure" }],
     };
     const possibleChartTypes = getPossibleChartType({
       meta: meta as any,
@@ -61,7 +61,7 @@ describe("possible chart types", () => {
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
     const meta = {
       dimensions: [{ __typename: "GeoShapesDimension" }],
-      measures: [{ __typename: "Measure" }],
+      measures: [{ __typename: "NumericalMeasure" }],
     };
     const possibleChartTypes = getPossibleChartType({
       meta: meta as any,

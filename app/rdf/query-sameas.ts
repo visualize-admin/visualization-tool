@@ -4,6 +4,7 @@ import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
+import { pragmas } from "./create-source";
 
 interface UnversionedResource {
   iri: NamedNode;
@@ -16,7 +17,7 @@ const buildUnversionedResourceQuery = (values: NamedNode[]) => {
       ${values}
     }
     ?iri ${schema.sameAs} ?sameAs .
-  `;
+  `.prologue`${pragmas}`;
 };
 
 /**

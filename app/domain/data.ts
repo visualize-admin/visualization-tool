@@ -6,6 +6,7 @@ import {
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NominalDimension,
+  NumericalMeasure,
   OrdinalDimension,
 } from "../graphql/query-hooks";
 import { ResolvedDimension } from "../graphql/shared-types";
@@ -147,6 +148,16 @@ export const canDimensionBeMultiFiltered = (d: DimensionMetadataFragment) => {
   );
 };
 
+export const isDimensionSortable = (
+  d?: DimensionMetadataFragment
+): d is NominalDimension | GeoCoordinatesDimension | GeoShapesDimension => {
+  return (
+    isNominalDimension(d) ||
+    isGeoCoordinatesDimension(d) ||
+    isGeoShapesDimension(d)
+  );
+};
+
 /**
  * @fixme use metadata to filter categorical dimension!
  */
@@ -182,13 +193,13 @@ export const getDimensionsByDimensionType = ({
 
 export const isNominalDimension = (
   dimension?: DimensionMetadataFragment
-): dimension is GeoCoordinatesDimension => {
+): dimension is NominalDimension => {
   return dimension?.__typename === "NominalDimension";
 };
 
 export const isOrdinalDimension = (
   dimension?: DimensionMetadataFragment
-): dimension is GeoCoordinatesDimension => {
+): dimension is OrdinalDimension => {
   return dimension?.__typename === "OrdinalDimension";
 };
 
@@ -202,6 +213,12 @@ export const isGeoShapesDimension = (
   dimension?: DimensionMetadataFragment
 ): dimension is GeoShapesDimension => {
   return dimension?.__typename === "GeoShapesDimension";
+};
+
+export const isNumericalMeasure = (
+  dimension?: DimensionMetadataFragment
+): dimension is NumericalMeasure => {
+  return dimension?.__typename === "NumericalMeasure";
 };
 
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
@@ -225,6 +242,7 @@ export const shouldValuesBeLoadedForResolvedDimension = (
   dim: ResolvedDimension
 ) => {
   return !(
-    dim.data.isMeasureDimension || isStandardErrorResolvedDimension(dim)
+    (dim.data.isNumerical && dim.data.scaleType !== "Ordinal") ||
+    isStandardErrorResolvedDimension(dim)
   );
 };

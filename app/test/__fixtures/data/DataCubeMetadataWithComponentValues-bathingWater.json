@@ -831,7 +831,7 @@
             { "value": 7700, "label": "7700" }
           ],
           "unit": "CFU/100mL",
-          "__typename": "Measure"
+          "__typename": "NumericalMeasure"
         }
       ],
       "__typename": "DataCube"

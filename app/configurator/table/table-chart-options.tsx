@@ -212,7 +212,7 @@ export const TableColumnOptions = ({
           {component.label}
         </SectionTitle>
         <ControlSectionContent>
-          {component.__typename !== "Measure" && (
+          {component.__typename !== "NumericalMeasure" && (
             <ChartOptionGroupHiddenField
               label={t({
                 id: "controls.table.column.group",

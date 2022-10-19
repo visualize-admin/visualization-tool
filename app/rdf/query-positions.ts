@@ -4,6 +4,7 @@ import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import batchLoad from "./batch-load";
+import { pragmas } from "./create-source";
 
 interface ResourcePosition {
   iri: NamedNode;
@@ -16,7 +17,7 @@ const buildResourcePositionQuery = (values: NamedNode<string>[]) => {
         ${values}
       }
       ?iri ${schema.position} ?position.
-    `;
+    `.prologue`${pragmas}`;
 };
 
 /**

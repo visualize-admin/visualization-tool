@@ -9,6 +9,7 @@ import {
   AreaSegmentField,
   ChartConfig,
   ChartConfigsAdjusters,
+  ChartSegmentField,
   ChartType,
   ColumnSegmentField,
   FieldAdjuster,
@@ -37,10 +38,17 @@ import {
   getTimeDimensions,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
+  isNumericalMeasure,
 } from "../domain/data";
 import { DimensionMetadataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
+
+import {
+  AREA_SEGMENT_SORTING,
+  COLUMN_SEGMENT_SORTING,
+  PIE_SEGMENT_SORTING,
+} from "./chart-config-ui-options";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -97,10 +105,12 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
   },
 };
 
-const DEFAULT_SORTING: {
+type SortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder;
-} = {
+};
+
+const DEFAULT_SORTING: SortingOption = {
   sortingType: "byDimensionLabel",
   sortingOrder: "asc",
 };
@@ -142,6 +152,8 @@ export const getInitialConfig = ({
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
+  const numericalMeasures = measures.filter(isNumericalMeasure);
+
   switch (chartType) {
     case "bar":
       return {
@@ -176,7 +188,7 @@ export const getInitialConfig = ({
             ).iri,
             sorting: DEFAULT_SORTING,
           },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
         },
       };
     case "line":
@@ -187,7 +199,7 @@ export const getInitialConfig = ({
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: getTimeDimensions(dimensions)[0].iri },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
         },
       };
     case "area":
@@ -198,7 +210,7 @@ export const getInitialConfig = ({
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: getTimeDimensions(dimensions)[0].iri },
-          y: { componentIri: measures[0].iri, imputationType: "none" },
+          y: { componentIri: numericalMeasures[0].iri, imputationType: "none" },
         },
       };
     case "scatterplot":
@@ -212,10 +224,12 @@ export const getInitialConfig = ({
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          x: { componentIri: measures[0].iri },
+          x: { componentIri: numericalMeasures[0].iri },
           y: {
             componentIri:
-              measures.length > 1 ? measures[1].iri : measures[0].iri,
+              numericalMeasures.length > 1
+                ? numericalMeasures[1].iri
+                : numericalMeasures[0].iri,
           },
           ...(scatterplotSegmentComponent
             ? {
@@ -240,7 +254,7 @@ export const getInitialConfig = ({
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: numericalMeasures[0].iri },
           segment: {
             componentIri: pieSegmentComponent.iri,
             palette: DEFAULT_PALETTE,
@@ -256,6 +270,7 @@ export const getInitialConfig = ({
       const allDimensionsSorted = [...dimensions, ...measures].sort((a, b) =>
         ascending(a.order ?? Infinity, b.order ?? Infinity)
       );
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
@@ -301,7 +316,7 @@ export const getInitialConfig = ({
           areaLayer: {
             show: geoShapes.length > 0,
             componentIri: geoShapes[0]?.iri || "",
-            measureIri: measures[0].iri,
+            measureIri: numericalMeasures[0].iri,
             colorScaleType: "continuous",
             colorScaleInterpolationType: "linear",
             palette: "oranges",
@@ -310,7 +325,7 @@ export const getInitialConfig = ({
           symbolLayer: {
             show: geoShapes.length === 0,
             componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
-            measureIri: measures[0].iri,
+            measureIri: numericalMeasures[0].iri,
             colors: DEFAULT_SYMBOL_LAYER_COLORS,
           },
         },
@@ -554,7 +569,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            // We could encouner byMeasure sorting type (Pie chart); we should
+            // switch to byTotalSize sorting then.
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byTotalSize",
+            }),
             type: "stacked",
           };
         }
@@ -677,8 +698,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentIri: oldSegment.componentIri,
             palette: oldSegment.palette,
             colorMapping: oldSegment.colorMapping,
-            // Line & ScatterPlot do not have sorting field.
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byTotalSize",
+            }),
           };
         }
 
@@ -701,8 +725,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
         componentIri: ({ oldValue, newChartConfig, measures }) => {
-          // If there is only one measure then x & y are already filled correctly.
-          if (measures.length > 1) {
+          const numericalMeasures = measures.filter(isNumericalMeasure);
+
+          // If there is only one numerical measure then x & y are already filled correctly.
+          if (numericalMeasures.length > 1) {
             if (newChartConfig.fields.x.componentIri !== oldValue) {
               return produce(newChartConfig, (draft) => {
                 draft.fields.y.componentIri = oldValue;
@@ -778,8 +804,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentIri: oldSegment.componentIri,
             palette: oldSegment.palette,
             colorMapping: oldSegment.colorMapping,
-            // Line & ScatterPlot do not have sorting field.
-            sorting: (oldSegment as any).sorting || DEFAULT_SORTING,
+            sorting: adjustSegmentSorting({
+              segment: oldSegment,
+              acceptedValues: PIE_SEGMENT_SORTING.map((d) => d.sortingType),
+              defaultValue: "byMeasure",
+            }),
           };
         }
 
@@ -943,6 +972,26 @@ const chartConfigsPathOverrides: {
 type ChartConfigPathOverrides =
   typeof chartConfigsPathOverrides[ChartType][ChartType];
 
+const adjustSegmentSorting = ({
+  segment,
+  acceptedValues,
+  defaultValue,
+}: {
+  segment: ChartSegmentField;
+  acceptedValues: SortingType[];
+  defaultValue: SortingType;
+}): SortingOption | undefined => {
+  const sorting = (segment as any).sorting as SortingOption | undefined;
+  const sortingType = sorting?.sortingType;
+  const newSorting = sorting
+    ? sortingType && acceptedValues.includes(sortingType)
+      ? sorting
+      : { ...sorting, sortingType: defaultValue }
+    : DEFAULT_SORTING;
+
+  return newSorting;
+};
+
 // Helpers
 export const getPossibleChartType = ({
   meta,
@@ -951,17 +1000,18 @@ export const getPossibleChartType = ({
 }): ChartType[] => {
   const { measures, dimensions } = meta;
 
+  const numericalMeasures = measures.filter(isNumericalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
   const timeDimensions = getTimeDimensions(dimensions);
 
   const categoricalEnabled: ChartType[] = ["column", "pie"];
   const geoEnabled: ChartType[] = ["column", "map", "pie"];
-  const multipleMeasuresEnabled: ChartType[] = ["scatterplot"];
+  const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
   const timeEnabled: ChartType[] = ["area", "column", "line"];
 
   let possibles: ChartType[] = ["table"];
-  if (measures.length > 0) {
+  if (numericalMeasures.length > 0) {
     if (categoricalDimensions.length > 0) {
       possibles.push(...categoricalEnabled);
     }
@@ -970,8 +1020,8 @@ export const getPossibleChartType = ({
       possibles.push(...geoEnabled);
     }
 
-    if (measures.length > 1) {
-      possibles.push(...multipleMeasuresEnabled);
+    if (numericalMeasures.length > 1) {
+      possibles.push(...multipleNumericalMeasuresEnabled);
     }
 
     if (timeDimensions.length > 0) {
@@ -1020,8 +1070,7 @@ const convertTableFieldsToSegmentField = ({
     // All the other dimension types can be used as a segment field.
     ?.filter(
       (d) =>
-        d.componentType !== "Attribute" &&
-        d.componentType !== "Measure" &&
+        d.componentType !== "NumericalMeasure" &&
         d.componentType !== "TemporalDimension"
     )
     .sort((a, b) => a.index - b.index);

@@ -1,3 +1,5 @@
 import { devtoolsExchange } from "@urql/devtools";
 
-export const devtoolsExchanges = [devtoolsExchange];
+import { gqlFlamegraphExchange } from "@/gql-flamegraph/devtool";
+
+export const devtoolsExchanges = [gqlFlamegraphExchange, devtoolsExchange];

@@ -1,5 +1,6 @@
 declare module "rdf-cube-view-query" {
   import { AnyPointer, ClownfaceInit } from "clownface";
+  import DefaultGraphExt from "rdf-ext/lib/DefaultGraph";
   import { Literal, NamedNode, Term } from "rdf-js";
   import { ParsingClient } from "sparql-http-client/ParsingClient";
   type NodeInit = {
@@ -101,10 +102,11 @@ declare module "rdf-cube-view-query" {
     constructor(
       options: NodeInit & {
         endpointUrl: string;
-        sourceGraph?: string;
+        sourceGraph?: string | DefaultGraphExt;
         user?: string;
         password?: string;
         queryOperation?: "get" | "postUrlencoded" | "postDirect";
+        queryPrefix?: string;
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
@@ -118,6 +120,7 @@ declare module "rdf-cube-view-query" {
   }
   export class LookupSource extends Source {
     static fromSource(source: Source): LookupSource;
+    queryPrefix?: string;
   }
   export class CubeSource extends Source {}
 }

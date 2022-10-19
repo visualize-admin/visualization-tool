@@ -62,7 +62,7 @@
     },
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries": {
       "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/entries",
-      "componentType": "Measure",
+      "componentType": "NumericalMeasure",
       "index": 4,
       "isGroup": false,
       "isHidden": false,
@@ -75,7 +75,7 @@
     },
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal": {
       "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/sumtotal",
-      "componentType": "Measure",
+      "componentType": "NumericalMeasure",
       "index": 5,
       "isGroup": false,
       "isHidden": false,
@@ -88,7 +88,7 @@
     },
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d": {
       "componentIri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/mean7d",
-      "componentType": "Measure",
+      "componentType": "NumericalMeasure",
       "index": 6,
       "isGroup": false,
       "isHidden": false,

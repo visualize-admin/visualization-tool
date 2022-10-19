@@ -434,9 +434,9 @@ const sortData = ({
   } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
   } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a) ?? NaN, getY(b) ?? NaN));
+    return [...data].sort((a, b) => descending(getY(a) ?? -1, getY(b) ?? -1));
   } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a) ?? NaN, getY(b) ?? NaN));
+    return [...data].sort((a, b) => ascending(getY(a) ?? -1, getY(b) ?? -1));
   } else {
     // default to ascending alphabetical
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));

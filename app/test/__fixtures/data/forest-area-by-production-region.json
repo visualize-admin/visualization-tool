@@ -189,7 +189,7 @@
           "values": [],
           "unit": "ha",
           "related": [],
-          "__typename": "Measure"
+          "__typename": "NumericalMeasure"
         }
       ],
       "observations": {

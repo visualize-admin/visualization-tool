@@ -1,5 +1,5 @@
 import { ChartType, SortingOrder } from "../configurator";
-import { imputationTypes } from "../configurator/config-types";
+import { imputationTypes, SortingType } from "../configurator/config-types";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -8,13 +8,13 @@ import { imputationTypes } from "../configurator/config-types";
 
 // This should match graphQL Schema
 export type DimensionType =
-  | "TemporalDimension"
-  | "NominalDimension"
-  | "OrdinalDimension"
+  | "NumericalMeasure"
+  | "OrdinalMeasure"
   | "GeoCoordinatesDimension"
   | "GeoShapesDimension"
-  | "Measure"
-  | "Attribute";
+  | "NominalDimension"
+  | "OrdinalDimension"
+  | "TemporalDimension";
 
 export type BaseEncodingField = "x" | "y" | "segment";
 export type GeoEncodingField = "baseLayer" | "areaLayer" | "symbolLayer";
@@ -36,7 +36,7 @@ export type EncodingOptions =
         | { field: string; values?: string | string[] }[];
     }[];
 export type EncodingSortingOption = {
-  sortingType: "byDimensionLabel" | "byTotalSize" | "byMeasure";
+  sortingType: SortingType;
   sortingOrder: SortingOrder[];
 };
 type InteractiveFilterType = "legend" | "time";
@@ -45,7 +45,7 @@ export interface EncodingSpec {
   optional: boolean;
   values: DimensionType[];
   filters: boolean;
-  sorting?: EncodingSortingOption[]; // { field: string; values: string | string[] }[];
+  sorting?: EncodingSortingOption[];
   options?: EncodingOptions;
 }
 export interface ChartSpec {
@@ -70,6 +70,26 @@ interface ChartSpecs {
  * - Differentiate sorting within chart vs. sorting legend/tooltip only
  */
 
+const SEGMENT_DIMENSION_TYPES: DimensionType[] = [
+  "NominalDimension",
+  "OrdinalDimension",
+  "GeoCoordinatesDimension",
+  "GeoShapesDimension",
+];
+
+export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+  { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+];
+
+export const COLUMN_SEGMENT_SORTING: EncodingSortingOption[] =
+  AREA_SEGMENT_SORTING;
+
+export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
+  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+];
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   column: {
     chartType: "column",
@@ -77,7 +97,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
         options: [{ field: "showStandardError", values: [true, false] }],
       },
@@ -100,17 +120,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
@@ -137,18 +149,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
       {
         field: "segment",
         optional: true,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -165,7 +172,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   line: {
     chartType: "line",
     encodings: [
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "x",
         optional: false,
@@ -175,27 +187,22 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        // sorting: [
-        //   { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        //   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-        // ],
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
     interactiveFilters: ["legend", "time"],
   },
-
   area: {
     chartType: "area",
     encodings: [
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "x",
         optional: false,
@@ -205,17 +212,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: AREA_SEGMENT_SORTING,
         options: [
           { field: "color", values: ["palette"] },
           { field: "imputationType", values: imputationTypes },
@@ -230,19 +229,19 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "segment",
         optional: true,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
         options: [{ field: "color", values: ["palette"] }],
       },
@@ -255,23 +254,15 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: false,
       },
       {
         field: "segment",
         optional: false,
-        values: [
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
+        values: SEGMENT_DIMENSION_TYPES,
         filters: true,
-        sorting: [
-          { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-        ],
+        sorting: PIE_SEGMENT_SORTING,
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
@@ -294,36 +285,16 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "areaLayer",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: true,
       },
       {
         field: "symbolLayer",
         optional: false,
-        values: ["Measure"],
+        values: ["NumericalMeasure"],
         filters: true,
       },
     ],
     interactiveFilters: [],
   },
 };
-
-// const tableOptions = {
-//   chartType: "table",
-//   settings: [
-//     { field: "showSearch", optional: false, type: "boolean", default: false },
-//     { field: "showAllRows", optional: false, type: "boolean", default: false },
-//   ],
-//   encodings: [
-//     {
-//       type: "section",
-//       title: "groups",
-//       encodings: [],
-//     },
-//     {
-//       type: "section",
-//       title: "columns",
-//       encodings: [],
-//     },
-//   ],
-// };
