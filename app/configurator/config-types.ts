@@ -128,6 +128,7 @@ const SortingType = t.union([
   t.literal("byDimensionLabel"),
   t.literal("byMeasure"),
   t.literal("byTotalSize"),
+  t.literal("byAuto"),
 ]);
 export type SortingType = t.TypeOf<typeof SortingType>;
 

@@ -633,6 +633,14 @@ const fieldLabels = {
     id: "controls.sorting.byDimensionLabel.ascending",
     message: "A → Z",
   }),
+  "controls.sorting.byAuto.ascending": defineMessage({
+    id: "controls.sorting.byDimensionLabel.ascending",
+    message: "A → Z",
+  }),
+  "controls.sorting.byAuto.descending": defineMessage({
+    id: "controls.sorting.byDimensionLabel.descending",
+    message: "Z → A",
+  }),
   "controls.sorting.byDimensionLabel.descending": defineMessage({
     id: "controls.sorting.byDimensionLabel.descending",
     message: "Z → A",
@@ -790,6 +798,22 @@ export function getFieldLabel(field: string): string {
     case "pie..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
       return i18n._(fieldLabels["controls.sorting.byDimensionLabel.ascending"]);
+    case "bar.stacked.byAuto.asc":
+    case "bar.grouped.byAuto.asc":
+    case "column..byAuto.asc":
+    case "column.stacked.byAuto.asc":
+    case "column.grouped.byAuto.asc":
+    case "pie..byAuto.asc":
+    case "area..byAuto.asc":
+      return i18n._(fieldLabels["controls.sorting.byAuto.ascending"]);
+    case "bar.stacked.byAuto.desc":
+    case "bar.grouped.byAuto.desc":
+    case "column..byAuto.desc":
+    case "column.stacked.byAuto.desc":
+    case "column.grouped.byAuto.desc":
+    case "pie..byAuto.desc":
+    case "area..byAuto.desc":
+      return i18n._(fieldLabels["controls.sorting.byAuto.descending"]);
     case "bar.stacked.byDimensionLabel.desc":
     case "bar.grouped.byDimensionLabel.desc":
     case "column..byDimensionLabel.desc":
