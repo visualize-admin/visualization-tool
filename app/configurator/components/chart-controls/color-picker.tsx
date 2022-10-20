@@ -61,9 +61,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       setInputColorValue(_color);
       // Make sure onChange is only called with valid colors
       const c = d3Color(_color);
+
       if (c) {
-        // Type defs of d3-color are not up-to-date
-        onChange?.((c as $Unexpressable).formatHex());
+        onChange?.(_color);
       }
     },
     [onChange, setInputColorValue]
@@ -73,9 +73,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     (_color) => {
       // Make sure onChange is only called with valid colors
       const c = d3Color(_color);
+
       if (c) {
-        // Type defs of d3-color are not up-to-date
-        setInputColorValue((c as $Unexpressable).formatHex());
+        setInputColorValue(_color);
       }
     },
     [setInputColorValue]
@@ -94,7 +94,6 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       <Box
         display="grid"
         sx={{
-          // width: 120,
           gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
           gap: 2,
           mb: 2,
@@ -120,10 +119,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },
           }}
-          inputProps={{
-            maxLength: 7,
-          }}
-          value={`#${inputColorValue.replace(/^#/, "")}`}
+          value={inputColorValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             selectColor(e.currentTarget.value);
           }}
@@ -166,6 +162,7 @@ export const ColorPickerMenu = (props: Props) => {
   const borderColor = d3Color(selectedColor)?.darker().toString();
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
+
   return (
     <ColorPickerBox
       sx={{
@@ -192,7 +189,7 @@ export const ColorPickerMenu = (props: Props) => {
               width: "1rem",
               height: "1rem",
             }}
-          ></Box>
+          />
         </Box>
       </ColorPickerButton>
       <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>

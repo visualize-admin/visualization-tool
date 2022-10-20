@@ -158,7 +158,14 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     </Link>
 
     {message ? (
-      <pre style={{ marginTop: "0.5rem", marginLeft: "1rem", marginBottom: 0 }}>
+      <pre
+        style={{
+          marginTop: "0.5rem",
+          marginLeft: "1rem",
+          marginBottom: 0,
+          whiteSpace: "pre-wrap",
+        }}
+      >
         {message}
       </pre>
     ) : null}

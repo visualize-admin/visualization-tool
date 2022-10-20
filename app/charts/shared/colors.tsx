@@ -1,15 +1,12 @@
 import { color, RGBColor } from "d3";
 
-export const convertHexToRgbArray = (
-  hex: string,
-  opacity?: number
-): number[] => {
-  const { r, g, b } = color(hex) as RGBColor;
+export const colorToRgbArray = (_color: string, opacity?: number): number[] => {
+  const { r, g, b } = color(_color) as RGBColor;
 
   return opacity !== undefined ? [r, g, b, opacity] : [r, g, b];
 };
 
-export const convertRgbArrayToHex = (rgbArray: number[]): string => {
+export const rgbArrayToHex = (rgbArray: number[]): string => {
   switch (rgbArray.length) {
     case 3:
       return `rgb(${rgbArray.join(",")})`;

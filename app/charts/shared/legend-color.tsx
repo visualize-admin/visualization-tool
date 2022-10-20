@@ -27,7 +27,7 @@ import { dfs } from "@/utils/dfs";
 import { interlace } from "@/utils/interlace";
 import useEvent from "@/utils/use-event";
 
-import { convertRgbArrayToHex } from "./colors";
+import { rgbArrayToHex } from "./colors";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -256,9 +256,7 @@ export const MapLegendColor = memo(function LegendColor({
       getColor={(v) => {
         const label = getLabel(v);
         const rgb = getColor({ [component.iri]: label });
-        const hex = convertRgbArrayToHex(rgb);
-
-        return hex;
+        return rgbArrayToHex(rgb);
       }}
       getLabel={getLabel}
       symbol="circle"
