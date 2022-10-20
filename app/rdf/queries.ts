@@ -329,7 +329,10 @@ const getCubeDimensionValuesWithMetadata = async ({
               ? schema.identifier
               : null,
           position: scaleType === "Ordinal" ? schema.position : null,
-          color: scaleType === "Ordinal" ? schema.color : null,
+          color:
+            scaleType === "Nominal" || scaleType === "Ordinal"
+              ? schema.color
+              : null,
         },
       }),
       dimensionIsVersioned(dimension)
