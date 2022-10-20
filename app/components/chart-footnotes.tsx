@@ -113,7 +113,7 @@ export const ChartFootnotes = ({
           <Trans id="typography.colon">: </Trans>
           {cubeLink ? (
             <Link target="_blank" href={cubeLink} rel="noreferrer">
-              {dataCubeByIri.title}
+              {dataCubeByIri.title}{" "}
               <Icon
                 name="linkExternal"
                 size={12}
@@ -132,7 +132,7 @@ export const ChartFootnotes = ({
               <Trans id="dataset.footnotes.updated">Latest update</Trans>
             </strong>
             <Trans id="typography.colon">: </Trans>
-            {formatLocale.format("%x %H:%M")(
+            {formatLocale.format("%d.%m.%Y %H:%M")(
               new Date(dataCubeByIri.dateModified)
             )}
           </Typography>
