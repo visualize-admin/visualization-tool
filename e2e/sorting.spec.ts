@@ -35,37 +35,34 @@ test("Segment sorting", async ({ selectors, actions, within, screen }) => {
     await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
 
     const legendItems = await selectors.chart.colorLegendItems();
-    const defaultExpected = chartType === "Lines" ? "Zurich" : "Aargau";
     const legendTexts = await legendItems.allInnerTexts();
-    expect(legendTexts[0]).toEqual(defaultExpected);
+    expect(legendTexts[0]).toEqual("Zurich");
 
     if (chartType !== "Lines") {
-      await within(selectors.edition.controlSection("Sort"))
-        .getByText("Name")
-        .click();
-
-      await actions.mui.selectOption("Automatic");
-
-      await selectors.chart.loaded();
-      await selectors.edition.filtersLoaded();
-
-      const legendTexts = await legendItems.allInnerTexts();
-      expect(legendTexts[0]).toBe("Zurich");
-      await screen.getByText("Z → A").click();
-
-      const legendTexts2 = await legendItems.allInnerTexts();
-      expect(legendTexts2[0]).toEqual(
-        chartType === "Pie" ? "Neuchâtel" : "Jura"
-      );
-
-      // Re-initialize for future tests
-      await screen.getByText("A → Z").click();
-
       await within(selectors.edition.controlSection("Sort"))
         .getByText("Automatic")
         .click();
 
       await actions.mui.selectOption("Name");
+
+      await selectors.chart.loaded();
+      await selectors.edition.filtersLoaded();
+
+      const legendTexts = await legendItems.allInnerTexts();
+      expect(legendTexts[0]).toBe("Aargau");
+      await screen.getByText("Z → A").click();
+
+      const legendTexts2 = await legendItems.allInnerTexts();
+      expect(legendTexts2[0]).toEqual("Zurich");
+
+      // Re-initialize for future tests
+      await screen.getByText("A → Z").click();
+
+      await within(selectors.edition.controlSection("Sort"))
+        .getByText("Name")
+        .click();
+
+      await actions.mui.selectOption("Automatic");
     }
   }
 });

@@ -119,8 +119,8 @@ type SortingOption = {
   sortingOrder: SortingOrder;
 };
 
-const DEFAULT_SORTING: SortingOption = {
-  sortingType: "byDimensionLabel",
+export const DEFAULT_SORTING: SortingOption = {
+  sortingType: "byAuto",
   sortingOrder: "asc",
 };
 
