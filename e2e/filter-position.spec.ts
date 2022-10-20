@@ -20,9 +20,7 @@ test("Filters should be sorted by position", async ({
     .findByText("None");
   await selectorLocator.click();
 
-  const menuLocator = await selectors.mui.popover();
-  const statusLocator = await menuLocator.findByText("Status");
-  await statusLocator.click();
+  await actions.mui.selectOption("Status");
 
   const panelRight = await selectors.panels.right().within();
   await panelRight.findByText("Selected filters", undefined, {
