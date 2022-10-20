@@ -141,7 +141,6 @@ const useGroupedColumnsState = (
 
   // Sort
   const xSorting = fields.x.sorting;
-  const xSortingOrder = fields.x.sorting?.sortingOrder;
 
   // Group by X
   const sortedData = useMemo(() => {
@@ -197,19 +196,24 @@ const useGroupedColumnsState = (
     const dimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
     );
+
+    const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(dimension, {
-      sorting: fields?.segment?.sorting,
+      sorting,
       sumsBySegment,
     });
 
-    return orderBy(uniqueSegments, sorters, xSortingOrder || "asc");
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
     plottableSortedData,
     dimensions,
     fields.segment?.sorting,
     fields.segment?.componentIri,
     sumsBySegment,
-    xSortingOrder,
     getSegment,
   ]);
 

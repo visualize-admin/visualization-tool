@@ -121,8 +121,8 @@ const useColumnsStackedState = (
   const xKey = fields.x.componentIri;
 
   // All Data
-  const sortingType = fields.x.sorting?.sortingType;
-  const sortingOrder = fields.x.sorting?.sortingOrder;
+  const xSortingType = fields.x.sorting?.sortingType;
+  const xSortingOrder = fields.x.sorting?.sortingOrder;
 
   const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
   const allDataWide = useMemo(
@@ -149,11 +149,11 @@ const useColumnsStackedState = (
       sortData({
         data,
         getX,
-        sortingType,
-        sortingOrder,
+        sortingType: xSortingType,
+        sortingOrder: xSortingOrder,
         xOrder,
       }),
-    [data, getX, sortingType, sortingOrder, xOrder]
+    [data, getX, xSortingType, xSortingOrder, xOrder]
   );
 
   const plottableSortedData = usePlottableData({
@@ -203,18 +203,22 @@ const useColumnsStackedState = (
       (d) => d.iri === fields.segment?.componentIri
     );
 
+    const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(dimension, {
-      sorting: fields?.segment?.sorting,
+      sorting,
       sumsBySegment,
     });
-    return orderBy(uniqueSegments, sorters, sortingOrder);
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
     plottableSortedData,
     dimensions,
     fields.segment?.sorting,
     fields.segment?.componentIri,
     sumsBySegment,
-    sortingOrder,
     getSegment,
   ]);
 
