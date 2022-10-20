@@ -17,6 +17,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Map:
   - area & symbol layers now use the same approach as for segment field (optional select element), to be more consistent across the app
   - it's now possible to use discrete color mapping in symbol layer
+- Errors:
+  - Make missing timeFormat error message more explicit
 
 ## [3.9.6] - 2022-10-12
 

@@ -189,7 +189,15 @@ export const resolvers: Resolvers = {
   TemporalDimension: {
     ...mkDimensionResolvers("TemporalDimension"),
     timeUnit: ({ data: { timeUnit } }) => timeUnit!,
-    timeFormat: ({ data: { timeFormat } }) => timeFormat!,
+    timeFormat: ({ data }) => {
+      if (data.timeFormat === undefined) {
+        throw new Error(
+          `Time format couldn't be retrieved for ${data.name}. Make sure it's set up properly in the Cube Creator – if it is, make sure that the interval scale is selected for this dimension (or remove time description if it's not a temporal dimension).`
+        );
+      }
+
+      return data.timeFormat;
+    },
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("GeoCoordinatesDimension"),
