@@ -327,7 +327,7 @@ const getCubeDimensionValuesWithLabels = async ({
             predicate: schema.position,
           })
         : [],
-      scaleType === "Ordinal"
+      scaleType === "Nominal" || scaleType === "Ordinal"
         ? loadResourceLiterals({
             ids: namedNodes,
             sparqlClient,
