@@ -266,10 +266,9 @@ const useGroupedColumnsState = (
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(sortedData, (d) => getXAsDate(d)) as [
-      Date,
-      Date
-    ];
+    const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
     // y
@@ -304,13 +303,13 @@ const useGroupedColumnsState = (
   }, [
     dimensions,
     fields.segment,
-    getX,
-    getXAsDate,
-    getY,
-    getYErrorRange,
-    sortedData,
     preparedData,
     segments,
+    plottableSortedData,
+    getX,
+    getXAsDate,
+    getYErrorRange,
+    getY,
   ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -446,7 +445,7 @@ const useGroupedColumnsState = (
   return {
     chartType: "column",
     preparedData,
-    allData: sortedData,
+    allData: plottableSortedData,
     bounds,
     getX,
     getXAsDate,

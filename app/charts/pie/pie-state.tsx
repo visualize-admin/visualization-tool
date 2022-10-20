@@ -84,7 +84,7 @@ const usePieState = (
   // Apply end-user-activated interactive filters to the stack
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    sortedData: data,
+    sortedData: plottableData,
     interactiveFilters,
     getSegment: getX,
   });
