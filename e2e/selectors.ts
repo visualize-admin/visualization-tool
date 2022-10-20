@@ -43,13 +43,16 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       filterCheckbox: (value: string) =>
         page.locator(`[data-value="${value}"]`),
       chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
+      filtersLoaded: () =>
+        screen.findByText("Selected filters", undefined, { timeout: 5000 }),
       controlSection: (title: string) =>
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h5:text-is("${title}")`),
         }),
     },
     chart: {
-      colorLegend: () => screen.findByTestId("colorLegend"),
+      colorLegend: (options?, waitForOptions?) =>
+        screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
       loaded: (options: { timeout?: number } = {}) =>
