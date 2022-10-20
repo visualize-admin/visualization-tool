@@ -8,12 +8,14 @@ import {
   ChartType,
   ColumnConfig,
   DataSource,
+  MapConfig,
   TableConfig,
 } from "@/configurator/config-types";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
   deriveFiltersFromFields,
+  getFiltersByMappingStatus,
   getLocalStorageKey,
   initChartStateFromChart,
   initChartStateFromCube,
@@ -612,5 +614,29 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
 
   it("should retain appropriate segment fields and discard the others", () => {
     runChecks(covid19TableChartConfig as unknown as TableConfig, segmentChecks);
+  });
+});
+
+describe("getFiltersByMappingStatus", () => {
+  it("should correctly retrieve categorical color iris", () => {
+    const config = {
+      chartType: "map",
+      fields: {
+        areaLayer: {
+          componentIri: "areaIri",
+          color: { type: "categorical", componentIri: "areaColorIri" },
+        },
+        symbolLayer: {
+          componentIri: "symbolIri",
+          color: { type: "categorical", componentIri: "symbolColorIri" },
+        },
+      },
+    } as any as MapConfig;
+
+    const { mappedFiltersIris } = getFiltersByMappingStatus(config);
+
+    expect([...mappedFiltersIris]).toEqual(
+      expect.arrayContaining(["areaColorIri", "symbolColorIri"])
+    );
   });
 });

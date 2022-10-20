@@ -648,6 +648,12 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isColorFieldInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is MapConfig => {
+  return isMapConfig(chartConfig);
+};
+
 export const isSegmentColorMappingInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is

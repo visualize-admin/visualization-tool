@@ -35,6 +35,7 @@ import {
   DataSource,
   ImputationType,
   isAreaConfig,
+  isColorFieldInConfig,
   isColumnConfig,
   isMapConfig,
   isSegmentColorMappingInConfig,
@@ -639,15 +640,38 @@ export const canTransitionToPreviousStep = (_: ConfiguratorState): boolean => {
   return true;
 };
 
+// FIXME: should by handled better, as color is a subfield and not actual field.
+// Side effects in ui encodings?
+export const getNonGenericFieldValues = (
+  chartConfig: ChartConfig
+): string[] => {
+  const iris: string[] = [];
+
+  if (isColorFieldInConfig(chartConfig)) {
+    if (chartConfig.fields.areaLayer?.color.type === "categorical") {
+      iris.push(chartConfig.fields.areaLayer.color.componentIri);
+    }
+
+    if (chartConfig.fields.symbolLayer?.color.type === "categorical") {
+      iris.push(chartConfig.fields.symbolLayer.color.componentIri);
+    }
+  }
+
+  return iris;
+};
+
+/** Get all filters by mapping status.
+ *
+ * We need to handle some fields differently
+ * due to the way the chart config is structured at the moment (colorField) is a
+ * subfield of areaLayer and symbolLayer fields.
+ */
 export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
   const genericFieldValues = Object.values(chartConfig.fields).map(
     (d) => d.componentIri
   );
-  const nonGenericFieldValues =
-    isMapConfig(chartConfig) &&
-    chartConfig.fields.symbolLayer?.color.type === "categorical"
-      ? [chartConfig.fields.symbolLayer.color.componentIri]
-      : [];
+  const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
+
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
   const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(
