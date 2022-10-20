@@ -9,6 +9,7 @@ import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { InteractiveLegendColor } from "@/charts/shared/legend-color";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { SortingField } from "@/configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
@@ -71,7 +72,10 @@ const fields = {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3",
     palette: "category10",
     type: "stacked",
-    sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+    sorting: {
+      sortingType: "byDimensionLabel",
+      sortingOrder: "asc",
+    } as SortingField["sorting"],
     colorMapping: {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/3/0":
         "#1f77b4",
