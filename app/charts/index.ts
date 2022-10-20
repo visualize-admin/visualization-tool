@@ -691,6 +691,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentIri: oldSegment.componentIri,
             palette: oldSegment.palette,
             colorMapping: oldSegment.colorMapping,
+            sorting:
+              "sorting" in oldSegment &&
+              oldSegment.sorting &&
+              "sortingOrder" in oldSegment.sorting
+                ? oldSegment.sorting || DEFAULT_FIXED_COLOR_FIELD
+                : DEFAULT_SORTING,
           };
         }
 
