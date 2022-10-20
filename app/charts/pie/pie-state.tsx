@@ -114,7 +114,7 @@ const usePieState = (
       plottableData.map((d) => [getX(d), getY(d)])
     );
     const uniqueSegments = Object.entries(measureBySegment)
-      .filter((x) => x[1])
+      .filter((x) => typeof x[1] === "number")
       .map((x) => x[0]);
 
     const sorters = makeDimensionValueSorters(segmentDimension, {
