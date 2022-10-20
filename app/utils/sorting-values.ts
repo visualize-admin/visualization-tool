@@ -56,7 +56,7 @@ export const makeDimensionValueSorters = (
     dv: DimensionValue["label"]
   ) => string | undefined | number)[] = [];
 
-  const defaultSorters = [getIdentifier, getPosition];
+  const defaultSorters = [getIdentifier, getPosition, getLabel];
 
   switch (sortingType) {
     case "byDimensionLabel":
