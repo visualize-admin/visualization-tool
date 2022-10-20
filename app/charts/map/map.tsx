@@ -5,7 +5,7 @@ import { geoArea } from "d3";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibregl from "maplibre-gl";
-import React from "react";
+import React, { useState } from "react";
 import Map, { LngLatLike, MapboxEvent, MapRef } from "react-map-gl";
 
 import { useChartState } from "@/charts/shared/use-chart-state";
@@ -325,6 +325,7 @@ export const MapComponent = () => {
     }
   });
 
+  const [loaded, setLoaded] = useState(false);
   return (
     <>
       {locked ? null : (
@@ -353,6 +354,14 @@ export const MapComponent = () => {
           doubleClickZoom={!locked}
           dragRotate={false}
           touchZoomRotate={!locked}
+          onData={(ev) => {
+            if (ev.dataType === "source" && !ev.isSourceLoaded) {
+              setLoaded(false);
+            }
+          }}
+          onIdle={() => {
+            setLoaded(true);
+          }}
           onLoad={(e) => {
             setMap(e.target);
             currentBBox.current = e.target.getBounds().toArray() as BBox;
@@ -378,6 +387,7 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
+          <div data-map-loaded={loaded ? "true" : "false"} />
           <DeckGLOverlay
             interleaved={true}
             layers={[geoJsonLayer, scatterplotLayer]}
