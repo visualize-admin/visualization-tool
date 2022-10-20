@@ -218,11 +218,19 @@ const useLinesState = (
     const dimension = dimensions.find(
       (d) => d.iri === fields?.segment?.componentIri
     );
-    const sorters = makeDimensionValueSorters(dimension);
-    return orderBy(uniqueSegments, sorters, "asc");
+    const sorting = fields?.segment?.sorting;
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting,
+    });
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
     dimensions,
     fields?.segment?.componentIri,
+    fields?.segment?.sorting,
     getSegment,
     plottableSortedData,
   ]);

@@ -225,7 +225,7 @@ const ColumnConfig = t.type(
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
-const LineSegmentField = GenericSegmentField;
+const LineSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
 const LineFields = t.intersection([

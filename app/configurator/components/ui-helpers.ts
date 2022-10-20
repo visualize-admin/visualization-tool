@@ -796,6 +796,7 @@ export function getFieldLabel(field: string): string {
     // for existing charts compatibility
     case "area.stacked.byDimensionLabel.asc":
     case "pie..byDimensionLabel.asc":
+    case "line..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
       return i18n._(fieldLabels["controls.sorting.byDimensionLabel.ascending"]);
     case "bar.stacked.byAuto.asc":
@@ -804,6 +805,7 @@ export function getFieldLabel(field: string): string {
     case "column.stacked.byAuto.asc":
     case "column.grouped.byAuto.asc":
     case "pie..byAuto.asc":
+    case "line..byAuto.asc":
     case "area..byAuto.asc":
       return i18n._(fieldLabels["controls.sorting.byAuto.ascending"]);
     case "bar.stacked.byAuto.desc":
@@ -812,6 +814,7 @@ export function getFieldLabel(field: string): string {
     case "column.stacked.byAuto.desc":
     case "column.grouped.byAuto.desc":
     case "pie..byAuto.desc":
+    case "line..byAuto.desc":
     case "area..byAuto.desc":
       return i18n._(fieldLabels["controls.sorting.byAuto.descending"]);
     case "bar.stacked.byDimensionLabel.desc":
@@ -823,6 +826,7 @@ export function getFieldLabel(field: string): string {
     // for existing charts compatibility
     case "area.stacked.byDimensionLabel.desc":
     case "pie..byDimensionLabel.desc":
+    case "line..byDimensionLabel.desc":
     case "sorting.byDimensionLabel.desc":
       return i18n._(
         fieldLabels["controls.sorting.byDimensionLabel.descending"]
