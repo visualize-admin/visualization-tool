@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -544,7 +543,8 @@ export const ChartConfigurator = ({
         <ControlSectionContent px="small">
           <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
         </ControlSectionContent>
-        <Divider />
+      </ControlSection>
+      <ControlSection>
         <SectionTitle titleId="controls-design">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
