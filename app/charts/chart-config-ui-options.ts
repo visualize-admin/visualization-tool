@@ -76,14 +76,21 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
 ];
 
 export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
   { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+];
+
+export const LINE_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
+  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
 export const COLUMN_SEGMENT_SORTING: EncodingSortingOption[] =
   AREA_SEGMENT_SORTING;
 
 export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
+  { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
@@ -216,6 +223,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
+        sorting: LINE_SEGMENT_SORTING,
         options: [{ field: "color", type: "palette" }],
       },
     ],

@@ -13,7 +13,7 @@ import { ElementType, forwardRef, HTMLProps, ReactNode } from "react";
 import { Icon, IconName } from "@/icons";
 import { useTheme } from "@/themes";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useControlSectionStyles = makeStyles<Theme>((theme) => ({
   controlSection: {
     borderTopColor: theme.palette.grey[500],
     borderTopWidth: "1px",
@@ -35,12 +35,12 @@ export const ControlSection = forwardRef<
     sx?: BoxProps["sx"];
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
 >(({ role, children, isHighlighted, sx, ...props }, ref) => {
-  const classes = useStyles();
+  const classes = useControlSectionStyles();
   return (
     <Box
       ref={ref}
       role={role}
-      data-testid='controlSection'
+      data-testid="controlSection"
       sx={{
         backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
         ...sx,
@@ -53,16 +53,7 @@ export const ControlSection = forwardRef<
   );
 });
 
-export const ControlSectionContent = ({
-  component,
-  role,
-  ariaLabelledBy,
-  children,
-  gap = "default",
-  px,
-  sx,
-  ...props
-}: {
+type ControlSectionContentProps = {
   component?: ElementType;
   role?: string;
   ariaLabelledBy?: string;
@@ -73,21 +64,41 @@ export const ControlSectionContent = ({
   gap?: "large" | "default" | "none";
   px?: "small" | "default";
   sx?: BoxProps["sx"];
-} & BoxProps) => {
+} & BoxProps;
+
+const useControlSectionContentStyles = makeStyles<
+  Theme,
+  Pick<ControlSectionContentProps, "gap" | "px">
+>((theme) => ({
+  controlSectionContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: ({ gap }) =>
+      theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
+    padding: ({ px }) =>
+      `0 ${theme.spacing(px === "small" ? 2 : 4)} ${theme.spacing(4)}`,
+  },
+}));
+
+export const ControlSectionContent = ({
+  component,
+  role,
+  ariaLabelledBy,
+  children,
+  gap = "default",
+  px,
+  sx,
+  ...props
+}: ControlSectionContentProps) => {
+  const classes = useControlSectionContentStyles({ gap, px });
   return (
     <Box
       component={component}
       role={role}
       aria-labelledby={ariaLabelledBy}
       {...props}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: gap === "large" ? 3 : gap === "default" ? 2 : 0,
-        px: px === "small" ? 2 : 4,
-        pb: 4,
-        ...sx,
-      }}
+      className={classes.controlSectionContent}
+      sx={sx}
     >
       {children}
     </Box>

@@ -1,6 +1,5 @@
 import {
   ascending,
-  descending,
   extent,
   group,
   max,
@@ -18,7 +17,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {
@@ -44,7 +43,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnFields, SortingField } from "@/configurator";
 import {
   formatNumberWithUnit,
   getPalette,
@@ -54,9 +53,8 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface GroupedColumnsState {
   chartType: "column";
@@ -101,7 +99,6 @@ const useGroupedColumnsState = (
     interactiveFiltersConfig,
     aspectRatio,
   } = chartProps;
-  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -143,10 +140,9 @@ const useGroupedColumnsState = (
   );
 
   // Sort
-  const xSortingType = fields.x.sorting?.sortingType;
-  const xSortingOrder = fields.x.sorting?.sortingOrder;
+  const xSorting = fields.x.sorting;
 
-  // All data
+  // Group by X
   const sortedData = useMemo(() => {
     const xOrder = [
       ...rollup(
@@ -160,11 +156,10 @@ const useGroupedColumnsState = (
     return sortData({
       data,
       getX,
-      xSortingType,
-      xSortingOrder,
+      xSorting,
       xOrder,
     });
-  }, [data, getX, xSortingType, xSortingOrder, getY]);
+  }, [data, getX, xSorting, getY]);
 
   const plottableSortedData = usePlottableData({
     data: sortedData,
@@ -182,62 +177,44 @@ const useGroupedColumnsState = (
   });
 
   // segments
-  const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
-  const segments = useMemo(() => {
-    const getSegmentsOrderedByName = () =>
-      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
-        (a, b) =>
-          segmentSortingOrder === "asc"
-            ? a.localeCompare(b, locale)
-            : b.localeCompare(a, locale)
-      );
+  const sumsBySegment = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        plottableSortedData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
+  }, [plottableSortedData, getY, getSegment]);
 
+  const segments = useMemo(() => {
+    const uniqueSegments = Array.from(
+      new Set(plottableSortedData.map((d) => getSegment(d)))
+    );
     const dimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
     );
 
-    const getSegmentsOrderedByPosition = () => {
-      const segments = Array.from(
-        new Set(plottableSortedData.map((d) => getSegment(d)))
-      );
-      if (!dimension) {
-        return segments;
-      }
-      const sorter = makeOrdinalDimensionSorter(dimension);
-      return sortBy(segments, sorter);
-    };
+    const sorting = fields?.segment?.sorting;
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting,
+      sumsBySegment,
+    });
 
-    const getSegmentsOrderedByTotalValue = () =>
-      [
-        ...rollup(
-          plottableSortedData,
-          (v) => sum(v, (x) => getY(x)),
-          (x) => getSegment(x)
-        ),
-      ]
-        .sort((a, b) =>
-          segmentSortingOrder === "asc"
-            ? ascending(a[1], b[1])
-            : descending(a[1], b[1])
-        )
-        .map((d) => d[0]);
-    if (dimension?.__typename === "OrdinalDimension") {
-      return getSegmentsOrderedByPosition();
-    }
-    return segmentSortingType === "byDimensionLabel"
-      ? getSegmentsOrderedByName()
-      : getSegmentsOrderedByTotalValue();
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
-    dimensions,
-    fields.segment?.componentIri,
-    getSegment,
-    getY,
-    locale,
-    segmentSortingOrder,
-    segmentSortingType,
     plottableSortedData,
+    dimensions,
+    fields.segment?.sorting,
+    fields.segment?.componentIri,
+    sumsBySegment,
+    getSegment,
   ]);
 
   /* Scales */
@@ -270,9 +247,11 @@ const useGroupedColumnsState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+      colors.unknown(() => undefined);
     } else {
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
+      colors.unknown(() => undefined);
     }
 
     const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
@@ -324,13 +303,13 @@ const useGroupedColumnsState = (
   }, [
     dimensions,
     fields.segment,
-    getX,
-    getXAsDate,
-    getY,
-    getYErrorRange,
-    plottableSortedData,
     preparedData,
     segments,
+    plottableSortedData,
+    getX,
+    getXAsDate,
+    getYErrorRange,
+    getY,
   ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -556,30 +535,27 @@ export const GroupedColumnChart = ({
 const sortData = ({
   data,
   getX,
-  xSortingType,
-  xSortingOrder,
   xOrder,
+  xSorting,
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  xSortingType: SortingType | undefined;
-  xSortingOrder: SortingOrder | undefined;
   xOrder: string[];
+  xSorting: SortingField["sorting"];
 }) => {
-  if (xSortingOrder === "desc" && xSortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (xSortingOrder === "asc" && xSortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (xSortingType === "byMeasure") {
+  const { sortingType, sortingOrder } = xSorting || {};
+  if (sortingType === "byDimensionLabel") {
+    return orderBy(data, getX, sortingOrder);
+  } else if (sortingType === "byMeasure") {
     const sd = sortByIndex({
       data,
       order: xOrder,
       getCategory: getX,
-      sortOrder: xSortingOrder,
+      sortOrder: sortingOrder,
     });
     return sd;
   } else {
     // default to scending alphabetical
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+    return orderBy(data, getX, "asc");
   }
 };

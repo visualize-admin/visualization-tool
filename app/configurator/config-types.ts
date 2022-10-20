@@ -128,6 +128,7 @@ const SortingType = t.union([
   t.literal("byDimensionLabel"),
   t.literal("byMeasure"),
   t.literal("byTotalSize"),
+  t.literal("byAuto"),
 ]);
 export type SortingType = t.TypeOf<typeof SortingType>;
 
@@ -224,7 +225,7 @@ const ColumnConfig = t.type(
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
-const LineSegmentField = GenericSegmentField;
+const LineSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
 const LineFields = t.intersection([

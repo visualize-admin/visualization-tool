@@ -15,7 +15,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import {
@@ -53,7 +53,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface ColumnsState {
   chartType: "column";
@@ -263,12 +263,18 @@ const useColumnsState = (
     const segmentDimension = dimensions.find(
       (d) => d.iri === fields.segment?.componentIri
     );
-    const sorter =
-      segmentDimension?.__typename === "OrdinalDimension"
-        ? makeOrdinalDimensionSorter(segmentDimension)
-        : null;
-    return sorter ? sortBy(rawSegments, sorter) : rawSegments;
-  }, [fields.segment?.palette, fields.segment?.componentIri, dimensions]);
+    const sorters = makeDimensionValueSorters(segmentDimension);
+    return orderBy(
+      rawSegments,
+      sorters,
+      fields.segment?.sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
+  }, [
+    fields.segment?.palette,
+    fields.segment?.sorting?.sortingOrder,
+    fields.segment?.componentIri,
+    dimensions,
+  ]);
   const colors = scaleOrdinal(sortedSegments).domain(segments);
 
   // Tooltip

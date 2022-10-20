@@ -36,6 +36,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     if (presetFrom && presetTo) {
       dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, presetFromStr, presetToStr]);
 
   // Data Filters
@@ -60,6 +61,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
 
       dispatch({ type: "SET_DATA_FILTER", value: newInteractiveDataFilters });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIris, dispatch]);
 
   const changes = useFilterChanges(chartConfig.filters);

@@ -502,7 +502,11 @@ const ChartFieldSorting = ({
         return t({ id: "controls.sorting.byMeasure", message: `Measure` });
       case "byTotalSize":
         return t({ id: "controls.sorting.byTotalSize", message: `Total size` });
+      case "byAuto":
+        return t({ id: "controls.sorting.byAuto", message: `Automatic` });
       default:
+        const _sanityCheck: never = type;
+        console.warn(`Sorting type label is ${_sanityCheck}`);
         return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
     }
   };
@@ -549,7 +553,7 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset" gap="none">
+      <ControlSectionContent component="fieldset">
         <Box>
           <Select
             id="sort-by"

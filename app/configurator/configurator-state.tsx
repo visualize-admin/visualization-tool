@@ -18,6 +18,7 @@ import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
+  DEFAULT_SORTING,
   getChartConfigAdjustedToChartType,
   getFieldComponentIris,
   getGroupedFieldIris,
@@ -368,8 +369,10 @@ export const deriveFiltersFromFields = produce(
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
       // Apply hierarchical dimensions first
-      const sortedDimensions = sortBy(dimensions, d => isGeoDimension(d) ? -1 : 1, (d) =>
-        d.hierarchy ? -1 : 1
+      const sortedDimensions = sortBy(
+        dimensions,
+        (d) => (isGeoDimension(d) ? -1 : 1),
+        (d) => (d.hierarchy ? -1 : 1)
       );
       sortedDimensions.forEach((dimension) =>
         applyNonTableDimensionToFilters({
@@ -719,10 +722,7 @@ const handleChartFieldChanged = (
           palette: DEFAULT_PALETTE,
           // Type exists only within column charts.
           ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
-          sorting: {
-            sortingType: "byDimensionLabel",
-            sortingOrder: "asc",
-          },
+          sorting: DEFAULT_SORTING,
           colorMapping: colorMapping,
         };
       }

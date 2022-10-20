@@ -321,6 +321,7 @@ export const BrushTime = () => {
       ).call(brush.move, coord);
       updateBrushEndedStatus(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidthScale, brushedIsEnded, dispatch, closestFromStr, closestToStr]);
 
   // This effect resets brush defaults to editor values
@@ -339,6 +340,8 @@ export const BrushTime = () => {
       brush.move,
       defaultSelection
     );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minBrushDomainValue, maxBrushDomainValue]);
 
   // This effect makes the brush responsive
@@ -350,6 +353,8 @@ export const BrushTime = () => {
       brush.move,
       coord
     );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidth, BRUSH_HEIGHT]);
 
   return (

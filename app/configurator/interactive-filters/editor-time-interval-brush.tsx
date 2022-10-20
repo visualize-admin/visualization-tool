@@ -119,6 +119,8 @@ export const EditorIntervalBrush = ({
       fromPx,
       toPx,
     ]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromPx, toPx]);
 
   return (

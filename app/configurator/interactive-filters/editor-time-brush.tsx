@@ -164,6 +164,7 @@ export const EditorBrush = ({
       brush.move,
       defaultSelection
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

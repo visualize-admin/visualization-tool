@@ -1,6 +1,5 @@
 import {
   ascending,
-  descending,
   extent,
   group,
   max,
@@ -19,7 +18,7 @@ import {
   sum,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
@@ -49,10 +48,9 @@ import {
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface AreasState {
   chartType: "area";
@@ -92,7 +90,6 @@ const useAreasState = (
     interactiveFiltersConfig,
     aspectRatio,
   } = chartProps;
-  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
@@ -211,60 +208,42 @@ const useAreasState = (
   const yAxisDescription = yMeasure.description || undefined;
 
   /** Ordered segments */
-  const segmentSortingType = fields.segment?.sorting?.sortingType;
-  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
+  const segmentSorting = fields.segment?.sorting;
+  const segmentSortingType = segmentSorting?.sortingType;
+  const segmentSortingOrder = segmentSorting?.sortingOrder;
 
   const segments = useMemo(() => {
-    const getSegmentsOrderedByName = () =>
-      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
-        (a, b) =>
-          segmentSortingOrder === "asc"
-            ? a.localeCompare(b, locale)
-            : b.localeCompare(a, locale)
-      );
+    const totalValueBySegment = Object.fromEntries([
+      ...rollup(
+        plottableSortedData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
 
-    const getSegmentsOrderedByTotalValue = () =>
-      [
-        ...rollup(
-          plottableSortedData,
-          (v) => sum(v, (x) => getY(x)),
-          (x) => getSegment(x)
-        ),
-      ]
-        .sort((a, b) =>
-          segmentSortingOrder === "asc"
-            ? ascending(a[1], b[1])
-            : descending(a[1], b[1])
-        )
-        .map((d) => d[0]);
-
-    const getSegmentsOrderedByPosition = () => {
-      const segments = Array.from(
-        new Set(plottableSortedData.map((d) => getSegment(d)))
-      );
-      const sorter = dimension ? makeOrdinalDimensionSorter(dimension) : null;
-      return sorter ? sortBy(segments, sorter) : segments;
-    };
-
+    const uniqueSegments = Array.from(
+      new Set(plottableSortedData.map((d) => getSegment(d)))
+    );
     const dimension = dimensions.find(
       (dim) => dim.iri === fields.segment?.componentIri
     );
-    if (dimension?.__typename === "OrdinalDimension") {
-      return getSegmentsOrderedByPosition();
-    }
-
-    return segmentSortingType === "byDimensionLabel"
-      ? getSegmentsOrderedByName()
-      : getSegmentsOrderedByTotalValue();
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting: segmentSorting,
+      sumsBySegment: totalValueBySegment,
+    });
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      segmentSortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
-    dimensions,
-    fields.segment?.componentIri,
-    getSegment,
-    getY,
-    locale,
-    segmentSortingOrder,
-    segmentSortingType,
     plottableSortedData,
+    dimensions,
+    segmentSorting,
+    segmentSortingOrder,
+    getY,
+    getSegment,
+    fields.segment?.componentIri,
   ]);
 
   /** Transform data  */
@@ -321,9 +300,11 @@ const useAreasState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+      colors.unknown(() => undefined);
     } else {
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
+      colors.unknown(() => undefined);
     }
     return { colors, xScale, yScale, xEntireScale };
   }, [

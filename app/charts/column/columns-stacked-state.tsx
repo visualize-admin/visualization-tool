@@ -22,7 +22,7 @@ import {
   sum,
 } from "d3";
 import keyBy from "lodash/keyBy";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import React, { ReactNode, useCallback, useMemo } from "react";
 
 import {
@@ -55,9 +55,8 @@ import {
   useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useLocale } from "@/locales/use-locale";
 import { sortByIndex } from "@/utils/array";
-import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface StackedColumnsState {
   chartType: "column";
@@ -102,7 +101,6 @@ const useColumnsStackedState = (
     interactiveFiltersConfig,
     aspectRatio,
   } = chartProps;
-  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const [interactiveFilters] = useInteractiveFilters();
@@ -123,8 +121,8 @@ const useColumnsStackedState = (
   const xKey = fields.x.componentIri;
 
   // All Data
-  const sortingType = fields.x.sorting?.sortingType;
-  const sortingOrder = fields.x.sorting?.sortingOrder;
+  const xSortingType = fields.x.sorting?.sortingType;
+  const xSortingOrder = fields.x.sorting?.sortingOrder;
 
   const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
   const allDataWide = useMemo(
@@ -151,11 +149,11 @@ const useColumnsStackedState = (
       sortData({
         data,
         getX,
-        sortingType,
-        sortingOrder,
+        sortingType: xSortingType,
+        sortingOrder: xSortingOrder,
         xOrder,
       }),
-    [data, getX, sortingType, sortingOrder, xOrder]
+    [data, getX, xSortingType, xSortingOrder, xOrder]
   );
 
   const plottableSortedData = usePlottableData({
@@ -185,64 +183,43 @@ const useColumnsStackedState = (
     getSegment,
   });
 
-  //Ordered segments
-  const segmentSortingType = fields.segment?.sorting?.sortingType;
-  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
-
-  const segments = useMemo(() => {
-    const getSegmentsOrderedByName = () =>
-      Array.from(new Set(plottableSortedData.map((d) => getSegment(d)))).sort(
-        (a, b) =>
-          segmentSortingOrder === "asc"
-            ? a.localeCompare(b, locale)
-            : b.localeCompare(a, locale)
-      );
-
-    const dimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
-    const getSegmentsOrderedByPosition = () => {
-      const segments = Array.from(
-        new Set(plottableSortedData.map((d) => getSegment(d)))
-      );
-      if (!dimension) {
-        return segments;
-      }
-      const sorter = makeOrdinalDimensionSorter(dimension);
-      return sortBy(segments, sorter);
-    };
-
-    const getSegmentsOrderedByTotalValue = () =>
-      [
+  const sumsBySegment = useMemo(
+    () =>
+      Object.fromEntries([
         ...rollup(
           plottableSortedData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
-      ]
-        .sort((a, b) =>
-          segmentSortingOrder === "asc"
-            ? ascending(a[1], b[1])
-            : descending(a[1], b[1])
-        )
-        .map((d) => d[0]);
+      ]),
+    [getSegment, getY, plottableSortedData]
+  );
 
-    if (dimension?.__typename === "OrdinalDimension") {
-      return getSegmentsOrderedByPosition();
-    }
+  const segments = useMemo(() => {
+    const uniqueSegments = Array.from(
+      new Set(plottableSortedData.map((d) => getSegment(d)))
+    );
+    const dimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    );
 
-    return segmentSortingType === "byDimensionLabel"
-      ? getSegmentsOrderedByName()
-      : getSegmentsOrderedByTotalValue();
+    const sorting = fields?.segment?.sorting;
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting,
+      sumsBySegment,
+    });
+    return orderBy(
+      uniqueSegments,
+      sorters,
+      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+    );
   }, [
-    dimensions,
-    segmentSortingType,
     plottableSortedData,
-    getSegment,
-    segmentSortingOrder,
-    locale,
+    dimensions,
+    fields.segment?.sorting,
     fields.segment?.componentIri,
-    getY,
+    sumsBySegment,
+    getSegment,
   ]);
 
   const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
@@ -289,9 +266,11 @@ const useColumnsStackedState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+      colors.unknown(() => undefined);
     } else {
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
+      colors.unknown(() => undefined);
     }
 
     // x
@@ -359,11 +338,14 @@ const useColumnsStackedState = (
 
   // stack order
   const series = useMemo(() => {
+    const sorting = fields.segment?.sorting;
+    const sortingType = sorting?.sortingType;
+    const sortingOrder = sorting?.sortingOrder;
     const stackOrder =
-      segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
-        ? stackOrderAscending
-        : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
-        ? stackOrderDescending
+      sortingType === "byTotalSize"
+        ? sortingOrder === "asc"
+          ? stackOrderAscending
+          : stackOrderDescending
         : // Reverse segments here, so they're sorted from top to bottom
           stackOrderReverse;
 
@@ -378,7 +360,7 @@ const useColumnsStackedState = (
       }[]
     );
     return series;
-  }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
+  }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding(
