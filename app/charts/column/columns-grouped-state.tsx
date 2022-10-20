@@ -247,9 +247,11 @@ const useGroupedColumnsState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+      colors.unknown(() => undefined);
     } else {
       colors.domain(segments);
       colors.range(getPalette(fields.segment?.palette));
+      colors.unknown(() => undefined);
     }
 
     const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
