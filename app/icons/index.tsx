@@ -12,7 +12,7 @@ export const Icon = ({
   name,
   ...props
 }: {
-  size?: number;
+  size?: number | string;
   color?: string;
   name: IconName;
 } & ComponentProps<"svg">) => {

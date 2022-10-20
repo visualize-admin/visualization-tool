@@ -116,7 +116,7 @@ export const ChartFootnotes = ({
               {dataCubeByIri.title}{" "}
               <Icon
                 name="linkExternal"
-                size={12}
+                size="1em"
                 style={{ display: "inline" }}
               />
             </Link>
