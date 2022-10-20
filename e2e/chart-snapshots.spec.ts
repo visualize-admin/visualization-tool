@@ -22,7 +22,9 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       page,
       selectors,
     }) => {
-      test.setTimeout(1 * 60 * 1000);
+      await page.routeFromHAR(`./e2e/har/chart-snapshots/${slug}.zip`, {
+        notFound: "fallback",
+      });
       await page.setViewportSize(viewportSize);
       await page.goto(`/en/__test/${env}/${slug}?dataSource=Int`);
       await selectors.chart.loaded();
