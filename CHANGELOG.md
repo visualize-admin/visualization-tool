@@ -13,6 +13,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Enable sorting of Geo dimensions
   - Maintain segment sorting type correctly when switching from / to Pie chart
   - Fix sorting by measure when undefined values are present in the data
+  - New "Automatic" sorting option using "identifier" or "position" or "label"
+  - Sorting is enabled for line charts (sorts legend items and tooltip values)
 - Map:
   - area & symbol layers now use the same approach as for segment field (optional select element), to be more consistent across the app
   - it's now possible to use discrete color mapping in symbol layer
