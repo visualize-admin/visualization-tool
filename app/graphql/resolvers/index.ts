@@ -265,6 +265,7 @@ export const resolvers: Resolvers = {
   NumericalMeasure: {
     ...mkDimensionResolvers("NumericalMeasure"),
     isCurrency: ({ data: { isCurrency } }) => isCurrency,
+    isDecimal: ({ data: { isDecimal } }) => isDecimal,
     currencyExponent: ({ data: { currencyExponent } }) => currencyExponent || 0,
     resolution: ({ data: { resolution } }) => resolution ?? null,
   },

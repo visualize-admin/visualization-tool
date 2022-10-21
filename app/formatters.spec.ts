@@ -1,16 +1,16 @@
 import { renderHook } from "@testing-library/react-hooks";
 
 import {
+  getTimeIntervalFormattedSelectOptions,
+  getTimeIntervalWithProps,
+} from "./configurator/components/ui-helpers";
+import {
   useDimensionFormatters,
   useFormatFullDateAuto,
   useTimeFormatLocale,
-} from '../../formatters'
-import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
+} from './formatters'
+import { DimensionMetadataFragment, TimeUnit } from "./graphql/query-hooks";
 
-import {
-  getTimeIntervalFormattedSelectOptions,
-  getTimeIntervalWithProps,
-} from "./ui-helpers";
 
 describe("useFormatFullDateAuto", () => {
   const setup = () => {
@@ -75,6 +75,23 @@ describe("useDimensionFormatters", () => {
           resolution: 0,
           __typename: "NumericalMeasure",
         } as DimensionMetadataFragment,
+        {
+          iri: "iri-decimal",
+          isNumerical: true,
+          isKeyDimension: false,
+          isDecimal: true,
+          currencyExponent: 1,
+          __typename: "NumericalMeasure",
+        } as DimensionMetadataFragment,
+        {
+          iri: "iri-decimal-resolution",
+          isNumerical: true,
+          isKeyDimension: false,
+          isDecimal: true,
+          currencyExponent: 1,
+          resolution: 2,
+          __typename: "NumericalMeasure",
+        } as DimensionMetadataFragment,
       ])
     );
     return { formatters };
@@ -110,6 +127,19 @@ describe("useDimensionFormatters", () => {
 
     // If we have a resolution on the dimension
     expect(formatters["iri-currency-int"]("20002")).toEqual("20'002");
+  });
+
+  it("should work with decimal dimensions", () => {
+    const { formatters } = setup();
+    expect(formatters["iri-decimal"]("0.0001")).toEqual("1e-4");
+    expect(formatters["iri-decimal"]("0.00015467")).toEqual("1.5467e-4");
+  });
+
+  it("should work with decimal dimensions with resolution", () => {
+    const { formatters } = setup();
+    const formatter = formatters["iri-decimal-resolution"] 
+    expect(formatter("0.0001")).toEqual("1e-4");
+    expect(formatter("0.00015467")).toEqual("1.55e-4");
   });
 });
 

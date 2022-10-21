@@ -126,6 +126,7 @@ export type Dimension = {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -165,6 +166,7 @@ export type GeoCoordinatesDimension = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -195,6 +197,7 @@ export type GeoShapesDimension = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -237,6 +240,7 @@ export type NominalDimension = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -265,10 +269,12 @@ export type NumericalMeasure = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
   isCurrency?: Maybe<Scalars['Boolean']>;
+  isDecimal?: Maybe<Scalars['Boolean']>;
   currencyExponent?: Maybe<Scalars['Int']>;
   resolution?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
@@ -316,6 +322,7 @@ export type OrdinalDimension = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -344,6 +351,7 @@ export type OrdinalMeasure = Dimension & {
   description?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -453,6 +461,7 @@ export type TemporalDimension = Dimension & {
   timeFormat: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
   order?: Maybe<Scalars['Int']>;
   isNumerical: Scalars['Boolean'];
   isKeyDimension: Scalars['Boolean'];
@@ -678,6 +687,7 @@ export type DimensionResolvers<ContextType = GraphQLContext, ParentType extends 
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -712,6 +722,7 @@ export type GeoCoordinatesDimensionResolvers<ContextType = GraphQLContext, Paren
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -732,6 +743,7 @@ export type GeoShapesDimensionResolvers<ContextType = GraphQLContext, ParentType
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -763,6 +775,7 @@ export type NominalDimensionResolvers<ContextType = GraphQLContext, ParentType e
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -778,10 +791,12 @@ export type NumericalMeasureResolvers<ContextType = GraphQLContext, ParentType e
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isCurrency?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isDecimal?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   currencyExponent?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   resolution?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NumericalMeasureValuesArgs, 'sourceType' | 'sourceUrl'>>;
@@ -815,6 +830,7 @@ export type OrdinalDimensionResolvers<ContextType = GraphQLContext, ParentType e
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -830,6 +846,7 @@ export type OrdinalMeasureResolvers<ContextType = GraphQLContext, ParentType ext
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -867,6 +884,7 @@ export type TemporalDimensionResolvers<ContextType = GraphQLContext, ParentType 
   timeFormat?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

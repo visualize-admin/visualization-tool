@@ -75,6 +75,7 @@ interface Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -100,6 +101,7 @@ type GeoCoordinatesDimension implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -125,6 +127,7 @@ type GeoShapesDimension implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -144,6 +147,7 @@ type NominalDimension implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -162,6 +166,7 @@ type OrdinalDimension implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -192,6 +197,7 @@ type TemporalDimension implements Dimension {
   timeFormat: String!
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
@@ -212,10 +218,12 @@ type NumericalMeasure implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!
   isCurrency: Boolean
+  isDecimal: Boolean
   currencyExponent: Int
   resolution: Int
   values(
@@ -233,6 +241,7 @@ type OrdinalMeasure implements Dimension {
   description: String
   unit: String
   scaleType: String
+  dataType: String
   order: Int
   isNumerical: Boolean!
   isKeyDimension: Boolean!

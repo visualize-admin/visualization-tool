@@ -43,6 +43,7 @@ fragment dimensionMetadata on Dimension {
   description
   isNumerical
   isKeyDimension
+  dataType
   order
   values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
   unit
@@ -59,6 +60,7 @@ fragment dimensionMetadata on Dimension {
     isCurrency
     currencyExponent
     resolution
+    isDecimal
   }
 }
 
