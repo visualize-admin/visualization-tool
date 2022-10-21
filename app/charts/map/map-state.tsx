@@ -183,7 +183,9 @@ const getCategoricalColors = (
   ) as DimensionMetadataFragment;
   const componentValuesByLabel = keyBy(component.values, (d) => d.label);
   const domain: string[] = component.values.map((d) => d.value) || [];
-  const rgbColorMapping = mapValues(color.colorMapping, colorToRgbArray);
+  const rgbColorMapping = mapValues(color.colorMapping, (d) =>
+    colorToRgbArray(d)
+  );
   const getValue = (d: Observation) =>
     d[color.componentIri] !== null ? `${d[color.componentIri]}` : "";
 
