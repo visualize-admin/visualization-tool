@@ -357,9 +357,6 @@ const MultiFilterContent = ({
         /** Shuffles colors to create new, randomized color mapping. */
         | "shuffle";
     }) => {
-      const computedField = `${field}${
-        colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
-      }`;
       const values = colorComponent?.values || [];
 
       switch (type) {
@@ -367,7 +364,8 @@ const MultiFilterContent = ({
           return dispatch({
             type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
             value: {
-              field: computedField,
+              field,
+              colorConfigPath,
               dimensionIri,
               values,
               random: false,
@@ -378,7 +376,8 @@ const MultiFilterContent = ({
           return dispatch({
             type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
             value: {
-              field: computedField,
+              field,
+              colorConfigPath,
               dimensionIri,
               values: sortBy(values, (d) => (usedValues.has(d.value) ? 0 : 1)),
               random: true,

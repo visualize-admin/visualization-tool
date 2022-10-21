@@ -196,6 +196,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
       value: {
         field: string;
+        colorConfigPath: string | undefined;
         dimensionIri: string;
         values: DimensionValue[];
         random: boolean;
@@ -1108,8 +1109,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
       if (draft.state === "CONFIGURING_CHART") {
-        const { field, dimensionIri, values, random } = action.value;
-        const fieldValue = get(draft.chartConfig, `fields.${field}`) as
+        const { field, colorConfigPath, dimensionIri, values, random } =
+          action.value;
+        const path = `fields.${field}${
+          colorConfigPath ? `.${colorConfigPath}` : ""
+        }`;
+        const fieldValue = get(draft.chartConfig, path) as
           | (GenericField & { palette: string })
           | undefined;
 
@@ -1119,11 +1124,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             dimensionValues: values,
             random,
           });
-          setWith(
-            draft.chartConfig,
-            `fields.${field}.colorMapping`,
-            colorMapping
-          );
+          setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
         }
       }
 
