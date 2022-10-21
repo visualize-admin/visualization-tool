@@ -15,9 +15,11 @@ test("Segment sorting", async ({
 }) => {
   test.setTimeout(60_000);
 
-  await page.routeFromHAR("./e2e/har/sorting.zip", {
-    notFound: "fallback",
-  });
+  if (process.env.E2E_HAR !== "false") {
+    await page.routeFromHAR("./e2e/har/sorting.zip", {
+      notFound: "fallback",
+    });
+  }
 
   await actions.chart.createFrom(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",
