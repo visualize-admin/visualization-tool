@@ -1,3 +1,4 @@
+import { sleep } from "./common";
 import { TestContext as Ctx } from "./types";
 
 /**
@@ -55,10 +56,16 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
-      loaded: (options: { timeout?: number } = {}) =>
-        page
+      loaded: async (options: { timeout?: number } = {}) => {
+        await page
           .locator(`[data-chart-loaded="true"]`)
-          .waitFor({ timeout: 40 * 1000, ...options }),
+          .waitFor({ timeout: 40 * 1000, ...options });
+        const hasMap = (await page.locator("[data-map-loaded]").count()) > 0;
+        if (hasMap) {
+          await page.locator('[data-map-loaded="true"]');
+          await sleep(500); // Waits for tile to fade in
+        }
+      },
     },
   };
   return selectors;
