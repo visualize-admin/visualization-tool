@@ -348,24 +348,43 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
-  // Recomputes color palette making sure that used values
-  // are sorted first, so they have different colors
-  const handleRecomputeColorMapping = useEvent(
-    ({ random }: { random: boolean } = { random: false }) => {
-      const usedValues = new Set(values.map((v) => v.value));
-      dispatch({
-        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-        value: {
-          field: `${field}${
-            colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
-          }`,
-          dimensionIri,
-          values: sortBy(colorComponent?.values, (d) =>
-            usedValues.has(d.value) ? 0 : 1
-          ),
-          random,
-        },
-      });
+  const handleUpdateColorMapping = useEvent(
+    ({
+      type,
+    }: {
+      type: /** Goes back to original color mapping. */
+      | "reset"
+        /** Shuffles colors to create new, randomized color mapping. */
+        | "shuffle";
+    }) => {
+      const computedField = `${field}${
+        colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
+      }`;
+      const values = colorComponent?.values || [];
+
+      switch (type) {
+        case "reset":
+          return dispatch({
+            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+            value: {
+              field: computedField,
+              dimensionIri,
+              values,
+              random: false,
+            },
+          });
+        case "shuffle":
+          const usedValues = new Set(values.map((v) => v.value));
+          return dispatch({
+            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+            value: {
+              field: computedField,
+              dimensionIri,
+              values: sortBy(values, (d) => (usedValues.has(d.value) ? 0 : 1)),
+              random: true,
+            },
+          });
+      }
     }
   );
 
@@ -431,9 +450,7 @@ const MultiFilterContent = ({
                   <IconButton
                     sx={{ ml: 1, my: -2 }}
                     size="small"
-                    onClick={() =>
-                      handleRecomputeColorMapping({ random: false })
-                    }
+                    onClick={() => handleUpdateColorMapping({ type: "reset" })}
                   >
                     <SvgIcRefresh fontSize="inherit" />
                   </IconButton>
@@ -450,7 +467,7 @@ const MultiFilterContent = ({
                     sx={{ ml: 1, my: -2 }}
                     size="small"
                     onClick={() =>
-                      handleRecomputeColorMapping({ random: true })
+                      handleUpdateColorMapping({ type: "shuffle" })
                     }
                   >
                     <SvgIcFormatting fontSize="inherit" />
