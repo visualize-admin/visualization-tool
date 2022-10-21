@@ -64,6 +64,7 @@ import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
+import SvgIcRefresh from "@/icons/components/IcRefresh";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { dfs } from "@/utils/dfs";
@@ -355,9 +356,9 @@ const MultiFilterContent = ({
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
-        field: `${field}${
-          colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
-        }`,
+          field: `${field}${
+            colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
+          }`,
           dimensionIri,
           values: sortBy(colorComponent?.values, (d) =>
             usedValues.has(d.value) ? 0 : 1
@@ -376,6 +377,10 @@ const MultiFilterContent = ({
         : true)
     );
   }, [colorConfigPath, config, dimensionIri, colorComponent]);
+
+  const hasDefaultColors = useMemo(() => {
+    return colorComponent?.values?.[0].color !== undefined;
+  }, [colorComponent?.values]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -415,21 +420,43 @@ const MultiFilterContent = ({
               Selected filters
             </Trans>
             {hasColorMapping ? (
-              <Tooltip
-                title={
-                  <Trans id="controls.filters.select.refresh-colors">
-                    Refresh colors
-                  </Trans>
-                }
-              >
-                <IconButton
-                  sx={{ ml: 1, my: -2 }}
-                  size="small"
-                  onClick={() => handleRecomputeColorMapping({ random: true })}
+              hasDefaultColors ? (
+                <Tooltip
+                  title={
+                    <Trans id="controls.filters.select.reset-colors">
+                      Reset colors
+                    </Trans>
+                  }
                 >
-                  <SvgIcFormatting fontSize="inherit" />
-                </IconButton>
-              </Tooltip>
+                  <IconButton
+                    sx={{ ml: 1, my: -2 }}
+                    size="small"
+                    onClick={() =>
+                      handleRecomputeColorMapping({ random: false })
+                    }
+                  >
+                    <SvgIcRefresh fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  title={
+                    <Trans id="controls.filters.select.refresh-colors">
+                      Refresh colors
+                    </Trans>
+                  }
+                >
+                  <IconButton
+                    sx={{ ml: 1, my: -2 }}
+                    size="small"
+                    onClick={() =>
+                      handleRecomputeColorMapping({ random: true })
+                    }
+                  >
+                    <SvgIcFormatting fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+              )
             ) : null}
           </Typography>
           <Typography variant="body2" component="span">
