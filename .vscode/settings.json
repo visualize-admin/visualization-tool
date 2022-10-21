@@ -14,6 +14,9 @@
     "yarn.lock": true
   },
   "playwright.env": {
+    // Set to "false" not to use any pre-recorded response for API routes
+    // during end-to-end tests
+    "E2E_HAR": "true",
     "E2E_BASE_URL": "http://localhost:3000"
   }
 }

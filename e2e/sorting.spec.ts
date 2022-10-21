@@ -5,8 +5,21 @@ import { test, expect } from "./common";
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-test("Segment sorting", async ({ selectors, actions, within, screen }) => {
+test("Segment sorting", async ({
+  selectors,
+  actions,
+  within,
+  screen,
+  context,
+  page,
+}) => {
   test.setTimeout(60_000);
+
+  if (process.env.E2E_HAR !== "false") {
+    await page.routeFromHAR("./e2e/har/sorting.zip", {
+      notFound: "fallback",
+    });
+  }
 
   await actions.chart.createFrom(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/13",

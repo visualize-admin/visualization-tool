@@ -33,6 +33,10 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI ? "html" : "line",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    contextOptions: {
+      // Decomment this if you want to save a HAR for a test
+      // recordHar: { path: "example.zip", urlFilter: "**/api/graphql" },
+    },
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     baseURL: process.env.E2E_BASE_URL,
