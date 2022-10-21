@@ -49,14 +49,12 @@ import {
   ChartOptionSwitchField,
   ColorPickerField,
 } from "@/configurator/components/field";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import {
-  getFieldLabel,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { getIconName } from "@/configurator/components/ui-helpers";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,

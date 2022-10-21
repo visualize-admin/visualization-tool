@@ -14,7 +14,7 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelectionButton } from "@/configurator/components/chart-type-selector";
-import { getPalette } from "@/configurator/components/ui-helpers";
+import { getPalette } from "@/palettes";
 
 const ControlsDoc = () => {
   const [currentColor, setCurrentColor] = useState(getPalette("accent")[0]);

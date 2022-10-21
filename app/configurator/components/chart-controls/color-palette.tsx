@@ -19,14 +19,14 @@ import {
   useConfiguratorState,
   DEFAULT_PALETTE,
 } from "@/configurator";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { isNumericalMeasure } from "@/domain/data";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   categoricalPalettes,
   divergingSteppedPalettes,
   getPalette,
-  mapValueIrisToColor,
-} from "@/configurator/components/ui-helpers";
-import { isNumericalMeasure } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+} from "@/palettes";
 import useEvent from "@/utils/use-event";
 
 type Props = {

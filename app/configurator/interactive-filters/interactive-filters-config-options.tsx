@@ -11,10 +11,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import {
-  parseDate,
-  useFormatFullDateAuto,
-} from "@/configurator/components/ui-helpers";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
@@ -25,6 +22,7 @@ import {
 } from "@/configurator/interactive-filters/interactive-filters-config-actions";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { useFormatFullDateAuto } from "@/formatters";
 import {
   DimensionMetadataFragment,
   TimeUnit,

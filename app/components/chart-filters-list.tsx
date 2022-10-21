@@ -3,7 +3,7 @@ import { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartConfig, DataSource } from "@/configurator";
-import { useTimeFormatUnit } from "@/configurator/components/ui-helpers";
+import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";

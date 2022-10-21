@@ -42,17 +42,19 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
-  formatNumberWithUnit,
-  getPalette,
   mkNumber,
   useErrorMeasure,
   useErrorRange,
   useErrorVariable,
-  useFormatNumber,
-  useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import {
+  useFormatNumber,
+  formatNumberWithUnit,
+  useTimeFormatUnit,
+} from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
+import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export interface ColumnsState {

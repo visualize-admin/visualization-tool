@@ -16,9 +16,9 @@ import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
-  useTimeFormatLocale,
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";

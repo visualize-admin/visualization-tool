@@ -5,10 +5,8 @@ import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
 import { FieldProps } from "@/configurator";
-import {
-  getFieldLabel,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { getIconName } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 

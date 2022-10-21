@@ -15,12 +15,8 @@ import {
   SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
-import {
-  divergingPalettes,
-  Palette,
-  sequentialPalettes,
-} from "@/configurator/components/ui-helpers";
 import { DataCubeMetadata } from "@/graphql/types";
+import { divergingPalettes, Palette, sequentialPalettes } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp

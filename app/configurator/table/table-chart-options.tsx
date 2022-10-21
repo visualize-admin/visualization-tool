@@ -22,8 +22,6 @@ import {
   TimeFilter,
 } from "@/configurator/components/filters";
 import {
-  getDefaultCategoricalPalette,
-  getDefaultDivergingSteppedPalette,
   getIconName,
   mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
@@ -43,6 +41,10 @@ import {
 import { canDimensionBeMultiFiltered } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
+import {
+  getDefaultCategoricalPalette,
+  getDefaultDivergingSteppedPalette,
+} from "@/palettes";
 
 const useTableColumnGroupHiddenField = ({
   path,

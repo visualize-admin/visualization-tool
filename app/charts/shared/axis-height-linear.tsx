@@ -10,7 +10,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { useFormatNumber } from "@/configurator/components/ui-helpers";
+import { useFormatNumber } from "@/formatters";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const TICK_MIN_HEIGHT = 50;

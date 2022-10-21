@@ -12,11 +12,10 @@ import React, { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
+import { useTimeFormatUnit } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-
-import { useTimeFormatUnit } from "../components/ui-helpers";
 
 const HANDLE_SIZE = 20;
 const HANDLE_OFFSET = HANDLE_SIZE / 8;

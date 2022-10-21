@@ -41,13 +41,13 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
-import {
-  formatNumberWithUnit,
-  getPalette,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import {
+  useFormatNumber,
+  formatNumberWithUnit,
+  useTimeFormatUnit,
+} from "@/formatters";
+import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";

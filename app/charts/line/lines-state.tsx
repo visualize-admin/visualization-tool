@@ -34,13 +34,13 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
-import {
-  formatNumberWithUnit,
-  getPalette,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import {
+  useFormatNumber,
+  formatNumberWithUnit,
+  useTimeFormatUnit,
+} from "@/formatters";
+import { getPalette } from "@/palettes";
 import { useTheme } from "@/themes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";

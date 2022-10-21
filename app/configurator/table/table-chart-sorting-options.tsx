@@ -22,10 +22,8 @@ import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import {
-  getFieldLabel,
-  useOrderedTableColumns,
-} from "@/configurator/components/ui-helpers";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   TableConfig,

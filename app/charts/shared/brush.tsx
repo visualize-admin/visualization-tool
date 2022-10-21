@@ -15,8 +15,8 @@ import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { useFormatFullDateAuto } from "@/formatters";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 // Space used in chart states as bottom margin

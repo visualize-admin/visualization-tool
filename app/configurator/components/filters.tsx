@@ -47,12 +47,12 @@ import {
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
+import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import {
   getTimeInterval,
   useTimeFormatLocale,
   useTimeFormatUnit,
-} from "@/configurator/components/ui-helpers";
-import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
+} from "@/formatters";
 import {
   DimensionMetadataFragment,
   useDimensionHierarchyQuery,

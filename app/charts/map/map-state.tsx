@@ -27,12 +27,9 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import {
-  formatNumberWithUnit,
-  getColorInterpolator,
   getErrorMeasure,
   useErrorMeasure,
   useErrorVariable,
-  useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import {
   BaseLayer,
@@ -51,7 +48,9 @@ import {
   Observation,
   ObservationValue,
 } from "@/domain/data";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { getColorInterpolator } from "@/palettes";
 
 import { colorToRgbArray } from "../shared/colors";
 
