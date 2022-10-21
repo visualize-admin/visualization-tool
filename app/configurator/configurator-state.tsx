@@ -838,6 +838,36 @@ const handleChartFieldChanged = (
   return draft;
 };
 
+export const updateColorMapping = (
+  draft: ConfiguratorState,
+  action: Extract<
+    ConfiguratorStateAction,
+    { type: "CHART_CONFIG_UPDATE_COLOR_MAPPING" }
+  >
+) => {
+  if (draft.state === "CONFIGURING_CHART") {
+    const { field, colorConfigPath, dimensionIri, values, random } =
+      action.value;
+    const path = `fields.${field}${
+      colorConfigPath ? `.${colorConfigPath}` : ""
+    }`;
+    const fieldValue = get(draft.chartConfig, path) as
+      | (GenericField & { palette: string })
+      | undefined;
+
+    if (fieldValue?.componentIri === dimensionIri) {
+      const colorMapping = mapValueIrisToColor({
+        palette: fieldValue.palette,
+        dimensionValues: values,
+        random,
+      });
+      setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
+    }
+  }
+
+  return draft;
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1108,27 +1138,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { field, colorConfigPath, dimensionIri, values, random } =
-          action.value;
-        const path = `fields.${field}${
-          colorConfigPath ? `.${colorConfigPath}` : ""
-        }`;
-        const fieldValue = get(draft.chartConfig, path) as
-          | (GenericField & { palette: string })
-          | undefined;
-
-        if (fieldValue?.componentIri === dimensionIri) {
-          const colorMapping = mapValueIrisToColor({
-            palette: fieldValue.palette,
-            dimensionValues: values,
-            random,
-          });
-          setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
-        }
-      }
-
-      return draft;
+      return updateColorMapping(draft, action);
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
