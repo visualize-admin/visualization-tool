@@ -7,6 +7,7 @@ import {
   ChartConfig,
   ChartType,
   ColumnConfig,
+  ConfiguratorStateConfiguringChart,
   DataSource,
   MapConfig,
   TableConfig,
@@ -21,6 +22,7 @@ import {
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
+  updateColorMapping,
 } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -638,5 +640,51 @@ describe("getFiltersByMappingStatus", () => {
     expect([...mappedFiltersIris]).toEqual(
       expect.arrayContaining(["areaColorIri", "symbolColorIri"])
     );
+  });
+});
+
+describe("colorMapping", () => {
+  it("should correctly reset color mapping", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      chartConfig: {
+        fields: {
+          areaLayer: {
+            componentIri: "areaLayerIri",
+            color: {
+              type: "categorical",
+              componentIri: "areaLayerColorIri",
+              palette: "oranges",
+              colorMapping: {
+                red: "green",
+                green: "blue",
+                blue: "red",
+              },
+            },
+          },
+        },
+      },
+    };
+
+    updateColorMapping(state as unknown as ConfiguratorStateConfiguringChart, {
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        field: "areaLayer",
+        colorConfigPath: "color",
+        dimensionIri: "areaLayerColorIri",
+        values: [
+          { value: "red", label: "red", color: "red" },
+          { value: "green", label: "green", color: "green" },
+          { value: "blue", label: "blue", color: "blue" },
+        ],
+        random: false,
+      },
+    });
+
+    expect(state.chartConfig.fields.areaLayer.color.colorMapping).toEqual({
+      red: "red",
+      green: "green",
+      blue: "blue",
+    });
   });
 });

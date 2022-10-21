@@ -33,12 +33,12 @@ import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   DataSource,
+  GenericField,
   ImputationType,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
   isMapConfig,
-  isSegmentColorMappingInConfig,
   isSegmentInConfig,
   NumericalColorField,
 } from "@/configurator/config-types";
@@ -195,6 +195,8 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
       value: {
+        field: string;
+        colorConfigPath: string | undefined;
         dimensionIri: string;
         values: DimensionValue[];
         random: boolean;
@@ -836,6 +838,36 @@ const handleChartFieldChanged = (
   return draft;
 };
 
+export const updateColorMapping = (
+  draft: ConfiguratorState,
+  action: Extract<
+    ConfiguratorStateAction,
+    { type: "CHART_CONFIG_UPDATE_COLOR_MAPPING" }
+  >
+) => {
+  if (draft.state === "CONFIGURING_CHART") {
+    const { field, colorConfigPath, dimensionIri, values, random } =
+      action.value;
+    const path = `fields.${field}${
+      colorConfigPath ? `.${colorConfigPath}` : ""
+    }`;
+    const fieldValue = get(draft.chartConfig, path) as
+      | (GenericField & { palette: string })
+      | undefined;
+
+    if (fieldValue?.componentIri === dimensionIri) {
+      const colorMapping = mapValueIrisToColor({
+        palette: fieldValue.palette,
+        dimensionValues: values,
+        random,
+      });
+      setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
+    }
+  }
+
+  return draft;
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1106,32 +1138,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values, random } = action.value;
-        if (
-          isSegmentColorMappingInConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.segment &&
-          draft.chartConfig.fields.segment.componentIri === dimensionIri
-        ) {
-          const colorMapping = mapValueIrisToColor({
-            palette: draft.chartConfig.fields.segment.palette,
-            dimensionValues: values,
-            random,
-          });
-          draft.chartConfig.fields.segment.colorMapping = colorMapping;
-        } else if (
-          isMapConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.symbolLayer?.color.type === "categorical"
-        ) {
-          const colorMapping = mapValueIrisToColor({
-            palette: draft.chartConfig.fields.symbolLayer.color.palette,
-            dimensionValues: values,
-          });
-          draft.chartConfig.fields.symbolLayer.color.colorMapping =
-            colorMapping;
-        }
-      }
-      return draft;
+      return updateColorMapping(draft, action);
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
