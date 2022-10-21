@@ -265,9 +265,11 @@ const getColorMapping = (
 };
 
 const MultiFilterContent = ({
+  field,
   colorComponent,
   tree,
 }: {
+  field: string;
   colorComponent: DimensionMetadataFragment | undefined;
   tree: HierarchyValue[];
 }) => {
@@ -353,6 +355,9 @@ const MultiFilterContent = ({
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
+        field: `${field}${
+          colorConfigPath !== undefined ? `.${colorConfigPath}` : ""
+        }`,
           dimensionIri,
           values: sortBy(colorComponent?.values, (d) =>
             usedValues.has(d.value) ? 0 : 1
@@ -779,6 +784,7 @@ export const DimensionValuesMultiFilter = ({
         getValueColor={getValueColor}
       >
         <MultiFilterContent
+          field={field}
           colorComponent={colorComponent}
           tree={
             hierarchyTree && hierarchyTree.length > 0
