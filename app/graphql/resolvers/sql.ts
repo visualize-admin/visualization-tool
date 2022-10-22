@@ -93,6 +93,8 @@ const parseSQLDimension = (
 
       // FIXME: Handle currencies in SQL resolvers
       isCurrency: false,
+      // FIXME: Handle isDecimal in SQL resolvers
+      isDecimal: false,
       currencyExponent: 0,
       // FIXME: not only measures can be numerical
       isNumerical: isMeasure,
