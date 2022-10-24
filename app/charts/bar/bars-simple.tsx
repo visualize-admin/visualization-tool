@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { HTMLAttributes, memo } from "react";
 
 import { BarsState } from "@/charts/bar/bars-state";
 import {
@@ -93,6 +93,7 @@ export const Bar = memo(
     color,
     fillOpacity = 1,
     stroke,
+    ...props
   }: {
     x: number;
     y: number;
@@ -101,7 +102,7 @@ export const Bar = memo(
     color: string;
     fillOpacity?: number;
     stroke?: string;
-  }) => {
+  } & HTMLAttributes<SVGRectElement>) => {
     return (
       <rect
         x={x}
@@ -111,6 +112,7 @@ export const Bar = memo(
         fill={color}
         fillOpacity={fillOpacity}
         stroke={stroke}
+        {...props}
       />
     );
   }

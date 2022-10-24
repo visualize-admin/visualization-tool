@@ -47,6 +47,7 @@ export const createActions = ({
       await selectors.chart.loaded(chartLoadedOptions);
     },
   },
+  /** Actions on MUI elements, options, selects, dialogs */
   mui: {
     selectOption: async (optionText: string) => {
       const locator = await selectors.mui.popover().findByText(optionText);
