@@ -704,11 +704,15 @@ function parseObservation(
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
+        const termType = obs[d.data.iri]?.termType;
 
         const value =
-          obs[d.data.iri]?.termType === "Literal" &&
+          termType === "Literal" &&
           ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
             ? null
+            : termType === "NamedNode" &&
+              ns.cube.Undefined.equals(obs[d.data.iri])
+            ? "–"
             : obs[d.data.iri]?.value;
 
         const rawValue = parseObservationValue({ value: obs[d.data.iri] });
