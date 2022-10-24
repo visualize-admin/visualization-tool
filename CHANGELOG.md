@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet
+
+## [3.11.0] - 2022-10-26
+
 - Charts:
   - Enable sorting of Geo dimensions
   - Maintain segment sorting type correctly when switching from / to Pie chart
@@ -21,6 +25,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - it's now possible to use discrete color mapping in symbol layer
 - Errors:
   - Make missing timeFormat error message more explicit
+- Tests:
+  - It is not easier and speedier to write E2E tests
 
 ## [3.10.0] - 2022-10-19
 
