@@ -29,14 +29,13 @@ import {
   TableConfig,
 } from "@/configurator";
 import {
-  getColorInterpolator,
   mkNumber,
-  useDimensionFormatters,
-  useFormatNumber,
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { useFormatNumber, useDimensionFormatters } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 

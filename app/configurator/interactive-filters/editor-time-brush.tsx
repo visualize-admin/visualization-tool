@@ -5,13 +5,11 @@ import React, { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
-import {
-  parseDate,
-  useFormatFullDateAuto,
-} from "@/configurator/components/ui-helpers";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { useFormatFullDateAuto } from "@/formatters";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 const HANDLE_HEIGHT = 20;

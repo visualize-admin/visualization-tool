@@ -36,9 +36,9 @@ import {
   accordionPresenceProps,
 } from "@/configurator/components/presence";
 import Tag from "@/configurator/components/tag";
-import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { truthy } from "@/domain/types";
+import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,

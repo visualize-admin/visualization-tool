@@ -25,12 +25,10 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotFields } from "@/configurator";
-import {
-  getPalette,
-  mkNumber,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
+import { mkNumber } from "@/configurator/components/ui-helpers";
 import { DimensionValue, Observation } from "@/domain/data";
+import { useFormatNumber } from "@/formatters";
+import { getPalette } from "@/palettes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export interface ScatterplotState {

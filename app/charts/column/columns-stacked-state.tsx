@@ -49,12 +49,9 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
-import {
-  formatNumberWithUnit,
-  getPalette,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 

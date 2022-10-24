@@ -6,7 +6,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
-import { useTimeFormatLocale } from "@/configurator/components/ui-helpers";
+import { useTimeFormatLocale } from "@/formatters";
 import {
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,

@@ -18,14 +18,13 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
 import { isNumericalMeasure, Observation } from "@/domain/data";
+import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
   useDataCubeObservationsQuery,
   useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { useDimensionFormatters } from "./ui-helpers";
 
 const DimensionLabel = ({
   dimension,

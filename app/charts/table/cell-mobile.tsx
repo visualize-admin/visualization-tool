@@ -9,8 +9,8 @@ import { getBarLeftOffset, getBarWidth } from "@/charts/table/cell-desktop";
 import { ColumnMeta, TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import Flex from "@/components/flex";
-import { useFormatNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { useFormatNumber } from "@/formatters";
 import { Icon } from "@/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({

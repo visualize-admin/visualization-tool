@@ -16,11 +16,8 @@ import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import {
-  formatNumberWithUnit,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
 import { truthy } from "@/domain/types";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 
 export type HoverObjectType = "area" | "symbol";
 

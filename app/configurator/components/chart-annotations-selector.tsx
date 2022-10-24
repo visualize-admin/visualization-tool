@@ -9,10 +9,8 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
 import { MetaInputField } from "@/configurator/components/field";
-import {
-  getFieldLabel,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { getIconName } from "@/configurator/components/ui-helpers";
 import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";

@@ -24,12 +24,9 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { PieFields } from "@/configurator";
-import {
-  formatNumberWithUnit,
-  getPalette,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
 import { DimensionValue, Observation } from "@/domain/data";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 export interface PieState {
   bounds: Bounds;

@@ -6,7 +6,7 @@ import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { useFormatShortDateAuto } from "@/configurator/components/ui-helpers";
+import { useFormatShortDateAuto } from "@/formatters";
 
 // Approximate the longest date format we're using for
 // Roughly equivalent to estimateTextWidth("99.99.9999", 12);

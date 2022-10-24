@@ -17,9 +17,9 @@ import {
   smoothPresenceProps,
 } from "@/configurator/components/presence";
 import Tag from "@/configurator/components/tag";
-import { useFormatDate } from "@/configurator/components/ui-helpers";
 import { DataSource } from "@/configurator/config-types";
 import { truthy } from "@/domain/types";
+import { useFormatDate } from "@/formatters";
 import {
   DataCubeMetadataQuery,
   useDataCubeMetadataQuery,

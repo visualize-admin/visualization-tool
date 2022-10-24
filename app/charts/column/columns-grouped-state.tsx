@@ -45,14 +45,13 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
-  formatNumberWithUnit,
-  getPalette,
   mkNumber,
   useErrorMeasure,
   useErrorRange,
-  useFormatNumber,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
+import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 

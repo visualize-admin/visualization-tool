@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useDimensionFormatters } from "@/configurator/components/ui-helpers";
+import { useDimensionFormatters } from "@/formatters";
 
 import { ChartProps } from "./use-chart-state";
 

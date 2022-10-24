@@ -8,10 +8,8 @@ import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
-import {
-  getFieldLabel,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";

@@ -30,9 +30,10 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { BarFields, SortingOrder, SortingType } from "@/configurator";
-import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
+import { mkNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
+import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 
 export interface GroupedBarsState {

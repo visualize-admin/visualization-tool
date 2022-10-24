@@ -23,13 +23,10 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { useWidth } from "@/charts/shared/use-width";
 import Flex from "@/components/flex";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
-import {
-  getColorInterpolator,
-  useDimensionFormatters,
-  useFormatInteger,
-} from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { useDimensionFormatters, useFormatInteger } from "@/formatters";
+import { getColorInterpolator } from "@/palettes";
 
 const MAX_WIDTH = 204;
 const HEIGHT = 80;

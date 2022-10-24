@@ -21,10 +21,8 @@ import {
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
 import {
-  getPalette,
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
-  useTimeFormatLocale,
 } from "@/configurator/components/ui-helpers";
 import {
   Option,
@@ -46,9 +44,11 @@ import {
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
+import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
+import { getPalette } from "@/palettes";
 
 export const ControlTabField = ({
   component,

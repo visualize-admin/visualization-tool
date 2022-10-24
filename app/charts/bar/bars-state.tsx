@@ -27,8 +27,9 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { BarFields, SortingOrder, SortingType } from "@/configurator";
-import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
+import { mkNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
+import { getPalette } from "@/palettes";
 
 export interface BarsState {
   chartType: "bar";

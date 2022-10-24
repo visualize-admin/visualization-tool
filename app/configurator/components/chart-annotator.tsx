@@ -7,7 +7,7 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
-import { getFieldLabel } from "@/configurator/components/ui-helpers";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 

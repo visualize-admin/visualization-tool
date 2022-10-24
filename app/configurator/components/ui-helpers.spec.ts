@@ -1,13 +1,15 @@
 import { renderHook } from "@testing-library/react-hooks";
 
+import {
+  useDimensionFormatters,
+  useFormatFullDateAuto,
+  useTimeFormatLocale,
+} from '../../formatters'
 import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
 
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
-  useDimensionFormatters,
-  useFormatFullDateAuto,
-  useTimeFormatLocale,
 } from "./ui-helpers";
 
 describe("useFormatFullDateAuto", () => {
