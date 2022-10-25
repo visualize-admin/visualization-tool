@@ -63,6 +63,7 @@ import {
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -75,34 +76,46 @@ export const ChartOptionsSelector = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const { activeField, chartConfig, dataSet, dataSource } = state;
   const locale = useLocale();
-  const [{ data }] = useDataCubeObservationsQuery({
+  const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
-      filters: state.chartConfig.filters,
+      filters: chartConfig.filters,
+    },
+  });
+
+  // Unfiltered dimensions & measures values.
+  const [{ data: metadataData }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
     },
   });
 
   const imputationNeeded = useImputationNeeded({
-    chartConfig: state.chartConfig,
-    data: data?.dataCubeByIri?.observations.data,
+    chartConfig,
+    data: observationsData?.dataCubeByIri?.observations.data,
   });
 
   const metaData = useMemo(() => {
-    if (data?.dataCubeByIri) {
+    if (metadataData?.dataCubeByIri) {
       return {
-        ...data.dataCubeByIri,
+        ...metadataData.dataCubeByIri,
         dimensions: [
           // There are no fields that make use of numeric dimensions at the moment.
-          ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
+          ...metadataData.dataCubeByIri.dimensions.filter(
+            (d) => !d.isNumerical
+          ),
         ],
       };
     }
-  }, [data?.dataCubeByIri]);
+  }, [metadataData?.dataCubeByIri]);
 
   if (metaData) {
     return (
@@ -113,8 +126,8 @@ export const ChartOptionsSelector = ({
           overflowY: "auto",
         }}
       >
-        {state.activeField ? (
-          isTableConfig(state.chartConfig) ? (
+        {activeField ? (
+          isTableConfig(chartConfig) ? (
             <TableColumnOptions state={state} metaData={metaData} />
           ) : (
             <ActiveFieldSwitch
