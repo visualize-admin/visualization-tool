@@ -41,7 +41,10 @@ import {
   useMultiFilterContext,
   useSingleFilterSelect,
 } from "@/configurator/config-form";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
@@ -473,9 +476,9 @@ export const MetaInputField = ({
 };
 
 const useMultiFilterColorPicker = (value: string) => {
-  const [configuratorState, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { dimensionIri, colorConfigPath } = useMultiFilterContext();
-  const { activeField } = configuratorState;
+  const { activeField, chartConfig } = state;
   const onChange = useCallback(
     (color: string) => {
       if (activeField) {
@@ -495,22 +498,12 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const path = colorConfigPath ? `${colorConfigPath}.` : "";
-  const chartConfig =
-    configuratorState.state === "CONFIGURING_CHART"
-      ? configuratorState.chartConfig
-      : null;
-
-  const color = chartConfig
-    ? get(
-        chartConfig,
-        `fields["${activeField}"].${path}colorMapping["${value}"]`
-      )
-    : null;
+  const color = get(
+    chartConfig,
+    `fields["${activeField}"].${path}colorMapping["${value}"]`
+  );
 
   const palette = useMemo(() => {
-    if (!chartConfig) {
-      return [];
-    }
     return getPalette(
       get(
         chartConfig,
@@ -519,21 +512,15 @@ const useMultiFilterColorPicker = (value: string) => {
     );
   }, [chartConfig, colorConfigPath, activeField]);
 
-  const checkedState =
-    configuratorState.state === "CONFIGURING_CHART" && dimensionIri
-      ? isMultiFilterFieldChecked(
-          configuratorState.chartConfig,
-          dimensionIri,
-          value
-        )
-      : null;
+  const checkedState = dimensionIri
+    ? isMultiFilterFieldChecked(chartConfig, dimensionIri, value)
+    : null;
 
   return useMemo(
     () => ({
       color,
       palette,
       onChange,
-
       checked: checkedState,
     }),
     [color, palette, onChange, checkedState]
