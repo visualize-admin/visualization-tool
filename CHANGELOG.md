@@ -14,19 +14,19 @@ Nothing yet
 ## [3.11.0] - 2022-10-26
 
 - Charts:
-  - Enable sorting of Geo dimensions
+  - Enable sorting of geo dimensions
   - Maintain segment sorting type correctly when switching from / to Pie chart
   - Fix sorting by measure when undefined values are present in the data
   - Enable CSS Color Module Level 3 color specifications in the color picker (instead of just HEX)
   - New "Automatic" sorting option using "identifier" or "position" or "label"
   - Sorting is enabled for line charts (sorts legend items and tooltip values)
 - Map:
-  - area & symbol layers now use the same approach as for segment field (optional select element), to be more consistent across the app
-  - it's now possible to use discrete color mapping in symbol layer
-- Errors:
+  - Area & symbol layers now use the same approach as for segment field (optional select element), to be more consistent across the app
+  - It's now possible to use discrete color mapping in both layers
+- Error messages:
   - Make missing timeFormat error message more explicit
 - Tests:
-  - It is not easier and speedier to write E2E tests
+  - It's now easier and speedier to write E2E tests
 
 ## [3.10.0] - 2022-10-19
 
