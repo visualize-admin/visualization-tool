@@ -727,16 +727,13 @@ const handleChartFieldChanged = (
     // optionalFields = ['segment', 'areaLayer', 'symbolLayer'],
     // should be reflected in chart encodings
     if (field === "segment") {
-      const colorMapping =
-        component?.values &&
-        mapValueIrisToColor({
-          palette: DEFAULT_PALETTE,
-          dimensionValues: component?.values,
-        });
-
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
       if (isSegmentInConfig(draft.chartConfig)) {
+        const colorMapping = mapValueIrisToColor({
+          palette: DEFAULT_PALETTE,
+          dimensionValues: component?.values || [],
+        });
         draft.chartConfig.filters[componentIri] = {
           type: "multi",
           values: Object.fromEntries(
@@ -744,12 +741,12 @@ const handleChartFieldChanged = (
           ),
         };
         draft.chartConfig.fields.segment = {
-          componentIri: componentIri,
+          componentIri,
           palette: DEFAULT_PALETTE,
           // Type exists only within column charts.
           ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
           sorting: DEFAULT_SORTING,
-          colorMapping: colorMapping,
+          colorMapping,
         };
       }
 
@@ -785,12 +782,10 @@ const handleChartFieldChanged = (
       draft.chartConfig.fields.segment &&
       "palette" in draft.chartConfig.fields.segment
     ) {
-      const colorMapping =
-        component &&
-        mapValueIrisToColor({
-          palette: draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
-          dimensionValues: component?.values,
-        });
+      const colorMapping = mapValueIrisToColor({
+        palette: draft.chartConfig.fields.segment.palette || DEFAULT_PALETTE,
+        dimensionValues: component?.values || [],
+      });
 
       draft.chartConfig.fields.segment.componentIri = componentIri;
       draft.chartConfig.fields.segment.colorMapping = colorMapping;
@@ -803,7 +798,7 @@ const handleChartFieldChanged = (
     } else {
       // Reset other field options
       (draft.chartConfig.fields as GenericFields)[field] = {
-        componentIri: componentIri,
+        componentIri,
       };
       // if x !== time, also deactivate interactive time filter
       if (
