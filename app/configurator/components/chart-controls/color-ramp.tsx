@@ -15,7 +15,7 @@ import {
   SequentialPaletteType,
   useConfiguratorState,
 } from "@/configurator";
-import { DataCubeMetadata } from "@/graphql/types";
+import { useLocale } from "@/locales/use-locale";
 import { divergingPalettes, Palette, sequentialPalettes } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
@@ -65,7 +65,6 @@ export const ColorRamp = ({
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
   field: string;
   path: string;
-  dataSetMetadata: DataCubeMetadata;
 };
 
 export const ColorRampField = ({
@@ -73,8 +72,8 @@ export const ColorRampField = ({
   path,
   disabled,
   nbClass,
-  dataSetMetadata,
 }: ColorRampFieldProps) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const { palettes, defaultPalette } = useMemo(() => {
@@ -101,9 +100,9 @@ export const ColorRampField = ({
         dispatch({
           type: "CHART_OPTION_CHANGED",
           value: {
+            locale,
             field,
             path,
-            dataSetMetadata,
             value,
           },
         });

@@ -146,7 +146,7 @@ export const TableColumnOptions = ({
   }
 
   if (activeField === "table-settings") {
-    return <TableSettings dataSetMetadata={metaData} />;
+    return <TableSettings />;
   }
   if (activeField === "table-sorting") {
     return <TableSortingOptions state={state} dataSetMetadata={metaData} />;
@@ -294,14 +294,12 @@ export const TableColumnOptions = ({
               getKey={(d) => d.type}
               field={activeField}
               path="columnStyle"
-              dataSetMetadata={metaData}
             />
 
             <ColumnStyleSubOptions
               chartConfig={chartConfig}
               activeField={activeField}
               component={component as DimensionMetadataFragment}
-              dataSetMetadata={metaData}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -368,12 +366,10 @@ const ColumnStyleSubOptions = ({
   chartConfig,
   activeField,
   component,
-  dataSetMetadata,
 }: {
   chartConfig: TableConfig;
   activeField: string;
   component: DimensionMetadataFragment;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (
@@ -399,7 +395,6 @@ const ColumnStyleSubOptions = ({
         ]}
         field={activeField}
         path="columnStyle.textStyle"
-        dataSetMetadata={dataSetMetadata}
       />
       {type === "text" ? (
         <>
@@ -410,7 +405,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.textColor"
-            dataSetMetadata={dataSetMetadata}
           />
           <ColorPickerField
             label={t({
@@ -419,7 +413,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.columnColor"
-            dataSetMetadata={dataSetMetadata}
           />
         </>
       ) : type === "category" ? (
@@ -447,7 +440,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.barColorPositive"
-            dataSetMetadata={dataSetMetadata}
           />
           <ColorPickerField
             label={t({
@@ -456,7 +448,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.barColorNegative"
-            dataSetMetadata={dataSetMetadata}
           />
           <ColorPickerField
             label={t({
@@ -465,7 +456,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.barColorBackground"
-            dataSetMetadata={dataSetMetadata}
           />
           <ChartOptionCheckboxField
             label={t({
@@ -474,7 +464,6 @@ const ColumnStyleSubOptions = ({
             })}
             field={activeField}
             path="columnStyle.barShowBackground"
-            dataSetMetadata={dataSetMetadata}
           />
         </Box>
       ) : null}
@@ -482,11 +471,7 @@ const ColumnStyleSubOptions = ({
   );
 };
 
-const TableSettings = ({
-  dataSetMetadata,
-}: {
-  dataSetMetadata: DataCubeMetadata;
-}) => {
+const TableSettings = () => {
   return (
     <ControlSection>
       <SectionTitle iconName="settings">
@@ -500,7 +485,6 @@ const TableSettings = ({
           })}
           field={null}
           path="settings.showSearch"
-          dataSetMetadata={dataSetMetadata}
         />
       </ControlSectionContent>
     </ControlSection>

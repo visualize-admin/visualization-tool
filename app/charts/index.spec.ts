@@ -40,32 +40,28 @@ describe("possible chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
     const possibleChartTypes = getPossibleChartType({
-      meta: bathingWaterData.data.dataCubeByIri as DataCubeMetadata,
+      metadata: bathingWaterData.data.dataCubeByIri as DataCubeMetadata,
     }).sort();
 
     expect(possibleChartTypes).toEqual(expectedChartTypes);
   });
 
   it("should only allow table if there are only measures available", () => {
-    const meta = {
+    const metadata = {
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }],
-    };
-    const possibleChartTypes = getPossibleChartType({
-      meta: meta as any,
-    }).sort();
+    } as any;
+    const possibleChartTypes = getPossibleChartType({ metadata }).sort();
 
     expect(possibleChartTypes).toEqual(["table"]);
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const meta = {
+    const metadata = {
       dimensions: [{ __typename: "GeoShapesDimension" }],
       measures: [{ __typename: "NumericalMeasure" }],
-    };
-    const possibleChartTypes = getPossibleChartType({
-      meta: meta as any,
-    }).sort();
+    } as any;
+    const possibleChartTypes = getPossibleChartType({ metadata }).sort();
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
   });
