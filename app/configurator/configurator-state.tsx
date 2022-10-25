@@ -949,6 +949,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               setWith(draft, nbClassPath, 3, Object);
             }
           } else if (action.value.path === "color.componentIri") {
+            const fieldIri = get(
+              draft,
+              `chartConfig.fields.${action.value.field}.componentIri`
+            );
+            const previousComponentIri = get(
+              draft,
+              `chartConfig.fields.${action.value.field}.color.componentIri`
+            ) as string;
+
             const allComponents = [
               ...action.value.dataSetMetadata.dimensions,
               ...action.value.dataSetMetadata.measures,
@@ -956,6 +965,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             const component = allComponents.find(
               (d) => d.iri === action.value.value
             );
+
+            // Clear old filters when switching to a new component.
+            if (previousComponentIri !== fieldIri) {
+              unset(draft, `chartConfig.filters["${previousComponentIri}"]`);
+            }
 
             if (!component) {
               setWith(
@@ -965,20 +979,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 Object
               );
             } else {
-              const previousComponentIri = get(
-                draft,
-                `chartConfig.fields.${action.value.field}.color.componentIri`
-              );
               const previousComponent = allComponents.find(
                 (d) => d.iri === previousComponentIri
               );
               const previousPalette = get(
                 draft,
                 `chartConfig.fields.${action.value.field}.color.palette`
-              );
-              const fieldIri = get(
-                draft,
-                `chartConfig.fields.${action.value.field}.componentIri`
               );
 
               if (
@@ -1000,10 +1006,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                   },
                   Object
                 );
-
-                if (fieldIri === component.iri) {
-                  unset(draft, `chartConfig.filters["${component.iri}"]`);
-                }
               } else if (isNumericalMeasure(component)) {
                 if (
                   (previousComponent &&
