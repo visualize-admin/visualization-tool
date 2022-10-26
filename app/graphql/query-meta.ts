@@ -1,4 +1,4 @@
-type RequestQueryMeta = {
+export type RequestQueryMeta = {
   text: string;
   startTime: number;
   endTime: number;
