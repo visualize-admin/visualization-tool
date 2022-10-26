@@ -18,6 +18,7 @@ import {
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
   getLocalStorageKey,
+  handleChartFieldChanged,
   handleChartOptionChanged,
   initChartStateFromChart,
   initChartStateFromCube,
@@ -690,6 +691,69 @@ describe("colorMapping", () => {
   });
 });
 
+describe("handleChartFieldChanged", () => {
+  jest.mock("@/graphql/client", () => ({
+    readQuery: () => {
+      return {
+        dimensions: [
+          {
+            iri: "newAreaLayerColorIri",
+            values: [{ value: "orange", label: "orange" }],
+          },
+          {
+            iri: "symbolLayerIri",
+            values: [{ value: "x", label: "y" }],
+          },
+        ],
+      };
+    },
+  }));
+
+  it("should not reset symbol layer when it's being updated", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSet: "mapDataset",
+      dataSource: {
+        type: "sparql",
+        url: "fakeUrl",
+      },
+      chartConfig: {
+        chartType: "map",
+        fields: {
+          symbolLayer: {
+            componentIri: "symbolLayerIri",
+            color: {
+              type: "categorical",
+              componentIri: "symbolLayerColorIri",
+              palette: "oranges",
+              colorMapping: {
+                red: "green",
+                green: "blue",
+                blue: "red",
+              },
+            },
+          },
+        },
+        filters: {},
+      },
+    };
+
+    handleChartFieldChanged(
+      state as unknown as ConfiguratorStateConfiguringChart,
+      {
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          locale: "en",
+          field: "symbolLayer",
+          componentIri: "symbolLayerIri",
+        },
+      }
+    );
+
+    expect(state.chartConfig.fields.symbolLayer.color).toBeDefined();
+  });
+});
+
 describe("handleChartOptionChanged", () => {
   jest.mock("@/graphql/client", () => ({
     readQuery: () => {
@@ -698,6 +762,10 @@ describe("handleChartOptionChanged", () => {
           {
             iri: "newAreaLayerColorIri",
             values: [{ value: "orange", label: "orange" }],
+          },
+          {
+            iri: "symbolLayerIri",
+            values: [{ value: "x", label: "y" }],
           },
         ],
       };
@@ -713,6 +781,7 @@ describe("handleChartOptionChanged", () => {
         url: "fakeUrl",
       },
       chartConfig: {
+        chartType: "map",
         fields: {
           areaLayer: {
             componentIri: "areaLayerIri",

@@ -41,6 +41,8 @@ import {
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
+  MapConfig,
+  MapFields,
   NumericalColorField,
 } from "@/configurator/config-types";
 import {
@@ -71,6 +73,8 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetadataFragment,
+  NumericalMeasure,
+  OrdinalMeasure,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Locale } from "@/locales/locales";
@@ -728,7 +732,37 @@ export const getChartOptionField = (
   );
 };
 
-const handleChartFieldChanged = (
+const initializeMapField = ({
+  chartConfig,
+  field,
+  componentIri,
+  dimensions,
+  measures,
+}: {
+  chartConfig: MapConfig;
+  field: "areaLayer" | "symbolLayer";
+  componentIri: string;
+  dimensions: DimensionMetadataFragment[];
+  measures: (NumericalMeasure | OrdinalMeasure)[];
+}) => {
+  if (field === "areaLayer") {
+    chartConfig.fields.areaLayer = getInitialAreaLayer({
+      component: dimensions
+        .filter(isGeoShapesDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures[0],
+    });
+  } else if (field === "symbolLayer") {
+    chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+      component: dimensions
+        .filter(isGeoDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures.filter(isNumericalMeasure)[0],
+    });
+  }
+};
+
+export const handleChartFieldChanged = (
   draft: ConfiguratorState,
   action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_CHANGED" }>
 ) => {
@@ -793,21 +827,13 @@ const handleChartFieldChanged = (
           );
       }
     } else if (isMapConfig(draft.chartConfig)) {
-      if (field === "areaLayer") {
-        draft.chartConfig.fields.areaLayer = getInitialAreaLayer({
-          component: dimensions
-            .filter(isGeoShapesDimension)
-            .find((d) => d.iri === componentIri)!,
-          measure: measures[0],
-        });
-      } else if (field === "symbolLayer") {
-        draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
-          component: dimensions
-            .filter(isGeoDimension)
-            .find((d) => d.iri === componentIri)!,
-          measure: measures.filter(isNumericalMeasure)[0],
-        });
-      }
+      initializeMapField({
+        chartConfig: draft.chartConfig,
+        field: field as keyof MapFields,
+        componentIri,
+        dimensions,
+        measures,
+      });
     }
   } else {
     // The field is being updated
@@ -831,10 +857,11 @@ const handleChartFieldChanged = (
         ),
       };
     } else {
-      // Reset other field options
+      // Reset field properties, excluding componentIri.
       (draft.chartConfig.fields as GenericFields)[field] = {
         componentIri,
       };
+
       // if x !== time, also deactivate interactive time filter
       if (
         isColumnConfig(draft.chartConfig) &&
@@ -848,6 +875,14 @@ const handleChartFieldChanged = (
           false,
           Object
         );
+      } else if (isMapConfig(draft.chartConfig)) {
+        initializeMapField({
+          chartConfig: draft.chartConfig,
+          field: field as keyof MapFields,
+          componentIri,
+          dimensions,
+          measures,
+        });
       }
     }
 
