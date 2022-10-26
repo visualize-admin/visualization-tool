@@ -41,6 +41,39 @@ jest.mock("@/utils/chart-config/exchange", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
+jest.mock("@/graphql/client", () => {
+  return {
+    client: {
+      readQuery: () => {
+        return {
+          data: {
+            dataCubeByIri: {
+              dimensions: [
+                {
+                  __typename: "GeoShapesDimension",
+                  iri: "newAreaLayerColorIri",
+                  values: [{ value: "orange", label: "orange" }],
+                },
+                {
+                  __typename: "GeoCoordinatesDimension",
+                  iri: "symbolLayerIri",
+                  values: [{ value: "x", label: "y" }],
+                },
+              ],
+              measures: [
+                {
+                  __typename: "NumericalMeasure",
+                  iri: "measure",
+                },
+              ],
+            },
+          },
+        };
+      },
+    },
+  };
+});
+
 afterEach(() => {
   jest.restoreAllMocks();
 });
@@ -692,23 +725,6 @@ describe("colorMapping", () => {
 });
 
 describe("handleChartFieldChanged", () => {
-  jest.mock("@/graphql/client", () => ({
-    readQuery: () => {
-      return {
-        dimensions: [
-          {
-            iri: "newAreaLayerColorIri",
-            values: [{ value: "orange", label: "orange" }],
-          },
-          {
-            iri: "symbolLayerIri",
-            values: [{ value: "x", label: "y" }],
-          },
-        ],
-      };
-    },
-  }));
-
   it("should not reset symbol layer when it's being updated", () => {
     const state = {
       state: "CONFIGURING_CHART",
@@ -755,23 +771,6 @@ describe("handleChartFieldChanged", () => {
 });
 
 describe("handleChartOptionChanged", () => {
-  jest.mock("@/graphql/client", () => ({
-    readQuery: () => {
-      return {
-        dimensions: [
-          {
-            iri: "newAreaLayerColorIri",
-            values: [{ value: "orange", label: "orange" }],
-          },
-          {
-            iri: "symbolLayerIri",
-            values: [{ value: "x", label: "y" }],
-          },
-        ],
-      };
-    },
-  }));
-
   it("should reset previous color filters", () => {
     const state = {
       state: "CONFIGURING_CHART",
