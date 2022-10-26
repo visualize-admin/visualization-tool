@@ -397,7 +397,7 @@ const MultiFilterContent = ({
   }, [colorConfigPath, config, dimensionIri, colorComponent]);
 
   const hasDefaultColors = useMemo(() => {
-    return colorComponent?.values?.[0].color !== undefined;
+    return colorComponent?.values?.[0]?.color !== undefined;
   }, [colorComponent?.values]);
 
   return (

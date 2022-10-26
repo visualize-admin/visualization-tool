@@ -18,6 +18,7 @@ import {
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
   getLocalStorageKey,
+  handleChartOptionChanged,
   initChartStateFromChart,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
@@ -403,7 +404,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
         measures: dataSetMetadata.measures,
       })
     );
-    deriveFiltersFromFields(newConfig, dataSetMetadata);
+    deriveFiltersFromFields(newConfig, dataSetMetadata.dimensions);
 
     return current(newConfig);
   };
@@ -686,5 +687,74 @@ describe("colorMapping", () => {
       green: "green",
       blue: "blue",
     });
+  });
+});
+
+describe("handleChartOptionChanged", () => {
+  jest.mock("@/graphql/client", () => ({
+    readQuery: () => {
+      return {
+        dimensions: [
+          {
+            iri: "newAreaLayerColorIri",
+            values: [{ value: "orange", label: "orange" }],
+          },
+        ],
+      };
+    },
+  }));
+
+  it("should reset previous color filters", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSet: "mapDataset",
+      dataSource: {
+        type: "sparql",
+        url: "fakeUrl",
+      },
+      chartConfig: {
+        fields: {
+          areaLayer: {
+            componentIri: "areaLayerIri",
+            color: {
+              type: "categorical",
+              componentIri: "areaLayerColorIri",
+              palette: "oranges",
+              colorMapping: {
+                red: "green",
+                green: "blue",
+                blue: "red",
+              },
+            },
+          },
+        },
+        filters: {
+          areaLayerColorIri: {
+            type: "multi",
+            values: {
+              red: true,
+              green: true,
+            },
+          },
+        },
+      },
+    };
+
+    handleChartOptionChanged(
+      state as unknown as ConfiguratorStateConfiguringChart,
+      {
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          locale: "en",
+          field: "areaLayer",
+          path: "color.componentIri",
+          value: "newAreaLayerColorIri",
+        },
+      }
+    );
+
+    expect(Object.keys(state.chartConfig.filters)).not.toContain(
+      "areaLayerColorIri"
+    );
   });
 });

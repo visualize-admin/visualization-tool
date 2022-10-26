@@ -41,13 +41,16 @@ import {
   useMultiFilterContext,
   useSingleFilterSelect,
 } from "@/configurator/config-form";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
 import { IconName } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 
 export const ControlTabField = ({
@@ -70,7 +73,7 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
-    ></ControlTab>
+    />
   );
 };
 
@@ -437,7 +440,7 @@ export const AnnotatorTabField = ({
       value={`${fieldProps.value}`}
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
-    ></AnnotatorTab>
+    />
   );
 };
 
@@ -473,9 +476,9 @@ export const MetaInputField = ({
 };
 
 const useMultiFilterColorPicker = (value: string) => {
-  const [configuratorState, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { dimensionIri, colorConfigPath } = useMultiFilterContext();
-  const { activeField } = configuratorState;
+  const { activeField, chartConfig } = state;
   const onChange = useCallback(
     (color: string) => {
       if (activeField) {
@@ -495,22 +498,12 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const path = colorConfigPath ? `${colorConfigPath}.` : "";
-  const chartConfig =
-    configuratorState.state === "CONFIGURING_CHART"
-      ? configuratorState.chartConfig
-      : null;
-
-  const color = chartConfig
-    ? get(
-        chartConfig,
-        `fields["${activeField}"].${path}colorMapping["${value}"]`
-      )
-    : null;
+  const color = get(
+    chartConfig,
+    `fields["${activeField}"].${path}colorMapping["${value}"]`
+  );
 
   const palette = useMemo(() => {
-    if (!chartConfig) {
-      return [];
-    }
     return getPalette(
       get(
         chartConfig,
@@ -519,21 +512,15 @@ const useMultiFilterColorPicker = (value: string) => {
     );
   }, [chartConfig, colorConfigPath, activeField]);
 
-  const checkedState =
-    configuratorState.state === "CONFIGURING_CHART" && dimensionIri
-      ? isMultiFilterFieldChecked(
-          configuratorState.chartConfig,
-          dimensionIri,
-          value
-        )
-      : null;
+  const checkedState = dimensionIri
+    ? isMultiFilterFieldChecked(chartConfig, dimensionIri, value)
+    : null;
 
   return useMemo(
     () => ({
       color,
       palette,
       onChange,
-
       checked: checkedState,
     }),
     [color, palette, onChange, checkedState]
@@ -569,7 +556,7 @@ export const SingleFilterField = ({
     value,
   });
 
-  return <Radio label={label} disabled={disabled} {...field}></Radio>;
+  return <Radio label={label} disabled={disabled} {...field} />;
 };
 
 export const ColorPickerField = ({
@@ -577,14 +564,13 @@ export const ColorPickerField = ({
   path,
   label,
   disabled,
-  dataSetMetadata,
 }: {
   field: string;
   path: string;
   label: ReactNode;
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const updateColor = useCallback(
@@ -592,13 +578,13 @@ export const ColorPickerField = ({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           field,
           path,
-          dataSetMetadata,
           value,
         },
       }),
-    [dispatch, field, path, dataSetMetadata]
+    [locale, dispatch, field, path]
   );
 
   if (state.state !== "CONFIGURING_CHART") {
@@ -632,19 +618,14 @@ export const ChartFieldField = ({
   options,
   optional,
   disabled,
-  dataSetMetadata,
 }: {
   label: string;
   field: string;
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
-  const fieldProps = useChartFieldField({
-    field,
-    dataSetMetadata,
-  });
+  const fieldProps = useChartFieldField({ field });
 
   const noneLabel = t({
     id: "controls.dimension.none",
@@ -686,7 +667,6 @@ export const ChartOptionRadioField = ({
   value,
   defaultChecked,
   disabled = false,
-  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
@@ -694,13 +674,11 @@ export const ChartOptionRadioField = ({
   value: string;
   defaultChecked?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionRadioField({
     path,
     field,
     value,
-    dataSetMetadata,
   });
 
   return (
@@ -709,7 +687,7 @@ export const ChartOptionRadioField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
-    ></Radio>
+    />
   );
 };
 
@@ -722,7 +700,6 @@ export const ChartOptionSliderField = ({
   max = 1,
   step = 0.1,
   defaultValue,
-  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
@@ -732,7 +709,6 @@ export const ChartOptionSliderField = ({
   max?: number;
   step?: number;
   defaultValue: number;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionSliderField({
     path,
@@ -740,7 +716,6 @@ export const ChartOptionSliderField = ({
     min,
     max,
     defaultValue,
-    dataSetMetadata,
   });
 
   return (
@@ -761,20 +736,17 @@ export const ChartOptionCheckboxField = ({
   path,
   defaultValue = false,
   disabled = false,
-  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
     defaultValue,
-    dataSetMetadata,
   });
 
   return (
@@ -783,7 +755,7 @@ export const ChartOptionCheckboxField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
-    ></Checkbox>
+    />
   );
 };
 
@@ -796,7 +768,6 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   options,
   getValue,
   getKey,
-  dataSetMetadata,
   isOptional,
 }: {
   id: string;
@@ -807,7 +778,6 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   options: Option[];
   getValue?: (x: string) => ValueType | undefined;
   getKey?: (x: ValueType) => string;
-  dataSetMetadata: DataCubeMetadata;
   isOptional?: boolean;
 }) => {
   const fieldProps = useChartOptionSelectField({
@@ -815,7 +785,6 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     path,
     getValue,
     getKey,
-    dataSetMetadata,
   });
   const noneLabel = t({
     id: "controls.dimension.none",
@@ -857,20 +826,17 @@ export const ChartOptionSwitchField = ({
   path,
   defaultValue = false,
   disabled = false,
-  dataSetMetadata,
 }: {
   label: string;
   field: string | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
     defaultValue,
-    dataSetMetadata,
   });
 
   return (
@@ -879,7 +845,7 @@ export const ChartOptionSwitchField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
-    ></Switch>
+    />
   );
 };
 

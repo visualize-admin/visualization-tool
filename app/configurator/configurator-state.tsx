@@ -32,6 +32,7 @@ import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
   DataSource,
   GenericField,
   ImputationType,
@@ -64,6 +65,7 @@ import {
   isNumericalMeasure,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { client } from "@/graphql/client";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -71,6 +73,7 @@ import {
   DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import {
@@ -88,8 +91,14 @@ import { unreachableError } from "@/utils/unreachable";
 export const DEFAULT_PALETTE = "category10";
 
 export type ConfiguratorStateAction =
-  | { type: "INITIALIZED"; value: ConfiguratorState }
-  | { type: "STEP_NEXT"; dataSetMetadata: DataCubeMetadata }
+  | {
+      type: "INITIALIZED";
+      value: ConfiguratorState;
+    }
+  | {
+      type: "STEP_NEXT";
+      dataSetMetadata: DataCubeMetadata;
+    }
   | {
       type: "STEP_PREVIOUS";
       to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
@@ -104,7 +113,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_TYPE_CHANGED";
-      value: { chartType: ChartType; dataSetMetadata: DataCubeMetadata };
+      value: {
+        locale: Locale;
+        chartType: ChartType;
+      };
     }
   | {
       type: "ACTIVE_FIELD_CHANGED";
@@ -113,18 +125,18 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_FIELD_CHANGED";
       value: {
+        locale: Locale;
         field: string;
         componentIri: string;
-        dataSetMetadata: DataCubeMetadata;
         selectedValues?: $FixMe[];
       };
     }
   | {
       type: "CHART_OPTION_CHANGED";
       value: {
+        locale: Locale;
         path: string;
         field: string | null;
-        dataSetMetadata: DataCubeMetadata;
         value:
           | string
           | number
@@ -164,8 +176,8 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_FIELD_DELETED";
       value: {
+        locale: Locale;
         field: string;
-        dataSetMetadata: DataCubeMetadata;
       };
     }
   | {
@@ -275,6 +287,23 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
   activeField: undefined,
 };
 
+const getCachedCubeMetadataWithComponentValues = (
+  draft: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart,
+  locale: Locale
+) => {
+  const query = client.readQuery<
+    DataCubeMetadataWithComponentValuesQuery,
+    DataCubeMetadataWithComponentValuesQueryVariables
+  >(DataCubeMetadataWithComponentValuesDocument, {
+    iri: draft.dataSet,
+    locale,
+    sourceType: draft.dataSource.type,
+    sourceUrl: draft.dataSource.url,
+  });
+
+  return query?.data?.dataCubeByIri;
+};
+
 export const getFilterValue = (
   state: ConfiguratorState,
   dimensionIri: string
@@ -347,7 +376,7 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (chartConfig: ChartConfig, { dimensions }: DataCubeMetadata) => {
+  (chartConfig: ChartConfig, dimensions: DimensionMetadataFragment[]) => {
     const { chartType, fields, filters } = chartConfig;
 
     if (chartType === "table") {
@@ -517,7 +546,7 @@ const transitionStepNext = (
     case "SELECTING_DATASET":
       if (draft.dataSet) {
         const possibleChartTypes = getPossibleChartType({
-          meta: dataSetMetadata,
+          metadata: dataSetMetadata,
         });
 
         const chartConfig = deriveFiltersFromFields(
@@ -526,7 +555,7 @@ const transitionStepNext = (
             dimensions: dataSetMetadata.dimensions,
             measures: dataSetMetadata.measures,
           }),
-          dataSetMetadata
+          dataSetMetadata.dimensions
         );
 
         return {
@@ -708,16 +737,22 @@ const handleChartFieldChanged = (
   }
 
   const {
+    locale,
     field,
     componentIri,
-    dataSetMetadata,
     selectedValues: actionSelectedValues,
   } = action.value;
+
+  const metadata = getCachedCubeMetadataWithComponentValues(draft, locale);
+  const { dimensions = [], measures = [] } = metadata || {
+    dimensions: [],
+    measures: [],
+  };
+
   const f = get(draft.chartConfig.fields, field);
-  const component = [
-    ...dataSetMetadata.dimensions,
-    ...dataSetMetadata.measures,
-  ].find((dim) => dim.iri === componentIri);
+  const component = [...dimensions, ...measures].find(
+    (dim) => dim.iri === componentIri
+  );
   const selectedValues = actionSelectedValues
     ? actionSelectedValues
     : component?.values || [];
@@ -760,17 +795,17 @@ const handleChartFieldChanged = (
     } else if (isMapConfig(draft.chartConfig)) {
       if (field === "areaLayer") {
         draft.chartConfig.fields.areaLayer = getInitialAreaLayer({
-          component: dataSetMetadata.dimensions
+          component: dimensions
             .filter(isGeoShapesDimension)
             .find((d) => d.iri === componentIri)!,
-          measure: dataSetMetadata.measures[0],
+          measure: measures[0],
         });
       } else if (field === "symbolLayer") {
         draft.chartConfig.fields.symbolLayer = getInitialSymbolLayer({
-          component: dataSetMetadata.dimensions
+          component: dimensions
             .filter(isGeoDimension)
             .find((d) => d.iri === componentIri)!,
-          measure: dataSetMetadata.measures.filter(isNumericalMeasure)[0],
+          measure: measures.filter(isNumericalMeasure)[0],
         });
       }
     }
@@ -825,10 +860,125 @@ const handleChartFieldChanged = (
     }
   }
 
-  draft.chartConfig = deriveFiltersFromFields(
-    draft.chartConfig,
-    action.value.dataSetMetadata
-  );
+  draft.chartConfig = deriveFiltersFromFields(draft.chartConfig, dimensions);
+
+  return draft;
+};
+
+export const handleChartOptionChanged = (
+  draft: ConfiguratorState,
+  action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
+) => {
+  if (draft.state === "CONFIGURING_CHART") {
+    // Side effects of changing an option.
+    // Maybe they could be defined in UI encodings?
+    if (action.value.field) {
+      if (action.value.path === "color.scaleType") {
+        const interpolationTypePath = `chartConfig.fields.${action.value.field}.color.interpolationType`;
+        const nbClassPath = `chartConfig.fields.${action.value.field}.color.nbClass`;
+
+        if (action.value.value === "continuous") {
+          setWith(draft, interpolationTypePath, "linear", Object);
+          unset(draft, nbClassPath);
+        } else if (action.value.value === "discrete") {
+          setWith(draft, interpolationTypePath, "jenks", Object);
+          setWith(draft, nbClassPath, 3, Object);
+        }
+      } else if (action.value.path === "color.componentIri") {
+        const fieldIri = get(
+          draft,
+          `chartConfig.fields.${action.value.field}.componentIri`
+        );
+        const previousComponentIri = get(
+          draft,
+          `chartConfig.fields.${action.value.field}.color.componentIri`
+        ) as string;
+
+        const metadata = getCachedCubeMetadataWithComponentValues(
+          draft,
+          action.value.locale
+        );
+        const allComponents = metadata
+          ? [...metadata.dimensions, ...metadata.measures]
+          : [];
+        const component = allComponents.find(
+          (d) => d.iri === action.value.value
+        );
+
+        // Clear old filters when switching to a new component.
+        if (previousComponentIri !== fieldIri) {
+          unset(draft, `chartConfig.filters["${previousComponentIri}"]`);
+        }
+
+        if (!component) {
+          setWith(
+            draft,
+            `chartConfig.fields.${action.value.field}.color`,
+            DEFAULT_FIXED_COLOR_FIELD,
+            Object
+          );
+        } else {
+          const previousComponent = allComponents.find(
+            (d) => d.iri === previousComponentIri
+          );
+          const previousPalette = get(
+            draft,
+            `chartConfig.fields.${action.value.field}.color.palette`
+          );
+
+          if (
+            canDimensionBeMultiFiltered(component) ||
+            isOrdinalMeasure(component)
+          ) {
+            setWith(
+              draft,
+              `chartConfig.fields.${action.value.field}.color`,
+              {
+                type: "categorical",
+                componentIri: component.iri,
+                // TODO: Have proper categorical palettes here.
+                palette: previousPalette || "blues",
+                colorMapping: mapValueIrisToColor({
+                  palette: previousPalette || "blues",
+                  dimensionValues: component.values,
+                }),
+              },
+              Object
+            );
+          } else if (isNumericalMeasure(component)) {
+            if (
+              (previousComponent && !isNumericalMeasure(previousComponent)) ||
+              !previousComponent
+            ) {
+              const newField: NumericalColorField = {
+                type: "numerical",
+                componentIri: component.iri,
+                palette: previousPalette || "oranges",
+                scaleType: "continuous",
+                interpolationType: "linear",
+              };
+
+              setWith(
+                draft,
+                `chartConfig.fields.${action.value.field}.color`,
+                newField,
+                Object
+              );
+            }
+          }
+        }
+      }
+    }
+
+    setWith(
+      draft,
+      action.value.field === null
+        ? `chartConfig.${action.value.path}`
+        : `chartConfig.fields["${action.value.field}"].${action.value.path}`,
+      action.value.value,
+      Object
+    );
+  }
 
   return draft;
 };
@@ -886,23 +1036,29 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.state === "CONFIGURING_CHART" ||
         draft.state === "DESCRIBING_CHART"
       ) {
-        // setWith(draft, action.value.path, action.value.value, Object);
-        const { chartType, dataSetMetadata } = action.value;
-
-        const previousConfig = current(draft.chartConfig);
-        draft.chartConfig = getChartConfigAdjustedToChartType({
-          chartConfig: previousConfig,
-          newChartType: chartType,
-          dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures,
-        });
-        draft.activeField = undefined;
-
-        draft.chartConfig = deriveFiltersFromFields(
-          draft.chartConfig,
-          dataSetMetadata
+        const { locale, chartType } = action.value;
+        const metadata = getCachedCubeMetadataWithComponentValues(
+          draft,
+          locale
         );
+
+        if (metadata) {
+          const { dimensions, measures } = metadata;
+          const previousConfig = current(draft.chartConfig);
+          draft.chartConfig = getChartConfigAdjustedToChartType({
+            chartConfig: previousConfig,
+            newChartType: chartType,
+            dimensions,
+            measures,
+          });
+          draft.activeField = undefined;
+          draft.chartConfig = deriveFiltersFromFields(
+            draft.chartConfig,
+            metadata.dimensions
+          );
+        }
       }
+
       return draft;
 
     case "ACTIVE_FIELD_CHANGED":
@@ -920,122 +1076,22 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
+        const metadata = getCachedCubeMetadataWithComponentValues(
+          draft,
+          action.value.locale
+        );
+        const dimensions = metadata?.dimensions || [];
+
         draft.chartConfig = deriveFiltersFromFields(
           draft.chartConfig,
-          action.value.dataSetMetadata
+          dimensions
         );
       }
+
       return draft;
 
     case "CHART_OPTION_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
-        // Side effects of changing an option.
-        // Maybe they could be defined in UI encodings?
-        if (action.value.field) {
-          if (action.value.path === "color.scaleType") {
-            const interpolationTypePath = `chartConfig.fields.${action.value.field}.color.interpolationType`;
-            const nbClassPath = `chartConfig.fields.${action.value.field}.color.nbClass`;
-
-            if (action.value.value === "continuous") {
-              setWith(draft, interpolationTypePath, "linear", Object);
-              unset(draft, nbClassPath);
-            } else if (action.value.value === "discrete") {
-              setWith(draft, interpolationTypePath, "jenks", Object);
-              setWith(draft, nbClassPath, 3, Object);
-            }
-          } else if (action.value.path === "color.componentIri") {
-            const allComponents = [
-              ...action.value.dataSetMetadata.dimensions,
-              ...action.value.dataSetMetadata.measures,
-            ];
-            const component = allComponents.find(
-              (d) => d.iri === action.value.value
-            );
-
-            if (!component) {
-              setWith(
-                draft,
-                `chartConfig.fields.${action.value.field}.color`,
-                DEFAULT_FIXED_COLOR_FIELD,
-                Object
-              );
-            } else {
-              const previousComponentIri = get(
-                draft,
-                `chartConfig.fields.${action.value.field}.color.componentIri`
-              );
-              const previousComponent = allComponents.find(
-                (d) => d.iri === previousComponentIri
-              );
-              const previousPalette = get(
-                draft,
-                `chartConfig.fields.${action.value.field}.color.palette`
-              );
-              const fieldIri = get(
-                draft,
-                `chartConfig.fields.${action.value.field}.componentIri`
-              );
-
-              if (
-                canDimensionBeMultiFiltered(component) ||
-                isOrdinalMeasure(component)
-              ) {
-                setWith(
-                  draft,
-                  `chartConfig.fields.${action.value.field}.color`,
-                  {
-                    type: "categorical",
-                    componentIri: component.iri,
-                    // TODO: Have proper categorical palettes here.
-                    palette: previousPalette || "blues",
-                    colorMapping: mapValueIrisToColor({
-                      palette: previousPalette || "blues",
-                      dimensionValues: component.values,
-                    }),
-                  },
-                  Object
-                );
-
-                if (fieldIri === component.iri) {
-                  unset(draft, `chartConfig.filters["${component.iri}"]`);
-                }
-              } else if (isNumericalMeasure(component)) {
-                if (
-                  (previousComponent &&
-                    !isNumericalMeasure(previousComponent)) ||
-                  !previousComponent
-                ) {
-                  const newField: NumericalColorField = {
-                    type: "numerical",
-                    componentIri: component.iri,
-                    palette: previousPalette || "oranges",
-                    scaleType: "continuous",
-                    interpolationType: "linear",
-                  };
-
-                  setWith(
-                    draft,
-                    `chartConfig.fields.${action.value.field}.color`,
-                    newField,
-                    Object
-                  );
-                }
-              }
-            }
-          }
-        }
-
-        setWith(
-          draft,
-          action.value.field === null
-            ? `chartConfig.${action.value.path}`
-            : `chartConfig.fields["${action.value.field}"].${action.value.path}`,
-          action.value.value,
-          Object
-        );
-      }
-
-      return draft;
+      return handleChartOptionChanged(draft, action);
 
     case "CHART_PALETTE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
@@ -1112,9 +1168,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         draft.chartConfig = deriveFiltersFromFields(
           action.value.chartConfig,
-          action.value.dataSetMetadata
+          action.value.dataSetMetadata.dimensions
         );
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":

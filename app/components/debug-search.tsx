@@ -18,6 +18,7 @@ import React, {
 } from "react";
 
 import { DataCubeSearchFilter, useDataCubesQuery } from "@/graphql/query-hooks";
+import { RequestQueryMeta } from "@/graphql/query-meta";
 
 const territoryTheme = {
   name: "Territory theme",

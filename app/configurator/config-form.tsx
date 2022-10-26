@@ -24,15 +24,10 @@ import {
   DimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { DataCubeMetadata } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
 import { dfs } from "@/utils/dfs";
 import useEvent from "@/utils/use-event";
 
-// interface FieldProps {
-//   name: HTMLInputElement["name"]
-//   onChange: [];
-// }
 export type Option = {
   value: string | $FixMe;
   label: string | $FixMe;
@@ -68,10 +63,8 @@ const getLeaves = (tree: HierarchyValue[], limit?: number) => {
 
 export const useChartFieldField = ({
   field,
-  dataSetMetadata,
 }: {
   field: string;
-  dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
   const client = useClient();
@@ -104,8 +97,8 @@ export const useChartFieldField = ({
       dispatch({
         type: "CHART_FIELD_CHANGED",
         value: {
+          locale,
           field,
-          dataSetMetadata,
           componentIri: dimensionIri,
           selectedValues: leaves,
         },
@@ -114,8 +107,8 @@ export const useChartFieldField = ({
       dispatch({
         type: "CHART_FIELD_DELETED",
         value: {
+          locale,
           field,
-          dataSetMetadata,
         },
       });
     }
@@ -139,14 +132,13 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
   path,
   getValue,
   getKey,
-  dataSetMetadata,
 }: {
   field: string;
   path: string;
   getValue?: (key: string) => ValueType | undefined;
   getKey?: (value: ValueType) => string;
-  dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
@@ -155,14 +147,14 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           field,
           path,
-          dataSetMetadata,
           value: getValue ? getValue(value) : value,
         },
       });
     },
-    [dispatch, field, path, getValue, dataSetMetadata]
+    [locale, dispatch, field, path, getValue]
   );
 
   let value: ValueType | undefined;
@@ -209,15 +201,14 @@ export const useChartOptionSliderField = ({
   min,
   max,
   defaultValue,
-  dataSetMetadata,
 }: {
   field: string | null;
   path: string;
   min: number;
   max: number;
   defaultValue: number;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
@@ -228,9 +219,9 @@ export const useChartOptionSliderField = ({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           field,
           path,
-          dataSetMetadata,
           value: Math.max(min, Math.min(+value, max)),
         },
       });
@@ -253,26 +244,25 @@ export const useChartOptionRadioField = ({
   field,
   path,
   value,
-  dataSetMetadata,
 }: {
   field: string | null;
   path: string;
   value: string;
-  dataSetMetadata: DataCubeMetadata;
 }): FieldProps => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(() => {
     dispatch({
       type: "CHART_OPTION_CHANGED",
       value: {
+        locale,
         field,
         path,
-        dataSetMetadata,
         value,
       },
     });
-  }, [dispatch, field, path, value, dataSetMetadata]);
+  }, [locale, dispatch, field, path, value]);
   const stateValue =
     state.state === "CONFIGURING_CHART"
       ? getChartOptionField(state, field, path)
@@ -291,13 +281,12 @@ export const useChartOptionBooleanField = ({
   path,
   field,
   defaultValue = "",
-  dataSetMetadata,
 }: {
   path: string;
   field: string | null;
   defaultValue: boolean | string;
-  dataSetMetadata: DataCubeMetadata;
 }): FieldProps => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
@@ -305,14 +294,14 @@ export const useChartOptionBooleanField = ({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           path,
           field,
-          dataSetMetadata,
           value: e.currentTarget.checked,
         },
       });
     },
-    [dispatch, path, field, dataSetMetadata]
+    [locale, dispatch, path, field]
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
@@ -353,24 +342,18 @@ export const useActiveFieldField = ({
 };
 
 // Specific ------------------------------------------------------------------
-export const useChartType = ({
-  metadata,
-}: {
-  metadata: DataCubeMetadata | null | undefined;
-}): {
+export const useChartType = (): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
 } => {
+  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
   const onChange = useEvent((chartType: ChartType) => {
-    if (!metadata) {
-      return;
-    }
     dispatch({
       type: "CHART_TYPE_CHANGED",
       value: {
+        locale,
         chartType,
-        dataSetMetadata: metadata,
       },
     });
   });
