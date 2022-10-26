@@ -112,6 +112,7 @@ export const ChartTypeSelector = ({
   sx?: BoxProps["sx"];
 } & BoxProps) => {
   const locale = useLocale();
+  const { value: chartType, onChange: onChangeChartType } = useChartType();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: state.dataSet,
@@ -120,16 +121,13 @@ export const ChartTypeSelector = ({
       locale,
     },
   });
-  const { value: chartType, onChange: onChangeChartType } = useChartType({
-    metadata: data?.dataCubeByIri,
-  });
+  const metadata = data?.dataCubeByIri;
 
-  if (!data?.dataCubeByIri) {
+  if (!metadata) {
     return <ControlSectionSkeleton />;
   }
 
-  const metaData = data.dataCubeByIri;
-  const possibleChartTypes = getPossibleChartType({ meta: metaData });
+  const possibleChartTypes = getPossibleChartType({ metadata });
 
   return (
     <Box sx={sx} {...props}>

@@ -294,7 +294,6 @@ const EncodingOptionsPanel = ({
               label={getFieldLabelHint[encoding.field]}
               optional={encoding.optional}
               options={options}
-              dataSetMetadata={metaData}
             />
             {encoding.options && (
               <ChartFieldOptions
@@ -302,7 +301,6 @@ const EncodingOptionsPanel = ({
                 field={encoding.field}
                 encodingOptions={encoding.options}
                 chartType={chartType}
-                dataSetMetadata={metaData}
               />
             )}
             {optionsByField["color"]?.field === "color" &&
@@ -319,7 +317,7 @@ const EncodingOptionsPanel = ({
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" ? (
-        <ChartMapBaseLayerSettings state={state} dataSetMetadata={metaData} />
+        <ChartMapBaseLayerSettings state={state} />
       ) : null}
 
       {encoding.sorting && isDimensionSortable(component) && (
@@ -327,7 +325,6 @@ const EncodingOptionsPanel = ({
           state={state}
           field={field}
           encodingSortingOptions={encoding.sorting}
-          dataSetMetadata={metaData}
         />
       )}
 
@@ -365,7 +362,6 @@ const EncodingOptionsPanel = ({
               field={encoding.field}
               defaultValue={true}
               label={t({ id: "controls.section.show-standard-error" })}
-              dataSetMetadata={metaData}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -447,13 +443,11 @@ const ChartFieldOptions = ({
   chartType,
   encodingOptions,
   disabled = false,
-  dataSetMetadata,
 }: {
   field: string;
   chartType: ChartType;
   encodingOptions?: EncodingOption[];
   disabled?: boolean;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   return (
     <>
@@ -473,7 +467,6 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
-                dataSetMetadata={dataSetMetadata}
               />
               <ChartOptionRadioField
                 label={getFieldLabel("grouped")}
@@ -481,7 +474,6 @@ const ChartFieldOptions = ({
                 path="type"
                 value={"grouped"}
                 disabled={disabled}
-                dataSetMetadata={dataSetMetadata}
               />
             </Flex>
           </Box>
@@ -494,15 +486,14 @@ const ChartFieldSorting = ({
   state,
   field,
   encodingSortingOptions,
-  dataSetMetadata,
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
   field: string;
   encodingSortingOptions: EncodingSortingOption[];
-  dataSetMetadata: DataCubeMetadata;
   disabled?: boolean;
 }) => {
+  const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
 
   const getSortingTypeLabel = (type: SortingType) => {
@@ -533,14 +524,14 @@ const ChartFieldSorting = ({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           field,
           path: "sorting",
-          dataSetMetadata,
           value: { sortingType, sortingOrder },
         },
       });
     },
-    [dispatch, field, dataSetMetadata]
+    [locale, dispatch, field]
   );
 
   const activeSortingType = get(
@@ -660,7 +651,6 @@ const ChartFieldSize = ({
           path="measureIri"
           options={measuresOptions}
           isOptional={optional}
-          dataSetMetadata={dataSetMetadata}
         />
       </ControlSectionContent>
     </ControlSection>
@@ -739,7 +729,6 @@ const ChartFieldColorComponent = ({
           field={field}
           path="color.componentIri"
           options={measuresOptions}
-          dataSetMetadata={dataSetMetadata}
           isOptional={optional}
         />
 
@@ -752,7 +741,6 @@ const ChartFieldColorComponent = ({
               })}
               field={field}
               path="color.value"
-              dataSetMetadata={dataSetMetadata}
             />
             <ChartOptionSliderField
               field={field}
@@ -765,7 +753,6 @@ const ChartFieldColorComponent = ({
               max={100}
               step={10}
               defaultValue={80}
-              dataSetMetadata={dataSetMetadata}
             />
           </>
         ) : colorType === "categorical" ? (
@@ -785,7 +772,6 @@ const ChartFieldColorComponent = ({
               field={field}
               path="color.palette"
               nbClass={nbClass}
-              dataSetMetadata={dataSetMetadata}
             />
             <FieldSetLegend
               sx={{ mb: 1 }}
@@ -803,7 +789,6 @@ const ChartFieldColorComponent = ({
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                dataSetMetadata={dataSetMetadata}
               />
 
               {nbOptions >= 3 && (
@@ -815,7 +800,6 @@ const ChartFieldColorComponent = ({
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  dataSetMetadata={dataSetMetadata}
                 />
               )}
             </Flex>
@@ -855,7 +839,6 @@ const ChartFieldColorComponent = ({
                   value: "jenks",
                 },
               ]}
-              dataSetMetadata={dataSetMetadata}
             />
             <ChartOptionSelectField<number>
               id="number-of-colors"
@@ -867,7 +850,6 @@ const ChartFieldColorComponent = ({
               path="color.nbClass"
               options={nbColorOptions}
               getValue={(d) => +d}
-              dataSetMetadata={dataSetMetadata}
             />
           </Stack>
         ) : null}
@@ -963,12 +945,11 @@ const ChartImputationType = ({
 
 const ChartMapBaseLayerSettings = ({
   state,
-  dataSetMetadata,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  dataSetMetadata: DataCubeMetadata;
 }) => {
   const chartConfig = state.chartConfig as MapConfig;
+  const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
 
   useEffect(() => {
@@ -979,12 +960,12 @@ const ChartMapBaseLayerSettings = ({
         dispatch({
           type: "CHART_OPTION_CHANGED",
           value: {
+            locale,
             field: null,
             // FIXME: shouldn't be a field if not mapped
             // to a component
             path: "baseLayer.bbox",
             value: map.getBounds().toArray(),
-            dataSetMetadata,
           },
         });
       }
@@ -992,14 +973,14 @@ const ChartMapBaseLayerSettings = ({
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
+          locale,
           field: null,
           path: "baseLayer.bbox",
           value: undefined,
-          dataSetMetadata,
         },
       });
     }
-  }, [chartConfig.baseLayer.locked, dispatch, dataSetMetadata]);
+  }, [chartConfig.baseLayer.locked, dispatch, locale]);
 
   return (
     <ControlSection>
@@ -1014,7 +995,6 @@ const ChartMapBaseLayerSettings = ({
           })}
           field={null}
           path="baseLayer.show"
-          dataSetMetadata={dataSetMetadata}
         />
         <ChartOptionSwitchField
           label={t({
@@ -1023,7 +1003,6 @@ const ChartMapBaseLayerSettings = ({
           })}
           field={null}
           path="baseLayer.locked"
-          dataSetMetadata={dataSetMetadata}
         />
       </ControlSectionContent>
     </ControlSection>

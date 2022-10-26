@@ -403,7 +403,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
         measures: dataSetMetadata.measures,
       })
     );
-    deriveFiltersFromFields(newConfig, dataSetMetadata);
+    deriveFiltersFromFields(newConfig, dataSetMetadata.dimensions);
 
     return current(newConfig);
   };
