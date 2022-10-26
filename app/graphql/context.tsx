@@ -15,6 +15,8 @@ import {
 import { createGeoCoordinatesLoader } from "../rdf/query-geo-coordinates";
 import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
 
+import { RequestQueryMeta } from "./query-meta";
+
 const MAX_BATCH_SIZE = 500;
 const createLoaders = async (locale: string, sparqlClient: ParsingClient) => {
   return {

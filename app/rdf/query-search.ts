@@ -8,6 +8,7 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { truthy } from "@/domain/types";
+import { RequestQueryMeta } from "@/graphql/query-meta";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
 import * as ns from "@/rdf/namespace";
