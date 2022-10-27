@@ -27,7 +27,7 @@ export const DataSetPreview = ({
   dataSource: DataSource;
 }) => {
   const locale = useLocale();
-  const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
+  const [{ data: metadata, fetching, error }] = useDataCubePreviewQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -36,8 +36,9 @@ export const DataSetPreview = ({
     },
   });
 
-  if (metaData && metaData.dataCubeByIri) {
-    const { dataCubeByIri } = metaData;
+  if (metadata?.dataCubeByIri) {
+    const { dataCubeByIri } = metadata;
+
     return (
       <Flex
         sx={{
@@ -46,7 +47,7 @@ export const DataSetPreview = ({
           justifyContent: "space-between",
         }}
       >
-        {metaData.dataCubeByIri.publicationStatus ===
+        {dataCubeByIri.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
             <HintRed iconName="datasetError" iconSize={64}>
@@ -107,10 +108,9 @@ export const DataSetPreview = ({
           >
             <DataSetPreviewTable
               title={dataCubeByIri.title}
-              dataSetIri={dataCubeByIri.iri}
-              dataSource={dataSource}
               dimensions={dataCubeByIri.dimensions}
               measures={dataCubeByIri.measures}
+              observations={dataCubeByIri.observations.data}
             />
           </Box>
           <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
