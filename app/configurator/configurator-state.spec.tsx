@@ -18,6 +18,7 @@ import {
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
   getLocalStorageKey,
+  handleChartFieldChanged,
   handleChartOptionChanged,
   initChartStateFromChart,
   initChartStateFromCube,
@@ -39,6 +40,39 @@ const mockedApi = api as jest.Mocked<typeof api>;
 jest.mock("@/utils/chart-config/exchange", () => ({
   fetchChartConfig: jest.fn(),
 }));
+
+jest.mock("@/graphql/client", () => {
+  return {
+    client: {
+      readQuery: () => {
+        return {
+          data: {
+            dataCubeByIri: {
+              dimensions: [
+                {
+                  __typename: "GeoShapesDimension",
+                  iri: "newAreaLayerColorIri",
+                  values: [{ value: "orange", label: "orange" }],
+                },
+                {
+                  __typename: "GeoCoordinatesDimension",
+                  iri: "symbolLayerIri",
+                  values: [{ value: "x", label: "y" }],
+                },
+              ],
+              measures: [
+                {
+                  __typename: "NumericalMeasure",
+                  iri: "measure",
+                },
+              ],
+            },
+          },
+        };
+      },
+    },
+  };
+});
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -690,20 +724,53 @@ describe("colorMapping", () => {
   });
 });
 
-describe("handleChartOptionChanged", () => {
-  jest.mock("@/graphql/client", () => ({
-    readQuery: () => {
-      return {
-        dimensions: [
-          {
-            iri: "newAreaLayerColorIri",
-            values: [{ value: "orange", label: "orange" }],
+describe("handleChartFieldChanged", () => {
+  it("should not reset symbol layer when it's being updated", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSet: "mapDataset",
+      dataSource: {
+        type: "sparql",
+        url: "fakeUrl",
+      },
+      chartConfig: {
+        chartType: "map",
+        fields: {
+          symbolLayer: {
+            componentIri: "symbolLayerIri",
+            color: {
+              type: "categorical",
+              componentIri: "symbolLayerColorIri",
+              palette: "oranges",
+              colorMapping: {
+                red: "green",
+                green: "blue",
+                blue: "red",
+              },
+            },
           },
-        ],
-      };
-    },
-  }));
+        },
+        filters: {},
+      },
+    };
 
+    handleChartFieldChanged(
+      state as unknown as ConfiguratorStateConfiguringChart,
+      {
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          locale: "en",
+          field: "symbolLayer",
+          componentIri: "symbolLayerIri",
+        },
+      }
+    );
+
+    expect(state.chartConfig.fields.symbolLayer.color).toBeDefined();
+  });
+});
+
+describe("handleChartOptionChanged", () => {
   it("should reset previous color filters", () => {
     const state = {
       state: "CONFIGURING_CHART",
@@ -713,6 +780,7 @@ describe("handleChartOptionChanged", () => {
         url: "fakeUrl",
       },
       chartConfig: {
+        chartType: "map",
         fields: {
           areaLayer: {
             componentIri: "areaLayerIri",

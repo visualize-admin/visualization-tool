@@ -1,4 +1,6 @@
 import { t } from "@lingui/macro";
+import { CircularProgress, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
@@ -52,6 +54,15 @@ import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+
+const useStyles = makeStyles<Theme>((theme) => ({
+  loadingIndicator: {
+    color: theme.palette.grey[700],
+    display: "inline-block",
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(2),
+  },
+}));
 
 export const ControlTabField = ({
   component,
@@ -625,7 +636,8 @@ export const ChartFieldField = ({
   optional?: boolean;
   disabled?: boolean;
 }) => {
-  const fieldProps = useChartFieldField({ field });
+  const classes = useStyles();
+  const { fetching, ...fieldProps } = useChartFieldField({ field });
 
   const noneLabel = t({
     id: "controls.dimension.none",
@@ -641,8 +653,21 @@ export const ChartFieldField = ({
     <Select
       key={`select-${field}-dimension`}
       id={field}
-      label={optional ? `${label} (${optionalLabel})` : label}
-      disabled={disabled}
+      label={
+        <>
+          {optional ? (
+            <span>
+              {label} ({optionalLabel})
+            </span>
+          ) : (
+            <span>{label}</span>
+          )}
+          {fetching ? (
+            <CircularProgress size={12} className={classes.loadingIndicator} />
+          ) : null}
+        </>
+      }
+      disabled={disabled || fetching}
       options={
         optional
           ? [
