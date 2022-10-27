@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import * as React from "react";
 
+import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
@@ -26,6 +27,7 @@ export const DataSetPreview = ({
   dataSetIri: string;
   dataSource: DataSource;
 }) => {
+  const classes = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
   const [{ data: metadata, fetching, error }] = useDataCubePreviewQuery({
     variables: {
@@ -114,16 +116,18 @@ export const DataSetPreview = ({
             />
           </Box>
           <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
-            <DataDownloadMenu
-              dataSetIri={dataSetIri}
-              dataSource={dataSource}
-              title={dataCubeByIri.title}
-            />
+            <Flex className={classes.actions}>
+              <DataDownloadMenu
+                dataSetIri={dataSetIri}
+                dataSource={dataSource}
+                title={dataCubeByIri.title}
+              />
               {dataCubeByIri.observations.sparqlEditorUrl && (
                 <RunSparqlQuery
                   url={dataCubeByIri.observations.sparqlEditorUrl}
                 />
               )}
+            </Flex>
             <Typography
               variant="body2"
               sx={{ color: "grey.600", fontWeight: "light" }}

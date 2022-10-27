@@ -17,33 +17,35 @@ import { makeOpenDataLink } from "@/utils/opendata";
 
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  actions: {
-    marginTop: theme.spacing(2),
-    "--column-gap": "16px",
-    columnGap: "var(--column-gap)",
-    rowGap: 1,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-    overflow: "hidden",
+export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
+  (theme) => ({
+    actions: {
+      marginTop: ({ useMarginTop }) => (useMarginTop ? theme.spacing(2) : 0),
+      "--column-gap": "16px",
+      columnGap: "var(--column-gap)",
+      rowGap: 1,
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "wrap",
+      overflow: "hidden",
 
-    // Separator between flex elements, the trick to have them not displayed
-    // for each line leftmost element is to have them negatively positioned
-    // cut by the overflow hidden
-    "& > *:before": {
-      content: '" "',
-      display: "block",
-      height: "3px",
-      width: "3px ",
-      borderRadius: "3px",
-      position: "relative",
-      left: "calc(-1 * var(--column-gap) / 2)",
-      backgroundColor: theme.palette.grey[600],
+      // Separator between flex elements, the trick to have them not displayed
+      // for each line leftmost element is to have them negatively positioned
+      // cut by the overflow hidden
+      "& > *:before": {
+        content: '" "',
+        display: "block",
+        height: "3px",
+        width: "3px ",
+        borderRadius: "3px",
+        position: "relative",
+        left: "calc(-1 * var(--column-gap) / 2)",
+        backgroundColor: theme.palette.grey[600],
+      },
     },
-  },
-}));
+  })
+);
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -58,7 +60,7 @@ export const ChartFootnotes = ({
   configKey?: string;
   onToggleTableView: () => void;
 }) => {
-  const classes = useStyles();
+  const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
   const { state: isTablePreview, setStateRaw: setIsTablePreview } =
