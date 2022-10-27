@@ -34,7 +34,6 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useDimensionFormatters } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
@@ -281,9 +280,7 @@ const useTableState = ({
           return common as TextColumnMeta;
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimension = dimensions.find(
-            (d) => d.iri === iri
-          ) as DimensionMetadataFragment;
+          const dimension = allColumnsByIri[iri];
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal<string>();
