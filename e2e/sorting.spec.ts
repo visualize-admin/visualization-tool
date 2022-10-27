@@ -77,3 +77,55 @@ test("Segment sorting", async ({
     await actions.mui.selectOption("Automatic");
   }
 });
+
+test("Segment sorting with hierarchy", async ({
+  actions,
+  selectors,
+  screen,
+  within,
+  page,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1",
+    "Int"
+  );
+  await actions.editor.selectActiveField("Color");
+
+  // Wait for color section to be ready
+  await selectors.edition.controlSection("Color").waitFor();
+
+  await within(selectors.edition.controlSection("Color"))
+    .getByText("None")
+    .click();
+
+  await actions.mui.selectOption("production region");
+  await selectors.chart.loaded();
+
+  await selectors.edition.filtersLoaded();
+  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+
+  await within(await selectors.chart.colorLegend()).findByText(
+    "Southern Alps",
+    undefined,
+    { timeout: 5000 }
+  );
+
+  const legendItems = await selectors.chart.colorLegendItems();
+
+  expect(await legendItems.allInnerTexts()).toEqual([
+    "Jura",
+    "Plateau",
+    "Pre-Alps",
+    "Alps",
+    "Southern Alps",
+  ]);
+
+  await screen.getByText("Z → A").click();
+  expect(await legendItems.allInnerTexts()).toEqual([
+    "Southern Alps",
+    "Alps",
+    "Pre-Alps",
+    "Plateau",
+    "Jura",
+  ]);
+});

@@ -1,6 +1,7 @@
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import { ascending } from "d3";
 import React, { memo, useMemo } from "react";
 
 import {
@@ -231,8 +232,18 @@ const useLegendGroups = ({
     }
 
     const groups = Array.from(groupsMap.entries());
+    if (segmentField && "sorting" in segmentField) {
+      // Re-sort hierarchy groups against the label order that we have received
+      const labelOrder = Object.fromEntries(
+        labels.map((x, i) => [x, i] as const)
+      );
+      groups.forEach(([_groupName, entries]) => {
+        entries.sort((a, b) => ascending(labelOrder[a], labelOrder[b]));
+      });
+    }
+
     return groups;
-  }, [hierarchy, labels, title]);
+  }, [hierarchy, labels, segmentField, title]);
 
   return groups;
 };
