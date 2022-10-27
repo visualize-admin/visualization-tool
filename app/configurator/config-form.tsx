@@ -5,7 +5,10 @@ import React, {
   InputHTMLAttributes,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 import { useClient } from "urql";
 
@@ -65,16 +68,28 @@ export const useChartFieldField = ({
   field,
 }: {
   field: string;
-}): SelectProps => {
+}): SelectProps & {
+  fetching: boolean;
+} => {
+  const unmountedRef = useRef(false);
+  const [fetching, setFetching] = useState(false);
   const [state, dispatch] = useConfiguratorState();
   const client = useClient();
   const locale = useLocale();
+
+  useEffect(() => {
+    return () => {
+      unmountedRef.current = true;
+    };
+  }, []);
 
   const onChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (!state.dataSet) {
       return;
     }
+
     if (e.target.value !== FIELD_VALUE_NONE) {
+      setFetching(true);
       const dimensionIri = e.target.value as string;
       const { data: hierarchyData } = await client
         .query<DimensionHierarchyQuery, DimensionHierarchyQueryVariables>(
@@ -90,19 +105,20 @@ export const useChartFieldField = ({
         .toPromise();
       const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
         ?.hierarchy as HierarchyValue[];
-
-      // If the dimension has a hierarchy, we select leaves
       const leaves = getLeaves(tree);
 
-      dispatch({
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale,
-          field,
-          componentIri: dimensionIri,
-          selectedValues: leaves,
-        },
-      });
+      if (!unmountedRef.current) {
+        dispatch({
+          type: "CHART_FIELD_CHANGED",
+          value: {
+            locale,
+            field,
+            componentIri: dimensionIri,
+            selectedValues: leaves,
+          },
+        });
+        setFetching(false);
+      }
     } else {
       dispatch({
         type: "CHART_FIELD_DELETED",
@@ -124,6 +140,7 @@ export const useChartFieldField = ({
     name: field,
     value,
     onChange,
+    fetching,
   };
 };
 
