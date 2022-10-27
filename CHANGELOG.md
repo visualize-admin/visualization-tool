@@ -9,7 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet
+- Editor:
+  - Introduced a loading state when switching dimension iris and a dataset is using a hierarchy
+  - Added a "default" color palette which becomes available to be selected in a ColorPalette element when custom schema:color properties are defined for dimension values in the Cube Creator
+- Charts:
+  - (table): Fixed available column styles based on dimension types (so it's not possible anymore to select "bar" cell type for nominal measures)
+  - Run SPARQL button now points to a corrent data environment
+- Dataset Preview
+  - Added a "Run SPARQL query" button
 
 ## [3.11.0] - 2022-10-26
 
