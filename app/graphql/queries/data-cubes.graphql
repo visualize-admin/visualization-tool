@@ -87,32 +87,10 @@ query DataCubePreview(
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
     }
-  }
-}
-
-query DataCubePreviewObservations(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $dimensions: [String!]
-  $latest: Boolean
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      dimensions: $dimensions
-      limit: 10
-    ) {
+    observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
       sparql
+      sparqlEditorUrl
     }
   }
 }

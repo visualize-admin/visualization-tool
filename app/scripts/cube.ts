@@ -15,9 +15,9 @@ import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
-  DataCubePreviewObservationsDocument,
-  DataCubePreviewObservationsQuery,
-  DataCubePreviewObservationsQueryVariables,
+  DataCubePreviewDocument,
+  DataCubePreviewQuery,
+  DataCubePreviewQueryVariables,
 } from "../graphql/query-hooks";
 
 config();
@@ -130,16 +130,16 @@ const previewCube = async ({
   }
 
   const res = await client
-    .query<
-      DataCubePreviewObservationsQuery,
-      DataCubePreviewObservationsQueryVariables
-    >(DataCubePreviewObservationsDocument, {
-      iri,
-      sourceType,
-      sourceUrl,
-      locale,
-      latest,
-    })
+    .query<DataCubePreviewQuery, DataCubePreviewQueryVariables>(
+      DataCubePreviewDocument,
+      {
+        iri,
+        sourceType,
+        sourceUrl,
+        locale,
+        latest,
+      }
+    )
     .toPromise();
 
   if (res.error) {

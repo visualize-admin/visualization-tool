@@ -565,19 +565,7 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'OrdinalMeasure' }
       & DimensionMetadata_OrdinalMeasure_Fragment
-    )> }> };
-
-export type DataCubePreviewObservationsQueryVariables = Exact<{
-  iri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
-  latest?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type DataCubePreviewObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any>, sparql: string } }> };
+    )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type DataCubeMetadataQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1043,37 +1031,17 @@ export const DataCubePreviewDocument = gql`
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
     }
+    observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
+      data
+      sparql
+      sparqlEditorUrl
+    }
   }
 }
     ${DimensionMetadataFragmentDoc}`;
 
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
-};
-export const DataCubePreviewObservationsDocument = gql`
-    query DataCubePreviewObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $dimensions: [String!], $latest: Boolean) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    observations(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      dimensions: $dimensions
-      limit: 10
-    ) {
-      data
-      sparql
-    }
-  }
-}
-    `;
-
-export function useDataCubePreviewObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewObservationsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubePreviewObservationsQuery>({ query: DataCubePreviewObservationsDocument, ...options });
 };
 export const DataCubeMetadataDocument = gql`
     query DataCubeMetadata($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean) {
