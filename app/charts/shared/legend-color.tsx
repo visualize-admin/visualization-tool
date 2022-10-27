@@ -11,6 +11,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import {
+  DataSource,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
@@ -141,6 +142,33 @@ export const InteractiveLegendColor = () => {
   );
 };
 
+const useDimension = ({
+  dataset,
+  dataSource,
+  locale,
+  dimensionIri,
+}: {
+  dataset: string;
+  dataSource: DataSource;
+  locale: string;
+  dimensionIri?: string;
+}) => {
+  const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: dataset,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale: locale,
+    },
+    pause: !dimensionIri,
+  });
+  return useMemo(() => {
+    return cubeMetadata?.dataCubeByIri?.dimensions.find(
+      (d) => d.iri === dimensionIri
+    );
+  }, [cubeMetadata?.dataCubeByIri?.dimensions, dimensionIri]);
+};
+
 const useLegendGroups = ({
   labels,
   title,
@@ -160,27 +188,23 @@ const useLegendGroups = ({
   }
 
   const locale = useLocale();
+
   // FIXME: should color field also be included here?
-  const segment = isSegmentInConfig(configState.chartConfig)
+  const segmentField = isSegmentInConfig(configState.chartConfig)
     ? configState.chartConfig.fields.segment
     : null;
-  const { dataSet, dataSource } = configState;
-  const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale: locale,
-    },
+
+  const { dataSet: dataset, dataSource } = configState;
+  const segmentDimension = useDimension({
+    dataset,
+    dataSource: dataSource,
+    locale: locale,
+    dimensionIri: segmentField?.componentIri,
   });
-  const segmentDimension = useMemo(() => {
-    return cubeMetadata?.dataCubeByIri?.dimensions.find(
-      (d) => d.iri === segment?.componentIri
-    );
-  }, [cubeMetadata?.dataCubeByIri?.dimensions, segment?.componentIri]);
+
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
-      cubeIri: dataSet,
+      cubeIri: dataset,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -197,16 +221,15 @@ const useLegendGroups = ({
       groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
     } else {
       const labelSet = new Set(labels);
-      [
-        ...dfs(hierarchy, (node, { parents }) => {
-          if (!labelSet.has(node.label)) {
-            return;
-          }
-          groupsMap.set(parents, groupsMap.get(parents) || []);
-          groupsMap.get(parents)?.push(node.label);
-        }),
-      ];
+      dfs(hierarchy, (node, { parents }) => {
+        if (!labelSet.has(node.label)) {
+          return;
+        }
+        groupsMap.set(parents, groupsMap.get(parents) || []);
+        groupsMap.get(parents)?.push(node.label);
+      });
     }
+
     const groups = Array.from(groupsMap.entries());
     return groups;
   }, [hierarchy, labels, title]);
@@ -330,5 +353,9 @@ export const LegendItem = ({
   symbol: LegendSymbol;
 }) => {
   const classes = useItemStyles({ symbol, color });
-  return <Flex className={classes.legendItem}>{item}</Flex>;
+  return (
+    <Flex data-testid="legendItem" className={classes.legendItem}>
+      {item}
+    </Flex>
+  );
 };
