@@ -15,8 +15,8 @@ import {
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
-import { getSparqlEditorUrl } from "@/rdf/queries";
 import { RawGeoShape } from "@/rdf/query-geo-shapes";
+import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 const getSource = (dataSourceType: string) => {
   return dataSourceType === "sparql" ? RDF : SQL;
@@ -160,8 +160,20 @@ export const resolvers: Resolvers = {
     rawData: async ({ data: { observationsRaw } }) => observationsRaw,
     sparql: async ({ data: { query } }) =>
       query.replace(/\n+/g, " ").replace(/"/g, "'"),
-    sparqlEditorUrl: async ({ data: { query } }) =>
-      getSparqlEditorUrl({ query }),
+    sparqlEditorUrl: async (
+      { data: { query } },
+      {},
+      {},
+      { variableValues }
+    ) => {
+      return getSparqlEditorUrl({
+        query,
+        dataSource: {
+          type: variableValues.sourceType,
+          url: variableValues.sourceUrl,
+        },
+      });
+    },
   },
   Dimension: {
     __resolveType({ data: { dataKind, scaleType } }) {

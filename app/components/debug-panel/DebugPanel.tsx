@@ -11,7 +11,7 @@ import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { DataSource, useConfiguratorState } from "@/configurator";
-import { SPARQL_EDITOR } from "@/domain/env";
+import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
@@ -80,6 +80,9 @@ const CubeMetadata = ({
 
 const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
+  const sparqlEditorUrl = dataSourceToSparqlEditorUrl(
+    configuratorState.dataSource
+  );
 
   return (
     <>
@@ -107,13 +110,13 @@ const DebugConfigurator = () => {
         ) : (
           <Typography variant="body1">Please select a dataset first</Typography>
         )}
-        {SPARQL_EDITOR && (
+        {
           <Button
             component="a"
             color="primary"
             variant="text"
             size="small"
-            href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
+            href={`${sparqlEditorUrl}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
               #pragma join.hash off
               
@@ -125,7 +128,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
           >
             <Typography variant="body2">Cube Metadata Query</Typography>
           </Button>
-        )}
+        }
         {configuratorState.dataSet ? (
           <CubeMetadata
             datasetIri={configuratorState.dataSet}

@@ -22,7 +22,6 @@ import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
   useDataCubeObservationsQuery,
-  useDataCubePreviewObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -172,38 +171,25 @@ const BackgroundRow = ({ nCells }: { nCells: number }) => {
 
 export const DataSetPreviewTable = ({
   title,
-  dataSetIri,
-  dataSource,
   dimensions,
   measures,
+  observations,
 }: {
   title: string;
-  dataSetIri: string;
-  dataSource: DataSource;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
+  observations: Observation[];
 }) => {
-  const locale = useLocale();
-  const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      dimensions: null,
-    },
-  });
-
   const headers = useMemo(() => {
     return getSortedHeaders(dimensions, measures);
   }, [dimensions, measures]);
 
-  if (!fetching && data?.dataCubeByIri) {
+  if (observations) {
     return (
       <PreviewTable
         title={title}
         headers={headers}
-        observations={data.dataCubeByIri.observations.data}
+        observations={observations}
       />
     );
   } else {

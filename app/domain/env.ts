@@ -36,9 +36,6 @@ export const SPARQL_GEO_ENDPOINT =
   process.env.SPARQL_GEO_ENDPOINT ??
   "https://geo.ld.admin.ch/query";
 
-export const SPARQL_EDITOR =
-  clientEnv?.SPARQL_EDITOR ?? process.env.SPARQL_EDITOR;
-
 export const SQL_ENDPOINT =
   clientEnv?.SQL_ENDPOINT ?? process.env.SQL_ENDPOINT ?? "";
 

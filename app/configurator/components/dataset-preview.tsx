@@ -1,10 +1,12 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
 import * as React from "react";
 
-import { DataDownloadMenu } from "@/components/data-download";
+import { useFootnotesStyles } from "@/components/chart-footnotes";
+import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
@@ -13,6 +15,61 @@ import { DataSource } from "@/configurator/config-types";
 import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+
+const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
+  (theme) => ({
+    root: {
+      flexGrow: 1,
+      flexDirection: "column",
+      justifyContent: "space-between",
+    },
+    header: {
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: theme.spacing(6),
+    },
+    title: {
+      color: theme.palette.grey[800],
+    },
+    createChartButton: {
+      marginLeft: theme.spacing(6),
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+    },
+    paper: {
+      borderRadius: theme.spacing(4),
+      paddingLeft: theme.spacing(5),
+      paddingTop: theme.spacing(6),
+      paddingRight: theme.spacing(5),
+      paddingBottom: theme.spacing(6),
+    },
+    description: {
+      marginBottom: theme.spacing(4),
+      color: theme.palette.grey[600],
+    },
+    tableWrapper: {
+      flexGrow: 1,
+      width: "100%",
+      position: "relative",
+      overflowX: "auto",
+      marginTop: ({ descriptionPresent }) =>
+        descriptionPresent ? theme.spacing(6) : 0,
+    },
+    footnotesWrapper: {
+      marginTop: theme.spacing(4),
+      justifyContent: "space-between",
+    },
+    numberOfRows: {
+      color: theme.palette.grey[600],
+    },
+    loadingWrapper: {
+      flexDirection: "column",
+      justifyContent: "space-between",
+      flexGrow: 1,
+      padding: theme.spacing(5),
+    },
+  })
+);
 
 export interface Preview {
   iri: string;
@@ -26,8 +83,9 @@ export const DataSetPreview = ({
   dataSetIri: string;
   dataSource: DataSource;
 }) => {
+  const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
+  const [{ data: metadata, fetching, error }] = useDataCubePreviewQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -35,18 +93,16 @@ export const DataSetPreview = ({
       locale,
     },
   });
+  const classes = useStyles({
+    descriptionPresent: !!metadata?.dataCubeByIri?.description,
+  });
 
-  if (metaData && metaData.dataCubeByIri) {
-    const { dataCubeByIri } = metaData;
+  if (metadata?.dataCubeByIri) {
+    const { dataCubeByIri } = metadata;
+
     return (
-      <Flex
-        sx={{
-          flexGrow: 1,
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        {metaData.dataCubeByIri.publicationStatus ===
+      <Flex className={classes.root}>
+        {dataCubeByIri.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
             <HintRed iconName="datasetError" iconSize={64}>
@@ -58,70 +114,59 @@ export const DataSetPreview = ({
             </HintRed>
           </Box>
         )}
-        <Flex
-          sx={{ alignItems: "center", justifyContent: "space-between", mb: 6 }}
-        >
+        <Flex className={classes.header}>
           <Head>
             <title key="title">
               {dataCubeByIri.title} - visualize.admin.ch
             </title>
           </Head>
-          <Typography component="div" variant="h1" sx={{ color: "grey.800" }}>
+          <Typography className={classes.title} component="div" variant="h1">
             {dataCubeByIri.title}
           </Typography>
           <Link passHref href={`/create/new?cube=${dataCubeByIri.iri}`}>
-            <Button
-              component="a"
-              sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
-            >
+            <Button className={classes.createChartButton} component="a">
               <Trans id="browse.dataset.create-visualization">
                 Create visualization from dataset
               </Trans>
             </Button>
           </Link>
         </Flex>
-        <Paper
-          elevation={5}
-          sx={{
-            borderRadius: 8,
-            py: 6,
-            px: 5,
-          }}
-        >
-          <Typography
-            component="div"
-            variant="body2"
-            sx={{ mb: 4, color: "grey.600" }}
-          >
-            {dataCubeByIri.description}
-          </Typography>
+        <Paper className={classes.paper} elevation={5}>
+          {dataCubeByIri.description && (
+            <Typography
+              className={classes.description}
+              component="div"
+              variant="body2"
+            >
+              {dataCubeByIri.description}
+            </Typography>
+          )}
 
-          <Box
-            sx={{
-              flexGrow: 1,
-              width: "100%",
-              position: "relative",
-              overflowX: "auto",
-              mt: 6,
-            }}
-          >
+          <Box className={classes.tableWrapper}>
             <DataSetPreviewTable
               title={dataCubeByIri.title}
-              dataSetIri={dataCubeByIri.iri}
-              dataSource={dataSource}
               dimensions={dataCubeByIri.dimensions}
               measures={dataCubeByIri.measures}
+              observations={dataCubeByIri.observations.data}
             />
           </Box>
-          <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
-            <DataDownloadMenu
-              dataSetIri={dataSetIri}
-              dataSource={dataSource}
-              title={dataCubeByIri.title}
-            />
+          <Flex className={classes.footnotesWrapper}>
+            <Flex className={footnotesClasses.actions}>
+              <DataDownloadMenu
+                dataSetIri={dataSetIri}
+                dataSource={dataSource}
+                title={dataCubeByIri.title}
+              />
+              {dataCubeByIri.observations.sparqlEditorUrl && (
+                <RunSparqlQuery
+                  url={dataCubeByIri.observations.sparqlEditorUrl}
+                />
+              )}
+            </Flex>
             <Typography
+              className={classes.numberOfRows}
               variant="body2"
-              sx={{ color: "grey.600", fontWeight: "light" }}
+              sx={{ fontWeight: "light" }}
             >
               <Trans id="datatable.showing.first.rows">
                 Showing first 10 rows
@@ -134,27 +179,13 @@ export const DataSetPreview = ({
     );
   } else if (fetching) {
     return (
-      <Flex
-        sx={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-          p: 5,
-        }}
-      >
+      <Flex className={classes.loadingWrapper}>
         <Loading />
       </Flex>
     );
   } else {
     return (
-      <Flex
-        sx={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-          p: 5,
-        }}
-      >
+      <Flex className={classes.loadingWrapper}>
         <LoadingDataError message={error?.message} />
       </Flex>
     );

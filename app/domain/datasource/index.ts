@@ -92,3 +92,13 @@ export const isDataSourceChangeable = (pathname: string) => {
     return false;
   }
 };
+
+export const dataSourceToSparqlEditorUrl = (dataSource: DataSource): string => {
+  switch (dataSource.type) {
+    case "sparql":
+      const url = new URL(dataSource.url);
+      return `${url.origin}/sparql`;
+    case "sql":
+      throw new Error("Not implemented yet.");
+  }
+};
