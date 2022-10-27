@@ -182,7 +182,9 @@ ${(
             id="search-ex-2"
             label="Tier"
             value="Affe"
-            onReset={() => alert("reset search")}
+            InputProps={{
+              onReset: () => alert("reset search"),
+            }}
           />
         </BrowseStateProvider>
       </ReactSpecimen>

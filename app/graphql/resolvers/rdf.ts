@@ -14,7 +14,6 @@ import {
   QueryResolvers,
   Resolvers,
 } from "@/graphql/resolver-types";
-import { ResolvedDataCube } from "@/graphql/shared-types";
 import { parseLocaleString } from "@/locales/locales";
 import { createSource } from "@/rdf/create-source";
 import {
@@ -33,7 +32,37 @@ import {
 } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
-import { searchCubes } from "@/rdf/query-search";
+import { SearchResult, searchCubes } from "@/rdf/query-search";
+
+const sortResults = (
+  results: SearchResult[],
+  order: DataCubeResultOrder | undefined | null,
+  locale: string | undefined | null
+): SearchResult[] => {
+  const getCube = (r: SearchResult) => r.dataCube.data;
+  switch (order) {
+    case DataCubeResultOrder.TitleAsc:
+      results.sort((a, b) =>
+        getCube(a).title.localeCompare(getCube(b).title, locale ?? undefined)
+      );
+      break;
+    case DataCubeResultOrder.CreatedDesc:
+    case undefined:
+    case null:
+      results.sort((a, b) => {
+        const ra = getCube(a).datePublished || "0";
+        const rb = getCube(b).datePublished || "0";
+        return descending(ra, rb);
+      });
+      break;
+    case DataCubeResultOrder.Score:
+      break;
+    default:
+      const exhaustCheck = order;
+      return exhaustCheck;
+  }
+  return results;
+};
 
 export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   _,
@@ -42,20 +71,6 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   info
 ) => {
   const { sparqlClient, sparqlClientStream } = await setup(info);
-  const sortResults = <T extends unknown[]>(
-    results: T,
-    getter: (d: T[number]) => ResolvedDataCube["data"]
-  ) => {
-    if (order === DataCubeResultOrder.TitleAsc) {
-      results.sort((a: any, b: any) =>
-        getter(a).title.localeCompare(getter(b).title, locale ?? undefined)
-      );
-    } else if (order === DataCubeResultOrder.CreatedDesc) {
-      results.sort((a: any, b: any) =>
-        descending(getter(a).datePublished, getter(b).datePublished)
-      );
-    }
-  };
 
   const { candidates, meta } = await searchCubes({
     locale,
@@ -70,7 +85,7 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     queries.push(query);
   }
 
-  sortResults(candidates, (x) => x.dataCube.data);
+  sortResults(candidates, order, locale);
   return candidates;
 };
 

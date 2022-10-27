@@ -22,6 +22,9 @@ export const createActions = ({
   selectors,
   within,
 }: TestContext & { selectors: Selectors }) => ({
+  search: {
+    clear: async () => await screen.getByTestId("clearSearch").click(),
+  },
   datasetPreview: {
     load: async (iri: string, dataSource: "Int" | "Prod") => {
       await page.goto(
