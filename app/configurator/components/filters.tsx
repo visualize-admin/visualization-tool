@@ -33,6 +33,7 @@ import React, {
   useState,
 } from "react";
 
+import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
@@ -396,9 +397,9 @@ const MultiFilterContent = ({
     );
   }, [colorConfigPath, config, dimensionIri, colorComponent]);
 
-  const hasDefaultColors = useMemo(() => {
-    return colorComponent?.values?.[0]?.color !== undefined;
-  }, [colorComponent?.values]);
+  const hasColors = useMemo(() => {
+    return hasDimensionColors(colorComponent);
+  }, [colorComponent]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -438,7 +439,7 @@ const MultiFilterContent = ({
               Selected filters
             </Trans>
             {hasColorMapping ? (
-              hasDefaultColors ? (
+              hasColors ? (
                 <Tooltip
                   title={
                     <Trans id="controls.filters.select.reset-colors">

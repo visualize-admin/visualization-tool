@@ -211,7 +211,9 @@ export const mapValueIrisToColor = ({
 
   const paletteValues = getPalette(palette);
   const colors = dimensionValues.map(
-    (d, i) => d.color || paletteValues[i % paletteValues.length]
+    (d, i) =>
+      (palette === "dimension" && d.color) ||
+      paletteValues[i % paletteValues.length]
   );
   const colorScale = scaleOrdinal<string, string>()
     .domain(dimensionValues.map((d) => `${d.value}`))

@@ -689,7 +689,7 @@ describe("colorMapping", () => {
             color: {
               type: "categorical",
               componentIri: "areaLayerColorIri",
-              palette: "oranges",
+              palette: "dimension",
               colorMapping: {
                 red: "green",
                 green: "blue",
@@ -787,7 +787,7 @@ describe("handleChartOptionChanged", () => {
             color: {
               type: "categorical",
               componentIri: "areaLayerColorIri",
-              palette: "oranges",
+              palette: "dimension",
               colorMapping: {
                 red: "green",
                 green: "blue",

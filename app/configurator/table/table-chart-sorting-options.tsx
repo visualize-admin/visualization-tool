@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { ascending } from "d3";
 import React, { ChangeEvent, useCallback } from "react";
 import {
   DragDropContext,
@@ -215,34 +216,38 @@ const AddTableSortingOption = ({
       }),
       disabled: true,
     },
-    ...columns.flatMap((c) => {
-      if (
-        chartConfig.sorting.some(
-          ({ componentIri }) => componentIri === c.componentIri
-        )
-      ) {
-        return [];
-      }
+    ...columns
+      .flatMap((c) => {
+        if (
+          chartConfig.sorting.some(
+            ({ componentIri }) => componentIri === c.componentIri
+          )
+        ) {
+          return [];
+        }
 
-      const component =
-        metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-        metaData.measures.find(({ iri }) => iri === c.componentIri);
+        const component =
+          metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+          metaData.measures.find(({ iri }) => iri === c.componentIri);
 
-      return component
-        ? [
-            {
-              value: component.iri,
-              label: component.label,
-            },
-          ]
-        : [];
-    }),
+        return component
+          ? [
+              {
+                value: component.iri,
+                label: component.label,
+              },
+            ]
+          : [];
+      })
+      .sort((a, b) => ascending(a.label, b.label)),
   ];
+
   return (
     <Select
       id="add-tablesorting"
       value="-"
       options={options}
+      sortOptions={false}
       label={t({
         id: "controls.sorting.addDimension",
         message: `Add dimension`,

@@ -38,11 +38,12 @@ import {
   updateIsGroup,
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
-import { canDimensionBeMultiFiltered } from "@/domain/data";
+import { canDimensionBeMultiFiltered, isNumericalMeasure } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import {
   getDefaultCategoricalPalette,
+  getDefaultCategoricalPaletteName,
   getDefaultDivergingSteppedPalette,
 } from "@/palettes";
 
@@ -170,34 +171,31 @@ export const TableColumnOptions = ({
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];
 
-  const columnStyleOptions =
-    component.__typename === "NominalDimension" ||
-    component.__typename === "OrdinalDimension" ||
-    component.__typename === "TemporalDimension"
-      ? [
-          {
-            value: "text",
-            label: t({ id: "columnStyle.text", message: `Text` }),
-          },
-          {
-            value: "category",
-            label: t({ id: "columnStyle.categories", message: `Categories` }),
-          },
-        ]
-      : [
-          {
-            value: "text",
-            label: t({ id: "columnStyle.text", message: `Text` }),
-          },
-          {
-            value: "heatmap",
-            label: t({ id: "columnStyle.heatmap", message: `Heat Map` }),
-          },
-          {
-            value: "bar",
-            label: t({ id: "columnStyle.bar", message: `Bar Chart` }),
-          },
-        ];
+  const columnStyleOptions = isNumericalMeasure(component)
+    ? [
+        {
+          value: "text",
+          label: t({ id: "columnStyle.text", message: `Text` }),
+        },
+        {
+          value: "heatmap",
+          label: t({ id: "columnStyle.heatmap", message: `Heat Map` }),
+        },
+        {
+          value: "bar",
+          label: t({ id: "columnStyle.bar", message: `Bar Chart` }),
+        },
+      ]
+    : [
+        {
+          value: "text",
+          label: t({ id: "columnStyle.text", message: `Text` }),
+        },
+        {
+          value: "category",
+          label: t({ id: "columnStyle.categories", message: `Categories` }),
+        },
+      ];
   return (
     <div
       key={`control-panel-table-column-${activeField}`}
@@ -259,12 +257,14 @@ export const TableColumnOptions = ({
                       columnColor: "#fff",
                     };
                   case "category":
+                    const palette = getDefaultCategoricalPaletteName(component);
+
                     return {
                       type: "category",
                       textStyle: "regular",
-                      palette: getDefaultCategoricalPalette().value,
+                      palette,
                       colorMapping: mapValueIrisToColor({
-                        palette: getDefaultCategoricalPalette().value,
+                        palette,
                         dimensionValues: (
                           component as DimensionMetadataFragment
                         )?.values,
@@ -419,7 +419,7 @@ const ColumnStyleSubOptions = ({
         <>
           <ColorPalette
             field={activeField}
-            colorConfigPath={"columnStyle"}
+            colorConfigPath="columnStyle"
             component={component}
           />
         </>
@@ -427,7 +427,7 @@ const ColumnStyleSubOptions = ({
         <>
           <ColorPalette
             field={activeField}
-            colorConfigPath={"columnStyle"}
+            colorConfigPath="columnStyle"
             component={component}
           />
         </>

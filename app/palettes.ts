@@ -33,15 +33,43 @@ import {
   schemeTableau10,
 } from "d3";
 
+import { hasDimensionColors } from "./charts/shared/colors";
 import {
   DivergingPaletteType,
   SequentialPaletteType,
 } from "./configurator/config-types";
+import { DimensionMetadataFragment } from "./graphql/query-hooks";
 
 // Colors
 
-export const getPalette = (palette?: string): ReadonlyArray<string> => {
+export const getDefaultCategoricalPaletteName = (
+  d: DimensionMetadataFragment
+): string => {
+  const hasColors = hasDimensionColors(d);
+  return hasColors ? "dimension" : DEFAULT_CATEGORICAL_PALETTE_NAME;
+};
+
+export const getDefaultCategoricalPalette = (
+  colors?: string[]
+): CategoricalPalette => {
+  if (colors) {
+    return {
+      label: "default",
+      value: "dimension",
+      colors: colors.slice(0, 10),
+    };
+  } else {
+    return categoricalPalettes[0];
+  }
+};
+
+export const getPalette = (
+  palette?: string,
+  colors?: string[]
+): ReadonlyArray<string> => {
   switch (palette) {
+    case "dimension":
+      return getDefaultCategoricalPalette(colors).colors;
     case "accent":
       return schemeAccent;
     case "category10":
@@ -67,6 +95,30 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
       return schemeCategory10;
   }
 };
+
+type CategoricalPalette = {
+  label: string;
+  value: string;
+  colors: ReadonlyArray<string>;
+};
+
+export const categoricalPalettes: Array<CategoricalPalette> = [
+  {
+    label: "category10",
+    value: "category10",
+    colors: getPalette("category10"),
+  },
+  { label: "accent", value: "accent", colors: getPalette("accent") },
+  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
+  { label: "paired", value: "paired", colors: getPalette("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
+  { label: "set1", value: "set1", colors: getPalette("set1") },
+  { label: "set2", value: "set2", colors: getPalette("set2") },
+  { label: "set3", value: "set3", colors: getPalette("set3") },
+];
+
+export const DEFAULT_CATEGORICAL_PALETTE_NAME = categoricalPalettes[0].value;
 
 export const getSingleHueSequentialPalette = ({
   nbClass = 5,
@@ -101,28 +153,6 @@ export const getSingleHueSequentialPalette = ({
       return schemeOranges[nbClass];
   }
 };
-
-export const categoricalPalettes: Array<{
-  label: string;
-  value: string;
-  colors: ReadonlyArray<string>;
-}> = [
-  {
-    label: "category10",
-    value: "category10",
-    colors: getPalette("category10"),
-  },
-  { label: "accent", value: "accent", colors: getPalette("accent") },
-  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
-  { label: "paired", value: "paired", colors: getPalette("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
-  { label: "set1", value: "set1", colors: getPalette("set1") },
-  { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") },
-];
-
-export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
 
 export type Palette<T> = {
   label: string;
