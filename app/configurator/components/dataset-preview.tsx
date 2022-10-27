@@ -4,7 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import * as React from "react";
 
-import { DataDownloadMenu } from "@/components/data-download";
+import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
@@ -119,6 +119,11 @@ export const DataSetPreview = ({
               dataSource={dataSource}
               title={dataCubeByIri.title}
             />
+              {dataCubeByIri.observations.sparqlEditorUrl && (
+                <RunSparqlQuery
+                  url={dataCubeByIri.observations.sparqlEditorUrl}
+                />
+              )}
             <Typography
               variant="body2"
               sx={{ color: "grey.600", fontWeight: "light" }}
