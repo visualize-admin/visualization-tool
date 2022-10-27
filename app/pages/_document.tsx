@@ -7,6 +7,7 @@ class MyDocument extends Document {
     return (
       <Html data-app-version={`${process.env.NEXT_PUBLIC_VERSION}`}>
         <Head>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/api/client-env"></script>
           {GA_TRACKING_ID && (
             <>
@@ -24,7 +25,7 @@ class MyDocument extends Document {
         </Head>
         <body>
           <Main />
-          <script noModule src="/static/ie-check.js"></script>
+          <script noModule src="/static/ie-check.js" defer></script>
           <NextScript />
         </body>
       </Html>
