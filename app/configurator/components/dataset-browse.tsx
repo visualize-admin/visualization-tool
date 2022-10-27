@@ -242,19 +242,21 @@ export const useBrowseState = () => {
     DataCubeResultOrder.Score
   );
 
+  console.log({ order });
+
   return useMemo(
     () => ({
       includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
-        setParams({ search: "", order: previousOrderRef.current });
+        setParams({ search: "", order: DataCubeResultOrder.CreatedDesc });
       },
       onSubmitSearch: (newSearch: string) => {
         setParams({
           search: newSearch,
           order:
             newSearch === ""
-              ? DataCubeResultOrder.TitleAsc
+              ? DataCubeResultOrder.CreatedDesc
               : previousOrderRef.current,
         });
       },
@@ -330,9 +332,11 @@ export const SearchDatasetBox = ({
     onReset,
     includeDrafts,
     setIncludeDrafts,
-    order,
+    order: stateOrder,
     onSetOrder,
   } = browseState;
+
+  const order = stateOrder || DataCubeResultOrder.CreatedDesc;
   const options = [
     {
       value: DataCubeResultOrder.Score,
@@ -384,10 +388,15 @@ export const SearchDatasetBox = ({
           id="datasetSearch"
           label={searchLabel}
           defaultValue={search || ""}
-          onKeyPress={handleKeyPress}
-          onReset={onReset}
+          InputProps={{
+            inputProps: {
+              "data-testid": "datasetSearch",
+            },
+            onKeyPress: handleKeyPress,
+            onReset: onReset,
+            onFocus: () => setShowDraftCheckbox(true),
+          }}
           placeholder={placeholderLabel}
-          onFocus={() => setShowDraftCheckbox(true)}
           sx={{ flexGrow: 1 }}
         />
       </Box>
@@ -442,6 +451,7 @@ export const SearchDatasetBox = ({
             id="datasetSort"
             smaller={true}
             value={order}
+            data-testid="datasetSort"
             options={isSearching ? options : options.slice(1)}
             onChange={(e) => {
               onSetOrder(e.target.value as DataCubeResultOrder);

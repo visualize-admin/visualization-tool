@@ -5,6 +5,7 @@ import {
   BoxProps,
   ButtonBase,
   Checkbox as MUICheckbox,
+  InputProps,
   FormControlLabel,
   Input as MUIInput,
   Radio as MUIRadio,
@@ -340,6 +341,7 @@ export const MinimalisticSelect = ({
   onChange,
   smaller = false,
   disabled,
+  ...props
 }: {
   id: string;
   options: Option[];
@@ -379,6 +381,7 @@ export const MinimalisticSelect = ({
       onChange={onChange}
       value={value}
       disabled={disabled}
+      {...props}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
@@ -509,32 +512,30 @@ export const SearchField = ({
   value,
   defaultValue,
   placeholder,
-  onKeyPress,
-  onReset,
-  onFocus,
-  onBlur,
   sx,
   inputRef,
+  InputProps,
 }: {
   id: string;
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: string;
   placeholder?: string;
-  onKeyPress?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
-  onReset?: () => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
+  InputProps?: InputProps;
   inputRef?: React.RefObject<HTMLInputElement>;
   sx?: BoxProps["sx"];
 } & FieldProps) => {
   const { search } = useBrowseContext();
-  const handleReset = useCallback(() => {
-    if (inputRef?.current) {
-      inputRef.current.value = "";
-    }
-    onReset?.();
-  }, [inputRef, onReset]);
+  const onReset = InputProps?.onReset;
+  const handleReset = useCallback(
+    (ev) => {
+      if (inputRef?.current) {
+        inputRef.current.value = "";
+      }
+      onReset?.(ev);
+    },
+    [inputRef, onReset]
+  );
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
@@ -549,16 +550,18 @@ export const SearchField = ({
         id={id}
         value={value}
         defaultValue={defaultValue}
-        onKeyPress={onKeyPress}
+        {...InputProps}
         placeholder={placeholder}
-        onFocus={onFocus}
-        onBlur={onBlur}
         autoComplete="off"
         inputRef={inputRef}
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
-            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={handleReset}>
+            <ButtonBase
+              sx={{ p: 0, cursor: "pointer" }}
+              onClick={handleReset}
+              data-testid="clearSearch"
+            >
               <VisuallyHidden>
                 <Trans id="controls.search.clear">Clear search field</Trans>
               </VisuallyHidden>

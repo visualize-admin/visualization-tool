@@ -1,19 +1,22 @@
 import { within } from "@playwright-testing-library/test";
+import { Locator } from "@playwright/test";
 
 import { test, expect } from "./common";
 
+const getSelectValue = async (locator: Locator) => {
+  return locator.evaluate((ev) => (ev as HTMLSelectElement).value);
+};
+
 test("should be possible to open a search URL, and search state should be recovered", async ({
   page,
-  screen,
   selectors,
 }) => {
-  const ctx = { page, screen };
-
   test.slow();
 
-  page.goto(
+  await page.goto(
     `/en/browse?includeDrafts=true&order=SCORE&search=category&dataSource=Int`
   );
+  await selectors.search.resultsCount();
 
   expect(await selectors.search.searchInput().getAttribute("value")).toEqual(
     "category"
@@ -54,4 +57,59 @@ test("search results count coherence", async ({ page, screen, selectors }) => {
 
     await page.locator(`:text("${count} results")`).waitFor({ timeout: 10000 });
   }
+});
+
+test("sort order", async ({ page, selectors, screen, actions }) => {
+  await page.goto("/en/browse?dataSource=Int");
+  const resultCount = await selectors.search.resultsCount();
+  const text = await resultCount.textContent();
+  const select = selectors.search.datasetSort().locator("select");
+
+  expect(await getSelectValue(select)).toBe("CREATED_DESC");
+
+  const searchInput = screen.getAllByPlaceholderText(
+    "Name, description, organization, theme, keyword"
+  );
+
+  // Search something, order should be score
+  await searchInput.type("NFI");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("SCORE");
+
+  // Clear via input
+  await searchInput.selectText();
+  await page.keyboard.press("Delete");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("CREATED_DESC");
+
+  // Search again
+  await searchInput.type("NFI");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("SCORE");
+
+  // Clear via button
+  await actions.search.clear();
+  expect(await getSelectValue(select)).toBe("CREATED_DESC");
+  expect(await searchInput.getAttribute("value")).toEqual("");
+
+  // Search again
+  await searchInput.type("NFI");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("SCORE");
+
+  // Select another order, clear, then search
+  await select.selectOption("TITLE_ASC");
+  await actions.search.clear();
+  await searchInput.type("NFI");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("TITLE_ASC");
+
+  // Select another order, clear, then search, order should be back
+  // to previous order
+  await select.selectOption("SCORE");
+  await actions.search.clear();
+  expect(await getSelectValue(select)).toBe("CREATED_DESC");
+  await searchInput.type("NFI");
+  await page.keyboard.press("Enter");
+  expect(await getSelectValue(select)).toBe("SCORE");
 });

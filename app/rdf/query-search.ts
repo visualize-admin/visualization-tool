@@ -8,6 +8,7 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { truthy } from "@/domain/types";
+import { Awaited } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
@@ -273,3 +274,7 @@ export const searchCubes = async ({
     },
   };
 };
+
+export type SearchResult = Awaited<
+  ReturnType<typeof searchCubes>
+>["candidates"][0];

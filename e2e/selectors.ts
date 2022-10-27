@@ -12,8 +12,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       options: () => page.locator('li[role="option"]'),
     },
     search: {
-      searchInput: () => page.locator("#datasetSearch"),
+      searchInput: () => screen.getByTestId("datasetSearch"),
       draftsCheckbox: () => page.locator("#dataset-include-drafts"),
+      datasetSort: () => screen.getByTestId("datasetSort"),
       navItem: () => screen.findByTestId("navItem"),
       navChip: () => screen.findByTestId("navChip"),
       resultsCount: () =>
