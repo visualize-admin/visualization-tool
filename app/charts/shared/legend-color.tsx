@@ -192,20 +192,22 @@ const useLegendGroups = ({
     hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
   const groups = useMemo(() => {
+    const groupsMap = new Map<HierarchyValue[], string[]>();
     if (!hierarchy) {
-      return new Map([[title ? [{ label: title }] : [], labels]]);
+      groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
+    } else {
+      const labelSet = new Set(labels);
+      [
+        ...dfs(hierarchy, (node, { parents }) => {
+          if (!labelSet.has(node.label)) {
+            return;
+          }
+          groupsMap.set(parents, groupsMap.get(parents) || []);
+          groupsMap.get(parents)?.push(node.label);
+        }),
+      ];
     }
-    const labelSet = new Set(labels);
-    const groups = new Map<HierarchyValue[], string[]>();
-    [
-      ...dfs(hierarchy, (node, { parents }) => {
-        if (!labelSet.has(node.label)) {
-          return;
-        }
-        groups.set(parents, groups.get(parents) || []);
-        groups.get(parents)?.push(node.label);
-      }),
-    ];
+    const groups = Array.from(groupsMap.entries());
     return groups;
   }, [hierarchy, labels, title]);
 
@@ -276,16 +278,16 @@ const LegendColorContent = ({
   symbol: LegendSymbol;
 }) => {
   const classes = useStyles();
-  const groupList = Array.from(groups.entries());
+
   return (
     <Flex
       className={clsx(
         classes.legendContainer,
-        groupList.length === 1 ? classes.legendContainerNoGroups : undefined
+        groups.length === 1 ? classes.legendContainerNoGroups : undefined
       )}
     >
       {groups
-        ? groupList.map(([g, colorValues]) => {
+        ? groups.map(([g, colorValues]) => {
             const headerLabelsArray = g.map((n) => n.label);
 
             return (
