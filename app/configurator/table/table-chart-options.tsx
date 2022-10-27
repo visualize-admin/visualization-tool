@@ -43,6 +43,7 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import {
   getDefaultCategoricalPalette,
+  getDefaultCategoricalPaletteName,
   getDefaultDivergingSteppedPalette,
 } from "@/palettes";
 
@@ -256,12 +257,14 @@ export const TableColumnOptions = ({
                       columnColor: "#fff",
                     };
                   case "category":
+                    const palette = getDefaultCategoricalPaletteName(component);
+
                     return {
                       type: "category",
                       textStyle: "regular",
-                      palette: getDefaultCategoricalPalette().value,
+                      palette,
                       colorMapping: mapValueIrisToColor({
-                        palette: getDefaultCategoricalPalette().value,
+                        palette,
                         dimensionValues: (
                           component as DimensionMetadataFragment
                         )?.values,
@@ -416,7 +419,7 @@ const ColumnStyleSubOptions = ({
         <>
           <ColorPalette
             field={activeField}
-            colorConfigPath={"columnStyle"}
+            colorConfigPath="columnStyle"
             component={component}
           />
         </>
@@ -424,7 +427,7 @@ const ColumnStyleSubOptions = ({
         <>
           <ColorPalette
             field={activeField}
-            colorConfigPath={"columnStyle"}
+            colorConfigPath="columnStyle"
             component={component}
           />
         </>

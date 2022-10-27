@@ -12,19 +12,21 @@ import { makeStyles } from "@mui/styles";
 import get from "lodash/get";
 import { useCallback } from "react";
 
+import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import {
   ConfiguratorStateConfiguringChart,
   useConfiguratorState,
-  DEFAULT_PALETTE,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { isNumericalMeasure } from "@/domain/data";
+import { DimensionValue, isNumericalMeasure } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   categoricalPalettes,
+  DEFAULT_CATEGORICAL_PALETTE_NAME,
   divergingSteppedPalettes,
+  getDefaultCategoricalPalette,
   getPalette,
 } from "@/palettes";
 import useEvent from "@/utils/use-event";
@@ -58,9 +60,20 @@ export const ColorPalette = ({
 }: Props) => {
   const [state, dispatch] = useConfiguratorState();
   const classes = useStyles();
+  const hasColors = hasDimensionColors(component);
+  const defaultPalette =
+    hasColors && component
+      ? getDefaultCategoricalPalette(
+          (component.values as DimensionValue[])
+            .map((d) => d.color)
+            .filter(Boolean) as string[]
+        )
+      : null;
 
   const palettes = isNumericalMeasure(component)
     ? divergingSteppedPalettes
+    : defaultPalette
+    ? [defaultPalette, ...categoricalPalettes]
     : categoricalPalettes;
 
   const currentPaletteName = get(
@@ -78,6 +91,7 @@ export const ColorPalette = ({
     if (!component || !palette) {
       return;
     }
+
     dispatch({
       type: "CHART_PALETTE_CHANGED",
       value: {
@@ -200,7 +214,7 @@ const ColorPaletteReset = ({
     `chartConfig.fields["${field}"].${
       colorConfigPath ? `${colorConfigPath}.` : ""
     }palette`,
-    DEFAULT_PALETTE
+    DEFAULT_CATEGORICAL_PALETTE_NAME
   ) as string;
 
   const colorMapping = get(
@@ -233,9 +247,9 @@ const ColorPaletteReset = ({
 
     const nbMatchedColors = colorMappingColors.length;
     const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);
-    const same = matchedColorsInPalette.every(
-      (pc, i) => pc === colorMappingColors[i]
-    );
+    const same =
+      matchedColorsInPalette.every((d, i) => d === colorMappingColors[i]) ||
+      palette === "dimension";
 
     return (
       <Button

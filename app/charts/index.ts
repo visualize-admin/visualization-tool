@@ -27,9 +27,9 @@ import {
   TableColumn,
   TableFields,
 } from "@/configurator/config-types";
-import { DEFAULT_PALETTE } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { getDefaultCategoricalPaletteName } from "@/palettes";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -160,6 +160,8 @@ export const getInitialAreaLayer = ({
   // color
   measure: NumericalMeasure | OrdinalMeasure;
 }): MapAreaLayer => {
+  const palette = getDefaultCategoricalPaletteName(measure);
+
   return {
     componentIri: component.iri,
     color: isNumericalMeasure(measure)
@@ -173,9 +175,9 @@ export const getInitialAreaLayer = ({
       : {
           type: "categorical",
           componentIri: measure.iri,
-          palette: "oranges",
+          palette,
           colorMapping: mapValueIrisToColor({
-            palette: DEFAULT_PALETTE,
+            palette,
             dimensionValues: measure.values,
           }),
         },
@@ -271,6 +273,9 @@ export const getInitialConfig = ({
       const scatterplotSegmentComponent =
         getCategoricalDimensions(dimensions)[0] ||
         getGeoDimensions(dimensions)[0];
+      const scatterplotPalette = getDefaultCategoricalPaletteName(
+        scatterplotSegmentComponent
+      );
 
       return {
         version: CHART_CONFIG_VERSION,
@@ -288,9 +293,9 @@ export const getInitialConfig = ({
           ...(scatterplotSegmentComponent
             ? {
                 componentIri: scatterplotSegmentComponent.iri,
-                palette: DEFAULT_PALETTE,
+                palette: scatterplotPalette,
                 colorMapping: mapValueIrisToColor({
-                  palette: DEFAULT_PALETTE,
+                  palette: scatterplotPalette,
                   dimensionValues: scatterplotSegmentComponent.values,
                 }),
               }
@@ -301,6 +306,7 @@ export const getInitialConfig = ({
       const pieSegmentComponent =
         getCategoricalDimensions(dimensions)[0] ||
         getGeoDimensions(dimensions)[0];
+      const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
 
       return {
         version: CHART_CONFIG_VERSION,
@@ -311,10 +317,10 @@ export const getInitialConfig = ({
           y: { componentIri: numericalMeasures[0].iri },
           segment: {
             componentIri: pieSegmentComponent.iri,
-            palette: DEFAULT_PALETTE,
+            palette: piePalette,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
             colorMapping: mapValueIrisToColor({
-              palette: DEFAULT_PALETTE,
+              palette: piePalette,
               dimensionValues: pieSegmentComponent.values,
             }),
           },
@@ -602,7 +608,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
         let newSegment: ColumnSegmentField | undefined;
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
@@ -610,6 +622,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const tableSegment = convertTableFieldsToSegmentField({
             fields: oldValue as TableFields,
             dimensions,
+            measures,
           });
 
           if (tableSegment) {
@@ -673,13 +686,20 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
         let newSegment: LineSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
           const tableSegment = convertTableFieldsToSegmentField({
             fields: oldValue as TableFields,
             dimensions,
+            measures,
           });
 
           if (tableSegment) {
@@ -738,13 +758,20 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
         let newSegment: AreaSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
           const tableSegment = convertTableFieldsToSegmentField({
             fields: oldValue as TableFields,
             dimensions,
+            measures,
           });
 
           if (tableSegment) {
@@ -800,13 +827,20 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
-      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
         let newSegment: ScatterPlotSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
           const tableSegment = convertTableFieldsToSegmentField({
             fields: oldValue as TableFields,
             dimensions,
+            measures,
           });
 
           if (tableSegment) {
@@ -844,13 +878,20 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      segment: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+      segment: ({
+        oldValue,
+        oldChartConfig,
+        newChartConfig,
+        dimensions,
+        measures,
+      }) => {
         let newSegment: PieSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
           const tableSegment = convertTableFieldsToSegmentField({
             fields: oldValue as TableFields,
             dimensions,
+            measures,
           });
 
           if (tableSegment) {
@@ -1136,9 +1177,11 @@ export const getFieldComponentIri = (fields: GenericFields, field: string) => {
 const convertTableFieldsToSegmentField = ({
   fields,
   dimensions,
+  measures,
 }: {
   fields: TableFields;
   dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
 }): GenericSegmentField | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
@@ -1153,17 +1196,17 @@ const convertTableFieldsToSegmentField = ({
 
   if (component) {
     const { componentIri } = component;
+    const actualComponent = [...dimensions, ...measures].find(
+      (d) => d.iri === componentIri
+    ) as DimensionMetadataFragment;
+    const palette = getDefaultCategoricalPaletteName(actualComponent);
 
     return {
       componentIri,
-      palette: DEFAULT_PALETTE,
+      palette,
       colorMapping: mapValueIrisToColor({
-        palette: DEFAULT_PALETTE,
-        dimensionValues: (
-          dimensions.find(
-            (d) => d.iri === componentIri
-          ) as DimensionMetadataFragment
-        )?.values,
+        palette,
+        dimensionValues: actualComponent.values,
       }),
     };
   }
