@@ -23,7 +23,6 @@ import {
   parseObservationValue,
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
-import { SPARQL_EDITOR } from "../domain/env";
 import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
@@ -637,16 +636,6 @@ const buildFilters = ({
   });
 
   return filterEntries;
-};
-
-export const getSparqlEditorUrl = ({
-  query,
-}: {
-  query: string;
-}): string | null => {
-  return SPARQL_EDITOR
-    ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}&requestMethod=POST`
-    : null;
 };
 
 async function fetchViewObservations({
