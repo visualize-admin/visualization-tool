@@ -200,7 +200,12 @@ export const dataCubeDimensionByIri: NonNullable<
 > = async ({ cube, locale }, { iri }, { setup }, info) => {
   const { sparqlClient } = await setup(info);
   const dimension = (
-    await getCubeDimensions({ cube, locale, sparqlClient })
+    await getCubeDimensions({
+      cube,
+      locale,
+      sparqlClient,
+      dimensionIris: [iri],
+    })
   ).find((d) => iri === d.data.iri);
   return dimension ?? null;
 };
