@@ -38,9 +38,7 @@ export const createActions = ({
       chartLoadedOptions?: Parameters<typeof selectors.chart.loaded>[0]
     ) => {
       await page.goto(
-        `en/browse/create/new?cube=${encodeURIComponent(
-          iri
-        )}&dataSource=${dataSource}`
+        `en/create/new?cube=${encodeURIComponent(iri)}&dataSource=${dataSource}`
       );
 
       await selectors.chart.loaded(chartLoadedOptions);
