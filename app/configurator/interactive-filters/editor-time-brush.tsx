@@ -8,7 +8,7 @@ import { Label } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
-import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { updateInteractiveTimeRangeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { useFormatFullDateAuto } from "@/formatters";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
@@ -79,12 +79,9 @@ export const EditorBrush = ({
 
       // Update interactive brush presets
       // The dates don't correspond to a data point.
-      const newIFConfig = updateInteractiveTimeFilter(
+      const newIFConfig = updateInteractiveTimeRangeFilter(
         chartConfig.interactiveFiltersConfig,
-        {
-          path: "time",
-          timeExtent: [xStart.toISOString(), xEnd.toISOString()],
-        }
+        { timeExtent: [xStart.toISOString(), xEnd.toISOString()] }
       );
       dispatch({
         type: "INTERACTIVE_FILTER_CHANGED",
@@ -148,7 +145,7 @@ export const EditorBrush = ({
     const { interactiveFiltersConfig } = chartConfig;
 
     if (interactiveFiltersConfig) {
-      const { from, to } = interactiveFiltersConfig.time.presets;
+      const { from, to } = interactiveFiltersConfig.timeRange.presets;
 
       if (from && to) {
         const fromDate = new Date(from);
@@ -188,21 +185,23 @@ export const EditorBrush = ({
       <Flex sx={{ justifyContent: "space-between" }}>
         <Typography component="div" variant="caption">
           {chartConfig &&
-            chartConfig.interactiveFiltersConfig?.time.presets.from &&
+            chartConfig.interactiveFiltersConfig?.timeRange.presets.from &&
             formatDateAuto(
               getClosestDimensionValue(
                 parseDate(
-                  chartConfig.interactiveFiltersConfig?.time.presets.from
+                  chartConfig.interactiveFiltersConfig?.timeRange.presets.from
                 )
               )
             )}
         </Typography>
         <Typography component="div" variant="caption">
           {chartConfig &&
-            chartConfig.interactiveFiltersConfig?.time.presets.to &&
+            chartConfig.interactiveFiltersConfig?.timeRange.presets.to &&
             formatDateAuto(
               getClosestDimensionValue(
-                parseDate(chartConfig.interactiveFiltersConfig?.time.presets.to)
+                parseDate(
+                  chartConfig.interactiveFiltersConfig?.timeRange.presets.to
+                )
               )
             )}
         </Typography>

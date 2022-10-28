@@ -18,6 +18,7 @@ import {
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -172,7 +173,7 @@ const DataFilter = ({
           " > div": { width: "100%" },
         }}
       >
-        {dimension.__typename !== "TemporalDimension" ? (
+        {!isTemporalDimension(dimension) ? (
           <DataFilterBaseDimension
             isKeyDimension={dimension.isKeyDimension}
             label={dimension.label}

@@ -52,7 +52,7 @@ export const Examples = ({
             },
           }}
           chartConfig={{
-            version: "1.2.0",
+            version: "1.2.1",
             fields: {
               x: {
                 sorting: {
@@ -103,7 +103,7 @@ export const Examples = ({
             },
             chartType: "column",
             interactiveFiltersConfig: {
-              time: {
+              timeRange: {
                 active: false,
                 presets: {
                   to: "",
@@ -151,7 +151,7 @@ export const Examples = ({
             },
           }}
           chartConfig={{
-            version: "1.2.0",
+            version: "1.2.1",
             fields: {
               x: {
                 componentIri: "http://www.w3.org/2006/time#Year",
@@ -185,7 +185,7 @@ export const Examples = ({
             },
             chartType: "area",
             interactiveFiltersConfig: {
-              time: {
+              timeRange: {
                 active: true,
                 presets: {
                   to: "2013-12-31T23:00:00.000Z",

@@ -32,7 +32,7 @@ ${(
         measures={scatterplotMeasures}
         interactiveFiltersConfig={{
           legend: { active: true, componentIri: "" },
-          time: {
+          timeRange: {
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },

@@ -32,7 +32,7 @@ ${(
             active: false,
             componentIris: [],
           },
-          time: {
+          timeRange: {
             presets: {
               type: "range",
               from: "0",

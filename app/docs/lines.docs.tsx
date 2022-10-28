@@ -26,7 +26,7 @@ ${(
         measures={measures}
         interactiveFiltersConfig={{
           legend: { active: true, componentIri: "" },
-          time: {
+          timeRange: {
             active: true,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },

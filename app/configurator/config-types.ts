@@ -89,7 +89,7 @@ export type InteractiveFiltersLegend = t.TypeOf<
   typeof InteractiveFiltersLegend
 >;
 
-const InteractiveFiltersTime = t.type({
+const InteractiveFiltersTimeRange = t.type({
   active: t.boolean,
   componentIri: t.string,
   presets: t.type({
@@ -98,7 +98,9 @@ const InteractiveFiltersTime = t.type({
     to: t.string,
   }),
 });
-export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
+export type InteractiveFiltersTimeRange = t.TypeOf<
+  typeof InteractiveFiltersTimeRange
+>;
 
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
@@ -111,7 +113,7 @@ export type InteractiveFiltersDataConfig = t.TypeOf<
 const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
-    time: InteractiveFiltersTime,
+    timeRange: InteractiveFiltersTimeRange,
     dataFilters: InteractiveFiltersDataConfig,
   }),
   t.undefined,

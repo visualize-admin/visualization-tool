@@ -66,6 +66,7 @@ import {
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
+  isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -868,12 +869,12 @@ export const handleChartFieldChanged = (
       if (
         isColumnConfig(draft.chartConfig) &&
         field === "x" &&
-        component?.__typename !== "TemporalDimension" &&
+        !isTemporalDimension(component) &&
         draft.chartConfig.interactiveFiltersConfig
       ) {
         setWith(
           draft,
-          `chartConfig.interactiveFiltersConfig.time.active`,
+          `chartConfig.interactiveFiltersConfig.timeRange.active`,
           false,
           Object
         );
@@ -1685,4 +1686,10 @@ export const isConfiguring = (
   s: ConfiguratorState
 ): s is ConfiguratorStateConfiguringChart => {
   return s.state === "CONFIGURING_CHART";
+};
+
+export const isDescribing = (
+  s: ConfiguratorState
+): s is ConfiguratorStateDescribingChart => {
+  return s.state === "DESCRIBING_CHART";
 };

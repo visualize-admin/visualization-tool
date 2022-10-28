@@ -49,7 +49,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -108,7 +108,7 @@ const useColumnsStackedState = (
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
 
-  const xIsTime = xDimension.__typename === "TemporalDimension";
+  const xIsTime = isTemporalDimension(xDimension);
 
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
@@ -161,7 +161,7 @@ const useColumnsStackedState = (
   // Data for Chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,

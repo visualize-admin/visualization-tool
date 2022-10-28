@@ -88,7 +88,9 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
-            {interactiveFiltersConfig?.time.active === true && <BrushTime />}
+            {interactiveFiltersConfig?.timeRange.active === true && (
+              <BrushTime />
+            )}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />

@@ -21,7 +21,7 @@
       "url": "https://int.lindas.admin.ch/query"
     },
     "chartConfig": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "fields": {
         "x": {
           "sorting": {
@@ -56,7 +56,7 @@
       "filters": {},
       "chartType": "column",
       "interactiveFiltersConfig": {
-        "time": {
+        "timeRange": {
           "active": false,
           "presets": {
             "to": "",

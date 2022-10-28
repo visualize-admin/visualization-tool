@@ -31,26 +31,22 @@ export type QueryFilters = Filters | FilterValueSingle;
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareQueryFilters = (
-  staticConfig: ChartConfig,
+  { chartType, filters, interactiveFiltersConfig }: ChartConfig,
   IFState: InteractiveFiltersState
-) => {
-  const interactiveFiltersIsActive =
-    staticConfig.interactiveFiltersConfig?.dataFilters.active;
-  const { filters } = staticConfig;
-  let res;
-  if (staticConfig.chartType !== "table") {
-    const queryFilters = interactiveFiltersIsActive
+): Filters => {
+  let res: QueryFilters;
+  const dataFiltersActive = interactiveFiltersConfig?.dataFilters.active;
+
+  if (chartType !== "table") {
+    const queryFilters = dataFiltersActive
       ? { ...filters, ...IFState.dataFilters }
       : filters;
-
     res = queryFilters;
   } else {
     res = filters;
   }
-  res = omitBy(
-    res,
-    (x) => x.type === "single" && x.value === FIELD_VALUE_NONE
-  ) as typeof filters;
+
+  res = omitBy(res, (x) => x.type === "single" && x.value === FIELD_VALUE_NONE);
 
   return res;
 };
@@ -62,10 +58,9 @@ export const useQueryFilters = ({
 }): QueryFilters => {
   const [IFState] = useInteractiveFilters();
 
-  return useMemo(
-    () => prepareQueryFilters(chartConfig, IFState),
-    [chartConfig, IFState]
-  );
+  return useMemo(() => {
+    return prepareQueryFilters(chartConfig, IFState);
+  }, [chartConfig, IFState]);
 };
 
 type ValuePredicate = (v: any) => boolean;
@@ -96,27 +91,27 @@ export const usePlottableData = ({
 // Different than the full dataset because
 // interactive filters may be applied (legend + brush)
 export const usePreparedData = ({
-  timeFilterActive,
+  timeRangeFilterActive,
   legendFilterActive,
   sortedData,
   interactiveFilters,
   getX,
   getSegment,
 }: {
-  timeFilterActive?: boolean;
+  timeRangeFilterActive?: boolean;
   legendFilterActive?: boolean;
   sortedData: Array<Observation>;
   interactiveFilters: InteractiveFiltersState;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }) => {
-  const { from, to } = interactiveFilters.time;
+  const { from, to } = interactiveFilters.timeRange;
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
   const allFilters = useMemo(() => {
     const timeFilter: ValuePredicate | null =
-      getX && from && to && timeFilterActive
+      getX && from && to && timeRangeFilterActive
         ? (d: Observation) =>
             getX(d).getTime() >= from.getTime() &&
             getX(d).getTime() <= to.getTime()
@@ -132,7 +127,7 @@ export const usePreparedData = ({
     getSegment,
     getX,
     legendFilterActive,
-    timeFilterActive,
+    timeRangeFilterActive,
     to,
   ]);
 

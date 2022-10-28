@@ -34,7 +34,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
@@ -98,7 +98,7 @@ const useLinesState = (
   if (!xDimension) {
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
-  if (xDimension.__typename !== "TemporalDimension") {
+  if (!isTemporalDimension(xDimension)) {
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
@@ -134,7 +134,7 @@ const useLinesState = (
   // All Data
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX,
@@ -258,13 +258,13 @@ const useLinesState = (
   }
 
   // Dimensions
-  const left = interactiveFiltersConfig?.time.active
+  const left = interactiveFiltersConfig?.timeRange.active
     ? estimateTextWidth(formatNumber(entireMaxValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = interactiveFiltersConfig?.time.active
+  const bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
     : 40;
   const margins = {

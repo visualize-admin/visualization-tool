@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "chartType": "column",
   "filters": {
     "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/georegion": {
@@ -16,7 +16,7 @@
       "active": false,
       "componentIri": ""
     },
-    "time": {
+    "timeRange": {
       "active": false,
       "componentIri": "",
       "presets": {
