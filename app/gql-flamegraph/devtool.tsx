@@ -407,23 +407,13 @@ export const urqlEE = mitt<{
 }>();
 
 export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
-  if (process.env.NODE_ENV === "production") {
-    return (ops$) => forward(ops$);
-  } else {
-    return (ops$) =>
-      pipe(
-        ops$,
-        tap((operation) =>
-          // eslint-disable-next-line no-console
-          urqlEE.emit("urql-received-operation", operation)
-        ),
-        forward,
-        tap((result) =>
-          // eslint-disable-next-line no-console
-          urqlEE.emit("urql-received-result", result)
-        )
-      );
-  }
+  return (ops$) =>
+    pipe(
+      ops$,
+      tap((operation) => urqlEE.emit("urql-received-operation", operation)),
+      forward,
+      tap((result) => urqlEE.emit("urql-received-result", result))
+    );
 };
 
 export default GqlDebug;
