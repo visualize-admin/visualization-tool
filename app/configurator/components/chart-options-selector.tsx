@@ -60,6 +60,7 @@ import {
   getDimensionsByDimensionType,
   isDimensionSortable,
   isStandardErrorDimension,
+  isTemporalDimension,
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -413,7 +414,7 @@ const ChartFieldMultiFilter = ({
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
-        {component && component.__typename === "TemporalDimension" ? (
+        {isTemporalDimension(component) ? (
           <TimeFilter
             key={component.iri}
             dimensionIri={component.iri}

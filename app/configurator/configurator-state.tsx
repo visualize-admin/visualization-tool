@@ -66,6 +66,7 @@ import {
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
+  isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -868,7 +869,7 @@ export const handleChartFieldChanged = (
       if (
         isColumnConfig(draft.chartConfig) &&
         field === "x" &&
-        component?.__typename !== "TemporalDimension" &&
+        !isTemporalDimension(component) &&
         draft.chartConfig.interactiveFiltersConfig
       ) {
         setWith(

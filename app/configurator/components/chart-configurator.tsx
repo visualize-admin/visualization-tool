@@ -54,7 +54,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { isStandardErrorDimension } from "@/domain/data";
+import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
   HierarchyValue,
@@ -146,7 +146,7 @@ const DataFilterSelectGeneric = ({
     tooltipText: dimension.description || undefined,
   };
 
-  if (dimension.__typename === "TemporalDimension") {
+  if (isTemporalDimension(dimension)) {
     if (dimension.timeUnit === "Day") {
       return <DataFilterSelectDay {...sharedProps} options={values} />;
     } else if (dimension.timeUnit === "Month") {

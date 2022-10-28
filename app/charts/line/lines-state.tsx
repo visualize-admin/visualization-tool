@@ -34,7 +34,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
@@ -98,7 +98,7 @@ const useLinesState = (
   if (!xDimension) {
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
-  if (xDimension.__typename !== "TemporalDimension") {
+  if (!isTemporalDimension(xDimension)) {
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 

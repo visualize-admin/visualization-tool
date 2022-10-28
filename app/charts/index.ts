@@ -42,6 +42,7 @@ import {
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
+  isTemporalDimension,
 } from "../domain/data";
 import {
   DimensionMetadataFragment,
@@ -667,7 +668,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => d.__typename === "TemporalDimension" && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -739,7 +740,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => d.__typename === "TemporalDimension" && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {

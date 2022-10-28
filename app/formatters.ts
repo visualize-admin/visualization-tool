@@ -14,7 +14,7 @@ import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
-import { isNumericalMeasure } from "@/domain/data";
+import { isNumericalMeasure, isTemporalDimension } from "@/domain/data";
 import {
   DimensionMetadataFragment,
   NumericalMeasure,
@@ -135,7 +135,7 @@ export const useDimensionFormatters = (
           } else {
             formatter = formatNumber;
           }
-        } else if (d.__typename === "TemporalDimension") {
+        } else if (isTemporalDimension(d)) {
           formatter = dateFormatterFromDimension(
             d,
             dateFormatters,

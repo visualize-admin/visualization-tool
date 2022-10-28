@@ -49,7 +49,7 @@ import {
   useErrorMeasure,
   useErrorRange,
 } from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -109,7 +109,7 @@ const useGroupedColumnsState = (
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
 
-  const xIsTime = xDimension.__typename === "TemporalDimension";
+  const xIsTime = isTemporalDimension(xDimension);
 
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);

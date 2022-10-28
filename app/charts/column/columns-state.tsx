@@ -47,13 +47,13 @@ import {
   useErrorRange,
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
   useTimeFormatUnit,
 } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TemporalDimension, TimeUnit } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
@@ -113,12 +113,10 @@ const useColumnsState = (
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
 
-  const xIsTime = xDimension.__typename === "TemporalDimension";
-
-  const timeUnit =
-    xDimension.__typename === "TemporalDimension"
-      ? xDimension.timeUnit
-      : undefined;
+  const xIsTime = isTemporalDimension(xDimension);
+  const timeUnit = xIsTime
+    ? (xDimension as TemporalDimension).timeUnit
+    : undefined;
 
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);

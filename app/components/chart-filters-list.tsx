@@ -3,6 +3,7 @@ import { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartConfig, DataSource } from "@/configurator";
+import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -47,13 +48,12 @@ export const ChartFiltersList = ({
         return [];
       }
 
-      const value =
-        dimension.__typename === "TemporalDimension"
-          ? {
-              value: f.value,
-              label: timeFormatUnit(f.value, dimension.timeUnit),
-            }
-          : dimension.values.find((v) => v.value === f.value);
+      const value = isTemporalDimension(dimension)
+        ? {
+            value: f.value,
+            label: timeFormatUnit(f.value, dimension.timeUnit),
+          }
+        : dimension.values.find((v) => v.value === f.value);
 
       return [
         {

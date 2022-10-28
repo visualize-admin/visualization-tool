@@ -38,7 +38,11 @@ import {
   updateIsGroup,
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
-import { canDimensionBeMultiFiltered, isNumericalMeasure } from "@/domain/data";
+import {
+  canDimensionBeMultiFiltered,
+  isNumericalMeasure,
+  isTemporalDimension,
+} from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import {
@@ -328,7 +332,7 @@ export const TableColumnOptions = ({
             )}
           </ControlSectionContent>
         </ControlSection>
-      ) : component.__typename === "TemporalDimension" ? (
+      ) : isTemporalDimension(component) ? (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>

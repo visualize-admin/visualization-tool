@@ -25,6 +25,7 @@ import {
 } from "@/configurator/interactive-filters/interactive-filters-config-actions";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { isTemporalDimension } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
   DimensionMetadataFragment,
@@ -267,8 +268,7 @@ const InteractiveDataFilterOptions = ({
     const configurableDimensions = data.dataCubeByIri.dimensions.filter(
       (d) =>
         !mappedIris.has(d.iri) &&
-        (d.__typename !== "TemporalDimension" ||
-          d.timeUnit === TimeUnit.Year) &&
+        (!isTemporalDimension(d) || d.timeUnit === TimeUnit.Year) &&
         !d.isNumerical
     );
 

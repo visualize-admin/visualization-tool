@@ -10,6 +10,7 @@ import {
   NumericalMeasure,
   OrdinalDimension,
   OrdinalMeasure,
+  TemporalDimension,
 } from "../graphql/query-hooks";
 import { ResolvedDimension } from "../graphql/shared-types";
 
@@ -236,6 +237,12 @@ export const isOrdinalMeasure = (
   dimension?: DimensionMetadataFragment
 ): dimension is OrdinalMeasure => {
   return dimension?.__typename === "OrdinalMeasure";
+};
+
+export const isTemporalDimension = (
+  dimension?: DimensionMetadataFragment | null
+): dimension is TemporalDimension => {
+  return dimension?.__typename === "TemporalDimension";
 };
 
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

@@ -16,6 +16,7 @@ import {
   isDescribing,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -68,7 +69,7 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Time */}
-          {xDimension?.__typename === "TemporalDimension" && canFilterTime && (
+          {isTemporalDimension(xDimension) && canFilterTime && (
             <InteractiveFilterTabField
               value="time"
               icon="time"
