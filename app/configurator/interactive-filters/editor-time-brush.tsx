@@ -81,10 +81,7 @@ export const EditorBrush = ({
       // The dates don't correspond to a data point.
       const newIFConfig = updateInteractiveTimeRangeFilter(
         chartConfig.interactiveFiltersConfig,
-        {
-          path: "timeRange",
-          timeExtent: [xStart.toISOString(), xEnd.toISOString()],
-        }
+        { timeExtent: [xStart.toISOString(), xEnd.toISOString()] }
       );
       dispatch({
         type: "INTERACTIVE_FILTER_CHANGED",

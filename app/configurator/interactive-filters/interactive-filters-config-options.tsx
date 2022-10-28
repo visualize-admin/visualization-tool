@@ -19,11 +19,11 @@ import {
 } from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import {
+  toggleInteractiveFilterDataDimension,
   useInteractiveDataFiltersToggle,
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeFiltersToggle,
-} from "@/configurator/interactive-filters/interactive-filters-config-actions";
-import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
+} from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isTemporalDimension } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
@@ -116,18 +116,16 @@ export const InteractiveFiltersOptions = ({
 
 const InteractiveTimeFilterToggle = ({
   label,
-  path,
   defaultChecked,
   disabled = false,
   timeExtent,
 }: {
   label: string;
-  path: "timeRange";
   defaultChecked?: boolean;
   disabled?: boolean;
-  timeExtent: string[];
+  timeExtent: [string, string];
 }) => {
-  const fieldProps = useInteractiveTimeRangeFiltersToggle({ path, timeExtent });
+  const fieldProps = useInteractiveTimeRangeFiltersToggle({ timeExtent });
 
   return (
     <Checkbox
@@ -185,7 +183,6 @@ const InteractiveTimeRangeFilterOptions = ({
                 id: "controls.interactiveFilters.time.toggleTimeFilter",
                 message: "Show time filter",
               })}
-              path="timeRange"
               defaultChecked={false}
               disabled={false}
               timeExtent={[
@@ -222,18 +219,16 @@ const InteractiveTimeRangeFilterOptions = ({
 // Data Filters
 const InteractiveDataFiltersToggle = ({
   label,
-  path,
   defaultChecked,
   disabled = false,
   dimensions,
 }: {
   label: string;
-  path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
   dimensions: DimensionMetadataFragment[];
 }) => {
-  const fieldProps = useInteractiveDataFiltersToggle({ path, dimensions });
+  const fieldProps = useInteractiveDataFiltersToggle({ dimensions });
 
   return (
     <Checkbox
@@ -279,7 +274,6 @@ const InteractiveDataFilterOptions = ({
             id: "controls.interactiveFilters.dataFilters.toggledataFilters",
             message: "Show data filters",
           })}
-          path="dataFilters"
           defaultChecked={false}
           disabled={false}
           dimensions={configurableDimensions}

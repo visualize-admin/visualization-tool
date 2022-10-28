@@ -1,130 +1,200 @@
 import produce from "immer";
+import get from "lodash/get";
+import { ChangeEvent, useCallback } from "react";
 
 import { InteractiveFiltersConfig } from "@/configurator/config-types";
+import {
+  isDescribing,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
-export const toggleInteractiveFilter = produce(
-  (
-    IFConfig: InteractiveFiltersConfig,
-    { path, value }: { path: InteractiveFilterType; value: boolean }
-  ): InteractiveFiltersConfig => {
-    if (!IFConfig?.[path]) {
-      return IFConfig;
-    }
-    IFConfig[path].active = value;
-    return IFConfig;
-  }
-);
+export const useInteractiveFiltersToggle = ({
+  path,
+}: {
+  path: InteractiveFilterType;
+}) => {
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      const newIFConfig = produce(
+        state.chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          if (draft?.[path]) {
+            draft[path].active = e.currentTarget.checked;
+          }
 
-export const toggleInteractiveTimeRangeFilter = produce(
-  (
-    IFConfig: InteractiveFiltersConfig,
-    {
-      path,
-      value,
-      timeExtent,
-    }: {
-      path: "timeRange";
-      value: boolean;
-      timeExtent: string[];
-    }
-  ): InteractiveFiltersConfig => {
-    if (!IFConfig?.[path]) {
-      return IFConfig;
-    }
+          return draft;
+        }
+      );
 
-    // Toggle time brush on/off
-    IFConfig[path].active = value;
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
+    },
+    [dispatch, path, state]
+  );
 
-    // set min and max date as default presets for time brush
-    if (value && !IFConfig[path].presets.from && !IFConfig[path].presets.to) {
-      IFConfig[path].presets.from = timeExtent[0];
-      IFConfig[path].presets.to = timeExtent[1];
-    }
-    return IFConfig;
-  }
-);
+  const stateValue = get(
+    state,
+    `chartConfig.interactiveFiltersConfig.${path}.active`
+  );
+  const checked = stateValue ? stateValue : false;
+
+  return {
+    name: path,
+    checked,
+    onChange,
+  };
+};
+
+export const useInteractiveTimeRangeFiltersToggle = ({
+  timeExtent,
+}: {
+  timeExtent: [string, string];
+}) => {
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      const active = e.currentTarget.checked;
+
+      if (timeExtent) {
+        const newConfig = produce(
+          chartConfig.interactiveFiltersConfig,
+          (draft) => {
+            if (draft?.timeRange) {
+              const { from, to } = draft.timeRange.presets;
+              draft.timeRange.active = active;
+
+              // set min and max date as default presets for time brush
+              if (active && !from && !to) {
+                draft.timeRange.presets.from = timeExtent[0];
+                draft.timeRange.presets.to = timeExtent[1];
+              }
+            }
+
+            return draft;
+          }
+        );
+
+        dispatch({
+          type: "INTERACTIVE_FILTER_CHANGED",
+          value: newConfig,
+        });
+      }
+    },
+    [chartConfig, timeExtent, dispatch]
+  );
+
+  const stateValue = get(
+    state,
+    `chartConfig.interactiveFiltersConfig.timeRange.active`
+  );
+  const checked = stateValue ? stateValue : false;
+
+  return {
+    name: "timeRange",
+    checked,
+    onChange,
+  };
+};
 
 export const updateInteractiveTimeRangeFilter = produce(
   (
-    IFConfig: InteractiveFiltersConfig,
-    {
-      path,
-      timeExtent,
-    }: {
-      path: "timeRange";
-      timeExtent: string[];
-    }
+    config: InteractiveFiltersConfig,
+    { timeExtent: [from, to] }: { timeExtent: [string, string] }
   ): InteractiveFiltersConfig => {
-    if (!IFConfig?.[path]) {
-      return IFConfig;
+    if (!config?.timeRange) {
+      return config;
     }
 
-    IFConfig[path].presets.from = timeExtent[0];
-    IFConfig[path].presets.to = timeExtent[1];
+    config.timeRange.presets.from = from;
+    config.timeRange.presets.to = to;
 
-    return IFConfig;
+    return config;
   }
 );
 
-export const toggleInteractiveDataFilter = produce(
-  (
-    IFConfig: InteractiveFiltersConfig,
-    {
-      path,
-      value,
-      dimensions,
-    }: {
-      path: "dataFilters";
-      value: boolean;
-      dimensions: DimensionMetadataFragment[];
-    }
-  ): InteractiveFiltersConfig => {
-    if (!IFConfig?.[path]) {
-      return IFConfig;
-    }
+export const useInteractiveDataFiltersToggle = ({
+  dimensions,
+}: {
+  dimensions: DimensionMetadataFragment[];
+}) => {
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
 
-    // Toggle filters on/off
-    IFConfig[path].active = value;
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      const active = e.currentTarget.checked;
 
-    // Default: toggle dimensions if none is selected, but they are set to true
-    if (value && IFConfig[path].componentIris.length === 0) {
-      IFConfig[path].componentIris = dimensions.map((d) => d.iri);
-    }
-    return IFConfig;
-  }
-);
+      const newConfig = produce(
+        chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          if (draft?.dataFilters) {
+            draft.dataFilters.active = active;
+
+            // Default: toggle dimensions if none is selected, but they are set to true
+            if (active && draft.dataFilters.componentIris.length === 0) {
+              draft.dataFilters.componentIris = dimensions.map((d) => d.iri);
+            }
+          }
+
+          return draft;
+        }
+      );
+
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newConfig,
+      });
+    },
+    [chartConfig, dimensions, dispatch]
+  );
+
+  const stateValue = get(
+    state,
+    "chartConfig.interactiveFiltersConfig.dataFilters.active"
+  );
+  const checked = stateValue ? stateValue : false;
+
+  return {
+    name: "dataFilters",
+    checked,
+    onChange,
+  };
+};
 
 // Add or remove a dimension from the interactive
 // data filters dimensions list
 export const toggleInteractiveFilterDataDimension = produce(
-  (
-    IFConfig: InteractiveFiltersConfig,
-    cIri: string
-  ): InteractiveFiltersConfig => {
-    if (!IFConfig?.dataFilters.componentIris) {
-      return IFConfig;
+  (config: InteractiveFiltersConfig, iri: string): InteractiveFiltersConfig => {
+    if (!config?.dataFilters.componentIris) {
+      return config;
     }
-    if (IFConfig.dataFilters.componentIris.includes(cIri)) {
-      const newComponentIris = IFConfig.dataFilters.componentIris.filter(
-        (d) => d !== cIri
+
+    if (config.dataFilters.componentIris.includes(iri)) {
+      const newComponentIris = config.dataFilters.componentIris.filter(
+        (d) => d !== iri
       );
       const newDataFilters = {
-        ...IFConfig.dataFilters,
+        ...config.dataFilters,
         componentIris: newComponentIris,
       };
-      return { ...IFConfig, dataFilters: newDataFilters };
-    } else if (!IFConfig.dataFilters.componentIris.includes(cIri)) {
-      const newComponentIris = [...IFConfig.dataFilters.componentIris, cIri];
+      return { ...config, dataFilters: newDataFilters };
+    } else if (!config.dataFilters.componentIris.includes(iri)) {
+      const newComponentIris = [...config.dataFilters.componentIris, iri];
       const newDataFilters = {
-        ...IFConfig.dataFilters,
+        ...config.dataFilters,
         componentIris: newComponentIris,
       };
 
-      return { ...IFConfig, dataFilters: newDataFilters };
+      return { ...config, dataFilters: newDataFilters };
     } else {
-      return IFConfig;
+      return config;
     }
   }
 );
