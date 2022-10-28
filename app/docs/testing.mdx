@@ -1,5 +1,9 @@
 ## Testing Strategy
 
+### E2E Testing
+
+Several end-to-end scenarios are run (searching, configuring charts) for every pull-request.
+
 ### Snapshot Regression Testing
 
 - Existing chart configurations are downloaded from the ~~production~~ develompent environment stored in `app/test/__fixtures`
@@ -15,3 +19,19 @@ To prevent regressions between releases, snapshot **tests are run automatically 
 ### To Do
 
 - Download full data for test fixtures incl. observations, so tests can run faster and don't rely on network requests.
+
+## Query performance
+
+A developer tool to monitor resolver performance and SPARQL queries that are made by the server
+is available if a page is accessed with the `debug=true` query parameter.
+
+See for example https://test.visualize.admin.ch/en?debug=true
+
+A small 🛠 should be present in the lower corner of the screen and clicking it will display the
+GraphQL debug panel. This panel shows every GraphQL query that is made to the server and queries
+can be inspected to see the timings of its resolvers. SPARQL queries made during requests are
+also collected and shown.
+
+⚠️ To be able to collect SPARQL queries, we need to monkey-patch the SPARQL client. If a library
+uses its own SPARQL client, we cannot monitor the SPARQL queries made, so some requests that
+are made can be missing.
