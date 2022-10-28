@@ -102,6 +102,14 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
   typeof InteractiveFiltersTimeRange
 >;
 
+const InteractiveFiltersTimeSlider = t.type({
+  // FIXME: add range
+  componentIri: t.string,
+});
+export type InteractiveFiltersTimeSlider = t.TypeOf<
+  typeof InteractiveFiltersTimeSlider
+>;
+
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
   componentIris: t.array(t.string),
@@ -114,6 +122,7 @@ const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
     timeRange: InteractiveFiltersTimeRange,
+    timeSlider: InteractiveFiltersTimeSlider,
     dataFilters: InteractiveFiltersDataConfig,
   }),
   t.undefined,

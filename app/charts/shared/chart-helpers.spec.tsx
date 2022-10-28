@@ -34,6 +34,9 @@ const commonInteractiveFiltersConfig = {
       to: "2020-01-01",
     },
   },
+  timeSlider: {
+    componentIri: "",
+  },
   dataFilters: {
     componentIris: [col("3"), col("4")],
     active: false,
@@ -46,6 +49,9 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
   timeRange: {
     from: new Date(2021, 0, 1),
     to: new Date(2021, 11, 31),
+  },
+  timeSlider: {
+    value: undefined,
   },
   dataFilters: {
     [col("3")]: {

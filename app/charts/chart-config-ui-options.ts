@@ -48,7 +48,8 @@ export interface EncodingSpec {
   options?: EncodingOption[];
 }
 
-// dataFilters is enabled by default.
+// dataFilters is enabled by default
+// timeSlider is enabled dynamically based on availability of temporal dimensions
 type InteractiveFilterType = "legend" | "timeRange";
 
 export interface ChartSpec {

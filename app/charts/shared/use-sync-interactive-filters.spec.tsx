@@ -23,6 +23,9 @@ const chartConfig = {
         "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
       ],
     },
+    timeSlider: {
+      componentIri: "",
+    },
     timeRange: {
       active: false,
       componentIri: "https://fake-iri/dimension/2",

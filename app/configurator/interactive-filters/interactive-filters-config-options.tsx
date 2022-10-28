@@ -21,10 +21,9 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brus
 import {
   toggleInteractiveFilterDataDimension,
   useInteractiveDataFiltersToggle,
-  useInteractiveFiltersToggle,
+  useInteractiveLegendFiltersToggle,
   useInteractiveTimeRangeFiltersToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isTemporalDimension } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
@@ -71,12 +70,11 @@ export const InteractiveFiltersOptions = ({
         <ControlSection>
           <SectionTitle iconName="segments">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
-            <InteractiveFiltersToggle
+            <InteractiveLegendFiltersToggle
               label={t({
                 id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
                 message: "Show interactive legend",
               })}
-              path="legend"
               defaultChecked={false}
               disabled={false}
             />
@@ -341,18 +339,16 @@ const InteractiveDataFilterOptionsCheckbox = ({
 };
 
 // Generic toggle
-const InteractiveFiltersToggle = ({
+const InteractiveLegendFiltersToggle = ({
   label,
-  path,
   defaultChecked,
   disabled = false,
 }: {
   label: string;
-  path: InteractiveFilterType;
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {
-  const fieldProps = useInteractiveFiltersToggle({ path });
+  const fieldProps = useInteractiveLegendFiltersToggle();
 
   return (
     <Checkbox

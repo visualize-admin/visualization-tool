@@ -6,6 +6,7 @@ import { FilterValueSingle } from "@/configurator";
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };
   timeRange: { from: Date | undefined; to: Date | undefined };
+  timeSlider: { value: Date | undefined };
   dataFilters: { [x: string]: FilterValueSingle };
 };
 
@@ -43,6 +44,7 @@ type InteractiveFiltersStateAction =
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
   timeRange: { from: undefined, to: undefined },
+  timeSlider: { value: undefined },
   dataFilters: {},
 };
 
