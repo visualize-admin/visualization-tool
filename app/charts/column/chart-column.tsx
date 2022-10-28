@@ -102,7 +102,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsStacked /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig?.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
@@ -130,7 +130,7 @@ export const ChartColumns = memo(
                 <ErrorWhiskersGrouped />
                 <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig?.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
@@ -158,7 +158,7 @@ export const ChartColumns = memo(
                 <ErrorWhiskers />
                 <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig?.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>

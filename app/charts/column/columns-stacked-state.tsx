@@ -161,7 +161,7 @@ const useColumnsStackedState = (
   // Data for Chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,

@@ -134,8 +134,8 @@ const useAreasState = (
 
   const xKey = fields.x.componentIri;
   const hasInteractiveTimeFilter = useMemo(
-    () => interactiveFiltersConfig?.time.active,
-    [interactiveFiltersConfig?.time.active]
+    () => interactiveFiltersConfig?.timeRange.active,
+    [interactiveFiltersConfig?.timeRange.active]
   );
 
   // All Data (used for brushing)
@@ -171,7 +171,7 @@ const useAreasState = (
   // Data for chart
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX,

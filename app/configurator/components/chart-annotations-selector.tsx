@@ -44,7 +44,7 @@ export const ChartAnnotationsSelector = ({
         tabIndex={-1}
         sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
-        {state.activeField === "time" ||
+        {state.activeField === "timeRange" ||
         state.activeField === "legend" ||
         state.activeField === "dataFilters" ? (
           <InteractiveFiltersOptions state={state} />

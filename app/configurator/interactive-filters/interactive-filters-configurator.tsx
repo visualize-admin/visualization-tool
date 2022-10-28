@@ -20,7 +20,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-export type InteractiveFilterType = "legend" | "time" | "dataFilters";
+export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
 
 export const InteractiveFiltersConfigurator = ({
   state: {
@@ -53,8 +53,10 @@ export const InteractiveFiltersConfigurator = ({
 
     const canFilterLegend =
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes("legend");
-    const canFilterTime =
-      chartConfigOptionsUISpec[chartType].interactiveFilters.includes("time");
+    const canFilterTimeRange =
+      chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
+        "timeRange"
+      );
     const canFilterData = Object.keys(filters).length > 0;
 
     return (
@@ -69,9 +71,9 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Time */}
-          {isTemporalDimension(xDimension) && canFilterTime && (
+          {isTemporalDimension(xDimension) && canFilterTimeRange && (
             <InteractiveFilterTabField
-              value="time"
+              value="timeRange"
               icon="time"
               label={xDimension.label}
             />

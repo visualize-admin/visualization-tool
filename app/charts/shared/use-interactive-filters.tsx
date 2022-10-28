@@ -5,7 +5,7 @@ import { FilterValueSingle } from "@/configurator";
 
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };
-  time: { from: Date | undefined; to: Date | undefined };
+  timeRange: { from: Date | undefined; to: Date | undefined };
   dataFilters: { [x: string]: FilterValueSingle };
 };
 
@@ -42,7 +42,7 @@ type InteractiveFiltersStateAction =
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
-  time: { from: undefined, to: undefined },
+  timeRange: { from: undefined, to: undefined },
   dataFilters: {},
 };
 
@@ -63,7 +63,7 @@ const InteractiveFiltersStateReducer = (
       }
       return draft;
     case "ADD_TIME_FILTER":
-      draft.time = { from: action.value[0], to: action.value[1] };
+      draft.timeRange = { from: action.value[0], to: action.value[1] };
       return draft;
     case "RESET_DATA_FILTER":
       draft.dataFilters = {};

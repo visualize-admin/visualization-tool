@@ -21,7 +21,7 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brus
 import {
   useInteractiveDataFiltersToggle,
   useInteractiveFiltersToggle,
-  useInteractiveTimeFiltersToggle,
+  useInteractiveTimeRangeFiltersToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-actions";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
@@ -83,7 +83,7 @@ export const InteractiveFiltersOptions = ({
           </ControlSectionContent>
         </ControlSection>
       );
-    } else if (activeField === "time") {
+    } else if (activeField === "timeRange") {
       const componentIri = getFieldComponentIri(chartConfig.fields, "x");
       const component = allComponents.find((d) => d.iri === componentIri);
 
@@ -91,7 +91,7 @@ export const InteractiveFiltersOptions = ({
         <ControlSection>
           <SectionTitle iconName="time">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
-            <InteractiveTimeFilterOptions state={state} />
+            <InteractiveTimeRangeFilterOptions state={state} />
           </ControlSectionContent>
         </ControlSection>
       );
@@ -122,12 +122,12 @@ const InteractiveTimeFilterToggle = ({
   timeExtent,
 }: {
   label: string;
-  path: "time";
+  path: "timeRange";
   defaultChecked?: boolean;
   disabled?: boolean;
   timeExtent: string[];
 }) => {
-  const fieldProps = useInteractiveTimeFiltersToggle({ path, timeExtent });
+  const fieldProps = useInteractiveTimeRangeFiltersToggle({ path, timeExtent });
 
   return (
     <Checkbox
@@ -139,7 +139,7 @@ const InteractiveTimeFilterToggle = ({
   );
 };
 
-const InteractiveTimeFilterOptions = ({
+const InteractiveTimeRangeFilterOptions = ({
   state,
 }: {
   state: ConfiguratorStateDescribingChart;
@@ -185,7 +185,7 @@ const InteractiveTimeFilterOptions = ({
                 id: "controls.interactiveFilters.time.toggleTimeFilter",
                 message: "Show time filter",
               })}
-              path="time"
+              path="timeRange"
               defaultChecked={false}
               disabled={false}
               timeExtent={[
@@ -199,8 +199,8 @@ const InteractiveTimeFilterOptions = ({
                 timeExtent={timeExtent}
                 timeDataPoints={component?.values}
                 disabled={
-                  !state.chartConfig.interactiveFiltersConfig?.time.active ??
-                  true
+                  !state.chartConfig.interactiveFiltersConfig?.timeRange
+                    .active ?? true
                 }
               />
             </Box>

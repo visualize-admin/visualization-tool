@@ -25,7 +25,7 @@ const commonInteractiveFiltersConfig = {
     active: false,
     componentIri: col("2"),
   },
-  time: {
+  timeRange: {
     active: false,
     componentIri: col("1"),
     presets: {
@@ -43,7 +43,7 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
   categories: {
     type: true,
   },
-  time: {
+  timeRange: {
     from: new Date(2021, 0, 1),
     to: new Date(2021, 11, 31),
   },

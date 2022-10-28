@@ -874,7 +874,7 @@ export const handleChartFieldChanged = (
       ) {
         setWith(
           draft,
-          `chartConfig.interactiveFiltersConfig.time.active`,
+          `chartConfig.interactiveFiltersConfig.timeRange.active`,
           false,
           Object
         );

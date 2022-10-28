@@ -230,11 +230,11 @@ const ChartWithInteractiveFilters = React.forwardRef(
     const { interactiveFiltersConfig } = chartConfig;
 
     const presetFrom =
-      interactiveFiltersConfig?.time.presets.from &&
-      parseDate(interactiveFiltersConfig?.time.presets.from.toString());
+      interactiveFiltersConfig?.timeRange.presets.from &&
+      parseDate(interactiveFiltersConfig?.timeRange.presets.from.toString());
     const presetTo =
-      interactiveFiltersConfig?.time.presets.to &&
-      parseDate(interactiveFiltersConfig?.time.presets.to.toString());
+      interactiveFiltersConfig?.timeRange.presets.to &&
+      parseDate(interactiveFiltersConfig?.timeRange.presets.to.toString());
 
     // Reset data filters if chart type changes
     useEffect(() => {

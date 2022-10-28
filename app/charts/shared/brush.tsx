@@ -40,7 +40,7 @@ export const BrushTime = () => {
     }
   };
 
-  const { from, to } = state.time;
+  const { from, to } = state.timeRange;
   const {
     brushOverlayColor,
     brushSelectionColor,

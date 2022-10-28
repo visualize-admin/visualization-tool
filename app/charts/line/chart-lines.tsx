@@ -90,7 +90,7 @@ export const ChartLines = memo(function ChartLines({
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
           <InteractionHorizontal />
-          {interactiveFiltersConfig?.time.active && <BrushTime />}
+          {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
         </ChartSvg>
 
         <Ruler />

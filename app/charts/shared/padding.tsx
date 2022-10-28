@@ -24,7 +24,9 @@ const computeChartPadding = (
     ...fakeTicks.map((x) => estimateTextWidth(`${formatNumber(x)}`))
   );
 
-  let bottom = interactiveFiltersConfig?.time.active ? BRUSH_BOTTOM_SPACE : 40;
+  let bottom = interactiveFiltersConfig?.timeRange.active
+    ? BRUSH_BOTTOM_SPACE
+    : 40;
   if (bandDomain && bandDomain.length) {
     bottom += max(bandDomain, (d) => estimateTextWidth(d) || 70)!;
   }

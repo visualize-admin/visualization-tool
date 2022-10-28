@@ -48,8 +48,8 @@ export interface EncodingSpec {
   options?: EncodingOption[];
 }
 
-// Should we also have dataFilters here?
-type InteractiveFilterType = "legend" | "time";
+// dataFilters is enabled by default.
+type InteractiveFilterType = "legend" | "timeRange";
 
 export interface ChartSpec {
   chartType: ChartType;
@@ -123,7 +123,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "time"],
+    interactiveFilters: ["legend", "timeRange"],
   },
   bar: {
     chartType: "bar",
@@ -161,7 +161,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "time"],
+    interactiveFilters: ["legend", "timeRange"],
   },
   column: {
     chartType: "column",
@@ -201,7 +201,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "time"],
+    interactiveFilters: ["legend", "timeRange"],
   },
   line: {
     chartType: "line",
@@ -227,7 +227,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", type: "palette" }],
       },
     ],
-    interactiveFilters: ["legend", "time"],
+    interactiveFilters: ["legend", "timeRange"],
   },
   map: {
     chartType: "map",

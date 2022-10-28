@@ -160,7 +160,7 @@ const useColumnsState = (
   });
 
   const preparedData = usePreparedData({
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX: getXAsDate,

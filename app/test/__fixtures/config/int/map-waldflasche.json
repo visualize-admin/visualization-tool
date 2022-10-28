@@ -22,7 +22,7 @@
       }
     },
     "chartConfig": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "chartType": "map",
       "filters": {
         "https://environment.ld.admin.ch/foen/nfi/inventory": {
@@ -44,7 +44,7 @@
       },
       "interactiveFiltersConfig": {
         "legend": { "active": false, "componentIri": "" },
-        "time": {
+        "timeRange": {
           "active": false,
           "componentIri": "",
           "presets": { "type": "range", "from": "", "to": "" }

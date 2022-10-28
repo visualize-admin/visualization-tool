@@ -100,7 +100,7 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
     active: false,
     componentIri: "",
   },
-  time: {
+  timeRange: {
     active: false,
     componentIri: "",
     presets: {
@@ -528,14 +528,14 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
     active: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.time.active = oldValue;
+          draft.interactiveFiltersConfig.timeRange.active = oldValue;
         }
       });
     },
     componentIri: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.time.componentIri = oldValue;
+          draft.interactiveFiltersConfig.timeRange.componentIri = oldValue;
         }
       });
     },
@@ -543,21 +543,21 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
       type: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
           if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.time.presets.type = oldValue;
+            draft.interactiveFiltersConfig.timeRange.presets.type = oldValue;
           }
         });
       },
       from: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
           if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.time.presets.from = oldValue;
+            draft.interactiveFiltersConfig.timeRange.presets.from = oldValue;
           }
         });
       },
       to: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
           if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.time.presets.to = oldValue;
+            draft.interactiveFiltersConfig.timeRange.presets.to = oldValue;
           }
         });
       },

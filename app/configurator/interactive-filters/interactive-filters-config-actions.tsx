@@ -8,7 +8,7 @@ import {
 import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
-  toggleInteractiveTimeFilter,
+  toggleInteractiveTimeRangeFilter,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -48,11 +48,11 @@ export const useInteractiveFiltersToggle = ({
   };
 };
 
-export const useInteractiveTimeFiltersToggle = ({
+export const useInteractiveTimeRangeFiltersToggle = ({
   path,
   timeExtent,
 }: {
-  path: "time";
+  path: "timeRange";
   timeExtent: string[];
 }) => {
   const [state, dispatch] = useConfiguratorState(isDescribing);
@@ -61,7 +61,7 @@ export const useInteractiveTimeFiltersToggle = ({
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       if (timeExtent) {
-        const newIFConfig = toggleInteractiveTimeFilter(
+        const newIFConfig = toggleInteractiveTimeRangeFilter(
           chartConfig.interactiveFiltersConfig,
           { path, value: e.currentTarget.checked, timeExtent }
         );

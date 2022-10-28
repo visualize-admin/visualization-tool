@@ -17,8 +17,7 @@ export const toggleInteractiveFilter = produce(
   }
 );
 
-// Time
-export const toggleInteractiveTimeFilter = produce(
+export const toggleInteractiveTimeRangeFilter = produce(
   (
     IFConfig: InteractiveFiltersConfig,
     {
@@ -26,7 +25,7 @@ export const toggleInteractiveTimeFilter = produce(
       value,
       timeExtent,
     }: {
-      path: "time";
+      path: "timeRange";
       value: boolean;
       timeExtent: string[];
     }
@@ -46,14 +45,15 @@ export const toggleInteractiveTimeFilter = produce(
     return IFConfig;
   }
 );
-export const updateInteractiveTimeFilter = produce(
+
+export const updateInteractiveTimeRangeFilter = produce(
   (
     IFConfig: InteractiveFiltersConfig,
     {
       path,
       timeExtent,
     }: {
-      path: "time";
+      path: "timeRange";
       timeExtent: string[];
     }
   ): InteractiveFiltersConfig => {
@@ -68,7 +68,6 @@ export const updateInteractiveTimeFilter = produce(
   }
 );
 
-// Data filters
 export const toggleInteractiveDataFilter = produce(
   (
     IFConfig: InteractiveFiltersConfig,

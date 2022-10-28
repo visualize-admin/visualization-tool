@@ -16,7 +16,7 @@
       "description": { "de": "", "fr": "", "it": "", "en": "" }
     },
     "chartConfig": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "chartType": "pie",
       "filters": {
         "https://environment.ld.admin.ch/foen/UBD003002/artengruppe": {
@@ -26,7 +26,7 @@
       },
       "interactiveFiltersConfig": {
         "legend": { "active": false, "componentIri": "" },
-        "time": {
+        "timeRange": {
           "active": false,
           "componentIri": "",
           "presets": { "type": "range", "from": "", "to": "" }

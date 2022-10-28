@@ -134,7 +134,7 @@ const useLinesState = (
   // All Data
   const preparedData = usePreparedData({
     legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeFilterActive: interactiveFiltersConfig?.time.active,
+    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
     sortedData: plottableSortedData,
     interactiveFilters,
     getX,
@@ -258,13 +258,13 @@ const useLinesState = (
   }
 
   // Dimensions
-  const left = interactiveFiltersConfig?.time.active
+  const left = interactiveFiltersConfig?.timeRange.active
     ? estimateTextWidth(formatNumber(entireMaxValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = interactiveFiltersConfig?.time.active
+  const bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
     : 40;
   const margins = {

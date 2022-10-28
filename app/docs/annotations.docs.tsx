@@ -39,7 +39,7 @@ ${(
         dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
-          time: {
+          timeRange: {
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
@@ -179,7 +179,7 @@ ${(
         dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
-          time: {
+          timeRange: {
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
@@ -218,7 +218,7 @@ ${(
         dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
-          time: {
+          timeRange: {
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },

@@ -7,7 +7,7 @@
     },
     "dataSet": "http://environment.ld.admin.ch/foen/rl_trial/dataset",
     "chartConfig": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "fields": {
         "x": {
           "sorting": {
