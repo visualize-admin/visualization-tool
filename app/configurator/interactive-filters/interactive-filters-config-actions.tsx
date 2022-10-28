@@ -1,8 +1,10 @@
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
-import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isDescribing,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
@@ -16,29 +18,29 @@ export const useInteractiveFiltersToggle = ({
 }: {
   path: InteractiveFilterType;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isDescribing);
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (state.state === "DESCRIBING_CHART") {
-        const newIFConfig = toggleInteractiveFilter(
-          state.chartConfig.interactiveFiltersConfig,
-          { path, value: e.currentTarget.checked }
-        );
+      const newIFConfig = toggleInteractiveFilter(
+        state.chartConfig.interactiveFiltersConfig,
+        { path, value: e.currentTarget.checked }
+      );
 
-        dispatch({
-          type: "INTERACTIVE_FILTER_CHANGED",
-          value: newIFConfig,
-        });
-      }
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
     },
     [dispatch, path, state]
   );
-  const stateValue =
-    state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFiltersConfig.${path}.active`, "")
-      : "";
 
+  const stateValue = get(
+    state,
+    `chartConfig.interactiveFiltersConfig.${path}.active`,
+    ""
+  );
   const checked = stateValue ? stateValue : false;
+
   return {
     name: path,
     checked,
@@ -53,12 +55,12 @@ export const useInteractiveTimeFiltersToggle = ({
   path: "time";
   timeExtent: string[];
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
 
-  const { chartConfig } = state as ConfiguratorStateDescribingChart;
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (timeExtent && state.state === "DESCRIBING_CHART") {
+      if (timeExtent) {
         const newIFConfig = toggleInteractiveTimeFilter(
           chartConfig.interactiveFiltersConfig,
           { path, value: e.currentTarget.checked, timeExtent }
@@ -70,14 +72,16 @@ export const useInteractiveTimeFiltersToggle = ({
         });
       }
     },
-    [state, chartConfig, path, timeExtent, dispatch]
+    [chartConfig, path, timeExtent, dispatch]
   );
-  const stateValue =
-    state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFiltersConfig.${path}.active`, "")
-      : "";
 
+  const stateValue = get(
+    state,
+    `chartConfig.interactiveFiltersConfig.${path}.active`,
+    ""
+  );
   const checked = stateValue ? stateValue : false;
+
   return {
     name: path,
     checked,
@@ -92,31 +96,31 @@ export const useInteractiveDataFiltersToggle = ({
   path: "dataFilters";
   dimensions: DimensionMetadataFragment[];
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
 
-  const { chartConfig } = state as ConfiguratorStateDescribingChart;
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (state.state === "DESCRIBING_CHART") {
-        const newIFConfig = toggleInteractiveDataFilter(
-          chartConfig.interactiveFiltersConfig,
-          { path, value: e.currentTarget.checked, dimensions }
-        );
+      const newIFConfig = toggleInteractiveDataFilter(
+        chartConfig.interactiveFiltersConfig,
+        { path, value: e.currentTarget.checked, dimensions }
+      );
 
-        dispatch({
-          type: "INTERACTIVE_FILTER_CHANGED",
-          value: newIFConfig,
-        });
-      }
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
     },
-    [state, chartConfig, path, dimensions, dispatch]
+    [chartConfig, path, dimensions, dispatch]
   );
-  const stateValue =
-    state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFiltersConfig.${path}.active`, "")
-      : "";
 
+  const stateValue = get(
+    state,
+    `chartConfig.interactiveFiltersConfig.${path}.active`,
+    ""
+  );
   const checked = stateValue ? stateValue : false;
+
   return {
     name: path,
     checked,

@@ -31,26 +31,22 @@ export type QueryFilters = Filters | FilterValueSingle;
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareQueryFilters = (
-  staticConfig: ChartConfig,
+  { chartType, filters, interactiveFiltersConfig }: ChartConfig,
   IFState: InteractiveFiltersState
-) => {
-  const interactiveFiltersIsActive =
-    staticConfig.interactiveFiltersConfig?.dataFilters.active;
-  const { filters } = staticConfig;
-  let res;
-  if (staticConfig.chartType !== "table") {
-    const queryFilters = interactiveFiltersIsActive
+): QueryFilters => {
+  let res: QueryFilters;
+  const dataFiltersActive = interactiveFiltersConfig?.dataFilters.active;
+
+  if (chartType !== "table") {
+    const queryFilters = dataFiltersActive
       ? { ...filters, ...IFState.dataFilters }
       : filters;
-
     res = queryFilters;
   } else {
     res = filters;
   }
-  res = omitBy(
-    res,
-    (x) => x.type === "single" && x.value === FIELD_VALUE_NONE
-  ) as typeof filters;
+
+  res = omitBy(res, (x) => x.type === "single" && x.value === FIELD_VALUE_NONE);
 
   return res;
 };
@@ -62,10 +58,9 @@ export const useQueryFilters = ({
 }): QueryFilters => {
   const [IFState] = useInteractiveFilters();
 
-  return useMemo(
-    () => prepareQueryFilters(chartConfig, IFState),
-    [chartConfig, IFState]
-  );
+  return useMemo(() => {
+    return prepareQueryFilters(chartConfig, IFState);
+  }, [chartConfig, IFState]);
 };
 
 type ValuePredicate = (v: any) => boolean;

@@ -13,7 +13,10 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isDescribing,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import {
   useInteractiveDataFiltersToggle,
@@ -35,14 +38,14 @@ export const InteractiveFiltersOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const { activeField } = state;
+  const { activeField, chartConfig, dataSet, dataSource } = state;
   const locale = useLocale();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
     },
   });
@@ -55,65 +58,61 @@ export const InteractiveFiltersOptions = ({
     }
   }, [activeField]);
 
-  if (data && data?.dataCubeByIri && activeField === "legend") {
-    const segmentDimensionIri = getFieldComponentIri(
-      state.chartConfig.fields,
-      "segment"
-    );
-    const component = [...data?.dataCubeByIri.dimensions].find(
-      (d) => d.iri === segmentDimensionIri
-    );
-    return (
-      <ControlSection>
-        <SectionTitle iconName="segments">{component?.label}</SectionTitle>
-        <ControlSectionContent gap="none">
-          <InteractiveFiltersToggle
-            label={t({
-              id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
-              message: "Show interactive legend",
-            })}
-            path="legend"
-            defaultChecked={false}
-            disabled={false}
-          ></InteractiveFiltersToggle>
-        </ControlSectionContent>
-      </ControlSection>
-    );
-  } else if (data && data?.dataCubeByIri && activeField === "time") {
-    const timeDimensionIri = getFieldComponentIri(
-      state.chartConfig.fields,
-      "x"
-    );
-    const component = [...data?.dataCubeByIri.dimensions].find(
-      (d) => d.iri === timeDimensionIri
-    );
-    return (
-      <ControlSection>
-        <SectionTitle iconName="time">{component?.label}</SectionTitle>
-        <ControlSectionContent gap="none">
-          <InteractiveTimeFilterOptions state={state} />
-        </ControlSectionContent>
-      </ControlSection>
-    );
-  } else if (activeField === "dataFilters") {
-    return (
-      <ControlSection>
-        <SectionTitle iconName="filter">
-          <Trans id="controls.section.interactiveFilters.dataFilters">
-            Data filters
-          </Trans>
-        </SectionTitle>
-        <ControlSectionContent gap="none">
-          <InteractiveDataFilterOptions state={state} />
-        </ControlSectionContent>
-      </ControlSection>
-    );
-  } else {
-    return null;
+  if (data?.dataCubeByIri) {
+    const { dimensions, measures } = data.dataCubeByIri;
+    const allComponents = [...dimensions, ...measures];
+
+    if (activeField === "legend") {
+      const componentIri = getFieldComponentIri(chartConfig.fields, "segment");
+      const component = allComponents.find((d) => d.iri === componentIri);
+
+      return (
+        <ControlSection>
+          <SectionTitle iconName="segments">{component?.label}</SectionTitle>
+          <ControlSectionContent gap="none">
+            <InteractiveFiltersToggle
+              label={t({
+                id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
+                message: "Show interactive legend",
+              })}
+              path="legend"
+              defaultChecked={false}
+              disabled={false}
+            />
+          </ControlSectionContent>
+        </ControlSection>
+      );
+    } else if (activeField === "time") {
+      const componentIri = getFieldComponentIri(chartConfig.fields, "x");
+      const component = allComponents.find((d) => d.iri === componentIri);
+
+      return (
+        <ControlSection>
+          <SectionTitle iconName="time">{component?.label}</SectionTitle>
+          <ControlSectionContent gap="none">
+            <InteractiveTimeFilterOptions state={state} />
+          </ControlSectionContent>
+        </ControlSection>
+      );
+    } else if (activeField === "dataFilters") {
+      return (
+        <ControlSection>
+          <SectionTitle iconName="filter">
+            <Trans id="controls.section.interactiveFilters.dataFilters">
+              Data filters
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent gap="none">
+            <InteractiveDataFilterOptions state={state} />
+          </ControlSectionContent>
+        </ControlSection>
+      );
+    }
   }
+
+  return null;
 };
 
-// Time Filter
 const InteractiveTimeFilterToggle = ({
   label,
   path,
@@ -128,13 +127,14 @@ const InteractiveTimeFilterToggle = ({
   timeExtent: string[];
 }) => {
   const fieldProps = useInteractiveTimeFiltersToggle({ path, timeExtent });
+
   return (
     <Checkbox
       disabled={disabled}
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
-    ></Checkbox>
+    />
   );
 };
 
@@ -155,26 +155,24 @@ const InteractiveTimeFilterOptions = ({
     },
   });
 
-  // FIXME: this binds "time" to field "x"
-  const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
-
   if (data?.dataCubeByIri) {
-    const timeDimension = data?.dataCubeByIri.dimensions.find(
-      (dim) => dim.iri === timeDimensionIri
+    const { dimensions, measures } = data.dataCubeByIri;
+    const componentIri = getFieldComponentIri(state.chartConfig.fields, "x");
+    const component = [...dimensions, ...measures].find(
+      (d) => d.iri === componentIri
     );
 
-    const hardFilters =
-      timeDimensionIri && state.chartConfig.filters[timeDimensionIri];
+    const hardFilters = componentIri
+      ? state.chartConfig.filters[componentIri]
+      : undefined;
     const hardFiltersValues =
-      hardFilters && hardFilters?.type === "multi"
-        ? hardFilters?.values ?? false
-        : false;
+      hardFilters?.type === "multi" ? hardFilters.values ?? false : false;
     // Time extent uses the "hard filters" (filters defined in the editor)
     // and defaults to full time extent (from dimension metadata).
     const timeExtent = hardFiltersValues
       ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))
-      : timeDimension
-      ? extent(timeDimension?.values, (d) => parseDate(d.value.toString()))
+      : component
+      ? extent(component?.values, (d) => parseDate(d.value.toString()))
       : undefined;
 
     return (
@@ -193,12 +191,12 @@ const InteractiveTimeFilterOptions = ({
                 formatDateAuto(timeExtent[0]),
                 formatDateAuto(timeExtent[1]),
               ]}
-            ></InteractiveTimeFilterToggle>
+            />
 
             <Box sx={{ my: 3 }}>
               <EditorBrush
                 timeExtent={timeExtent}
-                timeDataPoints={timeDimension?.values}
+                timeDataPoints={component?.values}
                 disabled={
                   !state.chartConfig.interactiveFiltersConfig?.time.active ??
                   true
@@ -234,10 +232,7 @@ const InteractiveDataFiltersToggle = ({
   disabled?: boolean;
   dimensions: DimensionMetadataFragment[];
 }) => {
-  const fieldProps = useInteractiveDataFiltersToggle({
-    path,
-    dimensions,
-  });
+  const fieldProps = useInteractiveDataFiltersToggle({ path, dimensions });
 
   return (
     <Checkbox
@@ -245,36 +240,36 @@ const InteractiveDataFiltersToggle = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
-    ></Checkbox>
+    />
   );
 };
 
 const InteractiveDataFilterOptions = ({
-  state,
+  state: { chartConfig, dataSet, dataSource },
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
     },
   });
-  const { chartConfig } = state;
+
   if (data?.dataCubeByIri) {
-    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
+    const mappedIris = getFieldComponentIris(chartConfig.fields);
 
     // Dimensions that are not encoded in the visualization
     // excluding temporal and numerical dimensions
-    const configurableDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) =>
-        !mappedIris.has(dim.iri) &&
-        (dim.__typename !== "TemporalDimension" ||
-          dim.timeUnit === TimeUnit.Year) &&
-        !dim.isNumerical
+    const configurableDimensions = data.dataCubeByIri.dimensions.filter(
+      (d) =>
+        !mappedIris.has(d.iri) &&
+        (d.__typename !== "TemporalDimension" ||
+          d.timeUnit === TimeUnit.Year) &&
+        !d.isNumerical
     );
 
     return (
@@ -288,7 +283,7 @@ const InteractiveDataFilterOptions = ({
           defaultChecked={false}
           disabled={false}
           dimensions={configurableDimensions}
-        ></InteractiveDataFiltersToggle>
+        />
         <Box sx={{ my: 3 }}>
           {configurableDimensions.map((d, i) => (
             <InteractiveDataFilterOptionsCheckbox
@@ -317,40 +312,37 @@ const InteractiveDataFilterOptionsCheckbox = ({
   label: string;
   disabled: boolean;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isDescribing);
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (state.state === "DESCRIBING_CHART") {
-        const { interactiveFiltersConfig } = state.chartConfig;
-        const newIFConfig = toggleInteractiveFilterDataDimension(
-          interactiveFiltersConfig,
-          e.currentTarget.value
-        );
+      const { interactiveFiltersConfig } = state.chartConfig;
+      const newIFConfig = toggleInteractiveFilterDataDimension(
+        interactiveFiltersConfig,
+        e.currentTarget.value
+      );
 
-        dispatch({
-          type: "INTERACTIVE_FILTER_CHANGED",
-          value: newIFConfig,
-        });
-      }
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
     },
     [dispatch, state]
   );
   const checked =
-    state.state === "DESCRIBING_CHART"
-      ? state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
-          value
-        )
-      : false;
+    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
+      value
+    );
 
   return (
     <Checkbox
+      name={`interactive-filter-${label}`}
       disabled={disabled}
       label={label}
       value={value}
       checked={checked}
       onChange={onChange}
-    ></Checkbox>
+    />
   );
 };
 
@@ -366,9 +358,7 @@ const InteractiveFiltersToggle = ({
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {
-  const fieldProps = useInteractiveFiltersToggle({
-    path,
-  });
+  const fieldProps = useInteractiveFiltersToggle({ path });
 
   return (
     <Checkbox
@@ -376,6 +366,6 @@ const InteractiveFiltersToggle = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
-    ></Checkbox>
+    />
   );
 };

@@ -1686,3 +1686,9 @@ export const isConfiguring = (
 ): s is ConfiguratorStateConfiguringChart => {
   return s.state === "CONFIGURING_CHART";
 };
+
+export const isDescribing = (
+  s: ConfiguratorState
+): s is ConfiguratorStateDescribingChart => {
+  return s.state === "DESCRIBING_CHART";
+};

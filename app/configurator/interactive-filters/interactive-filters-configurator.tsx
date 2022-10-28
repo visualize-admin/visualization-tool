@@ -12,50 +12,50 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isDescribing,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export type InteractiveFilterType = "legend" | "time" | "dataFilters";
 
 export const InteractiveFiltersConfigurator = ({
-  state,
+  state: {
+    dataSet,
+    dataSource,
+    chartConfig: { chartType, fields, filters },
+  },
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
     },
   });
-  const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
-  const segmentDimensionIri = getFieldComponentIri(
-    state.chartConfig.fields,
-    "segment"
-  );
+  const xDimensionIri = getFieldComponentIri(fields, "x");
+  const segmentDimensionIri = getFieldComponentIri(fields, "segment");
+
   if (data?.dataCubeByIri) {
-    // Are dimensions available?
-    const timeDimension = data?.dataCubeByIri.dimensions.find(
-      (dim) => dim.iri === timeDimensionIri
-    );
-    const segmentDimension = data?.dataCubeByIri.dimensions.find(
-      (dim) => dim.iri === segmentDimensionIri
+    const { dimensions, measures } = data.dataCubeByIri;
+    const allComponents = [...dimensions, ...measures];
+    const xDimension = allComponents.find((d) => d.iri === xDimensionIri);
+    const segmentDimension = allComponents.find(
+      (d) => d.iri === segmentDimensionIri
     );
 
-    // Can chart type have these filter options?
     const canFilterLegend =
-      chartConfigOptionsUISpec[
-        state.chartConfig.chartType
-      ].interactiveFilters.includes("legend");
+      chartConfigOptionsUISpec[chartType].interactiveFilters.includes("legend");
     const canFilterTime =
-      chartConfigOptionsUISpec[
-        state.chartConfig.chartType
-      ].interactiveFilters.includes("time");
-    const canFilterData = Object.keys(state.chartConfig.filters).length > 0;
+      chartConfigOptionsUISpec[chartType].interactiveFilters.includes("time");
+    const canFilterData = Object.keys(filters).length > 0;
+
     return (
       <ControlSection
         role="tablist"
@@ -68,22 +68,20 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Time */}
-          {timeDimension &&
-            timeDimension.__typename === "TemporalDimension" &&
-            canFilterTime && (
-              <InteractiveFilterTabField
-                value="time"
-                icon="time"
-                label={timeDimension.label}
-              ></InteractiveFilterTabField>
-            )}
+          {xDimension?.__typename === "TemporalDimension" && canFilterTime && (
+            <InteractiveFilterTabField
+              value="time"
+              icon="time"
+              label={xDimension.label}
+            />
+          )}
           {/* Legend */}
           {segmentDimension && canFilterLegend && (
             <InteractiveFilterTabField
               value="legend"
               icon="segment"
               label={segmentDimension.label}
-            ></InteractiveFilterTabField>
+            />
           )}
           {/* Data Filters */}
           {canFilterData && (
@@ -95,7 +93,7 @@ export const InteractiveFiltersConfigurator = ({
                   Filter Data
                 </Trans>
               }
-            ></InteractiveFilterTabField>
+            />
           )}
         </ControlSectionContent>
       </ControlSection>
@@ -115,7 +113,7 @@ const InteractiveFilterTabField = ({
   icon: string;
   label: ReactNode;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isDescribing);
 
   const onClick = useCallback(() => {
     dispatch({
@@ -125,18 +123,15 @@ const InteractiveFilterTabField = ({
   }, [dispatch, value]);
 
   const checked = state.activeField === value;
-  const active =
-    state.state === "DESCRIBING_CHART"
-      ? get(
-          state,
-          `chartConfig.interactiveFiltersConfig["${value}"].active`,
-          ""
-        )
-      : "";
+  const active = get(
+    state,
+    `chartConfig.interactiveFiltersConfig["${value}"].active`,
+    ""
+  );
 
   return (
     <OnOffControlTab
-      value={`${value}`}
+      value={value}
       label={label}
       icon={icon}
       checked={checked}
