@@ -15,14 +15,22 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 }) {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
-  const { data, getX, xScale, getY, yScale, getSegment, colors, bounds } =
-    useChartState() as LinesState | AreasState | ScatterplotState;
+  const {
+    preparedData,
+    getX,
+    xScale,
+    getY,
+    yScale,
+    getSegment,
+    colors,
+    bounds,
+  } = useChartState() as LinesState | AreasState | ScatterplotState;
 
   const { chartWidth, chartHeight, margins } = bounds;
 
   // FIXME: delaunay/voronoi calculation could be memoized
   const delaunay = Delaunay.from(
-    data,
+    preparedData,
     (d) => xScale(getX(d) ?? NaN),
     (d) => yScale(getY(d) ?? NaN)
   );
@@ -32,7 +40,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     const [x, y] = pointer(e, ref.current!);
 
     const location = delaunay.find(x, y);
-    const d = data[location];
+    const d = preparedData[location];
 
     if (typeof location !== "undefined") {
       dispatch({
@@ -55,7 +63,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
       {debug &&
-        data.map((d, i) => (
+        preparedData.map((d, i) => (
           <path
             key={i}
             d={voronoi.renderCell(i)}

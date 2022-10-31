@@ -27,11 +27,12 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
@@ -45,10 +46,11 @@ import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-export interface LinesState {
+export interface LinesState extends CommonChartState {
   chartType: "line";
   data: Observation[];
-  bounds: Bounds;
+  allData: Observation[];
+  preparedData: Observation[];
   segments: string[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
@@ -332,10 +334,13 @@ const useLinesState = (
       })),
     };
   };
+
   return {
     chartType: "line",
-    data,
     bounds,
+    data,
+    allData: plottableSortedData,
+    preparedData,
     getX,
     xScale,
     xEntireScale,

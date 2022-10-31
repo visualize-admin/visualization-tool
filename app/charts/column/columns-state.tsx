@@ -33,12 +33,13 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
   mkNumber,
@@ -56,9 +57,8 @@ import { TemporalDimension, TimeUnit } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-export interface ColumnsState {
+export interface ColumnsState extends CommonChartState {
   chartType: "column";
-  bounds: Bounds;
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;

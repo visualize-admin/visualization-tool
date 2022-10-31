@@ -34,11 +34,12 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
@@ -51,10 +52,11 @@ import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-export interface AreasState {
+export interface AreasState extends CommonChartState {
   chartType: "area";
   data: Observation[];
-  bounds: Bounds;
+  allData: Observation[];
+  preparedData: Observation[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
@@ -91,6 +93,7 @@ const useAreasState = (
   } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
@@ -131,10 +134,6 @@ const useAreasState = (
   );
 
   const xKey = fields.x.componentIri;
-  const hasInteractiveTimeFilter = useMemo(
-    () => interactiveFiltersConfig?.timeRange.active,
-    [interactiveFiltersConfig?.timeRange.active]
-  );
 
   // All Data (used for brushing)
   const sortedData = useMemo(
@@ -166,7 +165,6 @@ const useAreasState = (
     plotters: [getX, getY],
   });
 
-  // Data for chart
   const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
@@ -316,18 +314,18 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
-  const left = hasInteractiveTimeFilter
-    ? estimateTextWidth(formatNumber(entireMaxTotalValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
-  const bottom = hasInteractiveTimeFilter ? BRUSH_BOTTOM_SPACE : 40;
+  const [yMin, yMax] = yScale.domain();
+  const left = interactiveFiltersConfig?.timeRange.active
+    ? estimateNumberWidth(entireMaxTotalValue)
+    : Math.max(estimateNumberWidth(yMin), estimateNumberWidth(yMax));
+  const bottom = interactiveFiltersConfig?.timeRange.active
+    ? BRUSH_BOTTOM_SPACE
+    : 40;
 
   const margins = {
     top: 50,
     right: 40,
-    bottom: bottom,
+    bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
   const chartWidth = width - margins.left - margins.right;
@@ -362,11 +360,8 @@ const useAreasState = (
     });
 
     const yAnchor = 0;
-
     const xPlacement = "center";
-
     const yPlacement = "top";
-
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
@@ -396,8 +391,10 @@ const useAreasState = (
 
   return {
     chartType: "area",
-    data,
     bounds,
+    data,
+    allData: plottableSortedData,
+    preparedData,
     getX,
     xScale,
     xEntireScale,
