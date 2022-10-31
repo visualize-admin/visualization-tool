@@ -60,7 +60,6 @@ export interface ChartSpec {
 
 interface ChartSpecs {
   area: ChartSpec;
-  bar: ChartSpec;
   column: ChartSpec;
   line: ChartSpec;
   map: ChartSpec;
@@ -121,44 +120,6 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "color", type: "palette" },
           { field: "imputationType" },
-        ],
-      },
-    ],
-    interactiveFilters: ["legend", "timeRange"],
-  },
-  bar: {
-    chartType: "bar",
-    encodings: [
-      {
-        field: "y",
-        optional: false,
-        componentTypes: [
-          "TemporalDimension",
-          "NominalDimension",
-          "OrdinalDimension",
-          "GeoCoordinatesDimension",
-          "GeoShapesDimension",
-        ],
-        filters: true,
-      },
-      {
-        field: "x",
-        optional: false,
-        componentTypes: ["NumericalMeasure"],
-        filters: false,
-      },
-      {
-        field: "segment",
-        optional: true,
-        componentTypes: SEGMENT_COMPONENT_TYPES,
-        filters: true,
-        sorting: [
-          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
-        ],
-        options: [
-          { field: "chartSubType" },
-          { field: "color", type: "palette" },
         ],
       },
     ],

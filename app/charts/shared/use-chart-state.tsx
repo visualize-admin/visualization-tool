@@ -1,8 +1,6 @@
 import { createContext, useContext } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
-import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
-import { BarsState } from "@/charts/bar/bars-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -25,8 +23,6 @@ export interface ChartProps {
 }
 
 export type ChartState =
-  | BarsState
-  | GroupedBarsState
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState

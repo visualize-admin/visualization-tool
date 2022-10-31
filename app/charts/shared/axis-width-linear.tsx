@@ -2,7 +2,6 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
-import { BarsState } from "@/charts/bar/bars-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
@@ -12,11 +11,10 @@ import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xAxisDescription, chartType } =
-    useChartState() as ScatterplotState | BarsState;
+  const { xScale, bounds, xAxisLabel, xAxisDescription } =
+    useChartState() as ScatterplotState;
   const { chartWidth, chartHeight, margins } = bounds;
-  const { domainColor, labelColor, labelFontSize, gridColor, fontFamily } =
-    useChartTheme();
+  const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
   const xAxisRef = useRef<SVGGElement>(null);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
@@ -43,15 +41,6 @@ export const AxisWidthLinear = () => {
       .attr("text-anchor", "middle");
 
     g.select("path.domain").attr("stroke", gridColor);
-
-    // Styles for bar chart
-    if (chartType === "bar") {
-      g.select(".tick:first-of-type line")
-        .attr("stroke", domainColor)
-        .attr("stroke-width", 1);
-      g.select(".tick:first-of-type text").remove();
-      g.select("path.domain").remove();
-    }
   };
 
   useEffect(() => {
