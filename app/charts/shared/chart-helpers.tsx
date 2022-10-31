@@ -14,6 +14,7 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
+  ChartType,
   Filters,
   FilterValueSingle,
   ImputationType,
@@ -32,14 +33,16 @@ export type QueryFilters = Filters | FilterValueSingle;
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareQueryFilters = (
-  { chartType, filters, interactiveFiltersConfig }: ChartConfig,
-  state: InteractiveFiltersState
+  chartType: ChartType,
+  filters: Filters,
+  interactiveFiltersConfig: InteractiveFiltersConfig,
+  dataFilters: InteractiveFiltersState["dataFilters"]
 ): Filters => {
   let queryFilters = filters;
-  const { dataFilters, timeSlider } = interactiveFiltersConfig || {};
+  const { timeSlider } = interactiveFiltersConfig || {};
 
-  if (chartType !== "table" && dataFilters?.active) {
-    queryFilters = { ...queryFilters, ...state.dataFilters };
+  if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
+    queryFilters = { ...queryFilters, ...dataFilters };
   }
 
   queryFilters = omitBy(queryFilters, (v, k) => {
@@ -60,8 +63,18 @@ export const useQueryFilters = ({
   const [IFState] = useInteractiveFilters();
 
   return useMemo(() => {
-    return prepareQueryFilters(chartConfig, IFState);
-  }, [chartConfig, IFState]);
+    return prepareQueryFilters(
+      chartConfig.chartType,
+      chartConfig.filters,
+      chartConfig.interactiveFiltersConfig,
+      IFState.dataFilters
+    );
+  }, [
+    chartConfig.chartType,
+    chartConfig.filters,
+    chartConfig.interactiveFiltersConfig,
+    IFState.dataFilters,
+  ]);
 };
 
 type ValuePredicate = (v: any) => boolean;
@@ -83,8 +96,10 @@ export const usePlottableData = ({
       }
       return true;
     },
-    [plotters]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    plotters
   );
+
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 

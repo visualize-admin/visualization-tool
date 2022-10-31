@@ -6,7 +6,7 @@ import {
   prepareQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
-import { LineConfig } from "@/configurator";
+import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
@@ -20,7 +20,7 @@ const { col, val } = makeCubeNsGetters(
   "http://environment.ld.admin.ch/foen/px/0703010000_105"
 );
 
-const commonInteractiveFiltersConfig = {
+const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: false,
     componentIri: col("2"),
@@ -64,11 +64,10 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 describe("useQueryFilters", () => {
   it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
     const queryFilters = prepareQueryFilters(
-      {
-        ...line1Fixture.data.chartConfig,
-        interactiveFiltersConfig: commonInteractiveFiltersConfig,
-      } as LineConfig,
-      commonInteractiveFiltersState
+      line1Fixture.data.chartConfig.chartType as ChartType,
+      line1Fixture.data.chartConfig.filters as Filters,
+      commonInteractiveFiltersConfig,
+      commonInteractiveFiltersState.dataFilters
     );
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
@@ -78,16 +77,16 @@ describe("useQueryFilters", () => {
 
   it("should merge interactive filters state if interactive filters are active at publish time", () => {
     const queryFilters = prepareQueryFilters(
-      {
-        ...line1Fixture.data.chartConfig,
-        interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
-          dataFilters: {
-            active: true,
-          },
-        }),
-      } as LineConfig,
-      commonInteractiveFiltersState
+      line1Fixture.data.chartConfig.chartType as ChartType,
+      line1Fixture.data.chartConfig.filters as Filters,
+      merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+        },
+      }),
+      commonInteractiveFiltersState.dataFilters
     );
+
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
       value: val("3", "1"),
@@ -96,14 +95,13 @@ describe("useQueryFilters", () => {
 
   it("should omit none values since they should not be passed to graphql layer", () => {
     const queryFilters = prepareQueryFilters(
-      {
-        ...line1Fixture.data.chartConfig,
-        interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
-          dataFilters: {
-            active: true,
-          },
-        }),
-      } as LineConfig,
+      line1Fixture.data.chartConfig.chartType as ChartType,
+      line1Fixture.data.chartConfig.filters as Filters,
+      merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+        },
+      }),
       merge({}, commonInteractiveFiltersState, {
         dataFilters: {
           [col("3")]: {
@@ -111,8 +109,9 @@ describe("useQueryFilters", () => {
             value: FIELD_VALUE_NONE,
           },
         },
-      })
+      }).dataFilters
     );
+
     expect(queryFilters[col("3")]).toBeUndefined();
   });
 });
