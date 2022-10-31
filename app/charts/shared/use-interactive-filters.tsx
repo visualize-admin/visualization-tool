@@ -20,8 +20,8 @@ type InteractiveFiltersStateAction =
       value: string;
     }
   | {
-      type: "ADD_TIME_FILTER";
-      value: Date[];
+      type: "SET_TIME_RANGE_FILTER";
+      value: [Date, Date];
     }
   | {
       type: "RESET_DATA_FILTER";
@@ -64,7 +64,7 @@ const InteractiveFiltersStateReducer = (
         if (category) delete categories[action.value];
       }
       return draft;
-    case "ADD_TIME_FILTER":
+    case "SET_TIME_RANGE_FILTER":
       draft.timeRange = { from: action.value[0], to: action.value[1] };
       return draft;
     case "RESET_DATA_FILTER":

@@ -34,7 +34,10 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   useEffect(() => {
     // Editor time presets supersede interactive state
     if (presetFrom && presetTo) {
-      dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
+      dispatch({
+        type: "SET_TIME_RANGE_FILTER",
+        value: [presetFrom, presetTo],
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, presetFromStr, presetToStr]);
