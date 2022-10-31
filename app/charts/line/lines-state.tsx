@@ -20,9 +20,9 @@ import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
@@ -31,7 +31,6 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -91,7 +90,6 @@ const useLinesState = (
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 
@@ -132,11 +130,9 @@ const useLinesState = (
   });
 
   // All Data
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX,
     getSegment,
   });

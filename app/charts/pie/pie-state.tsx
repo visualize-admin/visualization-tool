@@ -12,16 +12,15 @@ import orderBy from "lodash/orderBy";
 import React, { ReactNode, useMemo, useCallback } from "react";
 
 import {
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
 } from "@/charts/shared/chart-helpers";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { PieFields } from "@/configurator";
 import { DimensionValue, Observation } from "@/domain/data";
@@ -58,7 +57,6 @@ const usePieState = (
   } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -79,10 +77,9 @@ const usePieState = (
   });
 
   // Apply end-user-activated interactive filters to the stack
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getSegment: getX,
   });
 

@@ -13,16 +13,15 @@ import React, { ReactNode, useMemo } from "react";
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
   getLabelWithUnit,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
 } from "@/charts/shared/chart-helpers";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotFields } from "@/configurator";
 import { mkNumber } from "@/configurator/components/ui-helpers";
@@ -64,8 +63,6 @@ const useScatterplotState = ({
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
-  const [interactiveFilters] = useInteractiveFilters();
-
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -83,10 +80,9 @@ const useScatterplotState = ({
   });
 
   // Data for chart
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getSegment,
   });
   const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);

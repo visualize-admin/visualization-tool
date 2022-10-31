@@ -29,7 +29,7 @@ import {
   stackOffsetDivergingPositiveZeros,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
+  useDataAfterInteractiveFilters,
   useSegment,
   useStringVariable,
   useTemporalVariable,
@@ -38,7 +38,6 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -93,7 +92,6 @@ const useAreasState = (
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 
@@ -169,11 +167,9 @@ const useAreasState = (
   });
 
   // Data for chart
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX,
     getSegment,
   });

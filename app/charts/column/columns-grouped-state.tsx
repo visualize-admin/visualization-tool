@@ -29,9 +29,9 @@ import {
 } from "@/charts/column/constants";
 import {
   getLabelWithUnit,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
@@ -41,7 +41,6 @@ import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
@@ -100,8 +99,6 @@ const useGroupedColumnsState = (
   } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
-
-  const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 
@@ -166,11 +163,9 @@ const useGroupedColumnsState = (
   });
 
   // Data for chart
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX: getXAsDate,
     getSegment,
   });

@@ -34,9 +34,9 @@ import {
 import {
   getLabelWithUnit,
   getWideData,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
@@ -46,7 +46,6 @@ import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -100,7 +99,6 @@ const useColumnsStackedState = (
   } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 
@@ -159,11 +157,9 @@ const useColumnsStackedState = (
   });
 
   // Data for Chart
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX: getXAsDate,
     getSegment,
   });

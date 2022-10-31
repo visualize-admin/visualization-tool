@@ -17,6 +17,7 @@ import {
   Filters,
   FilterValueSingle,
   ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -87,48 +88,46 @@ export const usePlottableData = ({
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
-// Prepare data used in charts.
-// Different than the full dataset because
-// interactive filters may be applied (legend + brush)
-export const usePreparedData = ({
-  timeRangeFilterActive,
-  legendFilterActive,
+/** Prepares the data to be used in charts.
+ *
+ * Different than the full dataset, because interactive filters might be applied.
+ */
+export const useDataAfterInteractiveFilters = ({
   sortedData,
-  interactiveFilters,
+  interactiveFiltersConfig,
   getX,
   getSegment,
 }: {
-  timeRangeFilterActive?: boolean;
-  legendFilterActive?: boolean;
   sortedData: Array<Observation>;
-  interactiveFilters: InteractiveFiltersState;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }) => {
+  const [interactiveFilters] = useInteractiveFilters();
   const { from, to } = interactiveFilters.timeRange;
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
   const allFilters = useMemo(() => {
-    const timeFilter: ValuePredicate | null =
-      getX && from && to && timeRangeFilterActive
+    const timeRangeFilter: ValuePredicate | null =
+      getX && from && to && interactiveFiltersConfig?.timeRange.active
         ? (d: Observation) =>
             getX(d).getTime() >= from.getTime() &&
             getX(d).getTime() <= to.getTime()
         : null;
     const legendFilter: ValuePredicate | null =
-      legendFilterActive && getSegment
+      interactiveFiltersConfig?.legend.active && getSegment
         ? (d: Observation) => !activeInteractiveFilters.includes(getSegment(d))
         : null;
-    return overEvery([legendFilter, timeFilter].filter(truthy));
+    return overEvery([timeRangeFilter, legendFilter].filter(truthy));
   }, [
     activeInteractiveFilters,
     from,
     getSegment,
     getX,
-    legendFilterActive,
-    timeRangeFilterActive,
     to,
+    interactiveFiltersConfig?.legend.active,
+    interactiveFiltersConfig?.timeRange.active,
   ]);
 
   const preparedData = useMemo(() => {
