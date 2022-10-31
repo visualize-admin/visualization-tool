@@ -34,21 +34,21 @@ export const prepareQueryFilters = (
   { chartType, filters, interactiveFiltersConfig }: ChartConfig,
   state: InteractiveFiltersState
 ): Filters => {
-  let res: QueryFilters;
-  const dataFiltersActive = interactiveFiltersConfig?.dataFilters.active;
+  let queryFilters = filters;
+  const { dataFilters, timeSlider } = interactiveFiltersConfig || {};
 
-  if (chartType !== "table") {
-    const queryFilters = dataFiltersActive
-      ? { ...filters, ...state.dataFilters }
-      : filters;
-    res = queryFilters;
-  } else {
-    res = filters;
+  if (chartType !== "table" && dataFilters?.active) {
+    queryFilters = { ...queryFilters, ...state.dataFilters };
   }
 
-  res = omitBy(res, (x) => x.type === "single" && x.value === FIELD_VALUE_NONE);
+  queryFilters = omitBy(queryFilters, (v, k) => {
+    return (
+      (v.type === "single" && v.value === FIELD_VALUE_NONE) ||
+      k === timeSlider?.componentIri
+    );
+  });
 
-  return res;
+  return queryFilters;
 };
 
 export const useQueryFilters = ({
