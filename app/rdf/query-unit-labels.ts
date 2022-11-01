@@ -1,4 +1,5 @@
 import { SELECT } from "@tpluscode/sparql-builder";
+import uniqBy from "lodash/uniqBy";
 import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -12,10 +13,11 @@ interface ResourceLabel {
 }
 
 const buildUnitsQuery = (values: Term[], locale: string) => {
+  const uniqueValues = uniqBy(values, (v) => v.value);
   return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent ?isCurrency`
     .WHERE`
         values ?iri {
-          ${values}
+          ${uniqueValues}
         }
 
         OPTIONAL { ?iri ${ns.rdfs.label} ?rdfsLabel }
