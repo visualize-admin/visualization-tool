@@ -97,6 +97,10 @@ export const DataSetPreview = ({
     descriptionPresent: !!metadata?.dataCubeByIri?.description,
   });
 
+  React.useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
   if (metadata?.dataCubeByIri) {
     const { dataCubeByIri } = metadata;
 

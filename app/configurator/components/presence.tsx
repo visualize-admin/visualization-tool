@@ -35,3 +35,10 @@ export const navPresenceProps = {
   animate: "center",
   exit: "exit",
 };
+
+export const bannerPresenceProps = {
+  transition: { duration: 0.5 },
+  initial: { scaleY: 0, marginTop: -350 },
+  animate: { scaleY: 1, marginTop: 0 },
+  exit: { scaleY: 0, marginTop: -350 },
+};

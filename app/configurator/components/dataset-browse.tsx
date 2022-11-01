@@ -242,8 +242,6 @@ export const useBrowseState = () => {
     DataCubeResultOrder.Score
   );
 
-  console.log({ order });
-
   return useMemo(
     () => ({
       includeDrafts: !!includeDrafts,
@@ -1126,7 +1124,7 @@ export const DatasetResult = ({
         query: filterParams,
       },
       undefined,
-      { shallow: true }
+      { shallow: true, scroll: false }
     );
   });
   const classes = useResultStyles();

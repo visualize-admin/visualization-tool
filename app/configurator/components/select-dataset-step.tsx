@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
@@ -8,6 +8,7 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
+import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
@@ -21,11 +22,13 @@ import {
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DataSetPreview } from "@/configurator/components/dataset-preview";
 import {
+  PanelBannerWrapper,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
 import {
+  bannerPresenceProps,
   MotionBox,
   navPresenceProps,
 } from "@/configurator/components/presence";
@@ -43,30 +46,58 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   panelLayout: {
     width: "100%",
-    maxWidth: 1300,
     margin: "auto",
     left: 0,
     right: 0,
     position: "static",
     // FIXME replace 96px with actual header size
-    marginTop: "96px",
+    marginTop: 96,
     height: "auto",
-    paddingTop: "55px",
   },
   panelLeft: {
     backgroundColor: "transparent",
-    paddingTop: 0,
+    paddingTop: 24,
     boxShadow: "none",
     borderRight: 0,
   },
   panelMiddle: {
-    paddingTop: 0,
+    paddingTop: 24,
     paddingLeft: 18,
     gridColumnStart: "middle",
     gridColumnEnd: "right",
+  },
+  panelBanner: {
+    display: "flex",
+    paddingLeft: 18,
+    paddingRight: 18,
+  },
+  panelBannerContent: {
+    flexDirection: "column",
+    justifyContent: "center",
+    maxWidth: 720,
+    [theme.breakpoints.down("xs")]: {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+    [theme.breakpoints.between("sm", "lg")]: {
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    [theme.breakpoints.up("lg")]: {
+      marginLeft: "20rem",
+      marginRight: "20rem",
+    },
+  },
+  panelBannerTitle: {
+    color: theme.palette.grey[700],
+    marginBottom: theme.spacing(4),
+  },
+  panelBannerDescription: {
+    color: theme.palette.grey[600],
+    marginBottom: theme.spacing(3),
   },
 }));
 
@@ -160,6 +191,39 @@ const SelectDatasetStepContent = () => {
           )}
         </AnimatePresence>
       </PanelLeftWrapper>
+      <AnimatePresence>
+        {!dataset && (
+          <MotionBox
+            {...bannerPresenceProps}
+            key="banner"
+            sx={{ width: "100vw" }}
+          >
+            <PanelBannerWrapper className={classes.panelBanner}>
+              <Flex className={classes.panelBannerContent}>
+                <Typography variant="h1" className={classes.panelBannerTitle}>
+                  Swiss Open Government Data
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.panelBannerDescription}
+                >
+                  <Trans id="browse.datasets.description">
+                    Explore datasets provided by the LINDAS Linked Data Service
+                    by either filtering by categories or organisations or search
+                    directly for specific keywords. Click on a dataset to see
+                    more detailed information and start creating your own
+                    visualizations.
+                  </Trans>
+                </Typography>
+                <SearchDatasetBox
+                  browseState={browseState}
+                  searchResult={datacubesQuery.data}
+                />
+              </Flex>
+            </PanelBannerWrapper>
+          </MotionBox>
+        )}
+      </AnimatePresence>
       <PanelMiddleWrapper className={classes.panelMiddle}>
         <Box sx={{ maxWidth: 900 }}>
           <AnimatePresence exitBeforeEnter>
@@ -172,7 +236,7 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             ) : (
               <MotionBox {...navPresenceProps}>
-                {filters.length > 0 ? (
+                {filters.length > 0 && (
                   <Typography
                     key="filters"
                     variant="h1"
@@ -188,45 +252,7 @@ const SelectDatasetStepContent = () => {
                       .map((f) => f.label)
                       .join(", ")}
                   </Typography>
-                ) : (
-                  <>
-                    <Typography
-                      key="all-datasets"
-                      variant="h1"
-                      color="grey.800"
-                      mb={4}
-                      sx={{ display: "block" }}
-                    >
-                      <Trans id="browse.datasets.all-datasets">
-                        All datasets
-                      </Trans>
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight={400}
-                      color="grey.800"
-                      sx={{
-                        mb: 4,
-                        maxWidth: 800,
-                        display: "block",
-                      }}
-                    >
-                      <Trans id="browse.datasets.description">
-                        Explore datasets provided by the LINDAS Linked Data
-                        Service by either filtering by categories or
-                        organisations or search directly for specific keywords.
-                        Click on a dataset to see more detailed information and
-                        start creating your own visualizations.
-                      </Trans>
-                    </Typography>
-                  </>
                 )}
-                <Box mb={1} key="search-box">
-                  <SearchDatasetBox
-                    browseState={browseState}
-                    searchResult={datacubesQuery.data}
-                  />
-                </Box>
                 <DatasetResults key="results" query={datacubesQuery} />
               </MotionBox>
             )}
