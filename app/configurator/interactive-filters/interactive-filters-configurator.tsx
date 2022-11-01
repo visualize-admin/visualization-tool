@@ -20,6 +20,8 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { getTimeSliderFilterDimensions } from "./helpers";
+
 export type InteractiveFilterType =
   | "legend"
   | "timeRange"
@@ -27,14 +29,11 @@ export type InteractiveFilterType =
   | "dataFilters";
 
 export const InteractiveFiltersConfigurator = ({
-  state: {
-    dataSet,
-    dataSource,
-    chartConfig: { chartType, fields, filters },
-  },
+  state: { dataSet, dataSource, chartConfig },
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
+  const { chartType, fields, filters } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
@@ -44,16 +43,23 @@ export const InteractiveFiltersConfigurator = ({
       locale,
     },
   });
-  const xDimensionIri = getFieldComponentIri(fields, "x");
-  const segmentDimensionIri = getFieldComponentIri(fields, "segment");
 
   if (data?.dataCubeByIri) {
     const { dimensions, measures } = data.dataCubeByIri;
     const allComponents = [...dimensions, ...measures];
-    const xDimension = allComponents.find((d) => d.iri === xDimensionIri);
-    const segmentDimension = allComponents.find(
-      (d) => d.iri === segmentDimensionIri
+
+    const xComponentIri = getFieldComponentIri(fields, "x");
+    const xComponent = allComponents.find((d) => d.iri === xComponentIri);
+
+    const segmentComponentIri = getFieldComponentIri(fields, "segment");
+    const segmentComponent = allComponents.find(
+      (d) => d.iri === segmentComponentIri
     );
+
+    const timeSliderDimensions = getTimeSliderFilterDimensions({
+      chartConfig,
+      dataCubeByIri: data.dataCubeByIri,
+    });
 
     const canFilterLegend =
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes("legend");
@@ -61,6 +67,7 @@ export const InteractiveFiltersConfigurator = ({
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
+    const canFilterTimeSlider = timeSliderDimensions.length > 0;
     const canFilterData = Object.keys(filters).length > 0;
 
     return (
@@ -74,20 +81,32 @@ export const InteractiveFiltersConfigurator = ({
           </Trans>
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
-          {/* Time */}
-          {isTemporalDimension(xDimension) && canFilterTimeRange && (
+          {/* Time range */}
+          {isTemporalDimension(xComponent) && canFilterTimeRange && (
             <InteractiveFilterTabField
               value="timeRange"
               icon="time"
-              label={xDimension.label}
+              label={xComponent.label}
+            />
+          )}
+          {/* Time slider */}
+          {canFilterTimeSlider && (
+            <InteractiveFilterTabField
+              value="timeSlider"
+              icon="play"
+              label={
+                <Trans id="controls.interactive.filters.timeSlider">
+                  Time slider
+                </Trans>
+              }
             />
           )}
           {/* Legend */}
-          {segmentDimension && canFilterLegend && (
+          {segmentComponent && canFilterLegend && (
             <InteractiveFilterTabField
               value="legend"
               icon="segment"
-              label={segmentDimension.label}
+              label={segmentComponent.label}
             />
           )}
           {/* Data Filters */}
@@ -116,7 +135,6 @@ const InteractiveFilterTabField = ({
   label,
 }: {
   value: InteractiveFilterType;
-  disabled?: boolean;
   icon: string;
   label: ReactNode;
 }) => {
@@ -130,9 +148,11 @@ const InteractiveFilterTabField = ({
   }, [dispatch, value]);
 
   const checked = state.activeField === value;
-  const active = get(
+  const active = !!get(
     state,
-    `chartConfig.interactiveFiltersConfig["${value}"].active`
+    `chartConfig.interactiveFiltersConfig["${value}"].${
+      value === "timeSlider" ? "componentIri" : "active"
+    }`
   );
 
   return (

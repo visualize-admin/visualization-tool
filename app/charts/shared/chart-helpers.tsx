@@ -32,14 +32,14 @@ export type QueryFilters = Filters | FilterValueSingle;
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareQueryFilters = (
   { chartType, filters, interactiveFiltersConfig }: ChartConfig,
-  IFState: InteractiveFiltersState
+  state: InteractiveFiltersState
 ): Filters => {
   let res: QueryFilters;
   const dataFiltersActive = interactiveFiltersConfig?.dataFilters.active;
 
   if (chartType !== "table") {
     const queryFilters = dataFiltersActive
-      ? { ...filters, ...IFState.dataFilters }
+      ? { ...filters, ...state.dataFilters }
       : filters;
     res = queryFilters;
   } else {

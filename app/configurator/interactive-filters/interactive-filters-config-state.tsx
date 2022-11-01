@@ -1,3 +1,4 @@
+import { SelectChangeEvent } from "@mui/material";
 import produce from "immer";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
@@ -9,6 +10,8 @@ import {
 } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import useEvent from "@/utils/use-event";
+
+import { FIELD_VALUE_NONE } from "../constants";
 
 export const useInteractiveLegendFiltersToggle = () => {
   const [state, dispatch] = useConfiguratorState(isDescribing);
@@ -111,6 +114,41 @@ export const updateInteractiveTimeRangeFilter = produce(
     return config;
   }
 );
+
+export const useInteractiveTimeSliderFiltersSelect = () => {
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
+
+  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
+    (e) => {
+      const value = (
+        e.target.value === FIELD_VALUE_NONE ? "" : e.target.value
+      ) as string;
+
+      const newConfig = produce(
+        chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          if (draft?.timeSlider) {
+            draft.timeSlider.componentIri = value;
+          }
+
+          return draft;
+        }
+      );
+
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newConfig,
+      });
+    },
+    [chartConfig, dispatch]
+  );
+
+  return {
+    name: "timeSlider",
+    onChange,
+  };
+};
 
 export const useInteractiveDataFiltersToggle = ({
   dimensions,
