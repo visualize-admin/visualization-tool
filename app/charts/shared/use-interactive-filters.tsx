@@ -24,6 +24,13 @@ type InteractiveFiltersStateAction =
       value: [Date, Date];
     }
   | {
+      type: "SET_TIME_SLIDER_FILTER";
+      value: Date;
+    }
+  | {
+      type: "RESET_TIME_SLIDER_FILTER";
+    }
+  | {
       type: "RESET_DATA_FILTER";
     }
   | {
@@ -66,6 +73,12 @@ const InteractiveFiltersStateReducer = (
       return draft;
     case "SET_TIME_RANGE_FILTER":
       draft.timeRange = { from: action.value[0], to: action.value[1] };
+      return draft;
+    case "SET_TIME_SLIDER_FILTER":
+      draft.timeSlider = { value: action.value };
+      return draft;
+    case "RESET_TIME_SLIDER_FILTER":
+      draft.timeSlider.value = undefined;
       return draft;
     case "RESET_DATA_FILTER":
       draft.dataFilters = {};
@@ -114,7 +127,6 @@ export const InteractiveFiltersProvider = ({
   const [state, dispatch] = useImmerReducer<
     InteractiveFiltersState,
     InteractiveFiltersStateAction
-    // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (

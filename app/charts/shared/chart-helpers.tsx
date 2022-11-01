@@ -118,36 +118,68 @@ export const useDataAfterInteractiveFilters = ({
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }) => {
-  const [interactiveFilters] = useInteractiveFilters();
-  const { from, to } = interactiveFilters.timeRange;
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
+  const [IFState] = useInteractiveFilters();
+
+  // time range
+  const fromTime = IFState.timeRange.from?.getTime();
+  const toTime = IFState.timeRange.to?.getTime();
+
+  // time slider
+  const getTime = useTemporalVariable(
+    interactiveFiltersConfig?.timeSlider.componentIri || ""
+  );
+  const timeSliderValue = IFState.timeSlider.value;
+
+  // legend
+  const legendItems = Object.keys(IFState.categories);
 
   const allFilters = useMemo(() => {
-    const timeRangeFilter: ValuePredicate | null =
-      getX && from && to && interactiveFiltersConfig?.timeRange.active
-        ? (d: Observation) =>
-            getX(d).getTime() >= from.getTime() &&
-            getX(d).getTime() <= to.getTime()
+    const timeRangeFilter =
+      getX && fromTime && toTime && interactiveFiltersConfig?.timeRange.active
+        ? (d: Observation) => {
+            const time = getX(d).getTime();
+            return time >= fromTime && time <= toTime;
+          }
         : null;
-    const legendFilter: ValuePredicate | null =
+    const timeSliderFilter =
+      interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+        ? (d: Observation) => {
+            return getTime(d).getTime() === timeSliderValue.getTime();
+          }
+        : null;
+    const legendFilter =
       interactiveFiltersConfig?.legend.active && getSegment
-        ? (d: Observation) => !activeInteractiveFilters.includes(getSegment(d))
+        ? (d: Observation) => {
+            return !legendItems.includes(getSegment(d));
+          }
         : null;
-    return overEvery([timeRangeFilter, legendFilter].filter(truthy));
+
+    return overEvery(
+      (
+        [
+          timeRangeFilter,
+          timeSliderFilter,
+          legendFilter,
+        ] as (ValuePredicate | null)[]
+      ).filter(truthy)
+    );
   }, [
-    activeInteractiveFilters,
-    from,
+    legendItems,
     getSegment,
     getX,
-    to,
+    getTime,
+    fromTime,
+    toTime,
     interactiveFiltersConfig?.legend.active,
     interactiveFiltersConfig?.timeRange.active,
+    interactiveFiltersConfig?.timeSlider.componentIri,
+    timeSliderValue,
   ]);
 
   const preparedData = useMemo(() => {
     return sortedData.filter(allFilters);
   }, [allFilters, sortedData]);
+
   return preparedData;
 };
 

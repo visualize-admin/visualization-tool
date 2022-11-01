@@ -21,7 +21,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   const [IFstate, dispatch] = useInteractiveFilters();
   const { interactiveFiltersConfig } = chartConfig;
 
-  // Time filter
+  // Time range filter
   const presetFrom =
     interactiveFiltersConfig?.timeRange.presets.from &&
     parseDate(interactiveFiltersConfig?.timeRange.presets.from.toString());
@@ -41,6 +41,17 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, presetFromStr, presetToStr]);
+
+  // Time slider filter
+  const timeSliderFilter = interactiveFiltersConfig?.timeSlider;
+  useEffect(() => {
+    if (
+      timeSliderFilter?.componentIri === "" &&
+      IFstate.timeSlider.value !== undefined
+    ) {
+      dispatch({ type: "RESET_TIME_SLIDER_FILTER" });
+    }
+  }, [IFstate.timeSlider.value, timeSliderFilter?.componentIri, dispatch]);
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
