@@ -7,35 +7,68 @@ import {
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import { ChartConfig } from "@/configurator";
+import {
+  ChartConfig,
+  ConfiguratorStateConfiguringChart,
+  InteractiveFiltersConfig,
+} from "@/configurator/config-types";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
+const { handleInteractiveFilterChanged } = jest.requireActual(
+  "@/configurator/configurator-state"
+);
+
+const interactiveFiltersConfig: InteractiveFiltersConfig = {
+  legend: {
+    componentIri: "https://fake-iri/dimension/0",
+    active: false,
+  },
+  dataFilters: {
+    active: true,
+    componentIris: [
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
+    ],
+  },
+  timeSlider: {
+    componentIri:
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
+  },
+  timeRange: {
+    active: false,
+    componentIri: "https://fake-iri/dimension/2",
+    presets: {
+      type: "range",
+      from: "2021-01-01",
+      to: "2021-01-12",
+    },
+  },
+};
+
+const configuratorState = {
+  state: "CONFIGURING_CHART",
+  chartConfig: {
+    interactiveFiltersConfig,
+  },
+} as unknown as ConfiguratorStateConfiguringChart;
+
+jest.mock("@/configurator/configurator-state", () => {
+  return {
+    useConfiguratorState: () => {
+      return [
+        configuratorState,
+        (action: {
+          type: "INTERACTIVE_FILTER_CHANGED";
+          value: InteractiveFiltersConfig;
+        }) => {
+          handleInteractiveFilterChanged(configuratorState, action);
+        },
+      ];
+    },
+  };
+});
 
 const chartConfig = {
   ...fixture.data.chartConfig,
-  interactiveFiltersConfig: {
-    legend: {
-      componentIri: "https://fake-iri/dimension/0",
-      active: false,
-    },
-    dataFilters: {
-      active: true,
-      componentIris: [
-        "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
-      ],
-    },
-    timeSlider: {
-      componentIri: "",
-    },
-    timeRange: {
-      active: false,
-      componentIri: "https://fake-iri/dimension/2",
-      presets: {
-        type: "range",
-        from: "2021-01-01",
-        to: "2021-01-12",
-      },
-    },
-  },
+  interactiveFiltersConfig,
 } as ChartConfig;
 
 const setup = ({
@@ -47,6 +80,7 @@ const setup = ({
     const [ifstate] = useInteractiveFilters();
     const [useModified, setUseModified] = useState(false);
     useSyncInteractiveFilters(useModified ? modifiedChartConfig : chartConfig);
+
     return (
       <div>
         <button
@@ -110,5 +144,11 @@ describe("useSyncInteractiveFilters", () => {
       value:
         "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1",
     });
+
+    expect(
+      configuratorState.chartConfig.interactiveFiltersConfig?.timeSlider
+        .componentIri
+    ).toEqual("");
+    expect(IFState2.timeSlider.value).toBeUndefined();
   });
 });

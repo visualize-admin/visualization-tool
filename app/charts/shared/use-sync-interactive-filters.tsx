@@ -5,10 +5,14 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   FilterValueSingle,
+  InteractiveFiltersConfig,
   isSegmentInConfig,
 } from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
+
+import { getFieldComponentIri } from "..";
 
 /**
  * Makes sure interactive filters are in sync with chart config.
@@ -19,6 +23,7 @@ import useFilterChanges from "@/configurator/use-filter-changes";
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   const [IFstate, dispatch] = useInteractiveFilters();
+  const [_, dispatchConfigurator] = useConfiguratorState();
   const { interactiveFiltersConfig } = chartConfig;
 
   // Time range filter
@@ -44,6 +49,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
 
   // Time slider filter
   const timeSliderFilter = interactiveFiltersConfig?.timeSlider;
+  const xComponentIri = getFieldComponentIri(chartConfig.fields, "x");
   useEffect(() => {
     if (
       timeSliderFilter?.componentIri === "" &&
@@ -51,7 +57,27 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     ) {
       dispatch({ type: "RESET_TIME_SLIDER_FILTER" });
     }
-  }, [IFstate.timeSlider.value, timeSliderFilter?.componentIri, dispatch]);
+
+    if (
+      xComponentIri !== undefined &&
+      xComponentIri === timeSliderFilter?.componentIri
+    ) {
+      dispatchConfigurator({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: {
+          ...interactiveFiltersConfig,
+          timeSlider: { componentIri: "" },
+        } as InteractiveFiltersConfig,
+      });
+    }
+  }, [
+    IFstate.timeSlider.value,
+    timeSliderFilter?.componentIri,
+    dispatch,
+    dispatchConfigurator,
+    interactiveFiltersConfig,
+    xComponentIri,
+  ]);
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;

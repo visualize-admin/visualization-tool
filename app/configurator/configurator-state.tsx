@@ -1054,6 +1054,28 @@ export const updateColorMapping = (
   return draft;
 };
 
+export const handleInteractiveFilterChanged = (
+  draft: ConfiguratorState,
+  action: Extract<
+    ConfiguratorStateAction,
+    { type: "INTERACTIVE_FILTER_CHANGED" }
+  >
+) => {
+  if (
+    draft.state === "CONFIGURING_CHART" ||
+    draft.state === "DESCRIBING_CHART"
+  ) {
+    setWith(
+      draft,
+      "chartConfig.interactiveFiltersConfig",
+      action.value,
+      Object
+    );
+  }
+
+  return draft;
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1195,15 +1217,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "INTERACTIVE_FILTER_CHANGED":
-      if (draft.state === "DESCRIBING_CHART") {
-        setWith(
-          draft,
-          `chartConfig.interactiveFiltersConfig`,
-          action.value,
-          Object
-        );
-      }
-      return draft;
+      return handleInteractiveFilterChanged(draft, action);
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
