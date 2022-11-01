@@ -11,6 +11,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { flag } from "@/configurator/components/flag";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import {
   isDescribing,
@@ -21,6 +22,8 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hoo
 import { useLocale } from "@/locales/use-locale";
 
 import { getTimeSliderFilterDimensions } from "./helpers";
+
+const ENABLE_TIME_SLIDER = typeof window !== "undefined" && flag("timeslider");
 
 export type InteractiveFilterType =
   | "legend"
@@ -67,7 +70,8 @@ export const InteractiveFiltersConfigurator = ({
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
-    const canFilterTimeSlider = timeSliderDimensions.length > 0;
+    const canFilterTimeSlider =
+      ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
     const canFilterData = Object.keys(filters).length > 0;
 
     return (
