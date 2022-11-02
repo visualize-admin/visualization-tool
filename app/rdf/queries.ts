@@ -12,8 +12,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { PromiseValue, truthy } from "@/domain/types";
-import { createSource, pragmas } from "@/rdf/create-source";
-import { makeCubeFilters } from "@/rdf/cube-filters";
+import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";
 import {
@@ -23,7 +22,6 @@ import {
   parseObservationValue,
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
-import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
@@ -101,29 +99,6 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
 
   // If there are no newer cubes, return the original one
   return cube;
-};
-
-export const getCubes = async ({
-  includeDrafts,
-  sourceUrl,
-  locale,
-  filters,
-}: {
-  includeDrafts: boolean;
-  sourceUrl: string;
-  locale: string;
-  filters?: DataCubeSearchFilter[];
-}): Promise<ResolvedDataCube[]> => {
-  const source = createSource({ endpointUrl: sourceUrl });
-
-  const cubesFilters = makeCubeFilters({ includeDrafts, filters });
-
-  const cubes = await source.cubes({
-    noShape: true,
-    filters: cubesFilters,
-  });
-
-  return cubes.map((cube) => parseCube({ cube, locale }));
 };
 
 export const getResolvedCube = async ({
