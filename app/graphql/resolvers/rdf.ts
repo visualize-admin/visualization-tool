@@ -278,15 +278,13 @@ const getDimensionValuesLoader = (
 };
 
 export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  { data: { iri } },
-  _unused,
+  { cube, data: { iri } },
+  _args,
   { setup },
   info
 ) => {
   const { locale } = info.variableValues;
-  const cubeIri = info.variableValues.iri || info.variableValues.cubeIri;
-  const { sparqlClient, sparqlClientStream, loaders } = await setup(info);
-  const cube = await loaders.cube.load(cubeIri);
+  const { sparqlClient, sparqlClientStream } = await setup(info);
 
   if (!cube) {
     throw new Error("Could not find cube");
