@@ -59,6 +59,8 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     height: "auto",
   },
   panelLeft: {
+    // To prevent weird look when dataset metadata is loading
+    minHeight: "calc(100vh - 96px)",
     backgroundColor: "transparent",
     paddingTop: ({ datasetPresent }) =>
       datasetPresent ? 48 : theme.spacing(5),
@@ -173,6 +175,7 @@ const SelectDatasetStepContent = () => {
             <MotionBox
               {...navPresenceProps}
               px={4}
+              mx={4}
               key="dataset-metadata"
               custom={dataset}
             >
@@ -188,7 +191,7 @@ const SelectDatasetStepContent = () => {
                 </Button>
               </NextLink>
               <DataSetMetadata
-                sx={{ mt: "3rem" }}
+                sx={{ mt: 6 }}
                 dataSetIri={dataset}
                 dataSource={configState.dataSource}
               />

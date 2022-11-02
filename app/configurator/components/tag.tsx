@@ -17,7 +17,6 @@ const TagTypography = styled(Typography)(({ theme }) => ({
   alignItems: "center",
   width: "fit-content",
   color: "grey.700",
-  boxShadow: "0 0 0 rgba(0, 0, 0, 0)",
   transition: "box-shadow ease 0.125s",
   "&:hover": {
     boxShadow: theme.shadows[2],

@@ -23,6 +23,7 @@ import {
   DimensionMetadataFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
+import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 
 const DimensionLabel = ({
@@ -92,36 +93,41 @@ export const PreviewTable = ({
         <caption style={{ display: "none" }}>{title}</caption>
         <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
           <TableRow sx={{ borderBottom: "none" }}>
-            {headers.map((header) => {
+            {headers.map((d) => {
               return (
                 <TableCell
-                  key={header.iri}
+                  key={d.iri}
                   component="th"
                   role="columnheader"
                   onClick={() => {
-                    if (sortBy?.iri === header.iri) {
+                    if (sortBy?.iri === d.iri) {
                       setSortDirection(
                         sortDirection === "asc" ? "desc" : "asc"
                       );
                     } else {
-                      setSortBy(header);
+                      setSortBy(d);
                       setSortDirection("asc");
                     }
                   }}
                   sx={{
-                    textAlign: isNumericalMeasure(header) ? "right" : "left",
+                    textAlign: isNumericalMeasure(d) ? "right" : "left",
                     borderBottom: "none",
                     whiteSpace: "nowrap",
                   }}
                 >
                   <TableSortLabel
-                    active={sortBy?.iri === header.iri}
-                    direction={sortDirection}
+                    active={sortBy === undefined || sortBy.iri === d.iri}
+                    direction={sortBy === undefined ? "desc" : sortDirection}
+                    IconComponent={SvgIcChevronDown}
+                    sx={{
+                      "&:hover > svg": {
+                        ...(sortBy === undefined
+                          ? { transform: "translateY(-15%)" }
+                          : {}),
+                      },
+                    }}
                   >
-                    <DimensionLabel
-                      dimension={header}
-                      tooltipProps={tooltipProps}
-                    />
+                    <DimensionLabel dimension={d} tooltipProps={tooltipProps} />
                   </TableSortLabel>
                 </TableCell>
               );

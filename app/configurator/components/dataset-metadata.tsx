@@ -56,11 +56,7 @@ export const DataSetMetadata = ({
   }
 
   return (
-    <MotionBox
-      sx={{ mx: 4, ...sx }}
-      key="dataset-metadata"
-      {...smoothPresenceProps}
-    >
+    <MotionBox sx={sx} key="dataset-metadata" {...smoothPresenceProps}>
       {cube.publisher && (
         <>
           <DatasetMetadataTitle>
@@ -141,18 +137,11 @@ export const DataSetMetadata = ({
 };
 
 const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
-  <Typography
-    variant="caption"
-    sx={{
-      lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "bold",
-      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.700",
-    }}
-  >
+  <Typography variant="body2" fontWeight={700} sx={{ color: "grey.700" }}>
     {children}
   </Typography>
 );
+
 const DatasetMetadataBody = ({
   children,
   sx,
@@ -163,11 +152,8 @@ const DatasetMetadataBody = ({
   <Typography
     variant="body2"
     sx={{
-      lineHeight: ["1.375rem", "1.5rem", "1.5rem"],
-      fontWeight: "regular",
-      fontSize: ["0.875rem", "0.875rem", "0.875rem"],
       color: "grey.900",
-      mb: 3,
+      mb: 5,
       ...sx,
     }}
   >
@@ -205,34 +191,38 @@ const DatasetTags = ({
   cube: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
 }) => {
   return (
-    <Stack spacing={1} direction="column">
-      {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
-        <NextLink
-          key={t.iri}
-          href={`/browse/${
-            t.__typename === "DataCubeTheme" ? "theme" : "organization"
-          }/${encodeURIComponent(t.iri)}`}
-          passHref
-        >
-          <Tag
-            component={MUILink}
-            /*
-            // @ts-ignore */
-            underline="none"
-            type={t.__typename}
-            title={t.label || undefined}
-            sx={{
-              maxWidth: "100%",
-              display: "flex",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-            }}
+    <>
+      <DatasetMetadataTitle>
+        <Trans id="dataset-preview.keywords">Keywords</Trans>
+      </DatasetMetadataTitle>
+      <Stack spacing={1} direction="column" sx={{ mt: 3 }}>
+        {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
+          <NextLink
+            key={t.iri}
+            href={`/browse/${
+              t.__typename === "DataCubeTheme" ? "theme" : "organization"
+            }/${encodeURIComponent(t.iri)}`}
+            passHref
           >
-            {t.label}
-          </Tag>
-        </NextLink>
-      ))}
-    </Stack>
+            <Tag
+              component={MUILink}
+              // @ts-ignore
+              underline="none"
+              type={t.__typename}
+              title={t.label || undefined}
+              sx={{
+                maxWidth: "100%",
+                display: "flex",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+              }}
+            >
+              {t.label}
+            </Tag>
+          </NextLink>
+        ))}
+      </Stack>
+    </>
   );
 };
