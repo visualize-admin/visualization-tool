@@ -816,7 +816,7 @@ msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for report
 
 #: app/configurator/components/dataset-browse.tsx:406
 msgid "dataset.results"
-msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
+msgstr "{0, plural, zero {No datasets} one {# dataset} other {# datasets}}"
 
 #: app/configurator/components/dataset-browse.tsx:351
 msgid "dataset.search.label"

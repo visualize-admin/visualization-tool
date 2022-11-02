@@ -421,9 +421,9 @@ export const SearchDatasetControls = ({
           <Plural
             id="dataset.results"
             value={searchResult.dataCubes.length}
-            zero="No results"
-            one="# result"
-            other="# results"
+            zero="No datasets"
+            one="# dataset"
+            other="# datasets"
           />
         )}
       </Typography>
