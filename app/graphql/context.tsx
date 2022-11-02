@@ -5,6 +5,8 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
+import { createSource } from "@/rdf/create-source";
+import cachedWithTTL from "@/utils/cached-with-ttl";
 import { timed, TimingCallback } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
@@ -19,6 +21,27 @@ import { RequestQueryMeta } from "./query-meta";
 
 const MAX_BATCH_SIZE = 500;
 
+const getRawCube = async (sourceUrl: string, iri: string) => {
+  const source = createSource({ endpointUrl: sourceUrl });
+  const cube = await source.cube(iri);
+  return cube;
+};
+
+const cachedGetRawCube = cachedWithTTL(
+  getRawCube,
+  (sourceUrl, iri) => `${iri}|${sourceUrl}`,
+  60_000
+);
+
+const createCubeLoader = (sourceUrl: string) => {
+  return (cubeIris: readonly string[]) => {
+    return Promise.all(
+      cubeIris.map(async (iri) => {
+        return cachedGetRawCube(sourceUrl, iri);
+      })
+    );
+  };
+};
 
 const createLoaders = async (
   locale: string,
@@ -26,6 +49,7 @@ const createLoaders = async (
   sourceUrl: string
 ) => {
   return {
+    cube: new DataLoader(createCubeLoader(sourceUrl)),
     dimensionValues: new DataLoader(
       createCubeDimensionValuesLoader(sparqlClient),
       {
