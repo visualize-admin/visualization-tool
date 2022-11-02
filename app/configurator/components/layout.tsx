@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridArea: "right",
   },
   panelLayout: {
-    backgroundColor: theme.palette.muted.main,
     display: "grid",
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",

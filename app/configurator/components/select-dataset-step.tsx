@@ -62,11 +62,13 @@ const useStyles = makeStyles<Theme>((theme) => ({
     backgroundColor: "transparent",
     paddingTop: 24,
     boxShadow: "none",
-    borderRight: 0,
+    borderRightColor: theme.palette.grey[300],
+    borderRightStyle: "solid",
+    borderRightWidth: 1,
   },
   panelMiddle: {
     paddingTop: 24,
-    paddingLeft: 18,
+    paddingLeft: 0,
     gridColumnStart: "middle",
     gridColumnEnd: "right",
   },
@@ -99,6 +101,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
   panelBannerDescription: {
     color: theme.palette.grey[600],
     marginBottom: theme.spacing(3),
+  },
+  filters: {
+    display: "block",
+    marginLeft: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+    color: theme.palette.grey[800],
   },
 }));
 
@@ -223,7 +231,7 @@ const SelectDatasetStepContent = () => {
         )}
       </AnimatePresence>
       <PanelMiddleWrapper className={classes.panelMiddle}>
-        <Box sx={{ maxWidth: 900 }}>
+        <Box sx={{ maxWidth: 1040 }}>
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
               <MotionBox {...navPresenceProps} key="preview">
@@ -237,10 +245,8 @@ const SelectDatasetStepContent = () => {
                 {filters.length > 0 && (
                   <Typography
                     key="filters"
+                    className={classes.filters}
                     variant="h1"
-                    color="grey.800"
-                    mb={4}
-                    sx={{ display: "block" }}
                   >
                     {filters
                       .filter(
