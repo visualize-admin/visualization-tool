@@ -16,7 +16,7 @@ const cachedWithTTL = <T extends (...args: any[]) => any>(
     if (cache[key]) {
       res = cache[key].result;
     } else {
-      const cached = await fn(...args);
+      const cached = fn(...args);
       cache[key] = { date: Date.now(), result: cached };
       res = cache[key].result;
     }

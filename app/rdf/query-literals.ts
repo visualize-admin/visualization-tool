@@ -1,4 +1,5 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
+import uniqBy from "lodash/uniqBy";
 import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -20,10 +21,11 @@ const buildResourceLiteralQuery = ({
   values: NamedNode<string>[];
   predicates: PredicateOption;
 }) => {
+  const uniqueValues = uniqBy(values, (x) => x.value);
   const q = SELECT.DISTINCT`?iri ${Object.keys(predicates).map((x) => `?${x}`)}`
     .WHERE`
       values ?iri {
-        ${values}
+        ${uniqueValues}
       }
 
       ${Object.entries(predicates)

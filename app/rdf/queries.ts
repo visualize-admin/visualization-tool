@@ -126,24 +126,15 @@ export const getCubes = async ({
   return cubes.map((cube) => parseCube({ cube, locale }));
 };
 
-export const getCube = async ({
-  iri,
-  sourceUrl,
+export const getResolvedCube = async ({
+  cube,
   locale,
   latest = true,
 }: {
-  iri: string;
-  sourceUrl: string;
+  cube: Cube;
   locale: string;
   latest?: boolean;
 }): Promise<ResolvedDataCube | null> => {
-  const source = createSource({ endpointUrl: sourceUrl });
-  const cube = await source.cube(iri);
-
-  if (!cube) {
-    return null;
-  }
-
   const latestCube = latest === false ? cube : await getLatestCube(cube);
   return parseCube({ cube: latestCube, locale });
 };

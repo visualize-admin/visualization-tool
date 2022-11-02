@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   Theme,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3";
@@ -229,6 +230,7 @@ const useEnsurePossibleFilters = ({
         .toPromise();
       if (error || !data) {
         setError(error);
+        setFetching(false);
         console.warn("Could not fetch possible filters", error);
         return;
       }
@@ -516,9 +518,10 @@ export const ChartConfigurator = ({
   } = useFilterReorder({
     onAddDimensionFilter: () => closeFilterMenu(),
   });
-  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
-    state,
-  });
+  const { fetching: possibleFiltersFetching, error: possibleFiltersError } =
+    useEnsurePossibleFilters({
+      state,
+    });
   const fetching = possibleFiltersFetching || dataFetching;
 
   const filterMenuButtonRef = useRef(null);
@@ -577,6 +580,11 @@ export const ChartConfigurator = ({
             aria-labelledby="controls-data"
             data-testid="configurator-filters"
           >
+            {possibleFiltersError ? (
+              <Typography variant="body2" color="error">
+                {possibleFiltersError.message}
+              </Typography>
+            ) : null}
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
