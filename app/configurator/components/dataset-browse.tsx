@@ -199,6 +199,7 @@ const useQueryParamsState = <T extends object>(
 export const useBrowseState = () => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [{ data: themeData }] = useThemesQuery({
     variables: {
       sourceType: dataSource.type,
@@ -244,6 +245,7 @@ export const useBrowseState = () => {
 
   return useMemo(
     () => ({
+      inputRef,
       includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
@@ -315,19 +317,62 @@ export const useBrowseContext = () => {
   return ctx;
 };
 
-export const SearchDatasetBox = ({
+export const SearchDatasetInput = ({
+  browseState,
+}: {
+  browseState: BrowseState;
+}) => {
+  const [_, setShowDraftCheckbox] = useState<boolean>(false);
+  const { inputRef, search, onSubmitSearch, onReset } = browseState;
+
+  const searchLabel = t({
+    id: "dataset.search.label",
+    message: `Search datasets`,
+  });
+
+  const placeholderLabel = t({
+    id: "dataset.search.placeholder",
+    message: `Name, description, organization, theme, keyword`,
+  });
+
+  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    if (ev.key === "Enter" && inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  return (
+    <Box sx={{ pt: 4 }}>
+      <SearchField
+        inputRef={inputRef}
+        id="datasetSearch"
+        label={searchLabel}
+        defaultValue={search || ""}
+        InputProps={{
+          inputProps: {
+            "data-testid": "datasetSearch",
+          },
+          onKeyPress: handleKeyPress,
+          onReset: onReset,
+          onFocus: () => setShowDraftCheckbox(true),
+        }}
+        placeholder={placeholderLabel}
+      />
+    </Box>
+  );
+};
+
+export const SearchDatasetControls = ({
   browseState,
   searchResult,
 }: {
   browseState: BrowseState;
   searchResult: Maybe<DataCubesQuery>;
 }) => {
-  const [_, setShowDraftCheckbox] = useState<boolean>(false);
-
   const {
+    inputRef,
     search,
     onSubmitSearch,
-    onReset,
     includeDrafts,
     setIncludeDrafts,
     order: stateOrder,
@@ -350,16 +395,6 @@ export const SearchDatasetBox = ({
     },
   ];
 
-  const searchLabel = t({
-    id: "dataset.search.label",
-    message: `Search datasets`,
-  });
-
-  const placeholderLabel = t({
-    id: "dataset.search.placeholder",
-    message: `Name, description, organization, theme, keyword`,
-  });
-
   const isSearching = search !== "";
 
   const onToggleIncludeDrafts = useEvent(async () => {
@@ -371,93 +406,65 @@ export const SearchDatasetBox = ({
     }
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
-    if (ev.key === "Enter" && inputRef.current) {
-      onSubmitSearch(inputRef.current.value);
-    }
-  };
-
   return (
-    <Box>
-      <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
-        <SearchField
-          inputRef={inputRef}
-          id="datasetSearch"
-          label={searchLabel}
-          defaultValue={search || ""}
-          InputProps={{
-            inputProps: {
-              "data-testid": "datasetSearch",
-            },
-            onKeyPress: handleKeyPress,
-            onReset: onReset,
-            onFocus: () => setShowDraftCheckbox(true),
-          }}
-          placeholder={placeholderLabel}
-          sx={{ flexGrow: 1 }}
+    <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+      <Typography
+        color="secondary"
+        sx={{
+          fontSize: ["0.75rem", "0.75rem", "0.75rem"],
+          lineHeight: "24px",
+        }}
+        aria-live="polite"
+        data-testid="search-results-count"
+      >
+        {searchResult && searchResult.dataCubes.length > 0 && (
+          <Plural
+            id="dataset.results"
+            value={searchResult.dataCubes.length}
+            zero="No results"
+            one="# result"
+            other="# results"
+          />
+        )}
+      </Typography>
+
+      <Flex sx={{ alignItems: "center" }}>
+        <Checkbox
+          label={t({
+            id: "dataset.includeDrafts",
+            message: "Include draft datasets",
+          })}
+          name="dataset-include-drafts"
+          value="dataset-include-drafts"
+          checked={includeDrafts}
+          disabled={false}
+          onChange={onToggleIncludeDrafts}
+          smaller
         />
-      </Box>
-
-      <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
-        <Typography
-          color="secondary"
-          sx={{
-            fontSize: ["0.75rem", "0.75rem", "0.75rem"],
-            lineHeight: "24px",
-          }}
-          aria-live="polite"
-          data-testid="search-results-count"
-        >
-          {searchResult && searchResult.dataCubes.length > 0 && (
-            <Plural
-              id="dataset.results"
-              value={searchResult.dataCubes.length}
-              zero="No results"
-              one="# result"
-              other="# results"
-            />
-          )}
-        </Typography>
-
-        <Flex sx={{ alignItems: "center" }}>
-          <Checkbox
-            label={t({
-              id: "dataset.includeDrafts",
-              message: "Include draft datasets",
-            })}
-            name="dataset-include-drafts"
-            value="dataset-include-drafts"
-            checked={includeDrafts}
-            disabled={false}
-            onChange={onToggleIncludeDrafts}
-            smaller
-          />
-          <label htmlFor="datasetSort">
-            <Typography
-              color="secondary"
-              sx={{
-                fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-                lineHeight: "24px",
-              }}
-            >
-              <Trans id="dataset.sortby">Sort by</Trans>
-            </Typography>
-          </label>
-
-          <MinimalisticSelect
-            id="datasetSort"
-            smaller={true}
-            value={order}
-            data-testid="datasetSort"
-            options={isSearching ? options : options.slice(1)}
-            onChange={(e) => {
-              onSetOrder(e.target.value as DataCubeResultOrder);
+        <label htmlFor="datasetSort">
+          <Typography
+            color="secondary"
+            sx={{
+              fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+              lineHeight: "24px",
             }}
-          />
-        </Flex>
+          >
+            <Trans id="dataset.sortby">Sort by</Trans>
+          </Typography>
+        </label>
+
+        <MinimalisticSelect
+          id="datasetSort"
+          smaller={true}
+          value={order}
+          data-testid="datasetSort"
+          options={isSearching ? options : options.slice(1)}
+          onChange={(e) => {
+            onSetOrder(e.target.value as DataCubeResultOrder);
+          }}
+        />
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
@@ -742,8 +749,6 @@ export const NavSectionTitle = ({
         alignItems: "center",
         p: 3,
         cursor: "pointer",
-        // border: "1px solid",
-        // borderColor: theme.borderColor,
         backgroundColor: theme.backgroundColor,
         borderRadius: 2,
         height: "2.5rem",

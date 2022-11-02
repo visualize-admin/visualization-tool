@@ -15,7 +15,8 @@ import {
   buildURLFromBrowseState,
   DataCubeAbout,
   DatasetResults,
-  SearchDatasetBox,
+  SearchDatasetControls,
+  SearchDatasetInput,
   SearchFilters,
   useBrowseContext,
 } from "@/configurator/components/dataset-browse";
@@ -215,10 +216,7 @@ const SelectDatasetStepContent = () => {
                     visualizations.
                   </Trans>
                 </Typography>
-                <SearchDatasetBox
-                  browseState={browseState}
-                  searchResult={datacubesQuery.data}
-                />
+                <SearchDatasetInput browseState={browseState} />
               </Flex>
             </PanelBannerWrapper>
           </MotionBox>
@@ -253,6 +251,11 @@ const SelectDatasetStepContent = () => {
                       .join(", ")}
                   </Typography>
                 )}
+
+                <SearchDatasetControls
+                  browseState={browseState}
+                  searchResult={datacubesQuery.data}
+                />
                 <DatasetResults key="results" query={datacubesQuery} />
               </MotionBox>
             )}
