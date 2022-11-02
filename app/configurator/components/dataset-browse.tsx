@@ -331,18 +331,24 @@ export const SearchDatasetInput = ({
   });
 
   const placeholderLabel = t({
-    id: "dataset.search.placeholder",
-    message: `Name, description, organization, theme, keyword`,
+    id: "select.controls.filters.search",
+    message: "Search",
   });
 
-  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
-    if (ev.key === "Enter" && inputRef.current) {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  const handleClick = () => {
+    if (inputRef.current) {
       onSubmitSearch(inputRef.current.value);
     }
   };
 
   return (
-    <Box sx={{ pt: 4 }}>
+    <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
       <SearchField
         inputRef={inputRef}
         id="datasetSearch"
@@ -357,8 +363,12 @@ export const SearchDatasetInput = ({
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
+        sx={{ width: "100%", maxWidth: 400 }}
       />
-    </Box>
+      <Button sx={{ px: 6 }} onClick={handleClick}>
+        <Trans id="select.controls.filters.search">Search</Trans>
+      </Button>
+    </Flex>
   );
 };
 
