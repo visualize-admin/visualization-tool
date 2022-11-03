@@ -47,7 +47,7 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const useStyles = makeStyles<Theme>((theme) => ({
+const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   panelLayout: {
     width: "100%",
     margin: "auto",
@@ -60,17 +60,21 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   panelLeft: {
     backgroundColor: "transparent",
-    paddingTop: 24,
+    paddingTop: ({ datasetPresent }) =>
+      datasetPresent ? 48 : theme.spacing(5),
     boxShadow: "none",
     borderRightColor: theme.palette.grey[300],
     borderRightStyle: "solid",
     borderRightWidth: 1,
+    transition: "padding-top 0.5s ease",
   },
   panelMiddle: {
-    paddingTop: 24,
     paddingLeft: 0,
+    paddingTop: ({ datasetPresent }) =>
+      datasetPresent ? 48 : theme.spacing(5),
     gridColumnStart: "middle",
     gridColumnEnd: "right",
+    transition: "padding-top 0.5s ease",
   },
   panelBanner: {
     display: "flex",
@@ -131,7 +135,7 @@ const SelectDatasetStepContent = () => {
     leading: true,
   });
   const router = useRouter();
-  const classes = useStyles();
+  const classes = useStyles({ datasetPresent: !!dataset });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
