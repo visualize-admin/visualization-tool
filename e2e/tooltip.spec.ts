@@ -28,5 +28,5 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   const tooltip = page.locator('[data-testid="chart-tooltip"]');
   await tooltip.waitFor();
   const textContent = await tooltip.textContent();
-  expect(textContent).toEqual("19942.078843e-1 Mt");
+  expect(textContent).toEqual("19940.2078843499898 Mt");
 });
