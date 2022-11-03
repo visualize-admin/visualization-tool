@@ -13,7 +13,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
-const { handleInteractiveFilterChanged } = jest.requireActual(
+const { handleInteractiveFilterTimeSliderReset } = jest.requireActual(
   "@/configurator/configurator-state"
 );
 
@@ -55,11 +55,8 @@ jest.mock("@/configurator/configurator-state", () => {
     useConfiguratorState: () => {
       return [
         configuratorState,
-        (action: {
-          type: "INTERACTIVE_FILTER_CHANGED";
-          value: InteractiveFiltersConfig;
-        }) => {
-          handleInteractiveFilterChanged(configuratorState, action);
+        (_: { type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET" }) => {
+          handleInteractiveFilterTimeSliderReset(configuratorState);
         },
       ];
     },

@@ -5,7 +5,6 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   FilterValueSingle,
-  InteractiveFiltersConfig,
   isSegmentInConfig,
 } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
@@ -62,13 +61,7 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
       xComponentIri !== undefined &&
       xComponentIri === timeSliderFilter?.componentIri
     ) {
-      dispatchConfigurator({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: {
-          ...interactiveFiltersConfig,
-          timeSlider: { componentIri: "" },
-        } as InteractiveFiltersConfig,
-      });
+      dispatchConfigurator({ type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET" });
     }
   }, [
     IFstate.timeSlider.value,

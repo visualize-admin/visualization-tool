@@ -194,6 +194,9 @@ export type ConfiguratorStateAction =
       value: InteractiveFiltersConfig;
     }
   | {
+      type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET";
+    }
+  | {
       type: "CHART_CONFIG_REPLACED";
       value: { chartConfig: ChartConfig; dataSetMetadata: DataCubeMetadata };
     }
@@ -1076,6 +1079,21 @@ export const handleInteractiveFilterChanged = (
   return draft;
 };
 
+export const handleInteractiveFilterTimeSliderReset = (
+  draft: ConfiguratorState
+) => {
+  if (
+    draft.state === "CONFIGURING_CHART" ||
+    draft.state === "DESCRIBING_CHART"
+  ) {
+    if (draft.chartConfig.interactiveFiltersConfig) {
+      draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri = "";
+    }
+  }
+
+  return draft;
+};
+
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1218,6 +1236,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "INTERACTIVE_FILTER_CHANGED":
       return handleInteractiveFilterChanged(draft, action);
+
+    case "INTERACTIVE_FILTER_TIME_SLIDER_RESET":
+      return handleInteractiveFilterTimeSliderReset(draft);
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
