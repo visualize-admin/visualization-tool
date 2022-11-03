@@ -10,6 +10,7 @@
     "description": { "de": "", "fr": "", "it": "", "en": "" }
   },
   "chartConfig": {
+    "version": "1.2.1",
     "chartType": "column",
     "filters": {
       "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel": {
@@ -27,7 +28,6 @@
       "dataFilters": { "active": false, "componentIris": [] }
     },
     "fields": {
-      "version": "1.2.1",
       "x": {
         "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/jahr",
         "sorting": { "sortingType": "byDimensionLabel", "sortingOrder": "asc" }
