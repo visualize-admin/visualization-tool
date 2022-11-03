@@ -9,12 +9,6 @@ const ChartAreasVisualization = dynamic(
     () => null as never
   )
 );
-const ChartBarsVisualization = dynamic(
-  import("@/charts/bar/chart-bar").then(
-    (mod) => mod.ChartBarsVisualization,
-    () => null as never
-  )
-);
 const ChartColumnsVisualization = dynamic(
   import("@/charts/column/chart-column").then(
     (mod) => mod.ChartColumnsVisualization,
@@ -76,8 +70,6 @@ const GenericChart = ({
   switch (chartConfig.chartType) {
     case "column":
       return <ChartColumnsVisualization {...props} chartConfig={chartConfig} />;
-    case "bar":
-      return <ChartBarsVisualization {...props} chartConfig={chartConfig} />;
     case "line":
       return <ChartLinesVisualization {...props} chartConfig={chartConfig} />;
     case "area":

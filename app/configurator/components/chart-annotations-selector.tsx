@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ConfiguratorStateDescribingChart } from "@/configurator";
 import {
@@ -12,6 +12,7 @@ import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
+import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
@@ -20,54 +21,65 @@ export const ChartAnnotationsSelector = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
+  const { activeField, meta } = state;
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (panelRef && panelRef.current) {
       panelRef.current.focus();
     }
-  }, [state.activeField]);
+  }, [activeField]);
   const locale = useLocale();
 
-  const af = state.activeField === "title" ? "title" : "description";
+  const isInteractiveFilterField = useMemo(() => {
+    switch (activeField as InteractiveFilterType) {
+      case "dataFilters":
+      case "legend":
+      case "timeRange":
+      case "timeSlider":
+        return true;
+
+      default:
+        return false;
+    }
+  }, [activeField]);
 
   // Reorder locales so the input field for
   // the current locale is on top
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
-  if (state.activeField) {
+  if (activeField) {
     return (
       <Box
         role="tabpanel"
-        id={`annotation-panel-${state.activeField}`}
-        aria-labelledby={`annotation-tab-${state.activeField}`}
+        id={`annotation-panel-${activeField}`}
+        aria-labelledby={`annotation-tab-${activeField}`}
         ref={panelRef}
         tabIndex={-1}
         sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
-        {state.activeField === "timeRange" ||
-        state.activeField === "legend" ||
-        state.activeField === "dataFilters" ? (
+        {isInteractiveFilterField ? (
           <InteractiveFiltersOptions state={state} />
         ) : (
           <ControlSection>
-            <SectionTitle iconName={getIconName(state.activeField)}>
-              {state.activeField && getFieldLabel(state.activeField)}
+            <SectionTitle iconName={getIconName(activeField)}>
+              {getFieldLabel(activeField)}
             </SectionTitle>
             <ControlSectionContent gap="none">
-              {state.activeField &&
-                orderedLocales.map((locale) => (
-                  <Box
-                    key={`${locale}-${state.activeField!}`}
-                    sx={{ ":not(:first-of-type)": { mt: 2 } }}
-                  >
-                    <MetaInputField
-                      metaKey={state.activeField!}
-                      locale={locale}
-                      label={getFieldLabel(locale)}
-                      value={state.meta[af][locale]}
-                    />
-                  </Box>
-                ))}
+              {orderedLocales.map((d) => (
+                <Box
+                  key={`${d}-${activeField!}`}
+                  sx={{ ":not(:first-of-type)": { mt: 2 } }}
+                >
+                  <MetaInputField
+                    metaKey={activeField}
+                    locale={d}
+                    label={getFieldLabel(d)}
+                    value={
+                      meta[activeField === "title" ? "title" : "description"][d]
+                    }
+                  />
+                </Box>
+              ))}
             </ControlSectionContent>
           </ControlSection>
         )}

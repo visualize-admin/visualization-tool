@@ -19,8 +19,9 @@ import {
   getLabelWithUnit,
   getSlugifiedIri,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 import {
   ColumnStyleCategory,
@@ -82,9 +83,8 @@ export type ColumnMeta =
   | TextColumnMeta
   | MKColumnMeta<{ type: "other" }>;
 
-export interface TableChartState {
+export interface TableChartState extends CommonChartState {
   chartType: "table";
-  bounds: Bounds;
   rowHeight: number;
   showSearch: boolean;
   data: Observation[];
@@ -275,7 +275,7 @@ const useTableState = ({
           description: allColumnsByIri[iri]?.description || undefined,
           formatter: cellFormatter,
           ...columnStyle,
-        };
+        } as const;
         if (columnStyleType === "text") {
           return common as TextColumnMeta;
         } else if (columnStyleType === "category") {

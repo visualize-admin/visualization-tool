@@ -96,6 +96,7 @@ export const findPreferredDimension = (
 };
 
 const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
+  // FIXME: we shouldn't keep empty props
   legend: {
     active: false,
     componentIri: "",
@@ -108,6 +109,9 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
       from: "",
       to: "",
     },
+  },
+  timeSlider: {
+    componentIri: "",
   },
   dataFilters: {
     active: false,
@@ -212,23 +216,6 @@ export const getInitialConfig = ({
   const numericalMeasures = measures.filter(isNumericalMeasure);
 
   switch (chartType) {
-    case "bar":
-      return {
-        version: CHART_CONFIG_VERSION,
-        chartType,
-        filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
-        fields: {
-          x: { componentIri: measures[0].iri },
-          y: {
-            componentIri: findPreferredDimension(
-              dimensions,
-              "TemporalDimension"
-            ).iri,
-            sorting: DEFAULT_SORTING,
-          },
-        },
-      };
     case "column":
       return {
         version: CHART_CONFIG_VERSION,
@@ -582,7 +569,6 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
 };
 
 const chartConfigsAdjusters: ChartConfigsAdjusters = {
-  bar: {},
   column: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
@@ -1001,7 +987,6 @@ const chartConfigsPathOverrides: {
     };
   };
 } = {
-  bar: {},
   column: {
     map: {
       "fields.areaLayer.componentIri": "fields.x.componentIri",

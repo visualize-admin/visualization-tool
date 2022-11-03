@@ -30,6 +30,7 @@ import {
   FilterValueSingle,
   InteractiveFiltersConfig,
 } from "@/configurator";
+import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -162,6 +163,11 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>
+            {interactiveFiltersConfig?.timeSlider.componentIri && (
+              <TimeSlider
+                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+              />
+            )}
           </ColumnChart>
         )}
       </>

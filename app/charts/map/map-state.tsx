@@ -23,9 +23,11 @@ import {
   useOptionalNumericVariable,
   useStringVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
+import { colorToRgbArray } from "@/charts/shared/colors";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import {
   getErrorMeasure,
   useErrorMeasure,
@@ -51,8 +53,6 @@ import {
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
-
-import { colorToRgbArray } from "../shared/colors";
 
 import { getBBox } from "./helpers";
 
@@ -87,9 +87,8 @@ type SymbolLayerColors =
   | { type: "fixed"; getColor: (d: Observation) => number[] }
   | AreaLayerColors;
 
-export interface MapState {
+export interface MapState extends CommonChartState {
   chartType: "map";
-  bounds: Bounds;
   features: GeoData;
   locked: boolean;
   lockedBBox: BBox | undefined;
@@ -524,8 +523,8 @@ const useMapState = (
 
   return {
     chartType: "map",
-    features,
     bounds,
+    features,
     showBaseLayer: baseLayer.show,
     locked: baseLayer.locked || false,
     lockedBBox: chartProps.baseLayer.bbox,

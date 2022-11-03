@@ -30,8 +30,6 @@ export const getChartIcon = (chartType: ChartType): IconName => {
   switch (chartType) {
     case "area":
       return "chartArea";
-    case "bar":
-      return "chartBar";
     case "column":
       return "chartColumn";
     case "line":

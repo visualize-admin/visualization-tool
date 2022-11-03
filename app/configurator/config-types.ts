@@ -102,6 +102,14 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
   typeof InteractiveFiltersTimeRange
 >;
 
+const InteractiveFiltersTimeSlider = t.type({
+  // FIXME: add range
+  componentIri: t.string,
+});
+export type InteractiveFiltersTimeSlider = t.TypeOf<
+  typeof InteractiveFiltersTimeSlider
+>;
+
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
   componentIris: t.array(t.string),
@@ -114,6 +122,7 @@ const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
     timeRange: InteractiveFiltersTimeRange,
+    timeSlider: InteractiveFiltersTimeSlider,
     dataFilters: InteractiveFiltersDataConfig,
   }),
   t.undefined,
@@ -172,33 +181,6 @@ const ColumnSegmentField = t.intersection([
   }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
-
-const BarFields = t.intersection([
-  t.type({
-    x: GenericField,
-    y: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      SortingField,
-    ]),
-  }),
-  t.partial({
-    segment: ColumnSegmentField,
-  }),
-]);
-const BarConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("bar"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: BarFields,
-  },
-  "BarConfig"
-);
-export type BarFields = t.TypeOf<typeof BarFields>;
-export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const ColumnFields = t.intersection([
   t.type({
@@ -544,7 +526,6 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 
 export type ChartFields =
   | ColumnFields
-  | BarFields
   | LineFields
   | AreaFields
   | ScatterPlotFields
@@ -561,7 +542,6 @@ export type ChartSegmentField =
 
 const ChartConfig = t.union([
   AreaConfig,
-  BarConfig,
   ColumnConfig,
   LineConfig,
   ScatterPlotConfig,
@@ -593,12 +573,6 @@ export const isAreaConfig = (
   chartConfig: ChartConfig
 ): chartConfig is AreaConfig => {
   return chartConfig.chartType === "area";
-};
-
-export const isBarConfig = (
-  chartConfig: ChartConfig
-): chartConfig is BarConfig => {
-  return chartConfig.chartType === "bar";
 };
 
 export const isColumnConfig = (
@@ -641,7 +615,6 @@ export const isSegmentInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is
   | AreaConfig
-  | BarConfig
   | ColumnConfig
   | LineConfig
   | ScatterPlotConfig
@@ -660,7 +633,6 @@ export const isSegmentColorMappingInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is
   | AreaConfig
-  | BarConfig
   | ColumnConfig
   | LineConfig
   | ScatterPlotConfig
@@ -668,7 +640,6 @@ export const isSegmentColorMappingInConfig = (
   const { chartType } = chartConfig;
   return (
     chartType === "area" ||
-    chartType === "bar" ||
     chartType === "column" ||
     chartType === "line" ||
     chartType === "scatterplot" ||
@@ -807,7 +778,6 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 };
 
 export type ChartConfigsAdjusters = {
-  bar: {};
   column: ColumnAdjusters;
   line: LineAdjusters;
   area: AreaAdjusters;

@@ -14,9 +14,11 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
+  ChartType,
   Filters,
   FilterValueSingle,
   ImputationType,
+  InteractiveFiltersConfig,
   isAreaConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -31,24 +33,26 @@ export type QueryFilters = Filters | FilterValueSingle;
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareQueryFilters = (
-  { chartType, filters, interactiveFiltersConfig }: ChartConfig,
-  IFState: InteractiveFiltersState
+  chartType: ChartType,
+  filters: Filters,
+  interactiveFiltersConfig: InteractiveFiltersConfig,
+  dataFilters: InteractiveFiltersState["dataFilters"]
 ): Filters => {
-  let res: QueryFilters;
-  const dataFiltersActive = interactiveFiltersConfig?.dataFilters.active;
+  let queryFilters = filters;
+  const { timeSlider } = interactiveFiltersConfig || {};
 
-  if (chartType !== "table") {
-    const queryFilters = dataFiltersActive
-      ? { ...filters, ...IFState.dataFilters }
-      : filters;
-    res = queryFilters;
-  } else {
-    res = filters;
+  if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
+    queryFilters = { ...queryFilters, ...dataFilters };
   }
 
-  res = omitBy(res, (x) => x.type === "single" && x.value === FIELD_VALUE_NONE);
+  queryFilters = omitBy(queryFilters, (v, k) => {
+    return (
+      (v.type === "single" && v.value === FIELD_VALUE_NONE) ||
+      k === timeSlider?.componentIri
+    );
+  });
 
-  return res;
+  return queryFilters;
 };
 
 export const useQueryFilters = ({
@@ -59,8 +63,18 @@ export const useQueryFilters = ({
   const [IFState] = useInteractiveFilters();
 
   return useMemo(() => {
-    return prepareQueryFilters(chartConfig, IFState);
-  }, [chartConfig, IFState]);
+    return prepareQueryFilters(
+      chartConfig.chartType,
+      chartConfig.filters,
+      chartConfig.interactiveFiltersConfig,
+      IFState.dataFilters
+    );
+  }, [
+    chartConfig.chartType,
+    chartConfig.filters,
+    chartConfig.interactiveFiltersConfig,
+    IFState.dataFilters,
+  ]);
 };
 
 type ValuePredicate = (v: any) => boolean;
@@ -82,58 +96,90 @@ export const usePlottableData = ({
       }
       return true;
     },
-    [plotters]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    plotters
   );
+
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
-// Prepare data used in charts.
-// Different than the full dataset because
-// interactive filters may be applied (legend + brush)
-export const usePreparedData = ({
-  timeRangeFilterActive,
-  legendFilterActive,
+/** Prepares the data to be used in charts.
+ *
+ * Different than the full dataset, because interactive filters might be applied.
+ */
+export const useDataAfterInteractiveFilters = ({
   sortedData,
-  interactiveFilters,
+  interactiveFiltersConfig,
   getX,
   getSegment,
 }: {
-  timeRangeFilterActive?: boolean;
-  legendFilterActive?: boolean;
   sortedData: Array<Observation>;
-  interactiveFilters: InteractiveFiltersState;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }) => {
-  const { from, to } = interactiveFilters.timeRange;
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
+  const [IFState] = useInteractiveFilters();
+
+  // time range
+  const fromTime = IFState.timeRange.from?.getTime();
+  const toTime = IFState.timeRange.to?.getTime();
+
+  // time slider
+  const getTime = useTemporalVariable(
+    interactiveFiltersConfig?.timeSlider.componentIri || ""
+  );
+  const timeSliderValue = IFState.timeSlider.value;
+
+  // legend
+  const legendItems = Object.keys(IFState.categories);
 
   const allFilters = useMemo(() => {
-    const timeFilter: ValuePredicate | null =
-      getX && from && to && timeRangeFilterActive
-        ? (d: Observation) =>
-            getX(d).getTime() >= from.getTime() &&
-            getX(d).getTime() <= to.getTime()
+    const timeRangeFilter =
+      getX && fromTime && toTime && interactiveFiltersConfig?.timeRange.active
+        ? (d: Observation) => {
+            const time = getX(d).getTime();
+            return time >= fromTime && time <= toTime;
+          }
         : null;
-    const legendFilter: ValuePredicate | null =
-      legendFilterActive && getSegment
-        ? (d: Observation) => !activeInteractiveFilters.includes(getSegment(d))
+    const timeSliderFilter =
+      interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+        ? (d: Observation) => {
+            return getTime(d).getTime() === timeSliderValue.getTime();
+          }
         : null;
-    return overEvery([legendFilter, timeFilter].filter(truthy));
+    const legendFilter =
+      interactiveFiltersConfig?.legend.active && getSegment
+        ? (d: Observation) => {
+            return !legendItems.includes(getSegment(d));
+          }
+        : null;
+
+    return overEvery(
+      (
+        [
+          timeRangeFilter,
+          timeSliderFilter,
+          legendFilter,
+        ] as (ValuePredicate | null)[]
+      ).filter(truthy)
+    );
   }, [
-    activeInteractiveFilters,
-    from,
+    legendItems,
     getSegment,
     getX,
-    legendFilterActive,
-    timeRangeFilterActive,
-    to,
+    getTime,
+    fromTime,
+    toTime,
+    interactiveFiltersConfig?.legend.active,
+    interactiveFiltersConfig?.timeRange.active,
+    interactiveFiltersConfig?.timeSlider.componentIri,
+    timeSliderValue,
   ]);
 
   const preparedData = useMemo(() => {
     return sortedData.filter(allFilters);
   }, [allFilters, sortedData]);
+
   return preparedData;
 };
 

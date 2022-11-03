@@ -1,10 +1,17 @@
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { extent } from "d3";
-import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import get from "lodash/get";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
-import { Checkbox } from "@/components/form";
+import { Checkbox, Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   ControlSection,
@@ -21,25 +28,32 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brus
 import {
   toggleInteractiveFilterDataDimension,
   useInteractiveDataFiltersToggle,
-  useInteractiveFiltersToggle,
+  useInteractiveLegendFiltersToggle,
   useInteractiveTimeRangeFiltersToggle,
+  useInteractiveTimeSliderFiltersSelect,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isTemporalDimension } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  TemporalDimension,
   TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { FIELD_VALUE_NONE } from "../constants";
+
+import { getTimeSliderFilterDimensions } from "./helpers";
 
 export const InteractiveFiltersOptions = ({
   state,
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const { activeField, chartConfig, dataSet, dataSource } = state;
+  const { chartConfig, dataSet, dataSource } = state;
+  const activeField = state.activeField as InteractiveFilterType;
   const locale = useLocale();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -71,12 +85,11 @@ export const InteractiveFiltersOptions = ({
         <ControlSection>
           <SectionTitle iconName="segments">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
-            <InteractiveFiltersToggle
+            <InteractiveLegendFiltersToggle
               label={t({
                 id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
                 message: "Show interactive legend",
               })}
-              path="legend"
               defaultChecked={false}
               disabled={false}
             />
@@ -92,6 +105,19 @@ export const InteractiveFiltersOptions = ({
           <SectionTitle iconName="time">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveTimeRangeFilterOptions state={state} />
+          </ControlSectionContent>
+        </ControlSection>
+      );
+    } else if (activeField === "timeSlider") {
+      return (
+        <ControlSection>
+          <SectionTitle iconName="play">
+            <Trans id="controls.interactive.filters.timeSlider">
+              Time slider
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent gap="none">
+            <InteractiveTimeSliderFilterOptions state={state} />
           </ControlSectionContent>
         </ControlSection>
       );
@@ -114,7 +140,7 @@ export const InteractiveFiltersOptions = ({
   return null;
 };
 
-const InteractiveTimeFilterToggle = ({
+const InteractiveTimeRangeFilterToggle = ({
   label,
   defaultChecked,
   disabled = false,
@@ -178,7 +204,7 @@ const InteractiveTimeRangeFilterOptions = ({
       <>
         {timeExtent && timeExtent[0] && timeExtent[1] ? (
           <>
-            <InteractiveTimeFilterToggle
+            <InteractiveTimeRangeFilterToggle
               label={t({
                 id: "controls.interactiveFilters.time.toggleTimeFilter",
                 message: "Show time filter",
@@ -214,6 +240,82 @@ const InteractiveTimeRangeFilterOptions = ({
   } else {
     return <Loading />;
   }
+};
+
+const InteractiveTimeSliderFilterOptions = ({
+  state: { chartConfig, dataSet, dataSource },
+}: {
+  state: ConfiguratorStateDescribingChart;
+}) => {
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+
+  const value =
+    get(chartConfig, "interactiveFiltersConfig.timeSlider.componentIri") ||
+    FIELD_VALUE_NONE;
+
+  if (data?.dataCubeByIri) {
+    const timeSliderDimensions = getTimeSliderFilterDimensions({
+      chartConfig,
+      dataCubeByIri: data.dataCubeByIri,
+    });
+
+    return (
+      <InteractiveTimeSliderFilterOptionsSelect
+        dimensions={timeSliderDimensions}
+        value={value}
+      />
+    );
+  } else {
+    return <Loading />;
+  }
+};
+
+const InteractiveTimeSliderFilterOptionsSelect = ({
+  dimensions,
+  value,
+}: {
+  dimensions: TemporalDimension[];
+  value: string;
+}) => {
+  const fieldProps = useInteractiveTimeSliderFiltersSelect();
+  const options = useMemo(() => {
+    return [
+      {
+        label: t({
+          id: "controls.none",
+          message: "None",
+        }),
+        value: FIELD_VALUE_NONE,
+        isNoneValue: true,
+      },
+      ...dimensions.map((d) => ({
+        label: d.label,
+        value: d.iri,
+      })),
+    ];
+  }, [dimensions]);
+
+  return (
+    <Select
+      id="time-slider-component-iri"
+      options={options}
+      label={t({
+        id: "controls.select.dimension",
+        message: "Select a dimension",
+      })}
+      value={value}
+      displayEmpty={true}
+      {...fieldProps}
+    />
+  );
 };
 
 // Data Filters
@@ -341,18 +443,16 @@ const InteractiveDataFilterOptionsCheckbox = ({
 };
 
 // Generic toggle
-const InteractiveFiltersToggle = ({
+const InteractiveLegendFiltersToggle = ({
   label,
-  path,
   defaultChecked,
   disabled = false,
 }: {
   label: string;
-  path: InteractiveFilterType;
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {
-  const fieldProps = useInteractiveFiltersToggle({ path });
+  const fieldProps = useInteractiveLegendFiltersToggle();
 
   return (
     <Checkbox
