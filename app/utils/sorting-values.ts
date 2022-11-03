@@ -90,3 +90,12 @@ export const valueComparator = (locale: string) => (a: Value, b: Value) => {
     return a.label.localeCompare(b.label, locale);
   }
 };
+
+export const getSortingOrders = (
+  sorters: ((...args: any[]) => any)[],
+  sorting: SortingField["sorting"]
+) => {
+  return Array(sorters.length).fill(
+    sorting?.sortingOrder === "desc" ? "desc" : "asc"
+  );
+};

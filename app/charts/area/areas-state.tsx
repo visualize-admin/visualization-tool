@@ -50,7 +50,10 @@ import {
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 export interface AreasState extends CommonChartState {
   chartType: "area";
@@ -228,13 +231,12 @@ const useAreasState = (
     return orderBy(
       uniqueSegments,
       sorters,
-      segmentSortingOrder === "desc" ? "desc" : "asc"
+      getSortingOrders(sorters, segmentSorting)
     );
   }, [
     plottableSortedData,
     dimensions,
     segmentSorting,
-    segmentSortingOrder,
     getY,
     getSegment,
     fields.segment?.componentIri,
