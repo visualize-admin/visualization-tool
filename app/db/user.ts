@@ -1,5 +1,13 @@
 import prisma from "./client";
 
+export const findBySub = async (sub: string) => {
+  return prisma.user.findFirstOrThrow({
+    where: {
+      sub,
+    },
+  });
+};
+
 /**
  * Ensures an authenticated user has an account
  * on our side.

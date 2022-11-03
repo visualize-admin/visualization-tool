@@ -4,6 +4,7 @@
 
 import { Prisma, Config, User } from "@prisma/client";
 
+import { Config as ConfigType } from "@/configurator";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 import { createChartId } from "../utils/create-chart-id";
@@ -46,13 +47,14 @@ type ChartJsonConfig = {
 
 const parseDbConfig = (conf: Config) => {
   const data = conf.data as ChartJsonConfig;
+  const migratedData = {
+    ...data,
+    dataSet: migrateDataSet(data.dataSet as string),
+    chartConfig: migrateChartConfig(data.chartConfig),
+  } as unknown as Omit<ConfigType, "activeField">;
   return {
     ...conf,
-    data: {
-      ...data,
-      dataSet: migrateDataSet(data.dataSet as string),
-      chartConfig: migrateChartConfig(data.chartConfig),
-    },
+    data: migratedData,
   };
 };
 
@@ -81,5 +83,18 @@ export const getConfig = async (key: string) => {
 export const getAllConfigs = async () => {
   const configs = await prisma.config.findMany();
   return configs.map((c) => parseDbConfig(c));
-
 };
+
+/**
+ * Get config from a user.
+ */
+export const getUserConfigs = async (userId: number) => {
+  const configs = await prisma.config.findMany({
+    where: {
+      user_id: userId,
+    },
+  });
+  return configs.map((c) => parseDbConfig(c));
+};
+
+export type ParsedConfig = ReturnType<typeof parseDbConfig>;
