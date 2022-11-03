@@ -122,13 +122,17 @@ const formatIdentity = (x: string | Date | null) => {
 const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
   const res = dim.resolution;
   const hasResolution = typeof res === "number";
-  const expFormatter = format(`${hasResolution ? `.${res}` : ""}~e`);
+  const formatting = `${hasResolution ? `.${res}` : ""}~e`;
+  const expFormatter = format(formatting);
   return (v: string) => {
-    if (v === "0" || v === "0.0") {
+    const p = parseFloat(v);
+    const a = Math.abs(p);
+    if (p === 0) {
       return formatNumber(v);
-    } else {
-      const p = parseFloat(v);
+    } else if (a > 999_999_999 || a < 0.0001) {
       return expFormatter(p);
+    } else {
+      return v;
     }
   };
 };

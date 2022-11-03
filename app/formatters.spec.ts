@@ -8,9 +8,8 @@ import {
   useDimensionFormatters,
   useFormatFullDateAuto,
   useTimeFormatLocale,
-} from './formatters'
+} from "./formatters";
 import { DimensionMetadataFragment, TimeUnit } from "./graphql/query-hooks";
-
 
 describe("useFormatFullDateAuto", () => {
   const setup = () => {
@@ -131,15 +130,20 @@ describe("useDimensionFormatters", () => {
 
   it("should work with decimal dimensions", () => {
     const { formatters } = setup();
-    expect(formatters["iri-decimal"]("0.0001")).toEqual("1e-4");
-    expect(formatters["iri-decimal"]("0.00015467")).toEqual("1.5467e-4");
+    const formatter = formatters["iri-decimal"];
+    expect(formatter("0.0001")).toEqual("0.0001");
+    expect(formatter("0.00015467")).toEqual("0.00015467");
+    expect(formatter("0.00001")).toEqual("1e-5");
+    expect(formatter("0.000015467")).toEqual("1.5467e-5");
   });
 
   it("should work with decimal dimensions with resolution", () => {
     const { formatters } = setup();
-    const formatter = formatters["iri-decimal-resolution"] 
-    expect(formatter("0.0001")).toEqual("1e-4");
-    expect(formatter("0.00015467")).toEqual("1.55e-4");
+    const formatter = formatters["iri-decimal-resolution"];
+    expect(formatter("0.0001")).toEqual("0.0001");
+    expect(formatter("0.00015467")).toEqual("0.00015467");
+    expect(formatter("0.00001")).toEqual("1e-5");
+    expect(formatter("0.000015467")).toEqual("1.55e-5");
   });
 });
 
