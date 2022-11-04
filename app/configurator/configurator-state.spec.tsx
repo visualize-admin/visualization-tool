@@ -52,7 +52,13 @@ jest.mock("@/graphql/client", () => {
                 {
                   __typename: "GeoShapesDimension",
                   iri: "newAreaLayerColorIri",
-                  values: [{ value: "orange", label: "orange" }],
+                  values: [
+                    {
+                      value: "orange",
+                      label: "orange",
+                      color: "rgb(255, 153, 0)",
+                    },
+                  ],
                 },
                 {
                   __typename: "GeoCoordinatesDimension",
@@ -720,6 +726,41 @@ describe("colorMapping", () => {
       red: "red",
       green: "green",
       blue: "blue",
+    });
+  });
+
+  it("should use dimension colors if present", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSource: {
+        type: "sparql",
+        url: "fakeUrl",
+      },
+      chartConfig: {
+        chartType: "column",
+        fields: {},
+        filters: {},
+      },
+    } as ConfiguratorStateConfiguringChart;
+
+    handleChartFieldChanged(
+      state as unknown as ConfiguratorStateConfiguringChart,
+      {
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          locale: "en",
+          field: "segment",
+          componentIri: "newAreaLayerColorIri",
+        },
+      }
+    );
+
+    const chartConfig = state.chartConfig as ColumnConfig;
+
+    expect(chartConfig.fields.segment?.componentIri === "newAreaLayerColorIri");
+    expect(chartConfig.fields.segment?.palette === "dimension");
+    expect(chartConfig.fields.segment?.colorMapping).toEqual({
+      orange: "rgb(255, 153, 0)",
     });
   });
 });

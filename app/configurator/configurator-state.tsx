@@ -29,7 +29,6 @@ import {
   getPossibleChartType,
 } from "@/charts";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
-import { hasDimensionColors } from "@/charts/shared/colors";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -81,7 +80,7 @@ import {
 import { DataCubeMetadata } from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
+import { getDefaultCategoricalPaletteName } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import {
   getDataSourceFromLocalStorage,
@@ -803,8 +802,9 @@ export const handleChartFieldChanged = (
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
       if (isSegmentInConfig(draft.chartConfig)) {
+        const palette = getDefaultCategoricalPaletteName(component);
         const colorMapping = mapValueIrisToColor({
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          palette,
           dimensionValues: component?.values || [],
         });
         draft.chartConfig.filters[componentIri] = {
@@ -815,7 +815,7 @@ export const handleChartFieldChanged = (
         };
         draft.chartConfig.fields.segment = {
           componentIri,
-          palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+          palette,
           // Type exists only within column charts.
           ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
           sorting: DEFAULT_SORTING,
@@ -847,10 +847,12 @@ export const handleChartFieldChanged = (
       draft.chartConfig.fields.segment &&
       "palette" in draft.chartConfig.fields.segment
     ) {
+      const palette = getDefaultCategoricalPaletteName(
+        component,
+        draft.chartConfig.fields.segment.palette
+      );
       const colorMapping = mapValueIrisToColor({
-        palette:
-          draft.chartConfig.fields.segment.palette ||
-          DEFAULT_CATEGORICAL_PALETTE_NAME,
+        palette,
         dimensionValues: component?.values || [],
       });
 
@@ -971,10 +973,10 @@ export const handleChartOptionChanged = (
             canDimensionBeMultiFiltered(component) ||
             isOrdinalMeasure(component)
           ) {
-            const hasColors = hasDimensionColors(component);
-            const palette = hasColors
-              ? "dimension"
-              : previousPalette || DEFAULT_CATEGORICAL_PALETTE_NAME;
+            const palette = getDefaultCategoricalPaletteName(
+              component,
+              previousPalette
+            );
             setWith(
               draft,
               `chartConfig.fields.${action.value.field}.color`,
