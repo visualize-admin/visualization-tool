@@ -23,7 +23,6 @@ import {
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DataSetPreview } from "@/configurator/components/dataset-preview";
 import {
-  PanelBannerWrapper,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
@@ -51,12 +50,10 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   panelLayout: {
     width: "100%",
     margin: "auto",
-    left: 0,
-    right: 0,
     position: "static",
-    // FIXME replace 96px with actual header size
-    marginTop: 96,
+    marginTop: ({ datasetPresent }) => (datasetPresent ? 96 : 0),
     height: "auto",
+    transition: "margin-top 0.5s ease",
   },
   panelLeft: {
     // To prevent weird look when dataset metadata is loading
@@ -79,9 +76,13 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     transition: "padding-top 0.5s ease",
   },
   panelBanner: {
+    position: "static",
     display: "flex",
-    paddingLeft: 18,
-    paddingRight: 18,
+    height: 350,
+    marginTop: 96,
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(7),
+    backgroundColor: theme.palette.primary.light,
   },
   panelBannerContent: {
     flexDirection: "column",
@@ -96,8 +97,8 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
       marginRight: "auto",
     },
     [theme.breakpoints.up("lg")]: {
-      marginLeft: "20rem",
-      marginRight: "20rem",
+      marginLeft: "auto",
+      marginRight: "auto",
     },
   },
   panelBannerTitle: {
@@ -168,53 +169,15 @@ const SelectDatasetStepContent = () => {
   }
 
   return (
-    <PanelLayout className={classes.panelLayout}>
-      <PanelLeftWrapper className={classes.panelLeft}>
-        <AnimatePresence exitBeforeEnter>
-          {dataset ? (
-            <MotionBox
-              {...navPresenceProps}
-              px={4}
-              mx={4}
-              key="dataset-metadata"
-              custom={dataset}
-            >
-              <NextLink passHref href={backLink}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<Icon name="chevronLeft" size={12} />}
-                >
-                  <Trans id="dataset-preview.back-to-results">
-                    Back to the list
-                  </Trans>
-                </Button>
-              </NextLink>
-              <DataSetMetadata
-                sx={{ mt: 6 }}
-                dataSetIri={dataset}
-                dataSource={configState.dataSource}
-              />
-            </MotionBox>
-          ) : (
-            <MotionBox
-              key="search-filters"
-              {...navPresenceProps}
-              custom={false}
-            >
-              <SearchFilters data={datacubesQuery.data} />
-            </MotionBox>
-          )}
-        </AnimatePresence>
-      </PanelLeftWrapper>
+    <Box>
       <AnimatePresence>
         {!dataset && (
-          <MotionBox
-            {...bannerPresenceProps}
-            key="banner"
-            sx={{ width: "100vw" }}
-          >
-            <PanelBannerWrapper className={classes.panelBanner}>
+          <MotionBox {...bannerPresenceProps} key="banner">
+            <Box
+              component="section"
+              role="banner"
+              className={classes.panelBanner}
+            >
               <Flex className={classes.panelBannerContent}>
                 <Typography variant="h1" className={classes.panelBannerTitle}>
                   Swiss Open Government Data
@@ -233,49 +196,90 @@ const SelectDatasetStepContent = () => {
                 </Typography>
                 <SearchDatasetInput browseState={browseState} />
               </Flex>
-            </PanelBannerWrapper>
+            </Box>
           </MotionBox>
         )}
       </AnimatePresence>
-      <PanelMiddleWrapper className={classes.panelMiddle}>
-        <Box sx={{ maxWidth: 1040 }}>
+
+      <PanelLayout className={classes.panelLayout}>
+        <PanelLeftWrapper className={classes.panelLeft}>
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
-              <MotionBox {...navPresenceProps} key="preview">
-                <DataSetPreview
+              <MotionBox
+                {...navPresenceProps}
+                px={4}
+                mx={4}
+                key="dataset-metadata"
+                custom={dataset}
+              >
+                <NextLink passHref href={backLink}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<Icon name="chevronLeft" size={12} />}
+                  >
+                    <Trans id="dataset-preview.back-to-results">
+                      Back to the list
+                    </Trans>
+                  </Button>
+                </NextLink>
+                <DataSetMetadata
+                  sx={{ mt: 6 }}
                   dataSetIri={dataset}
                   dataSource={configState.dataSource}
                 />
               </MotionBox>
             ) : (
-              <MotionBox {...navPresenceProps}>
-                {filters.length > 0 && (
-                  <Typography
-                    key="filters"
-                    className={classes.filters}
-                    variant="h1"
-                  >
-                    {filters
-                      .filter(
-                        (f): f is Exclude<typeof f, DataCubeAbout> =>
-                          f.__typename !== "DataCubeAbout"
-                      )
-                      .map((f) => f.label)
-                      .join(", ")}
-                  </Typography>
-                )}
-
-                <SearchDatasetControls
-                  browseState={browseState}
-                  searchResult={datacubesQuery.data}
-                />
-                <DatasetResults key="results" query={datacubesQuery} />
+              <MotionBox
+                key="search-filters"
+                {...navPresenceProps}
+                custom={false}
+              >
+                <SearchFilters data={datacubesQuery.data} />
               </MotionBox>
             )}
           </AnimatePresence>
-        </Box>
-      </PanelMiddleWrapper>
-    </PanelLayout>
+        </PanelLeftWrapper>
+        <PanelMiddleWrapper className={classes.panelMiddle}>
+          <Box sx={{ maxWidth: 1040 }}>
+            <AnimatePresence exitBeforeEnter>
+              {dataset ? (
+                <MotionBox {...navPresenceProps} key="preview">
+                  <DataSetPreview
+                    dataSetIri={dataset}
+                    dataSource={configState.dataSource}
+                  />
+                </MotionBox>
+              ) : (
+                <MotionBox {...navPresenceProps}>
+                  {filters.length > 0 && (
+                    <Typography
+                      key="filters"
+                      className={classes.filters}
+                      variant="h1"
+                    >
+                      {filters
+                        .filter(
+                          (f): f is Exclude<typeof f, DataCubeAbout> =>
+                            f.__typename !== "DataCubeAbout"
+                        )
+                        .map((f) => f.label)
+                        .join(", ")}
+                    </Typography>
+                  )}
+
+                  <SearchDatasetControls
+                    browseState={browseState}
+                    searchResult={datacubesQuery.data}
+                  />
+                  <DatasetResults key="results" query={datacubesQuery} />
+                </MotionBox>
+              )}
+            </AnimatePresence>
+          </Box>
+        </PanelMiddleWrapper>
+      </PanelLayout>
+    </Box>
   );
 };
 

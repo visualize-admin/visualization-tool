@@ -34,10 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "grid",
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
-    gridTemplateRows: "auto auto minmax(0, 1fr)",
+    gridTemplateRows: "auto minmax(0, 1fr)",
     gridTemplateAreas: `
     "header header header"
-    "banner banner banner"
     "left middle right"`,
     marginLeft: "auto",
     marginRight: "auto",
@@ -47,11 +46,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowY: "auto",
     padding: theme.spacing(4),
     gridArea: "middle",
-  },
-  panelBanner: {
-    height: 350,
-    backgroundColor: theme.palette.primary.light,
-    gridArea: "banner",
   },
 }));
 
@@ -157,29 +151,6 @@ export const PanelMiddleWrapper = ({
       className={clsx(classes.panelMiddle, className)}
       component="section"
       data-testid="panel-middle"
-      sx={sx}
-    >
-      {children}
-    </Box>
-  );
-};
-
-export const PanelBannerWrapper = ({
-  children,
-  sx,
-  className,
-}: {
-  children: React.ReactNode;
-  sx?: BoxProps["sx"];
-  className?: BoxProps["className"];
-}) => {
-  const classes = useStyles();
-
-  return (
-    <Box
-      className={clsx(classes.panelBanner, className)}
-      component="section"
-      role="banner"
       sx={sx}
     >
       {children}
