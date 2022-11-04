@@ -1,6 +1,6 @@
 /* eslint-disable no-redeclare */
 import { fold } from "fp-ts/lib/Either";
-import { pipe } from "fp-ts/lib/pipeable";
+import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
 import { DataCubeMetadata } from "@/graphql/types";
