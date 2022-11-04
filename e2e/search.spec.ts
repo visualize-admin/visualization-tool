@@ -27,7 +27,7 @@ test("should be possible to open a search URL, and search state should be recove
   );
 });
 
-test("search results count coherence", async ({ page, screen, selectors }) => {
+test("search results count coherence", async ({ page, selectors }) => {
   test.slow();
 
   const categories = [
@@ -55,7 +55,9 @@ test("search results count coherence", async ({ page, screen, selectors }) => {
     const count = await countChip.textContent();
     await panelLeft.locator(`:text("${t}")`).click();
 
-    await page.locator(`:text("${count} results")`).waitFor({ timeout: 10000 });
+    await page
+      .locator(`:text("${count} datasets")`)
+      .waitFor({ timeout: 10000 });
   }
 });
 
@@ -67,9 +69,7 @@ test("sort order", async ({ page, selectors, screen, actions }) => {
 
   expect(await getSelectValue(select)).toBe("CREATED_DESC");
 
-  const searchInput = screen.getAllByPlaceholderText(
-    "Name, description, organization, theme, keyword"
-  );
+  const searchInput = screen.getAllByPlaceholderText("Search");
 
   // Search something, order should be score
   await searchInput.type("NFI");
