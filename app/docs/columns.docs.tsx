@@ -41,6 +41,9 @@ ${(
             active: false,
             componentIri: "http://fake-iri",
           },
+          timeSlider: {
+            componentIri: "",
+          },
         }}
         fields={columnFields}
         measures={columnMeasures}

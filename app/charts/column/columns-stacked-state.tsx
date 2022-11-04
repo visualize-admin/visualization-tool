@@ -34,20 +34,20 @@ import {
 import {
   getLabelWithUnit,
   getWideData,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -55,11 +55,10 @@ import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-export interface StackedColumnsState {
+export interface StackedColumnsState extends CommonChartState {
   chartType: "column";
   preparedData: Observation[];
   allData: Observation[];
-  bounds: Bounds;
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
@@ -100,7 +99,6 @@ const useColumnsStackedState = (
   } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 
@@ -159,11 +157,9 @@ const useColumnsStackedState = (
   });
 
   // Data for Chart
-  const preparedData = usePreparedData({
-    legendFilterActive: interactiveFiltersConfig?.legend.active,
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX: getXAsDate,
     getSegment,
   });
@@ -498,9 +494,9 @@ const useColumnsStackedState = (
 
   return {
     chartType: "column",
+    bounds,
     preparedData,
     allData: plottableSortedData,
-    bounds,
     getX,
     getXAsDate,
     xScale,

@@ -25,13 +25,22 @@ ${(
         dimensions={dimensions}
         measures={measures}
         interactiveFiltersConfig={{
-          legend: { active: true, componentIri: "" },
+          legend: {
+            active: true,
+            componentIri: "",
+          },
           timeRange: {
             active: true,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
-          dataFilters: { active: false, componentIris: [] },
+          timeSlider: {
+            componentIri: "",
+          },
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
         }}
         aspectRatio={0.4}
       >

@@ -125,7 +125,7 @@ export const BrushTime = () => {
 
       // Update interactive filters state
       dispatch({
-        type: "ADD_TIME_FILTER",
+        type: "SET_TIME_RANGE_FILTER",
         value: newDates,
       });
     }
@@ -183,13 +183,13 @@ export const BrushTime = () => {
           if (getDate(indexLeft).getTime() < to.getTime()) {
             // new lower than "to"
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [getDate(indexLeft), to],
             });
           } else {
             // new too high, don't do anything
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, to],
             });
           }
@@ -199,12 +199,12 @@ export const BrushTime = () => {
           const indexRight = fullData[index];
           if (getDate(indexRight).getTime() < to.getTime()) {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [getDate(indexRight), to],
             });
           } else {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, to],
             });
           }
@@ -215,12 +215,12 @@ export const BrushTime = () => {
 
           if (getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, getDate(indexLeft)],
             });
           } else {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, to],
             });
           }
@@ -231,12 +231,12 @@ export const BrushTime = () => {
 
           if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, getDate(indexLeft)],
             });
           } else {
             dispatch({
-              type: "ADD_TIME_FILTER",
+              type: "SET_TIME_RANGE_FILTER",
               value: [from, to],
             });
           }
@@ -447,7 +447,7 @@ export const BrushTime = () => {
 
 //       // Update interactive filters state
 //       dispatch({
-//         type: "ADD_TIME_FILTER",
+//         type: "SET_TIME_RANGE_FILTER",
 //         value: [startIndex, endIndex - 1],
 //       });
 //     }
@@ -475,13 +475,13 @@ export const BrushTime = () => {
 //         if (indexLeft < to) {
 //           // new lower than "to"
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [indexLeft, to],
 //           });
 //         } else {
 //           // new too high, don't do anything
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, to],
 //           });
 //         }
@@ -491,12 +491,12 @@ export const BrushTime = () => {
 //         const indexRight = from + 1;
 //         if (indexRight < to) {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [indexRight, to],
 //           });
 //         } else {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, to],
 //           });
 //         }
@@ -507,12 +507,12 @@ export const BrushTime = () => {
 
 //         if (indexLeft > from) {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, indexLeft],
 //           });
 //         } else {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, to],
 //           });
 //         }
@@ -522,12 +522,12 @@ export const BrushTime = () => {
 
 //         if (indexRight && indexRight > from) {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, indexRight],
 //           });
 //         } else {
 //           dispatch({
-//             type: "ADD_TIME_FILTER",
+//             type: "SET_TIME_RANGE_FILTER",
 //             value: [from, to],
 //           });
 //         }

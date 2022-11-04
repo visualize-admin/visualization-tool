@@ -1,3 +1,4 @@
+import { SelectChangeEvent } from "@mui/material";
 import produce from "immer";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
@@ -7,44 +8,39 @@ import {
   isDescribing,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import useEvent from "@/utils/use-event";
 
-export const useInteractiveFiltersToggle = ({
-  path,
-}: {
-  path: InteractiveFilterType;
-}) => {
+import { FIELD_VALUE_NONE } from "../constants";
+
+export const useInteractiveLegendFiltersToggle = () => {
   const [state, dispatch] = useConfiguratorState(isDescribing);
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
-      const newIFConfig = produce(
-        state.chartConfig.interactiveFiltersConfig,
-        (draft) => {
-          if (draft?.[path]) {
-            draft[path].active = e.currentTarget.checked;
-          }
-
-          return draft;
+  const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
+    const newConfig = produce(
+      state.chartConfig.interactiveFiltersConfig,
+      (draft) => {
+        if (draft?.legend) {
+          draft.legend.active = e.currentTarget.checked;
         }
-      );
 
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newIFConfig,
-      });
-    },
-    [dispatch, path, state]
-  );
+        return draft;
+      }
+    );
+
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newConfig,
+    });
+  });
 
   const stateValue = get(
     state,
-    `chartConfig.interactiveFiltersConfig.${path}.active`
+    "chartConfig.interactiveFiltersConfig.legend.active"
   );
   const checked = stateValue ? stateValue : false;
 
   return {
-    name: path,
+    name: "legend",
     checked,
     onChange,
   };
@@ -118,6 +114,41 @@ export const updateInteractiveTimeRangeFilter = produce(
     return config;
   }
 );
+
+export const useInteractiveTimeSliderFiltersSelect = () => {
+  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const { chartConfig } = state;
+
+  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
+    (e) => {
+      const value = (
+        e.target.value === FIELD_VALUE_NONE ? "" : e.target.value
+      ) as string;
+
+      const newConfig = produce(
+        chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          if (draft?.timeSlider) {
+            draft.timeSlider.componentIri = value;
+          }
+
+          return draft;
+        }
+      );
+
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newConfig,
+      });
+    },
+    [chartConfig, dispatch]
+  );
+
+  return {
+    name: "timeSlider",
+    onChange,
+  };
+};
 
 export const useInteractiveDataFiltersToggle = ({
   dimensions,

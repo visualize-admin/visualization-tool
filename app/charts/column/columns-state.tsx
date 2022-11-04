@@ -26,20 +26,20 @@ import {
 } from "@/charts/column/constants";
 import {
   getLabelWithUnit,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
   mkNumber,
@@ -57,9 +57,8 @@ import { TemporalDimension, TimeUnit } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-export interface ColumnsState {
+export interface ColumnsState extends CommonChartState {
   chartType: "column";
-  bounds: Bounds;
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;
@@ -102,7 +101,6 @@ const useColumnsState = (
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
-  const [interactiveFilters] = useInteractiveFilters();
 
   const dimensionsByIri = useMemo(
     () => Object.fromEntries(dimensions.map((d) => [d.iri, d])),
@@ -159,10 +157,9 @@ const useColumnsState = (
     plotters: [getXAsDate, getY],
   });
 
-  const preparedData = usePreparedData({
-    timeRangeFilterActive: interactiveFiltersConfig?.timeRange.active,
+  const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
-    interactiveFilters,
+    interactiveFiltersConfig,
     getX: getXAsDate,
   });
 

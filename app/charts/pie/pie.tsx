@@ -6,11 +6,11 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const Pie = () => {
-  const { data, getPieData, getX, colors, bounds } =
+  const { preparedData, getPieData, getX, colors, bounds } =
     useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
 
-  const arcs = getPieData(data);
+  const arcs = getPieData(preparedData);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
