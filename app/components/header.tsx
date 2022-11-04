@@ -68,35 +68,40 @@ export const HeaderBorder = () => {
   );
 };
 
+const useHeaderStyles = makeStyles<Theme>((theme) => ({
+  wrapper: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    overflowY: "hidden",
+    zIndex: 13,
+    backgroundColor: theme.palette.grey[100],
+  },
+  content: {
+    minHeight: 92,
+    maxWidth: 1400,
+    marginLeft: "auto",
+    marginRight: "auto",
+    color: theme.palette.grey[700],
+  },
+}));
+
 export const Header = ({
   pageType = "app",
 }: {
   pageType?: "content" | "app";
 }) => {
+  const classes = useHeaderStyles();
+
   return (
-    <Box
-      sx={
-        pageType == "content"
-          ? undefined
-          : {
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              overflowY: "hidden",
-              zIndex: 13,
-            }
-      }
-    >
+    <Box className={pageType === "app" ? classes.wrapper : undefined}>
       <Flex
         component="header"
+        className={classes.content}
         sx={{
           px: [0, 4, 4],
           pt: [0, 3, 3],
-          minHeight: 92,
-
-          backgroundColor: "grey.100",
-          color: "grey.700",
           flexDirection: ["column", "row"],
         }}
       >
