@@ -12,16 +12,19 @@ import prisma from "./client";
 
 /**
  * Store data in the DB.
+ * If the user is logged, the chart is linked to the user.
  *
  * @param data Data to be stored as configuration
  */
 export const createConfig = async (
-  data: Prisma.ConfigCreateInput["data"]
+  data: Prisma.ConfigCreateInput["data"],
+  userId?: User["id"] | undefined
 ): Promise<{ key: string }> => {
   const result = await prisma.config.create({
     data: {
       key: createChartId(),
       data: data,
+      user_id: userId,
     },
   });
 

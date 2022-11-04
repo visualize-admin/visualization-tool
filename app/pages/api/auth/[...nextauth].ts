@@ -17,8 +17,7 @@ const providers = [
     : null,
 ].filter(truthy);
 
-const nextAuthConfig = {
-  // Configure one or more authentication providers
+export const nextAuthOptions = {
   providers,
   callbacks: {
     /**
