@@ -54,12 +54,11 @@ msgstr "Categories"
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
-#: app/configurator/components/select-dataset-step.tsx:200
-#: app/configurator/components/select-dataset-step.tsx:249
+#: app/configurator/components/select-dataset-step.tsx:284
 msgid "browse.datasets.all-datasets"
 msgstr "All datasets"
 
-#: app/configurator/components/select-dataset-step.tsx:214
+#: app/configurator/components/select-dataset-step.tsx:217
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
@@ -752,9 +751,13 @@ msgstr "Data source"
 msgid "data.source.notTrusted"
 msgstr "This chart is not using a trusted data source."
 
-#: app/configurator/components/select-dataset-step.tsx:141
+#: app/configurator/components/select-dataset-step.tsx:179
 msgid "dataset-preview.back-to-results"
 msgstr "Back to the datasets"
+
+#: app/configurator/components/dataset-metadata.tsx:196
+msgid "dataset-preview.keywords"
+msgstr "Keywords"
 
 #: app/components/chart-footnotes.tsx:113
 msgid "dataset.footnotes.dataset"
@@ -772,7 +775,7 @@ msgstr "Some data in this dataset is missing and has been interpolated to fill t
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
-#: app/configurator/components/dataset-metadata.tsx:82
+#: app/configurator/components/dataset-metadata.tsx:78
 msgid "dataset.metadata.date.created"
 msgstr "Date created"
 
@@ -780,11 +783,11 @@ msgstr "Date created"
 #~ msgid "dataset.metadata.date.footnotes.updated"
 #~ msgstr ", latest update: {0}"
 
-#: app/configurator/components/dataset-metadata.tsx:94
+#: app/configurator/components/dataset-metadata.tsx:90
 msgid "dataset.metadata.email"
 msgstr "Contact points"
 
-#: app/configurator/components/dataset-metadata.tsx:108
+#: app/configurator/components/dataset-metadata.tsx:104
 msgid "dataset.metadata.furtherinformation"
 msgstr "Further information"
 
@@ -793,11 +796,11 @@ msgstr "Further information"
 msgid "dataset.metadata.learnmore"
 msgstr "Learn more about the dataset"
 
-#: app/configurator/components/dataset-metadata.tsx:67
+#: app/configurator/components/dataset-metadata.tsx:63
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:89
+#: app/configurator/components/dataset-metadata.tsx:85
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -825,7 +828,7 @@ msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for report
 
 #: app/configurator/components/dataset-browse.tsx:415
 msgid "dataset.results"
-msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
+msgstr "{0, plural, zero {No datasets} one {# dataset} other {# datasets}}"
 
 #: app/configurator/components/dataset-browse.tsx:355
 msgid "dataset.search.label"

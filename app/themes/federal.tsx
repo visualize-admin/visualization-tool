@@ -173,16 +173,6 @@ theme.typography = merge(theme.typography, {
     lineHeight: [18, 20],
     fontWeight: "regular",
   }),
-  tag: createTypographyVariant(theme, {
-    lineHeight: [18, 20],
-    fontSize: [12, 14],
-  }),
-  // table: {
-  //   fontFamily: "body",
-  //   lineHeight: [2, 4, 4],
-  //   fontWeight: "regular",
-  //   fontSize: [2, 3, 3],
-  // },
   caption: createTypographyVariant(theme, {
     fontSize: [10, 12],
     lineHeight: [16, 18],

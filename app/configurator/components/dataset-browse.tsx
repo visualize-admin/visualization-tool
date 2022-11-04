@@ -199,6 +199,7 @@ const useQueryParamsState = <T extends object>(
 export const useBrowseState = () => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [{ data: themeData }] = useThemesQuery({
     variables: {
       sourceType: dataSource.type,
@@ -242,10 +243,9 @@ export const useBrowseState = () => {
     DataCubeResultOrder.Score
   );
 
-  console.log({ order });
-
   return useMemo(
     () => ({
+      inputRef,
       includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
@@ -317,19 +317,72 @@ export const useBrowseContext = () => {
   return ctx;
 };
 
-export const SearchDatasetBox = ({
+export const SearchDatasetInput = ({
+  browseState,
+}: {
+  browseState: BrowseState;
+}) => {
+  const [_, setShowDraftCheckbox] = useState<boolean>(false);
+  const { inputRef, search, onSubmitSearch, onReset } = browseState;
+
+  const searchLabel = t({
+    id: "dataset.search.label",
+    message: `Search datasets`,
+  });
+
+  const placeholderLabel = t({
+    id: "select.controls.filters.search",
+    message: "Search",
+  });
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  const handleClick = () => {
+    if (inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  return (
+    <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
+      <SearchField
+        inputRef={inputRef}
+        id="datasetSearch"
+        label={searchLabel}
+        defaultValue={search || ""}
+        InputProps={{
+          inputProps: {
+            "data-testid": "datasetSearch",
+          },
+          onKeyPress: handleKeyPress,
+          onReset: onReset,
+          onFocus: () => setShowDraftCheckbox(true),
+        }}
+        placeholder={placeholderLabel}
+        sx={{ width: "100%", maxWidth: 400 }}
+      />
+      <Button sx={{ px: 6 }} onClick={handleClick}>
+        <Trans id="select.controls.filters.search">Search</Trans>
+      </Button>
+    </Flex>
+  );
+};
+
+export const SearchDatasetControls = ({
   browseState,
   searchResult,
 }: {
   browseState: BrowseState;
   searchResult: Maybe<DataCubesQuery>;
 }) => {
-  const [_, setShowDraftCheckbox] = useState<boolean>(false);
-
   const {
+    inputRef,
     search,
     onSubmitSearch,
-    onReset,
     includeDrafts,
     setIncludeDrafts,
     order: stateOrder,
@@ -352,16 +405,6 @@ export const SearchDatasetBox = ({
     },
   ];
 
-  const searchLabel = t({
-    id: "dataset.search.label",
-    message: `Search datasets`,
-  });
-
-  const placeholderLabel = t({
-    id: "dataset.search.placeholder",
-    message: `Name, description, organization, theme, keyword`,
-  });
-
   const isSearching = search !== "";
 
   const onToggleIncludeDrafts = useEvent(async () => {
@@ -373,93 +416,62 @@ export const SearchDatasetBox = ({
     }
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
-    if (ev.key === "Enter" && inputRef.current) {
-      onSubmitSearch(inputRef.current.value);
-    }
-  };
-
   return (
-    <Box>
-      <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
-        <SearchField
-          inputRef={inputRef}
-          id="datasetSearch"
-          label={searchLabel}
-          defaultValue={search || ""}
-          InputProps={{
-            inputProps: {
-              "data-testid": "datasetSearch",
-            },
-            onKeyPress: handleKeyPress,
-            onReset: onReset,
-            onFocus: () => setShowDraftCheckbox(true),
-          }}
-          placeholder={placeholderLabel}
-          sx={{ flexGrow: 1 }}
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+        pl: 4,
+      }}
+    >
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        aria-live="polite"
+        data-testid="search-results-count"
+      >
+        {searchResult && searchResult.dataCubes.length > 0 && (
+          <Plural
+            id="dataset.results"
+            value={searchResult.dataCubes.length}
+            zero="No datasets"
+            one="# dataset"
+            other="# datasets"
+          />
+        )}
+      </Typography>
+
+      <Flex sx={{ alignItems: "center" }}>
+        <Checkbox
+          label={t({
+            id: "dataset.includeDrafts",
+            message: "Include draft datasets",
+          })}
+          name="dataset-include-drafts"
+          value="dataset-include-drafts"
+          checked={includeDrafts}
+          disabled={false}
+          onChange={onToggleIncludeDrafts}
         />
-      </Box>
+        <label htmlFor="datasetSort">
+          <Typography variant="body2" fontWeight={700}>
+            <Trans id="dataset.sortby">Sort by</Trans>
+          </Typography>
+        </label>
 
-      <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
-        <Typography
-          color="secondary"
-          sx={{
-            fontSize: ["0.75rem", "0.75rem", "0.75rem"],
-            lineHeight: "24px",
+        <MinimalisticSelect
+          id="datasetSort"
+          smaller={true}
+          value={order}
+          data-testid="datasetSort"
+          options={isSearching ? options : options.slice(1)}
+          onChange={(e) => {
+            onSetOrder(e.target.value as DataCubeResultOrder);
           }}
-          aria-live="polite"
-          data-testid="search-results-count"
-        >
-          {searchResult && searchResult.dataCubes.length > 0 && (
-            <Plural
-              id="dataset.results"
-              value={searchResult.dataCubes.length}
-              zero="No results"
-              one="# result"
-              other="# results"
-            />
-          )}
-        </Typography>
-
-        <Flex sx={{ alignItems: "center" }}>
-          <Checkbox
-            label={t({
-              id: "dataset.includeDrafts",
-              message: "Include draft datasets",
-            })}
-            name="dataset-include-drafts"
-            value="dataset-include-drafts"
-            checked={includeDrafts}
-            disabled={false}
-            onChange={onToggleIncludeDrafts}
-            smaller
-          />
-          <label htmlFor="datasetSort">
-            <Typography
-              color="secondary"
-              sx={{
-                fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-                lineHeight: "24px",
-              }}
-            >
-              <Trans id="dataset.sortby">Sort by</Trans>
-            </Typography>
-          </label>
-
-          <MinimalisticSelect
-            id="datasetSort"
-            smaller={true}
-            value={order}
-            data-testid="datasetSort"
-            options={isSearching ? options : options.slice(1)}
-            onChange={(e) => {
-              onSetOrder(e.target.value as DataCubeResultOrder);
-            }}
-          />
-        </Flex>
+        />
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
@@ -489,15 +501,15 @@ const organizationNavItemTheme = {
 
 const useStyles = makeStyles(() => ({
   navChip: {
-    minWidth: 20,
-    height: 20,
+    minWidth: 32,
+    height: 24,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 2,
   },
   removeFilterButton: {
-    minWidth: "16px",
-    minHeight: "16px",
+    minWidth: 16,
+    minHeight: 16,
     height: "auto",
     alignItems: "center",
     display: "flex",
@@ -510,6 +522,7 @@ const useStyles = makeStyles(() => ({
   navItem: {
     justifyContent: "space-between",
     alignItems: "center",
+    gap: 6,
     borderRadius: 2,
     width: "100%",
     display: "flex",
@@ -531,11 +544,7 @@ const NavChip = ({
     <Flex
       data-testid="navChip"
       className={classes.navChip}
-      sx={{
-        typography: "tag",
-        color: color,
-        backgroundColor: backgroundColor,
-      }}
+      sx={{ typography: "caption", color, backgroundColor }}
     >
       {children}
     </Flex>
@@ -637,7 +646,6 @@ const NavItem = ({
       sx={{
         mb: 1,
         pl: 4,
-        pr: 2,
         py: 1,
         backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
         "&:hover": {
@@ -744,8 +752,6 @@ export const NavSectionTitle = ({
         alignItems: "center",
         p: 3,
         cursor: "pointer",
-        // border: "1px solid",
-        // borderColor: theme.borderColor,
         backgroundColor: theme.backgroundColor,
         borderRadius: 2,
         height: "2.5rem",
@@ -1062,11 +1068,15 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     cursor: "pointer",
     textAlign: "left",
-    padding: `${theme.spacing(4)} ${theme.spacing(5)}`,
-    marginBottom: `${theme.spacing(3)}`,
-    borderRadius: 10,
-    boxShadow: theme.shadows[3],
-    backgroundColor: theme.palette.grey[100],
+    padding: `${theme.spacing(4)}`,
+    borderTopColor: theme.palette.grey[300],
+    borderTopStyle: "solid",
+    borderTopWidth: 1,
+    boxShadow: "none",
+    transition: "background 0.1s ease",
+    "&:hover": {
+      background: theme.palette.muted.main,
+    },
   },
 }));
 
@@ -1126,7 +1136,7 @@ export const DatasetResult = ({
         query: filterParams,
       },
       undefined,
-      { shallow: true }
+      { shallow: true, scroll: false }
     );
   });
   const classes = useResultStyles();
@@ -1137,14 +1147,9 @@ export const DatasetResult = ({
       elevation={1}
       className={classes.root}
     >
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ mb: 6 }}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Typography
-            variant="body2"
-            color="grey.600"
-            fontWeight={500}
-            gutterBottom={false}
-          >
+          <Typography variant="body2" fontWeight={700} gutterBottom={false}>
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
           {isDraft && (
@@ -1153,7 +1158,7 @@ export const DatasetResult = ({
             </Tag>
           )}
         </Flex>
-        <Typography component="div" variant="body1">
+        <Typography component="div" variant="body1" color="primary.main">
           {highlightedTitle ? (
             <Box
               component="span"
@@ -1170,7 +1175,6 @@ export const DatasetResult = ({
           sx={
             {
               WebkitLineClamp: 2,
-              mb: 2,
               lineHeight: 1.57,
               WebkitBoxOrient: "vertical",
               display: "-webkit-box",
@@ -1189,42 +1193,42 @@ export const DatasetResult = ({
             description
           )}
         </Typography>
-        <Stack spacing={1} direction="row">
-          {themes && showTags
-            ? sortBy(themes, (t) => t.label).map((t) => (
-                <Link
-                  key={t.iri}
-                  passHref
-                  href={`/browse/theme/${encodeURIComponent(t.iri)}`}
-                >
-                  <MUILink
-                    color="inherit"
-                    // The whole card is a link too, so we have to stop propagating the
-                    // event, otherwise we go first to <tag> page then to <result> page
-                    onClick={(ev) => ev.stopPropagation()}
-                  >
-                    <Tag type={t.__typename}>{t.label}</Tag>
-                  </MUILink>
-                </Link>
-              ))
-            : null}
-          {creator ? (
-            <Link
-              key={creator.iri}
-              passHref
-              href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
-            >
-              <MUILink
-                color="inherit"
-                // The whole card is a link too, so we have to stop propagating the
-                // event, otherwise we go first to <tag> page then to <result> page
-                onClick={(ev) => ev.stopPropagation()}
+      </Stack>
+      <Stack spacing={1} direction="row">
+        {themes && showTags
+          ? sortBy(themes, (t) => t.label).map((t) => (
+              <Link
+                key={t.iri}
+                passHref
+                href={`/browse/theme/${encodeURIComponent(t.iri)}`}
               >
-                <Tag type={creator.__typename}>{creator.label}</Tag>
-              </MUILink>
-            </Link>
-          ) : null}
-        </Stack>
+                <MUILink
+                  color="inherit"
+                  // The whole card is a link too, so we have to stop propagating the
+                  // event, otherwise we go first to <tag> page then to <result> page
+                  onClick={(ev) => ev.stopPropagation()}
+                >
+                  <Tag type={t.__typename}>{t.label}</Tag>
+                </MUILink>
+              </Link>
+            ))
+          : null}
+        {creator ? (
+          <Link
+            key={creator.iri}
+            passHref
+            href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
+          >
+            <MUILink
+              color="inherit"
+              // The whole card is a link too, so we have to stop propagating the
+              // event, otherwise we go first to <tag> page then to <result> page
+              onClick={(ev) => ev.stopPropagation()}
+            >
+              <Tag type={creator.__typename}>{creator.label}</Tag>
+            </MUILink>
+          </Link>
+        ) : null}
       </Stack>
     </MotionCard>
   );

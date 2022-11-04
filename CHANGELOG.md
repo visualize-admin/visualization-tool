@@ -19,6 +19,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
     with scientific notation
 - Dataset Preview:
   - Added a "Run SPARQL query" button
+- UI:
+  - Introduced new UI for search & dataset preview pages
 
 ## [3.11.0] - 2022-10-26
 

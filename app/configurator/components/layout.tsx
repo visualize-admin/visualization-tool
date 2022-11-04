@@ -25,7 +25,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridArea: "right",
   },
   panelLayout: {
-    backgroundColor: theme.palette.muted.main,
+    position: "fixed",
+    // FIXME replace 96px with actual header size
+    top: 96,
+    width: "100%",
+    maxWidth: 1400,
+    height: "calc(100vh - 96px)",
     display: "grid",
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
@@ -33,11 +38,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateAreas: `
     "header header header"
     "left middle right"`,
-    width: "100%",
-    position: "fixed",
-    // FIXME replace 96px with actual header size
-    top: "96px",
-    height: "calc(100vh - 96px)",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   panelMiddle: {
     overflowX: "hidden",

@@ -151,8 +151,8 @@ export const Logo = () => {
           role="figure"
           aria-labelledby="logo"
           sx={{
+            width: "calc(20rem - 16px)",
             display: ["none", "block"],
-            pr: 6,
             borderRightWidth: "1px",
             borderRightStyle: "solid",
             borderRightColor: "grey.300",

@@ -22,11 +22,12 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       flexGrow: 1,
       flexDirection: "column",
       justifyContent: "space-between",
+      paddingLeft: theme.spacing(6),
     },
     header: {
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: theme.spacing(6),
+      marginBottom: theme.spacing(5),
     },
     title: {
       color: theme.palette.grey[800],
@@ -38,10 +39,9 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
     },
     paper: {
       borderRadius: theme.spacing(4),
-      paddingLeft: theme.spacing(5),
-      paddingTop: theme.spacing(6),
       paddingRight: theme.spacing(5),
       paddingBottom: theme.spacing(6),
+      boxShadow: "none",
     },
     description: {
       marginBottom: theme.spacing(4),
@@ -54,6 +54,13 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       overflowX: "auto",
       marginTop: ({ descriptionPresent }) =>
         descriptionPresent ? theme.spacing(6) : 0,
+      WebkitMaskImage:
+        "linear-gradient(to right, #FFF calc(100% - 3rem), transparent)",
+
+      "&:after": {
+        content: "''",
+        paddingLeft: "1.5rem",
+      },
     },
     footnotesWrapper: {
       marginTop: theme.spacing(4),
@@ -96,6 +103,10 @@ export const DataSetPreview = ({
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeByIri?.description,
   });
+
+  React.useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
 
   if (metadata?.dataCubeByIri) {
     const { dataCubeByIri } = metadata;
@@ -142,14 +153,14 @@ export const DataSetPreview = ({
             </Typography>
           )}
 
-          <Box className={classes.tableWrapper}>
+          <Flex className={classes.tableWrapper}>
             <DataSetPreviewTable
               title={dataCubeByIri.title}
               dimensions={dataCubeByIri.dimensions}
               measures={dataCubeByIri.measures}
               observations={dataCubeByIri.observations.data}
             />
-          </Box>
+          </Flex>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
               <DataDownloadMenu

@@ -20,10 +20,6 @@ const pages = [
 
 export const staticPages = Object.fromEntries(
   pages.map(({ path, locale }) => {
-    // const [, locale, ...rest] = p.split("/");
-
-    // console.log(rest);
-
     return [
       path,
       {

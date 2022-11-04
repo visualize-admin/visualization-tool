@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
@@ -8,13 +8,15 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
+import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
   DataCubeAbout,
   DatasetResults,
-  SearchDatasetBox,
+  SearchDatasetControls,
+  SearchDatasetInput,
   SearchFilters,
   useBrowseContext,
 } from "@/configurator/components/dataset-browse";
@@ -26,6 +28,7 @@ import {
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
 import {
+  bannerPresenceProps,
   MotionBox,
   navPresenceProps,
 } from "@/configurator/components/presence";
@@ -43,30 +46,74 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   panelLayout: {
     width: "100%",
-    maxWidth: 1300,
     margin: "auto",
-    left: 0,
-    right: 0,
     position: "static",
-    // FIXME replace 96px with actual header size
-    marginTop: "96px",
+    marginTop: ({ datasetPresent }) => (datasetPresent ? 96 : 0),
     height: "auto",
-    paddingTop: "55px",
+    transition: "margin-top 0.5s ease",
   },
   panelLeft: {
+    // To prevent weird look when dataset metadata is loading
+    minHeight: "calc(100vh - 96px)",
     backgroundColor: "transparent",
-    paddingTop: 0,
+    paddingTop: ({ datasetPresent }) =>
+      datasetPresent ? 48 : theme.spacing(5),
     boxShadow: "none",
-    borderRight: 0,
+    borderRightColor: theme.palette.grey[300],
+    borderRightStyle: "solid",
+    borderRightWidth: 1,
+    transition: "padding-top 0.5s ease",
   },
   panelMiddle: {
-    paddingTop: 0,
-    paddingLeft: 18,
+    paddingLeft: 0,
+    paddingTop: ({ datasetPresent }) =>
+      datasetPresent ? 48 : theme.spacing(5),
     gridColumnStart: "middle",
     gridColumnEnd: "right",
+    transition: "padding-top 0.5s ease",
+  },
+  panelBanner: {
+    position: "static",
+    display: "flex",
+    height: 350,
+    marginTop: 96,
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(7),
+    backgroundColor: theme.palette.primary.light,
+  },
+  panelBannerContent: {
+    flexDirection: "column",
+    justifyContent: "center",
+    maxWidth: 720,
+    [theme.breakpoints.down("xs")]: {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+    [theme.breakpoints.between("sm", "lg")]: {
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    [theme.breakpoints.up("lg")]: {
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+  },
+  panelBannerTitle: {
+    color: theme.palette.grey[700],
+    marginBottom: theme.spacing(4),
+  },
+  panelBannerDescription: {
+    color: theme.palette.grey[600],
+    marginBottom: theme.spacing(3),
+  },
+  filters: {
+    display: "block",
+    marginLeft: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+    color: theme.palette.grey[800],
   },
 }));
 
@@ -91,7 +138,7 @@ const SelectDatasetStepContent = () => {
     leading: true,
   });
   const router = useRouter();
-  const classes = useStyles();
+  const classes = useStyles({ datasetPresent: !!dataset });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -122,118 +169,117 @@ const SelectDatasetStepContent = () => {
   }
 
   return (
-    <PanelLayout className={classes.panelLayout}>
-      <PanelLeftWrapper className={classes.panelLeft}>
-        <AnimatePresence exitBeforeEnter>
-          {dataset ? (
-            <MotionBox
-              {...navPresenceProps}
-              px={4}
-              key="dataset-metadata"
-              custom={dataset}
+    <Box>
+      <AnimatePresence>
+        {!dataset && (
+          <MotionBox {...bannerPresenceProps} key="banner">
+            <Box
+              component="section"
+              role="banner"
+              className={classes.panelBanner}
             >
-              <NextLink passHref href={backLink}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<Icon name="chevronLeft" size={12} />}
+              <Flex className={classes.panelBannerContent}>
+                <Typography variant="h1" className={classes.panelBannerTitle}>
+                  Swiss Open Government Data
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.panelBannerDescription}
                 >
-                  <Trans id="dataset-preview.back-to-results">
-                    Back to the list
+                  <Trans id="browse.datasets.description">
+                    Explore datasets provided by the LINDAS Linked Data Service
+                    by either filtering by categories or organisations or search
+                    directly for specific keywords. Click on a dataset to see
+                    more detailed information and start creating your own
+                    visualizations.
                   </Trans>
-                </Button>
-              </NextLink>
-              <DataSetMetadata
-                sx={{ mt: "3rem" }}
-                dataSetIri={dataset}
-                dataSource={configState.dataSource}
-              />
-            </MotionBox>
-          ) : (
-            <MotionBox
-              key="search-filters"
-              {...navPresenceProps}
-              custom={false}
-            >
-              <SearchFilters data={datacubesQuery.data} />
-            </MotionBox>
-          )}
-        </AnimatePresence>
-      </PanelLeftWrapper>
-      <PanelMiddleWrapper className={classes.panelMiddle}>
-        <Box sx={{ maxWidth: 900 }}>
+                </Typography>
+                <SearchDatasetInput browseState={browseState} />
+              </Flex>
+            </Box>
+          </MotionBox>
+        )}
+      </AnimatePresence>
+
+      <PanelLayout className={classes.panelLayout}>
+        <PanelLeftWrapper className={classes.panelLeft}>
           <AnimatePresence exitBeforeEnter>
             {dataset ? (
-              <MotionBox {...navPresenceProps} key="preview">
-                <DataSetPreview
+              <MotionBox
+                {...navPresenceProps}
+                px={4}
+                mx={4}
+                key="dataset-metadata"
+                custom={dataset}
+              >
+                <NextLink passHref href={backLink}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<Icon name="chevronLeft" size={12} />}
+                  >
+                    <Trans id="dataset-preview.back-to-results">
+                      Back to the list
+                    </Trans>
+                  </Button>
+                </NextLink>
+                <DataSetMetadata
+                  sx={{ mt: 6 }}
                   dataSetIri={dataset}
                   dataSource={configState.dataSource}
                 />
               </MotionBox>
             ) : (
-              <MotionBox {...navPresenceProps}>
-                {filters.length > 0 ? (
-                  <Typography
-                    key="filters"
-                    variant="h1"
-                    color="grey.800"
-                    mb={4}
-                    sx={{ display: "block" }}
-                  >
-                    {filters
-                      .filter(
-                        (f): f is Exclude<typeof f, DataCubeAbout> =>
-                          f.__typename !== "DataCubeAbout"
-                      )
-                      .map((f) => f.label)
-                      .join(", ")}
-                  </Typography>
-                ) : (
-                  <>
-                    <Typography
-                      key="all-datasets"
-                      variant="h1"
-                      color="grey.800"
-                      mb={4}
-                      sx={{ display: "block" }}
-                    >
-                      <Trans id="browse.datasets.all-datasets">
-                        All datasets
-                      </Trans>
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight={400}
-                      color="grey.800"
-                      sx={{
-                        mb: 4,
-                        maxWidth: 800,
-                        display: "block",
-                      }}
-                    >
-                      <Trans id="browse.datasets.description">
-                        Explore datasets provided by the LINDAS Linked Data
-                        Service by either filtering by categories or
-                        organisations or search directly for specific keywords.
-                        Click on a dataset to see more detailed information and
-                        start creating your own visualizations.
-                      </Trans>
-                    </Typography>
-                  </>
-                )}
-                <Box mb={1} key="search-box">
-                  <SearchDatasetBox
-                    browseState={browseState}
-                    searchResult={datacubesQuery.data}
-                  />
-                </Box>
-                <DatasetResults key="results" query={datacubesQuery} />
+              <MotionBox
+                key="search-filters"
+                {...navPresenceProps}
+                custom={false}
+              >
+                <SearchFilters data={datacubesQuery.data} />
               </MotionBox>
             )}
           </AnimatePresence>
-        </Box>
-      </PanelMiddleWrapper>
-    </PanelLayout>
+        </PanelLeftWrapper>
+        <PanelMiddleWrapper className={classes.panelMiddle}>
+          <Box sx={{ maxWidth: 1040 }}>
+            <AnimatePresence exitBeforeEnter>
+              {dataset ? (
+                <MotionBox {...navPresenceProps} key="preview">
+                  <DataSetPreview
+                    dataSetIri={dataset}
+                    dataSource={configState.dataSource}
+                  />
+                </MotionBox>
+              ) : (
+                <MotionBox {...navPresenceProps}>
+                  {filters.length > 0 && (
+                    <Typography
+                      key="filters"
+                      className={classes.filters}
+                      variant="h1"
+                    >
+                      {filters
+                        .filter(
+                          (f): f is Exclude<typeof f, DataCubeAbout> =>
+                            f.__typename !== "DataCubeAbout"
+                        )
+                        .map((f) => f.label)
+                        .join(", ")}
+                    </Typography>
+                  )}
+
+                  <SearchDatasetControls
+                    browseState={browseState}
+                    searchResult={datacubesQuery.data}
+                  />
+                  <DatasetResults key="results" query={datacubesQuery} />
+                </MotionBox>
+              )}
+            </AnimatePresence>
+          </Box>
+        </PanelMiddleWrapper>
+      </PanelLayout>
+    </Box>
   );
 };
 

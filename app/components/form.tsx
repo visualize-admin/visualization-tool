@@ -554,7 +554,7 @@ export const SearchField = ({
         placeholder={placeholder}
         autoComplete="off"
         inputRef={inputRef}
-        sx={{ width: "100%", input: { borderRadius: 2 } }}
+        sx={{ width: "100%", minHeight: 40, input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
             <ButtonBase
