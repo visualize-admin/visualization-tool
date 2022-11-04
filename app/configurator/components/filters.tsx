@@ -33,7 +33,6 @@ import React, {
   useState,
 } from "react";
 
-import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
@@ -73,7 +72,7 @@ import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
-import { ColorMapping, ConfiguratorState } from "../config-types";
+import { ConfiguratorState, GenericSegmentField } from "../config-types";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -249,7 +248,7 @@ const getOptionsFromTree = (tree: HierarchyValue[]) => {
 
 type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
 
-const getColorMapping = (
+const getColorConfig = (
   config: ConfiguratorState,
   colorConfigPath: string | undefined
 ) => {
@@ -257,12 +256,12 @@ const getColorMapping = (
     return;
   }
 
-  const colorMappingPath = `${config.activeField}.${
-    colorConfigPath ? `${colorConfigPath}.` : ""
-  }colorMapping`;
+  const path = `${config.activeField}${
+    colorConfigPath ? `.${colorConfigPath}` : ""
+  }`;
 
-  return get(config.chartConfig.fields, colorMappingPath) as
-    | ColorMapping
+  return get(config.chartConfig.fields, path) as
+    | GenericSegmentField
     | undefined;
 };
 
@@ -388,18 +387,18 @@ const MultiFilterContent = ({
     }
   );
 
+  const colorConfig = useMemo(() => {
+    return getColorConfig(config, colorConfigPath);
+  }, [config, colorConfigPath]);
+
   const hasColorMapping = useMemo(() => {
     return (
-      !!getColorMapping(config, colorConfigPath) &&
+      !!colorConfig?.colorMapping &&
       (colorComponent !== undefined
         ? dimensionIri === colorComponent.iri
         : true)
     );
-  }, [colorConfigPath, config, dimensionIri, colorComponent]);
-
-  const hasColors = useMemo(() => {
-    return hasDimensionColors(colorComponent);
-  }, [colorComponent]);
+  }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -439,7 +438,7 @@ const MultiFilterContent = ({
               Selected filters
             </Trans>
             {hasColorMapping ? (
-              hasColors ? (
+              colorConfig?.palette === "dimension" ? (
                 <Tooltip
                   title={
                     <Trans id="controls.filters.select.reset-colors">
