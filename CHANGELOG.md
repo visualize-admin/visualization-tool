@@ -15,7 +15,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Charts:
   - (table): Fixed available column styles based on dimension types (so it's not possible anymore to select "bar" cell type for nominal measures)
   - Run SPARQL button now points to a corrent data environment
-- Dataset Preview
+  - Numbers pertaining to a dimension with a decimal datatype will be formatted
+    with scientific notation
+- Dataset Preview:
   - Added a "Run SPARQL query" button
 
 ## [3.11.0] - 2022-10-26

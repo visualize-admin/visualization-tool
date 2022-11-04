@@ -56,6 +56,7 @@ export const Columns = () => {
           <Column
             key={i}
             x={xScale(getX(d)) as number}
+            data-index={i}
             width={xScale.bandwidth()}
             y={yScale(Math.max(y, 0))}
             height={Math.abs(yScale(y) - yScale(0))}

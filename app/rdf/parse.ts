@@ -240,11 +240,13 @@ export const parseCubeDimension = ({
 
   const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
   const description = dim.out(ns.schema.description, outOpts).value;
+
   const resolution =
     dataType?.equals(ns.xsd.int) || dataType?.equals(ns.xsd.integer)
       ? 0
       : undefined;
 
+  const isDecimal = dataType?.equals(ns.xsd.decimal) ?? false;
   return {
     cube,
     dimension: dim,
@@ -255,6 +257,7 @@ export const parseCubeDimension = ({
       name,
       description,
       related,
+      isDecimal,
       isLiteral,
       isNumerical,
       isKeyDimension,

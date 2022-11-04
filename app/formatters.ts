@@ -9,6 +9,7 @@ import {
   timeSecond,
   timeWeek,
   timeYear,
+  format,
 } from "d3";
 import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
@@ -112,8 +113,28 @@ const dateFormatterFromDimension = (
   return formatDateAuto;
 };
 
+type Formatter = (x: string) => string;
+
 const formatIdentity = (x: string | Date | null) => {
   return x !== DIMENSION_VALUE_UNDEFINED ? `${x}` : "–";
+};
+
+const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
+  const res = dim.resolution;
+  const hasResolution = typeof res === "number";
+  const formatting = `${hasResolution ? `.${res}` : ""}~e`;
+  const expFormatter = format(formatting);
+  return (v: string) => {
+    const p = parseFloat(v);
+    const a = Math.abs(p);
+    if (p === 0) {
+      return formatNumber(v);
+    } else if (a > 999_999_999 || a < 0.0001) {
+      return expFormatter(p);
+    } else {
+      return v;
+    }
+  };
 };
 
 export const useDimensionFormatters = (
@@ -132,6 +153,8 @@ export const useDimensionFormatters = (
         if (isNumericalMeasure(d)) {
           if (d.isCurrency) {
             formatter = currencyFormatter(d);
+          } else if (d.isDecimal) {
+            formatter = decimalFormatter(d, formatNumber);
           } else {
             formatter = formatNumber;
           }

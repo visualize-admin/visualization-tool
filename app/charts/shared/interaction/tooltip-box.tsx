@@ -83,6 +83,7 @@ export const TooltipBox = ({
       <div ref={posRef} />
       <Portal>
         <Box
+          data-testid="chart-tooltip"
           style={{
             zIndex: 10,
             position: "absolute",

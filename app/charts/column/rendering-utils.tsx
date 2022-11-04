@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { HTMLAttributes, memo } from "react";
 
 export const Column = memo(
   ({
@@ -7,13 +7,14 @@ export const Column = memo(
     width,
     height,
     color,
+    ...props
   }: {
     x: number;
     y: number;
     width: number;
     height: number;
     color?: string;
-  }) => {
+  } & HTMLAttributes<SVGRectElement>) => {
     return (
       <rect
         x={x}
@@ -22,6 +23,7 @@ export const Column = memo(
         height={height}
         fill={color}
         stroke="none"
+        {...props}
       />
     );
   }
