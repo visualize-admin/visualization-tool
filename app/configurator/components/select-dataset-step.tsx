@@ -48,7 +48,7 @@ const softJSONParse = (v: string) => {
 
 const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   panelLayout: {
-    width: "100%",
+    maxWidth: 1400,
     margin: "auto",
     position: "static",
     marginTop: ({ datasetPresent }) => (datasetPresent ? 96 : 0),
