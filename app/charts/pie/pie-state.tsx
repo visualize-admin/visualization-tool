@@ -27,8 +27,10 @@ import { PieFields } from "@/configurator";
 import { DimensionValue, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
-
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 export interface PieState extends CommonChartState {
   chartType: "pie";
   allData: Observation[];
@@ -114,15 +116,16 @@ const usePieState = (
       .filter((x) => typeof x[1] === "number")
       .map((x) => x[0]);
 
+    const sorting = fields.segment.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
-      sorting: fields.segment.sorting,
+      sorting: sorting,
       measureBySegment,
     });
 
     const segments = orderBy(
       uniqueSegments,
       sorters,
-      sortingOrder === "desc" ? "desc" : "asc"
+      getSortingOrders(sorters, sorting)
     );
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {

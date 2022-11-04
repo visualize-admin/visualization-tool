@@ -53,7 +53,10 @@ import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 export interface GroupedColumnsState extends CommonChartState {
   chartType: "column";
@@ -197,11 +200,7 @@ const useGroupedColumnsState = (
       sumsBySegment,
     });
 
-    return orderBy(
-      uniqueSegments,
-      sorters,
-      sorting?.sortingOrder === "desc" ? "desc" : "asc"
-    );
+    return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
   }, [
     plottableSortedData,
     dimensions,

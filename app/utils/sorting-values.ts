@@ -56,7 +56,7 @@ export const makeDimensionValueSorters = (
     dv: DimensionValue["label"]
   ) => string | undefined | number)[] = [];
 
-  const defaultSorters = [getIdentifier, getPosition, getLabel];
+  const defaultSorters = [getPosition, getIdentifier, getLabel];
 
   switch (sortingType) {
     case "byDimensionLabel":
@@ -69,7 +69,7 @@ export const makeDimensionValueSorters = (
       sorters = [getMeasure];
       break;
     case "byAuto":
-      sorters = [getIdentifier, getPosition];
+      sorters = [getPosition, getIdentifier];
       break;
     default:
       sorters = defaultSorters;
@@ -89,4 +89,13 @@ export const valueComparator = (locale: string) => (a: Value, b: Value) => {
   } else {
     return a.label.localeCompare(b.label, locale);
   }
+};
+
+export const getSortingOrders = (
+  sorters: ((...args: any[]) => any)[],
+  sorting: SortingField["sorting"]
+) => {
+  return Array(sorters.length).fill(
+    sorting?.sortingOrder === "desc" ? "desc" : "asc"
+  );
 };
