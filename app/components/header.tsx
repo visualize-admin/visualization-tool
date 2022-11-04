@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React, {
   Dispatch,
   SetStateAction,
@@ -68,31 +69,35 @@ export const HeaderBorder = () => {
   );
 };
 
-const useHeaderStyles = makeStyles<Theme>((theme) => ({
-  wrapper: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    overflowY: "hidden",
-    zIndex: 13,
-    backgroundColor: theme.palette.grey[100],
-  },
-  content: {
-    minHeight: 92,
-    maxWidth: 1400,
-    marginLeft: "auto",
-    marginRight: "auto",
-    color: theme.palette.grey[700],
-  },
-}));
+const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
+  (theme) => ({
+    wrapper: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      overflowY: "hidden",
+      zIndex: 13,
+      backgroundColor: theme.palette.grey[100],
+    },
+    content: {
+      minHeight: 92,
+      maxWidth: ({ isConfiguring }) => (isConfiguring ? undefined : 1400),
+      marginLeft: "auto",
+      marginRight: "auto",
+      color: theme.palette.grey[700],
+    },
+  })
+);
 
 export const Header = ({
   pageType = "app",
 }: {
   pageType?: "content" | "app";
 }) => {
-  const classes = useHeaderStyles();
+  const router = useRouter();
+  const isConfiguring = router.pathname === "/create/[chartId]";
+  const classes = useHeaderStyles({ isConfiguring });
 
   return (
     <Box className={pageType === "app" ? classes.wrapper : undefined}>
