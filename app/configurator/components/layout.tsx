@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     // FIXME replace 96px with actual header size
     top: 96,
     width: "100%",
-    maxWidth: 1400,
     height: "calc(100vh - 96px)",
     display: "grid",
     gridTemplateColumns:
