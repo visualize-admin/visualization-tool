@@ -29,7 +29,7 @@ module.exports = {
         const value = node.value;
 
         // Count of literal properties excluding ignored properties
-        if (value.type === "JSXExpressionContainer") {
+        if (value && value.type === "JSXExpressionContainer") {
           const props =
             (value.expression.properties &&
               value.expression.properties.filter(
