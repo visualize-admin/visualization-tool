@@ -41,12 +41,14 @@ import {
 import { DimensionMetadataFragment } from "./graphql/query-hooks";
 
 // Colors
-
 export const getDefaultCategoricalPaletteName = (
-  d: DimensionMetadataFragment
+  d?: DimensionMetadataFragment,
+  previousPaletteName?: string
 ): string => {
   const hasColors = hasDimensionColors(d);
-  return hasColors ? "dimension" : DEFAULT_CATEGORICAL_PALETTE_NAME;
+  return hasColors
+    ? "dimension"
+    : previousPaletteName || DEFAULT_CATEGORICAL_PALETTE_NAME;
 };
 
 export const getDefaultCategoricalPalette = (
