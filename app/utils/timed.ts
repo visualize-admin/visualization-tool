@@ -3,9 +3,11 @@ export type Timing = {
   end: number;
 };
 
+export type TimingCallback = ({ start, end }: Timing, ...args: any[]) => void;
+
 export const timed = <T extends (...args: any) => any>(
   fn: T,
-  cb: ({ start, end }: Timing, ...args: Parameters<T>) => void
+  cb: TimingCallback
 ) => {
   const wrapped = async function (...args: Parameters<T>) {
     const start = Date.now();

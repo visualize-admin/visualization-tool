@@ -31,13 +31,22 @@ ${(
         dimensions={scatterplotDimensions}
         measures={scatterplotMeasures}
         interactiveFiltersConfig={{
-          legend: { active: true, componentIri: "" },
+          legend: {
+            active: true,
+            componentIri: "",
+          },
           timeRange: {
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
-          dataFilters: { active: false, componentIris: [] },
+          timeSlider: {
+            componentIri: "",
+          },
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
         }}
         aspectRatio={1}
       >

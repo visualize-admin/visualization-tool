@@ -110,6 +110,7 @@ declare module "rdf-cube-view-query" {
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
+    endpoint: string;
     async cubes(options?: {
       noShape?: boolean;
       filters: $FixMe;

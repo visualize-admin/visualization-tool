@@ -4,7 +4,7 @@ import { createSource as createSource_ } from "@/rdf/create-source";
 import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
 import { unversionObservation as unversionObservation_ } from "@/rdf/query-dimension-values";
 
-import { GraphQLContext } from "./context";
+import { createContext } from "./context";
 import { Query } from "./resolvers";
 
 const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
@@ -21,17 +21,23 @@ const unversionObservation = unversionObservation_ as unknown as jest.Mock<
 jest.mock("../rdf/query-dimension-values", () => ({
   unversionObservation: jest.fn(),
 }));
-jest.mock("../rdf/query-search", () => ({
-  unversionObservation: jest.fn(),
-}));
+jest.mock("../rdf/query-search", () => ({}));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
+  createCubeDimensionValuesLoader: () => async () => [],
 }));
 jest.mock("../rdf/create-source", () => ({
   createSource: jest.fn(),
 }));
-jest.mock("../rdf/query-cube-metadata", () => ({}));
 jest.mock("../rdf/query-hierarchies", () => ({}));
+jest.mock("../rdf/parse", () => ({}));
+
+jest.mock("@rdf-esm/data-model", () => ({}));
+jest.mock("@rdf-esm/term-map", () => ({}));
+jest.mock("@rdf-esm/namespace", () => ({}));
+jest.mock("@tpluscode/sparql-builder", () => ({}));
+jest.mock("@tpluscode/rdf-ns-builders", () => ({}));
+jest.mock("@tpluscode/rdf-string", () => ({}));
 
 describe("possible filters", () => {
   beforeEach(() => {
@@ -66,6 +72,7 @@ describe("possible filters", () => {
     createSource.mockImplementation(() => ({
       cube: () => ({}),
     }));
+
     const res = await Query?.possibleFilters?.(
       {},
       {
@@ -77,10 +84,13 @@ describe("possible filters", () => {
           "https://fake-dimension-iri-2": { type: "single", value: 2 },
         },
       },
+      createContext(),
       {
-        setup: () => Promise.resolve({ sparqlClient: {} }),
-      } as unknown as GraphQLContext,
-      {} as GraphQLResolveInfo
+        variableValues: {
+          locale: "en",
+          sourceUrl: "https://fake-source.com/query",
+        },
+      } as unknown as GraphQLResolveInfo
     );
     expect(res).toEqual([
       { iri: "https://fake-dimension-iri-1", type: "single", value: 1 },

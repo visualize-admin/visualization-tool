@@ -11,7 +11,7 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { createSource, pragmas } from "@/rdf/create-source";
+import { pragmas } from "@/rdf/create-source";
 
 import * as ns from "./namespace";
 import { pruneTree, mapTree } from "./tree-utils";
@@ -82,31 +82,12 @@ const findHierarchyForDimension = (cube: Cube, dimensionIri: string) => {
 };
 
 export const queryHierarchy = async (
+  cube: Cube,
   dimensionIri: string,
-  sourceUrl: string,
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
 ): Promise<HierarchyValue[] | null> => {
-  const source = createSource({ endpointUrl: sourceUrl });
-
-  const cubeQuery = SELECT`?cube`.WHERE`
-  ?cube ${ns.cube.observationConstraint} ?shape.
-  ?shape ?prop ?dimension.
-  ?dimension ${ns.sh.path} <${dimensionIri}>.
-  
-  FILTER NOT EXISTS { ?cube ${ns.schema.expires} ?any . }
-  `.prologue`${pragmas}`;
-  const cubeResults = await cubeQuery.execute(sparqlClient.query);
-  if (cubeResults.length === 0) {
-    throw new Error("Could not find cube");
-  }
-
-  const cubeIri = cubeResults[0].cube.value;
-  const cube = await source.cube(cubeIri);
-  if (!cube) {
-    throw new Error("Could not find cube");
-  }
   const hierarchy = findHierarchyForDimension(cube, dimensionIri);
 
   // @ts-ignore

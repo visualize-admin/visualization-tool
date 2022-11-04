@@ -29,7 +29,7 @@ msgstr "Déplacer le filtre vers le bas"
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
-#: app/configurator/components/dataset-browse.tsx:1036
+#: app/configurator/components/dataset-browse.tsx:1037
 #: app/configurator/components/filters.tsx:730
 msgid "No results"
 msgstr "Aucun résultat"
@@ -42,15 +42,15 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-browse.tsx:967
+#: app/configurator/components/dataset-browse.tsx:968
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-browse.tsx:949
+#: app/configurator/components/dataset-browse.tsx:950
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
-#: app/configurator/components/dataset-preview.tsx:129
+#: app/configurator/components/dataset-preview.tsx:128
 msgid "browse.dataset.create-visualization"
 msgstr "Démarrer une visualisation"
 
@@ -413,25 +413,34 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:95
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:117
 msgid "controls.interactive.filters.dataFilter"
 msgstr "Filtres de données"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:273
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:104
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:97
+msgid "controls.interactive.filters.timeSlider"
+msgstr "Curseur temporel"
+
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:327
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr "Afficher les filtres de données"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:75
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:77
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr "Afficher la légende filtrante"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:207
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:222
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Il n'y a pas de dimension temporelle!"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:182
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:197
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Afficher le filtre temporel"
+
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:263
+msgid "controls.interactiveFilters.time.toggleTimeSliderFilter"
+msgstr "Afficher le curseur de temps"
 
 #: app/configurator/components/field-i18n.ts:135
 msgid "controls.language.english"
@@ -523,11 +532,11 @@ msgstr "Valeurs manquantes"
 msgid "controls.section.imputation.explanation"
 msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:68
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:78
 msgid "controls.section.interactive.filters"
 msgstr "Filtres interactifs"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:102
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:117
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtres de données"
 
@@ -762,7 +771,7 @@ msgstr "Mise à jour"
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-browse.tsx:440
+#: app/configurator/components/dataset-browse.tsx:427
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
@@ -779,7 +788,7 @@ msgid "dataset.metadata.furtherinformation"
 msgstr "Informations complémentaires"
 
 #: app/components/chart-footnotes.tsx:200
-#: app/configurator/components/dataset-metadata.tsx:114
+#: app/configurator/components/dataset-metadata.tsx:118
 msgid "dataset.metadata.learnmore"
 msgstr "En savoir plus sur le jeu de données"
 
@@ -791,21 +800,21 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:404
+#: app/configurator/components/dataset-browse.tsx:351
 msgid "dataset.order.newest"
 msgstr "Plus récent en premier"
 
-#: app/configurator/components/dataset-browse.tsx:396
+#: app/configurator/components/dataset-browse.tsx:343
 msgid "dataset.order.relevance"
 msgstr "Pertinence"
 
-#: app/configurator/components/dataset-browse.tsx:400
+#: app/configurator/components/dataset-browse.tsx:347
 msgid "dataset.order.title"
 msgstr "Titre"
 
 #: app/components/chart-preview.tsx:85
 #: app/components/chart-published.tsx:126
-#: app/configurator/components/dataset-preview.tsx:110
+#: app/configurator/components/dataset-preview.tsx:109
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
@@ -813,27 +822,27 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:428
+#: app/configurator/components/dataset-browse.tsx:415
 msgid "dataset.results"
 msgstr "{0, plural, zero {Aucun jeu de données} one {# jeu de données} other {# jeux de données}}"
 
-#: app/configurator/components/dataset-browse.tsx:328
+#: app/configurator/components/dataset-browse.tsx:355
 msgid "dataset.search.label"
 msgstr "Chercher"
 
-#: app/configurator/components/dataset-browse.tsx:356
-#~ msgid "dataset.search.placeholder"
-#~ msgstr "Nom, description, organisation, catégorie, mots clés..."
+#: app/configurator/components/dataset-browse.tsx:360
+msgid "dataset.search.placeholder"
+msgstr "Nom, description, organisation, catégorie, mots clés..."
 
-#: app/configurator/components/dataset-browse.tsx:452
+#: app/configurator/components/dataset-browse.tsx:446
 msgid "dataset.sortby"
 msgstr "Trier par"
 
-#: app/configurator/components/dataset-browse.tsx:1150
+#: app/configurator/components/dataset-browse.tsx:1152
 msgid "dataset.tag.draft"
 msgstr "Brouillon"
 
-#: app/configurator/components/dataset-preview.tsx:172
+#: app/configurator/components/dataset-preview.tsx:171
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
@@ -990,8 +999,6 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/dataset-browse.tsx:333
-#: app/configurator/components/dataset-browse.tsx:369
 #: app/configurator/components/filters.tsx:632
 msgid "select.controls.filters.search"
 msgstr "Chercher"

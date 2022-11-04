@@ -5,7 +5,9 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
-import { timed } from "@/utils/timed";
+import { createSource } from "@/rdf/create-source";
+import cachedWithTTL from "@/utils/cached-with-ttl";
+import { timed, TimingCallback } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
 import {
@@ -18,8 +20,36 @@ import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
 import { RequestQueryMeta } from "./query-meta";
 
 const MAX_BATCH_SIZE = 500;
-const createLoaders = async (locale: string, sparqlClient: ParsingClient) => {
+
+const getRawCube = async (sourceUrl: string, iri: string) => {
+  const source = createSource({ endpointUrl: sourceUrl });
+  const cube = await source.cube(iri);
+  return cube;
+};
+
+const cachedGetRawCube = cachedWithTTL(
+  getRawCube,
+  (sourceUrl, iri) => `${iri}|${sourceUrl}`,
+  60_000
+);
+
+const createCubeLoader = (sourceUrl: string) => {
+  return (cubeIris: readonly string[]) => {
+    return Promise.all(
+      cubeIris.map(async (iri) => {
+        return cachedGetRawCube(sourceUrl, iri);
+      })
+    );
+  };
+};
+
+const createLoaders = async (
+  locale: string,
+  sparqlClient: ParsingClient,
+  sourceUrl: string
+) => {
   return {
+    cube: new DataLoader(createCubeLoader(sourceUrl)),
     dimensionValues: new DataLoader(
       createCubeDimensionValuesLoader(sparqlClient),
       {
@@ -43,6 +73,30 @@ const createLoaders = async (locale: string, sparqlClient: ParsingClient) => {
 
 export type Loaders = Awaited<ReturnType<typeof createLoaders>>;
 
+const setupSparqlClients = (ctx: GraphQLContext, sourceUrl: string) => {
+  const sparqlClient = new ParsingClient({
+    endpointUrl: sourceUrl,
+  });
+  const sparqlClientStream = new StreamClient({
+    endpointUrl: sourceUrl,
+  });
+
+  const saveTimingToContext: TimingCallback = (t, ...args: [string]) => {
+    ctx.queries.push({
+      startTime: t.start,
+      endTime: t.end,
+      text: args[0],
+    });
+  };
+
+  sparqlClient.query.select = timed(
+    sparqlClient.query.select,
+    saveTimingToContext
+  );
+
+  return { sparqlClient, sparqlClientStream };
+};
+
 const createContextContent = async ({
   sourceUrl,
   locale,
@@ -52,24 +106,11 @@ const createContextContent = async ({
   locale: string;
   ctx: GraphQLContext;
 }) => {
-  const sparqlClient = new ParsingClient({
-    endpointUrl: sourceUrl,
-  });
-  const sparqlClientStream = new StreamClient({
-    endpointUrl: sourceUrl,
-  });
-  const loaders = await createLoaders(locale, sparqlClient);
-
-  sparqlClient.query.select = timed(
-    sparqlClient.query.select,
-    (t, ...args: Parameters<typeof sparqlClient.query.select>) => {
-      ctx.queries.push({
-        startTime: t.start,
-        endTime: t.end,
-        text: args[0],
-      });
-    }
+  const { sparqlClient, sparqlClientStream } = setupSparqlClients(
+    ctx,
+    sourceUrl
   );
+  const loaders = await createLoaders(locale, sparqlClient, sourceUrl);
 
   return new Proxy(
     { loaders, sparqlClient, sparqlClientStream },

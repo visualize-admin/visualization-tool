@@ -6,6 +6,7 @@ import { FilterValueSingle } from "@/configurator";
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };
   timeRange: { from: Date | undefined; to: Date | undefined };
+  timeSlider: { value: Date | undefined };
   dataFilters: { [x: string]: FilterValueSingle };
 };
 
@@ -19,8 +20,15 @@ type InteractiveFiltersStateAction =
       value: string;
     }
   | {
-      type: "ADD_TIME_FILTER";
-      value: Date[];
+      type: "SET_TIME_RANGE_FILTER";
+      value: [Date, Date];
+    }
+  | {
+      type: "SET_TIME_SLIDER_FILTER";
+      value: Date;
+    }
+  | {
+      type: "RESET_TIME_SLIDER_FILTER";
     }
   | {
       type: "RESET_DATA_FILTER";
@@ -43,6 +51,7 @@ type InteractiveFiltersStateAction =
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
   timeRange: { from: undefined, to: undefined },
+  timeSlider: { value: undefined },
   dataFilters: {},
 };
 
@@ -62,8 +71,14 @@ const InteractiveFiltersStateReducer = (
         if (category) delete categories[action.value];
       }
       return draft;
-    case "ADD_TIME_FILTER":
+    case "SET_TIME_RANGE_FILTER":
       draft.timeRange = { from: action.value[0], to: action.value[1] };
+      return draft;
+    case "SET_TIME_SLIDER_FILTER":
+      draft.timeSlider = { value: action.value };
+      return draft;
+    case "RESET_TIME_SLIDER_FILTER":
+      draft.timeSlider.value = undefined;
       return draft;
     case "RESET_DATA_FILTER":
       draft.dataFilters = {};
@@ -112,7 +127,6 @@ export const InteractiveFiltersProvider = ({
   const [state, dispatch] = useImmerReducer<
     InteractiveFiltersState,
     InteractiveFiltersStateAction
-    // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (

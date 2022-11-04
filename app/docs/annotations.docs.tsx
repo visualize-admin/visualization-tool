@@ -44,6 +44,9 @@ ${(
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
+          timeSlider: {
+            componentIri: "",
+          },
           dataFilters: { active: false, componentIris: [] },
         }}
         aspectRatio={0.4}
@@ -184,6 +187,9 @@ ${(
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
+          timeSlider: {
+            componentIri: "",
+          },
           dataFilters: { active: false, componentIris: [] },
         }}
         aspectRatio={0.4}
@@ -222,6 +228,9 @@ ${(
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
+          },
+          timeSlider: {
+            componentIri: "",
           },
           dataFilters: { active: false, componentIris: [] },
         }}

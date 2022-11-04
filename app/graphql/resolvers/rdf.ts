@@ -14,13 +14,11 @@ import {
   QueryResolvers,
   Resolvers,
 } from "@/graphql/resolver-types";
-import { parseLocaleString } from "@/locales/locales";
-import { createSource } from "@/rdf/create-source";
 import {
   createCubeDimensionValuesLoader,
-  getCube,
   getCubeDimensions,
   getCubeObservations,
+  getResolvedCube,
 } from "@/rdf/queries";
 import {
   loadOrganizations,
@@ -90,21 +88,22 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
 };
 
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
-  async (_, { iri, sourceUrl, locale, latest }) => {
-    return getCube({
-      iri,
-      sourceUrl,
-      locale: parseLocaleString(locale),
-      latest,
-    });
+  async (_, { iri, locale, latest }, { setup }, info) => {
+    const { loaders } = await setup(info);
+    const cube = await loaders.cube.load(iri);
+
+    if (!cube) {
+      return null;
+    }
+
+    return getResolvedCube({ cube, locale: locale || "de", latest });
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
-  async (_, { iri, sourceUrl, filters }, { setup }, info) => {
-    const { sparqlClient } = await setup(info);
-    const source = createSource({ endpointUrl: sourceUrl });
+  async (_, { iri, filters }, { setup }, info) => {
+    const { sparqlClient, loaders } = await setup(info);
 
-    const cube = await source.cube(iri);
+    const cube = await loaders.cube.load(iri);
     if (!cube) {
       return [];
     }
@@ -279,19 +278,25 @@ const getDimensionValuesLoader = (
 };
 
 export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  { data: { iri } },
-  { sourceUrl },
+  { cube, data: { iri } },
+  _args,
   { setup },
   info
 ) => {
+  const { locale } = info.variableValues;
   const { sparqlClient, sparqlClientStream } = await setup(info);
-  return queryHierarchy(
+
+  if (!cube) {
+    throw new Error("Could not find cube");
+  }
+  const res = await queryHierarchy(
+    cube,
     iri,
-    sourceUrl,
-    info.variableValues.locale,
+    locale,
     sparqlClient,
     sparqlClientStream
   );
+  return res;
 };
 
 export const dimensionValues: NonNullable<
