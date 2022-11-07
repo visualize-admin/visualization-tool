@@ -1,3 +1,6 @@
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { useRouter } from "next/router";
 import React from "react";
 
 import { ChartPanelConfigurator } from "@/components/chart-panel";
@@ -7,19 +10,77 @@ import { ChartAnnotationsSelector } from "@/configurator/components/chart-annota
 import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
+import { ConfiguratorDrawer } from "@/configurator/components/drawer";
 import {
-  PanelHeader,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
 } from "@/configurator/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
-import { Stepper } from "@/configurator/components/stepper";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
+import useEvent from "@/utils/use-event";
+
+const BackContainer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        borderBottom: "1px solid",
+        borderBottomColor: "divider",
+        px: 2,
+        minHeight: 78,
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const BackButton = ({
+  children,
+  onClick,
+}: { children: React.ReactNode } & ButtonProps) => {
+  return (
+    <Button
+      variant="text"
+      color="inherit"
+      size="small"
+      sx={{ fontWeight: "bold" }}
+      startIcon={<SvgIcChevronLeft />}
+      onClick={onClick}
+    >
+      {children}
+    </Button>
+  );
+};
 
 const ConfigureChartStep = () => {
-  const [state] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
+
+  const handleClosePanel = useEvent(() => {
+    dispatch({
+      type: "ACTIVE_FIELD_CHANGED",
+      value: undefined,
+    });
+  });
+
+  const router = useRouter();
+
+  const handlePrevious = useEvent(() => {
+    if (state.state !== "CONFIGURING_CHART") {
+      return;
+    }
+    router.push(
+      {
+        pathname: `/browse/dataset/${encodeURIComponent(state.dataSet)}`,
+      },
+      undefined,
+      { shallow: true }
+    );
+  });
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;
@@ -35,6 +96,9 @@ const ConfigureChartStep = () => {
           flexDirection: "column",
         }}
       >
+        <BackContainer>
+          <BackButton onClick={handlePrevious}>Back to datasets</BackButton>
+        </BackContainer>
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
@@ -49,9 +113,28 @@ const ConfigureChartStep = () => {
           />
         </ChartPanelConfigurator>
       </PanelMiddleWrapper>
-      <PanelRightWrapper>
-        <ChartOptionsSelector state={state} />
-      </PanelRightWrapper>
+      <ConfiguratorDrawer
+        anchor="left"
+        open={!!state.activeField}
+        hideBackdrop
+        onClose={handleClosePanel}
+      >
+        <div style={{ width: 319 }}>
+          <BackContainer>
+            <Button
+              variant="text"
+              color="inherit"
+              size="small"
+              sx={{ fontWeight: "bold" }}
+              startIcon={<SvgIcChevronLeft />}
+              onClick={handleClosePanel}
+            >
+              Back to main
+            </Button>
+          </BackContainer>
+          <ChartOptionsSelector state={state} />
+        </div>
+      </ConfiguratorDrawer>
     </>
   );
 };
@@ -112,9 +195,6 @@ export const Configurator = () => {
     <SelectDatasetStep />
   ) : (
     <PanelLayout>
-      <PanelHeader>
-        <Stepper dataSetIri={state.dataSet} />
-      </PanelHeader>
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
       {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}
       {state.state === "PUBLISHING" ? <PublishStep /> : null}

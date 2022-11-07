@@ -53,12 +53,10 @@ const useChartPanelInnerStyles = makeStyles<Theme, { showTabs: boolean }>(
     root: {
       flexDirection: "column",
       backgroundColor: theme.palette.grey[100],
-      boxShadow: theme.shadows[6],
-      borderRadius: 12,
-      borderTopLeftRadius: ({ showTabs }) => (showTabs ? 0 : 12),
+      border: "1px solid",
+      borderColor: theme.palette.divider,
       // TODO: Handle properly when chart composition is implemented (enable when
       // ChartSelectionTabs becomes scrollable)
-      borderTopRightRadius: 12,
       overflow: "hidden",
       width: "auto",
     },

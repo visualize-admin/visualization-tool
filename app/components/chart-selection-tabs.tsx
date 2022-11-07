@@ -1,4 +1,4 @@
-import { Box, Popover, Tab, Tabs, Theme } from "@mui/material";
+import { Box, Popover, Tab, Tabs, Theme, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, {
   createContext,
@@ -159,16 +159,21 @@ const TabsInner = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
-    <Tabs value={0}>
-      {/* TODO: Generate dynamically when chart composition is implemented */}
-      <Tab
-        sx={{ p: 0 }}
-        onClick={onActionButtonClick}
-        label={
-          <TabContent iconName={getIconName(chartType)} editable={editable} />
-        }
-      />
-    </Tabs>
+    <Box display="flex" sx={{ width: "100%", alignItems: "center" }}>
+      <Tabs value={0} sx={{ position: "relative", top: 1, flexGrow: 1 }}>
+        {/* TODO: Generate dynamically when chart composition is implemented */}
+        <Tab
+          sx={{ p: 0, background: "white" }}
+          onClick={onActionButtonClick}
+          label={
+            <TabContent iconName={getIconName(chartType)} editable={editable} />
+          }
+        />
+      </Tabs>
+      <Button color="primary" variant="contained">
+        Checkout to Publishing
+      </Button>
+    </Box>
   );
 };
 

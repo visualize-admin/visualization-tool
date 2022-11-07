@@ -31,12 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "100%",
     height: "calc(100vh - 96px)",
     display: "grid",
-    gridTemplateColumns:
-      "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+    gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr)",
     gridTemplateRows: "auto minmax(0, 1fr)",
     gridTemplateAreas: `
-    "header header header"
-    "left middle right"`,
+    "header header"
+    "left middle"`,
     marginLeft: "auto",
     marginRight: "auto",
   },
