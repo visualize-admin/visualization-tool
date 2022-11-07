@@ -952,7 +952,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         currentFilter={themeFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcCategories width={24} height={24} />}
+        icon={<SvgIcCategories width={20} height={20} />}
         label={<Trans id="browse-panel.themes">Themes</Trans>}
         extra={null}
       />
@@ -970,7 +970,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         currentFilter={orgFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcOrganisations width={24} height={24} />}
+        icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
           orgFilter && filters[0] === orgFilter ? (
