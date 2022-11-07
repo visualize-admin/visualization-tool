@@ -75,31 +75,26 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     gridColumnEnd: "right",
     transition: "padding-top 0.5s ease",
   },
-  panelBanner: {
+  panelBannerWrapper: {
     position: "static",
-    display: "flex",
+    display: "grid",
+    gridTemplateColumns:
+      "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+    gridTemplateAreas: `". banner ."`,
     height: 350,
     marginTop: 96,
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(7),
     backgroundColor: theme.palette.primary.light,
+  },
+  panelBanner: {
+    maxWidth: 1400,
+    margin: "auto",
+    padding: theme.spacing(4),
+    gridArea: "banner",
   },
   panelBannerContent: {
     flexDirection: "column",
     justifyContent: "center",
     maxWidth: 720,
-    [theme.breakpoints.down("xs")]: {
-      marginLeft: 0,
-      marginRight: 0,
-    },
-    [theme.breakpoints.between("sm", "lg")]: {
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    [theme.breakpoints.up("lg")]: {
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
   },
   panelBannerTitle: {
     color: theme.palette.grey[700],
@@ -176,26 +171,28 @@ const SelectDatasetStepContent = () => {
             <Box
               component="section"
               role="banner"
-              className={classes.panelBanner}
+              className={classes.panelBannerWrapper}
             >
-              <Flex className={classes.panelBannerContent}>
-                <Typography variant="h1" className={classes.panelBannerTitle}>
-                  Swiss Open Government Data
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className={classes.panelBannerDescription}
-                >
-                  <Trans id="browse.datasets.description">
-                    Explore datasets provided by the LINDAS Linked Data Service
-                    by either filtering by categories or organisations or search
-                    directly for specific keywords. Click on a dataset to see
-                    more detailed information and start creating your own
-                    visualizations.
-                  </Trans>
-                </Typography>
-                <SearchDatasetInput browseState={browseState} />
-              </Flex>
+              <div className={classes.panelBanner}>
+                <Flex className={classes.panelBannerContent}>
+                  <Typography variant="h1" className={classes.panelBannerTitle}>
+                    Swiss Open Government Data
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.panelBannerDescription}
+                  >
+                    <Trans id="browse.datasets.description">
+                      Explore datasets provided by the LINDAS Linked Data
+                      Service by either filtering by categories or organisations
+                      or search directly for specific keywords. Click on a
+                      dataset to see more detailed information and start
+                      creating your own visualizations.
+                    </Trans>
+                  </Typography>
+                  <SearchDatasetInput browseState={browseState} />
+                </Flex>
+              </div>
             </Box>
           </MotionBox>
         )}
