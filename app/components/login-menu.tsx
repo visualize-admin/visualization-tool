@@ -37,7 +37,6 @@ function LoginMenu() {
         <>
           <Typography variant="body2">
             Signed in as <Link href="/profile">{session.user?.name}</Link>{" "}
-            {session.user?.id}
             {" - "}
           </Typography>
           <Button
