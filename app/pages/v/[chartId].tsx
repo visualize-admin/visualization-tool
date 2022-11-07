@@ -14,6 +14,7 @@ import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
+import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 
 type PageProps =
@@ -24,7 +25,7 @@ type PageProps =
       status: "found";
       config: {
         key: string;
-        data: Config;
+        data: Omit<Config, "activeField">;
       };
     };
 
@@ -36,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   if (config && config.data) {
     // TODO validate configuration
-    return { props: { status: "found", config } };
+    return { props: serializeProps({ status: "found", config }) };
   }
 
   res.statusCode = 404;
@@ -44,12 +45,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return { props: { status: "notfound" } };
 };
 
-const VisualizationPage = (props: PageProps) => {
+const VisualizationPage = (props: Serialized<PageProps>) => {
   const locale = useLocale();
   const { query, replace } = useRouter();
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
+  const { status } = deserializeProps(props);
 
   useEffect(() => {
     // Remove publishSuccess from URL so that when reloading of sharing the link
@@ -60,17 +62,14 @@ const VisualizationPage = (props: PageProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (props.status === "notfound") {
-    // TODO: display 404 message
+  if (status === "notfound") {
     return <ErrorPage statusCode={404} />;
   }
 
   const {
-    config: {
-      key,
-      data: { dataSet, dataSource, meta, chartConfig },
-    },
-  } = props;
+    key,
+    data: { dataSet, dataSource, meta, chartConfig },
+  } = (props as Exclude<PageProps, { status: "notfound" }>).config;
 
   return (
     <>
