@@ -21,7 +21,7 @@ export const nextAuthOptions = {
   providers,
   callbacks: {
     /**
-     * When the is logged in, ensures it creates on our side and save its id
+     * When the user is logged in, ensures it creates on our side and save its id
      * on the session.
      */
     session: async ({ session, token }) => {

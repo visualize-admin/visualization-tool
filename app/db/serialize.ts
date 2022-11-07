@@ -6,8 +6,7 @@ export type Serialized<P> = P & {
 };
 
 export const serializeProps = <T extends unknown>(props: T) => {
-  const { json, meta } = SuperJSON.serialize(props);
-  const sprops = json;
+  const { json: sprops, meta } = SuperJSON.serialize(props);
   if (meta) {
     // @ts-ignore
     sprops._superjson = meta;

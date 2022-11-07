@@ -164,7 +164,7 @@ same storage, otherwise you'll have to reconfigure Keycloak.
 
 To configure Keycloak:
 
-- Access the [Keycloak admin][keycloak-admin]
+- Access the [Keycloak admin][keycloak-admin] (login, password: "admin", "admin")
 - Create client application
   - Via import: [Keycloak][keycloak-admin] > Clients > Import client
     - Use the exported client `keycloak-visualize-client-dev.json`

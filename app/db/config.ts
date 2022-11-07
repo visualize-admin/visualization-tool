@@ -11,6 +11,8 @@ import { createChartId } from "../utils/create-chart-id";
 
 import prisma from "./client";
 
+type PublishedConfig = Omit<ConfigType, "activeField">;
+
 /**
  * Store data in the DB.
  * If the user is logged, the chart is linked to the user.
@@ -49,9 +51,9 @@ const parseDbConfig = (conf: Config) => {
   const data = conf.data as ChartJsonConfig;
   const migratedData = {
     ...data,
-    dataSet: migrateDataSet(data.dataSet as string),
+    dataSet: migrateDataSet(data.dataSet),
     chartConfig: migrateChartConfig(data.chartConfig),
-  } as unknown as Omit<ConfigType, "activeField">;
+  } as PublishedConfig;
   return {
     ...conf,
     data: migratedData,
