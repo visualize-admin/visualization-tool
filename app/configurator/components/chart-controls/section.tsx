@@ -183,6 +183,7 @@ export const SectionTitle = ({
   disabled,
   children,
   sx,
+  right,
 }: {
   color?: string;
   iconName?: IconName;
@@ -190,6 +191,7 @@ export const SectionTitle = ({
   disabled?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
+  right?: React.ReactNode;
 }) => {
   const { setOpen, isOpen, disableCollapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
@@ -203,6 +205,7 @@ export const SectionTitle = ({
         {iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
+      {right}
       {disableCollapse ? null : (
         <IconButton
           size="small"
