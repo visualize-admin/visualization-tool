@@ -4,11 +4,11 @@ import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
-import { Loading } from "@/components/hint";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { flag } from "@/configurator/components/flag";
@@ -144,7 +144,24 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   } else {
-    return <Loading />;
+    return (
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-interactive-filters"
+        collapse
+      >
+        <SectionTitle
+          titleId="controls-interactive-filters"
+          gutterBottom={false}
+        >
+          <Trans id="controls.section.interactive.filters">
+            Interactive Filters
+          </Trans>
+        </SectionTitle>
+
+        <ControlSectionSkeleton showTitle={false} sx={{ mt: 0 }} />
+      </ControlSection>
+    );
   }
 };
 

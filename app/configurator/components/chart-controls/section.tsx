@@ -15,6 +15,7 @@ import {
   HTMLProps,
   ReactNode,
   useContext,
+  useEffect,
   useMemo,
 } from "react";
 import React from "react";
@@ -109,6 +110,11 @@ export const ControlSection = forwardRef<
     () => ({ ...disclosure, collapse }),
     [collapse, disclosure]
   );
+  useEffect(() => {
+    if (isHighlighted) {
+      disclosure.setOpen(true);
+    }
+  }, [disclosure, isHighlighted]);
   return (
     <ControlSectionContext.Provider value={ctx}>
       <Box
@@ -228,16 +234,20 @@ export const SectionTitle = ({
 
 export const ControlSectionSkeleton = ({
   sx,
+  showTitle = true,
 }: {
   sx?: React.ComponentProps<typeof ControlSection>["sx"];
+  showTitle?: boolean;
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>
     <ControlSectionContent px="small" gap="none">
-      <Typography variant="h1">
-        <Skeleton sx={{ bgcolor: "grey.300" }} />
-      </Typography>{" "}
+      {showTitle ? (
+        <Typography variant="h1">
+          <Skeleton sx={{ bgcolor: "grey.300" }} />
+        </Typography>
+      ) : null}
       <Skeleton
-        sx={{ bgcolor: "grey.300" }}
+        sx={{ bgcolor: "grey.300", mt: showTitle ? 0 : 2 }}
         variant="rectangular"
         width="100%"
         height={118}
