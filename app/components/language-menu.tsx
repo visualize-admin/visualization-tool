@@ -43,7 +43,6 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         ml: [0, "auto"],
         width: ["100%", "auto"],
         backgroundColor: ["grey.300", "transparent"],
-        order: [1, 2],
         justifyContent: "flex-end",
       }}
     >
