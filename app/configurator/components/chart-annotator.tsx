@@ -11,20 +11,18 @@ import { AnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
-import { useConfiguratorState } from "@/src";
+import { useConfiguratorState, useLocale } from "@/src";
 
 import { ConfiguratorStateConfiguringChart } from "../config-types";
 import { isConfiguring } from "../configurator-state";
 
 const WarnTitleDescription = () => {
   const [state] = useConfiguratorState(isConfiguring);
+  const locale = useLocale();
   const hasSomeTitleOrDescription = React.useMemo(() => {
     const { title, description } = state.meta;
-    return (
-      Object.values(title).some((x) => x != "") ||
-      Object.values(description).some((x) => x != "")
-    );
-  }, [state.meta]);
+    return title[locale] !== "" && description[locale] !== "";
+  }, [state.meta, locale]);
   return hasSomeTitleOrDescription ? null : (
     <Tooltip
       arrow
@@ -55,13 +53,23 @@ export const TitleAndDescriptionConfigurator = () => {
         <AnnotatorTabField
           value={"title"}
           icon="text"
-          label={getFieldLabel("title")}
-        ></AnnotatorTabField>
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-title-warning">
+              Please add a title
+            </Trans>
+          }
+          mainLabel={getFieldLabel("title")}
+        />
         <AnnotatorTabField
           value={"description"}
           icon="description"
-          label={getFieldLabel("description")}
-        ></AnnotatorTabField>
+          emptyValueWarning={
+            <Trans id="controls.annotator.add-description-warning">
+              Please add a description
+            </Trans>
+          }
+          mainLabel={getFieldLabel("description")}
+        />
       </ControlSectionContent>
     </ControlSection>
   );

@@ -207,6 +207,14 @@ msgstr "Regular"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Impostazioni predefinite"
 
+#: app/configurator/components/chart-annotator.tsx:67
+msgid "controls.annotator.add-description-warning"
+msgstr "Aggiungi una descrizione"
+
+#: app/configurator/components/chart-annotator.tsx:57
+msgid "controls.annotator.add-title-warning"
+msgstr "Aggiungi un titolo"
+
 #: app/configurator/components/field-i18n.ts:5
 msgid "controls.axis.horizontal"
 msgstr "Asse orizzontale"
@@ -252,7 +260,7 @@ msgstr "Tabella"
 msgid "controls.color"
 msgstr "Colore"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:45
+#: app/configurator/components/chart-controls/control-tab.tsx:47
 msgid "controls.color.add"
 msgstr "Aggiungi ..."
 
@@ -475,11 +483,11 @@ msgstr "Torna all'anteprima"
 msgid "controls.none"
 msgstr "Nessuno"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:312
+#: app/configurator/components/chart-controls/control-tab.tsx:338
 msgid "controls.option.isActive"
 msgstr "Attivo"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:308
+#: app/configurator/components/chart-controls/control-tab.tsx:334
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
 
@@ -511,7 +519,7 @@ msgstr "Stile della colonna"
 msgid "controls.section.data.filters"
 msgstr "Filtri"
 
-#: app/configurator/components/chart-annotator.tsx:52
+#: app/configurator/components/chart-annotator.tsx:50
 msgid "controls.section.description"
 msgstr "Titolo e descrizione"
 
@@ -565,7 +573,7 @@ msgstr "Ordinamento della tabella"
 msgid "controls.section.tableoptions"
 msgstr "Opzioni della tabella"
 
-#: app/configurator/components/chart-annotator.tsx:32
+#: app/configurator/components/chart-annotator.tsx:30
 msgid "controls.section.title.warning"
 msgstr "Aggiungi un titolo o una descrizione"
 

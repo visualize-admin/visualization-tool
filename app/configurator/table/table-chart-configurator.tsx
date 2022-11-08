@@ -140,13 +140,13 @@ export const ChartConfiguratorTable = ({
               key={"settings"}
               value={"table-settings"}
               icon="settings"
-              label={<Trans id="controls.table.settings">Settings</Trans>}
+              mainLabel={<Trans id="controls.table.settings">Settings</Trans>}
             />
             <AnnotatorTabField
               key={"sorting"}
               value={"table-sorting"}
               icon="sort"
-              label={<Trans id="controls.table.sorting">Sorting</Trans>}
+              mainLabel={<Trans id="controls.table.sorting">Sorting</Trans>}
             />
           </ControlSectionContent>
         </ControlSection>

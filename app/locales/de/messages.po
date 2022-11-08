@@ -187,6 +187,14 @@ msgstr "Normal"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Standardeinstellung"
 
+#: app/configurator/components/chart-annotator.tsx:67
+msgid "controls.annotator.add-description-warning"
+msgstr "Fügen Sie eine Beschreibung hinzu"
+
+#: app/configurator/components/chart-annotator.tsx:57
+msgid "controls.annotator.add-title-warning"
+msgstr "Füge einen Titel hinzu"
+
 #: app/configurator/components/field-i18n.ts:5
 msgid "controls.axis.horizontal"
 msgstr "Horizontale Achse"
@@ -232,7 +240,7 @@ msgstr "Tabelle"
 msgid "controls.color"
 msgstr "Farbe"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:45
+#: app/configurator/components/chart-controls/control-tab.tsx:47
 msgid "controls.color.add"
 msgstr "Hinzufügen …"
 
@@ -455,11 +463,11 @@ msgstr ""
 msgid "controls.none"
 msgstr ""
 
-#: app/configurator/components/chart-controls/control-tab.tsx:312
+#: app/configurator/components/chart-controls/control-tab.tsx:338
 msgid "controls.option.isActive"
 msgstr "Ein"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:308
+#: app/configurator/components/chart-controls/control-tab.tsx:334
 msgid "controls.option.isNotActive"
 msgstr "Aus"
 
@@ -495,7 +503,7 @@ msgstr "Spaltenstil"
 msgid "controls.section.data.filters"
 msgstr "Filter"
 
-#: app/configurator/components/chart-annotator.tsx:52
+#: app/configurator/components/chart-annotator.tsx:50
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
 
@@ -549,7 +557,7 @@ msgstr "Tabellensortierung"
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
 
-#: app/configurator/components/chart-annotator.tsx:32
+#: app/configurator/components/chart-annotator.tsx:30
 msgid "controls.section.title.warning"
 msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 
