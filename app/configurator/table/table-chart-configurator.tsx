@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Divider, Theme, Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useState } from "react";
 import {
@@ -125,8 +125,9 @@ export const ChartConfiguratorTable = ({
           <ControlSectionContent px="small" gap="none">
             <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
           </ControlSectionContent>
-          <Divider />
-          <SectionTitle>
+        </ControlSection>
+        <ControlSection collapse>
+          <SectionTitle gutterBottom={false}>
             <Trans id="controls.section.tableoptions">Table Options</Trans>
           </SectionTitle>
           <ControlSectionContent
