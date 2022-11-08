@@ -32,7 +32,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
     },
     panels: {
       left: () => screen.getByTestId("panel-left"),
-      right: () => screen.getByTestId("panel-right"),
+      drawer: () => screen.getByTestId("panel-drawer"),
       middle: () => screen.getByTestId("panel-middle"),
     },
     edition: {

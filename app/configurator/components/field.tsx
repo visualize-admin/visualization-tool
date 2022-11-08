@@ -1,9 +1,15 @@
 import { t } from "@lingui/macro";
-import { CircularProgress, Theme } from "@mui/material";
+import { CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import React, {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import Flex from "@/components/flex";
 import {
@@ -19,6 +25,7 @@ import {
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
+  AnnotatorTabProps,
   ControlTab,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
@@ -51,9 +58,20 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
-import { IconName } from "@/icons";
+import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+
+const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    color: theme.palette.primary.main,
+  },
+}));
+
+const FieldEditIcon = () => {
+  const classes = useFieldEditIconStyles();
+  return <SvgIcEdit width={18} height={18} className={classes.root} />;
+};
 
 const useStyles = makeStyles<Theme>((theme) => ({
   loadingIndicator: {
@@ -84,6 +102,7 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
+      rightIcon={<FieldEditIcon />}
     />
   );
 };
@@ -434,23 +453,37 @@ export const TimeInput = ({
 
 export const AnnotatorTabField = ({
   value,
+  emptyValueWarning,
   ...tabProps
 }: {
   value: string;
-  disabled?: boolean;
-  icon: IconName;
-  label: ReactNode;
-}) => {
+  emptyValueWarning?: React.ReactNode;
+} & Omit<AnnotatorTabProps, "onClick">) => {
   const fieldProps = useActiveFieldField({
     value,
   });
 
+  const [state] = useConfiguratorState(isConfiguring);
+  const locale = useLocale();
+  const hasText = useMemo(() => {
+    const key = value as "title" | "description";
+    return state.meta[key]?.[locale] !== "";
+  }, [state.meta, value, locale]);
+
   return (
     <AnnotatorTab
       {...tabProps}
+      lowerLabel={
+        hasText ? null : (
+          <Typography variant="caption" color="warning.main">
+            {emptyValueWarning}
+          </Typography>
+        )
+      }
       value={`${fieldProps.value}`}
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
+      rightIcon={<FieldEditIcon />}
     />
   );
 };

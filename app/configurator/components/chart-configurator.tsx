@@ -27,7 +27,6 @@ import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   isMapConfig,
   OptionGroup,
@@ -189,10 +188,7 @@ const orderedIsEqual = (
 const useEnsurePossibleFilters = ({
   state,
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);
@@ -438,9 +434,6 @@ const useStyles = makeStyles<
     fetching: boolean;
   }
 >((theme) => ({
-  filterSection: {
-    flexGrow: 1,
-  },
   loadingIndicator: {
     color: theme.palette.grey[700],
     display: "inline-block",
@@ -539,16 +532,16 @@ export const ChartConfigurator = ({
 
   return (
     <>
-      <ControlSection>
-        <SectionTitle titleId="controls-design">
+      <ControlSection collapse>
+        <SectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <ControlSectionContent px="small">
           <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection>
-        <SectionTitle titleId="controls-design">
+      <ControlSection collapse>
+        <SectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
         <ControlSectionContent
@@ -565,8 +558,8 @@ export const ChartConfigurator = ({
       </ControlSection>
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
-        <ControlSection className={classes.filterSection}>
-          <SectionTitle titleId="controls-data">
+        <ControlSection className={classes.filterSection} collapse>
+          <SectionTitle titleId="controls-data" gutterBottom={false}>
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress

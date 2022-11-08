@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import * as React from "react";
 
@@ -39,6 +40,23 @@ export const ChartPreview = ({
   );
 };
 
+const useStyles = makeStyles<Theme>({
+  title: {
+    marginBottom: 2,
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  description: {
+    marginBottom: 2,
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+});
+
 export const ChartPreviewInner = ({
   dataSetIri,
   dataSource,
@@ -46,9 +64,9 @@ export const ChartPreviewInner = ({
   dataSetIri: string;
   dataSource: DataSource;
 }) => {
-  const [state] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
-
+  const classes = useStyles();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -91,16 +109,21 @@ export const ChartPreviewInner = ({
           </Box>
         )}
         {(state.state === "CONFIGURING_CHART" ||
-          state.state === "DESCRIBING_CHART" ||
           state.state === "PUBLISHING") && (
           <>
             <>
               <Typography
                 variant="h2"
                 sx={{
-                  mb: 2,
                   color: state.meta.title[locale] === "" ? "grey.500" : "text",
                 }}
+                className={classes.title}
+                onClick={() =>
+                  dispatch({
+                    type: "ACTIVE_FIELD_CHANGED",
+                    value: "title",
+                  })
+                }
               >
                 {state.meta.title[locale] === "" ? (
                   <Trans id="annotation.add.title">[ Title ]</Trans>
@@ -118,11 +141,17 @@ export const ChartPreviewInner = ({
               </Head>
               <Typography
                 variant="body1"
+                className={classes.description}
                 sx={{
-                  mb: 2,
                   color:
                     state.meta.description[locale] === "" ? "grey.500" : "text",
                 }}
+                onClick={() =>
+                  dispatch({
+                    type: "ACTIVE_FIELD_CHANGED",
+                    value: "description",
+                  })
+                }
               >
                 {state.meta.description[locale] === "" ? (
                   <Trans id="annotation.add.description">[ Description ]</Trans>

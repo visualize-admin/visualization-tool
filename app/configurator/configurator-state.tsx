@@ -32,7 +32,6 @@ import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   DataSource,
   GenericField,
   ImputationType,
@@ -295,7 +294,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
 };
 
 const getCachedCubeMetadataWithComponentValues = (
-  draft: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart,
+  draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ) => {
   const query = client.readQuery<
@@ -579,14 +578,9 @@ const transitionStepNext = (
       return {
         ...draft,
         activeField: undefined,
-        state: "DESCRIBING_CHART",
-      };
-    case "DESCRIBING_CHART":
-      return {
-        ...draft,
-        activeField: undefined,
         state: "PUBLISHING",
       };
+
     case "INITIAL":
     case "PUBLISHING":
       break;
@@ -612,8 +606,6 @@ export const canTransitionToNextStep = (
     case "SELECTING_DATASET":
       return state.dataSet !== undefined;
     case "CONFIGURING_CHART":
-    case "DESCRIBING_CHART":
-      // These are all interchangeable in terms of validity
       return true;
   }
 
@@ -628,10 +620,8 @@ const getPreviousState = (
       return state;
     case "CONFIGURING_CHART":
       return "SELECTING_DATASET";
-    case "DESCRIBING_CHART":
-      return "CONFIGURING_CHART";
     case "PUBLISHING":
-      return "DESCRIBING_CHART";
+      return "CONFIGURING_CHART";
     default:
       return "SELECTING_DATASET";
   }
@@ -657,12 +647,6 @@ const transitionStepPrevious = (
         state: stepTo,
       };
     case "CONFIGURING_CHART":
-      return {
-        ...draft,
-        activeField: undefined,
-        state: stepTo,
-      };
-    case "DESCRIBING_CHART":
       return {
         ...draft,
         activeField: undefined,
@@ -1066,10 +1050,7 @@ export const handleInteractiveFilterChanged = (
     { type: "INTERACTIVE_FILTER_CHANGED" }
   >
 ) => {
-  if (
-    draft.state === "CONFIGURING_CHART" ||
-    draft.state === "DESCRIBING_CHART"
-  ) {
+  if (draft.state === "CONFIGURING_CHART") {
     setWith(
       draft,
       "chartConfig.interactiveFiltersConfig",
@@ -1084,10 +1065,7 @@ export const handleInteractiveFilterChanged = (
 export const handleInteractiveFilterTimeSliderReset = (
   draft: ConfiguratorState
 ) => {
-  if (
-    draft.state === "CONFIGURING_CHART" ||
-    draft.state === "DESCRIBING_CHART"
-  ) {
+  if (draft.state === "CONFIGURING_CHART") {
     if (draft.chartConfig.interactiveFiltersConfig) {
       draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri = "";
     }
@@ -1115,10 +1093,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.dataSource = action.value;
       return draft;
     case "CHART_TYPE_CHANGED":
-      if (
-        draft.state === "CONFIGURING_CHART" ||
-        draft.state === "DESCRIBING_CHART"
-      ) {
+      if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartType } = action.value;
         const metadata = getCachedCubeMetadataWithComponentValues(
           draft,
@@ -1145,11 +1120,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "ACTIVE_FIELD_CHANGED":
-      if (
-        draft.state === "CONFIGURING_CHART" ||
-        draft.state === "DESCRIBING_CHART"
-      )
+      if (draft.state === "CONFIGURING_CHART") {
         draft.activeField = action.value;
+      }
       return draft;
 
     case "CHART_FIELD_CHANGED":
@@ -1231,7 +1204,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_DESCRIPTION_CHANGED":
-      if (draft.state === "DESCRIBING_CHART") {
+      if (draft.state === "CONFIGURING_CHART") {
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
       }
       return draft;
@@ -1568,7 +1541,6 @@ const ConfiguratorStateProviderInternal = ({
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
-        case "DESCRIBING_CHART":
           if (chartId === "new") {
             const newChartId = createChartId();
             window.localStorage.setItem(
@@ -1723,10 +1695,4 @@ export const isConfiguring = (
   s: ConfiguratorState
 ): s is ConfiguratorStateConfiguringChart => {
   return s.state === "CONFIGURING_CHART";
-};
-
-export const isDescribing = (
-  s: ConfiguratorState
-): s is ConfiguratorStateDescribingChart => {
-  return s.state === "DESCRIBING_CHART";
 };

@@ -39,7 +39,6 @@ describe("viewing a dataset with only ordinal measures", () => {
     actions,
     within,
   }) => {
-    const ctx = { page, screen };
     await loadChartInLocalStorage(page, key, config);
     page.goto(`/en/create/${key}`);
 

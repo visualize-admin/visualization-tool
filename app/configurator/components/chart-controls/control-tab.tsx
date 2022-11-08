@@ -16,11 +16,13 @@ export const ControlTab = ({
   onClick,
   checked,
   labelId,
+  rightIcon,
 }: {
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
+  rightIcon?: React.ReactNode;
 } & FieldProps) => {
   return (
     <Box
@@ -38,7 +40,7 @@ export const ControlTab = ({
         <ControlTabButtonInner
           iconName={getIconName(value)}
           upperLabel={getFieldLabel(labelId)}
-          lowerLabel={
+          mainLabel={
             component ? (
               component.label
             ) : (
@@ -47,6 +49,7 @@ export const ControlTab = ({
           }
           checked={checked}
           optional={!component}
+          rightIcon={rightIcon}
         />
       </ControlTabButton>
     </Box>
@@ -79,7 +82,7 @@ export const OnOffControlTab = ({
       <ControlTabButton checked={checked} value={value} onClick={onClick}>
         <ControlTabButtonInner
           iconName={getIconName(icon)}
-          lowerLabel={label}
+          mainLabel={label}
           checked={checked}
           isActive={active}
           showIsActive
@@ -89,19 +92,27 @@ export const OnOffControlTab = ({
   );
 };
 
+export type AnnotatorTabProps = {
+  disabled?: boolean;
+  onClick: (x: string) => void;
+  value: string;
+  icon: IconName;
+  mainLabel: ReactNode;
+  upperLabel?: ReactNode;
+  lowerLabel?: ReactNode;
+  rightIcon?: ReactNode;
+} & FieldProps;
+
 export const AnnotatorTab = ({
   value,
   checked,
   onClick,
   icon,
-  label,
-}: {
-  disabled?: boolean;
-  onClick: (x: string) => void;
-  value: string;
-  icon: IconName;
-  label: ReactNode;
-} & FieldProps) => {
+  upperLabel,
+  mainLabel,
+  lowerLabel,
+  rightIcon,
+}: AnnotatorTabProps) => {
   return (
     <Box
       sx={{
@@ -117,8 +128,11 @@ export const AnnotatorTab = ({
       >
         <ControlTabButtonInner
           iconName={icon}
-          lowerLabel={label}
+          mainLabel={mainLabel}
+          upperLabel={upperLabel}
+          lowerLabel={lowerLabel}
           checked={checked}
+          rightIcon={rightIcon}
         />
       </ControlTabButton>
     </Box>
@@ -160,7 +174,7 @@ export const DraggableTab = ({
         <ControlTabButtonInner
           iconName={iconName ?? getIconName(value)}
           upperLabel={upperLabel}
-          lowerLabel={component.label}
+          mainLabel={component.label}
           checked={checked}
           optional={disabled}
         />
@@ -236,20 +250,24 @@ export const ControlTabButton = ({
 export const ControlTabButtonInner = ({
   iconName,
   upperLabel,
+  mainLabel,
   lowerLabel,
   checked,
+  rightIcon,
   optional = false,
   isActive = false,
   showIsActive = false,
 }: {
   iconName: IconName;
   upperLabel?: string | ReactNode;
-  lowerLabel: string | ReactNode;
+  mainLabel: string | ReactNode;
+  lowerLabel?: string | ReactNode;
   checked?: boolean;
   optional?: boolean;
   // On / Off indicator
   isActive?: boolean;
   showIsActive?: boolean;
+  rightIcon?: React.ReactNode;
 }) => {
   const classes = useStyles();
   return (
@@ -299,8 +317,16 @@ export const ControlTabButtonInner = ({
               textAlign: "left",
             }}
           >
-            {lowerLabel}
+            {mainLabel}
           </Typography>
+          {lowerLabel && (
+            <Typography
+              variant="caption"
+              sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
+            >
+              {lowerLabel}
+            </Typography>
+          )}
         </Flex>
       </Flex>
       {showIsActive && isActive === false ? (
@@ -312,6 +338,7 @@ export const ControlTabButtonInner = ({
           <Trans id="controls.option.isActive">On</Trans>
         </Box>
       ) : null}
+      {rightIcon}
     </Flex>
   );
 };
