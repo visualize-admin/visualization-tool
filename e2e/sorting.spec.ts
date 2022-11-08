@@ -75,6 +75,8 @@ test("Segment sorting", async ({
       .click();
 
     await actions.mui.selectOption("Automatic");
+
+    await page.locator('text="Back to main"').click();
   }
 });
 
