@@ -52,8 +52,20 @@ import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { IconName } from "@/icons";
+import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+
+const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    color: theme.palette.primary.main,
+  },
+}));
+
+const FieldEditIcon = () => {
+  const classes = useFieldEditIconStyles();
+  return <SvgIcEdit width={18} height={18} className={classes.root} />;
+};
 
 const useStyles = makeStyles<Theme>((theme) => ({
   loadingIndicator: {
@@ -84,6 +96,7 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
+      rightIcon={<FieldEditIcon />}
     />
   );
 };
@@ -444,13 +457,13 @@ export const AnnotatorTabField = ({
   const fieldProps = useActiveFieldField({
     value,
   });
-
   return (
     <AnnotatorTab
       {...tabProps}
       value={`${fieldProps.value}`}
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
+      rightIcon={<FieldEditIcon />}
     />
   );
 };

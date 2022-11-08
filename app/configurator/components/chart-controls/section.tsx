@@ -67,7 +67,7 @@ const useSectionTitleStyles = makeStyles<
         collapse ? theme.palette.grey[200] : "transparent",
 
       "& $icon": {
-        color: theme.palette.grey[900],
+        color: theme.palette.grey[600],
       },
     },
   },
@@ -83,7 +83,7 @@ const useSectionTitleStyles = makeStyles<
   },
   icon: {
     justifySelf: "flex-end",
-    color: theme.palette.grey[600],
+    color: theme.palette.grey[500],
   },
 }));
 
@@ -226,7 +226,13 @@ export const SectionTitle = ({
       </Typography>
       {right}
       <span className={classes.icon}>
-        {collapse ? isOpen ? <SvgIcMinus /> : <SvgIcAdd /> : null}
+        {collapse ? (
+          isOpen ? (
+            <SvgIcMinus width={18} height={18} />
+          ) : (
+            <SvgIcAdd width={18} height={18} />
+          )
+        ) : null}
       </span>
     </div>
   );
