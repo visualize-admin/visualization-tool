@@ -1231,7 +1231,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_DESCRIPTION_CHANGED":
-      if (draft.state === "DESCRIBING_CHART") {
+      if (draft.state === "CONFIGURING_CHART") {
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
       }
       return draft;
