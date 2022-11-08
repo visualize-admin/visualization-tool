@@ -27,7 +27,6 @@ import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   isMapConfig,
   OptionGroup,
@@ -189,10 +188,7 @@ const orderedIsEqual = (
 const useEnsurePossibleFilters = ({
   state,
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);

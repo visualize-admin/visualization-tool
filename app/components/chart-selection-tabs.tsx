@@ -13,7 +13,6 @@ import React, {
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   useConfiguratorState,
 } from "@/configurator";
@@ -97,9 +96,7 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
 
 const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [configuratorState] = useConfiguratorState() as unknown as [
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
+    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
   ];
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(

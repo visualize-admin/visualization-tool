@@ -2,15 +2,12 @@ import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import { ReactNode } from "react";
 
-import {
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
-} from "@/configurator";
+import { ConfiguratorStateConfiguringChart } from "@/configurator";
 
 export const EmptyRightPanel = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => (
   <Typography component="div" variant="body2" sx={{ m: 4 }}>
     {getRightPanelHint(state.state)}
@@ -24,12 +21,6 @@ const getRightPanelHint = (state: string): ReactNode => {
         <Trans id="controls.hint.configuring.chart">
           Select a chart element or a data dimension in the left panel to modify
           its options.
-        </Trans>
-      );
-    case "DESCRIBING_CHART":
-      return (
-        <Trans id="controls.hint.describing.chart">
-          Select an annotation field in the left panel.
         </Trans>
       );
     default:

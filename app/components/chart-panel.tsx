@@ -6,7 +6,6 @@ import Flex from "@/components/flex";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
 } from "@/configurator";
 import { useConfiguratorState } from "@/src";
@@ -18,9 +17,7 @@ type ChartPanelProps = { children: ReactNode } & BoxProps;
 export const ChartPanelConfigurator = (props: ChartPanelProps) => {
   // This type of chart panel can only appear for below steps.
   const [state] = useConfiguratorState() as unknown as [
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
+    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
   ];
 
   return (

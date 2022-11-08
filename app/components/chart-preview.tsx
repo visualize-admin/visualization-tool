@@ -109,7 +109,6 @@ export const ChartPreviewInner = ({
           </Box>
         )}
         {(state.state === "CONFIGURING_CHART" ||
-          state.state === "DESCRIBING_CHART" ||
           state.state === "PUBLISHING") && (
           <>
             <>
