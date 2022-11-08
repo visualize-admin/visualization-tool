@@ -7821,8 +7821,9 @@ eslint-plugin-unused-imports@^2.0.0:
   dependencies:
     eslint-rule-composer "^0.3.0"
 
-"eslint-plugin-visualize-admin@file:./eslint/visualize-admin":
+"eslint-plugin-visualize-admin@link:./eslint/visualize-admin":
   version "0.0.0"
+  uid ""
 
 eslint-rule-composer@^0.3.0:
   version "0.3.0"
