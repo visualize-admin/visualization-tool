@@ -29,8 +29,6 @@ const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       sx={{
-        borderBottom: "1px solid",
-        borderBottomColor: "divider",
         px: 2,
         minHeight: 78,
         display: "flex",

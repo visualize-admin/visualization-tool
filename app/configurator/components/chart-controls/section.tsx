@@ -37,9 +37,6 @@ const useControlSectionStyles = makeStyles<Theme, { isHighlighted?: boolean }>(
       flexShrink: 0,
       backgroundColor: ({ isHighlighted }) =>
         isHighlighted ? "primaryLight" : "grey.100",
-      "&:first-of-type": {
-        borderTopWidth: 0,
-      },
     },
   })
 );
