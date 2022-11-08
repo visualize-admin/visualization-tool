@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowX: "hidden",
     overflowY: "auto",
     backgroundColor: theme.palette.grey[100],
-    boxShadow: theme.shadows[5],
+    boxShadow: "none",
     borderRightColor: theme.palette.grey[500],
     borderRightWidth: "1px",
     borderRightStyle: "solid",
