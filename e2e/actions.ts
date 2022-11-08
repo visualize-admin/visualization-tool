@@ -11,7 +11,7 @@ const selectActiveEditorField =
     ).findByText(field);
     await fieldLocator.click();
     await selectors.panels
-      .right()
+      .drawer()
       .within()
       .findByText(field, undefined, { timeout: 3000 });
   };

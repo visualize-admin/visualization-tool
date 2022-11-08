@@ -130,7 +130,7 @@ const ConfigureChartStep = () => {
         hideBackdrop
         onClose={handleClosePanel}
       >
-        <div style={{ width: 319 }}>
+        <div style={{ width: 319 }} data-testid="panel-drawer">
           <BackContainer>
             <Button
               variant="text"

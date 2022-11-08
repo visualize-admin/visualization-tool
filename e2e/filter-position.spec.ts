@@ -15,14 +15,14 @@ test("Filters should be sorted by position", async ({
   await actions.editor.selectActiveField("Color");
 
   const selectorLocator = await selectors.panels
-    .right()
+    .drawer()
     .within()
     .findByText("None");
   await selectorLocator.click();
 
   await actions.mui.selectOption("Status");
 
-  const panelRight = await selectors.panels.right().within();
+  const panelRight = await selectors.panels.drawer().within();
   await panelRight.findByText("Selected filters", undefined, {
     timeout: 10_000,
   });
