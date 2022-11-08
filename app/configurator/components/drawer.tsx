@@ -6,9 +6,11 @@ export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
     position: "static",
   },
   "& > .MuiPaper-root": {
-    top: 95.5,
+    top: 96,
     bottom: 0,
     height: "auto",
     borderLeft: `1px ${theme.palette.divider} solid`,
+    borderRight: `1px ${theme.palette.divider} solid`,
+    boxShadow: "none",
   },
 }));
