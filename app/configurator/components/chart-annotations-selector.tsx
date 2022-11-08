@@ -49,7 +49,6 @@ export const ChartAnnotationsSelector = ({
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (activeField) {
-    console.log({ activeField })
     return (
       <Box
         role="tabpanel"
@@ -62,7 +61,7 @@ export const ChartAnnotationsSelector = ({
         {isInteractiveFilterField ? (
           <InteractiveFiltersOptions state={state} />
         ) : (
-          <ControlSection>
+          <ControlSection disableCollapse>
             <SectionTitle iconName={getIconName(activeField)}>
               {getFieldLabel(activeField)}
             </SectionTitle>

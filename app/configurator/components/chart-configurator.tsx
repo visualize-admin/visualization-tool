@@ -438,9 +438,6 @@ const useStyles = makeStyles<
     fetching: boolean;
   }
 >((theme) => ({
-  filterSection: {
-    flexGrow: 1,
-  },
   loadingIndicator: {
     color: theme.palette.grey[700],
     display: "inline-block",
