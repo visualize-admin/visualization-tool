@@ -12,9 +12,9 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { flag } from "@/configurator/components/flag";
-import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
-  isDescribing,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isTemporalDimension } from "@/domain/data";
@@ -34,7 +34,7 @@ export type InteractiveFilterType =
 export const InteractiveFiltersConfigurator = ({
   state: { dataSet, dataSource, chartConfig },
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const { chartType, fields, filters } = chartConfig;
   const locale = useLocale();
@@ -142,7 +142,7 @@ const InteractiveFilterTabField = ({
   icon: string;
   label: ReactNode;
 }) => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
 
   const onClick = useCallback(() => {
     dispatch({

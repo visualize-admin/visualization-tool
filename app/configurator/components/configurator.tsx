@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -7,20 +7,20 @@ import { ChartPanelConfigurator } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
-import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
-import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import { ConfiguratorDrawer } from "@/configurator/components/drawer";
 import {
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
-  PanelRightWrapper,
 } from "@/configurator/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import useEvent from "@/utils/use-event";
+
+import { ChartAnnotator } from "./chart-annotator";
+import { ChartOptionsSelector } from "./chart-options-selector";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -102,7 +102,10 @@ const ConfigureChartStep = () => {
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
-          <ChartConfigurator state={state} />
+          <>
+            <ChartConfigurator state={state} />
+            <ChartAnnotator state={state} />
+          </>
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
@@ -133,38 +136,14 @@ const ConfigureChartStep = () => {
             </Button>
           </BackContainer>
           <ChartOptionsSelector state={state} />
+          <ChartAnnotationsSelector state={state} />
         </div>
       </ConfiguratorDrawer>
     </>
   );
 };
 
-const DescribeChartStep = () => {
-  const [state] = useConfiguratorState();
 
-  if (state.state !== "DESCRIBING_CHART") {
-    return null;
-  }
-
-  return (
-    <>
-      <PanelLeftWrapper>
-        <ChartAnnotator state={state} />
-      </PanelLeftWrapper>
-      <PanelMiddleWrapper>
-        <ChartPanelConfigurator>
-          <ChartPreview
-            dataSetIri={state.dataSet}
-            dataSource={state.dataSource}
-          />
-        </ChartPanelConfigurator>
-      </PanelMiddleWrapper>
-      <PanelRightWrapper>
-        <ChartAnnotationsSelector state={state} />
-      </PanelRightWrapper>
-    </>
-  );
-};
 const PublishStep = () => {
   const [state] = useConfiguratorState();
 
@@ -196,7 +175,6 @@ export const Configurator = () => {
   ) : (
     <PanelLayout>
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
-      {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}
       {state.state === "PUBLISHING" ? <PublishStep /> : null}
     </PanelLayout>
   );

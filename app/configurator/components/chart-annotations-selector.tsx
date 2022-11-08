@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { useEffect, useMemo, useRef } from "react";
 
-import { ConfiguratorStateDescribingChart } from "@/configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -16,10 +15,12 @@ import { InteractiveFilterType } from "@/configurator/interactive-filters/intera
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
+import { ConfiguratorStateConfiguringChart } from "../config-types";
+
 export const ChartAnnotationsSelector = ({
   state,
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const { activeField, meta } = state;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -48,6 +49,7 @@ export const ChartAnnotationsSelector = ({
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (activeField) {
+    console.log({ activeField })
     return (
       <Box
         role="tabpanel"
