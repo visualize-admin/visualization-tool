@@ -34,7 +34,7 @@ const TitleAndDescriptionOptions = ({
   }
 
   return (
-    <ControlSection disableCollapse>
+    <ControlSection>
       <SectionTitle iconName={getIconName(activeField)}>
         {getFieldLabel(activeField)}
       </SectionTitle>

@@ -82,7 +82,7 @@ export const InteractiveFiltersOptions = ({
       const component = allComponents.find((d) => d.iri === componentIri);
 
       return (
-        <ControlSection disableCollapse>
+        <ControlSection>
           <SectionTitle iconName="segments">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveLegendFiltersToggle
@@ -101,7 +101,7 @@ export const InteractiveFiltersOptions = ({
       const component = allComponents.find((d) => d.iri === componentIri);
 
       return (
-        <ControlSection disableCollapse>
+        <ControlSection>
           <SectionTitle iconName="time">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveTimeRangeFilterOptions state={state} />
@@ -110,7 +110,7 @@ export const InteractiveFiltersOptions = ({
       );
     } else if (activeField === "timeSlider") {
       return (
-        <ControlSection disableCollapse>
+        <ControlSection>
           <SectionTitle iconName="play">
             <Trans id="controls.interactive.filters.timeSlider">
               Time slider
@@ -123,7 +123,7 @@ export const InteractiveFiltersOptions = ({
       );
     } else if (activeField === "dataFilters") {
       return (
-        <ControlSection disableCollapse>
+        <ControlSection>
           <SectionTitle iconName="filter">
             <Trans id="controls.section.interactiveFilters.dataFilters">
               Data filters

@@ -43,8 +43,12 @@ const WarnTitleDescription = () => {
 
 export const TitleAndDescriptionConfigurator = () => {
   return (
-    <ControlSection role="tablist" aria-labelledby="controls-design">
-      <SectionTitle titleId="controls-design" right={<WarnTitleDescription />}>
+    <ControlSection role="tablist" aria-labelledby="controls-design" collapse>
+      <SectionTitle
+        titleId="controls-design"
+        gutterBottom={false}
+        right={<WarnTitleDescription />}
+      >
         <Trans id="controls.section.description">Annotate</Trans>
       </SectionTitle>
       <ControlSectionContent px="small" gap="none">

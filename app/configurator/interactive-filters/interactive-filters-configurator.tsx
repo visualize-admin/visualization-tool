@@ -89,8 +89,12 @@ export const InteractiveFiltersConfigurator = ({
       <ControlSection
         role="tablist"
         aria-labelledby="controls-interactive-filters"
+        collapse
       >
-        <SectionTitle titleId="controls-interactive-filters">
+        <SectionTitle
+          titleId="controls-interactive-filters"
+          gutterBottom={false}
+        >
           <Trans id="controls.section.interactive.filters">
             Interactive Filters
           </Trans>

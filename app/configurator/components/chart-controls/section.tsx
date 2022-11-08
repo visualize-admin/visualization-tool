@@ -2,7 +2,6 @@ import {
   Box,
   BoxProps,
   Collapse,
-  IconButton,
   Skeleton,
   Theme,
   Typography,
@@ -47,6 +46,8 @@ const useSectionTitleStyles = makeStyles<
     disabled?: boolean;
     color?: string;
     sectionOpen: boolean;
+    gutterBottom: boolean;
+    collapse?: boolean;
   }
 >((theme) => ({
   root: {
@@ -54,11 +55,20 @@ const useSectionTitleStyles = makeStyles<
     alignItems: "center",
     width: "100%",
     padding: theme.spacing(4),
-    paddingBottom: ({ sectionOpen }) =>
-      sectionOpen ? theme.spacing(2) : theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    marginBottom: ({ gutterBottom }) => (gutterBottom ? 0 : -theme.spacing(2)),
     transition: "padding-bottom 300ms ease",
     border: "none",
     justifyContent: "flex-start",
+    "&:hover": {
+      cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
+      backgroundColor: ({ collapse }) =>
+        collapse ? theme.palette.grey[200] : "transparent",
+
+      "& $icon": {
+        color: theme.palette.grey[900],
+      },
+    },
   },
   text: {
     "& > svg:first-of-type": {
@@ -72,8 +82,7 @@ const useSectionTitleStyles = makeStyles<
   },
   icon: {
     justifySelf: "flex-end",
-    display: "inline-block",
-    marginRight: theme.spacing(-1),
+    color: theme.palette.grey[600],
   },
 }));
 
@@ -82,7 +91,7 @@ const ControlSectionContext = React.createContext({
   isOpen: false,
   close: () => {},
   setOpen: (_v: boolean | ((oldV: boolean) => boolean)) => {},
-  disableCollapse: false as boolean | undefined,
+  collapse: true as boolean | undefined,
 });
 
 export const ControlSection = forwardRef<
@@ -91,14 +100,14 @@ export const ControlSection = forwardRef<
     children: ReactNode;
     isHighlighted?: boolean;
     sx?: BoxProps["sx"];
-    disableCollapse?: boolean;
+    collapse?: boolean;
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
->(({ role, children, isHighlighted, sx, disableCollapse, ...props }, ref) => {
+>(({ role, children, isHighlighted, sx, collapse = false, ...props }, ref) => {
   const classes = useControlSectionStyles({ isHighlighted });
   const disclosure = useDisclosure(true);
   const ctx = useMemo(
-    () => ({ ...disclosure, disableCollapse }),
-    [disableCollapse, disclosure]
+    () => ({ ...disclosure, collapse }),
+    [collapse, disclosure]
   );
   return (
     <ControlSectionContext.Provider value={ctx}>
@@ -181,6 +190,7 @@ export const SectionTitle = ({
   children,
   sx,
   right,
+  gutterBottom = true,
 }: {
   color?: string;
   iconName?: IconName;
@@ -189,29 +199,29 @@ export const SectionTitle = ({
   children: ReactNode;
   sx?: TypographyProps["sx"];
   right?: React.ReactNode;
+  gutterBottom?: boolean;
 }) => {
-  const { setOpen, isOpen, disableCollapse } = useControlSectionContext();
+  const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
     color,
     sectionOpen: isOpen,
+    gutterBottom,
+    collapse,
   });
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      onClick={collapse ? () => setOpen((v) => !v) : undefined}
+    >
       <Typography variant="h5" id={titleId} className={classes.text} sx={sx}>
         {iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
       {right}
-      {disableCollapse ? null : (
-        <IconButton
-          size="small"
-          className={classes.icon}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {isOpen ? <SvgIcMinus /> : <SvgIcAdd />}
-        </IconButton>
-      )}
+      <span className={classes.icon}>
+        {collapse ? isOpen ? <SvgIcMinus /> : <SvgIcAdd /> : null}
+      </span>
     </div>
   );
 };

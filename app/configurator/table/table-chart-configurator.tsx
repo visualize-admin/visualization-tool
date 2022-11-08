@@ -118,8 +118,8 @@ export const ChartConfiguratorTable = ({
 
     return (
       <>
-        <ControlSection>
-          <SectionTitle titleId="controls-design">
+        <ControlSection collapse>
+          <SectionTitle titleId="controls-design" gutterBottom={false}>
             <Trans id="controls.select.chart.type">Chart Type</Trans>
           </SectionTitle>
           <ControlSectionContent px="small" gap="none">
