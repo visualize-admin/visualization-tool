@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import Box from "@mui/material/Box";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
@@ -102,7 +103,9 @@ const ConfigureChartStep = () => {
         }}
       >
         <BackContainer>
-          <BackButton onClick={handlePrevious}>Back to datasets</BackButton>
+          <BackButton onClick={handlePrevious}>
+            <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+          </BackButton>
         </BackContainer>
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />

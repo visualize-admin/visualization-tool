@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Box, Popover, Tab, Tabs, Theme, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, {
@@ -159,7 +160,7 @@ const TabsInner = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
-    <Box display="flex" sx={{ width: "100%", alignItems: "center" }}>
+    <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
       <Tabs value={0} sx={{ position: "relative", top: 1, flexGrow: 1 }}>
         {/* TODO: Generate dynamically when chart composition is implemented */}
         <Tab
@@ -171,7 +172,7 @@ const TabsInner = ({
         />
       </Tabs>
       <Button color="primary" variant="contained">
-        Checkout to Publishing
+        <Trans id="controls.nav.publish">Publish the chart</Trans>
       </Button>
     </Box>
   );
