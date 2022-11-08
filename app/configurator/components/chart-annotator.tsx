@@ -10,7 +10,7 @@ import {
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import SvgIcWarning from "@/icons/components/IcWarning";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useConfiguratorState } from "@/src";
 
 import { ConfiguratorStateConfiguringChart } from "../config-types";
@@ -30,12 +30,12 @@ const WarnTitleDescription = () => {
       arrow
       title={
         <Trans id="controls.section.title.warning">
-          Your chart has no title or description.
+          Please add a title or description.
         </Trans>
       }
     >
-      <Typography color="error">
-        <SvgIcWarning />
+      <Typography color="warning.main" sx={{ mr: 2 }}>
+        <SvgIcExclamation width={18} height={18} />
       </Typography>
     </Tooltip>
   );
