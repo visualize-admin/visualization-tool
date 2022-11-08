@@ -20,6 +20,7 @@ import {
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -171,8 +172,12 @@ const TabsInner = ({
           }
         />
       </Tabs>
-      <Button color="primary" variant="contained">
-        <Trans id="controls.nav.publish">Publish the chart</Trans>
+      <Button
+        color="primary"
+        variant="contained"
+        endIcon={<SvgIcChevronRight />}
+      >
+        <Trans id="button.publish">Publish the chart</Trans>
       </Button>
     </Box>
   );
