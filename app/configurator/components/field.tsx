@@ -467,7 +467,7 @@ export const AnnotatorTabField = ({
   const locale = useLocale();
   const hasText = useMemo(() => {
     const key = value as "title" | "description";
-    return state.meta[key][locale] !== "";
+    return state.meta[key]?.[locale] !== "";
   }, [state.meta, value, locale]);
 
   return (
