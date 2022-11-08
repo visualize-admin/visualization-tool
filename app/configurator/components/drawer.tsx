@@ -2,6 +2,9 @@ import { Drawer as MuiDrawer } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
+  "&": {
+    position: "static",
+  },
   "& > .MuiPaper-root": {
     top: 95.5,
     bottom: 0,
