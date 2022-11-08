@@ -18,8 +18,9 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
-import SvgIcChevronRight from "@/icons/components/IcChevronRight";
+import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -148,6 +149,41 @@ const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
   return <TabsInner chartType={chartType} editable={false} />;
 };
 
+const PublishChartButton = () => {
+  const [state, dispatch] = useConfiguratorState();
+  const { dataSet: dataSetIri } = state as
+    | ConfiguratorStatePublishing
+    | ConfiguratorStateConfiguringChart;
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: dataSetIri ?? "",
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
+    pause: !dataSetIri,
+  });
+  const goNext = useEvent(() => {
+    if (data?.dataCubeByIri) {
+      dispatch({
+        type: "STEP_NEXT",
+        dataSetMetadata: data?.dataCubeByIri,
+      });
+    }
+  });
+
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={data ? goNext : undefined}
+    >
+      <Trans id="button.publish">Publish the chart</Trans>
+    </Button>
+  );
+};
+
 const TabsInner = ({
   chartType,
   editable,
@@ -169,13 +205,7 @@ const TabsInner = ({
           }
         />
       </Tabs>
-      <Button
-        color="primary"
-        variant="contained"
-        endIcon={<SvgIcChevronRight />}
-      >
-        <Trans id="button.publish">Publish the chart</Trans>
-      </Button>
+      <PublishChartButton />
     </Box>
   );
 };
