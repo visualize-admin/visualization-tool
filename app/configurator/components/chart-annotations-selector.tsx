@@ -6,7 +6,6 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
@@ -101,6 +100,6 @@ export const ChartAnnotationsSelector = ({
       </Box>
     );
   } else {
-    return <EmptyRightPanel state={state} />;
+    return null;
   }
 };
