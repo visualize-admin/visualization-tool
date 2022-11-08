@@ -12,6 +12,28 @@ import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filte
 
 import { ConfiguratorStateConfiguringChart } from "../config-types";
 
+export const TitleAndDescriptionConfigurator = () => {
+  return (
+    <ControlSection role="tablist" aria-labelledby="controls-design">
+      <SectionTitle titleId="controls-design">
+        <Trans id="controls.section.description">Annotate</Trans>
+      </SectionTitle>
+      <ControlSectionContent px="small" gap="none">
+        <AnnotatorTabField
+          value={"title"}
+          icon="text"
+          label={getFieldLabel("title")}
+        ></AnnotatorTabField>
+        <AnnotatorTabField
+          value={"description"}
+          icon="description"
+          label={getFieldLabel("description")}
+        ></AnnotatorTabField>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
 export const ChartAnnotator = ({
   state,
 }: {
@@ -20,24 +42,7 @@ export const ChartAnnotator = ({
   return (
     <>
       {/* Title & Description */}
-      <ControlSection role="tablist" aria-labelledby="controls-design">
-        <SectionTitle titleId="controls-design">
-          <Trans id="controls.section.description">Annotate</Trans>
-        </SectionTitle>
-        <ControlSectionContent px="small" gap="none">
-          <AnnotatorTabField
-            value={"title"}
-            icon="text"
-            label={getFieldLabel("title")}
-          ></AnnotatorTabField>
-          <AnnotatorTabField
-            value={"description"}
-            icon="description"
-            label={getFieldLabel("description")}
-          ></AnnotatorTabField>
-        </ControlSectionContent>
-      </ControlSection>
-
+      <TitleAndDescriptionConfigurator />
       {/* Filters */}
       {state.chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
