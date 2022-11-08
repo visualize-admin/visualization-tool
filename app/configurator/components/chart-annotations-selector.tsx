@@ -62,7 +62,7 @@ export const ChartAnnotationsSelector = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { activeField, meta } = state;
+  const { activeField } = state;
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (panelRef && panelRef.current) {
