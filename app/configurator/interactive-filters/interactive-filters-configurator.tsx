@@ -31,6 +31,17 @@ export type InteractiveFilterType =
   | "timeSlider"
   | "dataFilters";
 
+export const isInteractiveFilterType = (
+  field: string | undefined
+): field is InteractiveFilterType => {
+  return (
+    field === "legend" ||
+    field === "timeRange" ||
+    field === "timeSlider" ||
+    field === "dataFilters"
+  );
+};
+
 export const InteractiveFiltersConfigurator = ({
   state: { dataSet, dataSource, chartConfig },
 }: {

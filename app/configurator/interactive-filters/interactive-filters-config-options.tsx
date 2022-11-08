@@ -19,9 +19,9 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
-  isDescribing,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
@@ -50,7 +50,7 @@ import { getTimeSliderFilterDimensions } from "./helpers";
 export const InteractiveFiltersOptions = ({
   state,
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const { chartConfig, dataSet, dataSource } = state;
   const activeField = state.activeField as InteractiveFilterType;
@@ -166,7 +166,7 @@ const InteractiveTimeRangeFilterToggle = ({
 const InteractiveTimeRangeFilterOptions = ({
   state,
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const formatDateAuto = useFormatFullDateAuto();
@@ -245,7 +245,7 @@ const InteractiveTimeRangeFilterOptions = ({
 const InteractiveTimeSliderFilterOptions = ({
   state: { chartConfig, dataSet, dataSource },
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -345,7 +345,7 @@ const InteractiveDataFiltersToggle = ({
 const InteractiveDataFilterOptions = ({
   state: { chartConfig, dataSet, dataSource },
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -408,7 +408,7 @@ const InteractiveDataFilterOptionsCheckbox = ({
   label: string;
   disabled: boolean;
 }) => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {

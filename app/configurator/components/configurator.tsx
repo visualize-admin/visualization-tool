@@ -19,6 +19,9 @@ import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configu
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import useEvent from "@/utils/use-event";
 
+import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
+import { isInteractiveFilterType } from "../interactive-filters/interactive-filters-configurator";
+
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartOptionsSelector } from "./chart-options-selector";
 
@@ -55,6 +58,10 @@ const BackButton = ({
       {children}
     </Button>
   );
+};
+
+const isAnnotationField = (field: string | undefined) => {
+  return field === "title" || field === "description";
 };
 
 const ConfigureChartStep = () => {
@@ -135,14 +142,18 @@ const ConfigureChartStep = () => {
               Back to main
             </Button>
           </BackContainer>
-          <ChartOptionsSelector state={state} />
-          <ChartAnnotationsSelector state={state} />
+          {isAnnotationField(state.activeField) ? (
+            <ChartAnnotationsSelector state={state} />
+          ) : isInteractiveFilterType(state.activeField) ? (
+            <InteractiveFiltersOptions state={state} />
+          ) : (
+            <ChartOptionsSelector state={state} />
+          )}
         </div>
       </ConfiguratorDrawer>
     </>
   );
 };
-
 
 const PublishStep = () => {
   const [state] = useConfiguratorState();

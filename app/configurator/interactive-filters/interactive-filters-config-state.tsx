@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback } from "react";
 
 import { InteractiveFiltersConfig } from "@/configurator/config-types";
 import {
-  isDescribing,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -14,7 +14,7 @@ import useEvent from "@/utils/use-event";
 import { FIELD_VALUE_NONE } from "../constants";
 
 export const useInteractiveLegendFiltersToggle = () => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     const newConfig = produce(
       state.chartConfig.interactiveFiltersConfig,
@@ -51,7 +51,7 @@ export const useInteractiveTimeRangeFiltersToggle = ({
 }: {
   timeExtent: [string, string];
 }) => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { chartConfig } = state;
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
@@ -116,7 +116,7 @@ export const updateInteractiveTimeRangeFilter = produce(
 );
 
 export const useInteractiveTimeSliderFiltersSelect = () => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { chartConfig } = state;
 
   const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
@@ -155,7 +155,7 @@ export const useInteractiveDataFiltersToggle = ({
 }: {
   dimensions: DimensionMetadataFragment[];
 }) => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { chartConfig } = state;
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
