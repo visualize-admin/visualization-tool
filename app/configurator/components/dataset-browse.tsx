@@ -417,14 +417,7 @@ export const SearchDatasetControls = ({
   });
 
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        mb: 2,
-        pl: 4,
-      }}
-    >
+    <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <Typography
         variant="body2"
         fontWeight={700}
@@ -1068,14 +1061,17 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     cursor: "pointer",
     textAlign: "left",
-    padding: `${theme.spacing(4)}`,
+    padding: `${theme.spacing(4)} 0`,
     borderTopColor: theme.palette.grey[300],
     borderTopStyle: "solid",
     borderTopWidth: 1,
     boxShadow: "none",
-    transition: "background 0.1s ease",
-    "&:hover": {
-      background: theme.palette.muted.main,
+
+    "& .MuiTypography-body1": {
+      transition: "font-weight 0.1s ease",
+    },
+    "&:hover .MuiTypography-body1": {
+      fontWeight: "bold",
     },
   },
 }));

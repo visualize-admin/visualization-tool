@@ -68,7 +68,6 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     transition: "padding-top 0.5s ease",
   },
   panelMiddle: {
-    paddingLeft: 0,
     paddingTop: ({ datasetPresent }) =>
       datasetPresent ? 48 : theme.spacing(5),
     gridColumnStart: "middle",
@@ -106,7 +105,6 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   },
   filters: {
     display: "block",
-    marginLeft: theme.spacing(4),
     marginBottom: theme.spacing(4),
     color: theme.palette.grey[800],
   },
