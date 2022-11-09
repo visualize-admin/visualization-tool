@@ -71,7 +71,7 @@ export const hierarchyToGraphviz = (
   hierarchy: DimensionHierarchyQueryHierarchy
 ) => {
   const lines = [] as string[];
-  dfs(hierarchy, (node, { depth, parents }) => {
+  dfs(hierarchy, (node, { parents }) => {
     lines.push(`"${node.value}"[label="${node.label.replace(/"/g, "")}"]`);
     if (parents.length > 0) {
       const parent = parents[parents.length - 1];

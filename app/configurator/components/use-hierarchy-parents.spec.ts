@@ -9,7 +9,7 @@ describe("grouping hierarchy by parents", () => {
     const iri =
       "https://ld.admin.ch/cube/dimension/aussenhandel_warenkoerbe/1_listZT";
     const ztGroups = groups.filter(
-      ([parents, values]) =>
+      ([parents]) =>
         parents.length > 0 && parents[parents.length - 1].value === iri
     )!;
 
