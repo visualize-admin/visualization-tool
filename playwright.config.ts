@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 2 : 0,
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? "html" : "line",
+  reporter: process.env.CI ? "list" : "line",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     contextOptions: {

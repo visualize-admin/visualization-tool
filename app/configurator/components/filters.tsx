@@ -501,7 +501,7 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <ConfiguratorDrawer anchor="right" open={!!anchorEl} hideBackdrop>
+      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
