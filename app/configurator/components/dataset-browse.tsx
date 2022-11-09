@@ -331,8 +331,8 @@ export const SearchDatasetInput = ({
   });
 
   const placeholderLabel = t({
-    id: "select.controls.filters.search",
-    message: "Search",
+    id: "dataset.search.placeholder",
+    message: "Name, description, organization, theme, keyword",
   });
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -363,7 +363,7 @@ export const SearchDatasetInput = ({
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
-        sx={{ width: "100%", maxWidth: 400 }}
+        sx={{ width: "100%", maxWidth: 350 }}
       />
       <Button sx={{ px: 6 }} onClick={handleClick}>
         <Trans id="select.controls.filters.search">Search</Trans>
