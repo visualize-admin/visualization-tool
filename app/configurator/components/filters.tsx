@@ -1,20 +1,17 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import {
-  autocompleteClasses,
   Box,
   Button,
   ClickAwayListener,
-  Input,
-  InputAdornment,
   Typography,
-  ListSubheader,
-  AutocompleteProps,
-  Autocomplete,
   Divider,
   Drawer as MuiDrawer,
   Theme,
   IconButton,
   Tooltip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -27,6 +24,7 @@ import React, {
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
+  ReactNode,
   useCallback,
   useMemo,
   useRef,
@@ -60,12 +58,12 @@ import {
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
-import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
 import { dfs } from "@/utils/dfs";
 import { valueComparator } from "@/utils/sorting-values";
@@ -127,7 +125,8 @@ const useStyles = makeStyles((theme: Theme) => {
       border: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
       alignSelf: "flex-start",
-      marginTop: "0.125rem",
+      marginTop: "0.375rem",
+      marginRight: "0.5rem",
     },
     optionLabel: {
       flexGrow: 1,
@@ -166,48 +165,6 @@ const useStyles = makeStyles((theme: Theme) => {
   };
 });
 
-const AutocompletePopperStyled = styled("div")(({ theme }) => ({
-  // The autocomplete styles the Popper and sets its width
-  // to its anchorEl width via the style attribute
-  // Since we cannot override the style attribute through
-  // componentsProps.popper yet, we have to use !important
-  // here
-  width: "100% !important",
-  [`& .${autocompleteClasses.paper}`]: {
-    boxShadow: "none",
-    margin: 0,
-    color: "inherit",
-    fontSize: theme.typography.body2.fontSize,
-    padding: 0,
-  },
-  [`& .${autocompleteClasses.listbox}`]: {
-    maxHeight: "max-content",
-    [`& .${autocompleteClasses.option}`]: {
-      display: "flex",
-      minHeight: "auto",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      gap: "0.5rem",
-      padding: "8px 16px",
-
-      '&[aria-selected="true"]': {
-        // We can see the selection status via the color box + selected icon
-        backgroundColor: "transparent",
-      },
-      [`&.${autocompleteClasses.focused}, &.${autocompleteClasses.focused}[aria-selected="true"]`]:
-        {
-          backgroundColor: theme.palette.action.hover,
-        },
-    },
-  },
-  [`&.${autocompleteClasses.popper}`]: {
-    width: 200,
-  },
-  [`&.${autocompleteClasses.popperDisablePortal}`]: {
-    position: "relative",
-  },
-}));
-
 const joinParents = (parents?: HierarchyValue[]) => {
   return parents?.map((x) => x.label).join(" > ") || "";
 };
@@ -216,24 +173,8 @@ const explodeParents = (parents: string) => {
   return parents ? parents.split(" > ") : [];
 };
 
-const AutocompletePopper: AutocompleteProps<
-  unknown,
-  true,
-  true,
-  true
->["PopperComponent"] = ({ disablePortal, anchorEl, open, ...rest }) => {
-  return <AutocompletePopperStyled {...rest} />;
-};
-
 const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
-};
-
-const isDimensionOptionEqualToDimensionValue = (
-  option: HierarchyValue,
-  value: HierarchyValue
-) => {
-  return option.value === value?.value;
 };
 
 const getOptionsFromTree = (tree: HierarchyValue[]) => {
@@ -245,8 +186,6 @@ const getOptionsFromTree = (tree: HierarchyValue[]) => {
     (node) => joinParents(node.parents)
   );
 };
-
-type AutocompleteOption = ReturnType<typeof getOptionsFromTree>[number];
 
 const getColorConfig = (
   config: ConfiguratorState,
@@ -283,14 +222,12 @@ const MultiFilterContent = ({
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
 
-  const { options, optionsByValue, optionsByParent } = useMemo(() => {
+  const { optionsByValue } = useMemo(() => {
     const flat = getOptionsFromTree(tree);
     const optionsByValue = keyBy(flat, (x) => x.value);
-    const optionsByParent = groupBy(flat, groupByParent);
     return {
       options: sortBy(flat, [groupByParent, (x) => x.label]),
       optionsByValue,
-      optionsByParent,
     };
   }, [tree]);
 
@@ -332,7 +269,7 @@ const MultiFilterContent = ({
   // The popover content is responsible for keeping this ref up-to-date.
   // This is so that the click-away close event can still access the pending values
   // without the state changing (triggering a repositioning of the popover).
-  const pendingValuesRef = useRef<AutocompleteOption[]>([]);
+  const pendingValuesRef = useRef<HierarchyValue[]>([]);
   const handleCloseAutocomplete = useEvent(() => {
     setAnchorEl(undefined);
     const newValues = pendingValuesRef.current
@@ -515,8 +452,7 @@ const MultiFilterContent = ({
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
-            options={options}
-            optionsByParent={optionsByParent}
+            options={tree}
             onClose={handleCloseAutocomplete}
             values={values}
             hasColorMapping={hasColorMapping}
@@ -540,165 +476,178 @@ const BreadcrumbChevron = () => {
   return <SvgIcChevronRight className={classes.root} />;
 };
 
+const StyledAccordion = styled(Accordion)({
+  boxShadow: "none",
+  minHeight: 0,
+
+  "&:before": {
+    display: "none",
+  },
+  "&.Mui-expanded": {
+    minHeight: 0,
+  },
+});
+
+const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
+  minHeight: 0,
+  transition: "background-color 0.1s ease",
+  paddingLeft: "1rem",
+  paddingRight: "1rem",
+
+  "&.Mui-expanded": {
+    minHeight: 0,
+  },
+  "& > .MuiAccordionSummary-content": {
+    alignItems: "center",
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  "&:hover": {
+    backgroundColor: theme.palette.primary.light,
+  },
+}));
+
+const TreeAccordionDetails = styled(AccordionDetails)(() => ({
+  padding: 0,
+}));
+
+const TreeAccordion = ({
+  depth,
+  value,
+  label,
+  selected,
+  expandable,
+  showColor,
+  onSelect,
+  children,
+}: {
+  depth: number;
+  value: string;
+  label: string;
+  selected: boolean;
+  expandable: boolean;
+  showColor: boolean;
+  onSelect: () => void;
+  children?: ReactNode;
+}) => {
+  const classes = useStyles();
+  const { getValueColor } = useMultiFilterContext();
+  const [expanded, setExpanded] = useState(false);
+
+  const paddingLeft = `${(depth + 1) * 8}px`;
+
+  return (
+    <StyledAccordion expanded={expanded} disableGutters>
+      <TreeAccordionSummary
+        sx={{ paddingLeft }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+      >
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          sx={{ visibility: expandable ? "visible" : "hidden" }}
+        >
+          <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
+        </IconButton>
+
+        {showColor && (
+          <div
+            className={classes.optionColor}
+            style={{
+              backgroundColor: selected ? getValueColor(value) : "transparent",
+            }}
+          />
+        )}
+
+        <Typography variant="body2" className={classes.optionLabel}>
+          {label}
+        </Typography>
+
+        <SvgIcCheck
+          className={classes.optionCheck}
+          style={{ visibility: selected ? "visible" : "hidden", marginTop: 8 }}
+        />
+      </TreeAccordionSummary>
+      {children && <TreeAccordionDetails>{children}</TreeAccordionDetails>}
+    </StyledAccordion>
+  );
+};
+
+const Tree = ({
+  depth,
+  options,
+  selectedValues,
+  showColors,
+  onSelect,
+}: {
+  depth: number;
+  options: HierarchyValue[];
+  selectedValues: HierarchyValue[];
+  showColors: boolean;
+  onSelect: (newSelectedValues: HierarchyValue[]) => void;
+}) => {
+  return (
+    <>
+      {options.map((d) => {
+        const { value, label, children } = d;
+        const selected = selectedValues.map((d) => d.value).includes(value);
+        const hasChildren = Array.isArray(children) && children.length > 0;
+
+        return (
+          <TreeAccordion
+            key={value}
+            depth={depth}
+            value={value}
+            label={label}
+            selected={selected}
+            expandable={hasChildren}
+            showColor={showColors}
+            onSelect={() => {
+              if (selected) {
+                onSelect(selectedValues.filter((d) => d.value !== value));
+              } else {
+                onSelect([...selectedValues, d]);
+              }
+            }}
+          >
+            {hasChildren ? (
+              <Tree
+                options={children}
+                depth={depth + 1}
+                selectedValues={selectedValues}
+                showColors={showColors}
+                onSelect={onSelect}
+              />
+            ) : null}
+          </TreeAccordion>
+        );
+      })}
+    </>
+  );
+};
+
 const DrawerContent = forwardRef<
   HTMLDivElement,
   {
-    optionsByParent: Record<string, AutocompleteOption[]>;
     onClose: () => void;
-    options: AutocompleteOption[];
-    values: AutocompleteOption[];
-    pendingValuesRef: MutableRefObject<AutocompleteOption[]>;
+    options: HierarchyValue[];
+    values: HierarchyValue[];
+    pendingValuesRef: MutableRefObject<HierarchyValue[]>;
     hasColorMapping: boolean;
   }
 >((props, ref) => {
-  const {
-    optionsByParent,
-    onClose,
-    values,
-    options,
-    pendingValuesRef,
-    hasColorMapping,
-  } = props;
+  const { onClose, values, options, pendingValuesRef, hasColorMapping } = props;
   const classes = useStyles();
-  const { getValueColor } = useMultiFilterContext();
-
-  const [inputValue, setInputValue] = useState("");
-  const [pendingValues, setPendingValues] = useState<AutocompleteOption[]>(
+  const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(
     () => values
   );
   pendingValuesRef.current = pendingValues;
-  const handleSelect = useEvent((_, newValues: AutocompleteOption[]) => {
-    setPendingValues(newValues);
-  });
 
-  const pendingValuesByParent = useMemo(() => {
-    return groupBy(pendingValues, groupByParent);
-  }, [pendingValues]);
-
-  const handleChangeInput: AutocompleteProps<
-    HierarchyValue,
-    true,
-    false,
-    false
-  >["onInputChange"] = useEvent((_, value, reason) => {
-    if (reason === "input") {
-      setInputValue(value);
-    }
-  });
-  const hasSelectedAllGroup = useCallback(
-    (groupKey: string) => {
-      return (
-        pendingValuesByParent[groupKey]?.length >=
-        optionsByParent[groupKey]?.length
-      );
-    },
-    [pendingValuesByParent, optionsByParent]
-  );
-
-  const handleSelectGroup = useEvent((groupLabel: string) => {
-    return setPendingValues((pendingValues) => {
-      if (hasSelectedAllGroup(groupLabel)) {
-        const toRemove = new Set(
-          optionsByParent[groupLabel].map((x) => x.value)
-        );
-        return pendingValues.filter((x) => !toRemove.has(x.value));
-      } else {
-        return [...pendingValues, ...optionsByParent[groupLabel]];
-      }
-    });
-  });
-
-  const handleAutocompleteClose = useEvent((_, reason) => {
-    if (reason === "escape") {
-      onClose();
-    }
-  });
-
-  const renderInput = useCallback(
-    (params) => (
-      <Box className={classes.autocompleteInputContainer}>
-        <Input
-          size="small"
-          className={classes.autocompleteInput}
-          startAdornment={
-            <InputAdornment position="start">
-              <SvgIcSearch />
-            </InputAdornment>
-          }
-          ref={params.InputProps.ref}
-          inputProps={params.inputProps}
-          autoFocus
-          placeholder={t({
-            id: "select.controls.filters.search",
-            message: "Search",
-          })}
-        />
-      </Box>
-    ),
-    [classes.autocompleteInput, classes.autocompleteInputContainer]
-  );
-
-  const renderGroup = useCallback(
-    (params) => {
-      return (
-        <>
-          {params.group ? (
-            <ListSubheader className={classes.listSubheader} key={params.key}>
-              <div>
-                {interlace(explodeParents(params.group), <BreadcrumbChevron />)}
-              </div>
-              <Button
-                variant="text"
-                onClick={() => handleSelectGroup(params.group)}
-              >
-                {hasSelectedAllGroup(params.group) ? (
-                  <Trans id="controls.filter.select.none">Select none</Trans>
-                ) : (
-                  <Trans id="controls.filter.select.all">Select all</Trans>
-                )}
-              </Button>
-            </ListSubheader>
-          ) : null}
-          {params.children}
-        </>
-      );
-    },
-    [classes.listSubheader, handleSelectGroup, hasSelectedAllGroup]
-  );
-
-  const renderOption = useCallback(
-    (props, option, { selected }) => {
-      return (
-        <li {...props}>
-          {hasColorMapping ? (
-            <div
-              className={classes.optionColor}
-              style={{
-                border: "1px solid #ccc",
-                backgroundColor: selected
-                  ? getValueColor(option.value)
-                  : "transparent",
-              }}
-            />
-          ) : null}
-          <div className={classes.optionLabel}>{option.label}</div>
-          <SvgIcCheck
-            className={classes.optionCheck}
-            style={{
-              visibility: selected ? "visible" : "hidden",
-            }}
-          />
-        </li>
-      );
-    },
-    [
-      classes.optionCheck,
-      classes.optionColor,
-      classes.optionLabel,
-      getValueColor,
-      hasColorMapping,
-    ]
-  );
   return (
     <div
       className={classes.autocompleteMenuContent}
@@ -721,25 +670,14 @@ const DrawerContent = forwardRef<
           </Trans>
         </Typography>
       </Box>
-      <Autocomplete
-        PopperComponent={AutocompletePopper}
-        value={pendingValues}
-        multiple
-        open
-        noOptionsText={t({ id: "No results" })}
-        renderTags={() => null}
-        onChange={handleSelect}
-        onClose={handleAutocompleteClose}
-        renderGroup={renderGroup}
+      <Tree
+        depth={0}
         options={options}
-        groupBy={groupByParent}
-        disableCloseOnSelect
-        isOptionEqualToValue={isDimensionOptionEqualToDimensionValue}
-        renderOption={renderOption}
-        renderInput={renderInput}
-        onInputChange={handleChangeInput}
-        inputValue={inputValue}
+        selectedValues={pendingValues}
+        showColors={hasColorMapping}
+        onSelect={(newValues: HierarchyValue[]) => setPendingValues(newValues)}
       />
+
       <Box className={classes.autocompleteApplyButtonContainer}>
         <Button
           size="small"
