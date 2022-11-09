@@ -6,6 +6,7 @@ import {
   DimensionHierarchyQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
 import { dfs } from "@/utils/dfs";
 
@@ -16,14 +17,17 @@ export type DimensionHierarchyQueryHierarchy = NN<
   >["hierarchy"]
 >;
 
+export type HierarchyParents = [
+  HierarchyValue[],
+  { node: HierarchyValue; parents: HierarchyValue[] }[]
+][];
+
 export const groupByParents = (hierarchy: DimensionHierarchyQueryHierarchy) => {
-  const allHierarchyValues = [
-    ...dfs(hierarchy, (node, { depth, parents }) => ({
-      node,
-      parents,
-      depth,
-    })),
-  ];
+  const allHierarchyValues = dfs(hierarchy, (node, { depth, parents }) => ({
+    node,
+    parents,
+    depth,
+  }));
 
   return groups(allHierarchyValues, (v) => v.parents);
 };
@@ -34,31 +38,31 @@ const useHierarchyParents = (
   dimension: DataCubeMetadata["dimensions"][number],
   locale: string,
   pause?: boolean
-) => {
+): HierarchyParents | undefined => {
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
       cubeIri: dataSet,
-      dimensionIri: dimension.iri,
+      dimensionIri: dimension?.iri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale: locale,
     },
-    pause: pause,
+    pause: pause || !dimension,
   });
   const hierarchy =
     hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
   return useMemo(() => {
-    if (!hierarchy) {
+    if (!hierarchy || !dimension) {
       return;
     }
-    const valueSet = new Set(dimension.values.map((x) => x.value));
-    return groupByParents(hierarchy)
-      .map(
-        ([parents, values]) =>
-          [parents, values.filter((x) => valueSet.has(x.node.value))] as const
-      )
-      .filter(([_parents, values]) => values.length > 0);
-  }, [dimension.values, hierarchy]);
+    const values = dimension.values;
+    const valueSet = new Set(values.map((v) => v.value));
+    const valueGroups = groupByParents(hierarchy);
+
+    return valueGroups.map(([parents, nodes]) => {
+      return [parents, nodes.filter((n) => valueSet.has(n.node.value))];
+    });
+  }, [dimension, hierarchy]);
 };
 
 /**

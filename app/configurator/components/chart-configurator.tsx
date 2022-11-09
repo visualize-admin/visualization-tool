@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ascending } from "d3";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
@@ -29,8 +28,6 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   isMapConfig,
-  OptionGroup,
-  Option,
 } from "@/configurator";
 import {
   ControlSection,
@@ -57,7 +54,6 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
-  HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
@@ -66,19 +62,11 @@ import {
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { makeOptionGroups } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
 import { ChartTypeSelector } from "./chart-type-selector";
 import useHierarchyParents from "./use-hierarchy-parents";
-
-const asGroup = (
-  parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
-) => {
-  return {
-    label: parents.map((p) => p.label).join(" > "),
-    value: parents.map((p) => p.value).join("$"),
-  };
-};
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -103,25 +91,13 @@ const DataFilterSelectGeneric = ({
     pause
   );
 
+  const optionGroups = useMemo(() => {
+    return makeOptionGroups(hierarchyParents);
+  }, [hierarchyParents]);
+
   const handleOpen = useEvent(() => setPause(false));
 
   const values = dimension.values;
-
-  const optionGroups = useMemo(() => {
-    if (hierarchyParents) {
-      return hierarchyParents
-        .map(
-          ([parents, dfsRes]) =>
-            [asGroup(parents), dfsRes.map((d) => d.node)] as [
-              OptionGroup,
-              (Option & { depth: number })[]
-            ]
-        )
-        .sort((a, b) => ascending(a[1][0].depth, b[1][0].depth));
-    } else {
-      return undefined;
-    }
-  }, [hierarchyParents]);
 
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
