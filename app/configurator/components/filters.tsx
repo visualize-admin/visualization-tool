@@ -590,6 +590,12 @@ const TreeAccordion = ({
   );
 };
 
+const validateChildren = (
+  d: Maybe<HierarchyValue[]> | undefined
+): d is HierarchyValue[] => {
+  return Array.isArray(d) && d.length > 0;
+};
+
 const areChildrenSelected = ({
   children,
   selectedValues,
@@ -597,7 +603,7 @@ const areChildrenSelected = ({
   children: Maybe<HierarchyValue[]> | undefined;
   selectedValues: HierarchyValue[];
 }): boolean => {
-  if (Array.isArray(children) && children.length > 0) {
+  if (validateChildren(children)) {
     const values = children.map((d) => d.value);
     if (selectedValues.some((d) => values.includes(d.value))) {
       return true;
@@ -630,7 +636,7 @@ const Tree = ({
     <>
       {options.map((d) => {
         const { value, label, children } = d;
-        const hasChildren = Array.isArray(children) && children.length > 0;
+        const hasChildren = validateChildren(children);
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
           : areChildrenSelected({ children, selectedValues })
@@ -656,7 +662,7 @@ const Tree = ({
           >
             {hasChildren ? (
               <Tree
-                options={children}
+                options={children as HierarchyValue[]}
                 depth={depth + 1}
                 selectedValues={selectedValues}
                 showColors={showColors}
