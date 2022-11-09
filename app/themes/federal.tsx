@@ -739,6 +739,9 @@ theme.components = {
           display: "none",
         },
       },
+      flexContainer: {
+        height: 60,
+      },
     },
   },
   MuiTab: {
@@ -746,19 +749,17 @@ theme.components = {
       root: {
         justifyContent: "center",
         alignItems: "center",
-        height: 49,
+        height: "100%",
         paddingTop: 0,
         paddingRight: 24,
         paddingBottom: 0,
         paddingLeft: 24,
-        backgroundColor: theme.palette.grey[100],
         color: theme.palette.grey[900],
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        boxShadow: shadows[6],
+        border: "1px solid",
+        borderBottomWidth: 0,
+        borderColor: theme.palette.divider,
 
         "&.Mui-selected": {
-          height: 50,
           color: theme.palette.primary.main,
         },
       },

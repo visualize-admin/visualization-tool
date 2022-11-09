@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Divider, Theme, Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useState } from "react";
 import {
@@ -118,15 +118,16 @@ export const ChartConfiguratorTable = ({
 
     return (
       <>
-        <ControlSection>
-          <SectionTitle titleId="controls-design">
+        <ControlSection collapse>
+          <SectionTitle titleId="controls-design" gutterBottom={false}>
             <Trans id="controls.select.chart.type">Chart Type</Trans>
           </SectionTitle>
           <ControlSectionContent px="small" gap="none">
             <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
           </ControlSectionContent>
-          <Divider />
-          <SectionTitle>
+        </ControlSection>
+        <ControlSection collapse>
+          <SectionTitle gutterBottom={false}>
             <Trans id="controls.section.tableoptions">Table Options</Trans>
           </SectionTitle>
           <ControlSectionContent
@@ -139,13 +140,13 @@ export const ChartConfiguratorTable = ({
               key={"settings"}
               value={"table-settings"}
               icon="settings"
-              label={<Trans id="controls.table.settings">Settings</Trans>}
+              mainLabel={<Trans id="controls.table.settings">Settings</Trans>}
             />
             <AnnotatorTabField
               key={"sorting"}
               value={"table-sorting"}
               icon="sort"
-              label={<Trans id="controls.table.sorting">Sorting</Trans>}
+              mainLabel={<Trans id="controls.table.sorting">Sorting</Trans>}
             />
           </ControlSectionContent>
         </ControlSection>

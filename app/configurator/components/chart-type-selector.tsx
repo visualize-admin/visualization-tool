@@ -18,7 +18,6 @@ import { useLocale } from "@/locales/use-locale";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
 } from "../config-types";
 
@@ -104,10 +103,7 @@ export const ChartTypeSelector = ({
   sx,
   ...props
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
   showHelp?: boolean;
   sx?: BoxProps["sx"];
 } & BoxProps) => {

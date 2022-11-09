@@ -14,7 +14,7 @@ type PageProps =
       status: "found";
       config: {
         key: string;
-        data: Config;
+        data: Omit<Config, "activeField">;
       };
     };
 

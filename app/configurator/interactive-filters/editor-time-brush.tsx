@@ -6,8 +6,10 @@ import React, { useCallback, useEffect, useRef } from "react";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { updateInteractiveTimeRangeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { useFormatFullDateAuto } from "@/formatters";
 import { useTheme } from "@/themes";
@@ -42,8 +44,8 @@ export const EditorBrush = ({
   // FIXME: make component responsive (currently triggers infinite loop)
   const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
 
-  const [state, dispatch] = useConfiguratorState();
-  const { chartConfig } = state as ConfiguratorStateDescribingChart;
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const { chartConfig } = state;
 
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
 

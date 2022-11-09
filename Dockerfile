@@ -26,6 +26,7 @@ ENV PORT 3000
 
 COPY ./ ./
 
+RUN yarn prisma generate
 RUN yarn build
 
 # Install only prod dependencies and start app

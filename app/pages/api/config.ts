@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { createConfig } from "../../db/config";
+import { createConfig } from "@/db/config";
+
+import { getServerSideSession } from "./session";
 
 /**
  * Endpoint to write configuration to.
@@ -11,7 +13,9 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "POST":
       try {
-        const result = await createConfig(req.body);
+        const session = await getServerSideSession(req, res);
+        const userId = session?.user?.id;
+        const result = await createConfig(req.body, userId);
 
         // TODO: Make this 201 and set final URI as Location header
         res.status(200).json(result);
@@ -27,4 +31,4 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default route
+export default route;

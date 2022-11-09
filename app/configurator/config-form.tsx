@@ -376,7 +376,7 @@ export const useChartType = (): {
   });
 
   const value =
-    state.state === "CONFIGURING_CHART" || state.state === "DESCRIBING_CHART"
+    state.state === "CONFIGURING_CHART"
       ? get(state, "chartConfig.chartType")
       : "";
 

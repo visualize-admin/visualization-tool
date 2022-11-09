@@ -144,3 +144,42 @@ Those charts configurations are kept in the repository.
 
 At the moment, the screenshots are made from charts using data from int.lindas.admin.ch as for some functionalities, we do not
 yet have production data.
+
+## Authentication
+
+Authentication by eIAM through a Keycloak instance.
+We use Next-auth to integrate our application with Keycloak.
+See https://next-auth.js.org/providers/keycloak for documentation.
+
+### Locally
+
+The easiest way is to run Keycloak via Docker.
+
+```
+docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:19.0.3 start-dev
+```
+
+⚠️ After creating the container via the above command, if you stop it, restart the container via the docker UI so that you re-use the
+same storage, otherwise you'll have to reconfigure Keycloak.
+
+To configure Keycloak:
+
+- Access the [Keycloak admin][keycloak-admin] (login, password: "admin", "admin")
+- Create client application
+  - Via import: [Keycloak][keycloak-admin] > Clients > Import client
+    - Use the exported client `keycloak-visualize-client-dev.json`
+  - Manually: [Keycloak][keycloak-admin] > Clients > Create client
+    - id: "visualize"
+    - Choose OpenIDConnect
+    - In next slide, toggle "Client Authentication" on
+    - Configure redirect URI on client
+      - Root URL: `http://localhost:3000`
+      - Redirect URI: `/api/auth/callback/keycloak`
+- Create a user
+  - Set a password to the user (in Credentials tab)
+- Set environment variables in `.env.local`
+  - KEYCLOAK_ID: "visualize"
+  - KEYCLOAK_SECRET: From [Keycloak][keycloak-admin] > Clients > visualize > Credentials > Client secret
+  - KEYCLOAK_ISSUER: http://localhost:8080/realms/master
+
+[keycloak-admin]: http://localhost:8080/admin/master/console/#/
