@@ -61,4 +61,30 @@ const useHierarchyParents = (
   }, [dimension.values, hierarchy]);
 };
 
+/**
+ * Can be used for debugging, pass a hierarchy, and copy the output
+ * to graphviz.
+ *
+ * @see https://dreampuf.github.io/GraphvizOnline/
+ */
+export const hierarchyToGraphviz = (
+  hierarchy: DimensionHierarchyQueryHierarchy
+) => {
+  const lines = [] as string[];
+  dfs(hierarchy, (node, { depth, parents }) => {
+    lines.push(`"${node.value}"[label="${node.label.replace(/"/g, "")}"]`);
+    if (parents.length > 0) {
+      const parent = parents[parents.length - 1];
+      lines.push(`"${parent.value}" -> "${node.value}"`);
+    }
+  });
+  return `
+    digraph G {
+      rankdir=LR
+
+      ${lines.join("\n")}
+    }
+  `;
+};
+
 export default useHierarchyParents;
