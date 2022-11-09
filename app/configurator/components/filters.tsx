@@ -516,8 +516,7 @@ const TreeAccordion = ({
   depth,
   value,
   label,
-  selected,
-  someChildrenSelected,
+  state,
   expandable,
   showColor,
   onSelect,
@@ -526,8 +525,7 @@ const TreeAccordion = ({
   depth: number;
   value: string;
   label: string;
-  selected: boolean;
-  someChildrenSelected: boolean;
+  state: "SELECTED" | "CHILDREN_SELECTED" | "NOT_SELECTED";
   expandable: boolean;
   showColor: boolean;
   onSelect: () => void;
@@ -562,7 +560,8 @@ const TreeAccordion = ({
           <div
             className={classes.optionColor}
             style={{
-              backgroundColor: selected ? getValueColor(value) : "transparent",
+              backgroundColor:
+                state === "SELECTED" ? getValueColor(value) : "transparent",
             }}
           />
         )}
@@ -572,10 +571,16 @@ const TreeAccordion = ({
         </Typography>
 
         <Icon
-          name={selected ? "check" : "indeterminate"}
+          name={
+            state === "SELECTED"
+              ? "check"
+              : state === "CHILDREN_SELECTED"
+              ? "indeterminate"
+              : "eye"
+          }
           className={classes.optionCheck}
           style={{
-            visibility: selected || someChildrenSelected ? "visible" : "hidden",
+            visibility: state === "NOT_SELECTED" ? "hidden" : "visible",
             marginTop: 8,
           }}
         />
@@ -585,7 +590,7 @@ const TreeAccordion = ({
   );
 };
 
-const areSomeChildrenSelected = ({
+const areChildrenSelected = ({
   children,
   selectedValues,
 }: {
@@ -599,7 +604,7 @@ const areSomeChildrenSelected = ({
     } else {
       return children
         .map((d) =>
-          areSomeChildrenSelected({ children: d.children, selectedValues })
+          areChildrenSelected({ children: d.children, selectedValues })
         )
         .some((d) => d === true);
     }
@@ -625,10 +630,12 @@ const Tree = ({
     <>
       {options.map((d) => {
         const { value, label, children } = d;
-        const selected = selectedValues.map((d) => d.value).includes(value);
         const hasChildren = Array.isArray(children) && children.length > 0;
-        const someChildrenSelected =
-          hasChildren && areSomeChildrenSelected({ children, selectedValues });
+        const state = selectedValues.map((d) => d.value).includes(value)
+          ? "SELECTED"
+          : areChildrenSelected({ children, selectedValues })
+          ? "CHILDREN_SELECTED"
+          : "NOT_SELECTED";
 
         return (
           <TreeAccordion
@@ -636,12 +643,11 @@ const Tree = ({
             depth={depth}
             value={value}
             label={label}
-            selected={selected}
-            someChildrenSelected={someChildrenSelected}
+            state={state}
             expandable={hasChildren}
             showColor={showColors}
             onSelect={() => {
-              if (selected) {
+              if (state === "SELECTED") {
                 onSelect(selectedValues.filter((d) => d.value !== value));
               } else {
                 onSelect([...selectedValues, d]);
