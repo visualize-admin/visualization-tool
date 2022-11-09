@@ -455,7 +455,8 @@ export const SearchDatasetControls = ({
 
         <MinimalisticSelect
           id="datasetSort"
-          smaller={true}
+          smaller
+          autoWidth
           value={order}
           data-testid="datasetSort"
           options={isSearching ? options : options.slice(1)}

@@ -365,15 +365,11 @@ export const MinimalisticSelect = ({
         p: 0,
         pl: 1,
         mr: 1, // Fix for Chrome which cuts of the label otherwise
-        "& > select": {
-          p: 0,
-        },
         ":focus": {
           outline: "none",
           borderColor: "primary.main",
         },
       }}
-      native
       size={smaller ? "small" : "medium"}
       variant="standard"
       id={id}
@@ -384,9 +380,9 @@ export const MinimalisticSelect = ({
       {...props}
     >
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value || undefined}>
+        <MenuItem key={opt.value} value={opt.value || undefined}>
           {opt.label}
-        </option>
+        </MenuItem>
       ))}
     </MUISelect>
   </Box>
