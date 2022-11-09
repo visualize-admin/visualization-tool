@@ -11,12 +11,15 @@ import {
   ChartConfig,
   DataSource,
   InteractiveFiltersDataConfig,
+  OptionGroup,
+  Option,
 } from "@/configurator";
 import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
+import useHierarchyParents from "@/configurator/components/use-hierarchy-parents";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -28,6 +31,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { makeOptionGroups } from "@/utils/hierarchy";
 
 export const ChartDataFilters = ({
   dataSet,
@@ -145,6 +149,18 @@ const DataFilter = ({
     },
   });
 
+  const hierarchyParents = useHierarchyParents(
+    dataSetIri,
+    dataSource,
+    data?.dataCubeByIri?.dimensionByIri!,
+    locale,
+    !data?.dataCubeByIri?.dimensionByIri
+  );
+
+  const optionGroups = React.useMemo(() => {
+    return makeOptionGroups(hierarchyParents);
+  }, [hierarchyParents]);
+
   const setDataFilter = (e: SelectChangeEvent<unknown>) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",
@@ -181,6 +197,7 @@ const DataFilter = ({
         {!isTemporalDimension(dimension) ? (
           <DataFilterBaseDimension
             dimension={dimension}
+            optionGroups={optionGroups}
             onChange={setDataFilter}
             value={value as string}
           />
@@ -203,11 +220,13 @@ const DataFilterBaseDimension = ({
   value,
   onChange,
   options: propOptions,
+  optionGroups,
 }: {
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
   options?: Array<{ label: string; value: string }>;
+  optionGroups?: [OptionGroup, Option[]][];
 }) => {
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -235,6 +254,7 @@ const DataFilterBaseDimension = ({
       id="dataFilterBaseDimension"
       label={label}
       options={allOptions}
+      optionGroups={optionGroups}
       value={value}
       tooltipText={tooltipText || undefined}
       onChange={onChange}
