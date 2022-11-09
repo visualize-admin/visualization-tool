@@ -20,7 +20,12 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
-import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
+import {
+  Dimension,
+  TemporalDimension,
+  TimeUnit,
+  useDimensionValuesQuery,
+} from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -175,21 +180,14 @@ const DataFilter = ({
       >
         {!isTemporalDimension(dimension) ? (
           <DataFilterBaseDimension
-            isKeyDimension={dimension.isKeyDimension}
-            label={dimension.label}
-            options={dimension.values}
-            value={value as string}
-            tooltipText={dimension.description || undefined}
+            dimension={dimension}
             onChange={setDataFilter}
+            value={value as string}
           />
         ) : dimension.timeUnit === TimeUnit.Year ? (
           <DataFilterTemporalDimension
-            isKeyDimension={dimension.isKeyDimension}
-            label={dimension.label}
-            options={dimension.values}
             value={value as string}
-            timeUnit={dimension.timeUnit}
-            timeFormat={dimension.timeFormat}
+            dimension={dimension}
             onChange={setDataFilter}
           />
         ) : null}
@@ -201,24 +199,24 @@ const DataFilter = ({
 };
 
 const DataFilterBaseDimension = ({
-  isKeyDimension,
-  label,
-  options,
+  dimension,
   value,
-  tooltipText,
   onChange,
+  options: propOptions,
 }: {
-  isKeyDimension: boolean;
-  label: string;
-  options: Array<{ label: string; value: string }>;
+  dimension: Dimension;
   value: string;
-  tooltipText?: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
+  options?: Array<{ label: string; value: string }>;
 }) => {
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
+
+  const { label, isKeyDimension, description: tooltipText } = dimension;
+  const options = propOptions || dimension.values;
+
   const allOptions = React.useMemo(() => {
     return isKeyDimension
       ? options
@@ -238,31 +236,31 @@ const DataFilterBaseDimension = ({
       label={label}
       options={allOptions}
       value={value}
-      tooltipText={tooltipText}
+      tooltipText={tooltipText || undefined}
       onChange={onChange}
     />
   );
 };
 
 const DataFilterTemporalDimension = ({
-  isKeyDimension,
-  label,
-  options,
-  timeUnit,
-  timeFormat,
+  dimension,
   value,
   tooltipText,
   onChange,
 }: {
-  isKeyDimension: boolean;
-  label: string;
-  options: Array<{ label: string; value: string }>;
-  timeUnit: TimeUnit;
-  timeFormat: string;
+  dimension: TemporalDimension;
   value: string;
   tooltipText?: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
+  const {
+    isKeyDimension,
+    label,
+    values: options,
+    timeUnit,
+    timeFormat,
+  } = dimension;
+
   const formatLocale = useTimeFormatLocale();
   const timeIntervalWithProps = React.useMemo(
     () =>
@@ -282,11 +280,9 @@ const DataFilterTemporalDimension = ({
   if (timeIntervalWithProps.range < 100) {
     return (
       <DataFilterBaseDimension
-        isKeyDimension={isKeyDimension}
-        label={label}
+        dimension={dimension}
         options={timeIntervalOptions}
         value={value}
-        tooltipText={tooltipText}
         onChange={onChange}
       />
     );
