@@ -53,6 +53,7 @@ import {
 } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  Maybe,
   useDimensionHierarchyQuery,
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
@@ -516,6 +517,7 @@ const TreeAccordion = ({
   value,
   label,
   selected,
+  someChildrenSelected,
   expandable,
   showColor,
   onSelect,
@@ -525,6 +527,7 @@ const TreeAccordion = ({
   value: string;
   label: string;
   selected: boolean;
+  someChildrenSelected: boolean;
   expandable: boolean;
   showColor: boolean;
   onSelect: () => void;
@@ -568,14 +571,41 @@ const TreeAccordion = ({
           {label}
         </Typography>
 
-        <SvgIcCheck
+        <Icon
+          name={selected ? "check" : "indeterminate"}
           className={classes.optionCheck}
-          style={{ visibility: selected ? "visible" : "hidden", marginTop: 8 }}
+          style={{
+            visibility: selected || someChildrenSelected ? "visible" : "hidden",
+            marginTop: 8,
+          }}
         />
       </TreeAccordionSummary>
       {children && <TreeAccordionDetails>{children}</TreeAccordionDetails>}
     </StyledAccordion>
   );
+};
+
+const areSomeChildrenSelected = ({
+  children,
+  selectedValues,
+}: {
+  children: Maybe<HierarchyValue[]> | undefined;
+  selectedValues: HierarchyValue[];
+}): boolean => {
+  if (Array.isArray(children) && children.length > 0) {
+    const values = children.map((d) => d.value);
+    if (selectedValues.some((d) => values.includes(d.value))) {
+      return true;
+    } else {
+      return children
+        .map((d) =>
+          areSomeChildrenSelected({ children: d.children, selectedValues })
+        )
+        .some((d) => d === true);
+    }
+  } else {
+    return false;
+  }
 };
 
 const Tree = ({
@@ -597,6 +627,8 @@ const Tree = ({
         const { value, label, children } = d;
         const selected = selectedValues.map((d) => d.value).includes(value);
         const hasChildren = Array.isArray(children) && children.length > 0;
+        const someChildrenSelected =
+          hasChildren && areSomeChildrenSelected({ children, selectedValues });
 
         return (
           <TreeAccordion
@@ -605,6 +637,7 @@ const Tree = ({
             value={value}
             label={label}
             selected={selected}
+            someChildrenSelected={someChildrenSelected}
             expandable={hasChildren}
             showColor={showColors}
             onSelect={() => {
