@@ -55,6 +55,11 @@ const useStyles = makeStyles<Theme>((theme) => ({
     borderTopStyle: "solid",
     borderTopWidth: 1,
   },
+  sortingItemBox: {
+    "&:first-of-type $sortingItemContainer": {
+      borderTopWidth: 0,
+    },
+  },
   selectWrapper: {
     color: theme.palette.grey[800],
     lineHeight: "1rem",
@@ -79,6 +84,14 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "&:hover": {
       color: theme.palette.secondary.main,
     },
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    position: "absolute",
+    top: "50%",
+    right: 2,
+    marginTop: -12,
   },
 }));
 
@@ -325,17 +338,6 @@ const ChangeTableSortingOption = ({
   );
 };
 
-const useTableSortingOptionsStyles = makeStyles({
-  icon: {
-    width: 24,
-    height: 24,
-    position: "absolute",
-    top: "50%",
-    right: 2,
-    marginTop: -12,
-  },
-});
-
 export const TableSortingOptions = ({
   state,
   dataSetMetadata,
@@ -345,7 +347,7 @@ export const TableSortingOptions = ({
 }) => {
   const [, dispatch] = useConfiguratorState();
   const { activeField, chartConfig } = state;
-  const classes = useTableSortingOptionsStyles();
+  const classes = useStyles();
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
@@ -407,6 +409,7 @@ export const TableSortingOptions = ({
                                 position: "relative",
                                 boxShadow: isDragging ? "tooltip" : undefined,
                               }}
+                              className={classes.sortingItemBox}
                               style={{
                                 ...draggableProps.style,
                               }}

@@ -39,7 +39,6 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
 import {
   ChartFieldField,
   ChartOptionCheckboxField,
@@ -137,9 +136,7 @@ export const ChartOptionsSelector = ({
               imputationNeeded={imputationNeeded}
             />
           )
-        ) : (
-          <EmptyRightPanel state={state} />
-        )}
+        ) : null}
       </Box>
     );
   } else {

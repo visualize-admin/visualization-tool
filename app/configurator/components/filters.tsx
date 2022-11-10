@@ -5,7 +5,6 @@ import {
   ClickAwayListener,
   Typography,
   Divider,
-  Drawer as MuiDrawer,
   Theme,
   IconButton,
   Tooltip,
@@ -44,6 +43,7 @@ import {
   useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
+import { ConfiguratorDrawer } from "@/configurator/components/drawer";
 import {
   MultiFilterFieldColorPicker,
   SingleFilterField,
@@ -78,16 +78,6 @@ import { interlace } from "../../utils/interlace";
 import { ConfiguratorState, GenericSegmentField } from "../config-types";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
-
-const Drawer = styled(MuiDrawer)(({ theme }) => ({
-  "& > .MuiPaper-root": {
-    top: 152,
-    bottom: 0,
-    height: "auto",
-    borderLeft: `1px ${theme.palette.divider} solid`,
-    borderTop: `1px ${theme.palette.divider} solid`,
-  },
-}));
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -483,7 +473,7 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <Drawer anchor="right" open={!!anchorEl} hideBackdrop>
+      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
@@ -494,7 +484,7 @@ const MultiFilterContent = ({
             hasColorMapping={hasColorMapping}
           />
         </ClickAwayListener>
-      </Drawer>
+      </ConfiguratorDrawer>
     </Box>
   );
 };

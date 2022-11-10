@@ -331,8 +331,8 @@ export const SearchDatasetInput = ({
   });
 
   const placeholderLabel = t({
-    id: "select.controls.filters.search",
-    message: "Search",
+    id: "dataset.search.placeholder",
+    message: "Name, description, organization, theme, keyword",
   });
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -363,7 +363,7 @@ export const SearchDatasetInput = ({
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
-        sx={{ width: "100%", maxWidth: 400 }}
+        sx={{ width: "100%", maxWidth: 350 }}
       />
       <Button sx={{ px: 6 }} onClick={handleClick}>
         <Trans id="select.controls.filters.search">Search</Trans>
@@ -417,14 +417,7 @@ export const SearchDatasetControls = ({
   });
 
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        mb: 2,
-        pl: 4,
-      }}
-    >
+    <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <Typography
         variant="body2"
         fontWeight={700}
@@ -462,7 +455,8 @@ export const SearchDatasetControls = ({
 
         <MinimalisticSelect
           id="datasetSort"
-          smaller={true}
+          smaller
+          autoWidth
           value={order}
           data-testid="datasetSort"
           options={isSearching ? options : options.slice(1)}
@@ -952,7 +946,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         currentFilter={themeFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcCategories width={24} height={24} />}
+        icon={<SvgIcCategories width={20} height={20} />}
         label={<Trans id="browse-panel.themes">Themes</Trans>}
         extra={null}
       />
@@ -970,7 +964,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         currentFilter={orgFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcOrganisations width={24} height={24} />}
+        icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
           orgFilter && filters[0] === orgFilter ? (
@@ -1068,14 +1062,17 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     cursor: "pointer",
     textAlign: "left",
-    padding: `${theme.spacing(4)}`,
+    padding: `${theme.spacing(4)} 0`,
     borderTopColor: theme.palette.grey[300],
     borderTopStyle: "solid",
     borderTopWidth: 1,
     boxShadow: "none",
-    transition: "background 0.1s ease",
-    "&:hover": {
-      background: theme.palette.muted.main,
+
+    "& .MuiTypography-body1": {
+      transition: "font-weight 0.1s ease",
+    },
+    "&:hover .MuiTypography-body1": {
+      fontWeight: "bold",
     },
   },
 }));

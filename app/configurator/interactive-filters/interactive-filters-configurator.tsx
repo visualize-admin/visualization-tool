@@ -4,17 +4,17 @@ import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
-import { Loading } from "@/components/hint";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { flag } from "@/configurator/components/flag";
-import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
-  isDescribing,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isTemporalDimension } from "@/domain/data";
@@ -31,10 +31,21 @@ export type InteractiveFilterType =
   | "timeSlider"
   | "dataFilters";
 
+export const isInteractiveFilterType = (
+  field: string | undefined
+): field is InteractiveFilterType => {
+  return (
+    field === "legend" ||
+    field === "timeRange" ||
+    field === "timeSlider" ||
+    field === "dataFilters"
+  );
+};
+
 export const InteractiveFiltersConfigurator = ({
   state: { dataSet, dataSource, chartConfig },
 }: {
-  state: ConfiguratorStateDescribingChart;
+  state: ConfiguratorStateConfiguringChart;
 }) => {
   const { chartType, fields, filters } = chartConfig;
   const locale = useLocale();
@@ -78,8 +89,12 @@ export const InteractiveFiltersConfigurator = ({
       <ControlSection
         role="tablist"
         aria-labelledby="controls-interactive-filters"
+        collapse
       >
-        <SectionTitle titleId="controls-interactive-filters">
+        <SectionTitle
+          titleId="controls-interactive-filters"
+          gutterBottom={false}
+        >
           <Trans id="controls.section.interactive.filters">
             Interactive Filters
           </Trans>
@@ -129,7 +144,24 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   } else {
-    return <Loading />;
+    return (
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-interactive-filters"
+        collapse
+      >
+        <SectionTitle
+          titleId="controls-interactive-filters"
+          gutterBottom={false}
+        >
+          <Trans id="controls.section.interactive.filters">
+            Interactive Filters
+          </Trans>
+        </SectionTitle>
+
+        <ControlSectionSkeleton showTitle={false} sx={{ mt: 0 }} />
+      </ControlSection>
+    );
   }
 };
 
@@ -142,7 +174,7 @@ const InteractiveFilterTabField = ({
   icon: string;
   label: ReactNode;
 }) => {
-  const [state, dispatch] = useConfiguratorState(isDescribing);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
 
   const onClick = useCallback(() => {
     dispatch({

@@ -1,4 +1,5 @@
-import { Box, Popover, Tab, Tabs, Theme } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { Box, Popover, Tab, Tabs, Theme, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, {
   createContext,
@@ -12,13 +13,14 @@ import React, {
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
+import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -95,9 +97,7 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
 
 const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   const [configuratorState] = useConfiguratorState() as unknown as [
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
+    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
   ];
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
@@ -149,6 +149,41 @@ const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
   return <TabsInner chartType={chartType} editable={false} />;
 };
 
+const PublishChartButton = () => {
+  const [state, dispatch] = useConfiguratorState();
+  const { dataSet: dataSetIri } = state as
+    | ConfiguratorStatePublishing
+    | ConfiguratorStateConfiguringChart;
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: dataSetIri ?? "",
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
+    pause: !dataSetIri,
+  });
+  const goNext = useEvent(() => {
+    if (data?.dataCubeByIri) {
+      dispatch({
+        type: "STEP_NEXT",
+        dataSetMetadata: data?.dataCubeByIri,
+      });
+    }
+  });
+
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={data ? goNext : undefined}
+    >
+      <Trans id="button.publish">Publish the chart</Trans>
+    </Button>
+  );
+};
+
 const TabsInner = ({
   chartType,
   editable,
@@ -159,16 +194,19 @@ const TabsInner = ({
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
-    <Tabs value={0}>
-      {/* TODO: Generate dynamically when chart composition is implemented */}
-      <Tab
-        sx={{ p: 0 }}
-        onClick={onActionButtonClick}
-        label={
-          <TabContent iconName={getIconName(chartType)} editable={editable} />
-        }
-      />
-    </Tabs>
+    <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
+      <Tabs value={0} sx={{ position: "relative", top: 1, flexGrow: 1 }}>
+        {/* TODO: Generate dynamically when chart composition is implemented */}
+        <Tab
+          sx={{ p: 0, background: "white" }}
+          onClick={onActionButtonClick}
+          label={
+            <TabContent iconName={getIconName(chartType)} editable={editable} />
+          }
+        />
+      </Tabs>
+      <PublishChartButton />
+    </Box>
   );
 };
 

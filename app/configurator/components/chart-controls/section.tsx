@@ -1,6 +1,7 @@
 import {
   Box,
   BoxProps,
+  Collapse,
   Skeleton,
   Theme,
   Typography,
@@ -8,24 +9,91 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { ElementType, forwardRef, HTMLProps, ReactNode } from "react";
+import {
+  ElementType,
+  forwardRef,
+  HTMLProps,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import React from "react";
 
 import { Icon, IconName } from "@/icons";
-import { useTheme } from "@/themes";
+import SvgIcAdd from "@/icons/components/IcAdd";
+import SvgIcMinus from "@/icons/components/IcMinus";
 
-const useControlSectionStyles = makeStyles<Theme>((theme) => ({
-  controlSection: {
-    borderTopColor: theme.palette.grey[500],
-    borderTopWidth: "1px",
-    borderTopStyle: "solid",
-    overflowX: "hidden",
-    overflowY: "auto",
-    flexShrink: 0,
-    "&:first-of-type": {
-      borderTopWidth: 0,
+import useDisclosure from "../use-disclosure";
+
+const useControlSectionStyles = makeStyles<Theme, { isHighlighted?: boolean }>(
+  (theme) => ({
+    controlSection: {
+      borderTopColor: theme.palette.grey[500],
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      overflowX: "hidden",
+      overflowY: "auto",
+      flexShrink: 0,
+      backgroundColor: ({ isHighlighted }) =>
+        isHighlighted ? "primaryLight" : "grey.100",
+    },
+  })
+);
+
+const useSectionTitleStyles = makeStyles<
+  Theme,
+  {
+    disabled?: boolean;
+    color?: string;
+    sectionOpen: boolean;
+    gutterBottom: boolean;
+    collapse?: boolean;
+  }
+>((theme) => ({
+  root: {
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    padding: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    marginBottom: ({ gutterBottom }) => (gutterBottom ? 0 : -theme.spacing(2)),
+    transition: "padding-bottom 300ms ease",
+    border: "none",
+    justifyContent: "flex-start",
+    "&:hover": {
+      cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
+      backgroundColor: ({ collapse }) =>
+        collapse ? theme.palette.grey[200] : "transparent",
+
+      "& $icon": {
+        color: theme.palette.grey[600],
+      },
     },
   },
+  text: {
+    "& > svg:first-of-type": {
+      marginRight: theme.spacing(2),
+    },
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
+    color: ({ disabled, color }) =>
+      disabled ? "grey.600" : color ?? "grey.800",
+  },
+  icon: {
+    justifySelf: "flex-end",
+    color: theme.palette.grey[500],
+  },
 }));
+
+const ControlSectionContext = React.createContext({
+  open: () => {},
+  isOpen: false,
+  close: () => {},
+  setOpen: (_v: boolean | ((oldV: boolean) => boolean)) => {},
+  collapse: true as boolean | undefined,
+});
 
 export const ControlSection = forwardRef<
   HTMLDivElement,
@@ -33,23 +101,33 @@ export const ControlSection = forwardRef<
     children: ReactNode;
     isHighlighted?: boolean;
     sx?: BoxProps["sx"];
+    collapse?: boolean;
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
->(({ role, children, isHighlighted, sx, ...props }, ref) => {
-  const classes = useControlSectionStyles();
+>(({ role, children, isHighlighted, sx, collapse = false, ...props }, ref) => {
+  const classes = useControlSectionStyles({ isHighlighted });
+  const disclosure = useDisclosure(true);
+  const ctx = useMemo(
+    () => ({ ...disclosure, collapse }),
+    [collapse, disclosure]
+  );
+  useEffect(() => {
+    if (isHighlighted) {
+      disclosure.setOpen(true);
+    }
+  }, [disclosure, isHighlighted]);
   return (
-    <Box
-      ref={ref}
-      role={role}
-      data-testid="controlSection"
-      sx={{
-        backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
-        ...sx,
-      }}
-      {...props}
-      className={clsx(classes.controlSection, props.className)}
-    >
-      {children}
-    </Box>
+    <ControlSectionContext.Provider value={ctx}>
+      <Box
+        ref={ref}
+        role={role}
+        data-testid="controlSection"
+        sx={sx}
+        {...props}
+        className={clsx(classes.controlSection, props.className)}
+      >
+        {children}
+      </Box>
+    </ControlSectionContext.Provider>
   );
 });
 
@@ -91,19 +169,24 @@ export const ControlSectionContent = ({
   ...props
 }: ControlSectionContentProps) => {
   const classes = useControlSectionContentStyles({ gap, px });
+  const disclosure = useControlSectionContext();
   return (
-    <Box
-      component={component}
-      role={role}
-      aria-labelledby={ariaLabelledBy}
-      {...props}
-      className={classes.controlSectionContent}
-      sx={sx}
-    >
-      {children}
-    </Box>
+    <Collapse in={disclosure.isOpen}>
+      <Box
+        component={component}
+        role={role}
+        aria-labelledby={ariaLabelledBy}
+        {...props}
+        className={classes.controlSectionContent}
+        sx={sx}
+      >
+        {children}
+      </Box>
+    </Collapse>
   );
 };
+
+const useControlSectionContext = () => useContext(ControlSectionContext);
 
 export const SectionTitle = ({
   color,
@@ -112,6 +195,8 @@ export const SectionTitle = ({
   disabled,
   children,
   sx,
+  right,
+  gutterBottom = true,
 }: {
   color?: string;
   iconName?: IconName;
@@ -119,45 +204,56 @@ export const SectionTitle = ({
   disabled?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
+  right?: React.ReactNode;
+  gutterBottom?: boolean;
 }) => {
-  const theme = useTheme();
+  const { setOpen, isOpen, collapse } = useControlSectionContext();
+  const classes = useSectionTitleStyles({
+    disabled,
+    color,
+    sectionOpen: isOpen,
+    gutterBottom,
+    collapse,
+  });
   return (
-    <Typography
-      variant="h5"
-      id={titleId}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        p: 4,
-        pb: 2,
-        border: "none",
-        justifyContent: "flex-start",
-        color: disabled ? "grey.600" : color ?? "grey.800",
-        "& > svg:first-of-type": {
-          marginRight: theme.spacing(2),
-        },
-        ...sx,
-      }}
+    <div
+      className={classes.root}
+      onClick={collapse ? () => setOpen((v) => !v) : undefined}
     >
-      {iconName ? <Icon name={iconName} /> : null}
-      {children}
-    </Typography>
+      <Typography variant="h5" id={titleId} className={classes.text} sx={sx}>
+        {iconName ? <Icon name={iconName} /> : null}
+        {children}
+      </Typography>
+      {right}
+      <span className={classes.icon}>
+        {collapse ? (
+          isOpen ? (
+            <SvgIcMinus width={18} height={18} />
+          ) : (
+            <SvgIcAdd width={18} height={18} />
+          )
+        ) : null}
+      </span>
+    </div>
   );
 };
 
 export const ControlSectionSkeleton = ({
   sx,
+  showTitle = true,
 }: {
   sx?: React.ComponentProps<typeof ControlSection>["sx"];
+  showTitle?: boolean;
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>
     <ControlSectionContent px="small" gap="none">
-      <Typography variant="h1">
-        <Skeleton sx={{ bgcolor: "grey.300" }} />
-      </Typography>{" "}
+      {showTitle ? (
+        <Typography variant="h1">
+          <Skeleton sx={{ bgcolor: "grey.300" }} />
+        </Typography>
+      ) : null}
       <Skeleton
-        sx={{ bgcolor: "grey.300" }}
+        sx={{ bgcolor: "grey.300", mt: showTitle ? 0 : 2 }}
         variant="rectangular"
         width="100%"
         height={118}

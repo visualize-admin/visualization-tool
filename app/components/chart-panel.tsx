@@ -6,7 +6,6 @@ import Flex from "@/components/flex";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
 } from "@/configurator";
 import { useConfiguratorState } from "@/src";
@@ -18,9 +17,7 @@ type ChartPanelProps = { children: ReactNode } & BoxProps;
 export const ChartPanelConfigurator = (props: ChartPanelProps) => {
   // This type of chart panel can only appear for below steps.
   const [state] = useConfiguratorState() as unknown as [
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
+    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
   ];
 
   return (
@@ -53,12 +50,10 @@ const useChartPanelInnerStyles = makeStyles<Theme, { showTabs: boolean }>(
     root: {
       flexDirection: "column",
       backgroundColor: theme.palette.grey[100],
-      boxShadow: theme.shadows[6],
-      borderRadius: 12,
-      borderTopLeftRadius: ({ showTabs }) => (showTabs ? 0 : 12),
+      border: "1px solid",
+      borderColor: theme.palette.divider,
       // TODO: Handle properly when chart composition is implemented (enable when
       // ChartSelectionTabs becomes scrollable)
-      borderTopRightRadius: 12,
       overflow: "hidden",
       width: "auto",
     },

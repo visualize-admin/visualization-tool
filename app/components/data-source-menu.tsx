@@ -30,6 +30,7 @@ export const DataSourceMenu = () => {
       </Label>
       <MinimalisticSelect
         id="dataSourceSelect"
+        smaller
         options={SOURCE_OPTIONS}
         value={stringifyDataSource(dataSource)}
         onChange={(e) => {
