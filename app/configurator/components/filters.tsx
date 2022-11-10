@@ -765,7 +765,7 @@ const DrawerContent = forwardRef<
       <Box className={classes.autocompleteHeader}>
         <Flex alignItems="center" justifyContent="space-between">
           <Typography variant="h5" gutterBottom>
-            <Trans id="controls.set-filters">Set filters</Trans>
+            <Trans id="controls.set-filters">Edit filters</Trans>
           </Typography>
           <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
             <SvgIcClose fontSize="inherit" />
