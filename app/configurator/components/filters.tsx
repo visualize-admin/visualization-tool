@@ -33,6 +33,7 @@ import React, {
   useState,
 } from "react";
 
+import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
 import { Loading } from "@/components/hint";
 import {
@@ -121,7 +122,7 @@ const useStyles = makeStyles((theme: Theme) => {
       width: "100%",
     },
     textInput: {
-      marginTop: theme.spacing(4),
+      margin: `${theme.spacing(4)} 0px`,
       padding: "0px 12px",
       width: "100%",
       height: 40,
@@ -215,6 +216,39 @@ const getColorConfig = (
     | undefined;
 };
 
+const FilterControls = ({
+  selectAll,
+  selectNone,
+  allKeysLength,
+  activeKeysLength,
+}: {
+  selectAll: () => void;
+  selectNone: () => void;
+  allKeysLength: number;
+  activeKeysLength: number;
+}) => {
+  const classes = useFootnotesStyles({ useMarginTop: false });
+
+  return (
+    <Box className={classes.actions}>
+      <Button
+        onClick={selectAll}
+        variant="inline"
+        disabled={activeKeysLength === allKeysLength}
+      >
+        <Trans id="controls.filter.select.all">Select all</Trans>
+      </Button>
+      <Button
+        onClick={selectNone}
+        variant="inline"
+        disabled={activeKeysLength === 0}
+      >
+        <Trans id="controls.filter.select.none">Select none</Trans>
+      </Button>
+    </Box>
+  );
+};
+
 const MultiFilterContent = ({
   field,
   colorComponent,
@@ -233,11 +267,11 @@ const MultiFilterContent = ({
 
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
 
-  const { optionsByValue } = useMemo(() => {
-    const flat = getOptionsFromTree(tree);
-    const optionsByValue = keyBy(flat, (x) => x.value);
+  const { flatOptions, optionsByValue } = useMemo(() => {
+    const flatOptions = getOptionsFromTree(tree);
+    const optionsByValue = keyBy(flatOptions, (x) => x.value);
     return {
-      options: sortBy(flat, [groupByParent, (x) => x.label]),
+      flatOptions,
       optionsByValue,
     };
   }, [tree]);
@@ -352,22 +386,12 @@ const MultiFilterContent = ({
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
         <Flex justifyContent="space-between" gap="0.75rem">
-          <Flex gap="0.75rem">
-            <Button
-              onClick={selectAll}
-              variant="inline"
-              disabled={activeKeys.size === allValues.length}
-            >
-              <Trans id="controls.filter.select.all">Select all</Trans>
-            </Button>
-            <Button
-              onClick={selectNone}
-              variant="inline"
-              disabled={activeKeys.size === 0}
-            >
-              <Trans id="controls.filter.select.none">Select none</Trans>
-            </Button>
-          </Flex>
+          <FilterControls
+            selectAll={selectAll}
+            selectNone={selectNone}
+            allKeysLength={allValues.length}
+            activeKeysLength={activeKeys.size}
+          />
           <div>
             <Button
               variant="contained"
@@ -464,6 +488,7 @@ const MultiFilterContent = ({
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
             options={tree}
+            flatOptions={flatOptions}
             onClose={handleCloseAutocomplete}
             values={values}
             hasColorMapping={hasColorMapping}
@@ -704,12 +729,20 @@ const DrawerContent = forwardRef<
   {
     onClose: () => void;
     options: HierarchyValue[];
+    flatOptions: HierarchyValue[];
     values: HierarchyValue[];
     pendingValuesRef: MutableRefObject<HierarchyValue[]>;
     hasColorMapping: boolean;
   }
 >((props, ref) => {
-  const { onClose, values, options, pendingValuesRef, hasColorMapping } = props;
+  const {
+    onClose,
+    options,
+    flatOptions,
+    values,
+    pendingValuesRef,
+    hasColorMapping,
+  } = props;
   const classes = useStyles();
   const [textInput, setTextInput] = useState("");
   const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(
@@ -755,6 +788,12 @@ const DrawerContent = forwardRef<
             </InputAdornment>
           }
           sx={{ typography: "body2" }}
+        />
+        <FilterControls
+          selectAll={() => setPendingValues(flatOptions)}
+          selectNone={() => setPendingValues([])}
+          allKeysLength={flatOptions.length}
+          activeKeysLength={pendingValues.length}
         />
       </Box>
       <Tree
