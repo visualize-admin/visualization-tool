@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -12,6 +12,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  InputAdornment,
+  Input,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -66,6 +68,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
 import { useLocale } from "@/locales/use-locale";
+import { pruneTree } from "@/rdf/tree-utils";
 import { dfs } from "@/utils/dfs";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -116,6 +119,13 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     autocompleteInput: {
       width: "100%",
+    },
+    textInput: {
+      marginTop: theme.spacing(4),
+      padding: "0px 12px",
+      width: "100%",
+      height: 40,
+      minHeight: 40,
     },
     optionColor: {
       borderRadius: "4px",
@@ -550,7 +560,7 @@ const TreeAccordion = ({
         onClick={(e) => {
           e.stopPropagation();
           if (selectable) {
-          onSelect();
+            onSelect();
           }
         }}
       >
@@ -701,10 +711,17 @@ const DrawerContent = forwardRef<
 >((props, ref) => {
   const { onClose, values, options, pendingValuesRef, hasColorMapping } = props;
   const classes = useStyles();
+  const [textInput, setTextInput] = useState("");
   const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(
     () => values
   );
   pendingValuesRef.current = pendingValues;
+
+  const filteredOptions = useMemo(() => {
+    return pruneTree(options, (d) =>
+      d.label.toLowerCase().includes(textInput.toLowerCase())
+    );
+  }, [textInput, options]);
 
   return (
     <div
@@ -727,10 +744,22 @@ const DrawerContent = forwardRef<
             visualization.
           </Trans>
         </Typography>
+        <Input
+          className={classes.textInput}
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          placeholder={t({ id: "select.controls.filters.search" })}
+          startAdornment={
+            <InputAdornment position="start">
+              <Icon name="search" size={16} />
+            </InputAdornment>
+          }
+          sx={{ typography: "body2" }}
+        />
       </Box>
       <Tree
         depth={0}
-        options={options}
+        options={filteredOptions}
         selectedValues={pendingValues}
         showColors={hasColorMapping}
         onSelect={(newValues: HierarchyValue[]) => setPendingValues(newValues)}
