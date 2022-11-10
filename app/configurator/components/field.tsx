@@ -145,6 +145,7 @@ export const DataFilterSelect = ({
   optionGroups,
   tooltipText,
   onOpen,
+  loading,
 }: {
   dimensionIri: string;
   label: string;
@@ -156,6 +157,7 @@ export const DataFilterSelect = ({
   optionGroups?: [OptionGroup, Option[]][];
   tooltipText?: string;
   onOpen?: () => void;
+  loading?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -192,6 +194,7 @@ export const DataFilterSelect = ({
       optionGroups={optionGroups}
       tooltipText={tooltipText}
       onOpen={onOpen}
+      loading={loading}
       {...fieldProps}
     />
   );

@@ -38,7 +38,10 @@ const useHierarchyParents = (
   dimension: DataCubeMetadata["dimensions"][number],
   locale: string,
   pause?: boolean
-): HierarchyParents | undefined => {
+): {
+  fetching: boolean;
+  data: HierarchyParents | undefined;
+} => {
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
       cubeIri: dataSet,
@@ -49,9 +52,10 @@ const useHierarchyParents = (
     },
     pause: pause || !dimension,
   });
+
   const hierarchy =
     hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
-  return useMemo(() => {
+  const data = useMemo(() => {
     if (!hierarchy || !dimension) {
       return;
     }
@@ -59,10 +63,20 @@ const useHierarchyParents = (
     const valueSet = new Set(values.map((v) => v.value));
     const valueGroups = groupByParents(hierarchy);
 
-    return valueGroups.map(([parents, nodes]) => {
-      return [parents, nodes.filter((n) => valueSet.has(n.node.value))];
-    });
+    return valueGroups
+      .map(([parents, nodes]) => {
+        return [parents, nodes.filter((n) => valueSet.has(n.node.value))];
+      })
+      .filter((x) => x[1].length > 0) as HierarchyParents;
   }, [dimension, hierarchy]);
+
+  return useMemo(
+    () => ({
+      data,
+      fetching: hierarchyResp.fetching,
+    }),
+    [hierarchyResp.fetching, data]
+  );
 };
 
 /**

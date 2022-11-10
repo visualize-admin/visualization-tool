@@ -149,7 +149,7 @@ const DataFilter = ({
     },
   });
 
-  const hierarchyParents = useHierarchyParents(
+  const { data: hierarchyParents } = useHierarchyParents(
     dataSetIri,
     dataSource,
     data?.dataCubeByIri?.dimensionByIri!,

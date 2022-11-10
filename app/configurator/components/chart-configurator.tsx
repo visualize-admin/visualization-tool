@@ -83,13 +83,14 @@ const DataFilterSelectGeneric = ({
   const [state] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const [pause, setPause] = useState(true);
-  const hierarchyParents = useHierarchyParents(
-    state.dataSet,
-    state.dataSource,
-    dimension,
-    locale,
-    pause
-  );
+  const { data: hierarchyParents, fetching: fetchingHierarchy } =
+    useHierarchyParents(
+      state.dataSet,
+      state.dataSource,
+      dimension,
+      locale,
+      pause
+    );
 
   const optionGroups = useMemo(() => {
     return makeOptionGroups(hierarchyParents);
@@ -145,6 +146,7 @@ const DataFilterSelectGeneric = ({
         options={values}
         optionGroups={optionGroups}
         onOpen={handleOpen}
+        loading={fetchingHierarchy}
       />
     );
   }
