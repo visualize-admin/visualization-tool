@@ -7,6 +7,7 @@ import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
+import SelectTree from "@/components/select-tree";
 import {
   ChartConfig,
   DataSource,
@@ -14,24 +15,24 @@ import {
   OptionGroup,
   Option,
 } from "@/configurator";
-import { TimeInput } from "@/configurator/components/field";
+import { hierarchyToOptions, TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
-import useHierarchyParents from "@/configurator/components/use-hierarchy-parents";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
   Dimension,
+  HierarchyValue,
   TemporalDimension,
   TimeUnit,
+  useDimensionHierarchyQuery,
   useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { makeOptionGroups } from "@/utils/hierarchy";
 
 export const ChartDataFilters = ({
   dataSet,
@@ -150,19 +151,25 @@ const DataFilter = ({
     },
   });
 
-  const { data: hierarchyParents } = useHierarchyParents({
-    datasetIri: dataSetIri,
-    dataSource,
-    dimension: data?.dataCubeByIri?.dimensionByIri!,
-    locale,
-    pause: !data?.dataCubeByIri?.dimensionByIri,
+  const dimension = data?.dataCubeByIri?.dimensionByIri;
+
+  const [hierarchyResp] = useDimensionHierarchyQuery({
+    variables: {
+      cubeIri: dataSetIri,
+      dimensionIri: dimension?.iri!,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale: locale,
+    },
+    pause: !dimension,
   });
 
-  const optionGroups = React.useMemo(() => {
-    return makeOptionGroups(hierarchyParents);
-  }, [hierarchyParents]);
+  const hierarchy =
+    hierarchyResp.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
-  const setDataFilter = (e: SelectChangeEvent<unknown>) => {
+  const setDataFilter = (
+    e: SelectChangeEvent<unknown> | { target: { value: string } }
+  ) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",
       value: { dimensionIri, dimensionValueIri: e.target.value as string },
@@ -195,20 +202,28 @@ const DataFilter = ({
           " > div": { width: "100%" },
         }}
       >
-        {!isTemporalDimension(dimension) ? (
-          <DataFilterBaseDimension
+        {isTemporalDimension(dimension) ? (
+          dimension.timeUnit === TimeUnit.Year ? (
+            <DataFilterTemporalDimension
+              value={value as string}
+              dimension={dimension}
+              onChange={setDataFilter}
+            />
+          ) : null
+        ) : hierarchy ? (
+          <DataFilterHierarchyDimension
             dimension={dimension}
-            optionGroups={optionGroups}
+            onChange={setDataFilter}
+            hierarchy={hierarchy}
+            value={value as string}
+          />
+        ) : (
+          <DataFilterGenericDimension
+            dimension={dimension}
             onChange={setDataFilter}
             value={value as string}
           />
-        ) : dimension.timeUnit === TimeUnit.Year ? (
-          <DataFilterTemporalDimension
-            value={value as string}
-            dimension={dimension}
-            onChange={setDataFilter}
-          />
-        ) : null}
+        )}
       </Flex>
     );
   } else {
@@ -216,12 +231,11 @@ const DataFilter = ({
   }
 };
 
-const DataFilterBaseDimension = ({
+const DataFilterGenericDimension = ({
   dimension,
   value,
   onChange,
   options: propOptions,
-  optionGroups,
 }: {
   dimension: Dimension;
   value: string;
@@ -255,10 +269,59 @@ const DataFilterBaseDimension = ({
       id="dataFilterBaseDimension"
       label={label}
       options={allOptions}
-      optionGroups={optionGroups}
       value={value}
       tooltipText={tooltipText || undefined}
       onChange={onChange}
+    />
+  );
+};
+
+const DataFilterHierarchyDimension = ({
+  dimension,
+  value,
+  onChange,
+  hierarchy,
+}: {
+  dimension: Dimension;
+  value: string;
+  onChange: (e: { target: { value: string } }) => void;
+  hierarchy?: HierarchyValue[];
+}) => {
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+
+  const {
+    label,
+    isKeyDimension,
+    description: tooltipText,
+    values: dimensionValues,
+  } = dimension;
+  const options = React.useMemo(() => {
+    let opts = [] as { label: string; value: string; isNoneValue?: boolean }[];
+    if (hierarchy) {
+      opts = hierarchyToOptions(hierarchy);
+    } else {
+      opts = dimensionValues;
+    }
+    if (!isKeyDimension) {
+      opts.push({
+        value: FIELD_VALUE_NONE,
+        label: noneLabel,
+        isNoneValue: true,
+      });
+    }
+    return opts;
+  }, [hierarchy, isKeyDimension, dimensionValues, noneLabel]);
+
+  return (
+    <SelectTree
+      value={value}
+      options={options}
+      onChange={onChange}
+      label={label}
+      tooltipText={tooltipText || undefined}
     />
   );
 };
@@ -300,7 +363,7 @@ const DataFilterTemporalDimension = ({
 
   if (timeIntervalWithProps.range < 100) {
     return (
-      <DataFilterBaseDimension
+      <DataFilterGenericDimension
         dimension={dimension}
         options={timeIntervalOptions}
         value={value}
