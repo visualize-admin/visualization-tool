@@ -697,7 +697,8 @@ const Tree = ({
             value={value}
             label={label}
             state={state}
-            selectable={Boolean(hasValue)}
+            // Has value is only present for hierarchies.
+            selectable={hasValue !== undefined ? Boolean(hasValue) : true}
             expandable={hasChildren}
             showColor={showColors}
             onSelect={() => {
