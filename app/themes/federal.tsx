@@ -580,6 +580,11 @@ theme.components = {
         color: theme.palette.grey[700],
         textOverflow: "ellipsis",
         fontSize: theme.typography.body2.fontSize,
+        "&.MuiInputBase-inputSizeSmall": {
+          height: "auto",
+          minHeight: 0,
+          paddingLeft: 0,
+        },
       },
       disabled: {
         color: theme.palette.grey[500],

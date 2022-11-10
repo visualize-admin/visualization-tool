@@ -65,11 +65,14 @@ test("sort order", async ({ page, selectors, screen, actions }) => {
   await page.goto("/en/browse?dataSource=Int");
   const resultCount = await selectors.search.resultsCount();
   const text = await resultCount.textContent();
-  const select = selectors.search.datasetSort().locator("select");
+  // Custom MUI select element; uses an input element under the hood
+  const select = selectors.search.datasetSort().locator("input");
 
   expect(await getSelectValue(select)).toBe("CREATED_DESC");
 
-  const searchInput = screen.getAllByPlaceholderText("Search");
+  const searchInput = screen.getAllByPlaceholderText(
+    "Name, organization, keyword..."
+  );
 
   // Search something, order should be score
   await searchInput.type("NFI");
@@ -97,8 +100,9 @@ test("sort order", async ({ page, selectors, screen, actions }) => {
   await page.keyboard.press("Enter");
   expect(await getSelectValue(select)).toBe("SCORE");
 
-  // Select another order, clear, then search
-  await select.selectOption("TITLE_ASC");
+  // Select another order, clear, then search. Using fill due to the select
+  // being custom MUI implementation
+  await select.fill("TITLE_ASC");
   await actions.search.clear();
   await searchInput.type("NFI");
   await page.keyboard.press("Enter");
@@ -106,7 +110,7 @@ test("sort order", async ({ page, selectors, screen, actions }) => {
 
   // Select another order, clear, then search, order should be back
   // to previous order
-  await select.selectOption("SCORE");
+  await select.fill("SCORE");
   await actions.search.clear();
   expect(await getSelectValue(select)).toBe("CREATED_DESC");
   await searchInput.type("NFI");

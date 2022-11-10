@@ -22,7 +22,7 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       flexGrow: 1,
       flexDirection: "column",
       justifyContent: "space-between",
-      paddingLeft: theme.spacing(6),
+      paddingLeft: theme.spacing(4),
     },
     header: {
       alignItems: "center",
