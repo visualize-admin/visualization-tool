@@ -1068,11 +1068,12 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     borderTopWidth: 1,
     boxShadow: "none",
 
-    "& .MuiTypography-body1": {
-      transition: "font-weight 0.1s ease",
-    },
-    "&:hover .MuiTypography-body1": {
-      fontWeight: "bold",
+    "& .MuiTypography-body1": {},
+  },
+
+  title: {
+    "&:hover": {
+      textDecoration: "underline",
     },
   },
 }));
@@ -1138,12 +1139,7 @@ export const DatasetResult = ({
   });
   const classes = useResultStyles();
   return (
-    <MotionCard
-      {...smoothPresenceProps}
-      onClick={handleClick}
-      elevation={1}
-      className={classes.root}
-    >
+    <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
       <Stack spacing={2} sx={{ mb: 6 }}>
         <Flex sx={{ justifyContent: "space-between" }}>
           <Typography variant="body2" fontWeight={700} gutterBottom={false}>
@@ -1155,7 +1151,13 @@ export const DatasetResult = ({
             </Tag>
           )}
         </Flex>
-        <Typography component="div" variant="body1" color="primary.main">
+        <Typography
+          component="div"
+          variant="body1"
+          onClick={handleClick}
+          color="primary.main"
+          className={classes.title}
+        >
           {highlightedTitle ? (
             <Box
               component="span"
