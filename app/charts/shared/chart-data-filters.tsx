@@ -99,6 +99,7 @@ export const ChartDataFilters = ({
 
           {componentIris.length > 0 && (
             <Box
+              data-testid="published-chart-interactive-filters"
               sx={{
                 display: filtersVisible ? "grid" : "none",
                 columnGap: 3,

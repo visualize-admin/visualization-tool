@@ -33,6 +33,11 @@ const configs: TestConfig[] = [
     name: "Map - Waldfläsche (areas)",
     slug: "map-waldflasche",
   },
+  {
+    chartId: "nI6X4V_EcK2c",
+    name: "Bathing water quality (interactive filters hierarchie)",
+    slug: "bathing-water-quality-hierarchie",
+  },
 ];
 
 export default configs;

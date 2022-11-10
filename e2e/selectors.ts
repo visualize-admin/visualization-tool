@@ -52,6 +52,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
           has: page.locator(`h5:text-is("${title}")`),
         }),
     },
+    published: {
+      interactiveFilters: () =>
+        screen.getByTestId("published-chart-interactive-filters"),
+    },
     chart: {
       colorLegend: (options?, waitForOptions?) =>
         screen.findByTestId("colorLegend", options, waitForOptions),
