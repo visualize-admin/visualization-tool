@@ -517,6 +517,7 @@ const TreeAccordion = ({
   value,
   label,
   state,
+  selectable,
   expandable,
   showColor,
   onSelect,
@@ -526,6 +527,7 @@ const TreeAccordion = ({
   value: string;
   label: string;
   state: "SELECTED" | "CHILDREN_SELECTED" | "NOT_SELECTED";
+  selectable: boolean;
   expandable: boolean;
   showColor: boolean;
   onSelect: () => void;
@@ -547,7 +549,9 @@ const TreeAccordion = ({
         sx={{ paddingLeft }}
         onClick={(e) => {
           e.stopPropagation();
+          if (selectable) {
           onSelect();
+          }
         }}
       >
         <IconButton
@@ -564,6 +568,7 @@ const TreeAccordion = ({
           <div
             className={classes.optionColor}
             style={{
+              visibility: selectable ? "visible" : "hidden",
               backgroundColor:
                 state === "SELECTED" ? getValueColor(value) : "transparent",
             }}
@@ -639,7 +644,7 @@ const Tree = ({
   return (
     <>
       {options.map((d) => {
-        const { value, label, children } = d;
+        const { hasValue, value, label, children } = d;
         const hasChildren = validateChildren(children);
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
@@ -654,6 +659,7 @@ const Tree = ({
             value={value}
             label={label}
             state={state}
+            selectable={Boolean(hasValue)}
             expandable={hasChildren}
             showColor={showColors}
             onSelect={() => {
