@@ -559,7 +559,10 @@ const TreeAccordion = ({
             e.stopPropagation();
             setExpanded(!expanded);
           }}
-          sx={{ visibility: expandable ? "visible" : "hidden" }}
+          sx={{
+            alignSelf: "flex-start",
+            visibility: expandable ? "visible" : "hidden",
+          }}
         >
           <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
         </IconButton>
