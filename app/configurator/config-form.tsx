@@ -395,7 +395,11 @@ export const useSingleFilterSelect = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<
-    (e: Pick<SelectChangeEvent<unknown>, "target">) => void
+    (
+      e:
+        | Pick<SelectChangeEvent<unknown>, "target">
+        | { target: { value: string } }
+    ) => void
   >(
     (e) => {
       dispatch({

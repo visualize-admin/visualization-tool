@@ -220,6 +220,20 @@ theme.components = {
       },
     },
   },
+  MuiTreeItem: {
+    styleOverrides: {
+      content: {
+        minHeight: "32px",
+      },
+      label: {
+        fontSize: theme.typography.body2.fontSize,
+
+        [theme.breakpoints.up("md")]: {
+          fontSize: theme.typography.body2.fontSize,
+        },
+      },
+    },
+  },
   MuiButton: {
     variants: [
       {

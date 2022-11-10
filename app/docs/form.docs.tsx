@@ -13,6 +13,7 @@ import {
   Switch,
   MinimalisticSelect,
 } from "@/components/form";
+import SelectTree from "@/components/select-tree";
 import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
@@ -24,6 +25,49 @@ const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
       name={"foo"}
       checked={checked}
       onChange={() => toggle(!checked)}
+    />
+  );
+};
+
+const numberOptions = Array(200)
+  .fill(null)
+  .map((_x, i) => ({
+    value: `example_${i}`,
+    label: `Example ${i}`,
+  }));
+
+const SelectTreeExample = () => {
+  const [value, setValue] = useState("5");
+  return (
+    <SelectTree
+      value={value}
+      onChange={({ target: { value } }) => setValue(value)}
+      options={[
+        {
+          value: "1",
+          label: "Applications",
+          children: [{ value: "2", label: "Calendar" }],
+        },
+        {
+          value: "5",
+          label: "Documents",
+          selectable: false,
+          children: [
+            { value: "10", label: "OSS" },
+            {
+              value: "6",
+              label: "MUI",
+              children: [{ value: "8", label: "index.js" }],
+            },
+          ],
+        },
+        {
+          label: "Numbers",
+          value: "numbers",
+          selectable: false,
+          children: numberOptions,
+        },
+      ]}
     />
   );
 };
@@ -217,6 +261,14 @@ ${(
             />
           )}
         />
+      </ReactSpecimen>
+    )}
+
+    ## Select tree
+
+    ${(
+      <ReactSpecimen>
+        <SelectTreeExample />
       </ReactSpecimen>
     )}
 
