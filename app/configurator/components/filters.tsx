@@ -538,7 +538,11 @@ const TreeAccordion = ({
   const paddingLeft = `${(depth + 1) * 8}px`;
 
   return (
-    <StyledAccordion expanded={expanded} disableGutters>
+    <StyledAccordion
+      expanded={expanded}
+      disableGutters
+      TransitionProps={{ unmountOnExit: true }}
+    >
       <TreeAccordionSummary
         sx={{ paddingLeft }}
         onClick={(e) => {
