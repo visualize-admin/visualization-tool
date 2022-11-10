@@ -764,9 +764,12 @@ const DrawerContent = forwardRef<
     >
       <Box className={classes.autocompleteHeader}>
         <Flex alignItems="center" justifyContent="space-between">
-          <Typography variant="h5" gutterBottom>
-            <Trans id="controls.set-filters">Edit filters</Trans>
-          </Typography>
+          <Flex alignItems="center" gap="0.25rem" mb={3}>
+            <Icon name="filter" size={16} />
+            <Typography variant="h5">
+              <Trans id="controls.set-filters">Edit filters</Trans>
+            </Typography>
+          </Flex>
           <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
             <SvgIcClose fontSize="inherit" />
           </IconButton>
