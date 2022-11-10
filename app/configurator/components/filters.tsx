@@ -90,11 +90,6 @@ const useStyles = makeStyles((theme: Theme) => {
     autocompleteHeader: {
       margin: "1rem var(--mx)",
     },
-    autocompleteInputContainer: {
-      margin: "0 var(--mx) 0rem",
-      paddingBottom: "1rem",
-      borderBottom: `1px solid ${theme.palette.divider}`,
-    },
     autocompleteApplyButtonContainer: {
       position: "sticky",
       zIndex: 1000,
@@ -107,9 +102,6 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     autocompleteApplyButton: {
       justifyContent: "center",
-    },
-    autocompleteInput: {
-      width: "100%",
     },
     textInput: {
       margin: `${theme.spacing(4)} 0px`,
@@ -139,24 +131,6 @@ const useStyles = makeStyles((theme: Theme) => {
       flexShrink: 0,
       alignSelf: "flex-start",
       marginTop: "0.125rem",
-    },
-    listSubheader: {
-      minHeight: "3rem",
-      padding: "0.5rem 0rem",
-      margin: "0.5rem 1rem",
-      alignItems: "center",
-      gridTemplateRows: "auto min-content",
-      border: `1px solid ${theme.palette.divider}`,
-      borderWidth: "1px 0 1px 0",
-      "& button": {
-        padding: 0,
-        minHeight: "auto",
-      },
-
-      "&:before, &:after": {
-        display: "block",
-        content: "' '",
-      },
     },
     selectedValueRow: {
       display: "flex",
