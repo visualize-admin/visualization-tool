@@ -1,0 +1,74 @@
+{
+  "key": "nI6X4V_EcK2c",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/ubd0104/11",
+    "dataSource": {
+      "url": "https://int.lindas.admin.ch/query",
+      "type": "sparql"
+    },
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "sorting": {
+            "sortingType": "byAuto",
+            "sortingOrder": "asc"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing"
+        },
+        "y": {
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd0104/value"
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/ubd0104/location": {
+          "type": "single",
+          "value": "https://ld.admin.ch/dimension/bgdi/inlandwaters/bathingwater/CH19007"
+        },
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          "type": "single",
+          "value": "E.coli"
+        }
+      },
+      "version": "1.3.0",
+      "chartType": "column",
+      "interactiveFiltersConfig": {
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "timeRange": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "timeSlider": {
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": true,
+          "componentIris": [
+            "https://environment.ld.admin.ch/foen/ubd0104/location"
+          ]
+        }
+      }
+    }
+  }
+}
