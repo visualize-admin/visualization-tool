@@ -70,8 +70,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
 import { useLocale } from "@/locales/use-locale";
-import { pruneTree } from "@/rdf/tree-utils";
-import { dfs } from "@/utils/dfs";
+import { getOptionsFromTree, joinParents, pruneTree } from "@/rdf/tree-utils";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
@@ -142,26 +141,12 @@ const useStyles = makeStyles((theme: Theme) => {
   };
 });
 
-const joinParents = (parents?: HierarchyValue[]) => {
-  return parents?.map((x) => x.label).join(" > ") || "";
-};
-
 const explodeParents = (parents: string) => {
   return parents ? parents.split(" > ") : [];
 };
 
 const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
-};
-
-const getOptionsFromTree = (tree: HierarchyValue[]) => {
-  return sortBy(
-    dfs(tree, (node, { parents }) => ({
-      ...node,
-      parents,
-    })),
-    (node) => joinParents(node.parents)
-  );
 };
 
 const getColorConfig = (
