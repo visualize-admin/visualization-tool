@@ -32,19 +32,25 @@ export const groupByParents = (hierarchy: DimensionHierarchyQueryHierarchy) => {
   return groups(allHierarchyValues, (v) => v.parents);
 };
 
-const useHierarchyParents = (
-  dataSet: string,
-  dataSource: DataSource,
-  dimension: DataCubeMetadata["dimensions"][number],
-  locale: string,
-  pause?: boolean
-): {
+const useHierarchyParents = ({
+  datasetIri,
+  dataSource,
+  dimension,
+  locale,
+  pause,
+}: {
+  datasetIri: string;
+  dataSource: DataSource;
+  dimension: DataCubeMetadata["dimensions"][number];
+  locale: string;
+  pause?: boolean;
+}): {
   fetching: boolean;
   data: HierarchyParents | undefined;
 } => {
   const [hierarchyResp] = useDimensionHierarchyQuery({
     variables: {
-      cubeIri: dataSet,
+      cubeIri: datasetIri,
       dimensionIri: dimension?.iri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

@@ -150,13 +150,13 @@ const DataFilter = ({
     },
   });
 
-  const { data: hierarchyParents } = useHierarchyParents(
-    dataSetIri,
+  const { data: hierarchyParents } = useHierarchyParents({
+    datasetIri: dataSetIri,
     dataSource,
-    data?.dataCubeByIri?.dimensionByIri!,
+    dimension: data?.dataCubeByIri?.dimensionByIri!,
     locale,
-    !data?.dataCubeByIri?.dimensionByIri
-  );
+    pause: !data?.dataCubeByIri?.dimensionByIri,
+  });
 
   const optionGroups = React.useMemo(() => {
     return makeOptionGroups(hierarchyParents);

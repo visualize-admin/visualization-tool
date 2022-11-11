@@ -84,13 +84,13 @@ const DataFilterSelectGeneric = ({
   const locale = useLocale();
   const [pause, setPause] = useState(true);
   const { data: hierarchyParents, fetching: fetchingHierarchy } =
-    useHierarchyParents(
-      state.dataSet,
-      state.dataSource,
+    useHierarchyParents({
+      datasetIri: state.dataSet,
+      dataSource: state.dataSource,
       dimension,
       locale,
-      pause
-    );
+      pause,
+    });
 
   const optionGroups = useMemo(() => {
     return makeOptionGroups(hierarchyParents);
