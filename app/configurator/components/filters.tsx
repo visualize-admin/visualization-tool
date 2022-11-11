@@ -21,6 +21,7 @@ import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import React, {
   forwardRef,
   MouseEventHandler,
@@ -630,6 +631,10 @@ const areChildrenSelected = ({
   }
 };
 
+const isHierarchyOptionSelectable = (d: HierarchyValue) => {
+  return d.hasValue !== undefined ? Boolean(d.hasValue) : true;
+};
+
 const Tree = ({
   depth,
   options,
@@ -646,7 +651,7 @@ const Tree = ({
   return (
     <>
       {options.map((d) => {
-        const { hasValue, value, label, children } = d;
+        const { value, label, children } = d;
         const hasChildren = validateChildren(children);
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
@@ -662,7 +667,7 @@ const Tree = ({
             label={label}
             state={state}
             // Has value is only present for hierarchies.
-            selectable={hasValue !== undefined ? Boolean(hasValue) : true}
+            selectable={isHierarchyOptionSelectable(d)}
             expandable={hasChildren}
             showColor={showColors}
             onSelect={() => {
@@ -710,10 +715,18 @@ const DrawerContent = forwardRef<
   } = props;
   const classes = useStyles();
   const [textInput, setTextInput] = useState("");
-  const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(
-    () => values
+  const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(() =>
+    // Do not set unselectable options
+    values.filter(isHierarchyOptionSelectable)
   );
   pendingValuesRef.current = pendingValues;
+
+  const uniqueSelectableFlatOptions = useMemo(() => {
+    return uniqBy(
+      flatOptions.filter(isHierarchyOptionSelectable),
+      (d) => d.value
+    );
+  }, [flatOptions]);
 
   const filteredOptions = useMemo(() => {
     return pruneTree(options, (d) =>
@@ -758,9 +771,9 @@ const DrawerContent = forwardRef<
           sx={{ typography: "body2" }}
         />
         <FilterControls
-          selectAll={() => setPendingValues(flatOptions)}
+          selectAll={() => setPendingValues(uniqueSelectableFlatOptions)}
           selectNone={() => setPendingValues([])}
-          allKeysLength={flatOptions.length}
+          allKeysLength={uniqueSelectableFlatOptions.length}
           activeKeysLength={pendingValues.length}
         />
       </Box>
