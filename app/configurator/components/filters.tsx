@@ -230,12 +230,17 @@ const MultiFilterContent = ({
     const values = (
       (rawValues?.type === "multi" && Object.keys(rawValues.values)) ||
       Object.keys(optionsByValue)
-    ).map((v) => optionsByValue[v]);
+    )
+      .map((v) => optionsByValue[v])
+      .filter(isHierarchyOptionSelectable);
     const grouped = groups(values, groupByParent)
-      .sort(
-        (a, b) =>
-          ascending(explodeParents(a[0]).length, explodeParents(b[0]).length) ||
-          ascending(a[0], b[0])
+      .sort((a, b) =>
+        a[0].length === 0
+          ? 1
+          : ascending(
+              explodeParents(a[0]).length,
+              explodeParents(b[0]).length
+            ) || ascending(a[0], b[0])
       )
       .map(([parent, group]) => {
         return [
@@ -243,10 +248,11 @@ const MultiFilterContent = ({
           group.sort(
             (a, b) =>
               ascending(a.position ?? 0, b.position ?? 0) ||
-              ascending(a.label, b.label)
+              ascending(a.label.toLowerCase(), b.label.toLowerCase())
           ),
         ] as const;
       });
+
     return {
       values,
       valueGroups: grouped,
