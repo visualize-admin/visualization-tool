@@ -628,17 +628,21 @@ const isHierarchyOptionSelectable = (d: HierarchyValue) => {
 
 const Tree = ({
   depth,
+  selectableDepthsMap,
   options,
   selectedValues,
   showColors,
   onSelect,
 }: {
   depth: number;
+  selectableDepthsMap: Record<number, boolean>;
   options: HierarchyValue[];
   selectedValues: HierarchyValue[];
   showColors: boolean;
   onSelect: (newSelectedValues: HierarchyValue[]) => void;
 }) => {
+  const someDepthOptionsSelectable = selectableDepthsMap[depth];
+
   return (
     <>
       {options.map((d) => {
@@ -660,7 +664,9 @@ const Tree = ({
             // Has value is only present for hierarchies.
             selectable={isHierarchyOptionSelectable(d)}
             expandable={hasChildren}
-            showColor={showColors}
+            showColor={
+              (showColors && someDepthOptionsSelectable) || d.depth === -1
+            }
             onSelect={() => {
               if (state === "SELECTED") {
                 onSelect(selectedValues.filter((d) => d.value !== value));
@@ -671,8 +677,9 @@ const Tree = ({
           >
             {hasChildren ? (
               <Tree
-                options={children as HierarchyValue[]}
                 depth={depth + 1}
+                selectableDepthsMap={selectableDepthsMap}
+                options={children as HierarchyValue[]}
                 selectedValues={selectedValues}
                 showColors={showColors}
                 onSelect={onSelect}
@@ -712,11 +719,25 @@ const DrawerContent = forwardRef<
   );
   pendingValuesRef.current = pendingValues;
 
-  const uniqueSelectableFlatOptions = useMemo(() => {
-    return uniqBy(
+  const { selectableDepthsMap, uniqueSelectableFlatOptions } = useMemo(() => {
+    const uniqueSelectableFlatOptions = uniqBy(
       flatOptions.filter(isHierarchyOptionSelectable),
       (d) => d.value
     );
+
+    const selectableDepthsMap = flatOptions.reduce((acc, d) => {
+      if (!acc[d.depth]) {
+        acc[d.depth] = false;
+      }
+
+      if (acc[d.depth] === false && d.hasValue) {
+        acc[d.depth] = true;
+      }
+
+      return acc;
+    }, {} as Record<number, boolean>);
+
+    return { selectableDepthsMap, uniqueSelectableFlatOptions };
   }, [flatOptions]);
 
   const filteredOptions = useMemo(() => {
@@ -770,6 +791,7 @@ const DrawerContent = forwardRef<
       </Box>
       <Tree
         depth={0}
+        selectableDepthsMap={selectableDepthsMap}
         options={filteredOptions}
         selectedValues={pendingValues}
         showColors={hasColorMapping}
