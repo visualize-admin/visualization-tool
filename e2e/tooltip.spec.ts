@@ -9,9 +9,6 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   const filterLocator = await within(
     selectors.edition.controlSection("Filters")
   );
-  await filterLocator.getByText("Balance of land use").click();
-
-  await actions.mui.selectOption("Sectors Ordinance CO2");
 
   await filterLocator.getByText("Greenhouse gas").click();
   await actions.mui.selectOption("Synthetic gases");
