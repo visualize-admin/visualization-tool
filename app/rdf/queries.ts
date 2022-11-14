@@ -217,7 +217,7 @@ export const getCubeDimensionValues = async (
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
-const getCubeDimensionValuesWithMetadata = async ({
+export const getCubeDimensionValuesWithMetadata = async ({
   dimension,
   cube,
   sparqlClient,
@@ -458,6 +458,8 @@ export const getCubeObservations = async ({
     observationsView,
     disableDistinct: !!(!filters || Object.keys(filters).length === 0),
   });
+
+  // console.log({ query, observationsRaw });
 
   const serverFilter =
     Object.keys(serverFilters).length > 0

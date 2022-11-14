@@ -1,4 +1,3 @@
-import { SELECT } from "@tpluscode/sparql-builder";
 import {
   getHierarchy,
   HierarchyNode,
@@ -8,59 +7,15 @@ import { ascending, descending } from "d3";
 import { isGraphPointer } from "is-graph-pointer";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
-import { NamedNode } from "rdf-js";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { pragmas } from "@/rdf/create-source";
+import { ResolvedDimension } from "@/graphql/shared-types";
 
 import * as ns from "./namespace";
+import { getCubeDimensionValuesWithMetadata } from "./queries";
 import { pruneTree, mapTree, sortTree, getOptionsFromTree } from "./tree-utils";
-
-const queryDimensionValuesWithLabels = async ({
-  dimensionIri,
-  client,
-  locale,
-}: {
-  dimensionIri: string;
-  client: ParsingClient;
-  locale: string;
-}): Promise<{ value: string; label: string }[]> => {
-  const query = SELECT.DISTINCT`?value ?label`.WHERE`    
-    ?cube <https://cube.link/observationSet> ?observationSet .
-    ?observationSet <https://cube.link/observation> ?observation .
-    ?observation <${dimensionIri}> ?value .
-
-    OPTIONAL {
-      ?value <http://schema.org/name> ?language_label .
-      FILTER (
-        LANGMATCHES(LANG(?language_label), "${locale}")
-      )
-    }
-
-    OPTIONAL {
-      ?value <http://schema.org/name> ?no_language_label .
-      FILTER (
-        (LANG(?no_language_label) = "")
-      )
-    }
-
-    BIND(COALESCE(?language_label, ?no_language_label) AS ?label) 
-    `.prologue`${pragmas}`;
-
-  const rows = (await query.execute(client.query)) as {
-    value: NamedNode;
-    label: NamedNode | undefined;
-  }[];
-
-  return rows
-    .filter((d) => d.label !== undefined)
-    .map((r) => ({
-      value: r.value.value,
-      label: r.label!.value,
-    }));
-};
 
 const getName = (pointer: AnyPointer, language: string) => {
   const name = pointer.out(ns.schema.name, { language })?.value;
@@ -115,48 +70,50 @@ const findHierarchyForDimension = (cube: Cube, dimensionIri: string) => {
 };
 
 export const queryHierarchy = async (
-  cube: Cube,
-  dimensionIri: string,
+  rdimension: ResolvedDimension,
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
 ): Promise<HierarchyValue[] | null> => {
-  const hierarchy = findHierarchyForDimension(cube, dimensionIri);
+  const hierarchy = findHierarchyForDimension(
+    rdimension.cube,
+    rdimension.data.iri
+  );
 
   // @ts-ignore
   if (!isGraphPointer(hierarchy)) {
     return null;
   }
-
-  const dimensionValuesWithLabelsProm = queryDimensionValuesWithLabels({
-    dimensionIri,
-    client: sparqlClient,
+  const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
+    cube: rdimension.cube,
+    dimension: rdimension.dimension,
+    sparqlClient,
     locale,
   });
+
   const results = await getHierarchy(hierarchy).execute(
     // @ts-ignore
     sparqlClientStream,
     rdf
   );
 
-  const tree = toTree(results, dimensionIri, locale);
+  const tree = toTree(results, rdimension.data.iri, locale);
   const treeValues = new Set(getOptionsFromTree(tree).map((d) => d.value));
-  const dimensionValuesWithLabels = await dimensionValuesWithLabelsProm;
   const dimensionValues = new Set(
-    dimensionValuesWithLabels.map((d) => d.value)
+    dimensionValuesWithLabels.map((d) => `${d.value}`)
   );
   const prunedTree = mapTree(
     pruneTree(tree, (node) => dimensionValues.has(node.value)),
     (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
   );
   const additionalTreeValues = dimensionValuesWithLabels
-    .filter((d) => !treeValues.has(d.value))
+    .filter((d) => !treeValues.has(`${d.value}`))
     .map((d) => ({
       label: d.label || "-",
-      value: d.value,
+      value: `${d.value}`,
       depth: -1,
       children: [],
-      dimensionIri,
+      dimensionIri: rdimension.data.iri,
       hasValue: true,
     }));
 

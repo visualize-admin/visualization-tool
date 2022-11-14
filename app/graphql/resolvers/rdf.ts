@@ -278,7 +278,7 @@ const getDimensionValuesLoader = (
 };
 
 export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
-  { cube, data: { iri } },
+  rdimension,
   _args,
   { setup },
   info
@@ -286,16 +286,17 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
   const { locale } = info.variableValues;
   const { sparqlClient, sparqlClientStream } = await setup(info);
 
-  if (!cube) {
+  if (!rdimension.cube) {
     throw new Error("Could not find cube");
   }
+
   const res = await queryHierarchy(
-    cube,
-    iri,
+    rdimension,
     locale,
     sparqlClient,
     sparqlClientStream
   );
+
   return res;
 };
 
