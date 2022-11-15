@@ -887,7 +887,7 @@ const ChartImputationType = ({
   const updateImputationType = useCallback<(type: ImputationType) => void>(
     (type) => {
       dispatch({
-        type: "IMPUTATION_TYPE_CHANGED",
+        type: "CHART_IMPUTATION_TYPE_CHANGED",
         value: {
           type,
         },

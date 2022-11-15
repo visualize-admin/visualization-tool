@@ -223,7 +223,7 @@ const useEnsurePossibleFilters = ({
 
       if (!isEqual(filters, state.chartConfig.filters) && !isEmpty(filters)) {
         dispatch({
-          type: "CHART_CONFIG_FILTERS_UPDATE",
+          type: "CHART_FILTERS_UPDATE",
           value: {
             filters,
           },
@@ -334,7 +334,7 @@ const useFilterReorder = ({
     onAddDimensionFilter?.();
     const filterValue = dimension.values[0];
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "CHART_FILTER_SET_SINGLE",
       value: {
         dimensionIri: dimension.iri,
         value: filterValue.value,
@@ -344,7 +344,7 @@ const useFilterReorder = ({
 
   const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "CHART_FILTER_SET_SINGLE",
       value: {
         dimensionIri: dimension.iri,
         value: FIELD_VALUE_NONE,

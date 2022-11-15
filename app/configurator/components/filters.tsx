@@ -277,7 +277,7 @@ const MultiFilterContent = ({
       .map((x) => x?.value)
       .filter(Boolean);
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_MULTI",
+      type: "CHART_FILTER_SET_MULTI",
       value: {
         dimensionIri,
         values: newValues,
@@ -300,7 +300,7 @@ const MultiFilterContent = ({
       switch (type) {
         case "reset":
           return dispatch({
-            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+            type: "CHART_COLOR_MAPPING_CHANGED",
             value: {
               field,
               colorConfigPath,
@@ -312,7 +312,7 @@ const MultiFilterContent = ({
         case "shuffle":
           const usedValues = new Set(values.map((v) => v.value));
           return dispatch({
-            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+            type: "CHART_COLOR_MAPPING_CHANGED",
             value: {
               field,
               colorConfigPath,
@@ -915,7 +915,7 @@ export const TimeFilter = ({
   const setFilterRange = useCallback(
     ([from, to]: [string, string]) => {
       dispatch({
-        type: "CHART_CONFIG_FILTER_SET_RANGE",
+        type: "CHART_FILTER_SET_RANGE",
         value: {
           dimensionIri,
           from,

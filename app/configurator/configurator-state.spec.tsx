@@ -24,7 +24,7 @@ import {
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
-  updateColorMapping,
+  handleColorMappingChanged,
 } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -707,20 +707,23 @@ describe("colorMapping", () => {
       },
     };
 
-    updateColorMapping(state as unknown as ConfiguratorStateConfiguringChart, {
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-      value: {
-        field: "areaLayer",
-        colorConfigPath: "color",
-        dimensionIri: "areaLayerColorIri",
-        values: [
-          { value: "red", label: "red", color: "red" },
-          { value: "green", label: "green", color: "green" },
-          { value: "blue", label: "blue", color: "blue" },
-        ],
-        random: false,
-      },
-    });
+    handleColorMappingChanged(
+      state as unknown as ConfiguratorStateConfiguringChart,
+      {
+        type: "CHART_COLOR_MAPPING_CHANGED",
+        value: {
+          field: "areaLayer",
+          colorConfigPath: "color",
+          dimensionIri: "areaLayerColorIri",
+          values: [
+            { value: "red", label: "red", color: "red" },
+            { value: "green", label: "green", color: "green" },
+            { value: "blue", label: "blue", color: "blue" },
+          ],
+          random: false,
+        },
+      }
+    );
 
     expect(state.chartConfig.fields.areaLayer.color.colorMapping).toEqual({
       red: "red",

@@ -112,17 +112,6 @@ export type ConfiguratorStateChartAction =
     }
   // Fields & options.
   | {
-      type: "CHART_DESCRIPTION_CHANGED";
-      value: {
-        path: string | string[];
-        value: string;
-      };
-    }
-  | {
-      type: "IMPUTATION_TYPE_CHANGED";
-      value: { type: ImputationType };
-    }
-  | {
       type: "CHART_FIELD_CHANGED";
       value: {
         locale: Locale;
@@ -154,7 +143,30 @@ export type ConfiguratorStateChartAction =
           | undefined;
       };
     }
+  | {
+      type: "CHART_DESCRIPTION_CHANGED";
+      value: {
+        path: string | string[];
+        value: string;
+      };
+    }
+  | {
+      type: "CHART_IMPUTATION_TYPE_CHANGED";
+      value: {
+        type: ImputationType;
+      };
+    }
   // Colors.
+  | {
+      type: "CHART_COLOR_MAPPING_CHANGED";
+      value: {
+        field: string;
+        colorConfigPath: string | undefined;
+        dimensionIri: string;
+        values: DimensionValue[];
+        random: boolean;
+      };
+    }
   | {
       type: "CHART_PALETTE_CHANGED";
       value: {
@@ -181,39 +193,29 @@ export type ConfiguratorStateChartAction =
         color: string;
       };
     }
-  | {
-      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
-      value: {
-        field: string;
-        colorConfigPath: string | undefined;
-        dimensionIri: string;
-        values: DimensionValue[];
-        random: boolean;
-      };
-    }
   // Filters.
   | {
-      type: "CHART_CONFIG_FILTER_SET_SINGLE";
+      type: "CHART_FILTERS_UPDATE";
+      value: {
+        filters: Filters;
+      };
+    }
+  | {
+      type: "CHART_FILTER_SET_SINGLE";
       value: {
         dimensionIri: string;
         value: string;
       };
     }
   | {
-      type: "CHART_CONFIG_FILTERS_UPDATE";
-      value: {
-        filters: Filters;
-      };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_SET_MULTI";
+      type: "CHART_FILTER_SET_MULTI";
       value: {
         dimensionIri: string;
         values: string[];
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_ADD_MULTI";
+      type: "CHART_FILTER_ADD_MULTI";
       value: {
         dimensionIri: string;
         values: string[];
@@ -221,7 +223,7 @@ export type ConfiguratorStateChartAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
+      type: "CHART_FILTER_REMOVE_MULTI";
       value: {
         dimensionIri: string;
         values: string[];
@@ -229,7 +231,7 @@ export type ConfiguratorStateChartAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_SET_RANGE";
+      type: "CHART_FILTER_SET_RANGE";
       value: {
         dimensionIri: string;
         from: string;
@@ -237,19 +239,13 @@ export type ConfiguratorStateChartAction =
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_RESET_RANGE";
+      type: "CHART_FILTER_RESET_MULTI";
       value: {
         dimensionIri: string;
       };
     }
   | {
-      type: "CHART_CONFIG_FILTER_RESET_MULTI";
-      value: {
-        dimensionIri: string;
-      };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
+      type: "CHART_FILTER_SET_NONE_MULTI";
       value: {
         dimensionIri: string;
       };
@@ -1056,11 +1052,11 @@ export const handleChartOptionChanged = (
   return draft;
 };
 
-export const updateColorMapping = (
+export const handleColorMappingChanged = (
   draft: ConfiguratorState,
   action: Extract<
     ConfiguratorStateAction,
-    { type: "CHART_CONFIG_UPDATE_COLOR_MAPPING" }
+    { type: "CHART_COLOR_MAPPING_CHANGED" }
   >
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
@@ -1268,7 +1264,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_SINGLE":
+    case "CHART_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
 
@@ -1283,10 +1279,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
-      return updateColorMapping(draft, action);
+    case "CHART_COLOR_MAPPING_CHANGED":
+      return handleColorMappingChanged(draft, action);
 
-    case "CHART_CONFIG_FILTER_SET_MULTI":
+    case "CHART_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
@@ -1296,7 +1292,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_ADD_MULTI":
+    case "CHART_FILTER_ADD_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
@@ -1321,7 +1317,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_REMOVE_MULTI":
+    case "CHART_FILTER_REMOVE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
@@ -1351,15 +1347,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_RESET_MULTI":
-    case "CHART_CONFIG_FILTER_RESET_RANGE":
+    case "CHART_FILTER_RESET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
         delete draft.chartConfig.filters[dimensionIri];
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_NONE_MULTI":
+    case "CHART_FILTER_SET_NONE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
@@ -1369,7 +1364,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_RANGE":
+    case "CHART_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, from, to } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
@@ -1380,14 +1375,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTERS_UPDATE":
+    case "CHART_FILTERS_UPDATE":
       if (draft.state === "CONFIGURING_CHART") {
         const { filters } = action.value;
         draft.chartConfig.filters = filters;
       }
       return draft;
 
-    case "IMPUTATION_TYPE_CHANGED":
+    case "CHART_IMPUTATION_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         if (isAreaConfig(draft.chartConfig)) {
           draft.chartConfig.fields.y.imputationType = action.value.type;

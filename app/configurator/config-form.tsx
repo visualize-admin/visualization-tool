@@ -195,7 +195,7 @@ export const useDimensionSelection = (dimensionIri: string) => {
 
   const selectAll = useCallback(() => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_RESET_MULTI",
+      type: "CHART_FILTER_RESET_MULTI",
       value: {
         dimensionIri,
       },
@@ -204,7 +204,7 @@ export const useDimensionSelection = (dimensionIri: string) => {
 
   const selectNone = useCallback(() => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
+      type: "CHART_FILTER_SET_NONE_MULTI",
       value: { dimensionIri },
     });
   }, [dispatch, dimensionIri]);
@@ -399,7 +399,7 @@ export const useSingleFilterSelect = ({
   >(
     (e) => {
       dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        type: "CHART_FILTER_SET_SINGLE",
         value: {
           dimensionIri,
           value: (e.target.value === ""
@@ -438,7 +438,7 @@ export const useSingleFilterField = ({
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       dispatch({
-        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        type: "CHART_FILTER_SET_SINGLE",
         value: {
           dimensionIri,
           value: e.currentTarget.value,
