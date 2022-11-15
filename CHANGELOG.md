@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.12.0] - 2022-11-15
+
 - Editor:
   - Introduced a loading state when switching dimension iris and a dataset is using a hierarchy
   - Added a "default" color palette which becomes available to be selected in a ColorPalette element when custom schema:color properties are defined for dimension values in the Cube Creator
