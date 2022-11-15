@@ -1,4 +1,4 @@
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/graphql/query-hooks";
 
 export const dfs = function <T extends unknown>(
   tree: HierarchyValue[],

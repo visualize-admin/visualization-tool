@@ -1,6 +1,6 @@
 import sortBy from "lodash/sortBy";
 
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/graphql/query-hooks";
 import { dfs } from "@/utils/dfs";
 
 export const mapTree = (

@@ -25,8 +25,8 @@ import {
   DimensionHierarchyQuery,
   DimensionHierarchyQueryVariables,
   DimensionValuesQuery,
+  HierarchyValue,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { dfs } from "@/utils/dfs";
 import useEvent from "@/utils/use-event";

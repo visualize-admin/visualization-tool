@@ -73,6 +73,7 @@ import {
   DataCubeMetadataWithComponentValuesQuery,
   DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetadataFragment,
+  HierarchyValue,
   NumericalMeasure,
   OrdinalMeasure,
 } from "@/graphql/query-hooks";
@@ -93,26 +94,14 @@ import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
-export type ConfiguratorStateAction =
+export type ConfiguratorStateChartAction =
+  // Base.
   | {
-      type: "INITIALIZED";
-      value: ConfiguratorState;
-    }
-  | {
-      type: "STEP_NEXT";
-      dataSetMetadata: DataCubeMetadata;
-    }
-  | {
-      type: "STEP_PREVIOUS";
-      to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
-    }
-  | {
-      type: "DATASET_SELECTED";
-      dataSet: string | undefined;
-    }
-  | {
-      type: "DATASOURCE_CHANGED";
-      value: DataSource;
+      type: "CHART_CONFIG_REPLACED";
+      value: {
+        chartConfig: ChartConfig;
+        dataSetMetadata: DataCubeMetadata;
+      };
     }
   | {
       type: "CHART_TYPE_CHANGED";
@@ -121,9 +110,17 @@ export type ConfiguratorStateAction =
         chartType: ChartType;
       };
     }
+  // Fields & options.
   | {
-      type: "ACTIVE_FIELD_CHANGED";
-      value: string | undefined;
+      type: "CHART_DESCRIPTION_CHANGED";
+      value: {
+        path: string | string[];
+        value: string;
+      };
+    }
+  | {
+      type: "IMPUTATION_TYPE_CHANGED";
+      value: { type: ImputationType };
     }
   | {
       type: "CHART_FIELD_CHANGED";
@@ -131,7 +128,14 @@ export type ConfiguratorStateAction =
         locale: Locale;
         field: string;
         componentIri: string;
-        selectedValues?: $FixMe[];
+        selectedValues?: HierarchyValue[];
+      };
+    }
+  | {
+      type: "CHART_FIELD_DELETED";
+      value: {
+        locale: Locale;
+        field: string;
       };
     }
   | {
@@ -150,6 +154,7 @@ export type ConfiguratorStateAction =
           | undefined;
       };
     }
+  // Colors.
   | {
       type: "CHART_PALETTE_CHANGED";
       value: {
@@ -177,40 +182,6 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_FIELD_DELETED";
-      value: {
-        locale: Locale;
-        field: string;
-      };
-    }
-  | {
-      type: "CHART_DESCRIPTION_CHANGED";
-      value: { path: string | string[]; value: string };
-    }
-  | {
-      type: "INTERACTIVE_FILTER_CHANGED";
-      value: InteractiveFiltersConfig;
-    }
-  | {
-      type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET";
-    }
-  | {
-      type: "CHART_CONFIG_REPLACED";
-      value: { chartConfig: ChartConfig; dataSetMetadata: DataCubeMetadata };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_SET_SINGLE";
-      value: { dimensionIri: string; value: string };
-    }
-  | {
-      type: "CHART_CONFIG_FILTERS_UPDATE";
-      value: { filters: Filters };
-    }
-  | {
-      type: "CHART_CONFIG_FILTER_SET_MULTI";
-      value: { dimensionIri: string; values: string[] };
-    }
-  | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
       value: {
         field: string;
@@ -220,31 +191,103 @@ export type ConfiguratorStateAction =
         random: boolean;
       };
     }
+  // Filters.
+  | {
+      type: "CHART_CONFIG_FILTER_SET_SINGLE";
+      value: {
+        dimensionIri: string;
+        value: string;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_FILTERS_UPDATE";
+      value: {
+        filters: Filters;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_SET_MULTI";
+      value: {
+        dimensionIri: string;
+        values: string[];
+      };
+    }
   | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
-      value: { dimensionIri: string; values: string[]; allValues: string[] };
+      value: {
+        dimensionIri: string;
+        values: string[];
+        allValues: string[];
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
-      value: { dimensionIri: string; values: string[]; allValues: string[] };
+      value: {
+        dimensionIri: string;
+        values: string[];
+        allValues: string[];
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
-      value: { dimensionIri: string; from: string; to: string };
+      value: {
+        dimensionIri: string;
+        from: string;
+        to: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_RESET_RANGE";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_RESET_MULTI";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
+    };
+
+export type ConfiguratorStateAction =
+  | ConfiguratorStateChartAction
+  | {
+      type: "INITIALIZED";
+      value: ConfiguratorState;
     }
-  | { type: "IMPUTATION_TYPE_CHANGED"; value: { type: ImputationType } }
+  | {
+      type: "STEP_NEXT";
+      dataSetMetadata: DataCubeMetadata;
+    }
+  | {
+      type: "STEP_PREVIOUS";
+      to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
+    }
+  | {
+      type: "DATASET_SELECTED";
+      dataSet: string | undefined;
+    }
+  | {
+      type: "DATASOURCE_CHANGED";
+      value: DataSource;
+    }
+  | {
+      type: "ACTIVE_FIELD_CHANGED";
+      value: string | undefined;
+    }
+  | {
+      type: "INTERACTIVE_FILTER_CHANGED";
+      value: InteractiveFiltersConfig;
+    }
+  | {
+      type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET";
+    }
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 

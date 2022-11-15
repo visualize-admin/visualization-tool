@@ -57,12 +57,12 @@ import {
 } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  HierarchyValue,
   Maybe,
   useDimensionHierarchyQuery,
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
