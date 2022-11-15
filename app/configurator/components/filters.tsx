@@ -526,7 +526,7 @@ const TreeAccordion = ({
 }) => {
   const classes = useStyles();
   const { getValueColor } = useMultiFilterContext();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(() => (depth === 0 ? true : false));
 
   const paddingLeft = `${(depth + 1) * 8}px`;
 
