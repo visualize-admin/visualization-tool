@@ -21,6 +21,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Added a "Run SPARQL query" button
 - UI:
   - Introduced new UI for search & dataset preview pages
+  - Updated filters editing by introducing the tree view for hierarchical dimensions
+  - Introduced a structure to hierarchical dimensions in select elements in published charts
 
 ## [3.11.0] - 2022-10-26
 

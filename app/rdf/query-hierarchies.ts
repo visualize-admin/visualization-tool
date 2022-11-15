@@ -1,9 +1,9 @@
-import { SELECT } from "@tpluscode/sparql-builder";
 import {
   getHierarchy,
   HierarchyNode,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
+import { ascending, descending } from "d3";
 import { isGraphPointer } from "is-graph-pointer";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
@@ -11,26 +11,14 @@ import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { pragmas } from "@/rdf/create-source";
+import { ResolvedDimension } from "@/graphql/shared-types";
 
 import * as ns from "./namespace";
-import { pruneTree, mapTree } from "./tree-utils";
-
-const queryDimensionValues = async (
-  dimension: string,
-  sparqlClient: ParsingClient
-) => {
-  const query = SELECT.DISTINCT`?value`.WHERE`    
-      ?cube <https://cube.link/observationSet> ?observationSet .
-      ?observationSet <https://cube.link/observation> ?observation .
-      ?observation <${dimension}> ?value .
-    `.prologue`${pragmas}`;
-  const rows = await query.execute(sparqlClient.query);
-  return rows.map((r) => r.value.value);
-};
+import { getCubeDimensionValuesWithMetadata } from "./queries";
+import { pruneTree, mapTree, sortTree, getOptionsFromTree } from "./tree-utils";
 
 const getName = (pointer: AnyPointer, language: string) => {
-  let name = pointer.out(ns.schema.name, { language })?.value;
+  const name = pointer.out(ns.schema.name, { language })?.value;
   if (name) {
     return name;
   }
@@ -82,30 +70,58 @@ const findHierarchyForDimension = (cube: Cube, dimensionIri: string) => {
 };
 
 export const queryHierarchy = async (
-  cube: Cube,
-  dimensionIri: string,
+  rdimension: ResolvedDimension,
   locale: string,
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
 ): Promise<HierarchyValue[] | null> => {
-  const hierarchy = findHierarchyForDimension(cube, dimensionIri);
+  const hierarchy = findHierarchyForDimension(
+    rdimension.cube,
+    rdimension.data.iri
+  );
 
   // @ts-ignore
   if (!isGraphPointer(hierarchy)) {
     return null;
   }
+  const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
+    cube: rdimension.cube,
+    dimension: rdimension.dimension,
+    sparqlClient,
+    locale,
+  });
 
-  const dimensionValuesProm = queryDimensionValues(dimensionIri, sparqlClient);
   const results = await getHierarchy(hierarchy).execute(
     // @ts-ignore
     sparqlClientStream,
     rdf
   );
 
-  const tree = toTree(results, dimensionIri, locale);
-  const dimensionValues = new Set(await dimensionValuesProm);
-  return mapTree(
+  const tree = toTree(results, rdimension.data.iri, locale);
+  const treeValues = new Set(getOptionsFromTree(tree).map((d) => d.value));
+  const dimensionValues = new Set(
+    dimensionValuesWithLabels.map((d) => `${d.value}`)
+  );
+  const prunedTree = mapTree(
     pruneTree(tree, (node) => dimensionValues.has(node.value)),
     (node) => ({ ...node, hasValue: dimensionValues.has(node.value) })
+  );
+  const additionalTreeValues = dimensionValuesWithLabels
+    .filter((d) => !treeValues.has(`${d.value}`))
+    .map((d) => ({
+      label: d.label || "-",
+      value: `${d.value}`,
+      depth: -1,
+      children: [],
+      dimensionIri: rdimension.data.iri,
+      hasValue: true,
+    }));
+
+  return sortTree(
+    [...prunedTree, ...additionalTreeValues],
+    (a, b) =>
+      descending(a.depth, b.depth) ||
+      ascending(a.position ?? 0, b.position ?? 0) ||
+      ascending(a.label.toLowerCase(), b.label.toLowerCase())
   );
 };

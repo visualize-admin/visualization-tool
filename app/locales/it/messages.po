@@ -29,8 +29,7 @@ msgstr "Sposta il filtro in basso"
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
-#: app/configurator/components/dataset-browse.tsx:1036
-#: app/configurator/components/filters.tsx:729
+#: app/configurator/components/dataset-browse.tsx:1043
 msgid "No results"
 msgstr "Nessun risultato"
 
@@ -42,11 +41,11 @@ msgstr "[ Nessuna descrizione ]"
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
-#: app/configurator/components/dataset-browse.tsx:967
+#: app/configurator/components/dataset-browse.tsx:974
 msgid "browse-panel.organizations"
 msgstr "Organizzazioni"
 
-#: app/configurator/components/dataset-browse.tsx:949
+#: app/configurator/components/dataset-browse.tsx:956
 msgid "browse-panel.themes"
 msgstr "Categorie"
 
@@ -54,11 +53,11 @@ msgstr "Categorie"
 msgid "browse.dataset.create-visualization"
 msgstr "Iniziare una visualizzazione"
 
-#: app/configurator/components/select-dataset-step.tsx:291
+#: app/configurator/components/select-dataset-step.tsx:295
 msgid "browse.datasets.all-datasets"
 msgstr "Tutti i set di dati"
 
-#: app/configurator/components/select-dataset-step.tsx:184
+#: app/configurator/components/select-dataset-step.tsx:189
 msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
@@ -347,33 +346,31 @@ msgstr "Descrizione"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
-#: app/configurator/components/filters.tsx:479
+#: app/configurator/components/filters.tsx:450
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
 
-#: app/configurator/components/filters.tsx:413
-#: app/configurator/components/filters.tsx:657
+#: app/configurator/components/filters.tsx:238
 msgid "controls.filter.select.all"
 msgstr "Seleziona tutti"
 
-#: app/configurator/components/filters.tsx:420
-#: app/configurator/components/filters.tsx:655
+#: app/configurator/components/filters.tsx:245
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
-#: app/configurator/components/filters.tsx:430
+#: app/configurator/components/filters.tsx:401
 msgid "controls.filters.select.filters"
 msgstr "Filtri"
 
-#: app/configurator/components/filters.tsx:460
+#: app/configurator/components/filters.tsx:431
 msgid "controls.filters.select.refresh-colors"
 msgstr "Aggiorna i colori"
 
-#: app/configurator/components/filters.tsx:444
+#: app/configurator/components/filters.tsx:415
 msgid "controls.filters.select.reset-colors"
 msgstr "Reimpostare i colori"
 
-#: app/configurator/components/filters.tsx:437
+#: app/configurator/components/filters.tsx:408
 msgid "controls.filters.select.selected-filters"
 msgstr "Filtri selezionati"
 
@@ -620,15 +617,15 @@ msgstr "Seleziona una misura"
 #~ msgid "controls.select.optional"
 #~ msgstr "facoltativo"
 
-#: app/configurator/components/filters.tsx:711
+#: app/configurator/components/filters.tsx:794
 msgid "controls.set-filters"
-msgstr "Filtrer"
+msgstr "Modificare i filtri"
 
-#: app/configurator/components/filters.tsx:718
+#: app/configurator/components/filters.tsx:801
 msgid "controls.set-filters-caption"
 msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dans la visualisation"
 
-#: app/configurator/components/filters.tsx:750
+#: app/configurator/components/filters.tsx:840
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
@@ -752,7 +749,7 @@ msgstr "Fonte di dati"
 msgid "data.source.notTrusted"
 msgstr "Questo grafico non utilizza una fonte di dati affidabile."
 
-#: app/configurator/components/select-dataset-step.tsx:217
+#: app/configurator/components/select-dataset-step.tsx:221
 msgid "dataset-preview.back-to-results"
 msgstr "Torna ai set di dati"
 
@@ -760,11 +757,11 @@ msgstr "Torna ai set di dati"
 msgid "dataset-preview.keywords"
 msgstr "Parole chiave"
 
-#: app/components/chart-footnotes.tsx:113
+#: app/components/chart-footnotes.tsx:117
 msgid "dataset.footnotes.dataset"
 msgstr "Set di dati"
 
-#: app/components/chart-footnotes.tsx:134
+#: app/components/chart-footnotes.tsx:138
 msgid "dataset.footnotes.updated"
 msgstr "Ultimo aggiornamento"
 
@@ -772,7 +769,7 @@ msgstr "Ultimo aggiornamento"
 msgid "dataset.hasImputedValues"
 msgstr "In questo set di dati mancano alcuni dati. Questi sono stati interpolati per colmare le lacune.."
 
-#: app/configurator/components/dataset-browse.tsx:440
+#: app/configurator/components/dataset-browse.tsx:447
 msgid "dataset.includeDrafts"
 msgstr "Includere le bozze"
 
@@ -788,7 +785,7 @@ msgstr "Punti di contatto"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Addizionali informazioni"
 
-#: app/components/chart-footnotes.tsx:200
+#: app/components/chart-footnotes.tsx:204
 #: app/configurator/components/dataset-metadata.tsx:114
 msgid "dataset.metadata.learnmore"
 msgstr "Ulteriori informazioni sul set di dati"
@@ -823,7 +820,7 @@ msgstr "Attenzione, questo set di dati è una bozza.<0/><1>Non utilizzare questo
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo grafico per un rapporto!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:428
+#: app/configurator/components/dataset-browse.tsx:435
 msgid "dataset.results"
 msgstr "{0, plural, zero {Nessun set di dati} one {# set di dati} other {# set di dati}}"
 
@@ -939,8 +936,8 @@ msgstr "Nascondi i filtri"
 msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
-#: app/components/header.tsx:198
-#: app/components/header.tsx:217
+#: app/components/header.tsx:201
+#: app/components/header.tsx:220
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
@@ -948,19 +945,19 @@ msgstr "Logo della Confederazione svizzera"
 #~ msgid "metadata.dataset"
 #~ msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:219
+#: app/components/chart-footnotes.tsx:223
 msgid "metadata.link.created.with.visualize"
 msgstr "Creato con visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:145
+#: app/components/chart-footnotes.tsx:149
 msgid "metadata.source"
 msgstr "Fonte"
 
-#: app/components/chart-footnotes.tsx:183
+#: app/components/chart-footnotes.tsx:187
 msgid "metadata.switch.chart"
 msgstr "Passare alla visualizzazione del grafico"
 
-#: app/components/chart-footnotes.tsx:185
+#: app/components/chart-footnotes.tsx:189
 msgid "metadata.switch.table"
 msgstr "Passare alla vista tabella"
 
@@ -1000,8 +997,9 @@ msgstr "Ecco una visualizzazione che ho creato usando visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
+#: app/configurator/components/dataset-browse.tsx:333
 #: app/configurator/components/dataset-browse.tsx:369
-#: app/configurator/components/filters.tsx:631
+#: app/configurator/components/filters.tsx:810
 msgid "select.controls.filters.search"
 msgstr "Cerca"
 
@@ -1009,8 +1007,8 @@ msgstr "Cerca"
 msgid "table.column.no"
 msgstr "Colonna {0}"
 
-#: app/components/chart-footnotes.tsx:115
-#: app/components/chart-footnotes.tsx:136
-#: app/components/chart-footnotes.tsx:147
+#: app/components/chart-footnotes.tsx:119
+#: app/components/chart-footnotes.tsx:140
+#: app/components/chart-footnotes.tsx:151
 msgid "typography.colon"
 msgstr ": "

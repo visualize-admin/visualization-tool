@@ -59,6 +59,7 @@ import { default as Forward } from "@/icons/components/IcForward";
 import { default as Google } from "@/icons/components/IcGoogle";
 import { default as HintWarning } from "@/icons/components/IcHintWarning";
 import { default as Image } from "@/icons/components/IcImage";
+import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
 import { default as Info } from "@/icons/components/IcInfo";
 import { default as Laptop } from "@/icons/components/IcLaptop";
 import { default as LeftAligned } from "@/icons/components/IcLeftAligned";
@@ -192,6 +193,7 @@ export const Icons = {
   google: Google,
   hintWarning: HintWarning,
   image: Image,
+  indeterminate: Indeterminate,
   info: Info,
   laptop: Laptop,
   leftAligned: LeftAligned,

@@ -1,4 +1,7 @@
+import sortBy from "lodash/sortBy";
+
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { dfs } from "@/utils/dfs";
 
 export const mapTree = (
   tree: HierarchyValue[],
@@ -10,6 +13,16 @@ export const mapTree = (
       children: t.children ? mapTree(t.children, cb) : undefined,
     };
   });
+};
+
+export const sortTree = (
+  tree: HierarchyValue[],
+  sorter: (a: HierarchyValue, b: HierarchyValue) => number
+): HierarchyValue[] => {
+  return [...tree].sort(sorter).map((d) => ({
+    ...d,
+    children: d.children ? sortTree(d.children, sorter) : undefined,
+  }));
 };
 
 const filterTreeHelper = (
@@ -142,4 +155,18 @@ export const makeTreeFromValues = (
     depth,
     children: [],
   }));
+};
+
+export const getOptionsFromTree = (tree: HierarchyValue[]) => {
+  return sortBy(
+    dfs(tree, (node, { parents }) => ({
+      ...node,
+      parents,
+    })),
+    (node) => joinParents(node.parents)
+  );
+};
+
+export const joinParents = (parents?: HierarchyValue[]) => {
+  return parents?.map((x) => x.label).join(" > ") || "";
 };
