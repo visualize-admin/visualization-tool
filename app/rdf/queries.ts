@@ -459,8 +459,6 @@ export const getCubeObservations = async ({
     disableDistinct: !!(!filters || Object.keys(filters).length === 0),
   });
 
-  // console.log({ query, observationsRaw });
-
   const serverFilter =
     Object.keys(serverFilters).length > 0
       ? makeServerFilter(serverFilters)
