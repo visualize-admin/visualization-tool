@@ -72,9 +72,6 @@ const usePieState = (
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getX = useSegment(fields.segment.componentIri);
 
-  // Sort data
-  const sortingOrder = fields.segment.sorting?.sortingOrder;
-
   // Data actually sorted in pie(),
   const plottableData = usePlottableData({
     data: data,
@@ -155,7 +152,6 @@ const usePieState = (
     plottableData,
     segmentDimension,
     segmentValuesByLabel,
-    sortingOrder,
   ]);
 
   const getSegmentLabel = useCallback(

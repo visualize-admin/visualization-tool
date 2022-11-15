@@ -1060,19 +1060,19 @@ const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
     position: "relative",
     color: theme.palette.grey[700],
-    cursor: "pointer",
     textAlign: "left",
     padding: `${theme.spacing(4)} 0`,
     borderTopColor: theme.palette.grey[300],
     borderTopStyle: "solid",
     borderTopWidth: 1,
     boxShadow: "none",
+  },
 
-    "& .MuiTypography-body1": {
-      transition: "font-weight 0.1s ease",
-    },
-    "&:hover .MuiTypography-body1": {
-      fontWeight: "bold",
+  title: {
+    display: "inline-block",
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "underline",
     },
   },
 }));
@@ -1138,14 +1138,9 @@ export const DatasetResult = ({
   });
   const classes = useResultStyles();
   return (
-    <MotionCard
-      {...smoothPresenceProps}
-      onClick={handleClick}
-      elevation={1}
-      className={classes.root}
-    >
-      <Stack spacing={2} sx={{ mb: 6 }}>
-        <Flex sx={{ justifyContent: "space-between" }}>
+    <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
+      <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
+        <Flex sx={{ justifyContent: "space-between", width: "100%" }}>
           <Typography variant="body2" fontWeight={700} gutterBottom={false}>
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
@@ -1155,7 +1150,13 @@ export const DatasetResult = ({
             </Tag>
           )}
         </Flex>
-        <Typography component="div" variant="body1" color="primary.main">
+        <Typography
+          component="div"
+          variant="body1"
+          onClick={handleClick}
+          color="primary.main"
+          className={classes.title}
+        >
           {highlightedTitle ? (
             <Box
               component="span"

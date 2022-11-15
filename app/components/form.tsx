@@ -4,6 +4,7 @@ import {
   Box,
   BoxProps,
   ButtonBase,
+  Paper,
   Checkbox as MUICheckbox,
   InputProps,
   FormControlLabel,
@@ -19,11 +20,16 @@ import {
   MenuItem,
   TypographyProps,
   Stack,
+  CircularProgress,
+  styled,
+  PaperProps,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
 import flatten from "lodash/flatten";
+import React, { useContext } from "react";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
+import { forwardRef } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
 import {
@@ -253,6 +259,54 @@ export type Group = {
   value: string;
 };
 
+// Copied over from https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Menu/Menu.js
+const MenuPaper = styled(Paper, {
+  name: "MuiMenu",
+  slot: "Paper",
+  overridesResolver: (_props: PaperProps, styles) => styles.paper,
+})({
+  // specZ: The maximum height of a simple menu should be one or more rows less than the view
+  // height. This ensures a tapable area outside of the simple menu with which to dismiss
+  // the menu.
+  maxHeight: "calc(100% - 96px)",
+  // Add iOS momentum scrolling for iOS < 13.0
+  WebkitOverflowScrolling: "touch",
+});
+
+const LoadingMenuPaperContext = React.createContext(
+  false as boolean | undefined
+);
+
+/**
+ * Shows a loading indicator when hierarchy is loading
+ */
+const LoadingMenuPaper = forwardRef<HTMLDivElement>(
+  (props: PaperProps, ref) => {
+    const loading = useContext(LoadingMenuPaperContext);
+    return (
+      <MenuPaper {...props} ref={ref}>
+        {props.children}
+        {loading ? (
+          <Box
+            px={4}
+            py={2}
+            sx={{
+              position: "sticky",
+              bottom: 0,
+              backgroundColor: "warning.light",
+            }}
+          >
+            <Typography variant="body2">
+              <Trans id="hint.loading.data" />
+              <CircularProgress size={12} color="inherit" />
+            </Typography>
+          </Box>
+        ) : null}
+      </MenuPaper>
+    );
+  }
+);
+
 export const Select = ({
   label,
   id,
@@ -265,6 +319,7 @@ export const Select = ({
   optionGroups,
   tooltipText,
   onOpen,
+  loading,
 }: {
   id: string;
   options: Option[];
@@ -274,6 +329,7 @@ export const Select = ({
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, Option[]][];
   tooltipText?: string;
+  loading?: boolean;
 } & SelectProps) => {
   const locale = useLocale();
 
@@ -294,42 +350,50 @@ export const Select = ({
   }, [optionGroups, sortOptions, locale, options]);
 
   return (
-    <Box>
-      {label && (
-        <Label htmlFor={id} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
-          {label}
-          {controls}
-        </Label>
-      )}
-      <MUISelect
-        sx={{
-          width: "100%",
-        }}
-        id={id}
-        name={id}
-        onChange={onChange}
-        value={value}
-        disabled={disabled}
-        onOpen={onOpen}
-      >
-        {sortedOptions.map((opt) => {
-          if (!opt.value) {
-            return null;
-          }
-          return opt.type === "group" ? (
-            <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
-          ) : (
-            <MenuItem
-              key={opt.value}
-              disabled={opt.disabled}
-              value={opt.value ?? undefined}
-            >
-              {opt.label}
-            </MenuItem>
-          );
-        })}
-      </MUISelect>
-    </Box>
+    <LoadingMenuPaperContext.Provider value={loading}>
+      <Box>
+        {label && (
+          <Label htmlFor={id} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
+            {label}
+            {controls}
+          </Label>
+        )}
+        <MUISelect
+          sx={{
+            width: "100%",
+          }}
+          id={id}
+          name={id}
+          onChange={onChange}
+          value={value}
+          disabled={disabled}
+          onOpen={onOpen}
+          MenuProps={{
+            PaperProps: {
+              // @ts-ignore - It works
+              component: LoadingMenuPaper,
+            },
+          }}
+        >
+          {sortedOptions.map((opt) => {
+            if (!opt.value) {
+              return null;
+            }
+            return opt.type === "group" ? (
+              <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
+            ) : (
+              <MenuItem
+                key={opt.value}
+                disabled={opt.disabled}
+                value={opt.value ?? undefined}
+              >
+                {opt.label}
+              </MenuItem>
+            );
+          })}
+        </MUISelect>
+      </Box>
+    </LoadingMenuPaperContext.Provider>
   );
 };
 
