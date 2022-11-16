@@ -18,11 +18,11 @@ describe("Filters", () => {
 
     const texts = await labels.allTextContents();
     expect(texts).toEqual([
-      "1. production region",
-      "2. stand structure",
-      "3. evaluation type",
-      "4. unit of evaluation",
-      "5. grid",
+      "1. Production region",
+      "2. Evaluation type",
+      "3. Stand structure",
+      "4. Grid",
+      "5. Inventory",
     ]);
   });
 
@@ -32,6 +32,8 @@ describe("Filters", () => {
     selectors,
     within,
   }) => {
+    test.slow();
+
     await page.goto(
       "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
     );
