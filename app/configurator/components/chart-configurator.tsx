@@ -129,11 +129,14 @@ const DataFilterSelectGeneric = ({
     } else if (dimension.timeUnit === "Month") {
       return <DataFilterSelect {...sharedProps} options={values} />;
     } else {
+      const from = values[0].value;
+      const to = values[values.length - 1]?.value || from;
+
       return (
         <DataFilterSelectTime
           {...sharedProps}
-          from={values[0].value}
-          to={values[1].value}
+          from={from}
+          to={to}
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
         />
