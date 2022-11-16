@@ -1,31 +1,32 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of what the bug is. If it seems connected to some data problem (missing values, wrong parsing) please first check the cube in Cube Checker ([int](https://int.visualize.admin.ch/_cube-checker), [prod](https://visualize.admin.ch/_cube-checker)) to see if everything is fine there.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+2. Click on '...'
+3. Scroll down to '...'
 4. See error
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Screenshots or video**
+If applicable, add screenshots or a short video to help put your problem into a context.
 
 **Environment (please complete the following information):**
- - Visualize environment and version: [e.g. INT v3.2.6]
- - Browser and version [e.g. Chrome 95]
+
+- Visualize environment and version: [e.g. INT v3.12.0]
+- Browser and version [e.g. Chrome 107]
 
 **Additional context**
 Add any other context about the problem here.
