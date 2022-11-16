@@ -491,8 +491,9 @@ const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   },
   "& > .MuiAccordionSummary-content": {
     alignItems: "center",
-    marginTop: 6,
-    marginBottom: 6,
+    marginTop: 0,
+    marginBottom: 0,
+    minHeight: 32,
   },
   "&:hover": {
     backgroundColor: theme.palette.primary.light,
@@ -553,6 +554,8 @@ const TreeAccordion = ({
           sx={{
             alignSelf: "flex-start",
             visibility: expandable ? "visible" : "hidden",
+            mt: 1,
+            p: 1,
           }}
         >
           <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
