@@ -61,19 +61,36 @@ const useTreeItemStyles = makeStyles<Theme>((theme) => ({
       },
     },
   },
+  // Necessary to use $content below
+  content: {},
   root: {
     "&:hover > div > $iconContainer": {
       opacity: 1,
+    },
+    "--depth": 1,
+    "& &": {
+      "--depth": 2,
+    },
+    "& & &": {
+      "--depth": 3,
+    },
+    "& & & &": {
+      "--depth": 4,
+    },
+    "& & & & &": {
+      "--depth": 5,
+    },
+    "& $content": {
+      paddingLeft: "calc(var(--depth) * 10px)",
     },
   },
   iconContainer: {
     opacity: 0.5,
   },
   group: {
+    // The padding is done on the content inside the row for the hover
+    // effect to extend until the edge of the popover
     marginLeft: 0,
-  },
-  content: {
-    paddingLeft: theme.spacing(2),
   },
 }));
 
