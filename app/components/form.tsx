@@ -11,6 +11,7 @@ import {
   Input as MUIInput,
   Radio as MUIRadio,
   Select as MUISelect,
+  Skeleton,
   Slider as MUISlider,
   Switch as MUISwitch,
   SelectProps,
@@ -20,7 +21,6 @@ import {
   MenuItem,
   TypographyProps,
   Stack,
-  CircularProgress,
   styled,
   PaperProps,
 } from "@mui/material";
@@ -285,23 +285,17 @@ const LoadingMenuPaper = forwardRef<HTMLDivElement>(
     const loading = useContext(LoadingMenuPaperContext);
     return (
       <MenuPaper {...props} ref={ref}>
-        {props.children}
         {loading ? (
-          <Box
-            px={4}
-            py={2}
-            sx={{
-              position: "sticky",
-              bottom: 0,
-              backgroundColor: "warning.light",
-            }}
-          >
-            <Typography variant="body2">
+          <Box px={4} py={5}>
+            <Typography variant="body2" sx={{ mb: 2 }} color="text.secondary">
               <Trans id="hint.loading.data" />
-              <CircularProgress size={12} color="inherit" />
             </Typography>
+            <Skeleton sx={{ bgcolor: "grey.300" }} />
+            <Skeleton sx={{ bgcolor: "grey.300" }} />
           </Box>
-        ) : null}
+        ) : (
+          props.children
+        )}
       </MenuPaper>
     );
   }
