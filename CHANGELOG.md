@@ -9,7 +9,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Enhancements:
+  - Cube Checker:
+    - Introduced a Temporal dimensions scaleType check
+- Bug fixes:
+  - Correctly retrieve min & max values for Temporal dimensions when scaleType is not equal to Interval
 
 ## [3.12.0] - 2022-11-15
 

@@ -85,7 +85,6 @@ test("Segment sorting with hierarchy", async ({
   selectors,
   screen,
   within,
-  page,
 }) => {
   await actions.chart.createFrom(
     "https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1",
@@ -100,7 +99,7 @@ test("Segment sorting with hierarchy", async ({
     .getByText("None")
     .click();
 
-  await actions.mui.selectOption("production region");
+  await actions.mui.selectOption("Production region");
   await selectors.chart.loaded();
 
   await selectors.edition.filtersLoaded();
@@ -109,7 +108,7 @@ test("Segment sorting with hierarchy", async ({
   await within(await selectors.chart.colorLegend()).findByText(
     "Southern Alps",
     undefined,
-    { timeout: 5000 }
+    { timeout: 10_000 }
   );
 
   const legendItems = await selectors.chart.colorLegendItems();
