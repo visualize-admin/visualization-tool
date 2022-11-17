@@ -12,6 +12,7 @@ import {
   PopoverActions,
   useEventCallback,
   OutlinedInput,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
@@ -51,11 +52,52 @@ const useStyles = makeStyles<Theme, { disabled?: boolean; open?: boolean }>(
 
 const useTreeItemStyles = makeStyles<Theme>((theme) => ({
   label: {
+    display: "flex",
     fontSize: theme.typography.body2.fontSize,
 
     [theme.breakpoints.up("xs")]: {
       "&": {
         fontSize: theme.typography.body2.fontSize,
+      },
+    },
+  },
+  root: {
+    "&:hover > div > $iconContainer": {
+      opacity: 1,
+    },
+  },
+  iconContainer: {
+    opacity: 0.5,
+  },
+  group: {
+    marginLeft: 0,
+  },
+  content: {
+    paddingLeft: theme.spacing(2),
+  },
+}));
+
+const useCustomTreeItemStyles = makeStyles<
+  Theme,
+  {
+    selectable?: boolean;
+  }
+>((theme) => ({
+  action: {
+    color: theme.palette.text.primary,
+    opacity: 0.5,
+    marginLeft: "1rem",
+    "&:hover": {
+      opacity: 1,
+      color: theme.palette.primary.main,
+    },
+    transform: "translateX(0)",
+    transition: "transform 0.3s ease, opacity 0.3s ease",
+  },
+  root: {
+    "&:hover": {
+      "& $action": {
+        transform: "translateX(0)",
       },
     },
   },
@@ -74,6 +116,7 @@ const TreeItemContent = React.forwardRef<
     nodeId: string;
     onMouseDown?: React.MouseEventHandler;
     "data-selectable"?: boolean;
+    "data-children"?: boolean;
   }
 >(function TreeItemContent(props, ref) {
   const {
@@ -90,7 +133,8 @@ const TreeItemContent = React.forwardRef<
     ...other
   } = props;
 
-  const selectable = other["data-selectable"];
+  const hasChildren = other["data-children"];
+  const selectable = other["data-selectable"] !== false;
 
   const {
     disabled,
@@ -112,9 +156,20 @@ const TreeItemContent = React.forwardRef<
     }
   });
 
+  const ownClasses = useCustomTreeItemStyles({
+    selectable,
+  });
+
   const handleClickLabel = useEvent((event: React.MouseEvent) => {
+    handleExpansion(event);
+  });
+
+  const handleClickIcon = useEvent((event: React.MouseEvent) => {
+    handleExpansion(event);
+  });
+
+  const handleSelect = useEvent((event: React.MouseEvent) => {
     if (selectable === false) {
-      handleExpansion(event);
       return;
     }
     preventSelection(event);
@@ -125,14 +180,10 @@ const TreeItemContent = React.forwardRef<
     }
   });
 
-  const handleClickIcon = useEvent((event: React.MouseEvent) => {
-    handleExpansion(event);
-  });
-
   return (
     /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions -- Key event is handled by the TreeView */
     <div
-      className={clsx(className, classes.root, {
+      className={clsx(className, classes.root, ownClasses.root, {
         [classes.expanded]: expanded,
         [classes.selected]: selected,
         [classes.focused]: focused,
@@ -145,8 +196,16 @@ const TreeItemContent = React.forwardRef<
       <div onClick={handleClickIcon} className={clsx(classes.iconContainer)}>
         {icon}
       </div>
-      <div onClick={handleClickLabel} className={classes.label}>
+      <div
+        onClick={selectable && !hasChildren ? handleSelect : handleClickLabel}
+        className={classes.label}
+      >
         {label}
+        <div className={ownClasses.action} onClick={handleSelect}>
+          <Typography variant="caption">
+            {selectable && hasChildren ? "Select" : ""}
+          </Typography>
+        </div>
       </div>
     </div>
   );
@@ -252,6 +311,7 @@ function SelectTree({
                   // @ts-expect-error - TS says we cannot put a data attribute
                   // on the HTML element, but we know we can.
                   "data-selectable": selectable,
+                  "data-children": children && children.length > 0,
                 }}
               >
                 {children ? renderTreeContent(children) : null}
@@ -338,7 +398,6 @@ function SelectTree({
           onNodeToggle={handleNodeToggle}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
-          // onNodeSelect={handleNodeSelect}
           sx={{ flexGrow: 1, overflowY: "auto", pb: 2, "user-select": "none" }}
         >
           {renderTreeContent(options)}

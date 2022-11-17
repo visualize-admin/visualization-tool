@@ -45,19 +45,29 @@ const SelectTreeExample = () => {
       options={[
         {
           value: "1",
-          label: "Applications",
+          label: "Root",
           children: [{ value: "2", label: "Calendar" }],
         },
         {
           value: "5",
-          label: "Documents",
+          label: "Switzerland",
           selectable: false,
           children: [
-            { value: "10", label: "OSS" },
+            { value: "10", label: "Bern" },
             {
               value: "6",
-              label: "MUI",
-              children: [{ value: "8", label: "index.js" }],
+              label: "Zürich",
+              children: [
+                {
+                  value: "9",
+                  label: "Bürkliplatz",
+                  children: [{ value: "7", label: "Pavillion" }],
+                },
+                {
+                  value: "8",
+                  label: "Langstrasse",
+                },
+              ],
             },
           ],
         },
@@ -264,7 +274,7 @@ ${(
       </ReactSpecimen>
     )}
 
-    ## Select tree
+  ## Select tree
 
     ${(
       <ReactSpecimen>
