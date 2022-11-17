@@ -298,21 +298,17 @@ function SelectTree({
   }, [options]);
 
   const defaultExpanded = useMemo(() => {
-    const res = [];
+    if (!value && options.length > 0) {
+      return options[0].value ? [options[0].value] : [];
+    }
+    const res = value ? [value] : [];
     let cur = value;
     const parents = parentsRef.current;
     while (cur && parents[cur]) {
       res.push(parents[cur]);
       cur = parents[cur];
     }
-    if (res.length === 0) {
-      const children = options[0].children;
-      if (children) {
-        res.push(options[0].value);
-      }
-    }
 
-    console.log("expanded", res);
     return res;
   }, [value, options]);
 
