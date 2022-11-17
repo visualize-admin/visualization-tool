@@ -179,7 +179,9 @@ const TreeItemContent = React.forwardRef<
   });
 
   const handleClickLabel = useEvent((event: React.MouseEvent) => {
-    handleExpansion(event);
+    if (!event.defaultPrevented) {
+      handleExpansion(event);
+    }
   });
 
   const handleClickIcon = useEvent((event: React.MouseEvent) => {
@@ -187,6 +189,7 @@ const TreeItemContent = React.forwardRef<
   });
 
   const handleSelect = useEvent((event: React.MouseEvent) => {
+    event.preventDefault();
     if (selectable === false) {
       return;
     }
