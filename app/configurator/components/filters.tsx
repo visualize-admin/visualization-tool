@@ -41,7 +41,6 @@ import {
   isConfiguring,
   MultiFilterContextProvider,
   useConfiguratorState,
-  useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
 import { ConfiguratorDrawer } from "@/configurator/components/drawer";
@@ -215,8 +214,6 @@ const MultiFilterContent = ({
 
   const classes = useStyles();
 
-  const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-
   const { flatOptions, optionsByValue } = useMemo(() => {
     const flatOptions = getOptionsFromTree(tree);
     const optionsByValue = keyBy(flatOptions, (x) => x.value);
@@ -341,24 +338,16 @@ const MultiFilterContent = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Flex justifyContent="space-between" gap="0.75rem">
-          <FilterControls
-            selectAll={selectAll}
-            selectNone={selectNone}
-            allKeysLength={allValues.length}
-            activeKeysLength={activeKeys.size}
-          />
-          <div>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={handleOpenAutocomplete}
-            >
-              <Trans id="controls.filters.select.filters">Filters</Trans>
-            </Button>
-          </div>
-        </Flex>
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={handleOpenAutocomplete}
+          fullWidth
+          sx={{ justifyContent: "center", mb: 2 }}
+        >
+          <Trans id="controls.set-filters">Edit filters</Trans>
+        </Button>
         <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
         <Flex justifyContent="space-between">
           <Typography variant="h5">
