@@ -21,7 +21,7 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
     .click();
 
   // Select production region as origin for symbols
-  await actions.mui.selectOption("production region");
+  await actions.mui.selectOption("Production region");
 
   await selectors.chart.loaded();
 
@@ -30,7 +30,7 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
     .click();
 
   // Selects production region for color mapping
-  await actions.mui.selectOption("production region");
+  await actions.mui.selectOption("Production region");
 
   const legendItems = await selectors.chart.colorLegendItems();
   expect(await legendItems.count()).toBe(6);

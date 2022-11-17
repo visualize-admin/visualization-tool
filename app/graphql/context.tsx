@@ -20,7 +20,7 @@ import { RequestQueryMeta } from "./query-meta";
 
 const MAX_BATCH_SIZE = 500;
 
-const getRawCube = async (sourceUrl: string, iri: string) => {
+export const getRawCube = async (sourceUrl: string, iri: string) => {
   const source = createSource({ endpointUrl: sourceUrl });
   const cube = await source.cube(iri);
   return cube;

@@ -8,9 +8,10 @@ import { GetServerSideProps, NextPage } from "next";
 import rdf from "rdf-ext";
 import React from "react";
 import StreamClient from "sparql-http-client";
+import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ContentLayout } from "@/components/layout";
-import { DataSource } from "@/configurator";
+import { DataSource } from "@/configurator/config-types";
 import {
   DEFAULT_DATA_SOURCE,
   parseDataSource,
@@ -18,6 +19,9 @@ import {
   useDataSourceState,
 } from "@/domain/datasource";
 import { SOURCES_BY_LABEL } from "@/domain/datasource/constants";
+import { getRawCube } from "@/graphql/context";
+import { ResolvedDimension } from "@/graphql/shared-types";
+import { getCubeDimensions as _getCubeDimensions } from "@/rdf/queries";
 import { fromStream } from "@/rdf/sparql-client";
 
 import * as ns from "../rdf/namespace";
@@ -32,6 +36,11 @@ type CheckRunContext = {
   cubeIri: string;
   loaders: {
     describeCubes: DataLoader<string, AnyPointer, unknown>;
+    getCubeDimensions: DataLoader<
+      string,
+      ResolvedDimension[] | undefined,
+      unknown
+    >;
   };
 };
 
@@ -56,6 +65,26 @@ const describeCubes = async (
       const stream = await query.execute(sparqlClientStream.query);
       const dataset = await fromStream(rdf.dataset(), stream);
       return clownface({ dataset });
+    })
+  );
+};
+
+const getCubeDimensions = async (
+  sparqlClient: ParsingClient,
+  sourceUrl: string,
+  cubeIris: readonly string[]
+) => {
+  return Promise.all(
+    cubeIris.map(async (cubeIri) => {
+      const rawCube = await getRawCube(sourceUrl, cubeIri);
+
+      if (rawCube) {
+        return await _getCubeDimensions({
+          cube: rawCube,
+          locale: "en",
+          sparqlClient,
+        });
+      }
     })
   );
 };
@@ -153,6 +182,37 @@ const checks: Check[] = [
       }
     },
   },
+  {
+    name: "Has correct scale type for Temporal dimensions",
+    description:
+      "All Temporal dimensions should have Interval scale type (qudt:scaleType)",
+    run: async ({ cubeIri, loaders }) => {
+      const dimensions = await loaders.getCubeDimensions.load(cubeIri);
+      const temporalDimensions = dimensions?.filter(
+        (d) => d.data.dataKind === "Time"
+      );
+
+      if (temporalDimensions) {
+        const ok = temporalDimensions.every(
+          (d) => d.data.scaleType === "Interval"
+        );
+
+        if (ok) {
+          return {
+            ok,
+            message: "All Temporal dimensions have Interval scale type",
+          };
+        } else {
+          return {
+            ok,
+            message: "Not all Temporal dimensions have Interval scale type",
+          };
+        }
+      } else {
+        return { ok: true, message: "No Temporal dimensions in cube" };
+      }
+    },
+  },
 ];
 
 const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
@@ -244,6 +304,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       );
     }
 
+    const sparqlClient = new ParsingClient({
+      endpointUrl: datasource.url,
+    });
     const sparqlClientStream = new StreamClient({
       endpointUrl: datasource.url,
     });
@@ -253,6 +316,13 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       loaders: {
         describeCubes: new DataLoader<string, AnyPointer>((cubeIri) =>
           describeCubes(sparqlClientStream, cubeIri)
+        ),
+        getCubeDimensions: new DataLoader<
+          string,
+          ResolvedDimension[] | undefined,
+          unknown
+        >((cubeIri) =>
+          getCubeDimensions(sparqlClient, datasource.url, cubeIri)
         ),
       },
     };
