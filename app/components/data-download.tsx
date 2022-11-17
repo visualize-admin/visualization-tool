@@ -177,7 +177,7 @@ const DataDownloadInnerMenu = ({
           state.isDownloading ? <CircularProgress /> : <Icon name="download" />
         }
         {...bindHover(popupState)}
-        sx={{ p: 0 }}
+        sx={{ p: 0, ml: "2px" }}
       >
         <Typography variant="caption">
           <Trans id="button.download.data">Download data</Trans>
