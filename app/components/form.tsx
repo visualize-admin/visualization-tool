@@ -318,6 +318,8 @@ export const Select = ({
   controls,
   optionGroups,
   tooltipText,
+  open,
+  onClose,
   onOpen,
   loading,
 }: {
@@ -367,7 +369,9 @@ export const Select = ({
           onChange={onChange}
           value={value}
           disabled={disabled}
+          open={open}
           onOpen={onOpen}
+          onClose={onClose}
           MenuProps={{
             PaperProps: {
               // @ts-ignore - It works

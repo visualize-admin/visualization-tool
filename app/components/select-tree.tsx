@@ -20,6 +20,7 @@ import useId from "@mui/utils/useId";
 import clsx from "clsx";
 import { useCallback, useMemo, useState } from "react";
 import * as React from "react";
+import { useEffect } from "react";
 
 import { Label } from "@/components/form";
 import { Icon } from "@/icons";
@@ -253,6 +254,9 @@ export type SelectTreeProps = {
   disabled?: boolean;
   tooltipText?: string;
   label?: string;
+  onOpen?: () => void;
+  onClose?: () => void;
+  open?: boolean;
 };
 
 function SelectTree({
@@ -263,6 +267,9 @@ function SelectTree({
   tooltipText,
   disabled,
   controls,
+  onOpen,
+  onClose,
+  open,
 }: SelectTreeProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
@@ -270,11 +277,13 @@ function SelectTree({
   const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(ev.currentTarget);
     setMinMenuWidth(ev.currentTarget.clientWidth);
+    onOpen?.();
   });
+
   const handleClose = useEventCallback(() => {
     setAnchorEl(undefined);
+    onClose?.();
   });
-  const open = !!anchorEl;
   const classes = useStyles({ disabled, open });
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
@@ -390,6 +399,14 @@ function SelectTree({
   );
 
   const id = useId();
+  const inputRef = React.useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const inputNode = inputRef.current;
+    if (inputNode) {
+      setMinMenuWidth(inputNode.clientWidth);
+    }
+  }, [open]);
 
   return (
     <div>
@@ -403,6 +420,7 @@ function SelectTree({
         readOnly
         value={value ? labelsByValue[value] : undefined}
         disabled={disabled}
+        ref={inputRef}
         size="small"
         className={classes.input}
         onClick={disabled ? undefined : handleClick}
@@ -414,7 +432,7 @@ function SelectTree({
           horizontal: "left",
         }}
         anchorEl={anchorEl}
-        open={open}
+        open={open !== undefined ? open : !!anchorEl}
         onClose={handleClose}
         action={menuRef}
         PaperProps={paperProps}

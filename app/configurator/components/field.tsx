@@ -68,6 +68,8 @@ import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
+import useDisclosure from "./use-disclosure";
+
 const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
   root: {
     color: theme.palette.primary.main,
@@ -216,11 +218,24 @@ export const DataFilterSelect = ({
     return hierarchyToOptions(hierarchy);
   }, [hierarchy]);
 
+  const { open, close, isOpen } = useDisclosure();
+  const handleOpen = () => {
+    open();
+    onOpen?.();
+  };
+
+  const handleClose = () => {
+    close();
+  };
+
   if (hierarchy && hierarchyOptions) {
     return (
       <SelectTree
         label={isOptional ? `${label} (${optionalLabel})` : label}
         options={hierarchyOptions}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        open={isOpen}
         disabled={disabled}
         controls={controls}
         tooltipText={tooltipText}
@@ -238,7 +253,9 @@ export const DataFilterSelect = ({
       sortOptions={false}
       controls={controls}
       tooltipText={tooltipText}
-      onOpen={onOpen}
+      open={isOpen}
+      onClose={handleClose}
+      onOpen={handleOpen}
       loading={loading}
       {...fieldProps}
     />
