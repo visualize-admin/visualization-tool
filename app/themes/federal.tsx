@@ -231,31 +231,6 @@ theme.components = {
         },
       },
       {
-        props: { variant: "selectColorPicker" },
-        style: {
-          color: "grey.700",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          bg: "monochrome100",
-          p: 1,
-          height: "40px",
-          borderWidth: "1px",
-          borderStyle: "solid",
-          borderColor: theme.palette.divider,
-          ":hover": {
-            bg: "monochrome100",
-          },
-          ":active": {
-            backgroundColor: "grey.100",
-          },
-          ":disabled": {
-            cursor: "initial",
-            backgroundColor: "muted.main",
-          },
-        },
-      },
-      {
         props: { variant: "inline" },
         style: {
           backgroundColor: "transparent",
