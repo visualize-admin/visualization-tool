@@ -306,7 +306,7 @@ const DataFilterHierarchyDimension = ({
       opts = dimensionValues;
     }
     if (!isKeyDimension) {
-      opts.push({
+      opts.unshift({
         value: FIELD_VALUE_NONE,
         label: noneLabel,
         isNoneValue: true,
