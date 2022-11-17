@@ -13,6 +13,7 @@ import {
   useEventCallback,
   OutlinedInput,
   Typography,
+  Collapse,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
@@ -274,6 +275,7 @@ function SelectTree({
   const classes = useStyles({ disabled, open });
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
+
   const labelsByValue = useMemo(() => {
     parentsRef.current = {} as Record<NodeId, NodeId>;
     const res: Record<string, string> = {};
@@ -309,6 +311,17 @@ function SelectTree({
   });
 
   const treeItemClasses = useTreeItemStyles();
+  const treeItemTransitionProps = useMemo(
+    () => ({
+      onEntered: () => {
+        menuRef.current?.updatePosition();
+      },
+      onExited: () => {
+        menuRef.current?.updatePosition();
+      },
+    }),
+    []
+  );
   const renderTreeContent = useCallback(
     (nodesData: Tree) => {
       return (
@@ -324,6 +337,8 @@ function SelectTree({
                   children && children.length > 0 ? <ChevronRightIcon /> : null
                 }
                 classes={treeItemClasses}
+                TransitionComponent={Collapse}
+                TransitionProps={treeItemTransitionProps}
                 ContentProps={{
                   // @ts-expect-error - TS says we cannot put a data attribute
                   // on the HTML element, but we know we can.
@@ -338,21 +353,10 @@ function SelectTree({
         </>
       );
     },
-    [defaultExpanded, treeItemClasses]
+    [defaultExpanded, treeItemClasses, treeItemTransitionProps]
   );
 
   const menuRef = React.useRef<PopoverActions>(null);
-  const handleNodeToggle = () => {
-    setTimeout(() => {
-      menuRef.current?.updatePosition();
-    }, 500);
-    setTimeout(() => {
-      menuRef.current?.updatePosition();
-    }, 1000);
-    setTimeout(() => {
-      menuRef.current?.updatePosition();
-    }, 2000);
-  };
 
   const paperProps = useMemo(() => {
     return {
@@ -362,8 +366,8 @@ function SelectTree({
     };
   }, [minMenuWidth]);
 
-  const transitionProps = useMemo(() => {
-    return {
+  const menuTransitionProps = useMemo(
+    () => ({
       /**
        * Adds transition for top, as we need to reposition the paper when a node is toggled.
        * This needs to be done like this since the Grow transition component imperatively
@@ -374,8 +378,9 @@ function SelectTree({
           node.style.transition = `${node.style.transition}, top 158ms cubic-bezier(0.4, 0, 0.2, 1)`;
         }
       },
-    };
-  }, []);
+    }),
+    []
+  );
 
   const id = useId();
 
@@ -406,13 +411,12 @@ function SelectTree({
         onClose={handleClose}
         action={menuRef}
         PaperProps={paperProps}
-        TransitionProps={transitionProps}
+        TransitionProps={menuTransitionProps}
       >
         <TreeView
           defaultSelected={value}
           defaultExpanded={defaultExpanded}
           onNodeSelect={handleNodeSelect}
-          onNodeToggle={handleNodeToggle}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           sx={{ flexGrow: 1, overflowY: "auto", pb: 2, "user-select": "none" }}
