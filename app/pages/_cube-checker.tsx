@@ -213,6 +213,37 @@ const checks: Check[] = [
       }
     },
   },
+  {
+    name: "Has timeFormat defined for Temporal dimensions",
+    description:
+      "All Temporal dimensions must have timeFormat defined (Time precision)",
+    run: async ({ cubeIri, loaders }) => {
+      const dimensions = await loaders.getCubeDimensions.load(cubeIri);
+      const temporalDimensions = dimensions?.filter(
+        (d) => d.data.dataKind === "Time"
+      );
+
+      if (temporalDimensions) {
+        const ok = temporalDimensions.every(
+          (d) => d.data.timeFormat !== undefined
+        );
+
+        if (ok) {
+          return {
+            ok,
+            message: "All Temporal dimensions have time format defined",
+          };
+        } else {
+          return {
+            ok,
+            message: "Not all Temporal dimensions have time format defined",
+          };
+        }
+      } else {
+        return { ok: true, message: "No Temporal dimensions in cube" };
+      }
+    },
+  },
 ];
 
 const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
