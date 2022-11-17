@@ -302,8 +302,16 @@ function SelectTree({
       res.push(parents[cur]);
       cur = parents[cur];
     }
+    if (res.length === 0) {
+      const children = options[0].children;
+      if (children) {
+        res.push(options[0].value);
+      }
+    }
+
+    console.log("expanded", res);
     return res;
-  }, [value]);
+  }, [value, options]);
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
     onChange({ target: { value: value } });
