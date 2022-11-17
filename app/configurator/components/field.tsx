@@ -3,6 +3,7 @@ import { CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
+import orderBy from "lodash/orderBy";
 import React, {
   ChangeEvent,
   ReactNode,
@@ -61,6 +62,7 @@ import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -135,9 +137,8 @@ export const OnOffControlTabField = ({
 };
 
 export const DataFilterSelect = ({
-  dimensionIri,
+  dimension,
   label,
-  options,
   id,
   disabled,
   isOptional,
@@ -147,9 +148,8 @@ export const DataFilterSelect = ({
   onOpen,
   loading,
 }: {
-  dimensionIri: string;
+  dimension: DimensionMetadataFragment;
   label: string;
-  options: Option[];
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
@@ -159,7 +159,7 @@ export const DataFilterSelect = ({
   onOpen?: () => void;
   loading?: boolean;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri });
+  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -171,7 +171,14 @@ export const DataFilterSelect = ({
     message: `optional`,
   });
 
-  const allOptions = useMemo(() => {
+  const sortedValues = useMemo(() => {
+    const sorters = makeDimensionValueSorters(dimension);
+    const sortedValues = orderBy(dimension.values, sorters);
+
+    return sortedValues;
+  }, [dimension]);
+
+  const allValues = useMemo(() => {
     return isOptional
       ? [
           {
@@ -179,17 +186,18 @@ export const DataFilterSelect = ({
             label: noneLabel,
             isNoneValue: true,
           },
-          ...options,
+          ...sortedValues,
         ]
-      : options;
-  }, [isOptional, options, noneLabel]);
+      : sortedValues;
+  }, [isOptional, sortedValues, noneLabel]);
 
   return (
     <Select
       id={id}
       label={isOptional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
-      options={allOptions}
+      options={allValues}
+      sortOptions={false}
       controls={controls}
       optionGroups={optionGroups}
       tooltipText={tooltipText}
@@ -204,21 +212,19 @@ const formatDate = timeFormat("%Y-%m-%d");
 const parseDate = timeParse("%Y-%m-%d");
 
 export const DataFilterSelectDay = ({
-  dimensionIri,
+  dimension,
   label,
-  options,
   disabled,
   isOptional,
   controls,
 }: {
-  dimensionIri: string;
+  dimension: DimensionMetadataFragment;
   label: string;
-  options: Option[];
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri });
+  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -238,10 +244,10 @@ export const DataFilterSelectDay = ({
             label: noneLabel,
             isNoneValue: true,
           },
-          ...options,
+          ...dimension.values,
         ]
-      : options;
-  }, [isOptional, options, noneLabel]);
+      : dimension.values;
+  }, [isOptional, dimension.values, noneLabel]);
 
   const allOptionsSet = useMemo(() => {
     return new Set(
@@ -285,7 +291,7 @@ export const DataFilterSelectDay = ({
       disabled={disabled}
       controls={controls}
       onChange={fieldProps.onChange}
-      name={dimensionIri}
+      name={dimension.iri}
       value={dateValue}
       isDayDisabled={isDisabled}
       minDate={minDate}
@@ -295,7 +301,7 @@ export const DataFilterSelectDay = ({
 };
 
 export const DataFilterSelectTime = ({
-  dimensionIri,
+  dimension,
   label,
   from,
   to,
@@ -307,7 +313,7 @@ export const DataFilterSelectTime = ({
   controls,
   tooltipText,
 }: {
-  dimensionIri: string;
+  dimension: DimensionMetadataFragment;
   label: string;
   from: string;
   to: string;
@@ -319,7 +325,7 @@ export const DataFilterSelectTime = ({
   controls?: React.ReactNode;
   tooltipText?: string;
 }) => {
-  const fieldProps = useSingleFilterSelect({ dimensionIri });
+  const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
   const formatLocale = useTimeFormatLocale();
 
   const noneLabel = t({
