@@ -99,7 +99,7 @@ const useColumnsState = (
     aspectRatio,
   } = chartProps;
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
   const dimensionsByIri = useMemo(

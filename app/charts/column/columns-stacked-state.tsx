@@ -101,7 +101,7 @@ const useColumnsStackedState = (
     aspectRatio,
   } = chartProps;
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
 

@@ -90,7 +90,7 @@ const useLinesState = (
   } = chartProps;
   const theme = useTheme();
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);

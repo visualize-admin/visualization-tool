@@ -21,7 +21,7 @@ export const getTickNumber = (height: number) => {
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const { yScale, yAxisLabel, yAxisDescription, bounds } = useChartState() as
     | AreasState
