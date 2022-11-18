@@ -28,6 +28,7 @@ import { OperationResult, useClient } from "urql";
 
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { DataSource } from "@/configurator";
+import { getSortedColumns } from "@/configurator/components/datatable";
 import { useLocale } from "@/src";
 
 import { Observation } from "../domain/data";
@@ -84,6 +85,7 @@ export type FileFormat = typeof FILE_FORMATS[number];
 const makeColumnLabel = (dim: DimensionMetadataFragment) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
 };
+
 const prepareData = ({
   dimensions,
   measures,
@@ -93,7 +95,7 @@ const prepareData = ({
   measures: DimensionMetadataFragment[];
   observations: Observation[];
 }) => {
-  const columns = keyBy([...dimensions, ...measures], (d) => d.iri);
+  const columns = keyBy(getSortedColumns(dimensions, measures), (d) => d.iri);
   const data = observations.map((obs) =>
     Object.keys(obs).reduce((acc, key) => {
       const col = columns[key];
