@@ -41,7 +41,6 @@ import {
   useTimeFormatUnit,
 } from "@/formatters";
 import { getPalette } from "@/palettes";
-import { useTheme } from "@/themes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -88,7 +87,6 @@ const useLinesState = (
     interactiveFiltersConfig,
     aspectRatio,
   } = chartProps;
-  const theme = useTheme();
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -326,10 +324,7 @@ const useLinesState = (
         hide: getY(td) === null,
         label: getSegment(td),
         value: yValueFormatter(getY(td)),
-        color:
-          segments.length > 1
-            ? (colors(getSegment(td)) as string)
-            : theme.palette.primary.main,
+        color: colors(getSegment(td)) as string,
         yPos: yScale(getY(td) ?? 0),
       })),
     };

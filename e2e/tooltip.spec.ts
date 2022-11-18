@@ -2,7 +2,7 @@ import { test, expect } from "./common";
 
 test("tooltip content", async ({ actions, selectors, within, page }) => {
   await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502test/3",
+    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/6",
     "Int"
   );
 
