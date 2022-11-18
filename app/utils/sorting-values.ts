@@ -3,15 +3,18 @@ import { DimensionValue } from "@/domain/data";
 
 import { DataCubeObservationsQuery } from "../graphql/query-hooks";
 
-const maybeInt = (s?: string) => {
-  if (!s) {
+const maybeInt = (value?: string): number | string => {
+  if (!value) {
     return Infinity;
   }
-  try {
-    return parseInt(s, 10);
-  } catch {
-    return s;
+
+  const maybeInt = parseInt(value, 10);
+
+  if (isNaN(maybeInt)) {
+    return value;
   }
+
+  return maybeInt;
 };
 
 export const makeDimensionValueSorters = (
