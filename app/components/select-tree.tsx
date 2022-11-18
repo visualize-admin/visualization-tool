@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MUITreeItem, {
@@ -223,11 +224,13 @@ const TreeItemContent = React.forwardRef<
         className={classes.label}
       >
         {label}
-        <div className={ownClasses.action} onClick={handleSelect}>
-          <Typography variant="caption">
-            {selectable && hasChildren ? "Select" : ""}
-          </Typography>
-        </div>
+        {selectable && hasChildren ? (
+          <div className={ownClasses.action} onClick={handleSelect}>
+            <Typography variant="caption">
+              <Trans id="controls.tree.select-value">Select</Trans>
+            </Typography>
+          </div>
+        ) : null}
       </div>
     </div>
   );
