@@ -114,7 +114,7 @@ const DataFilterSelectGeneric = ({
   );
 
   const sharedProps = {
-    dimensionIri: dimension.iri,
+    dimension: dimension,
     label: `${index + 1}. ${dimension.label}`,
     controls: controls,
     id: `select-single-filter-${index}`,
@@ -125,9 +125,9 @@ const DataFilterSelectGeneric = ({
 
   if (isTemporalDimension(dimension)) {
     if (dimension.timeUnit === "Day") {
-      return <DataFilterSelectDay {...sharedProps} options={values} />;
+      return <DataFilterSelectDay {...sharedProps} />;
     } else if (dimension.timeUnit === "Month") {
-      return <DataFilterSelect {...sharedProps} options={values} />;
+      return <DataFilterSelect {...sharedProps} />;
     } else {
       const from = values[0].value;
       const to = values[values.length - 1]?.value || from;
@@ -146,7 +146,6 @@ const DataFilterSelectGeneric = ({
     return (
       <DataFilterSelect
         {...sharedProps}
-        options={values}
         optionGroups={optionGroups}
         onOpen={handleOpen}
         loading={fetchingHierarchy}

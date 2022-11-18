@@ -69,7 +69,12 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
 import { useLocale } from "@/locales/use-locale";
-import { getOptionsFromTree, joinParents, pruneTree } from "@/rdf/tree-utils";
+import {
+  getOptionsFromTree,
+  joinParents,
+  pruneTree,
+  sortTree,
+} from "@/rdf/tree-utils";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
@@ -208,16 +213,18 @@ const MultiFilterContent = ({
   tree: HierarchyValue[];
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
-  const { activeKeys, allValues, colorConfigPath, dimensionIri } =
+  const { dimensionIri, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
   const rawValues = config.chartConfig.filters[dimensionIri];
 
   const classes = useStyles();
 
-  const { flatOptions, optionsByValue } = useMemo(() => {
-    const flatOptions = getOptionsFromTree(tree);
+  const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
+    const sortedTree = sortTree(tree);
+    const flatOptions = getOptionsFromTree(sortedTree);
     const optionsByValue = keyBy(flatOptions, (x) => x.value);
     return {
+      sortedTree,
       flatOptions,
       optionsByValue,
     };
@@ -432,7 +439,7 @@ const MultiFilterContent = ({
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
-            options={tree}
+            options={sortedTree}
             flatOptions={flatOptions}
             onClose={handleCloseAutocomplete}
             values={values}
@@ -661,7 +668,7 @@ const Tree = ({
             expandable={hasChildren}
             renderExpandButton={currentDepthsMetadata.expandable}
             renderColorCheckbox={
-              (showColors && currentDepthsMetadata.selectable) || d.depth === -1
+              showColors && (currentDepthsMetadata.selectable || d.depth === -1)
             }
             onSelect={() => {
               if (state === "SELECTED") {

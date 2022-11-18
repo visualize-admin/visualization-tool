@@ -18,12 +18,33 @@ describe("Filters", () => {
 
     const texts = await labels.allTextContents();
     expect(texts).toEqual([
+      // --- Hierarchy dimensions
       "1. Production region",
-      "2. Evaluation type",
-      "3. Stand structure",
-      "4. Grid",
-      "5. Inventory",
+      "2. Stand structure",
+      // ---
+      "3. Grid",
+      "4. Inventory",
+      "5. Reference area",
     ]);
+
+    const productionRegionFilter = selectors.edition.dataFilterInput(
+      "1. Production region"
+    );
+    const productionRegionFilterValue = await productionRegionFilter
+      .locator("input")
+      .inputValue();
+    expect(productionRegionFilterValue).toEqual(
+      "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland"
+    );
+
+    const standStructureFilter =
+      selectors.edition.dataFilterInput("2. Stand structure");
+    const standStructureFilterValue = await standStructureFilter
+      .locator("input")
+      .inputValue();
+    expect(standStructureFilterValue).toEqual(
+      "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Struk/Total"
+    );
   });
 
   test("Temporal filter should display all values", async ({

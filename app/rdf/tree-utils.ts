@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
@@ -15,13 +16,17 @@ export const mapTree = (
   });
 };
 
-export const sortTree = (
-  tree: HierarchyValue[],
-  sorter: (a: HierarchyValue, b: HierarchyValue) => number
-): HierarchyValue[] => {
-  return [...tree].sort(sorter).map((d) => ({
+/** Sorts the tree by default chain of sorters (position -> identifier -> label). */
+export const sortTree = (tree: HierarchyValue[]): HierarchyValue[] => {
+  const sortedTree = orderBy(
+    tree,
+    ["depth", "position", "identifier", "label"],
+    ["desc", "asc", "asc", "asc"]
+  ) as HierarchyValue[];
+
+  return sortedTree.map((d) => ({
     ...d,
-    children: d.children ? sortTree(d.children, sorter) : undefined,
+    children: d.children ? sortTree(d.children) : undefined,
   }));
 };
 

@@ -343,7 +343,7 @@ export const TableColumnOptions = ({
             </legend>
             {component.isKeyDimension && isHidden && !isGroup ? (
               <DataFilterSelectTime
-                dimensionIri={component.iri}
+                dimension={component}
                 label={component.label}
                 from={component.values[0].value}
                 to={
