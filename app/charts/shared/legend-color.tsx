@@ -315,9 +315,9 @@ const LegendColorContent = ({
                     )}
                   </Typography>
                 ) : null}
-                {colorValues.map((d) => (
+                {colorValues.map((d, i) => (
                   <LegendItem
-                    key={d}
+                    key={`${d}_${i}`}
                     item={getLabel(d)}
                     color={getColor(d)}
                     symbol={symbol}
