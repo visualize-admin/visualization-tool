@@ -13,16 +13,12 @@ test("should be possible to edit filters of a hierarchy", async ({
   await page.goto(`/en/create/${key}`);
   await selectors.chart.loaded();
 
-  const selectNone = await screen.findByText("Select none", undefined, {
-    timeout: 10 * 1000,
-  });
-
-  await selectNone.click();
-
   (
-    await screen.findByText("Filters", {
-      selector: "button",
-    })
+    await screen.findByText(
+      "Edit filters",
+      { selector: "button" },
+      { timeout: 5_000 }
+    )
   ).click();
 
   const filters = await selectors.edition.filterDrawer().within();

@@ -16,6 +16,14 @@
       "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/kurzel": {
         "type": "single",
         "value": "Bd"
+      },
+      "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/code": {
+        "type": "multi",
+        "values": {
+          "https://ld.admin.ch/cube/dimension/cofog/gf02": true,
+          "https://ld.admin.ch/cube/dimension/cofog/gf07": true,
+          "https://ld.admin.ch/cube/dimension/cofog/gf10": true
+        }
       }
     },
     "interactiveFiltersConfig": {
