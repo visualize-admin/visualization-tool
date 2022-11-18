@@ -668,7 +668,7 @@ const Tree = ({
             expandable={hasChildren}
             renderExpandButton={currentDepthsMetadata.expandable}
             renderColorCheckbox={
-              (showColors && currentDepthsMetadata.selectable) || d.depth === -1
+              showColors && (currentDepthsMetadata.selectable || d.depth === -1)
             }
             onSelect={() => {
               if (state === "SELECTED") {
