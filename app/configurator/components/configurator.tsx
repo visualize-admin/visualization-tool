@@ -81,7 +81,10 @@ const ConfigureChartStep = () => {
     }
     router.push(
       {
-        pathname: `/browse/dataset/${encodeURIComponent(state.dataSet)}`,
+        pathname: `/browse`,
+        query: {
+          dataset: state.dataSet,
+        },
       },
       undefined,
       { shallow: true }
