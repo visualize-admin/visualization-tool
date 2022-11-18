@@ -18,11 +18,11 @@ export const mapTree = (
 
 /** Sorts the tree by default chain of sorters (position -> identifier -> label). */
 export const sortTree = (tree: HierarchyValue[]): HierarchyValue[] => {
-  const sortedTree = orderBy(tree, [
-    "position",
-    "identifier",
-    "label",
-  ]) as HierarchyValue[];
+  const sortedTree = orderBy(
+    tree,
+    ["depth", "position", "identifier", "label"],
+    ["desc", "asc", "asc", "asc"]
+  ) as HierarchyValue[];
 
   return sortedTree.map((d) => ({
     ...d,
