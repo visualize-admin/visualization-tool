@@ -501,6 +501,13 @@ const makeServerFilter = (filters: Filters) => {
   };
 };
 
+export const hasHierarchy = (dim: CubeDimension) => {
+  return (
+    dim.out(ns.cubeMeta.inHierarchy).values.length > 0 ||
+    dim.out(ns.cubeMeta.hasHierarchy).values.length > 0
+  );
+};
+
 const buildFilters = ({
   cube,
   view,
@@ -557,11 +564,9 @@ const buildFilters = ({
       );
     }
 
-    const hasHierarchy =
-      cubeDimension.out(ns.cubeMeta.inHierarchy).values.length > 0 ||
-      cubeDimension.out(ns.cubeMeta.hasHierarchy).values.length > 0;
+    const dimensionHasHierarchy = hasHierarchy(cubeDimension);
     const toRDFValue = (value: string): NamedNode | Literal => {
-      return dataType && !hasHierarchy
+      return dataType && !dimensionHasHierarchy
         ? parsedCubeDimension.data.hasUndefinedValues &&
           value === DIMENSION_VALUE_UNDEFINED
           ? rdf.literal("", ns.cube.Undefined)

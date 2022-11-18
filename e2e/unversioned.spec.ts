@@ -5,11 +5,11 @@ test("Unversioned dataset > should be possible to open a link to an unversioned 
   screen,
   actions,
 }) => {
-  await actions.chart.createFrom(
+  await actions.datasetPreview.load(
     "https://culture.ld.admin.ch/sfa/StateAccounts_Function",
     "Int"
   );
-  await screen.findByText("State accounts - Function", undefined, {
+  await screen.findAllByText("State accounts - Function", undefined, {
     timeout: 10 * 1000,
   });
 });

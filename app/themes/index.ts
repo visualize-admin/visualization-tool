@@ -51,7 +51,6 @@ declare module "@mui/material" {
   }
 
   interface ButtonPropsVariantOverrides {
-    selectColorPicker: true;
     inline: true;
     inverted: true;
   }
