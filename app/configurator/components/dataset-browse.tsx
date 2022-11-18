@@ -223,8 +223,17 @@ export const useBrowseState = () => {
     }
   );
 
-  const { search, type, order, iri, includeDrafts } = browseParams;
-  const dataset = type === "dataset" ? iri : undefined;
+  const {
+    search,
+    type,
+    order,
+    iri,
+    includeDrafts,
+    dataset: paramDataset,
+  } = browseParams;
+
+  // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
+  const dataset = type === "dataset" ? iri : paramDataset;
   const filters = getFiltersFromParams(browseParams, {
     themes: themeData?.themes,
     organizations: orgData?.organizations,
@@ -549,7 +558,7 @@ const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
   return `${
     __typename === "DataCubeTheme" ? "theme" : "organization"
-  }/${encodeURIComponent(iri)}`;
+  }=${encodeURIComponent(iri)}`;
 };
 
 const NavItem = ({
@@ -590,7 +599,9 @@ const NavItem = ({
       newFilters.push(next);
     }
     return (
-      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
+      "/browse?" +
+      newFilters.map(encodeFilter).join("&") +
+      (extraURLParams ? `&${extraURLParams}` : "")
     );
   }, [includeDrafts, search, level, next, filters]);
 
@@ -607,7 +618,7 @@ const NavItem = ({
     const nextIndex = filters.findIndex((f) => f.iri === next.iri);
     const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
     return (
-      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
+      "/browse?" + newFilters.map(encodeFilter).join("&") + `&${extraURLParams}`
     );
   }, [includeDrafts, search, filters, next.iri]);
 
@@ -1118,19 +1129,16 @@ export const DatasetResult = ({
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
-  const browseParams = useMemo(() => {
-    return getBrowseParamsFromQuery(router.query);
-  }, [router]);
-  const filterParams = useMemo(() => {
-    return {
-      previous: JSON.stringify(browseParams),
-    };
-  }, [browseParams]);
+
   const handleClick = useEvent(() => {
+    const browseParams = getBrowseParamsFromQuery(router.query);
     router.push(
       {
-        pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
-        query: filterParams,
+        pathname: `/browse`,
+        query: {
+          previous: JSON.stringify(browseParams),
+          dataset: iri,
+        },
       },
       undefined,
       { shallow: true, scroll: false }
