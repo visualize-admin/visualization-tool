@@ -28,7 +28,7 @@ export const createActions = ({
   datasetPreview: {
     load: async (iri: string, dataSource: "Int" | "Prod") => {
       await page.goto(
-        `en/browse?dataset/${encodeURIComponent(iri)}?dataSource=${dataSource}`
+        `en/browse?dataset=${encodeURIComponent(iri)}&dataSource=${dataSource}`
       );
 
       await selectors.datasetPreview.loaded();

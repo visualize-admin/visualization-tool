@@ -87,7 +87,7 @@ describe("use redirect to versioned cube", () => {
       versionedCube: { iri: "https://versioned-cube" },
     });
     expect(router.replace).toHaveBeenCalledWith({
-      pathname: "/de/browse/dataset/https%3A%2F%2Fversioned-cube",
+      pathname: "/de/browse?dataset=https%3A%2F%2Fversioned-cube",
     });
   });
 
@@ -97,7 +97,7 @@ describe("use redirect to versioned cube", () => {
       versionedCube: { iri: "https://versioned-cube2" },
     });
     expect(router.replace).toHaveBeenCalledWith({
-      pathname: "/de/browse/dataset/https%3A%2F%2Fversioned-cube2",
+      pathname: "/de/browse?dataset=https%3A%2F%2Fversioned-cube2",
     });
   });
 });

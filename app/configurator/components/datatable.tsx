@@ -187,7 +187,7 @@ export const DataSetPreviewTable = ({
   observations: Observation[];
 }) => {
   const headers = useMemo(() => {
-    return getSortedHeaders(dimensions, measures);
+    return getSortedColumns(dimensions, measures);
   }, [dimensions, measures]);
 
   if (observations) {
@@ -231,7 +231,8 @@ export const DataSetTable = ({
     if (!data?.dataCubeByIri) {
       return [];
     }
-    return getSortedHeaders(
+
+    return getSortedColumns(
       data.dataCubeByIri.dimensions,
       data.dataCubeByIri.measures
     );
@@ -252,13 +253,13 @@ export const DataSetTable = ({
   }
 };
 
-function getSortedHeaders(
+export const getSortedColumns = (
   dimensions: DimensionMetadataFragment[],
   measures: DimensionMetadataFragment[]
-) {
+) => {
   const allDimensions = [...dimensions, ...measures];
   allDimensions.sort((a, b) =>
     ascending(a.order ?? Infinity, b.order ?? Infinity)
   );
   return allDimensions;
-}
+};

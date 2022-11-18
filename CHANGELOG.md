@@ -12,6 +12,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Enhancements:
   - Cube Checker:
     - Introduced a Temporal dimensions scaleType & timeFormat checks
+  - Data download:
+    - Order of columns in downloaded files now matches the order visible in the dataset preview (based on shacl:order)
 - Bug fixes:
   - Correctly retrieve min & max values for Temporal dimensions when scaleType is not equal to Interval
 
