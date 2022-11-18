@@ -51,6 +51,8 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h5:text-is("${title}")`),
         }),
+      dataFilterInput: (label: string) =>
+        page.locator(`div[role="button"]:has-text("${label}")`),
     },
     published: {
       interactiveFilters: () =>
