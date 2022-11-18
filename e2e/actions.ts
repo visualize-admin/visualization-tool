@@ -50,8 +50,13 @@ export const createActions = ({
   /** Actions on MUI elements, options, selects, dialogs */
   mui: {
     selectOption: async (optionText: string) => {
-      const locator = await selectors.mui.popover().findByText(optionText);
-      await locator.click();
+      const item = await await selectors.mui.popover().findByText(optionText);
+      await item.click();
+      const select = await item.locator("..").locator("text=Select");
+      const count = await select.count();
+      if (count) {
+        await select.click();
+      }
     },
   },
   editor: {
