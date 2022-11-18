@@ -20,6 +20,7 @@ import { ascending, groups } from "d3";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
+import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import React, {
@@ -249,11 +250,7 @@ const MultiFilterContent = ({
       .map(([parent, group]) => {
         return [
           parent,
-          group.sort(
-            (a, b) =>
-              ascending(a.position ?? 0, b.position ?? 0) ||
-              ascending(a.label.toLowerCase(), b.label.toLowerCase())
-          ),
+          orderBy(group, ["position", "identifier", "label"]),
         ] as const;
       });
 
