@@ -48,13 +48,17 @@ export const useRedirectToVersionedCube = ({
 
       if (resp) {
         router.replace({
-          pathname: `/${locale}/browse?dataset=${encodeURIComponent(resp.iri)}`,
+          pathname: `/${locale}/browse`,
+          query: {
+            dataset: resp.iri,
+          },
         });
       } else {
         router.replace({
-          pathname: `/en?${getErrorQueryParams("CANNOT_FIND_CUBE", {
+          pathname: `/`,
+          query: getErrorQueryParams("CANNOT_FIND_CUBE", {
             iri: datasetIri,
-          })}`,
+          }),
         });
       }
       hasRun.current = true;
