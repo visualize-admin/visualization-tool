@@ -174,7 +174,7 @@ const useQueryParamsState = <T extends object>(
         : undefined;
     const dataset = extractParamFromPath(router.asPath, "dataset");
     const query = sp ? Object.fromEntries(sp.entries()) : undefined;
-    if (dataset && query) {
+    if (dataset && query && !query.dataset) {
       query.dataset = dataset[0];
     }
     return query ? parse(query) : initialState;
