@@ -65,7 +65,7 @@ const useScatterplotState = ({
   aspectRatio: number;
 }): ScatterplotState => {
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const getX = useOptionalNumericVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);

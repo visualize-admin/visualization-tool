@@ -95,7 +95,7 @@ const useAreasState = (
     aspectRatio,
   } = chartProps;
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
 

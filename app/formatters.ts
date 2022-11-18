@@ -297,17 +297,21 @@ export const useTimeFormatUnit = () => {
   return formatter;
 };
 
-export const useFormatNumber = () => {
+export const useFormatNumber = (props?: { decimals: number | "auto" }) => {
+  const { decimals } = props || { decimals: 2 };
   const formatter = useMemo(() => {
     const { format } = getD3FormatLocale();
-    const formatter = format(",.2~f");
+    const specifier = decimals === "auto" ? ",~f" : `,.${decimals}~f`;
+    const formatter = format(specifier);
+
     return (x: NumberValue | null | undefined) => {
       if (x === null || x === undefined) {
         return "–";
       }
       return `${formatter(x)}`;
     };
-  }, []);
+  }, [decimals]);
+
   return formatter;
 };
 

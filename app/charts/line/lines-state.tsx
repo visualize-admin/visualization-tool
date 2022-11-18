@@ -88,7 +88,7 @@ const useLinesState = (
     aspectRatio,
   } = chartProps;
   const width = useWidth();
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
