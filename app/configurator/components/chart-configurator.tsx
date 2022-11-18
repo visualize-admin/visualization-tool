@@ -146,7 +146,6 @@ const DataFilterSelectGeneric = ({
     return (
       <DataFilterSelect
         {...sharedProps}
-        options={values}
         hierarchy={hierarchy as HierarchyValue[]}
         onOpen={handleOpen}
         loading={hierarchyResp.fetching}
