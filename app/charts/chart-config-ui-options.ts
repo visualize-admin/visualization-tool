@@ -147,6 +147,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
         filters: true,
         sorting: [
+          { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
