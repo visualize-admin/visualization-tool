@@ -319,9 +319,12 @@ export type PieConfig = t.TypeOf<typeof PieConfig>;
 
 const DivergingPaletteType = t.union([
   t.literal("BrBG"),
-  t.literal("PRGn"),
   t.literal("PiYG"),
+  t.literal("PRGn"),
   t.literal("PuOr"),
+  t.literal("RdBu"),
+  t.literal("RdYlBu"),
+  t.literal("RdYlGn"),
 ]);
 
 export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
