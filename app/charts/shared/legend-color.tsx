@@ -1,7 +1,6 @@
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { ascending } from "d3";
 import React, { memo, useMemo } from "react";
 
 import {
@@ -22,14 +21,13 @@ import {
   useDataCubeMetadataWithComponentValuesQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { dfs } from "@/utils/dfs";
 import { interlace } from "@/utils/interlace";
 import useEvent from "@/utils/use-event";
 
 import { rgbArrayToHex } from "./colors";
+import { getLegendGroups } from "./legend-color-helpers";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -217,33 +215,13 @@ const useLegendGroups = ({
     hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
   const groups = useMemo(() => {
-    const groupsMap = new Map<HierarchyValue[], string[]>();
-    if (!hierarchy) {
-      groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
-    } else {
-      const labelSet = new Set(labels);
-      dfs(hierarchy, (node, { parents }) => {
-        if (!labelSet.has(node.label)) {
-          return;
-        }
-        groupsMap.set(parents, groupsMap.get(parents) || []);
-        groupsMap.get(parents)?.push(node.label);
-      });
-    }
-
-    const groups = Array.from(groupsMap.entries());
-    if (segmentField && "sorting" in segmentField) {
-      // Re-sort hierarchy groups against the label order that we have received
-      const labelOrder = Object.fromEntries(
-        labels.map((x, i) => [x, i] as const)
-      );
-      groups.forEach(([_groupName, entries]) => {
-        entries.sort((a, b) => ascending(labelOrder[a], labelOrder[b]));
-      });
-    }
-
-    return groups;
-  }, [hierarchy, labels, segmentField, title]);
+    return getLegendGroups({
+      title,
+      labels,
+      hierarchy,
+      sort: !!(segmentField && "sorting" in segmentField),
+    });
+  }, [title, labels, hierarchy, segmentField]);
 
   return groups;
 };
@@ -253,7 +231,6 @@ export const LegendColor = memo(function LegendColor({
 }: {
   symbol: LegendSymbol;
 }) {
-  // @ts-ignore
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
   const groups = useLegendGroups({ labels: colors.domain() });
 

@@ -41,7 +41,6 @@ import {
   isConfiguring,
   MultiFilterContextProvider,
   useConfiguratorState,
-  useDimensionSelection,
   useMultiFilterContext,
 } from "@/configurator";
 import { ConfiguratorDrawer } from "@/configurator/components/drawer";
@@ -220,8 +219,6 @@ const MultiFilterContent = ({
 
   const classes = useStyles();
 
-  const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
     const sortedTree = sortTree(tree);
     const flatOptions = getOptionsFromTree(sortedTree);
@@ -348,24 +345,16 @@ const MultiFilterContent = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Flex justifyContent="space-between" gap="0.75rem">
-          <FilterControls
-            selectAll={selectAll}
-            selectNone={selectNone}
-            allKeysLength={allValues.length}
-            activeKeysLength={activeKeys.size}
-          />
-          <div>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={handleOpenAutocomplete}
-            >
-              <Trans id="controls.filters.select.filters">Filters</Trans>
-            </Button>
-          </div>
-        </Flex>
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={handleOpenAutocomplete}
+          fullWidth
+          sx={{ justifyContent: "center", mb: 2 }}
+        >
+          <Trans id="controls.set-filters">Edit filters</Trans>
+        </Button>
         <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
         <Flex justifyContent="space-between">
           <Typography variant="h5">
@@ -498,8 +487,9 @@ const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   },
   "& > .MuiAccordionSummary-content": {
     alignItems: "center",
-    marginTop: 6,
-    marginBottom: 6,
+    marginTop: 0,
+    marginBottom: 0,
+    minHeight: 32,
   },
   "&:hover": {
     backgroundColor: theme.palette.primary.light,
@@ -517,7 +507,8 @@ const TreeAccordion = ({
   state,
   selectable,
   expandable,
-  showColor,
+  renderExpandButton,
+  renderColorCheckbox,
   onSelect,
   children,
 }: {
@@ -527,7 +518,8 @@ const TreeAccordion = ({
   state: "SELECTED" | "CHILDREN_SELECTED" | "NOT_SELECTED";
   selectable: boolean;
   expandable: boolean;
-  showColor: boolean;
+  renderExpandButton: boolean;
+  renderColorCheckbox: boolean;
   onSelect: () => void;
   children?: ReactNode;
 }) => {
@@ -552,20 +544,26 @@ const TreeAccordion = ({
           }
         }}
       >
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded(!expanded);
-          }}
-          sx={{
-            alignSelf: "flex-start",
-            visibility: expandable ? "visible" : "hidden",
-          }}
-        >
-          <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
-        </IconButton>
+        {renderExpandButton ? (
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanded(!expanded);
+            }}
+            sx={{
+              alignSelf: "flex-start",
+              visibility: expandable ? "visible" : "hidden",
+              mt: 1,
+              p: 1,
+            }}
+          >
+            <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
+          </IconButton>
+        ) : (
+          <div style={{ marginLeft: "1rem" }} />
+        )}
 
-        {showColor && (
+        {renderColorCheckbox && (
           <div
             className={classes.optionColor}
             style={{
@@ -634,26 +632,23 @@ const isHierarchyOptionSelectable = (d: HierarchyValue) => {
 };
 
 const Tree = ({
-  depth,
-  selectableDepthsMap,
+  depthsMetadata,
   options,
   selectedValues,
   showColors,
   onSelect,
 }: {
-  depth: number;
-  selectableDepthsMap: Record<number, boolean>;
+  depthsMetadata: Record<number, { selectable: boolean; expandable: boolean }>;
   options: HierarchyValue[];
   selectedValues: HierarchyValue[];
   showColors: boolean;
   onSelect: (newSelectedValues: HierarchyValue[]) => void;
 }) => {
-  const someDepthOptionsSelectable = selectableDepthsMap[depth];
-
   return (
     <>
       {options.map((d) => {
-        const { value, label, children } = d;
+        const { depth, value, label, children } = d;
+        const currentDepthsMetadata = depthsMetadata[depth];
         const hasChildren = validateChildren(children);
         const state = selectedValues.map((d) => d.value).includes(value)
           ? "SELECTED"
@@ -671,8 +666,9 @@ const Tree = ({
             // Has value is only present for hierarchies.
             selectable={isHierarchyOptionSelectable(d)}
             expandable={hasChildren}
-            showColor={
-              (showColors && someDepthOptionsSelectable) || d.depth === -1
+            renderExpandButton={currentDepthsMetadata.expandable}
+            renderColorCheckbox={
+              (showColors && currentDepthsMetadata.selectable) || d.depth === -1
             }
             onSelect={() => {
               if (state === "SELECTED") {
@@ -684,8 +680,7 @@ const Tree = ({
           >
             {hasChildren ? (
               <Tree
-                depth={depth + 1}
-                selectableDepthsMap={selectableDepthsMap}
+                depthsMetadata={depthsMetadata}
                 options={children as HierarchyValue[]}
                 selectedValues={selectedValues}
                 showColors={showColors}
@@ -726,25 +721,33 @@ const DrawerContent = forwardRef<
   );
   pendingValuesRef.current = pendingValues;
 
-  const { selectableDepthsMap, uniqueSelectableFlatOptions } = useMemo(() => {
+  const { depthsMetadata, uniqueSelectableFlatOptions } = useMemo(() => {
     const uniqueSelectableFlatOptions = uniqBy(
       flatOptions.filter(isHierarchyOptionSelectable),
       (d) => d.value
     );
 
-    const selectableDepthsMap = flatOptions.reduce((acc, d) => {
+    const depthsMetadata = flatOptions.reduce((acc, d) => {
       if (!acc[d.depth]) {
-        acc[d.depth] = false;
+        acc[d.depth] = { selectable: false, expandable: false };
       }
 
-      if (acc[d.depth] === false && d.hasValue) {
-        acc[d.depth] = true;
+      if (acc[d.depth].selectable === false && d.hasValue) {
+        acc[d.depth].selectable = true;
+      }
+
+      if (
+        acc[d.depth].expandable === false &&
+        d.children &&
+        d.children.length > 0
+      ) {
+        acc[d.depth].expandable = true;
       }
 
       return acc;
-    }, {} as Record<number, boolean>);
+    }, {} as Record<number, { selectable: boolean; expandable: boolean }>);
 
-    return { selectableDepthsMap, uniqueSelectableFlatOptions };
+    return { depthsMetadata, uniqueSelectableFlatOptions };
   }, [flatOptions]);
 
   const filteredOptions = useMemo(() => {
@@ -797,8 +800,7 @@ const DrawerContent = forwardRef<
         />
       </Box>
       <Tree
-        depth={0}
-        selectableDepthsMap={selectableDepthsMap}
+        depthsMetadata={depthsMetadata}
         options={filteredOptions}
         selectedValues={pendingValues}
         showColors={hasColorMapping}
