@@ -165,7 +165,7 @@ type SteppedPalette<T> = Omit<Palette<T>, "interpolator"> & {
   colors: ReadonlyArray<string>;
 };
 const steppedPaletteSteps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
-const divergingPaletteKeys = [
+const divergingPaletteKeys: DivergingPaletteType[] = [
   "RdBu",
   "RdYlBu",
   "RdYlGn",
@@ -173,15 +173,15 @@ const divergingPaletteKeys = [
   "PRGn",
   "PiYG",
   "PuOr",
-] as DivergingPaletteType[];
-const sequentialPaletteKeys = [
+];
+const sequentialPaletteKeys: SequentialPaletteType[] = [
   "blues",
   "greens",
   "greys",
   "oranges",
   "purples",
   "reds",
-] as SequentialPaletteType[];
+];
 const interpolatorByName = {
   RdBu: interpolateRdBu,
   RdYlBu: interpolateRdYlBu,
