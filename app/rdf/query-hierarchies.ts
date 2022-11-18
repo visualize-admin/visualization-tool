@@ -3,7 +3,6 @@ import {
   HierarchyNode,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
-import { ascending, descending } from "d3";
 import { isGraphPointer } from "is-graph-pointer";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
@@ -15,7 +14,7 @@ import { ResolvedDimension } from "@/graphql/shared-types";
 
 import * as ns from "./namespace";
 import { getCubeDimensionValuesWithMetadata } from "./queries";
-import { pruneTree, mapTree, sortTree, getOptionsFromTree } from "./tree-utils";
+import { pruneTree, mapTree, getOptionsFromTree } from "./tree-utils";
 
 const getName = (pointer: AnyPointer, language: string) => {
   const name = pointer.out(ns.schema.name, { language })?.value;
@@ -40,6 +39,8 @@ const toTree = (
       children: node.nextInHierarchy.map((childNode) =>
         serializeNode(childNode, depth + 1)
       ),
+      position: node.resource.out(ns.schema.position).term?.value,
+      identifier: node.resource.out(ns.schema.identifier).term?.value,
       depth,
       dimensionIri: dimensionIri,
     };
@@ -108,20 +109,19 @@ export const queryHierarchy = async (
   );
   const additionalTreeValues = dimensionValuesWithLabels
     .filter((d) => !treeValues.has(`${d.value}`))
-    .map((d) => ({
-      label: d.label || "-",
-      value: `${d.value}`,
-      depth: -1,
-      children: [],
-      dimensionIri: rdimension.data.iri,
-      hasValue: true,
-    }));
+    .map(
+      (d) =>
+        ({
+          label: d.label || "-",
+          value: `${d.value}`,
+          depth: -1,
+          children: [],
+          dimensionIri: rdimension.data.iri,
+          hasValue: true,
+          position: "-1",
+          identifier: "",
+        } as HierarchyValue)
+    );
 
-  return sortTree(
-    [...prunedTree, ...additionalTreeValues],
-    (a, b) =>
-      descending(a.depth, b.depth) ||
-      ascending(a.position ?? 0, b.position ?? 0) ||
-      ascending(a.label.toLowerCase(), b.label.toLowerCase())
-  );
+  return [...prunedTree, ...additionalTreeValues];
 };

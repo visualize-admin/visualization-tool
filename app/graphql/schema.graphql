@@ -63,6 +63,7 @@ type HierarchyValue {
   value: String!
   label: String!
   position: String
+  identifier: String
   dimensionIri: String!
   depth: Int!
   children: [HierarchyValue!]

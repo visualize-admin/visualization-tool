@@ -403,6 +403,8 @@ fragment hierarchyValueFields on HierarchyValue {
   depth
   label
   hasValue
+  position
+  identifier
 }
 
 query DimensionHierarchy(
