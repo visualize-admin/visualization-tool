@@ -107,15 +107,17 @@ export const ChartOptionsSelector = ({
     if (metadataData?.dataCubeByIri) {
       return {
         ...metadataData.dataCubeByIri,
-        dimensions: [
-          // There are no fields that make use of numeric dimensions at the moment.
-          ...metadataData.dataCubeByIri.dimensions.filter(
-            (d) => !d.isNumerical
-          ),
-        ],
+        dimensions: isTableConfig(chartConfig)
+          ? metadataData.dataCubeByIri.dimensions
+          : [
+              // There are no fields that make use of numeric dimensions at the moment.
+              ...metadataData.dataCubeByIri.dimensions.filter(
+                (d) => !d.isNumerical
+              ),
+            ],
       };
     }
-  }, [metadataData?.dataCubeByIri]);
+  }, [chartConfig, metadataData?.dataCubeByIri]);
 
   if (metaData) {
     return (
