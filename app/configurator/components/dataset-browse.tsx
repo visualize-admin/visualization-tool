@@ -558,7 +558,7 @@ const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
   return `${
     __typename === "DataCubeTheme" ? "theme" : "organization"
-  }=${encodeURIComponent(iri)}`;
+  }/${encodeURIComponent(iri)}`;
 };
 
 const NavItem = ({
@@ -599,9 +599,7 @@ const NavItem = ({
       newFilters.push(next);
     }
     return (
-      "/browse?" +
-      newFilters.map(encodeFilter).join("&") +
-      (extraURLParams ? `&${extraURLParams}` : "")
+      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
     );
   }, [includeDrafts, search, level, next, filters]);
 
