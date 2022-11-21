@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Alert, Typography } from "@mui/material";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
@@ -41,6 +41,7 @@ import {
 import {
   canDimensionBeMultiFiltered,
   isNumericalMeasure,
+  isStandardErrorDimension,
   isTemporalDimension,
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -165,12 +166,15 @@ export const TableColumnOptions = ({
   }
 
   // Active field is always a component IRI, like in filters
-  const component =
-    metaData.dimensions.find((d) => d.iri === activeField) ??
-    metaData.measures.find((d) => d.iri === activeField);
+  const allComponents = [...metaData.dimensions, ...metaData.measures];
+  const component = allComponents.find((d) => d.iri === activeField);
 
   if (!component) {
-    return <div>`No component ${activeField}`</div>;
+    return (
+      <Alert icon={false} severity="error">
+        <Typography variant="body2">No component {activeField}</Typography>
+      </Alert>
+    );
   }
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];
@@ -308,7 +312,8 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {canDimensionBeMultiFiltered(component) ? (
+      {canDimensionBeMultiFiltered(component) &&
+      !isStandardErrorDimension(component) ? (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
