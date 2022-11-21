@@ -152,6 +152,7 @@ const TreeItemContent = React.forwardRef<
     label,
     nodeId,
     onClick,
+    children,
     onMouseDown,
 
     ...other
@@ -190,10 +191,6 @@ const TreeItemContent = React.forwardRef<
     }
   });
 
-  const handleClickIcon = useEvent((event: React.MouseEvent) => {
-    handleExpansion(event);
-  });
-
   const handleSelect = useEvent((event: React.MouseEvent) => {
     event.preventDefault();
     if (selectable === false) {
@@ -217,16 +214,12 @@ const TreeItemContent = React.forwardRef<
         [classes.disabled]: disabled,
       })}
       onMouseDown={handleMouseDown}
+      onClick={selectable && !hasChildren ? handleSelect : handleClickLabel}
       ref={ref as React.ForwardedRef<HTMLDivElement>}
       {...other}
     >
-      <div onClick={handleClickIcon} className={clsx(classes.iconContainer)}>
-        {icon}
-      </div>
-      <div
-        onClick={selectable && !hasChildren ? handleSelect : handleClickLabel}
-        className={classes.label}
-      >
+      <div className={clsx(classes.iconContainer)}>{icon}</div>
+      <div className={classes.label}>
         {label}
         {selectable && hasChildren ? (
           <div className={ownClasses.action} onClick={handleSelect}>
