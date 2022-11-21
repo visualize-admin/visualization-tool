@@ -121,6 +121,10 @@ const useCustomTreeItemStyles = makeStyles<
       },
     },
   },
+  checkIcon: {
+    marginLeft: theme.spacing(2),
+    color: theme.palette.text.secondary,
+  },
 }));
 
 const TreeItemContent = React.forwardRef<
@@ -232,6 +236,11 @@ const TreeItemContent = React.forwardRef<
           </div>
         ) : null}
       </div>
+      {selected ? (
+        <div className={ownClasses.checkIcon}>
+          <Icon name="check" />
+        </div>
+      ) : null}
     </div>
   );
 });
@@ -274,17 +283,17 @@ function SelectTree({
   onClose,
   open,
 }: SelectTreeProps) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
 
   const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(ev.currentTarget);
+    setOpenState(true);
     setMinMenuWidth(ev.currentTarget.clientWidth);
     onOpen?.();
   });
 
   const handleClose = useEventCallback(() => {
-    setAnchorEl(undefined);
+    setOpenState(false);
     onClose?.();
   });
   const classes = useStyles({ disabled, open });
@@ -431,11 +440,11 @@ function SelectTree({
       />
       <Menu
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "left",
         }}
-        anchorEl={anchorEl}
-        open={open !== undefined ? open : !!anchorEl}
+        anchorEl={inputRef.current}
+        open={open !== undefined ? open : !!openState}
         onClose={handleClose}
         action={menuRef}
         PaperProps={paperProps}
