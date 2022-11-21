@@ -3,15 +3,18 @@ import { DimensionValue } from "@/domain/data";
 
 import { DataCubeObservationsQuery } from "../graphql/query-hooks";
 
-const maybeInt = (s?: string) => {
-  if (!s) {
+const maybeInt = (value?: string): number | string => {
+  if (!value) {
     return Infinity;
   }
-  try {
-    return parseInt(s, 10);
-  } catch {
-    return s;
+
+  const maybeInt = parseInt(value, 10);
+
+  if (isNaN(maybeInt)) {
+    return value;
   }
+
+  return maybeInt;
 };
 
 export const makeDimensionValueSorters = (
@@ -21,7 +24,13 @@ export const makeDimensionValueSorters = (
       >["dimensions"][number]
     | undefined,
   options: {
-    sorting?: NonNullable<SortingField["sorting"]> | undefined;
+    sorting?:
+      | NonNullable<SortingField["sorting"]>
+      | {
+          sortingType: "byTableSortingType";
+          sortingOrder: "asc";
+        }
+      | undefined;
     sumsBySegment?: Record<string, number | null>;
     measureBySegment?: Record<string, number | null>;
   } = {}
@@ -71,6 +80,8 @@ export const makeDimensionValueSorters = (
     case "byAuto":
       sorters = [getPosition, getIdentifier];
       break;
+    case "byTableSortingType":
+      sorters = [getPosition, getLabel];
     default:
       sorters = defaultSorters;
   }

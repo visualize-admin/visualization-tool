@@ -9,11 +9,12 @@ import {
   scaleOrdinal,
   scaleDiverging,
   scaleLinear,
+  ascending,
 } from "d3";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
 import { ReactNode, useMemo } from "react";
-import { Cell, Column } from "react-table";
+import { Cell, Column, Row } from "react-table";
 
 import {
   getLabelWithUnit,
@@ -38,6 +39,7 @@ import { useFormatNumber, useDimensionFormatters } from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export type MKColumnMeta<T> = {
   iri: string;
@@ -145,7 +147,7 @@ const useTableState = ({
   // Data used by react-table
   const memoizedData = useMemo(
     function replaceKeys() {
-      //Only read keys once
+      // Only read keys once
       const keys = Object.keys(data[0]);
       const slugifiedKeys = keys.map(getSlugifiedIri);
 
@@ -165,18 +167,25 @@ const useTableState = ({
     },
     [data, types]
   );
+
   // Columns used by react-table
   const tableColumns = useMemo(() => {
+    const allComponents = [...dimensions, ...measures];
+
     return orderedTableColumns.map((c) => {
-      const headerDimension = [...dimensions, ...measures].find(
-        (dim) => dim.iri === c.componentIri
+      const headerComponent = allComponents.find(
+        (d) => d.iri === c.componentIri
       );
 
-      if (!headerDimension) {
+      if (!headerComponent) {
         throw Error(`No dimension <${c.componentIri}> in cube!`);
       }
 
-      const headerLabel = getLabelWithUnit(headerDimension);
+      const sorters = makeDimensionValueSorters(headerComponent, {
+        sorting: { sortingType: "byTableSortingType", sortingOrder: "asc" },
+      });
+
+      const headerLabel = getLabelWithUnit(headerComponent);
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.
@@ -203,9 +212,24 @@ const useTableState = ({
         accessor: getSlugifiedIri(c.componentIri),
 
         width,
-        // If sort type is not "basic", react-table default to "alphanumeric"
-        // which doesn't sort negative values properly.
-        sortType: "basic",
+        sortType: (
+          rowA: Row<Observation>,
+          rowB: Row<Observation>,
+          colId: string
+        ) => {
+          for (const d of sorters) {
+            const result = ascending(
+              d(rowA.values[colId]),
+              d(rowB.values[colId])
+            );
+
+            if (result) {
+              return result;
+            }
+          }
+
+          return 0;
+        },
       };
     });
   }, [orderedTableColumns, data, dimensions, measures, formatNumber]);
@@ -337,22 +361,16 @@ const useTableState = ({
             ),
           ];
           const columnItemSizes = columnItems.map((item) => {
-            // @ts-ignore
             const itemAsString = formatter(item);
             return estimateTextWidth(`${itemAsString}`, 16) + 80;
           });
           const width =
             Math.max(max(columnItemSizes, (d) => d) || 150, 150) -
             BAR_CELL_PADDING * 2;
-          // const hasNegativeValue =
-          //   (min(data, (d) => Math.abs(+d[iri])) || 0) < 0;
           const domain = extent(columnItems, (d) => d) as [number, number];
           const widthScale = scaleLinear().domain(domain).range([0, width]);
 
-          return {
-            ...common,
-            widthScale,
-          } as BarColumnMeta;
+          return { ...common, widthScale } as BarColumnMeta;
         } else {
           return null as never;
         }
