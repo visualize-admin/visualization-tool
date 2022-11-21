@@ -24,7 +24,7 @@ describe("Filters", () => {
       // ---
       "3. Evaluation type",
       "4. Reference area",
-      "5. Inventory",
+      "5. Grid",
     ]);
 
     const productionRegionFilter = selectors.edition.dataFilterInput(
