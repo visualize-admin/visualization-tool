@@ -143,7 +143,7 @@ const ConfigureChartStep = () => {
               startIcon={<SvgIcChevronLeft />}
               onClick={handleClosePanel}
             >
-              Back to main
+              <Trans id="controls.nav.back-to-main">Back to main</Trans>
             </Button>
           </BackContainer>
           {isAnnotationField(state.activeField) ? (

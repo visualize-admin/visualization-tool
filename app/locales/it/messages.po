@@ -13,23 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:629
+#: app/configurator/components/chart-configurator.tsx:628
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
-#: app/configurator/components/chart-configurator.tsx:602
+#: app/configurator/components/chart-configurator.tsx:601
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
-#: app/configurator/components/chart-configurator.tsx:599
+#: app/configurator/components/chart-configurator.tsx:598
 msgid "Move filter down"
 msgstr "Sposta il filtro in basso"
 
-#: app/configurator/components/chart-configurator.tsx:596
+#: app/configurator/components/chart-configurator.tsx:595
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
-#: app/configurator/components/dataset-browse.tsx:1048
+#: app/configurator/components/dataset-browse.tsx:1046
 msgid "No results"
 msgstr "Nessun risultato"
 
@@ -41,11 +41,11 @@ msgstr "[ Nessuna descrizione ]"
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
-#: app/configurator/components/dataset-browse.tsx:979
+#: app/configurator/components/dataset-browse.tsx:977
 msgid "browse-panel.organizations"
 msgstr "Organizzazioni"
 
-#: app/configurator/components/dataset-browse.tsx:961
+#: app/configurator/components/dataset-browse.tsx:959
 msgid "browse-panel.themes"
 msgstr "Categorie"
 
@@ -69,23 +69,23 @@ msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando p
 msgid "button.copy.visualization"
 msgstr "Copia e modifica questa visualizzazione"
 
-#: app/components/data-download.tsx:193
+#: app/components/data-download.tsx:195
 msgid "button.download"
 msgstr "Scarica"
 
-#: app/components/data-download.tsx:183
+#: app/components/data-download.tsx:185
 msgid "button.download.data"
 msgstr "Scaricare i dati"
 
-#: app/components/data-download.tsx:213
+#: app/components/data-download.tsx:215
 msgid "button.download.data.all"
 msgstr "Set di dati completo"
 
-#: app/components/data-download.tsx:204
+#: app/components/data-download.tsx:206
 msgid "button.download.data.visible"
 msgstr "Set di dati filtrati"
 
-#: app/components/data-download.tsx:366
+#: app/components/data-download.tsx:368
 msgid "button.download.runsparqlquery.visible"
 msgstr "Esegui query SPARQL"
 
@@ -142,7 +142,7 @@ msgstr "Aree"
 #~ msgid "chart.map.layers.area.discretization.quantize"
 #~ msgstr "Intervalli uguali"
 
-#: app/configurator/components/chart-configurator.tsx:678
+#: app/configurator/components/chart-configurator.tsx:677
 #: app/configurator/components/chart-options-selector.tsx:986
 #: app/configurator/components/field-i18n.ts:31
 msgid "chart.map.layers.base"
@@ -347,31 +347,31 @@ msgstr "Descrizione"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
-#: app/configurator/components/filters.tsx:407
+#: app/configurator/components/filters.tsx:400
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
 
-#: app/configurator/components/filters.tsx:189
+#: app/configurator/components/filters.tsx:194
 msgid "controls.filter.select.all"
 msgstr "Seleziona tutti"
 
-#: app/configurator/components/filters.tsx:196
+#: app/configurator/components/filters.tsx:201
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
 #: app/configurator/components/filters.tsx:358
-msgid "controls.filters.select.filters"
-msgstr "Filtri"
+#~ msgid "controls.filters.select.filters"
+#~ msgstr "Filtri"
 
-#: app/configurator/components/filters.tsx:388
+#: app/configurator/components/filters.tsx:381
 msgid "controls.filters.select.refresh-colors"
 msgstr "Aggiorna i colori"
 
-#: app/configurator/components/filters.tsx:372
+#: app/configurator/components/filters.tsx:365
 msgid "controls.filters.select.reset-colors"
 msgstr "Reimpostare i colori"
 
-#: app/configurator/components/filters.tsx:365
+#: app/configurator/components/filters.tsx:358
 msgid "controls.filters.select.selected-filters"
 msgstr "Filtri selezionati"
 
@@ -457,6 +457,10 @@ msgstr "Italiano"
 msgid "controls.measure"
 msgstr "Misura"
 
+#: app/configurator/components/configurator.tsx:146
+msgid "controls.nav.back-to-main"
+msgstr "Torna alle impostazioni generali"
+
 #: app/configurator/components/configurator.tsx:110
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
@@ -485,7 +489,7 @@ msgstr "Cancella la ricerca"
 msgid "controls.section.additional-information"
 msgstr "Informazioni aggiuntive"
 
-#: app/configurator/components/chart-configurator.tsx:526
+#: app/configurator/components/chart-configurator.tsx:525
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
 
@@ -497,7 +501,7 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
-#: app/configurator/components/chart-configurator.tsx:544
+#: app/configurator/components/chart-configurator.tsx:543
 msgid "controls.section.data.filters"
 msgstr "Filtri"
 
@@ -559,7 +563,7 @@ msgstr "Opzioni della tabella"
 msgid "controls.section.title.warning"
 msgstr "Aggiungi un titolo o una descrizione"
 
-#: app/configurator/components/chart-configurator.tsx:518
+#: app/configurator/components/chart-configurator.tsx:517
 #: app/configurator/components/chart-type-selector.tsx:131
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"
@@ -619,15 +623,16 @@ msgstr "Seleziona una misura"
 #~ msgid "controls.select.optional"
 #~ msgstr "facoltativo"
 
-#: app/configurator/components/filters.tsx:760
+#: app/configurator/components/filters.tsx:353
+#: app/configurator/components/filters.tsx:767
 msgid "controls.set-filters"
 msgstr "Modificare i filtri"
 
-#: app/configurator/components/filters.tsx:768
+#: app/configurator/components/filters.tsx:775
 msgid "controls.set-filters-caption"
 msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dans la visualisation"
 
-#: app/configurator/components/filters.tsx:808
+#: app/configurator/components/filters.tsx:814
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
@@ -731,7 +736,7 @@ msgstr "Mostra il campo di ricerca"
 msgid "controls.title"
 msgstr "Titolo"
 
-#: app/components/select-tree.tsx:230
+#: app/components/select-tree.tsx:227
 msgid "controls.tree.select-value"
 msgstr "Selezionare"
 
@@ -842,7 +847,7 @@ msgstr "Nome, organizzazione, parola chiave..."
 msgid "dataset.sortby"
 msgstr "Ordina per"
 
-#: app/configurator/components/dataset-browse.tsx:1157
+#: app/configurator/components/dataset-browse.tsx:1155
 msgid "dataset.tag.draft"
 msgstr "Bozza"
 
@@ -1005,7 +1010,7 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/dataset-browse.tsx:378
-#: app/configurator/components/filters.tsx:777
+#: app/configurator/components/filters.tsx:784
 msgid "select.controls.filters.search"
 msgstr "Cerca"
 
