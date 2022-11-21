@@ -54,19 +54,19 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
+  HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
   useDataCubeMetadataWithComponentValuesQuery,
+  useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { makeOptionGroups } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
 import { ChartTypeSelector } from "./chart-type-selector";
-import useHierarchyParents from "./use-hierarchy-parents";
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -83,18 +83,18 @@ const DataFilterSelectGeneric = ({
   const [state] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const [pause, setPause] = useState(true);
-  const { data: hierarchyParents, fetching: fetchingHierarchy } =
-    useHierarchyParents({
-      datasetIri: state.dataSet,
-      dataSource: state.dataSource,
-      dimension,
+  const [hierarchyResp] = useDimensionHierarchyQuery({
+    variables: {
+      cubeIri: state.dataSet,
+      sourceUrl: state.dataSource.url,
+      sourceType: state.dataSource.type,
+      dimensionIri: dimension?.iri,
       locale,
-      pause,
-    });
-
-  const optionGroups = useMemo(() => {
-    return makeOptionGroups(hierarchyParents);
-  }, [hierarchyParents]);
+    },
+    pause,
+  });
+  const hierarchy =
+    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
   const handleOpen = useEvent(() => setPause(false));
 
@@ -146,9 +146,9 @@ const DataFilterSelectGeneric = ({
     return (
       <DataFilterSelect
         {...sharedProps}
-        optionGroups={optionGroups}
+        hierarchy={hierarchy as HierarchyValue[]}
         onOpen={handleOpen}
-        loading={fetchingHierarchy}
+        loading={hierarchyResp.fetching}
       />
     );
   }

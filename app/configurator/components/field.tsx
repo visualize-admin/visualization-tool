@@ -23,6 +23,7 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
+import SelectTree, { SelectTreeProps } from "@/components/select-tree";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -36,7 +37,6 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   Option,
-  OptionGroup,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
@@ -58,11 +58,17 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
-import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  HierarchyValue,
+  TimeUnit,
+} from "@/graphql/query-hooks";
 import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
+
+import useDisclosure from "./use-disclosure";
 
 const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -109,6 +115,20 @@ export const ControlTabField = ({
   );
 };
 
+export const hierarchyToOptions = (hierarchy: HierarchyValue[]) => {
+  const transform = (h: HierarchyValue): SelectTreeProps["options"][number] => {
+    return {
+      ...h,
+      selectable: !!h.hasValue,
+      children:
+        h.children && h.children.length > 0
+          ? h.children.map(transform)
+          : undefined,
+    };
+  };
+  return hierarchy.map((h) => transform(h));
+};
+
 export const OnOffControlTabField = ({
   value,
   label,
@@ -143,7 +163,7 @@ export const DataFilterSelect = ({
   disabled,
   isOptional,
   controls,
-  optionGroups,
+  hierarchy,
   tooltipText,
   onOpen,
   loading,
@@ -154,7 +174,7 @@ export const DataFilterSelect = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
-  optionGroups?: [OptionGroup, Option[]][];
+  hierarchy?: HierarchyValue[];
   tooltipText?: string;
   onOpen?: () => void;
   loading?: boolean;
@@ -191,6 +211,39 @@ export const DataFilterSelect = ({
       : sortedValues;
   }, [isOptional, sortedValues, noneLabel]);
 
+  const hierarchyOptions = useMemo(() => {
+    if (!hierarchy) {
+      return;
+    }
+    return hierarchyToOptions(hierarchy);
+  }, [hierarchy]);
+
+  const { open, close, isOpen } = useDisclosure();
+  const handleOpen = () => {
+    open();
+    onOpen?.();
+  };
+
+  const handleClose = () => {
+    close();
+  };
+
+  if (hierarchy && hierarchyOptions) {
+    return (
+      <SelectTree
+        label={isOptional ? `${label} (${optionalLabel})` : label}
+        options={hierarchyOptions}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        open={isOpen}
+        disabled={disabled}
+        controls={controls}
+        tooltipText={tooltipText}
+        {...fieldProps}
+      />
+    );
+  }
+
   return (
     <Select
       id={id}
@@ -199,9 +252,10 @@ export const DataFilterSelect = ({
       options={allValues}
       sortOptions={false}
       controls={controls}
-      optionGroups={optionGroups}
       tooltipText={tooltipText}
-      onOpen={onOpen}
+      open={isOpen}
+      onClose={handleClose}
+      onOpen={handleOpen}
       loading={loading}
       {...fieldProps}
     />

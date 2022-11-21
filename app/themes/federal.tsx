@@ -220,6 +220,20 @@ theme.components = {
       },
     },
   },
+  MuiTreeItem: {
+    styleOverrides: {
+      content: {
+        minHeight: "32px",
+      },
+      label: {
+        fontSize: theme.typography.body2.fontSize,
+
+        [theme.breakpoints.up("md")]: {
+          fontSize: theme.typography.body2.fontSize,
+        },
+      },
+    },
+  },
   MuiButton: {
     variants: [
       {
@@ -228,31 +242,6 @@ theme.components = {
           fontSize: 14,
           minHeight: 32,
           minWidth: "auto",
-        },
-      },
-      {
-        props: { variant: "selectColorPicker" },
-        style: {
-          color: "grey.700",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          bg: "monochrome100",
-          p: 1,
-          height: "40px",
-          borderWidth: "1px",
-          borderStyle: "solid",
-          borderColor: theme.palette.divider,
-          ":hover": {
-            bg: "monochrome100",
-          },
-          ":active": {
-            backgroundColor: "grey.100",
-          },
-          ":disabled": {
-            cursor: "initial",
-            backgroundColor: "muted.main",
-          },
         },
       },
       {

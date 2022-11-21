@@ -5,6 +5,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestPublishedCubeFromUnversionedIri } from "@/rdf/query-cube-metadata";
 import { getErrorQueryParams } from "@/utils/flashes";
+import useEvent from "@/utils/use-event";
 
 import { ConfiguratorState } from "../config-types";
 
@@ -26,6 +27,44 @@ export const useRedirectToVersionedCube = ({
   const router = useRouter();
   const hasRun = useRef(false);
 
+  const handleLoad = useEvent(async () => {
+    const { url: dataSourceURL } = dataSource;
+    if (hasRun.current) {
+      return;
+    }
+
+    if (
+      datasetIri &&
+      !Array.isArray(datasetIri) &&
+      !isDatasetIriVersioned(datasetIri)
+    ) {
+      const sparqlClient = new ParsingClient({
+        endpointUrl: dataSourceURL,
+      });
+      const resp = await queryLatestPublishedCubeFromUnversionedIri(
+        sparqlClient,
+        datasetIri
+      );
+
+      if (resp) {
+        router.replace({
+          pathname: `/${locale}/browse`,
+          query: {
+            dataset: resp.iri,
+          },
+        });
+      } else {
+        router.replace({
+          pathname: `/`,
+          query: getErrorQueryParams("CANNOT_FIND_CUBE", {
+            iri: datasetIri,
+          }),
+        });
+      }
+      hasRun.current = true;
+    }
+  });
+
   useEffect(() => {
     if (dataSource.type !== "sparql") {
       console.error(
@@ -33,43 +72,9 @@ export const useRedirectToVersionedCube = ({
       );
       return;
     }
-    const { url: dataSourceURL } = dataSource;
-    const run = async () => {
-      if (hasRun.current) {
-        return;
-      }
-      if (
-        datasetIri &&
-        !Array.isArray(datasetIri) &&
-        !isDatasetIriVersioned(datasetIri)
-      ) {
-        const sparqlClient = new ParsingClient({
-          endpointUrl: dataSourceURL,
-        });
-        const resp = await queryLatestPublishedCubeFromUnversionedIri(
-          sparqlClient,
-          datasetIri
-        );
-
-        if (!resp) {
-          router.replace({
-            pathname: `/?${getErrorQueryParams("CANNOT_FIND_CUBE", {
-              iri: datasetIri,
-            })}`,
-          });
-        } else {
-          router.replace({
-            pathname: `/${locale}/browse/dataset/${encodeURIComponent(
-              resp.iri
-            )}`,
-          });
-        }
-        hasRun.current = true;
-      }
-    };
 
     if (router.isReady) {
-      run();
+      handleLoad();
     }
-  }, [router, locale, dataSource, datasetIri]);
+  }, [router, locale, dataSource, datasetIri, handleLoad]);
 };
