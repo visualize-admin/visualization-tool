@@ -476,7 +476,7 @@ const StyledAccordion = styled(Accordion)({
 const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   minHeight: 0,
   transition: "background-color 0.1s ease",
-  paddingLeft: "1rem",
+  paddingLeft: "0.25rem",
   paddingRight: "1rem",
 
   "&.Mui-expanded": {
@@ -552,6 +552,7 @@ const TreeAccordion = ({
               visibility: expandable ? "visible" : "hidden",
               mt: 1,
               p: 1,
+              ml: 2,
             }}
           >
             <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
