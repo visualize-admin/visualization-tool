@@ -12,7 +12,9 @@ test("should be able to load a map with a dimension with a large number of value
     { timeout: 60 * 1000 }
   );
 
-  await page.locator("text=Chart Type").waitFor({ timeout: 30_000 });
+  await page
+    .locator("h5", { hasText: "Chart Type" })
+    .waitFor({ timeout: 30_000 });
   await actions.editor.changeChartType("Map");
   await selectors.chart.loaded();
   await page.screenshot({

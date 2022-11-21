@@ -11,7 +11,9 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   );
 
   await filterLocator.getByText("Greenhouse gas").click();
-  await selectors.mui.popover().findByText("Synthetic gases");
+  await selectors.mui
+    .popover()
+    .findByText("Synthetic gases", undefined, { timeout: 10_000 });
 
   await actions.mui.selectOption("Synthetic gases");
 
