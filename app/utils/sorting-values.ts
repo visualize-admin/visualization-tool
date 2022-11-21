@@ -24,7 +24,13 @@ export const makeDimensionValueSorters = (
       >["dimensions"][number]
     | undefined,
   options: {
-    sorting?: NonNullable<SortingField["sorting"]> | undefined;
+    sorting?:
+      | NonNullable<SortingField["sorting"]>
+      | {
+          sortingType: "byTableSortingType";
+          sortingOrder: "asc";
+        }
+      | undefined;
     sumsBySegment?: Record<string, number | null>;
     measureBySegment?: Record<string, number | null>;
   } = {}
@@ -74,6 +80,8 @@ export const makeDimensionValueSorters = (
     case "byAuto":
       sorters = [getPosition, getIdentifier];
       break;
+    case "byTableSortingType":
+      sorters = [getPosition, getLabel];
     default:
       sorters = defaultSorters;
   }
