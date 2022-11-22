@@ -93,6 +93,8 @@ import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
+import { toggleInteractiveFilterDataDimension } from "./interactive-filters/interactive-filters-config-state";
+
 export type ConfiguratorStateAction =
   | {
       type: "INITIALIZED";
@@ -201,6 +203,10 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: { dimensionIri: string; value: string };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE";
+      value: { dimensionIri: string };
     }
   | {
       type: "CHART_CONFIG_FILTERS_UPDATE";
@@ -1242,6 +1248,19 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             value,
           };
         }
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri } = action.value;
+        delete draft.chartConfig.filters[dimensionIri];
+        const newIFConfig = toggleInteractiveFilterDataDimension(
+          draft.chartConfig.interactiveFiltersConfig,
+          dimensionIri,
+          false
+        );
+        draft.chartConfig.interactiveFiltersConfig = newIFConfig;
       }
       return draft;
 

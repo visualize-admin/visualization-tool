@@ -53,7 +53,6 @@ import {
   moveFilterField,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
@@ -351,10 +350,9 @@ const useFilterReorder = ({
 
   const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
       value: {
         dimensionIri: dimension.iri,
-        value: FIELD_VALUE_NONE,
       },
     });
   });

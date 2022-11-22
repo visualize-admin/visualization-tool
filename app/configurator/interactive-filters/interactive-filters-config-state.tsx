@@ -229,16 +229,22 @@ export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
 
 // Add or remove a dimension from the interactive
 // data filters dimensions list
-const toggleInteractiveFilterDataDimension = produce(
-  (config: InteractiveFiltersConfig, iri: string): InteractiveFiltersConfig => {
+export const toggleInteractiveFilterDataDimension = produce(
+  (
+    config: InteractiveFiltersConfig,
+    iri: string,
+    newValue?: boolean
+  ): InteractiveFiltersConfig => {
     if (!config?.dataFilters.componentIris) {
       return config;
     }
 
     const currentComponentIris = config.dataFilters.componentIris;
-    let newComponentIris = currentComponentIris.includes(iri)
-      ? config.dataFilters.componentIris.filter((d) => d !== iri)
-      : [...currentComponentIris, iri];
+    const shouldAdd =
+      newValue === undefined ? !currentComponentIris.includes(iri) : newValue;
+    const newComponentIris = shouldAdd
+      ? [...currentComponentIris, iri]
+      : config.dataFilters.componentIris.filter((d) => d !== iri);
     const newDataFilters = {
       ...config.dataFilters,
       componentIris: newComponentIris,
