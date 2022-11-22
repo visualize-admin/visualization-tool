@@ -8,6 +8,9 @@ import {
   MenuItem,
   Theme,
   Typography,
+  Switch,
+  FormControlLabel,
+  FormControlLabelProps,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
@@ -65,6 +68,8 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
+
+import { useInteractiveDataFilter } from "../interactive-filters/interactive-filters-config-options";
 
 import { ChartTypeSelector } from "./chart-type-selector";
 
@@ -469,6 +474,23 @@ const useStyles = makeStyles<
   },
 }));
 
+const InteractiveDataFilterCheckbox = ({
+  value,
+  ...props
+}: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
+  const { checked, toggle } = useInteractiveDataFilter(value);
+  return (
+    <FormControlLabel
+      componentsProps={{
+        typography: { variant: "caption", color: "text.secondary" },
+      }}
+      {...props}
+      control={<Switch checked={checked} onChange={() => toggle()} />}
+      label={<Trans id="controls.filter.interactive.toggle">Interactive</Trans>}
+    />
+  );
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -580,6 +602,12 @@ export const ChartConfigurator = ({
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
                           >
+                            <div>
+                              <InteractiveDataFilterCheckbox
+                                value={dimension.iri}
+                                sx={{ mb: 1 }}
+                              />
+                            </div>
                             <DataFilterSelectGeneric
                               key={dimension.iri}
                               dimension={dimension}
@@ -589,6 +617,7 @@ export const ChartConfigurator = ({
                                 handleRemoveDimensionFilter(dimension)
                               }
                             />
+
                             <Box className={classes.dragButtons}>
                               <MoveDragButtons
                                 moveUpButtonProps={{

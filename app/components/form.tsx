@@ -23,6 +23,7 @@ import {
   Stack,
   styled,
   PaperProps,
+  FormControlLabelProps,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
@@ -195,7 +196,7 @@ export const Checkbox = ({
   smaller,
   indeterminate,
 }: {
-  label: string | React.ReactNode;
+  label: FormControlLabelProps["label"];
   disabled?: boolean;
   color?: string;
   smaller?: boolean;

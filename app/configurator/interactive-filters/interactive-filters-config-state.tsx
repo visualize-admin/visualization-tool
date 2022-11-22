@@ -207,25 +207,15 @@ export const toggleInteractiveFilterDataDimension = produce(
       return config;
     }
 
-    if (config.dataFilters.componentIris.includes(iri)) {
-      const newComponentIris = config.dataFilters.componentIris.filter(
-        (d) => d !== iri
-      );
-      const newDataFilters = {
-        ...config.dataFilters,
-        componentIris: newComponentIris,
-      };
-      return { ...config, dataFilters: newDataFilters };
-    } else if (!config.dataFilters.componentIris.includes(iri)) {
-      const newComponentIris = [...config.dataFilters.componentIris, iri];
-      const newDataFilters = {
-        ...config.dataFilters,
-        componentIris: newComponentIris,
-      };
-
-      return { ...config, dataFilters: newDataFilters };
-    } else {
-      return config;
-    }
+    const currentComponentIris = config.dataFilters.componentIris;
+    let newComponentIris = currentComponentIris.includes(iri)
+      ? config.dataFilters.componentIris.filter((d) => d !== iri)
+      : [...currentComponentIris, iri];
+    const newDataFilters = {
+      ...config.dataFilters,
+      componentIris: newComponentIris,
+    };
+    newDataFilters.active = newComponentIris.length > 0;
+    return { ...config, dataFilters: newDataFilters };
   }
 );

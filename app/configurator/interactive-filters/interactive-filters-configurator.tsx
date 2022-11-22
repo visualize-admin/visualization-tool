@@ -136,18 +136,6 @@ export const InteractiveFiltersConfigurator = ({
               label={segmentComponent.label}
             />
           )}
-          {/* Data Filters */}
-          {canFilterData && (
-            <InteractiveFilterTabField
-              value="dataFilters"
-              icon="filter"
-              label={
-                <Trans id="controls.interactive.filters.dataFilter">
-                  Filter Data
-                </Trans>
-              }
-            />
-          )}
         </ControlSectionContent>
       </ControlSection>
     );

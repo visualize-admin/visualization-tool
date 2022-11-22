@@ -816,9 +816,8 @@ export const handleChartFieldChanged = (
         draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
           newComponentIris;
 
-        if (newComponentIris.length === 0) {
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.active = false;
-        }
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.active =
+          newComponentIris.length > 0;
       }
     } else if (isMapConfig(draft.chartConfig)) {
       initializeMapField({

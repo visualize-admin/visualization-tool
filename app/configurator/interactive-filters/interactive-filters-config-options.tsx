@@ -2,13 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import { extent } from "d3";
 import get from "lodash/get";
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { Checkbox, Select } from "@/components/form";
@@ -40,6 +34,7 @@ import {
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+import useEvent from "@/utils/use-event";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
@@ -119,19 +114,6 @@ export const InteractiveFiltersOptions = ({
           </SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveTimeSliderFilterOptions state={state} />
-          </ControlSectionContent>
-        </ControlSection>
-      );
-    } else if (activeField === "dataFilters") {
-      return (
-        <ControlSection>
-          <SectionTitle iconName="filter">
-            <Trans id="controls.section.interactiveFilters.dataFilters">
-              Data filters
-            </Trans>
-          </SectionTitle>
-          <ControlSectionContent gap="none">
-            <InteractiveDataFilterOptions state={state} />
           </ControlSectionContent>
         </ControlSection>
       );
@@ -397,20 +379,6 @@ const InteractiveDataFilterOptions = ({
           disabled={configurableDimensions.length === 0}
           dimensions={configurableDimensions}
         />
-        {configurableDimensions.length > 0 ? (
-          <Box sx={{ my: 3 }}>
-            {configurableDimensions.map((d, i) => (
-              <InteractiveDataFilterOptionsCheckbox
-                key={i}
-                label={d.label}
-                value={d.iri}
-                disabled={
-                  !chartConfig.interactiveFiltersConfig?.dataFilters.active
-                }
-              />
-            ))}
-          </Box>
-        ) : null}
       </>
     );
   } else {
@@ -418,29 +386,26 @@ const InteractiveDataFilterOptions = ({
   }
 };
 
-const useInteractiveDataFilter = (value: string) => {
+export const useInteractiveDataFilter = (dimensionIri: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
-      const { interactiveFiltersConfig } = state.chartConfig;
-      const newIFConfig = toggleInteractiveFilterDataDimension(
-        interactiveFiltersConfig,
-        e.currentTarget.value
-      );
-
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newIFConfig,
-      });
-    },
-    [dispatch, state]
-  );
-  const checked =
-    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
-      value
+  const toggle = useEvent(() => {
+    const { interactiveFiltersConfig } = state.chartConfig;
+    const newIFConfig = toggleInteractiveFilterDataDimension(
+      interactiveFiltersConfig,
+      dimensionIri
     );
 
-  return { checked, onChange };
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newIFConfig,
+    });
+  });
+  const checked =
+    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
+      dimensionIri
+    );
+
+  return { checked, toggle };
 };
 
 const InteractiveDataFilterOptionsCheckbox = ({
@@ -452,7 +417,10 @@ const InteractiveDataFilterOptionsCheckbox = ({
   label: string;
   disabled: boolean;
 }) => {
-  const { checked, onChange } = useInteractiveDataFilter(value);
+  const { checked, toggle } = useInteractiveDataFilter(value);
+  const handleChange = useEvent(() => {
+    return toggle();
+  });
   return (
     <Checkbox
       name={`interactive-filter-${label}`}
@@ -460,7 +428,7 @@ const InteractiveDataFilterOptionsCheckbox = ({
       label={label}
       value={value}
       checked={checked}
-      onChange={onChange}
+      onChange={handleChange}
     />
   );
 };
