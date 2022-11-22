@@ -414,7 +414,7 @@ export const SearchDatasetControls = ({
     },
   ];
 
-  const isSearching = search !== "";
+  const isSearching = search !== "" && search !== undefined;
 
   const onToggleIncludeDrafts = useEvent(async () => {
     setIncludeDrafts(!includeDrafts);
