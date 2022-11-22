@@ -664,7 +664,7 @@ const Tree = ({
             // Has value is only present for hierarchies.
             selectable={isHierarchyOptionSelectable(d)}
             expandable={hasChildren}
-            renderExpandButton={currentDepthsMetadata.expandable}
+            renderExpandButton={currentDepthsMetadata.expandable || depth > 0}
             renderColorCheckbox={
               showColors && (currentDepthsMetadata.selectable || d.depth === -1)
             }
