@@ -150,6 +150,9 @@ export const useInteractiveTimeSliderFiltersSelect = () => {
   };
 };
 
+/**
+ * Toggles all data filters
+ */
 export const useInteractiveDataFiltersToggle = ({
   dimensions,
 }: {
@@ -199,9 +202,34 @@ export const useInteractiveDataFiltersToggle = ({
   };
 };
 
+/**
+ * Toggles a single data filter
+ */
+export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const toggle = useEvent(() => {
+    const { interactiveFiltersConfig } = state.chartConfig;
+    const newIFConfig = toggleInteractiveFilterDataDimension(
+      interactiveFiltersConfig,
+      dimensionIri
+    );
+
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newIFConfig,
+    });
+  });
+  const checked =
+    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
+      dimensionIri
+    );
+
+  return { checked, toggle };
+};
+
 // Add or remove a dimension from the interactive
 // data filters dimensions list
-export const toggleInteractiveFilterDataDimension = produce(
+const toggleInteractiveFilterDataDimension = produce(
   (config: InteractiveFiltersConfig, iri: string): InteractiveFiltersConfig => {
     if (!config?.dataFilters.componentIris) {
       return config;

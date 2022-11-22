@@ -69,7 +69,7 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
-import { useInteractiveDataFilter } from "../interactive-filters/interactive-filters-config-options";
+import { useInteractiveDataFilterToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ChartTypeSelector } from "./chart-type-selector";
 
@@ -478,7 +478,7 @@ const InteractiveDataFilterCheckbox = ({
   value,
   ...props
 }: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
-  const { checked, toggle } = useInteractiveDataFilter(value);
+  const { checked, toggle } = useInteractiveDataFilterToggle(value);
   return (
     <FormControlLabel
       componentsProps={{

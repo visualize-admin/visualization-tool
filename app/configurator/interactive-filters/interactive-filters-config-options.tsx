@@ -14,13 +14,8 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
-import {
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import {
-  toggleInteractiveFilterDataDimension,
   useInteractiveTimeRangeFiltersToggle,
   useInteractiveTimeSliderFiltersSelect,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
@@ -31,7 +26,6 @@ import {
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import useEvent from "@/utils/use-event";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
@@ -274,26 +268,4 @@ const InteractiveTimeSliderFilterOptionsSelect = ({
       {...fieldProps}
     />
   );
-};
-
-export const useInteractiveDataFilter = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const toggle = useEvent(() => {
-    const { interactiveFiltersConfig } = state.chartConfig;
-    const newIFConfig = toggleInteractiveFilterDataDimension(
-      interactiveFiltersConfig,
-      dimensionIri
-    );
-
-    dispatch({
-      type: "INTERACTIVE_FILTER_CHANGED",
-      value: newIFConfig,
-    });
-  });
-  const checked =
-    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
-      dimensionIri
-    );
-
-  return { checked, toggle };
 };
