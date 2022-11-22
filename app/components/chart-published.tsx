@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -19,6 +19,7 @@ import {
 import GenericChart from "@/components/common-chart";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
+import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
@@ -65,6 +66,7 @@ export const ChartPublished = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    position: "relative",
     display: "flex",
     flexGrow: 1,
     flexDirection: "column",
@@ -90,6 +92,8 @@ export const ChartPublishedInner = ({
   const classes = useStyles();
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
+
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: {
@@ -117,7 +121,7 @@ export const ChartPublishedInner = ({
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} ref={rootRef}>
       <ChartErrorBoundary resetKeys={[chartConfig]}>
         {metaData?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
@@ -161,11 +165,14 @@ export const ChartPublishedInner = ({
             </HintBlue>
           </Box>
         )}
-        {meta.title[locale] !== "" && (
+        <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
           <Typography component="div" variant="h2" mb={2}>
             {meta.title[locale]}
           </Typography>
-        )}
+
+          <MetadataPanel container={rootRef.current} />
+        </Flex>
+
         {meta.description[locale] && (
           <Typography component="div" variant="body1" mb={2}>
             {meta.description[locale]}

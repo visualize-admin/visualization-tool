@@ -140,7 +140,7 @@ export const ChartPreviewInner = ({
                   )}
                 </Typography>
 
-                <MetadataPanel />
+                <MetadataPanel top={96} />
               </Flex>
               <Head>
                 <title key="title">

@@ -1,11 +1,8 @@
-import { Button, IconButton, Theme, Typography } from "@mui/material";
+import { Button, Drawer, IconButton, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
 
-import {
-  ConfiguratorDrawer,
-  DRAWER_WIDTH,
-} from "@/configurator/components/drawer";
+import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
 
@@ -45,7 +42,7 @@ export const useContext = () => {
   return ctx;
 };
 
-const useStyles = makeStyles<Theme>((theme) => {
+const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
   return {
     header: {
       display: "flex",
@@ -60,13 +57,30 @@ const useStyles = makeStyles<Theme>((theme) => {
       width: DRAWER_WIDTH,
       padding: theme.spacing(4),
     },
+    drawer: {
+      position: "static",
+
+      "& > .MuiPaper-root": {
+        top: ({ drawerTop }) => drawerTop,
+        bottom: 0,
+        height: "auto",
+        borderRight: `1px ${theme.palette.divider} solid`,
+        boxShadow: "none",
+      },
+    },
   };
 });
 
-export const MetadataPanel = () => {
+export const MetadataPanel = ({
+  container,
+  top,
+}: {
+  container?: HTMLDivElement | null;
+  top?: number;
+}) => {
   return (
     <ContextProvider>
-      <PanelInner />
+      <PanelInner container={container} top={top} />
     </ContextProvider>
   );
 };
@@ -80,7 +94,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const Header = ({ onClose }: { onClose: () => void }) => {
-  const classes = useStyles();
+  const classes = useStyles({});
 
   return (
     <div className={classes.header}>
@@ -96,12 +110,19 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 };
 
 const Content = () => {
-  const classes = useStyles();
+  const classes = useStyles({});
 
   return <div className={classes.content}></div>;
 };
 
-const PanelInner = () => {
+const PanelInner = ({
+  container,
+  top = 0,
+}: {
+  container: HTMLDivElement | null | undefined;
+  top?: number;
+}) => {
+  const classes = useStyles({ drawerTop: top });
   const { open, toggle } = useContext();
   const handleToggle = useEvent(() => {
     toggle();
@@ -111,11 +132,17 @@ const PanelInner = () => {
     <>
       <ToggleButton onClick={handleToggle} />
 
-      {/* Change name. */}
-      <ConfiguratorDrawer open={open} anchor="left" hideBackdrop>
+      <Drawer
+        className={classes.drawer}
+        open={open}
+        anchor="left"
+        hideBackdrop
+        ModalProps={{ container }}
+        PaperProps={{ style: { position: "absolute" } }}
+      >
         <Header onClose={handleToggle} />
         <Content />
-      </ConfiguratorDrawer>
+      </Drawer>
     </>
   );
 };
