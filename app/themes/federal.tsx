@@ -389,6 +389,11 @@ theme.components = {
   },
   MuiInputBase: {
     styleOverrides: {
+      input: {
+        "&:focus": {
+          backgroundColor: "transparent",
+        },
+      },
       adornedStart: {
         "> svg:first-of-type": {
           margin: "0 0.5rem",
