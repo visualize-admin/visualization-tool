@@ -21,7 +21,10 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { getTimeSliderFilterDimensions } from "./helpers";
+import {
+  getDataFilterDimensions,
+  getTimeSliderFilterDimensions,
+} from "./helpers";
 
 const ENABLE_TIME_SLIDER = typeof window !== "undefined" && flag("timeslider");
 
@@ -83,7 +86,12 @@ export const InteractiveFiltersConfigurator = ({
       );
     const canFilterTimeSlider =
       ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
-    const canFilterData = Object.keys(filters).length > 0;
+
+    const dataFilterDimensions = getDataFilterDimensions(
+      chartConfig,
+      data?.dataCubeByIri
+    );
+    const canFilterData = dataFilterDimensions.length > 0;
 
     return (
       <ControlSection

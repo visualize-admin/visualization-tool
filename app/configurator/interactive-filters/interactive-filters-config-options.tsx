@@ -10,7 +10,7 @@ import React, {
   useRef,
 } from "react";
 
-import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
+import { getFieldComponentIri } from "@/charts";
 import { Checkbox, Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
@@ -33,19 +33,20 @@ import {
   useInteractiveTimeSliderFiltersSelect,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import { isTemporalDimension } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
   DimensionMetadataFragment,
   TemporalDimension,
-  TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
-import { getTimeSliderFilterDimensions } from "./helpers";
+import {
+  getTimeSliderFilterDimensions,
+  getDataFilterDimensions,
+} from "./helpers";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -358,15 +359,11 @@ const InteractiveDataFilterOptions = ({
   });
 
   if (data?.dataCubeByIri) {
-    const mappedIris = getFieldComponentIris(chartConfig.fields);
-
     // Dimensions that are not encoded in the visualization
     // excluding temporal and numerical dimensions
-    const configurableDimensions = data.dataCubeByIri.dimensions.filter(
-      (d) =>
-        !mappedIris.has(d.iri) &&
-        (!isTemporalDimension(d) || d.timeUnit === TimeUnit.Year) &&
-        !d.isNumerical
+    const configurableDimensions = getDataFilterDimensions(
+      chartConfig,
+      data?.dataCubeByIri
     );
 
     return (
