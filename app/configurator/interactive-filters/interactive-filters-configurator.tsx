@@ -50,7 +50,7 @@ export const InteractiveFiltersConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { chartType, fields, filters } = chartConfig;
+  const { chartType, fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {

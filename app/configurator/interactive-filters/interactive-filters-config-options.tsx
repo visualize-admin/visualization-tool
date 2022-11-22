@@ -418,17 +418,8 @@ const InteractiveDataFilterOptions = ({
   }
 };
 
-const InteractiveDataFilterOptionsCheckbox = ({
-  value,
-  label,
-  disabled,
-}: {
-  value: string;
-  label: string;
-  disabled: boolean;
-}) => {
+const useInteractiveDataFilter = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
-
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       const { interactiveFiltersConfig } = state.chartConfig;
@@ -449,6 +440,19 @@ const InteractiveDataFilterOptionsCheckbox = ({
       value
     );
 
+  return { checked, onChange };
+};
+
+const InteractiveDataFilterOptionsCheckbox = ({
+  value,
+  label,
+  disabled,
+}: {
+  value: string;
+  label: string;
+  disabled: boolean;
+}) => {
+  const { checked, onChange } = useInteractiveDataFilter(value);
   return (
     <Checkbox
       name={`interactive-filter-${label}`}
