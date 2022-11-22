@@ -809,10 +809,16 @@ export const handleChartFieldChanged = (
 
       // Remove this component from the interactive filter, if it is there
       if (draft.chartConfig.interactiveFiltersConfig) {
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+        const newComponentIris =
           draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
             (c) => c !== componentIri
           );
+        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+          newComponentIris;
+
+        if (newComponentIris.length === 0) {
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.active = false;
+        }
       }
     } else if (isMapConfig(draft.chartConfig)) {
       initializeMapField({

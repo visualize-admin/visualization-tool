@@ -195,7 +195,7 @@ export const Checkbox = ({
   smaller,
   indeterminate,
 }: {
-  label: string;
+  label: string | React.ReactNode;
   disabled?: boolean;
   color?: string;
   smaller?: boolean;

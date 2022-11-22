@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { extent } from "d3";
 import get from "lodash/get";
 import React, {
@@ -325,9 +325,9 @@ const InteractiveDataFiltersToggle = ({
   disabled = false,
   dimensions,
 }: {
-  label: string;
+  label: React.ComponentProps<typeof Checkbox>["label"];
   defaultChecked?: boolean;
-  disabled?: boolean;
+  disabled?: React.ComponentProps<typeof Checkbox>["disabled"];
   dimensions: DimensionMetadataFragment[];
 }) => {
   const fieldProps = useInteractiveDataFiltersToggle({ dimensions });
@@ -372,26 +372,48 @@ const InteractiveDataFilterOptions = ({
     return (
       <>
         <InteractiveDataFiltersToggle
-          label={t({
-            id: "controls.interactiveFilters.dataFilters.toggledataFilters",
-            message: "Show data filters",
-          })}
+          label={
+            <>
+              <Typography variant="body2">
+                {t({
+                  id: "controls.interactiveFilters.dataFilters.toggledataFilters",
+                  message: "Show data filters",
+                })}
+              </Typography>
+              {configurableDimensions.length === 0 ? (
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  sx={{ my: 1 }}
+                >
+                  <Trans id="controls.interactiveFilters.dataFilters.unavailable">
+                    All dimensions have been encoded onto the chart, no
+                    dimensions are available to server as interactive data
+                    filters.
+                  </Trans>
+                </Typography>
+              ) : null}
+            </>
+          }
           defaultChecked={false}
-          disabled={false}
+          disabled={configurableDimensions.length === 0}
           dimensions={configurableDimensions}
         />
-        <Box sx={{ my: 3 }}>
-          {configurableDimensions.map((d, i) => (
-            <InteractiveDataFilterOptionsCheckbox
-              key={i}
-              label={d.label}
-              value={d.iri}
-              disabled={
-                !chartConfig.interactiveFiltersConfig?.dataFilters.active
-              }
-            />
-          ))}
-        </Box>
+        {configurableDimensions.length > 0 ? (
+          <Box sx={{ my: 3 }}>
+            {configurableDimensions.map((d, i) => (
+              <InteractiveDataFilterOptionsCheckbox
+                key={i}
+                label={d.label}
+                value={d.iri}
+                disabled={
+                  !chartConfig.interactiveFiltersConfig?.dataFilters.active
+                }
+              />
+            ))}
+          </Box>
+        ) : null}
       </>
     );
   } else {
