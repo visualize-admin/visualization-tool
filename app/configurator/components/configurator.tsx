@@ -9,7 +9,10 @@ import { ChartPreview } from "@/components/chart-preview";
 import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
-import { ConfiguratorDrawer } from "@/configurator/components/drawer";
+import {
+  ConfiguratorDrawer,
+  DRAWER_WIDTH,
+} from "@/configurator/components/drawer";
 import {
   PanelLayout,
   PanelLeftWrapper,
@@ -133,7 +136,7 @@ const ConfigureChartStep = () => {
         hideBackdrop
         onClose={handleClosePanel}
       >
-        <div style={{ width: 319 }} data-testid="panel-drawer">
+        <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
           <BackContainer>
             <Button
               variant="text"
