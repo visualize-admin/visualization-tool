@@ -21,10 +21,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import {
-  getDataFilterDimensions,
-  getTimeSliderFilterDimensions,
-} from "./helpers";
+import { getTimeSliderFilterDimensions } from "./helpers";
 
 const ENABLE_TIME_SLIDER = typeof window !== "undefined" && flag("timeslider");
 
@@ -68,30 +65,17 @@ export const InteractiveFiltersConfigurator = ({
     const xComponentIri = getFieldComponentIri(fields, "x");
     const xComponent = allComponents.find((d) => d.iri === xComponentIri);
 
-    const segmentComponentIri = getFieldComponentIri(fields, "segment");
-    const segmentComponent = allComponents.find(
-      (d) => d.iri === segmentComponentIri
-    );
-
     const timeSliderDimensions = getTimeSliderFilterDimensions({
       chartConfig,
       dataCubeByIri: data.dataCubeByIri,
     });
 
-    const canFilterLegend =
-      chartConfigOptionsUISpec[chartType].interactiveFilters.includes("legend");
     const canFilterTimeRange =
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
     const canFilterTimeSlider =
       ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
-
-    const dataFilterDimensions = getDataFilterDimensions(
-      chartConfig,
-      data?.dataCubeByIri
-    );
-    const canFilterData = dataFilterDimensions.length > 0;
 
     return (
       <ControlSection
