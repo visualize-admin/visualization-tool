@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { extent } from "d3";
 import get from "lodash/get";
 import React, { useEffect, useMemo, useRef } from "react";
@@ -21,15 +21,12 @@ import {
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import {
   toggleInteractiveFilterDataDimension,
-  useInteractiveDataFiltersToggle,
-  useInteractiveLegendFiltersToggle,
   useInteractiveTimeRangeFiltersToggle,
   useInteractiveTimeSliderFiltersSelect,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { useFormatFullDateAuto } from "@/formatters";
 import {
-  DimensionMetadataFragment,
   TemporalDimension,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "@/graphql/query-hooks";
@@ -38,10 +35,7 @@ import useEvent from "@/utils/use-event";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
-import {
-  getTimeSliderFilterDimensions,
-  getDataFilterDimensions,
-} from "./helpers";
+import { getTimeSliderFilterDimensions } from "./helpers";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -73,26 +67,7 @@ export const InteractiveFiltersOptions = ({
     const { dimensions, measures } = data.dataCubeByIri;
     const allComponents = [...dimensions, ...measures];
 
-    if (activeField === "legend") {
-      const componentIri = getFieldComponentIri(chartConfig.fields, "segment");
-      const component = allComponents.find((d) => d.iri === componentIri);
-
-      return (
-        <ControlSection>
-          <SectionTitle iconName="segments">{component?.label}</SectionTitle>
-          <ControlSectionContent gap="none">
-            <InteractiveLegendFiltersToggle
-              label={t({
-                id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
-                message: "Show interactive legend",
-              })}
-              defaultChecked={false}
-              disabled={false}
-            />
-          </ControlSectionContent>
-        </ControlSection>
-      );
-    } else if (activeField === "timeRange") {
+    if (activeField === "timeRange") {
       const componentIri = getFieldComponentIri(chartConfig.fields, "x");
       const component = allComponents.find((d) => d.iri === componentIri);
 
@@ -301,91 +276,6 @@ const InteractiveTimeSliderFilterOptionsSelect = ({
   );
 };
 
-// Data Filters
-const InteractiveDataFiltersToggle = ({
-  label,
-  defaultChecked,
-  disabled = false,
-  dimensions,
-}: {
-  label: React.ComponentProps<typeof Checkbox>["label"];
-  defaultChecked?: boolean;
-  disabled?: React.ComponentProps<typeof Checkbox>["disabled"];
-  dimensions: DimensionMetadataFragment[];
-}) => {
-  const fieldProps = useInteractiveDataFiltersToggle({ dimensions });
-
-  return (
-    <Checkbox
-      disabled={disabled}
-      label={label}
-      {...fieldProps}
-      checked={fieldProps.checked ?? defaultChecked}
-    />
-  );
-};
-
-const InteractiveDataFilterOptions = ({
-  state: { chartConfig, dataSet, dataSource },
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
-  const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
-  if (data?.dataCubeByIri) {
-    // Dimensions that are not encoded in the visualization
-    // excluding temporal and numerical dimensions
-    const configurableDimensions = getDataFilterDimensions(
-      chartConfig,
-      data?.dataCubeByIri
-    );
-
-    return (
-      <>
-        <InteractiveDataFiltersToggle
-          label={
-            <>
-              <Typography variant="body2">
-                {t({
-                  id: "controls.interactiveFilters.dataFilters.toggledataFilters",
-                  message: "Show data filters",
-                })}
-              </Typography>
-              {configurableDimensions.length === 0 ? (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  sx={{ my: 1 }}
-                >
-                  <Trans id="controls.interactiveFilters.dataFilters.unavailable">
-                    All dimensions have been encoded onto the chart, no
-                    dimensions are available to server as interactive data
-                    filters.
-                  </Trans>
-                </Typography>
-              ) : null}
-            </>
-          }
-          defaultChecked={false}
-          disabled={configurableDimensions.length === 0}
-          dimensions={configurableDimensions}
-        />
-      </>
-    );
-  } else {
-    return <Loading />;
-  }
-};
-
 export const useInteractiveDataFilter = (dimensionIri: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const toggle = useEvent(() => {
@@ -406,51 +296,4 @@ export const useInteractiveDataFilter = (dimensionIri: string) => {
     );
 
   return { checked, toggle };
-};
-
-const InteractiveDataFilterOptionsCheckbox = ({
-  value,
-  label,
-  disabled,
-}: {
-  value: string;
-  label: string;
-  disabled: boolean;
-}) => {
-  const { checked, toggle } = useInteractiveDataFilter(value);
-  const handleChange = useEvent(() => {
-    return toggle();
-  });
-  return (
-    <Checkbox
-      name={`interactive-filter-${label}`}
-      disabled={disabled}
-      label={label}
-      value={value}
-      checked={checked}
-      onChange={handleChange}
-    />
-  );
-};
-
-// Generic toggle
-const InteractiveLegendFiltersToggle = ({
-  label,
-  defaultChecked,
-  disabled = false,
-}: {
-  label: string;
-  defaultChecked?: boolean;
-  disabled?: boolean;
-}) => {
-  const fieldProps = useInteractiveLegendFiltersToggle();
-
-  return (
-    <Checkbox
-      disabled={disabled}
-      label={label}
-      {...fieldProps}
-      checked={fieldProps.checked ?? defaultChecked}
-    />
-  );
 };

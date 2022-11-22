@@ -13,6 +13,8 @@ import {
   AccordionDetails,
   InputAdornment,
   Input,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -81,6 +83,7 @@ import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { ConfiguratorState, GenericSegmentField } from "../config-types";
+import { useInteractiveLegendFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -339,19 +342,31 @@ const MultiFilterContent = ({
     );
   }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
 
+  const interactiveFilterProps = useInteractiveLegendFiltersToggle();
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={handleOpenAutocomplete}
-          fullWidth
-          sx={{ justifyContent: "center", mb: 2 }}
-        >
-          <Trans id="controls.set-filters">Edit filters</Trans>
-        </Button>
+        <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+          <FormControlLabel
+            componentsProps={{ typography: { variant: "caption" } }}
+            control={<Switch {...interactiveFilterProps} />}
+            label={
+              <Trans id="controls.filters.interactive.toggle">
+                Interactive
+              </Trans>
+            }
+          />
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            onClick={handleOpenAutocomplete}
+            sx={{ justifyContent: "center", mb: 2 }}
+          >
+            <Trans id="controls.set-filters">Edit filters</Trans>
+          </Button>
+        </Box>
         <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
         <Flex justifyContent="space-between">
           <Typography variant="h5">

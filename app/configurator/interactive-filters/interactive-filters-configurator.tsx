@@ -128,14 +128,6 @@ export const InteractiveFiltersConfigurator = ({
               }
             />
           )}
-          {/* Legend */}
-          {segmentComponent && canFilterLegend && (
-            <InteractiveFilterTabField
-              value="legend"
-              icon="segment"
-              label={segmentComponent.label}
-            />
-          )}
         </ControlSectionContent>
       </ControlSection>
     );
