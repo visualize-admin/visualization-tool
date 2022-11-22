@@ -19,6 +19,7 @@ import GenericChart from "@/components/common-chart";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
+import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
@@ -112,25 +113,35 @@ export const ChartPreviewInner = ({
           state.state === "PUBLISHING") && (
           <>
             <>
-              <Typography
-                variant="h2"
+              <Flex
                 sx={{
-                  color: state.meta.title[locale] === "" ? "grey.500" : "text",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
                 }}
-                className={classes.title}
-                onClick={() =>
-                  dispatch({
-                    type: "ACTIVE_FIELD_CHANGED",
-                    value: "title",
-                  })
-                }
               >
-                {state.meta.title[locale] === "" ? (
-                  <Trans id="annotation.add.title">[ Title ]</Trans>
-                ) : (
-                  state.meta.title[locale]
-                )}
-              </Typography>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    color:
+                      state.meta.title[locale] === "" ? "grey.500" : "text",
+                  }}
+                  className={classes.title}
+                  onClick={() =>
+                    dispatch({
+                      type: "ACTIVE_FIELD_CHANGED",
+                      value: "title",
+                    })
+                  }
+                >
+                  {state.meta.title[locale] === "" ? (
+                    <Trans id="annotation.add.title">[ Title ]</Trans>
+                  ) : (
+                    state.meta.title[locale]
+                  )}
+                </Typography>
+
+                <MetadataPanel />
+              </Flex>
               <Head>
                 <title key="title">
                   {state.meta.title[locale] === ""
