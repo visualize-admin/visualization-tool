@@ -195,10 +195,20 @@ const TabsInner = ({
 }) => {
   return (
     <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
-      <Tabs value={0} sx={{ position: "relative", top: 1, flexGrow: 1 }}>
-        {/* TODO: Generate dynamically when chart composition is implemented */}
+      <Tabs
+        value={0}
+        TabIndicatorProps={{ style: { display: "none" } }}
+        sx={{ position: "relative", top: 1, flexGrow: 1 }}
+      >
+        {/* TODO: Generate dynamically when chart composition is implemented. Add useStyles */}
         <Tab
-          sx={{ p: 0, background: "white" }}
+          sx={{
+            p: 0,
+            background: "white",
+            border: "1px solid",
+            borderBottomWidth: 0,
+            borderColor: "divider",
+          }}
           onClick={onActionButtonClick}
           label={
             <TabContent iconName={getIconName(chartType)} editable={editable} />

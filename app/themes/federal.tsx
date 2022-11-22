@@ -720,14 +720,6 @@ theme.components = {
   },
   MuiTabs: {
     styleOverrides: {
-      root: {
-        "& .MuiTabs-flexContainer": {
-          gap: 4,
-        },
-        "& .MuiTabs-indicator": {
-          display: "none",
-        },
-      },
       flexContainer: {
         height: 60,
       },
@@ -744,9 +736,6 @@ theme.components = {
         paddingBottom: 0,
         paddingLeft: 24,
         color: theme.palette.grey[900],
-        border: "1px solid",
-        borderBottomWidth: 0,
-        borderColor: theme.palette.divider,
 
         "&.Mui-selected": {
           color: theme.palette.primary.main,
