@@ -405,7 +405,7 @@ const ChartFieldMultiFilter = ({
     | undefined;
 
   return encoding.filters && component ? (
-    <ControlSection data-testid="chart-edition-right-filters">
+    <ControlSection data-testid="chart-edition-multi-filters">
       <SectionTitle
         disabled={!component}
         iconName="filter"
