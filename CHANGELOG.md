@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.13.0] - 2022-11-22
+
 - Enhancements:
   - Cube Checker:
     - Introduced a Temporal dimensions scaleType & timeFormat checks
