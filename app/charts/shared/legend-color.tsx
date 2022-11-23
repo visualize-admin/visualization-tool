@@ -46,6 +46,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   legendContainerNoGroups: {
     gridTemplateColumns: "1fr",
+    "& $legendGroup": {
+      flexDirection: "row",
+    },
   },
   legendGroup: {
     display: "flex",
