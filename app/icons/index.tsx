@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 
-import { ChartType } from "@/configurator";
+import { ChartType, ComponentType } from "@/configurator/config-types";
 import { IconName, Icons } from "@/icons/components";
 
 export { Icons } from "./components";
@@ -16,6 +16,7 @@ export const Icon = ({
   color?: string;
   name: IconName;
 } & ComponentProps<"svg">) => {
+  const { style, ...otherProps } = props;
   const IconComponent = Icons[name];
 
   if (!IconComponent) {
@@ -23,7 +24,15 @@ export const Icon = ({
     return null;
   }
 
-  return <IconComponent width={size} height={size} color={color} {...props} />;
+  return (
+    <IconComponent
+      width={size}
+      height={size}
+      color={color}
+      style={{ minWidth: size, minHeight: size, ...style }}
+      {...otherProps}
+    />
+  );
 };
 
 export const getChartIcon = (chartType: ChartType): IconName => {
@@ -42,5 +51,31 @@ export const getChartIcon = (chartType: ChartType): IconName => {
       return "chartScatterplot";
     case "table":
       return "table";
+    default:
+      const _exhaustiveCheck: never = chartType;
+      return _exhaustiveCheck;
+  }
+};
+
+export const getDimensionIconName = (
+  dimensionType: ComponentType
+): IconName => {
+  switch (dimensionType) {
+    case "GeoCoordinatesDimension":
+    case "GeoShapesDimension":
+      return "geographical";
+    case "NominalDimension":
+      return "chartPie";
+    case "NumericalMeasure":
+      return "numerical";
+    case "OrdinalDimension":
+      return "sort";
+    case "OrdinalMeasure":
+      return "sort";
+    case "TemporalDimension":
+      return "pointInTime";
+    default:
+      const _exhaustiveCheck: never = dimensionType;
+      return _exhaustiveCheck;
   }
 };

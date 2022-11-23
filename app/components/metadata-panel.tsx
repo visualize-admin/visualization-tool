@@ -15,8 +15,11 @@ import { DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { Icon, getDimensionIconName } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
+
+import Flex from "./flex";
 
 type Section = "general" | "data";
 
@@ -102,6 +105,12 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
       flexDirection: "column",
       gap: theme.spacing(4),
       padding: 0,
+    },
+    icon: {
+      display: "inline",
+      marginLeft: -6,
+      marginTop: -3,
+      marginRight: 2,
     },
   };
 });
@@ -257,9 +266,15 @@ const TabPanelData = ({
     <TabPanel className={classes.tabPanel} value="data">
       {dimensions.map((d) => (
         <Box key={d.iri}>
-          <Typography variant="body2" fontWeight="bold">
-            {d.label}
-          </Typography>
+          <Flex>
+            <Icon
+              className={classes.icon}
+              name={getDimensionIconName(d.__typename)}
+            />
+            <Typography variant="body2" fontWeight="bold">
+              {d.label}
+            </Typography>
+          </Flex>
           <Typography variant="body2">{d.description}</Typography>
         </Box>
       ))}

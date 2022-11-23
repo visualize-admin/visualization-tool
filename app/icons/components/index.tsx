@@ -56,6 +56,7 @@ import { default as Filter } from "@/icons/components/IcFilter";
 import { default as Folder } from "@/icons/components/IcFolder";
 import { default as Formatting } from "@/icons/components/IcFormatting";
 import { default as Forward } from "@/icons/components/IcForward";
+import { default as Geographical } from "@/icons/components/IcGeographical";
 import { default as Google } from "@/icons/components/IcGoogle";
 import { default as HintWarning } from "@/icons/components/IcHintWarning";
 import { default as Image } from "@/icons/components/IcImage";
@@ -78,11 +79,13 @@ import { default as MobileLandscape } from "@/icons/components/IcMobileLandscape
 import { default as MobilePortrait } from "@/icons/components/IcMobilePortrait";
 import { default as More } from "@/icons/components/IcMore";
 import { default as Next } from "@/icons/components/IcNext";
+import { default as Numerical } from "@/icons/components/IcNumerical";
 import { default as Organisations } from "@/icons/components/IcOrganisations";
 import { default as Origin } from "@/icons/components/IcOrigin";
 import { default as Pause } from "@/icons/components/IcPause";
 import { default as Pdf } from "@/icons/components/IcPdf";
 import { default as Play } from "@/icons/components/IcPlay";
+import { default as PointInTime } from "@/icons/components/IcPointInTime";
 import { default as Previous } from "@/icons/components/IcPrevious";
 import { default as Print } from "@/icons/components/IcPrint";
 import { default as Refresh } from "@/icons/components/IcRefresh";
@@ -190,6 +193,7 @@ export const Icons = {
   folder: Folder,
   formatting: Formatting,
   forward: Forward,
+  geographical: Geographical,
   google: Google,
   hintWarning: HintWarning,
   image: Image,
@@ -212,11 +216,13 @@ export const Icons = {
   mobilePortrait: MobilePortrait,
   more: More,
   next: Next,
+  numerical: Numerical,
   organisations: Organisations,
   origin: Origin,
   pause: Pause,
   pdf: Pdf,
   play: Play,
+  pointInTime: PointInTime,
   previous: Previous,
   print: Print,
   refresh: Refresh,
