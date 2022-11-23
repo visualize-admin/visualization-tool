@@ -9,10 +9,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-  LegendColor,
-} from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   DataSource,
@@ -100,11 +97,10 @@ export const ChartLines = memo(function ChartLines({
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>
 
-      {fields.segment && interactiveFiltersConfig?.legend.active ? (
-        <InteractiveLegendColor />
-      ) : fields.segment ? (
-        <LegendColor symbol="line" />
-      ) : null}
+      <LegendColor
+        symbol="line"
+        interactive={fields.segment && interactiveFiltersConfig?.legend.active}
+      />
     </LineChart>
   );
 });

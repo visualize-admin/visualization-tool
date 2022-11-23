@@ -13,10 +13,31 @@ import {
 } from "@/charts/shared/axis-width-linear";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractiveLegendColor } from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { InteractiveFiltersConfig } from "@/configurator";
+import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+
+const interactiveFiltersConfig: InteractiveFiltersConfig = {
+  legend: {
+    active: true,
+    componentIri: "",
+  },
+  timeRange: {
+    active: false,
+    componentIri: "",
+    presets: { type: "range", from: "", to: "" },
+  },
+  timeSlider: {
+    componentIri: "",
+  },
+  dataFilters: {
+    active: false,
+    componentIris: [],
+  },
+};
 
 export const Docs = () => markdown`
 
@@ -24,46 +45,49 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <InteractiveFiltersProvider>
-      <ScatterplotChart
-        data={scatterplotObservations}
-        fields={scatterplotFields}
-        dimensions={scatterplotDimensions}
-        measures={scatterplotMeasures}
-        interactiveFiltersConfig={{
-          legend: {
-            active: true,
-            componentIri: "",
-          },
-          timeRange: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          timeSlider: {
-            componentIri: "",
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        }}
-        aspectRatio={1}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <AxisWidthLinear />
-            <AxisHeightLinear />
-            <AxisWidthLinearDomain />
-            <AxisHeightLinearDomain />
-            <Scatterplot />
-            <InteractionVoronoi />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        {scatterplotFields.segment && <InteractiveLegendColor />}
-      </ScatterplotChart>
-    </InteractiveFiltersProvider>
+    <PublishedConfiguratorStateProvider
+      initialState={{
+        state: "PUBLISHING",
+        activeField: undefined,
+        // @ts-ignore
+        meta: { title: {}, description: {} },
+        dataSource: { type: "sparql", url: "" },
+        dataSet: "",
+        chartConfig: {
+          chartType: "scatterplot",
+          filters: {},
+          version: "0.0.1",
+          interactiveFiltersConfig,
+          fields: scatterplotFields,
+        },
+      }}
+    >
+      <InteractiveFiltersProvider>
+        <ScatterplotChart
+          data={scatterplotObservations}
+          fields={scatterplotFields}
+          dimensions={scatterplotDimensions}
+          measures={scatterplotMeasures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={1}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <AxisWidthLinear />
+              <AxisHeightLinear />
+              <AxisWidthLinearDomain />
+              <AxisHeightLinearDomain />
+              <Scatterplot />
+              <InteractionVoronoi />
+            </ChartSvg>
+            <Tooltip type="single" />
+          </ChartContainer>
+          {scatterplotFields.segment && (
+            <LegendColor symbol="square" interactive />
+          )}
+        </ScatterplotChart>
+      </InteractiveFiltersProvider>
+    </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;

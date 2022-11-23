@@ -6,10 +6,7 @@ import { PieChart } from "@/charts/pie/pie-state";
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-  LegendColor,
-} from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import {
   Loading,
   LoadingDataError,
@@ -122,11 +119,12 @@ export const ChartPie = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
-          <InteractiveLegendColor />
-        ) : fields.segment ? (
-          <LegendColor symbol="square" />
-        ) : null}{" "}
+        <LegendColor
+          symbol="square"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active === true
+          }
+        />
       </PieChart>
     );
   }
