@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
 import {
   Box,
-  BoxProps,
   Link,
   LinkProps,
   Typography,
@@ -12,10 +11,6 @@ import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
-import {
-  MotionBox,
-  smoothPresenceProps,
-} from "@/configurator/components/presence";
 import Tag from "@/configurator/components/tag";
 import { DataSource } from "@/configurator/config-types";
 import { truthy } from "@/domain/types";
@@ -31,11 +26,9 @@ import { makeOpenDataLink } from "@/utils/opendata";
 export const DataSetMetadata = ({
   dataSetIri,
   dataSource,
-  sx,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
-  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
@@ -56,7 +49,7 @@ export const DataSetMetadata = ({
   }
 
   return (
-    <MotionBox sx={sx} key="dataset-metadata" {...smoothPresenceProps}>
+    <div>
       {cube.publisher && (
         <>
           <DatasetMetadataTitle>
@@ -132,7 +125,7 @@ export const DataSetMetadata = ({
         ) : null}
       </DatasetMetadataBody>
       <DatasetTags cube={cube} />
-    </MotionBox>
+    </div>
   );
 };
 

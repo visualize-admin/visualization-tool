@@ -31,6 +31,7 @@ import {
   bannerPresenceProps,
   MotionBox,
   navPresenceProps,
+  smoothPresenceProps,
 } from "@/configurator/components/presence";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -218,11 +219,16 @@ const SelectDatasetStepContent = () => {
                     </Trans>
                   </Button>
                 </NextLink>
-                <DataSetMetadata
+                <MotionBox
+                  key="dataset-metadata"
                   sx={{ mt: 6 }}
-                  dataSetIri={dataset}
-                  dataSource={configState.dataSource}
-                />
+                  {...smoothPresenceProps}
+                >
+                  <DataSetMetadata
+                    dataSetIri={dataset}
+                    dataSource={configState.dataSource}
+                  />
+                </MotionBox>
               </MotionBox>
             ) : (
               <MotionBox
