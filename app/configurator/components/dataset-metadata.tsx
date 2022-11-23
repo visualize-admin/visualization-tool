@@ -149,14 +149,7 @@ const DatasetMetadataBody = ({
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => (
-  <Typography
-    variant="body2"
-    sx={{
-      color: "grey.900",
-      mb: 5,
-      ...sx,
-    }}
-  >
+  <Typography variant="body2" sx={{ color: "grey.900", mb: 4, ...sx }}>
     {children}
   </Typography>
 );

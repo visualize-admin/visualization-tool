@@ -95,6 +95,9 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
         minHeight: 40,
       },
     },
+    tabPanel: {
+      padding: 0,
+    },
   };
 });
 
@@ -207,10 +210,12 @@ const PanelInner = ({
             />
           </TabList>
 
-          <TabPanel value="general">
+          <TabPanel className={classes.tabPanel} value="general">
             <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
           </TabPanel>
-          <TabPanel value="data">Data</TabPanel>
+          <TabPanel className={classes.tabPanel} value="data">
+            Data
+          </TabPanel>
         </TabContext>
 
         <Content />
