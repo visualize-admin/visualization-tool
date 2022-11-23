@@ -74,20 +74,3 @@ export const TitleAndDescriptionConfigurator = () => {
     </ControlSection>
   );
 };
-
-export const ChartAnnotator = ({
-  state,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
-  return (
-    <>
-      {/* Title & Description */}
-      <TitleAndDescriptionConfigurator />
-      {/* Filters */}
-      {state.chartConfig.chartType !== "table" && (
-        <InteractiveFiltersConfigurator state={state} />
-      )}
-    </>
-  );
-};

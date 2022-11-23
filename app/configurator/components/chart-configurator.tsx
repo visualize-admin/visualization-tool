@@ -674,6 +674,10 @@ export const ChartConfigurator = ({
           </ControlSectionContent>
         </ControlSection>
       )}
+      <TitleAndDescriptionConfigurator />
+      {state.chartConfig.chartType !== "table" && (
+        <InteractiveFiltersConfigurator state={state} />
+      )}
     </>
   );
 };
