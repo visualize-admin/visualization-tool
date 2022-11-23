@@ -14,7 +14,7 @@ describe("Filters", () => {
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
-    const labels = filters.locator("label");
+    const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
     expect(texts).toEqual([
@@ -30,8 +30,9 @@ describe("Filters", () => {
     const productionRegionFilter = selectors.edition.dataFilterInput(
       "1. Production region"
     );
+
     const productionRegionFilterValue = await productionRegionFilter
-      .locator("input")
+      .locator("input[name^=select-single-filter]")
       .inputValue();
     expect(productionRegionFilterValue).toEqual(
       "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland"
@@ -40,7 +41,7 @@ describe("Filters", () => {
     const standStructureFilter =
       selectors.edition.dataFilterInput("2. Stand structure");
     const standStructureFilterValue = await standStructureFilter
-      .locator("input")
+      .locator("input[name^=select-single-filter]")
       .inputValue();
 
     // Following expect is broken
@@ -70,7 +71,7 @@ describe("Filters", () => {
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
-    const labels = filters.locator("label");
+    const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
     expect(texts).toEqual(["1. Jahr der Vergütung"]);
