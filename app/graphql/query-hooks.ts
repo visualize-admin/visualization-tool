@@ -598,7 +598,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, publicationStatus: DataCubePublicationStatus, expires?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetadata_GeoCoordinatesDimension_Fragment
       & HierarchyMetadata_GeoCoordinatesDimension_Fragment
@@ -1107,6 +1107,8 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     iri
     title
     publisher
+    publicationStatus
+    expires
     identifier
     workExamples
     creator {
