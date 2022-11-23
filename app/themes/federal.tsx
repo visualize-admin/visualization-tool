@@ -387,6 +387,15 @@ theme.components = {
       },
     },
   },
+  MuiBadge: {
+    styleOverrides: {
+      badge: {
+        minWidth: 18,
+        height: 18,
+        padding: [0, 3],
+      },
+    },
+  },
   MuiInputBase: {
     styleOverrides: {
       input: {

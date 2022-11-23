@@ -496,8 +496,9 @@ const InteractiveDataFilterCheckbox = ({
 const FiltersBadge = () => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
-  return ctx.isOpen ? null : (
+  return (
     <Badge
+      invisible={ctx.isOpen}
       badgeContent={Object.values(state.chartConfig.filters).length}
       color="primary"
       sx={{ display: "block", mr: 4 }}
