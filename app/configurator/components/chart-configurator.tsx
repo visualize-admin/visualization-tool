@@ -575,11 +575,7 @@ export const ChartConfigurator = ({
       </ControlSection>
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
-        <ControlSection
-          className={classes.filterSection}
-          collapse
-          defaultExpanded={false}
-        >
+        <ControlSection className={classes.filterSection} collapse>
           <SectionTitle
             titleId="controls-data"
             gutterBottom={false}
