@@ -174,8 +174,8 @@ theme.typography = merge(theme.typography, {
     fontWeight: "regular",
   }),
   caption: createTypographyVariant(theme, {
-    fontSize: [10, 12],
-    lineHeight: [16, 18],
+    fontSize: [12],
+    lineHeight: [18],
     fontWeight: "regular",
   }),
 });

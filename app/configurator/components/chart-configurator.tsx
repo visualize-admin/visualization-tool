@@ -11,6 +11,7 @@ import {
   Switch,
   FormControlLabel,
   FormControlLabelProps,
+  Badge,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
@@ -37,6 +38,7 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  useControlSectionContext,
 } from "@/configurator/components/chart-controls/section";
 import {
   ControlTabField,
@@ -69,7 +71,9 @@ import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 import { useInteractiveDataFilterToggle } from "../interactive-filters/interactive-filters-config-state";
+import { InteractiveFiltersConfigurator } from "../interactive-filters/interactive-filters-configurator";
 
+import { TitleAndDescriptionConfigurator } from "./chart-annotator";
 import { ChartTypeSelector } from "./chart-type-selector";
 
 const DataFilterSelectGeneric = ({
@@ -558,8 +562,16 @@ export const ChartConfigurator = ({
       </ControlSection>
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
-        <ControlSection className={classes.filterSection} collapse>
-          <SectionTitle titleId="controls-data" gutterBottom={false}>
+        <ControlSection
+          className={classes.filterSection}
+          collapse
+          defaultExpanded={false}
+        >
+          <SectionTitle
+            titleId="controls-data"
+            gutterBottom={false}
+            sx={{ justifyContent: "space-between" }}
+          >
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress

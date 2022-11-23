@@ -9,11 +9,9 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useConfiguratorState, useLocale } from "@/src";
 
-import { ConfiguratorStateConfiguringChart } from "../config-types";
 import { isConfiguring } from "../configurator-state";
 
 const WarnTitleDescription = () => {
@@ -41,7 +39,12 @@ const WarnTitleDescription = () => {
 
 export const TitleAndDescriptionConfigurator = () => {
   return (
-    <ControlSection role="tablist" aria-labelledby="controls-design" collapse>
+    <ControlSection
+      role="tablist"
+      aria-labelledby="controls-design"
+      collapse
+      defaultExpanded={false}
+    >
       <SectionTitle
         titleId="controls-design"
         gutterBottom={false}
