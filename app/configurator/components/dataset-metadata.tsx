@@ -35,7 +35,7 @@ export const DataSetMetadata = ({
 }: {
   dataSetIri: string;
   dataSource: DataSource;
-  sx: BoxProps["sx"];
+  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
