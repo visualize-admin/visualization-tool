@@ -71,11 +71,17 @@ export const InteractiveFiltersConfigurator = ({
     });
 
     const canFilterTimeRange =
+      isTemporalDimension(xComponent) &&
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
+
     const canFilterTimeSlider =
       ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
+
+    if (!canFilterTimeRange && !canFilterTimeSlider) {
+      return null;
+    }
 
     return (
       <ControlSection
@@ -94,11 +100,11 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Time range */}
-          {isTemporalDimension(xComponent) && canFilterTimeRange && (
+          {canFilterTimeRange && (
             <InteractiveFilterTabField
               value="timeRange"
               icon="time"
-              label={xComponent.label}
+              label={xComponent!.label}
             />
           )}
           {/* Time slider */}
