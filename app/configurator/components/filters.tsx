@@ -83,7 +83,7 @@ import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { ConfiguratorState, GenericSegmentField } from "../config-types";
-import { useInteractiveLegendFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
+import { useInteractiveFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -342,21 +342,23 @@ const MultiFilterContent = ({
     );
   }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
 
-  const interactiveFilterProps = useInteractiveLegendFiltersToggle();
+  const interactiveFilterProps = useInteractiveFiltersToggle("legend");
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
         <Box sx={{ justifyContent: "space-between", display: "flex" }}>
-          <FormControlLabel
-            componentsProps={{ typography: { variant: "caption" } }}
-            control={<Switch {...interactiveFilterProps} />}
-            label={
-              <Trans id="controls.filters.interactive.toggle">
-                Interactive
-              </Trans>
-            }
-          />
+          {config.activeField === "segment" ? (
+            <FormControlLabel
+              componentsProps={{ typography: { variant: "caption" } }}
+              control={<Switch {...interactiveFilterProps} />}
+              label={
+                <Trans id="controls.filters.interactive.toggle">
+                  Interactive
+                </Trans>
+              }
+            />
+          ) : null}
           <Button
             variant="contained"
             size="small"

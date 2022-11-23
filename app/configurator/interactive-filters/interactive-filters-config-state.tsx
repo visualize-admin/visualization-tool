@@ -13,14 +13,14 @@ import useEvent from "@/utils/use-event";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
-export const useInteractiveLegendFiltersToggle = () => {
+export const useInteractiveFiltersToggle = (target: "legend") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     const newConfig = produce(
       state.chartConfig.interactiveFiltersConfig,
       (draft) => {
-        if (draft?.legend) {
-          draft.legend.active = e.currentTarget.checked;
+        if (draft?.[target]) {
+          draft[target].active = e.currentTarget.checked;
         }
 
         return draft;
@@ -35,12 +35,12 @@ export const useInteractiveLegendFiltersToggle = () => {
 
   const stateValue = get(
     state,
-    "chartConfig.interactiveFiltersConfig.legend.active"
+    `chartConfig.interactiveFiltersConfig.${target}.active`
   );
   const checked = stateValue ? stateValue : false;
 
   return {
-    name: "legend",
+    name: target,
     checked,
     onChange,
   };
