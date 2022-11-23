@@ -493,6 +493,18 @@ const InteractiveDataFilterCheckbox = ({
   );
 };
 
+const FiltersBadge = () => {
+  const ctx = useControlSectionContext();
+  const [state] = useConfiguratorState(isConfiguring);
+  return ctx.isOpen ? null : (
+    <Badge
+      badgeContent={Object.values(state.chartConfig.filters).length}
+      color="primary"
+      sx={{ display: "block", mr: 4 }}
+    />
+  );
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -579,6 +591,7 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
+            <FiltersBadge />
           </SectionTitle>
 
           <ControlSectionContent
