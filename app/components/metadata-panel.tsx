@@ -1,15 +1,18 @@
+import { t } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Box,
   Button,
   Drawer,
   IconButton,
+  Input,
+  InputAdornment,
   Tab,
   Theme,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 import { DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
@@ -111,6 +114,13 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
       marginLeft: -6,
       marginTop: -3,
       marginRight: 2,
+    },
+    search: {
+      marginTop: theme.spacing(2),
+      padding: "0px 12px",
+      width: "100%",
+      height: 40,
+      minHeight: 40,
     },
   };
 });
@@ -261,10 +271,35 @@ const TabPanelData = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const classes = useStyles({});
+  const [searchInput, setSearchInput] = useState("");
+
+  const filteredDimensions = useMemo(() => {
+    return dimensions.filter(
+      (d) =>
+        d.label.toLowerCase().includes(searchInput) ||
+        d.description?.toLowerCase().includes(searchInput)
+    );
+  }, [dimensions, searchInput]);
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
-      {dimensions.map((d) => (
+      {/* Extract into a component (as it's also used in MultiFilter drawer?) */}
+      <Input
+        className={classes.search}
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value.toLowerCase())}
+        placeholder={t({
+          id: "select.controls.metadata.search",
+          message: "Jump to...",
+        })}
+        startAdornment={
+          <InputAdornment position="start">
+            <Icon name="search" size={16} />
+          </InputAdornment>
+        }
+        sx={{ typography: "body2" }}
+      />
+      {filteredDimensions.map((d) => (
         <Box key={d.iri}>
           <Flex>
             <Icon
