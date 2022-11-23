@@ -500,7 +500,7 @@ const FiltersBadge = () => {
     <Badge
       invisible={ctx.isOpen}
       badgeContent={Object.values(state.chartConfig.filters).length}
-      color="primary"
+      color="secondary"
       sx={{ display: "block", mr: 4 }}
     />
   );
