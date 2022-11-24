@@ -58,14 +58,12 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
-import {
-  DimensionMetadataFragment,
-  HierarchyValue,
-  TimeUnit,
-} from "@/graphql/query-hooks";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
+import { sortTree } from "@/rdf/tree-utils";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 import useDisclosure from "./use-disclosure";
@@ -126,7 +124,7 @@ export const hierarchyToOptions = (hierarchy: HierarchyValue[]) => {
           : undefined,
     };
   };
-  return hierarchy.map((h) => transform(h));
+  return sortTree(hierarchy).map((h) => transform(h));
 };
 
 export const OnOffControlTabField = ({
