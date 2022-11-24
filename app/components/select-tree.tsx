@@ -338,9 +338,9 @@ function SelectTree({
     return res;
   }, [options]);
 
-  const handleOpen = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
+  const handleOpen = useEventCallback(() => {
     setOpenState(true);
-    setMinMenuWidth(ev.currentTarget.clientWidth);
+    setMinMenuWidth(inputRef.current?.clientLeft);
     onOpen?.();
   });
 
@@ -463,7 +463,8 @@ function SelectTree({
   const handleKeyDown: React.HTMLAttributes<HTMLInputElement>["onKeyDown"] =
     useEvent((ev) => {
       if (ev.key === "Enter" || ev.key == " ") {
-        handleOpen(ev);
+        handleOpen();
+        ev.preventDefault();
       }
     });
 
@@ -510,6 +511,7 @@ function SelectTree({
           value={inputValue}
           sx={{ p: 1, width: "100%" }}
           InputProps={{
+            autoFocus: true,
             startAdornment: <Icon name="search" size={16} color="#555" />,
             endAdornment: (
               <IconButton size="small" onClick={handleClickResetInput}>
