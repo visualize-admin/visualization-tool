@@ -247,8 +247,12 @@ const TreeItem = (props: TreeItemProps) => {
   return <MUITreeItem {...props} ContentComponent={TreeItemContent} />;
 };
 
-type TreeHierachyValue = HierarchyValue & {
+type TreeHierachyValue = Omit<
+  HierarchyValue,
+  "depth" | "dimensionIri" | "children"
+> & {
   selectable?: boolean;
+  children?: TreeHierachyValue[];
 };
 
 type Tree = TreeHierachyValue[];
@@ -268,12 +272,12 @@ export type SelectTreeProps = {
   open?: boolean;
 };
 
-const getFilteredOptions = (options: HierarchyValue[], value: string) => {
+const getFilteredOptions = (options: Tree, value: string) => {
   return value === ""
     ? options
-    : pruneTree(options, (d) =>
+    : (pruneTree(options as HierarchyValue[], (d) =>
         d.label.toLowerCase().includes(value.toLowerCase())
-      );
+      ) as Tree);
 };
 
 function SelectTree({
@@ -355,7 +359,9 @@ function SelectTree({
       const newExpanded = Array.from(
         new Set([
           ...curExpanded,
-          ...flattenTree(filteredOptions).map((v) => v.value),
+          ...flattenTree(filteredOptions as HierarchyValue[]).map(
+            (v) => v.value
+          ),
         ])
       );
       return newExpanded;
