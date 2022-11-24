@@ -15,7 +15,7 @@ import {
   OptionGroup,
   Option,
 } from "@/configurator";
-import { hierarchyToOptions, TimeInput } from "@/configurator/components/field";
+import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
@@ -33,6 +33,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { hierarchyToOptions } from "@/utils/hierarchy";
 
 export const ChartDataFilters = ({
   dataSet,
