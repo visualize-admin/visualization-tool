@@ -47,7 +47,7 @@ export const InteractiveFiltersConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { chartType, fields, filters } = chartConfig;
+  const { chartType, fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
@@ -65,31 +65,30 @@ export const InteractiveFiltersConfigurator = ({
     const xComponentIri = getFieldComponentIri(fields, "x");
     const xComponent = allComponents.find((d) => d.iri === xComponentIri);
 
-    const segmentComponentIri = getFieldComponentIri(fields, "segment");
-    const segmentComponent = allComponents.find(
-      (d) => d.iri === segmentComponentIri
-    );
-
     const timeSliderDimensions = getTimeSliderFilterDimensions({
       chartConfig,
       dataCubeByIri: data.dataCubeByIri,
     });
 
-    const canFilterLegend =
-      chartConfigOptionsUISpec[chartType].interactiveFilters.includes("legend");
     const canFilterTimeRange =
+      isTemporalDimension(xComponent) &&
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
+
     const canFilterTimeSlider =
       ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
-    const canFilterData = Object.keys(filters).length > 0;
+
+    if (!canFilterTimeRange && !canFilterTimeSlider) {
+      return null;
+    }
 
     return (
       <ControlSection
         role="tablist"
         aria-labelledby="controls-interactive-filters"
         collapse
+        defaultExpanded={false}
       >
         <SectionTitle
           titleId="controls-interactive-filters"
@@ -101,11 +100,11 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Time range */}
-          {isTemporalDimension(xComponent) && canFilterTimeRange && (
+          {canFilterTimeRange && (
             <InteractiveFilterTabField
               value="timeRange"
               icon="time"
-              label={xComponent.label}
+              label={xComponent!.label}
             />
           )}
           {/* Time slider */}
@@ -116,26 +115,6 @@ export const InteractiveFiltersConfigurator = ({
               label={
                 <Trans id="controls.interactive.filters.timeSlider">
                   Time slider
-                </Trans>
-              }
-            />
-          )}
-          {/* Legend */}
-          {segmentComponent && canFilterLegend && (
-            <InteractiveFilterTabField
-              value="legend"
-              icon="segment"
-              label={segmentComponent.label}
-            />
-          )}
-          {/* Data Filters */}
-          {canFilterData && (
-            <InteractiveFilterTabField
-              value="dataFilters"
-              icon="filter"
-              label={
-                <Trans id="controls.interactive.filters.dataFilter">
-                  Filter Data
                 </Trans>
               }
             />

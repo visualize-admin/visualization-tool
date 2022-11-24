@@ -174,8 +174,8 @@ theme.typography = merge(theme.typography, {
     fontWeight: "regular",
   }),
   caption: createTypographyVariant(theme, {
-    fontSize: [10, 12],
-    lineHeight: [16, 18],
+    fontSize: [12],
+    lineHeight: [18],
     fontWeight: "regular",
   }),
 });
@@ -384,6 +384,15 @@ theme.components = {
         "& .MuiListItemIcon-root.MuiListItemIcon-root": {
           minWidth: "24px",
         },
+      },
+    },
+  },
+  MuiBadge: {
+    styleOverrides: {
+      badge: {
+        minWidth: 18,
+        height: 18,
+        padding: [0, 3],
       },
     },
   },

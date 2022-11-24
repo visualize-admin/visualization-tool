@@ -8,6 +8,10 @@ import {
   MenuItem,
   Theme,
   Typography,
+  Switch,
+  FormControlLabel,
+  FormControlLabelProps,
+  Badge,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
@@ -34,6 +38,7 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  useControlSectionContext,
 } from "@/configurator/components/chart-controls/section";
 import {
   ControlTabField,
@@ -50,7 +55,6 @@ import {
   moveFilterField,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
@@ -66,6 +70,10 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
+import { useInteractiveDataFilterToggle } from "../interactive-filters/interactive-filters-config-state";
+import { InteractiveFiltersConfigurator } from "../interactive-filters/interactive-filters-configurator";
+
+import { TitleAndDescriptionConfigurator } from "./chart-annotator";
 import { ChartTypeSelector } from "./chart-type-selector";
 
 const DataFilterSelectGeneric = ({
@@ -346,10 +354,9 @@ const useFilterReorder = ({
 
   const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
     dispatch({
-      type: "CHART_CONFIG_FILTER_SET_SINGLE",
+      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
       value: {
         dimensionIri: dimension.iri,
-        value: FIELD_VALUE_NONE,
       },
     });
   });
@@ -469,6 +476,36 @@ const useStyles = makeStyles<
   },
 }));
 
+const InteractiveDataFilterCheckbox = ({
+  value,
+  ...props
+}: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
+  const { checked, toggle } = useInteractiveDataFilterToggle(value);
+  return (
+    <FormControlLabel
+      componentsProps={{
+        typography: { variant: "caption", color: "text.secondary" },
+      }}
+      {...props}
+      control={<Switch checked={checked} onChange={() => toggle()} />}
+      label={<Trans id="controls.filter.interactive.toggle">Interactive</Trans>}
+    />
+  );
+};
+
+const FiltersBadge = () => {
+  const ctx = useControlSectionContext();
+  const [state] = useConfiguratorState(isConfiguring);
+  return (
+    <Badge
+      invisible={ctx.isOpen}
+      badgeContent={Object.values(state.chartConfig.filters).length}
+      color="secondary"
+      sx={{ display: "block", mr: 4 }}
+    />
+  );
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -539,7 +576,11 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
         <ControlSection className={classes.filterSection} collapse>
-          <SectionTitle titleId="controls-data" gutterBottom={false}>
+          <SectionTitle
+            titleId="controls-data"
+            gutterBottom={false}
+            sx={{ justifyContent: "space-between" }}
+          >
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -547,6 +588,7 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
+            <FiltersBadge />
           </SectionTitle>
 
           <ControlSectionContent
@@ -580,6 +622,12 @@ export const ChartConfigurator = ({
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
                           >
+                            <div>
+                              <InteractiveDataFilterCheckbox
+                                value={dimension.iri}
+                                sx={{ mb: 1 }}
+                              />
+                            </div>
                             <DataFilterSelectGeneric
                               key={dimension.iri}
                               dimension={dimension}
@@ -589,6 +637,7 @@ export const ChartConfigurator = ({
                                 handleRemoveDimensionFilter(dimension)
                               }
                             />
+
                             <Box className={classes.dragButtons}>
                               <MoveDragButtons
                                 moveUpButtonProps={{
@@ -646,6 +695,10 @@ export const ChartConfigurator = ({
             ) : null}
           </ControlSectionContent>
         </ControlSection>
+      )}
+      <TitleAndDescriptionConfigurator />
+      {state.chartConfig.chartType !== "table" && (
+        <InteractiveFiltersConfigurator state={state} />
       )}
     </>
   );

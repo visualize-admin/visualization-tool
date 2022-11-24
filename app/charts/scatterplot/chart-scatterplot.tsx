@@ -12,10 +12,7 @@ import {
 } from "@/charts/shared/axis-width-linear";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-  LegendColor,
-} from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
   DataSource,
@@ -100,11 +97,13 @@ export const ChartScatterplot = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
-          <InteractiveLegendColor />
-        ) : fields.segment ? (
-          <LegendColor symbol="circle" />
-        ) : null}{" "}
+
+        <LegendColor
+          symbol="circle"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active === true
+          }
+        />
       </ScatterplotChart>
     );
   }

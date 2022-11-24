@@ -9,10 +9,7 @@ import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-  LegendColor,
-} from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   AreaConfig,
@@ -95,11 +92,13 @@ export const ChartAreas = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
         </ChartContainer>
-        {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
-          <InteractiveLegendColor />
-        ) : fields.segment ? (
-          <LegendColor symbol="square" />
-        ) : null}
+
+        <LegendColor
+          symbol="square"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active === true
+          }
+        />
       </AreaChart>
     );
   }

@@ -1,11 +1,16 @@
-import { getFieldComponentIri } from "@/charts";
+import { getFieldComponentIri, getFieldComponentIris } from "@/charts";
 import { isTemporalDimension } from "@/domain/data";
 import {
+  DataCubeMetadataWithComponentValuesQuery,
   DimensionMetadataFragment,
   TemporalDimension,
+  TimeUnit,
 } from "@/graphql/query-hooks";
 
-import { ChartConfig } from "../config-types";
+import {
+  ChartConfig,
+  ConfiguratorStateConfiguringChart,
+} from "../config-types";
 
 export const getTimeSliderFilterDimensions = ({
   chartConfig,
@@ -33,4 +38,23 @@ export const getTimeSliderFilterDimensions = ({
   }
 
   return [];
+};
+
+export const getDataFilterDimensions = (
+  chartConfig: ConfiguratorStateConfiguringChart["chartConfig"],
+  dataCube: NonNullable<
+    DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+  >
+) => {
+  const mappedIris = getFieldComponentIris(chartConfig.fields);
+  // Dimensions that are not encoded in the visualization
+  // excluding temporal and numerical dimensions
+  const configurableDimensions = dataCube.dimensions.filter(
+    (d) =>
+      !mappedIris.has(d.iri) &&
+      (!isTemporalDimension(d) || d.timeUnit === TimeUnit.Year) &&
+      !d.isNumerical
+  );
+
+  return configurableDimensions;
 };
