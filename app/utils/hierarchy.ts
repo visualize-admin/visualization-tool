@@ -4,7 +4,7 @@ import { SelectTreeProps } from "@/components/select-tree";
 import { OptionGroup, Option } from "@/configurator";
 import { HierarchyParents } from "@/configurator/components/use-hierarchy-parents";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { sortTree } from "@/rdf/tree-utils";
+import { sortHierarchy } from "@/rdf/tree-utils";
 
 const asGroup = (
   parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
@@ -43,5 +43,5 @@ export const hierarchyToOptions = (hierarchy: HierarchyValue[]) => {
           : undefined,
     };
   };
-  return sortTree(hierarchy).map((h) => transform(h));
+  return sortHierarchy(hierarchy).map((h) => transform(h));
 };
