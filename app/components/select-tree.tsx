@@ -9,7 +9,7 @@ import MUITreeItem, {
 import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
   Theme,
-  Menu,
+  Popover,
   PopoverActions,
   useEventCallback,
   OutlinedInput,
@@ -22,7 +22,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
 import clsx from "clsx";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import * as React from "react";
 import { useEffect } from "react";
 
@@ -338,7 +338,7 @@ function SelectTree({
     return res;
   }, [options]);
 
-  const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
+  const handleOpen = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
     setOpenState(true);
     setMinMenuWidth(ev.currentTarget.clientWidth);
     onOpen?.();
@@ -371,7 +371,10 @@ function SelectTree({
   });
 
   const handleClickResetInput = useEvent(() => {
-    setInputValue("");
+    const newValue = "";
+    setInputValue(newValue);
+    setFilteredOptions(getFilteredOptions(options, newValue));
+    setExpanded(defaultExpanded);
   });
 
   const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
@@ -456,6 +459,14 @@ function SelectTree({
     []
   );
 
+  const treeRef = useRef();
+  const handleKeyDown: React.HTMLAttributes<HTMLInputElement>["onKeyDown"] =
+    useEvent((ev) => {
+      if (ev.key === "Enter" || ev.key == " ") {
+        handleOpen(ev);
+      }
+    });
+
   useEffect(() => {
     const inputNode = inputRef.current;
     if (inputNode) {
@@ -478,10 +489,11 @@ function SelectTree({
         ref={inputRef}
         size="small"
         className={classes.input}
-        onClick={disabled ? undefined : handleClick}
+        onClick={disabled ? undefined : handleOpen}
+        onKeyDown={handleKeyDown}
         endAdornment={<Icon className={classes.icon} name="caretDown" />}
       />
-      <Menu
+      <Popover
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -492,15 +504,11 @@ function SelectTree({
         action={menuRef}
         PaperProps={paperProps}
         TransitionProps={menuTransitionProps}
-        MenuListProps={{
-          // @ts-ignore
-          component: "div",
-        }}
       >
         <TextField
           size="small"
           value={inputValue}
-          sx={{ px: 1, pb: 1, width: "100%" }}
+          sx={{ p: 1, width: "100%" }}
           InputProps={{
             startAdornment: <Icon name="search" size={16} color="#555" />,
             endAdornment: (
@@ -512,18 +520,30 @@ function SelectTree({
           }}
           onChange={handleInputChange}
         />
-        <TreeView
-          defaultSelected={value}
-          expanded={expanded}
-          onNodeToggle={handleNodeToggle}
-          onNodeSelect={handleNodeSelect}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          sx={{ flexGrow: 1, overflowY: "auto", pb: 2, "user-select": "none" }}
-        >
-          {renderTreeContent(filteredOptions)}
-        </TreeView>
-      </Menu>
+        {filteredOptions.length === 0 ? (
+          <Typography variant="body2" sx={{ px: 2, py: 4 }}>
+            <Trans id="No results" />
+          </Typography>
+        ) : (
+          <TreeView
+            ref={treeRef}
+            defaultSelected={value}
+            expanded={expanded}
+            onNodeToggle={handleNodeToggle}
+            onNodeSelect={handleNodeSelect}
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{
+              flexGrow: 1,
+              overflowY: "auto",
+              pb: 2,
+              "user-select": "none",
+            }}
+          >
+            {renderTreeContent(filteredOptions)}
+          </TreeView>
+        )}
+      </Popover>
     </div>
   );
 }
