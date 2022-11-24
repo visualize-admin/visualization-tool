@@ -92,10 +92,13 @@ export const makeDimensionValueSorters = (
 interface Value {
   label: string;
   position?: number;
+  identifier?: number;
 }
 
 export const valueComparator = (locale: string) => (a: Value, b: Value) => {
-  if (a.position !== undefined && b.position !== undefined) {
+  if (a.identifier !== undefined && b.identifier !== undefined) {
+    return a.identifier < b.identifier ? -1 : 1;
+  } else if (a.position !== undefined && b.position !== undefined) {
     return a.position < b.position ? -1 : 1;
   } else {
     return a.label.localeCompare(b.label, locale);
