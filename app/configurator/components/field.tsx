@@ -23,7 +23,7 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
-import SelectTree, { SelectTreeProps } from "@/components/select-tree";
+import SelectTree from "@/components/select-tree";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -63,7 +63,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
-import { sortTree } from "@/rdf/tree-utils";
+import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 import useDisclosure from "./use-disclosure";
@@ -111,20 +111,6 @@ export const ControlTabField = ({
       rightIcon={<FieldEditIcon />}
     />
   );
-};
-
-export const hierarchyToOptions = (hierarchy: HierarchyValue[]) => {
-  const transform = (h: HierarchyValue): SelectTreeProps["options"][number] => {
-    return {
-      ...h,
-      selectable: !!h.hasValue,
-      children:
-        h.children && h.children.length > 0
-          ? h.children.map(transform)
-          : undefined,
-    };
-  };
-  return sortTree(hierarchy).map((h) => transform(h));
 };
 
 export const OnOffControlTabField = ({
