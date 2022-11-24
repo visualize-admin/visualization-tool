@@ -273,10 +273,12 @@ export type SelectTreeProps = {
 };
 
 const getFilteredOptions = (options: Tree, value: string) => {
+  const rx = new RegExp(`^${value}|\\s${value}`, "i");
   return value === ""
     ? options
-    : (pruneTree(options as HierarchyValue[], (d) =>
-        d.label.toLowerCase().includes(value.toLowerCase())
+    : (pruneTree(
+        options as HierarchyValue[],
+        (d) => !!d.label.match(rx)
       ) as Tree);
 };
 
