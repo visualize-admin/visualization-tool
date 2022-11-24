@@ -175,3 +175,9 @@ export const getOptionsFromTree = (tree: HierarchyValue[]) => {
 export const joinParents = (parents?: HierarchyValue[]) => {
   return parents?.map((x) => x.label).join(" > ") || "";
 };
+
+export const flattenTree = (tree: HierarchyValue[]) => {
+  const res: HierarchyValue[] = [];
+  dfs(tree, (x) => res.push(x));
+  return res;
+};

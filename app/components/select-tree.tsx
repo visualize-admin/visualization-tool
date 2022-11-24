@@ -6,7 +6,7 @@ import MUITreeItem, {
   TreeItemProps,
   useTreeItem,
 } from "@mui/lab/TreeItem";
-import TreeView from "@mui/lab/TreeView";
+import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
   Theme,
   Menu,
@@ -15,6 +15,9 @@ import {
   OutlinedInput,
   Typography,
   Collapse,
+  TextField,
+  TextFieldProps,
+  IconButton,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
@@ -24,7 +27,9 @@ import * as React from "react";
 import { useEffect } from "react";
 
 import { Label } from "@/components/form";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
+import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme, { disabled?: boolean; open?: boolean }>(
@@ -242,12 +247,11 @@ const TreeItem = (props: TreeItemProps) => {
   return <MUITreeItem {...props} ContentComponent={TreeItemContent} />;
 };
 
-type Tree = {
-  value: string;
-  label: string;
-  children?: Tree;
+type TreeHierachyValue = HierarchyValue & {
   selectable?: boolean;
-}[];
+};
+
+type Tree = TreeHierachyValue[];
 
 type NodeId = string;
 
@@ -264,6 +268,14 @@ export type SelectTreeProps = {
   open?: boolean;
 };
 
+const getFilteredOptions = (options: HierarchyValue[], value: string) => {
+  return value === ""
+    ? options
+    : pruneTree(options, (d) =>
+        d.label.toLowerCase().includes(value.toLowerCase())
+      );
+};
+
 function SelectTree({
   label,
   options,
@@ -278,20 +290,29 @@ function SelectTree({
 }: SelectTreeProps) {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
-
-  const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
-    setOpenState(true);
-    setMinMenuWidth(ev.currentTarget.clientWidth);
-    onOpen?.();
-  });
-
-  const handleClose = useEventCallback(() => {
-    setOpenState(false);
-    onClose?.();
-  });
+  const [inputValue, setInputValue] = useState("");
   const classes = useStyles({ disabled, open });
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
+  const menuRef = React.useRef<PopoverActions>(null);
+  const id = useId();
+  const inputRef = React.useRef<HTMLDivElement>();
+
+  const defaultExpanded = useMemo(() => {
+    if (!value && options.length > 0) {
+      return options[0].value ? [options[0].value] : [];
+    }
+    const res = value ? [value] : [];
+    let cur = value;
+    const parents = parentsRef.current;
+    while (cur && parents[cur]) {
+      res.push(parents[cur]);
+      cur = parents[cur];
+    }
+    return res;
+  }, [value, options]);
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   const labelsByValue = useMemo(() => {
     parentsRef.current = {} as Record<NodeId, NodeId>;
@@ -311,20 +332,45 @@ function SelectTree({
     return res;
   }, [options]);
 
-  const defaultExpanded = useMemo(() => {
-    if (!value && options.length > 0) {
-      return options[0].value ? [options[0].value] : [];
-    }
-    const res = value ? [value] : [];
-    let cur = value;
-    const parents = parentsRef.current;
-    while (cur && parents[cur]) {
-      res.push(parents[cur]);
-      cur = parents[cur];
-    }
+  const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
+    setOpenState(true);
+    setMinMenuWidth(ev.currentTarget.clientWidth);
+    onOpen?.();
+  });
 
-    return res;
-  }, [value, options]);
+  const handleClose = useEventCallback(() => {
+    setOpenState(false);
+    setInputValue("");
+    setFilteredOptions(getFilteredOptions(options, ""));
+    setExpanded(defaultExpanded);
+    onClose?.();
+  });
+
+  const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
+    const value = ev.currentTarget.value;
+    setInputValue(value);
+    const filteredOptions = getFilteredOptions(options, value);
+    setFilteredOptions(filteredOptions);
+    setExpanded((curExpanded) => {
+      const newExpanded = Array.from(
+        new Set([
+          ...curExpanded,
+          ...flattenTree(filteredOptions).map((v) => v.value),
+        ])
+      );
+      return newExpanded;
+    });
+  });
+
+  const handleClickResetInput = useEvent(() => {
+    setInputValue("");
+  });
+
+  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
+    (_ev, nodeIds) => {
+      setExpanded(nodeIds);
+    }
+  );
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
     onChange({ target: { value: value } });
@@ -377,15 +423,14 @@ function SelectTree({
     [defaultExpanded, treeItemClasses, treeItemTransitionProps]
   );
 
-  const menuRef = React.useRef<PopoverActions>(null);
-
-  const paperProps = useMemo(() => {
-    return {
+  const paperProps = useMemo(
+    () => ({
       style: {
-        minWidth: minMenuWidth === undefined ? 0 : minMenuWidth,
+        minWidth: minMenuWidth ?? 0,
       },
-    };
-  }, [minMenuWidth]);
+    }),
+    [minMenuWidth]
+  );
 
   const menuTransitionProps = useMemo(
     () => ({
@@ -402,9 +447,6 @@ function SelectTree({
     }),
     []
   );
-
-  const id = useId();
-  const inputRef = React.useRef<HTMLDivElement>();
 
   useEffect(() => {
     const inputNode = inputRef.current;
@@ -442,16 +484,36 @@ function SelectTree({
         action={menuRef}
         PaperProps={paperProps}
         TransitionProps={menuTransitionProps}
+        MenuListProps={{
+          // @ts-ignore
+          component: "div",
+        }}
       >
+        <TextField
+          size="small"
+          value={inputValue}
+          sx={{ px: 1, pb: 1, width: "100%" }}
+          InputProps={{
+            startAdornment: <Icon name="search" size={16} color="#555" />,
+            endAdornment: (
+              <IconButton size="small" onClick={handleClickResetInput}>
+                <Icon name="close" size={16} />
+              </IconButton>
+            ),
+            sx: { "& input": { fontSize: "12px" }, pl: 1, pr: 1 },
+          }}
+          onChange={handleInputChange}
+        />
         <TreeView
           defaultSelected={value}
-          defaultExpanded={defaultExpanded}
+          expanded={expanded}
+          onNodeToggle={handleNodeToggle}
           onNodeSelect={handleNodeSelect}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           sx={{ flexGrow: 1, overflowY: "auto", pb: 2, "user-select": "none" }}
         >
-          {renderTreeContent(options)}
+          {renderTreeContent(filteredOptions)}
         </TreeView>
       </Menu>
     </div>
