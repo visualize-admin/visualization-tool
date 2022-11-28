@@ -29,6 +29,8 @@ import {
 } from "@/configurator/components/layout";
 import {
   bannerPresenceProps,
+  BANNER_HEIGHT,
+  BANNER_MARGIN_TOP,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
@@ -81,8 +83,8 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
     gridTemplateAreas: `". banner ."`,
-    height: 350,
-    marginTop: 96,
+    height: BANNER_HEIGHT,
+    marginTop: BANNER_MARGIN_TOP,
     backgroundColor: theme.palette.primary.light,
   },
   panelBanner: {
