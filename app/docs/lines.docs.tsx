@@ -7,10 +7,30 @@ import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
-import { InteractiveLegendColor } from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { SortingField } from "@/configurator";
+import { InteractiveFiltersConfig, SortingField } from "@/configurator";
+import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+
+const interactiveFiltersConfig: InteractiveFiltersConfig = {
+  legend: {
+    active: true,
+    componentIri: "",
+  },
+  timeRange: {
+    active: true,
+    componentIri: "",
+    presets: { type: "range", from: "", to: "" },
+  },
+  timeSlider: {
+    componentIri: "",
+  },
+  dataFilters: {
+    active: false,
+    componentIris: [],
+  },
+};
 
 export const Docs = () => markdown`
 
@@ -18,50 +38,51 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <InteractiveFiltersProvider>
-      <LineChart
-        data={observations}
-        fields={fields}
-        dimensions={dimensions}
-        measures={measures}
-        interactiveFiltersConfig={{
-          legend: {
-            active: true,
-            componentIri: "",
-          },
-          timeRange: {
-            active: true,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          timeSlider: {
-            componentIri: "",
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        }}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <BrushTime />
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-            <Lines />
-            {/* <InteractionHorizontal /> */}
-          </ChartSvg>
+    <PublishedConfiguratorStateProvider
+      initialState={{
+        state: "PUBLISHING",
+        activeField: undefined,
+        // @ts-ignore
+        meta: { title: {}, description: {} },
+        dataSource: { type: "sparql", url: "" },
+        dataSet: "",
+        chartConfig: {
+          chartType: "line",
+          filters: {},
+          version: "0.0.1",
+          interactiveFiltersConfig,
+          fields,
+        },
+      }}
+    >
+      <InteractiveFiltersProvider>
+        <LineChart
+          data={observations}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={0.4}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <BrushTime />
+              <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+              <Lines />
+              {/* <InteractionHorizontal /> */}
+            </ChartSvg>
 
-          {/* <Ruler />
+            {/* <Ruler />
 
         <HoverDotMultiple />
 
         <Tooltip type={fields.segment ? "multiple" : "single"} /> */}
-        </ChartContainer>
+          </ChartContainer>
 
-        {fields.segment && <InteractiveLegendColor />}
-      </LineChart>
-    </InteractiveFiltersProvider>
+          {fields.segment && <LegendColor symbol="line" interactive />}
+        </LineChart>
+      </InteractiveFiltersProvider>
+    </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;

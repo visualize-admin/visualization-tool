@@ -26,7 +26,6 @@ import useEvent from "@/utils/use-event";
 import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
 import { isInteractiveFilterType } from "../interactive-filters/interactive-filters-configurator";
 
-import { ChartAnnotator } from "./chart-annotator";
 import { ChartOptionsSelector } from "./chart-options-selector";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
@@ -116,10 +115,7 @@ const ConfigureChartStep = () => {
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
-          <>
-            <ChartConfigurator state={state} />
-            <ChartAnnotator state={state} />
-          </>
+          <ChartConfigurator state={state} />
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper>

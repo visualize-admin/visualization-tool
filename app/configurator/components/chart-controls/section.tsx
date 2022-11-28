@@ -102,10 +102,22 @@ export const ControlSection = forwardRef<
     isHighlighted?: boolean;
     sx?: BoxProps["sx"];
     collapse?: boolean;
+    defaultExpanded?: boolean;
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
->(({ role, children, isHighlighted, sx, collapse = false, ...props }, ref) => {
+>(function ControlSection(
+  {
+    role,
+    children,
+    isHighlighted,
+    sx,
+    collapse = false,
+    defaultExpanded = true,
+    ...props
+  },
+  ref
+) {
   const classes = useControlSectionStyles({ isHighlighted });
-  const disclosure = useDisclosure(true);
+  const disclosure = useDisclosure(defaultExpanded);
   const ctx = useMemo(
     () => ({ ...disclosure, collapse }),
     [collapse, disclosure]
@@ -186,7 +198,7 @@ export const ControlSectionContent = ({
   );
 };
 
-const useControlSectionContext = () => useContext(ControlSectionContext);
+export const useControlSectionContext = () => useContext(ControlSectionContext);
 
 export const SectionTitle = ({
   color,

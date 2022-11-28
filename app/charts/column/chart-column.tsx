@@ -18,10 +18,7 @@ import {
 import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import {
-  InteractiveLegendColor,
-  LegendColor,
-} from "@/charts/shared/legend-color";
+import { LegendColor } from "@/charts/shared/legend-color";
 import {
   ColumnConfig,
   ColumnFields,
@@ -107,11 +104,13 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            {fields.segment && interactiveFiltersConfig?.legend.active ? (
-              <InteractiveLegendColor />
-            ) : fields.segment ? (
-              <LegendColor symbol="square" />
-            ) : null}
+
+            <LegendColor
+              symbol="square"
+              interactive={
+                fields.segment && interactiveFiltersConfig?.legend.active
+              }
+            />
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
           fields.segment.type === "grouped" ? (
@@ -136,11 +135,12 @@ export const ChartColumns = memo(
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            {fields.segment && interactiveFiltersConfig?.legend.active ? (
-              <InteractiveLegendColor />
-            ) : fields.segment ? (
-              <LegendColor symbol="square" />
-            ) : null}
+            <LegendColor
+              symbol="square"
+              interactive={
+                fields.segment && interactiveFiltersConfig?.legend.active
+              }
+            />
           </GroupedColumnChart>
         ) : (
           <ColumnChart

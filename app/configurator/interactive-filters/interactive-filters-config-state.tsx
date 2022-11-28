@@ -13,14 +13,14 @@ import useEvent from "@/utils/use-event";
 
 import { FIELD_VALUE_NONE } from "../constants";
 
-export const useInteractiveLegendFiltersToggle = () => {
+export const useInteractiveFiltersToggle = (target: "legend") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     const newConfig = produce(
       state.chartConfig.interactiveFiltersConfig,
       (draft) => {
-        if (draft?.legend) {
-          draft.legend.active = e.currentTarget.checked;
+        if (draft?.[target]) {
+          draft[target].active = e.currentTarget.checked;
         }
 
         return draft;
@@ -35,12 +35,12 @@ export const useInteractiveLegendFiltersToggle = () => {
 
   const stateValue = get(
     state,
-    "chartConfig.interactiveFiltersConfig.legend.active"
+    `chartConfig.interactiveFiltersConfig.${target}.active`
   );
   const checked = stateValue ? stateValue : false;
 
   return {
-    name: "legend",
+    name: target,
     checked,
     onChange,
   };
@@ -150,6 +150,9 @@ export const useInteractiveTimeSliderFiltersSelect = () => {
   };
 };
 
+/**
+ * Toggles all data filters
+ */
 export const useInteractiveDataFiltersToggle = ({
   dimensions,
 }: {
@@ -199,33 +202,54 @@ export const useInteractiveDataFiltersToggle = ({
   };
 };
 
+/**
+ * Toggles a single data filter
+ */
+export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const toggle = useEvent(() => {
+    const { interactiveFiltersConfig } = state.chartConfig;
+    const newIFConfig = toggleInteractiveFilterDataDimension(
+      interactiveFiltersConfig,
+      dimensionIri
+    );
+
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newIFConfig,
+    });
+  });
+  const checked =
+    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
+      dimensionIri
+    );
+
+  return { checked, toggle };
+};
+
 // Add or remove a dimension from the interactive
 // data filters dimensions list
 export const toggleInteractiveFilterDataDimension = produce(
-  (config: InteractiveFiltersConfig, iri: string): InteractiveFiltersConfig => {
+  (
+    config: InteractiveFiltersConfig,
+    iri: string,
+    newValue?: boolean
+  ): InteractiveFiltersConfig => {
     if (!config?.dataFilters.componentIris) {
       return config;
     }
 
-    if (config.dataFilters.componentIris.includes(iri)) {
-      const newComponentIris = config.dataFilters.componentIris.filter(
-        (d) => d !== iri
-      );
-      const newDataFilters = {
-        ...config.dataFilters,
-        componentIris: newComponentIris,
-      };
-      return { ...config, dataFilters: newDataFilters };
-    } else if (!config.dataFilters.componentIris.includes(iri)) {
-      const newComponentIris = [...config.dataFilters.componentIris, iri];
-      const newDataFilters = {
-        ...config.dataFilters,
-        componentIris: newComponentIris,
-      };
-
-      return { ...config, dataFilters: newDataFilters };
-    } else {
-      return config;
-    }
+    const currentComponentIris = config.dataFilters.componentIris;
+    const shouldAdd =
+      newValue === undefined ? !currentComponentIris.includes(iri) : newValue;
+    const newComponentIris = shouldAdd
+      ? [...currentComponentIris, iri]
+      : config.dataFilters.componentIris.filter((d) => d !== iri);
+    const newDataFilters = {
+      ...config.dataFilters,
+      componentIris: newComponentIris,
+    };
+    newDataFilters.active = newComponentIris.length > 0;
+    return { ...config, dataFilters: newDataFilters };
   }
 );

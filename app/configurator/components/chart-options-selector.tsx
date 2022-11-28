@@ -405,8 +405,12 @@ const ChartFieldMultiFilter = ({
     | undefined;
 
   return encoding.filters && component ? (
-    <ControlSection data-testid="chart-edition-right-filters">
-      <SectionTitle disabled={!component} iconName="filter">
+    <ControlSection data-testid="chart-edition-multi-filters">
+      <SectionTitle
+        disabled={!component}
+        iconName="filter"
+        gutterBottom={false}
+      >
         <Trans id="controls.section.filter">Filter</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none">

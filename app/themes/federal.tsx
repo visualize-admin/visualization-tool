@@ -174,8 +174,8 @@ theme.typography = merge(theme.typography, {
     fontWeight: "regular",
   }),
   caption: createTypographyVariant(theme, {
-    fontSize: [10, 12],
-    lineHeight: [16, 18],
+    fontSize: [12],
+    lineHeight: [18],
     fontWeight: "regular",
   }),
 });
@@ -387,8 +387,22 @@ theme.components = {
       },
     },
   },
+  MuiBadge: {
+    styleOverrides: {
+      badge: {
+        minWidth: 18,
+        height: 18,
+        padding: [0, 3],
+      },
+    },
+  },
   MuiInputBase: {
     styleOverrides: {
+      input: {
+        "&:focus": {
+          backgroundColor: "transparent",
+        },
+      },
       adornedStart: {
         "> svg:first-of-type": {
           margin: "0 0.5rem",

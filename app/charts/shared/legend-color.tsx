@@ -9,7 +9,7 @@ import {
 } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
-import { Checkbox } from "@/components/form";
+import { Checkbox, CheckboxProps } from "@/components/form";
 import {
   DataSource,
   isSegmentInConfig,
@@ -31,7 +31,7 @@ import { getLegendGroups } from "./legend-color-helpers";
 
 type LegendSymbol = "square" | "line" | "circle";
 
-const useStyles = makeStyles<Theme>(() => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
     position: "relative",
     justifyContent: "flex-start",
@@ -46,11 +46,18 @@ const useStyles = makeStyles<Theme>(() => ({
   },
   legendContainerNoGroups: {
     gridTemplateColumns: "1fr",
+    "& $legendGroup": {
+      flexDirection: "row",
+    },
   },
   legendGroup: {
     display: "flex",
     flexWrap: "wrap",
     columnGap: "1rem",
+    flexDirection: "column",
+  },
+  groupHeader: {
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -80,66 +87,11 @@ const useItemStyles = makeStyles<
       borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
     },
   },
+
+  legendCheckbox: {
+    marginTop: () => "0.25rem",
+  },
 }));
-
-export const InteractiveLegendColor = () => {
-  const [state, dispatch] = useInteractiveFilters();
-  const { categories } = state;
-
-  const activeInteractiveFilters = useMemo(() => {
-    return new Set(Object.keys(categories));
-  }, [categories]);
-
-  const { colors } = useChartState() as ColorsChartState;
-
-  const setFilter = useEvent((item: string) => {
-    if (activeInteractiveFilters.has(item)) {
-      dispatch({
-        type: "REMOVE_INTERACTIVE_FILTER",
-        value: item,
-      });
-    } else {
-      dispatch({
-        type: "ADD_INTERACTIVE_FILTER",
-        value: item,
-      });
-    }
-  });
-
-  const groups = useMemo(() => {
-    return [{ label: undefined, value: "", values: colors.domain() }];
-  }, [colors]);
-  const classes = useStyles();
-  return (
-    <Flex
-      className={clsx(
-        classes.legendContainer,
-        groups.length === 1 ? classes.legendContainerNoGroups : undefined
-      )}
-    >
-      {groups.map((group) => {
-        return (
-          <div key={group.value}>
-            {group.label ? (
-              <Typography variant="h4">{group.label}</Typography>
-            ) : null}
-            {colors.domain().map((item, i) => (
-              <Checkbox
-                label={item}
-                name={item}
-                value={item}
-                checked={!activeInteractiveFilters.has(item)}
-                onChange={() => setFilter(item)}
-                key={i}
-                color={colors(item)}
-              />
-            ))}
-          </div>
-        );
-      })}
-    </Flex>
-  );
-};
 
 const useDimension = ({
   dataset,
@@ -228,8 +180,10 @@ const useLegendGroups = ({
 
 export const LegendColor = memo(function LegendColor({
   symbol,
+  interactive,
 }: {
   symbol: LegendSymbol;
+  interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
   const groups = useLegendGroups({ labels: colors.domain() });
@@ -240,6 +194,7 @@ export const LegendColor = memo(function LegendColor({
       getColor={(v) => colors(v)}
       getLabel={getSegmentLabel}
       symbol={symbol}
+      interactive={interactive}
     />
   );
 });
@@ -282,13 +237,37 @@ const LegendColorContent = ({
   getColor,
   getLabel,
   symbol,
+  interactive,
 }: {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   symbol: LegendSymbol;
+  interactive?: boolean;
 }) => {
   const classes = useStyles();
+  const [state, dispatch] = useInteractiveFilters();
+  const { categories } = state;
+
+  const activeInteractiveFilters = useMemo(() => {
+    return new Set(Object.keys(categories));
+  }, [categories]);
+
+  const handleToggle: CheckboxProps["onChange"] = useEvent((ev) => {
+    const item = ev.target.value;
+    console.log({ item });
+    if (activeInteractiveFilters.has(item)) {
+      dispatch({
+        type: "REMOVE_INTERACTIVE_FILTER",
+        value: item,
+      });
+    } else {
+      dispatch({
+        type: "ADD_INTERACTIVE_FILTER",
+        value: item,
+      });
+    }
+  });
 
   return (
     <Flex
@@ -300,7 +279,6 @@ const LegendColorContent = ({
       {groups
         ? groups.map(([g, colorValues]) => {
             const headerLabelsArray = g.map((n) => n.label);
-
             return (
               <div
                 className={classes.legendGroup}
@@ -308,7 +286,12 @@ const LegendColorContent = ({
                 data-testid="colorLegend"
               >
                 {headerLabelsArray.length > 0 ? (
-                  <Typography variant="h5" display="flex" alignItems="center">
+                  <Typography
+                    variant="h5"
+                    display="flex"
+                    alignItems="center"
+                    className={classes.groupHeader}
+                  >
                     {interlace(
                       g.map((n) => n.label),
                       <SvgIcChevronRight />
@@ -321,6 +304,11 @@ const LegendColorContent = ({
                     item={getLabel(d)}
                     color={getColor(d)}
                     symbol={symbol}
+                    interactive={interactive}
+                    onToggle={handleToggle}
+                    checked={
+                      interactive && !activeInteractiveFilters.has(getLabel(d))
+                    }
                   />
                 ))}
               </div>
@@ -335,15 +323,36 @@ export const LegendItem = ({
   item,
   color,
   symbol,
+  interactive,
+  onToggle,
+  checked,
 }: {
   item: string;
   color: string;
   symbol: LegendSymbol;
+  interactive?: boolean;
+  onToggle?: CheckboxProps["onChange"];
+  checked?: boolean;
 }) => {
   const classes = useItemStyles({ symbol, color });
   return (
-    <Flex data-testid="legendItem" className={classes.legendItem}>
-      {item}
-    </Flex>
+    <>
+      {interactive && onToggle ? (
+        <Checkbox
+          label={item}
+          name={item}
+          value={item}
+          checked={checked !== undefined ? checked : true}
+          onChange={onToggle}
+          key={item}
+          color={color}
+          className={classes.legendCheckbox}
+        />
+      ) : (
+        <Flex data-testid="legendItem" className={classes.legendItem}>
+          {item}
+        </Flex>
+      )}
+    </>
   );
 };

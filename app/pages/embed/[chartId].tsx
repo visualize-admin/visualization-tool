@@ -5,6 +5,7 @@ import ErrorPage from "next/error";
 import { ChartPublished } from "@/components/chart-published";
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
+import { serializeProps } from "@/db/serialize";
 
 type PageProps =
   | {
@@ -26,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   if (config && config.data) {
     // TODO validate configuration
-    return { props: { status: "found", config } };
+    return { props: serializeProps({ status: "found", config }) };
   }
 
   res.statusCode = 404;
