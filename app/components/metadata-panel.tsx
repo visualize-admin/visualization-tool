@@ -67,13 +67,13 @@ export const useContext = () => {
   return ctx;
 };
 
-const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
+const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
-    drawer: {
+    root: {
       position: "static",
 
       "& > .MuiPaper-root": {
-        top: ({ drawerTop }) => drawerTop,
+        top: ({ top }) => top,
         bottom: 0,
         width: DRAWER_WIDTH + 1,
         height: "auto",
@@ -83,6 +83,11 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
         boxShadow: "none",
       },
     },
+  };
+});
+
+const useOtherStyles = makeStyles<Theme>((theme) => {
+  return {
     header: {
       display: "flex",
       alignItems: "center",
@@ -164,7 +169,8 @@ const PanelInner = ({
   container: HTMLDivElement | null | undefined;
   top?: number;
 }) => {
-  const classes = useStyles({ drawerTop: top });
+  const drawerClasses = useDrawerStyles({ top });
+  const otherClasses = useOtherStyles();
   const { open, toggle, activeSection, setActiveSection } = useContext();
   const handleToggle = useEvent(() => {
     toggle();
@@ -175,7 +181,7 @@ const PanelInner = ({
       <ToggleButton onClick={handleToggle} />
 
       <Drawer
-        className={classes.drawer}
+        className={drawerClasses.root}
         open={open}
         anchor="left"
         hideBackdrop
@@ -186,7 +192,7 @@ const PanelInner = ({
 
         <TabContext value={activeSection}>
           <TabList
-            className={classes.tabList}
+            className={otherClasses.tabList}
             onChange={(_, v) => {
               setActiveSection(v);
             }}
@@ -232,7 +238,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const Header = ({ onClose }: { onClose: () => void }) => {
-  const classes = useStyles({});
+  const classes = useOtherStyles();
 
   return (
     <div className={classes.header}>
@@ -248,7 +254,7 @@ const Header = ({ onClose }: { onClose: () => void }) => {
 };
 
 const Content = () => {
-  const classes = useStyles({});
+  const classes = useOtherStyles();
 
   return <div className={classes.content}></div>;
 };
@@ -260,7 +266,7 @@ const TabPanelGeneral = ({
   datasetIri: string;
   dataSource: DataSource;
 }) => {
-  const classes = useStyles({});
+  const classes = useOtherStyles();
 
   return (
     <TabPanel className={classes.tabPanel} value="general">
@@ -274,7 +280,7 @@ const TabPanelData = ({
 }: {
   dimensions: DimensionMetadataFragment[];
 }) => {
-  const classes = useStyles({});
+  const classes = useOtherStyles();
   const [searchInput, setSearchInput] = useState("");
 
   const filteredDimensions = useMemo(() => {
