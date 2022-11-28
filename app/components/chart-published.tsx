@@ -170,7 +170,11 @@ export const ChartPublishedInner = ({
             {meta.title[locale]}
           </Typography>
 
-          <MetadataPanel container={rootRef.current} />
+          <MetadataPanel
+            datasetIri={dataSet}
+            dataSource={dataSource}
+            container={rootRef.current}
+          />
         </Flex>
 
         {meta.description[locale] && (

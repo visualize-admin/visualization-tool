@@ -10,6 +10,8 @@ import {
 import { makeStyles } from "@mui/styles";
 import React from "react";
 
+import { DataSource } from "@/configurator";
+import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
@@ -97,15 +99,24 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
 });
 
 export const MetadataPanel = ({
+  datasetIri,
+  dataSource,
   container,
   top,
 }: {
+  datasetIri: string;
+  dataSource: DataSource;
   container?: HTMLDivElement | null;
   top?: number;
 }) => {
   return (
     <ContextProvider>
-      <PanelInner container={container} top={top} />
+      <PanelInner
+        datasetIri={datasetIri}
+        dataSource={dataSource}
+        container={container}
+        top={top}
+      />
     </ContextProvider>
   );
 };
@@ -141,9 +152,13 @@ const Content = () => {
 };
 
 const PanelInner = ({
+  datasetIri,
+  dataSource,
   container,
   top = 0,
 }: {
+  datasetIri: string;
+  dataSource: DataSource;
   container: HTMLDivElement | null | undefined;
   top?: number;
 }) => {
@@ -192,7 +207,9 @@ const PanelInner = ({
             />
           </TabList>
 
-          <TabPanel value="general">General</TabPanel>
+          <TabPanel value="general">
+            <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
+          </TabPanel>
           <TabPanel value="data">Data</TabPanel>
         </TabContext>
 

@@ -140,7 +140,11 @@ export const ChartPreviewInner = ({
                   )}
                 </Typography>
 
-                <MetadataPanel top={96} />
+                <MetadataPanel
+                  datasetIri={dataSetIri}
+                  dataSource={dataSource}
+                  top={96}
+                />
               </Flex>
               <Head>
                 <title key="title">
