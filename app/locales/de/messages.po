@@ -62,10 +62,6 @@ msgstr "Alle Datensätze"
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
-#: app/configurator/components/stepper.tsx:65
-#~ msgid "button.back"
-#~ msgstr "Zurück"
-
 #: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren und editieren"
@@ -107,10 +103,6 @@ msgstr "Kopiert!"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/configurator/components/stepper.tsx:70
-#~ msgid "button.next"
-#~ msgstr "Weiter"
-
 #: app/components/chart-selection-tabs.tsx:182
 msgid "button.publish"
 msgstr "Diese Visualisierung veröffentlichen"
@@ -137,18 +129,9 @@ msgstr "Weltkarte anzeigen"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Gesperrte Ansicht"
 
-#: app/configurator/map/map-chart-options.tsx:198
-#: app/configurator/map/map-chart-options.tsx:403
-#~ msgid "chart.map.layers.show"
-#~ msgstr "Ebene anzeigen"
-
 #: app/configurator/components/field-i18n.ts:39
 msgid "chart.map.layers.symbol"
 msgstr "Symbole"
-
-#: app/configurator/map/map-chart-options.tsx:530
-#~ msgid "chart.map.warning.noGeoDimensions"
-#~ msgstr "In diesem Datenset können keine geografischen Dimensionen angezeigt werden."
 
 #: app/charts/table/table.tsx:291
 msgid "chart.published.toggle.mobile.view"
@@ -313,24 +296,10 @@ msgstr "Gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
-#: app/configurator/map/map-chart-options.tsx:209
-#: app/configurator/map/map-chart-options.tsx:418
-#~ msgid "controls.dimension.geographical"
-#~ msgstr "Geografische Dimension"
-
-#: app/configurator/components/field.tsx:645
-#: app/configurator/map/map-chart-options.tsx:548
-#~ msgid "controls.dimension.none"
-#~ msgstr "Keine"
-
 #: app/charts/shared/chart-data-filters.tsx:247
 #: app/charts/shared/chart-data-filters.tsx:291
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
-
-#: app/configurator/components/chart-configurator.tsx:491
-#~ msgid "controls.filter.interactive.toggle"
-#~ msgstr ""
 
 #: app/configurator/components/filters.tsx:417
 msgid "controls.filter.nb-elements"
@@ -348,10 +317,6 @@ msgstr "Alle abwählen"
 #: app/configurator/components/filters.tsx:356
 msgid "controls.filters.interactive.toggle"
 msgstr "Interaktive"
-
-#: app/configurator/components/filters.tsx:358
-#~ msgid "controls.filters.select.filters"
-#~ msgstr "Filter"
 
 #: app/configurator/components/filters.tsx:398
 msgid "controls.filters.select.refresh-colors"
@@ -393,22 +358,10 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:137
-#~ msgid "controls.interactive.filters.dataFilter"
-#~ msgstr "Datenfilter"
-
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:80
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:116
 msgid "controls.interactive.filters.timeSlider"
 msgstr "Zeitschieber"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:375
-#~ msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
-#~ msgstr "Datenfilter anzeigen"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:89
-#~ msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
-#~ msgstr "Filterbare Legende anzeigen"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:185
 msgid "controls.interactiveFilters.time.noTimeDimension"
@@ -417,10 +370,6 @@ msgstr "Keine Zeitdimension verfügbar!"
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:160
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Zeitfilter anzeigen"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:263
-#~ msgid "controls.interactiveFilters.time.toggleTimeSliderFilter"
-#~ msgstr "Zeitschieber anzeigen"
 
 #: app/configurator/components/field-i18n.ts:135
 msgid "controls.language.english"
@@ -437,11 +386,6 @@ msgstr "Deutsch"
 #: app/configurator/components/field-i18n.ts:147
 msgid "controls.language.italian"
 msgstr "Italienisch"
-
-#: app/configurator/map/map-chart-options.tsx:209
-#: app/configurator/map/map-chart-options.tsx:414
-#~ msgid "controls.location"
-#~ msgstr "Standort"
 
 #: app/configurator/components/field-i18n.ts:9
 msgid "controls.measure"
@@ -479,10 +423,6 @@ msgstr "Ein"
 #: app/configurator/components/chart-controls/control-tab.tsx:334
 msgid "controls.option.isNotActive"
 msgstr "Aus"
-
-#: app/configurator/components/field.tsx:817
-#~ msgid "controls.option.none"
-#~ msgstr "Keine"
 
 #: app/configurator/components/chart-options-selector.tsx:782
 msgid "controls.scale.type"
@@ -541,10 +481,6 @@ msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:136
 msgid "controls.section.interactive.filters"
 msgstr "Interaktive Filter hinzufügen"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:128
-#~ msgid "controls.section.interactiveFilters.dataFilters"
-#~ msgstr "Datenfilter"
 
 #: app/configurator/components/chart-options-selector.tsx:364
 msgid "controls.section.show-standard-error"
@@ -622,13 +558,6 @@ msgstr "Dimension auswählen"
 #: app/configurator/components/chart-options-selector.tsx:728
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
-
-#: app/configurator/components/field.tsx:134
-#: app/configurator/components/field.tsx:191
-#: app/configurator/components/field.tsx:293
-#: app/configurator/components/field.tsx:650
-#~ msgid "controls.select.optional"
-#~ msgstr "optional"
 
 #: app/configurator/components/filters.tsx:369
 #: app/configurator/components/filters.tsx:785
@@ -959,10 +888,6 @@ msgstr "Filter anzeigen"
 #: app/components/header.tsx:220
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
-
-#: app/components/chart-footnotes.tsx:121
-#~ msgid "metadata.dataset"
-#~ msgstr "Datensatz"
 
 #: app/components/chart-footnotes.tsx:223
 msgid "metadata.link.created.with.visualize"

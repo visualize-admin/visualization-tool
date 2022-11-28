@@ -62,10 +62,6 @@ msgstr "All datasets"
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
-#: app/configurator/components/stepper.tsx:65
-#~ msgid "button.back"
-#~ msgstr "Back"
-
 #: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"
@@ -107,10 +103,6 @@ msgstr "Copied!"
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
-#: app/configurator/components/stepper.tsx:70
-#~ msgid "button.next"
-#~ msgstr "Next"
-
 #: app/components/chart-selection-tabs.tsx:182
 msgid "button.publish"
 msgstr "Publish this visualization"
@@ -122,26 +114,6 @@ msgstr "Share"
 #: app/configurator/components/field-i18n.ts:35
 msgid "chart.map.layers.area"
 msgstr "Areas"
-
-#: app/configurator/map/map-chart-options.tsx:254
-#~ msgid "chart.map.layers.area.discretization.continuous"
-#~ msgstr "Continuous"
-
-#: app/configurator/map/map-chart-options.tsx:267
-#~ msgid "chart.map.layers.area.discretization.discrete"
-#~ msgstr "Discrete"
-
-#: app/configurator/map/map-chart-options.tsx:312
-#~ msgid "chart.map.layers.area.discretization.jenks"
-#~ msgstr "Jenks (natural breaks)"
-
-#: app/configurator/map/map-chart-options.tsx:305
-#~ msgid "chart.map.layers.area.discretization.quantiles"
-#~ msgstr "Quantiles (equal distribution of values)"
-
-#: app/configurator/map/map-chart-options.tsx:298
-#~ msgid "chart.map.layers.area.discretization.quantize"
-#~ msgstr "Quantize (equal intervals)"
 
 #: app/configurator/components/chart-configurator.tsx:727
 #: app/configurator/components/chart-options-selector.tsx:992
@@ -157,18 +129,9 @@ msgstr "Show Worldmap"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Locked view"
 
-#: app/configurator/map/map-chart-options.tsx:198
-#: app/configurator/map/map-chart-options.tsx:403
-#~ msgid "chart.map.layers.show"
-#~ msgstr "Show layer"
-
 #: app/configurator/components/field-i18n.ts:39
 msgid "chart.map.layers.symbol"
 msgstr "Symbols"
-
-#: app/configurator/map/map-chart-options.tsx:530
-#~ msgid "chart.map.warning.noGeoDimensions"
-#~ msgstr "In this dataset there are no geographical dimensions to display."
 
 #: app/charts/table/table.tsx:291
 msgid "chart.published.toggle.mobile.view"
@@ -333,24 +296,10 @@ msgstr "Stacked"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/map/map-chart-options.tsx:209
-#: app/configurator/map/map-chart-options.tsx:418
-#~ msgid "controls.dimension.geographical"
-#~ msgstr "Geographical dimension"
-
-#: app/configurator/components/field.tsx:645
-#: app/configurator/map/map-chart-options.tsx:548
-#~ msgid "controls.dimension.none"
-#~ msgstr "None"
-
 #: app/charts/shared/chart-data-filters.tsx:247
 #: app/charts/shared/chart-data-filters.tsx:291
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
-
-#: app/configurator/components/chart-configurator.tsx:491
-#~ msgid "controls.filter.interactive.toggle"
-#~ msgstr "Interactive"
 
 #: app/configurator/components/filters.tsx:417
 msgid "controls.filter.nb-elements"
@@ -368,10 +317,6 @@ msgstr "Select none"
 #: app/configurator/components/filters.tsx:356
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactive"
-
-#: app/configurator/components/filters.tsx:358
-#~ msgid "controls.filters.select.filters"
-#~ msgstr "Filters"
 
 #: app/configurator/components/filters.tsx:398
 msgid "controls.filters.select.refresh-colors"
@@ -413,22 +358,10 @@ msgstr "-"
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:137
-#~ msgid "controls.interactive.filters.dataFilter"
-#~ msgstr "Data Filters"
-
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:80
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:116
 msgid "controls.interactive.filters.timeSlider"
 msgstr "Time slider"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:375
-#~ msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
-#~ msgstr "Show data filters"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:89
-#~ msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
-#~ msgstr "Show legend filter"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:185
 msgid "controls.interactiveFilters.time.noTimeDimension"
@@ -437,10 +370,6 @@ msgstr "There is no time dimension!"
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:160
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Show time filter"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:263
-#~ msgid "controls.interactiveFilters.time.toggleTimeSliderFilter"
-#~ msgstr "Show time slider"
 
 #: app/configurator/components/field-i18n.ts:135
 msgid "controls.language.english"
@@ -457,11 +386,6 @@ msgstr "German"
 #: app/configurator/components/field-i18n.ts:147
 msgid "controls.language.italian"
 msgstr "Italian"
-
-#: app/configurator/map/map-chart-options.tsx:209
-#: app/configurator/map/map-chart-options.tsx:414
-#~ msgid "controls.location"
-#~ msgstr "Location"
 
 #: app/configurator/components/field-i18n.ts:9
 msgid "controls.measure"
@@ -558,10 +482,6 @@ msgstr "For this chart type, replacement values should be assigned to missing va
 msgid "controls.section.interactive.filters"
 msgstr "Interactive Filters"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:128
-#~ msgid "controls.section.interactiveFilters.dataFilters"
-#~ msgstr "Data Filters"
-
 #: app/configurator/components/chart-options-selector.tsx:364
 msgid "controls.section.show-standard-error"
 msgstr "Show standard error"
@@ -638,13 +558,6 @@ msgstr "Select a dimension"
 #: app/configurator/components/chart-options-selector.tsx:728
 msgid "controls.select.measure"
 msgstr "Select a measure"
-
-#: app/configurator/components/field.tsx:134
-#: app/configurator/components/field.tsx:191
-#: app/configurator/components/field.tsx:293
-#: app/configurator/components/field.tsx:650
-#~ msgid "controls.select.optional"
-#~ msgstr "optional"
 
 #: app/configurator/components/filters.tsx:369
 #: app/configurator/components/filters.tsx:785
@@ -811,10 +724,6 @@ msgstr "Include draft datasets"
 msgid "dataset.metadata.date.created"
 msgstr "Date created"
 
-#: app/components/chart-footnotes.tsx:109
-#~ msgid "dataset.metadata.date.footnotes.updated"
-#~ msgstr ", latest update: {0}"
-
 #: app/configurator/components/dataset-metadata.tsx:83
 msgid "dataset.metadata.email"
 msgstr "Contact points"
@@ -979,10 +888,6 @@ msgstr "Show Filters"
 #: app/components/header.tsx:220
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
-
-#: app/components/chart-footnotes.tsx:121
-#~ msgid "metadata.dataset"
-#~ msgstr "Dataset"
 
 #: app/components/chart-footnotes.tsx:223
 msgid "metadata.link.created.with.visualize"
