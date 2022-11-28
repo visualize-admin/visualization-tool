@@ -3,6 +3,7 @@ import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import * as React from "react";
+import { useMemo } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -22,7 +23,7 @@ import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -68,7 +69,7 @@ export const ChartPreviewInner = ({
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const classes = useStyles();
-  const [{ data: metaData }] = useDataCubeMetadataQuery({
+  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -84,6 +85,13 @@ export const ChartPreviewInner = ({
   } = useChartTablePreview();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+
+  const allDimensions = useMemo(() => {
+    return [
+      ...(metaData?.dataCubeByIri?.dimensions ?? []),
+      ...(metaData?.dataCubeByIri?.measures ?? []),
+    ];
+  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
 
   return (
     <Flex
@@ -143,6 +151,7 @@ export const ChartPreviewInner = ({
                 <MetadataPanel
                   datasetIri={dataSetIri}
                   dataSource={dataSource}
+                  dimensions={allDimensions}
                   top={96}
                 />
               </Flex>

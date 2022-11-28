@@ -1,5 +1,6 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
+  Box,
   Button,
   Drawer,
   IconButton,
@@ -13,6 +14,7 @@ import React from "react";
 import { DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
 
@@ -96,6 +98,9 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
       },
     },
     tabPanel: {
+      display: "flex",
+      flexDirection: "column",
+      gap: theme.spacing(4),
       padding: 0,
     },
   };
@@ -104,11 +109,13 @@ const useStyles = makeStyles<Theme, { drawerTop?: number }>((theme) => {
 export const MetadataPanel = ({
   datasetIri,
   dataSource,
+  dimensions,
   container,
   top,
 }: {
   datasetIri: string;
   dataSource: DataSource;
+  dimensions: DimensionMetadataFragment[];
   container?: HTMLDivElement | null;
   top?: number;
 }) => {
@@ -117,6 +124,7 @@ export const MetadataPanel = ({
       <PanelInner
         datasetIri={datasetIri}
         dataSource={dataSource}
+        dimensions={dimensions}
         container={container}
         top={top}
       />
@@ -124,44 +132,16 @@ export const MetadataPanel = ({
   );
 };
 
-const ToggleButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <Button component="a" variant="text" size="small" onClick={onClick}>
-      <Typography variant="body2">Metadata</Typography>
-    </Button>
-  );
-};
-
-const Header = ({ onClose }: { onClose: () => void }) => {
-  const classes = useStyles({});
-
-  return (
-    <div className={classes.header}>
-      <Typography variant="body2" fontWeight="bold">
-        Metadata
-      </Typography>
-
-      <IconButton size="small" onClick={onClose}>
-        <SvgIcClose />
-      </IconButton>
-    </div>
-  );
-};
-
-const Content = () => {
-  const classes = useStyles({});
-
-  return <div className={classes.content}></div>;
-};
-
 const PanelInner = ({
   datasetIri,
   dataSource,
+  dimensions,
   container,
   top = 0,
 }: {
   datasetIri: string;
   dataSource: DataSource;
+  dimensions: DimensionMetadataFragment[];
   container: HTMLDivElement | null | undefined;
   top?: number;
 }) => {
@@ -210,16 +190,79 @@ const PanelInner = ({
             />
           </TabList>
 
-          <TabPanel className={classes.tabPanel} value="general">
-            <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
-          </TabPanel>
-          <TabPanel className={classes.tabPanel} value="data">
-            Data
-          </TabPanel>
+          <TabPanelGeneral datasetIri={datasetIri} dataSource={dataSource} />
+          <TabPanelData dimensions={dimensions} />
         </TabContext>
 
         <Content />
       </Drawer>
     </>
+  );
+};
+
+const ToggleButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <Button component="a" variant="text" size="small" onClick={onClick}>
+      <Typography variant="body2">Metadata</Typography>
+    </Button>
+  );
+};
+
+const Header = ({ onClose }: { onClose: () => void }) => {
+  const classes = useStyles({});
+
+  return (
+    <div className={classes.header}>
+      <Typography variant="body2" fontWeight="bold">
+        Metadata
+      </Typography>
+
+      <IconButton size="small" onClick={onClose}>
+        <SvgIcClose />
+      </IconButton>
+    </div>
+  );
+};
+
+const Content = () => {
+  const classes = useStyles({});
+
+  return <div className={classes.content}></div>;
+};
+
+const TabPanelGeneral = ({
+  datasetIri,
+  dataSource,
+}: {
+  datasetIri: string;
+  dataSource: DataSource;
+}) => {
+  const classes = useStyles({});
+
+  return (
+    <TabPanel className={classes.tabPanel} value="general">
+      <DataSetMetadata dataSetIri={datasetIri} dataSource={dataSource} />
+    </TabPanel>
+  );
+};
+
+const TabPanelData = ({
+  dimensions,
+}: {
+  dimensions: DimensionMetadataFragment[];
+}) => {
+  const classes = useStyles({});
+
+  return (
+    <TabPanel className={classes.tabPanel} value="data">
+      {dimensions.map((d) => (
+        <Box key={d.iri}>
+          <Typography variant="body2" fontWeight="bold">
+            {d.label}
+          </Typography>
+          <Typography variant="body2">{d.description}</Typography>
+        </Box>
+      ))}
+    </TabPanel>
   );
 };

@@ -33,7 +33,7 @@ import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
 } from "@/domain/datasource";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -95,7 +95,7 @@ export const ChartPublishedInner = ({
 
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const [{ data: metaData }] = useDataCubeMetadataQuery({
+  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -119,6 +119,13 @@ export const ChartPublishedInner = ({
     containerHeight,
   } = useChartTablePreview();
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+
+  const allDimensions = useMemo(() => {
+    return [
+      ...(metaData?.dataCubeByIri?.dimensions ?? []),
+      ...(metaData?.dataCubeByIri?.measures ?? []),
+    ];
+  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
 
   return (
     <Box className={classes.root} ref={rootRef}>
@@ -173,6 +180,7 @@ export const ChartPublishedInner = ({
           <MetadataPanel
             datasetIri={dataSet}
             dataSource={dataSource}
+            dimensions={allDimensions}
             container={rootRef.current}
           />
         </Flex>
