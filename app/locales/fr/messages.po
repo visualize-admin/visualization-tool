@@ -13,19 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:657
+#: app/configurator/components/chart-configurator.tsx:677
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
-#: app/configurator/components/chart-configurator.tsx:630
+#: app/configurator/components/chart-configurator.tsx:650
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
 
-#: app/configurator/components/chart-configurator.tsx:627
+#: app/configurator/components/chart-configurator.tsx:647
 msgid "Move filter down"
 msgstr "Déplacer le filtre vers le bas"
 
-#: app/configurator/components/chart-configurator.tsx:624
+#: app/configurator/components/chart-configurator.tsx:644
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
@@ -33,11 +33,11 @@ msgstr "Déplacer le filtre vers le haut"
 msgid "No results"
 msgstr "Aucun résultat"
 
-#: app/components/chart-preview.tsx:157
+#: app/components/chart-preview.tsx:181
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
-#: app/components/chart-preview.tsx:129
+#: app/components/chart-preview.tsx:145
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
@@ -53,11 +53,11 @@ msgstr "Catégories"
 msgid "browse.dataset.create-visualization"
 msgstr "Démarrer une visualisation"
 
-#: app/configurator/components/select-dataset-step.tsx:290
+#: app/configurator/components/select-dataset-step.tsx:296
 msgid "browse.datasets.all-datasets"
 msgstr "Tous les jeux de données"
 
-#: app/configurator/components/select-dataset-step.tsx:183
+#: app/configurator/components/select-dataset-step.tsx:184
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
@@ -142,7 +142,7 @@ msgstr "Zones"
 #~ msgid "chart.map.layers.area.discretization.quantize"
 #~ msgstr "Intervalles égaux"
 
-#: app/configurator/components/chart-configurator.tsx:706
+#: app/configurator/components/chart-configurator.tsx:730
 #: app/configurator/components/chart-options-selector.tsx:992
 #: app/configurator/components/field-i18n.ts:31
 msgid "chart.map.layers.base"
@@ -206,11 +206,11 @@ msgstr "Normal"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Paramètres d'origine"
 
-#: app/configurator/components/chart-annotator.tsx:67
+#: app/configurator/components/chart-annotator.tsx:70
 msgid "controls.annotator.add-description-warning"
 msgstr "Ajoutez une description au graphique"
 
-#: app/configurator/components/chart-annotator.tsx:57
+#: app/configurator/components/chart-annotator.tsx:60
 msgid "controls.annotator.add-title-warning"
 msgstr "Ajoutez un titre au graphique"
 
@@ -347,11 +347,11 @@ msgstr "Description"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
-#: app/configurator/components/chart-configurator.tsx:487
-#~ msgid "controls.filter.interactive.toggle"
-#~ msgstr ""
+#: app/configurator/components/chart-configurator.tsx:491
+msgid "controls.filter.interactive.toggle"
+msgstr ""
 
-#: app/configurator/components/filters.tsx:415
+#: app/configurator/components/filters.tsx:417
 msgid "controls.filter.nb-elements"
 msgstr "{0} sur {1}"
 
@@ -363,8 +363,7 @@ msgstr "Tout sélectionner"
 msgid "controls.filter.select.none"
 msgstr "Tout déselectionner"
 
-#: app/configurator/components/chart-configurator.tsx:488
-#: app/configurator/components/filters.tsx:355
+#: app/configurator/components/filters.tsx:356
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactif"
 
@@ -372,15 +371,15 @@ msgstr "Interactif"
 #~ msgid "controls.filters.select.filters"
 #~ msgstr "Filtres"
 
-#: app/configurator/components/filters.tsx:396
+#: app/configurator/components/filters.tsx:398
 msgid "controls.filters.select.refresh-colors"
 msgstr "Renouveller les couleurs"
 
-#: app/configurator/components/filters.tsx:380
+#: app/configurator/components/filters.tsx:382
 msgid "controls.filters.select.reset-colors"
 msgstr "Réinitialiser les couleurs"
 
-#: app/configurator/components/filters.tsx:373
+#: app/configurator/components/filters.tsx:375
 msgid "controls.filters.select.selected-filters"
 msgstr "Filtres sélectionnés"
 
@@ -417,7 +416,7 @@ msgstr "Zéros"
 #~ msgstr "Filtres de données"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:80
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:109
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:116
 msgid "controls.interactive.filters.timeSlider"
 msgstr "Curseur temporel"
 
@@ -461,11 +460,24 @@ msgstr "Italien"
 msgid "controls.measure"
 msgstr "Variable mesurée"
 
-#: app/configurator/components/configurator.tsx:146
+#: app/components/metadata-panel.tsx:228
+#: app/components/metadata-panel.tsx:240
+msgid "controls.metadata-panel.metadata"
+msgstr "Metadata"
+
+#: app/components/metadata-panel.tsx:208
+msgid "controls.metadata-panel.section.data"
+msgstr "Données"
+
+#: app/components/metadata-panel.tsx:198
+msgid "controls.metadata-panel.section.general"
+msgstr "Général"
+
+#: app/configurator/components/configurator.tsx:145
 msgid "controls.nav.back-to-main"
 msgstr "Retour aux paramètres généraux"
 
-#: app/configurator/components/configurator.tsx:110
+#: app/configurator/components/configurator.tsx:112
 msgid "controls.nav.back-to-preview"
 msgstr "Retour à l'aperçu"
 
@@ -485,7 +497,7 @@ msgstr "Inactif"
 msgid "controls.scale.type"
 msgstr "Type d'échelle"
 
-#: app/components/form.tsx:625
+#: app/components/form.tsx:630
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
@@ -493,7 +505,7 @@ msgstr "Effacer la recherche"
 msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
-#: app/configurator/components/chart-configurator.tsx:547
+#: app/configurator/components/chart-configurator.tsx:562
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
 
@@ -505,11 +517,11 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
-#: app/configurator/components/chart-configurator.tsx:565
+#: app/configurator/components/chart-configurator.tsx:584
 msgid "controls.section.data.filters"
 msgstr "Filtres"
 
-#: app/configurator/components/chart-annotator.tsx:50
+#: app/configurator/components/chart-annotator.tsx:53
 msgid "controls.section.description"
 msgstr "Titre & description"
 
@@ -534,8 +546,8 @@ msgstr "Valeurs manquantes"
 msgid "controls.section.imputation.explanation"
 msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:90
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:129
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:97
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:136
 msgid "controls.section.interactive.filters"
 msgstr "Filtres interactifs"
 
@@ -563,11 +575,11 @@ msgstr "Tri du tableau"
 msgid "controls.section.tableoptions"
 msgstr "Options du tableau"
 
-#: app/configurator/components/chart-annotator.tsx:30
+#: app/configurator/components/chart-annotator.tsx:28
 msgid "controls.section.title.warning"
 msgstr "Ajoutez un titre et une description"
 
-#: app/configurator/components/chart-configurator.tsx:539
+#: app/configurator/components/chart-configurator.tsx:554
 #: app/configurator/components/chart-type-selector.tsx:131
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"
@@ -627,16 +639,16 @@ msgstr "Sélectionner une variable"
 #~ msgid "controls.select.optional"
 #~ msgstr "optionnel"
 
-#: app/configurator/components/filters.tsx:367
-#: app/configurator/components/filters.tsx:783
+#: app/configurator/components/filters.tsx:369
+#: app/configurator/components/filters.tsx:785
 msgid "controls.set-filters"
 msgstr "Modifier les filtres"
 
-#: app/configurator/components/filters.tsx:791
+#: app/configurator/components/filters.tsx:793
 msgid "controls.set-filters-caption"
 msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dans la visualisation."
 
-#: app/configurator/components/filters.tsx:830
+#: app/configurator/components/filters.tsx:832
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
@@ -760,15 +772,15 @@ msgstr "IRI du cube"
 msgid "data.source"
 msgstr "Source des données"
 
-#: app/components/chart-published.tsx:148
+#: app/components/chart-published.tsx:159
 msgid "data.source.notTrusted"
 msgstr "Ce graphique n'utilise pas une source de données fiable."
 
-#: app/configurator/components/select-dataset-step.tsx:216
+#: app/configurator/components/select-dataset-step.tsx:217
 msgid "dataset-preview.back-to-results"
 msgstr "Revenir aux jeux de données"
 
-#: app/configurator/components/dataset-metadata.tsx:196
+#: app/configurator/components/dataset-metadata.tsx:182
 msgid "dataset-preview.keywords"
 msgstr "Mots clés"
 
@@ -780,7 +792,7 @@ msgstr "Jeu de données"
 msgid "dataset.footnotes.updated"
 msgstr "Mise à jour"
 
-#: app/components/chart-published.tsx:157
+#: app/components/chart-published.tsx:168
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
@@ -788,28 +800,28 @@ msgstr "Certaines données de cet ensemble de données sont manquantes et ont é
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
-#: app/configurator/components/dataset-metadata.tsx:78
+#: app/configurator/components/dataset-metadata.tsx:71
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx:90
+#: app/configurator/components/dataset-metadata.tsx:83
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx:104
+#: app/configurator/components/dataset-metadata.tsx:97
 msgid "dataset.metadata.furtherinformation"
 msgstr "Informations complémentaires"
 
 #: app/components/chart-footnotes.tsx:204
-#: app/configurator/components/dataset-metadata.tsx:114
+#: app/configurator/components/dataset-metadata.tsx:107
 msgid "dataset.metadata.learnmore"
 msgstr "En savoir plus sur le jeu de données"
 
-#: app/configurator/components/dataset-metadata.tsx:63
+#: app/configurator/components/dataset-metadata.tsx:56
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:85
+#: app/configurator/components/dataset-metadata.tsx:78
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -825,13 +837,13 @@ msgstr "Pertinence"
 msgid "dataset.order.title"
 msgstr "Titre"
 
-#: app/components/chart-preview.tsx:103
-#: app/components/chart-published.tsx:126
+#: app/components/chart-preview.tsx:112
+#: app/components/chart-published.tsx:137
 #: app/configurator/components/dataset-preview.tsx:120
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/components/chart-published.tsx:137
+#: app/components/chart-published.tsx:148
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
@@ -915,7 +927,7 @@ msgstr "Problème de téléchargement des données"
 msgid "hint.how.to.share"
 msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
 
-#: app/components/form.tsx:292
+#: app/components/form.tsx:297
 #: app/components/hint.tsx:111
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
@@ -1014,9 +1026,13 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/dataset-browse.tsx:378
-#: app/configurator/components/filters.tsx:800
+#: app/configurator/components/filters.tsx:802
 msgid "select.controls.filters.search"
 msgstr "Chercher"
+
+#: app/components/metadata-panel.tsx:295
+msgid "select.controls.metadata.search"
+msgstr "Sauter à..."
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:101
 msgid "table.column.no"

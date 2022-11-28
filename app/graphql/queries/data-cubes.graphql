@@ -154,6 +154,8 @@ query DataCubeMetadataWithComponentValues(
     iri
     title
     publisher
+    publicationStatus
+    expires
     identifier
     workExamples
     creator {

@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -19,6 +19,7 @@ import {
 import GenericChart from "@/components/common-chart";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
+import { MetadataPanel } from "@/components/metadata-panel";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
@@ -27,12 +28,16 @@ import {
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
+import { flag } from "@/configurator/components/flag";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
 } from "@/domain/datasource";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -65,6 +70,7 @@ export const ChartPublished = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    position: "relative",
     display: "flex",
     flexGrow: 1,
     flexDirection: "column",
@@ -91,7 +97,9 @@ export const ChartPublishedInner = ({
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
 
-  const [{ data: metaData }] = useDataCubeMetadataQuery({
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -116,8 +124,15 @@ export const ChartPublishedInner = ({
   } = useChartTablePreview();
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
+  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
+    return [
+      ...(metaData?.dataCubeByIri?.dimensions ?? []),
+      ...(metaData?.dataCubeByIri?.measures ?? []),
+    ];
+  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
+
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} ref={rootRef}>
       <ChartErrorBoundary resetKeys={[chartConfig]}>
         {metaData?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
@@ -161,11 +176,21 @@ export const ChartPublishedInner = ({
             </HintBlue>
           </Box>
         )}
-        {meta.title[locale] !== "" && (
+        <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
           <Typography component="div" variant="h2" mb={2}>
             {meta.title[locale]}
           </Typography>
-        )}
+
+          {flag("metadata") && (
+            <MetadataPanel
+              datasetIri={dataSet}
+              dataSource={dataSource}
+              dimensions={allDimensions}
+              container={rootRef.current}
+            />
+          )}
+        </Flex>
+
         {meta.description[locale] && (
           <Typography component="div" variant="body1" mb={2}>
             {meta.description[locale]}

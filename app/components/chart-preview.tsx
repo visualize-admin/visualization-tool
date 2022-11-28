@@ -3,6 +3,7 @@ import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import * as React from "react";
+import { useMemo } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -19,9 +20,14 @@ import GenericChart from "@/components/common-chart";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
+import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { flag } from "@/configurator/components/flag";
+import {
+  DimensionMetadataFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -67,7 +73,7 @@ export const ChartPreviewInner = ({
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const classes = useStyles();
-  const [{ data: metaData }] = useDataCubeMetadataQuery({
+  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -83,6 +89,13 @@ export const ChartPreviewInner = ({
   } = useChartTablePreview();
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
+
+  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
+    return [
+      ...(metaData?.dataCubeByIri?.dimensions ?? []),
+      ...(metaData?.dataCubeByIri?.measures ?? []),
+    ];
+  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
 
   return (
     <Flex
@@ -112,25 +125,42 @@ export const ChartPreviewInner = ({
           state.state === "PUBLISHING") && (
           <>
             <>
-              <Typography
-                variant="h2"
+              <Flex
                 sx={{
-                  color: state.meta.title[locale] === "" ? "grey.500" : "text",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
                 }}
-                className={classes.title}
-                onClick={() =>
-                  dispatch({
-                    type: "ACTIVE_FIELD_CHANGED",
-                    value: "title",
-                  })
-                }
               >
-                {state.meta.title[locale] === "" ? (
-                  <Trans id="annotation.add.title">[ Title ]</Trans>
-                ) : (
-                  state.meta.title[locale]
+                <Typography
+                  variant="h2"
+                  sx={{
+                    color:
+                      state.meta.title[locale] === "" ? "grey.500" : "text",
+                  }}
+                  className={classes.title}
+                  onClick={() =>
+                    dispatch({
+                      type: "ACTIVE_FIELD_CHANGED",
+                      value: "title",
+                    })
+                  }
+                >
+                  {state.meta.title[locale] === "" ? (
+                    <Trans id="annotation.add.title">[ Title ]</Trans>
+                  ) : (
+                    state.meta.title[locale]
+                  )}
+                </Typography>
+
+                {flag("metadata") && (
+                  <MetadataPanel
+                    datasetIri={dataSetIri}
+                    dataSource={dataSource}
+                    dimensions={allDimensions}
+                    top={96}
+                  />
                 )}
-              </Typography>
+              </Flex>
               <Head>
                 <title key="title">
                   {state.meta.title[locale] === ""

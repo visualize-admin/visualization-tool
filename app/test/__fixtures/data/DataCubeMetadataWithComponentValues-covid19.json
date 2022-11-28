@@ -4,6 +4,7 @@
       "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/2/",
       "title": "Covid19 Vaccinated Persons",
       "publisher": null,
+      "publicationStatus": "PUBLISHED",
       "dimensions": [
         {
           "iri": "https://environment.ld.admin.ch/foen/COVID19VaccPersons_v2/date",
