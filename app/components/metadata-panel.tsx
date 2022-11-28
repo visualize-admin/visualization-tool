@@ -18,6 +18,8 @@ import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
 import React, { useState } from "react";
+import create from "zustand";
+import shallow from "zustand/shallow";
 
 import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
@@ -31,57 +33,35 @@ import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
 
-type Section = "general" | "data";
+type MetadataPanelSection = "general" | "data";
 
-type State = {
+type MetadataPanelState = {
   open: boolean;
   toggle: () => void;
-  activeSection: Section;
-  setActiveSection: (d: Section) => void;
+  activeSection: MetadataPanelSection;
+  setActiveSection: (d: MetadataPanelSection) => void;
   selectedDimension: DimensionMetadataFragment | undefined;
-  setSelectedDimension: (d: DimensionMetadataFragment | undefined) => void;
+  setSelectedDimension: (d: DimensionMetadataFragment) => void;
   clearSelectedDimension: () => void;
 };
 
-const Context = React.createContext<State | undefined>(undefined);
-
-export const ContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [open, setOpen] = React.useState(false);
-  const [activeSection, setActiveSection] = React.useState<Section>("general");
-  const [selectedDimension, setSelectedDimension] = React.useState<
-    DimensionMetadataFragment | undefined
-  >(undefined);
-
-  const ctx: State = React.useMemo(() => {
-    return {
-      open,
-      toggle: () => setOpen(!open),
-      activeSection,
-      setActiveSection,
-      selectedDimension,
-      setSelectedDimension,
-      clearSelectedDimension: () => setSelectedDimension(undefined),
-    };
-  }, [open, activeSection, selectedDimension]);
-
-  return <Context.Provider value={ctx}>{children}</Context.Provider>;
-};
-
-export const useContext = () => {
-  const ctx = React.useContext(Context);
-
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap your component in <ContextProvider /> to useContext()"
-    );
-  }
-
-  return ctx;
-};
+export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
+  open: false,
+  toggle: () => {
+    set({ open: !get().open });
+  },
+  activeSection: "general",
+  setActiveSection: (d: MetadataPanelSection) => {
+    set({ activeSection: d });
+  },
+  selectedDimension: undefined,
+  setSelectedDimension: (d: DimensionMetadataFragment) => {
+    set({ selectedDimension: d });
+  },
+  clearSelectedDimension: () => {
+    set({ selectedDimension: undefined });
+  },
+}));
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -163,32 +143,6 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
   };
 });
 
-export const MetadataPanel = ({
-  datasetIri,
-  dataSource,
-  dimensions,
-  container,
-  top,
-}: {
-  datasetIri: string;
-  dataSource: DataSource;
-  dimensions: DimensionMetadataFragment[];
-  container?: HTMLDivElement | null;
-  top?: number;
-}) => {
-  return (
-    <ContextProvider>
-      <PanelInner
-        datasetIri={datasetIri}
-        dataSource={dataSource}
-        dimensions={dimensions}
-        container={container}
-        top={top}
-      />
-    </ContextProvider>
-  );
-};
-
 const animationProps: Transition = {
   transition: {
     duration: 0.2,
@@ -204,7 +158,7 @@ const animationProps: Transition = {
   },
 };
 
-const PanelInner = ({
+export const MetadataPanel = ({
   datasetIri,
   dataSource,
   dimensions,
@@ -214,12 +168,21 @@ const PanelInner = ({
   datasetIri: string;
   dataSource: DataSource;
   dimensions: DimensionMetadataFragment[];
-  container: HTMLDivElement | null | undefined;
+  container?: HTMLDivElement | null;
   top?: number;
 }) => {
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
-  const { open, toggle, activeSection, setActiveSection } = useContext();
+  const { open, toggle, activeSection, setActiveSection } =
+    useMetadataPanelStore(
+      (state) => ({
+        open: state.open,
+        toggle: state.toggle,
+        activeSection: state.activeSection,
+        setActiveSection: state.setActiveSection,
+      }),
+      shallow
+    );
   const handleToggle = useEvent(() => {
     toggle();
   });
@@ -342,7 +305,14 @@ const TabPanelData = ({
 }) => {
   const classes = useOtherStyles();
   const { selectedDimension, setSelectedDimension, clearSelectedDimension } =
-    useContext();
+    useMetadataPanelStore(
+      (state) => ({
+        selectedDimension: state.selectedDimension,
+        setSelectedDimension: state.setSelectedDimension,
+        clearSelectedDimension: state.clearSelectedDimension,
+      }),
+      shallow
+    );
   const [inputValue, setInputValue] = useState("");
 
   const options = React.useMemo(() => {
@@ -373,7 +343,7 @@ const TabPanelData = ({
             <Autocomplete
               className={classes.search}
               disablePortal
-              onChange={(_, v) => setSelectedDimension(v?.value)}
+              onChange={(_, v) => v && setSelectedDimension(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
               options={options}
@@ -443,7 +413,12 @@ const TabPanelDataDimension = ({
   expandable: boolean;
 }) => {
   const classes = useOtherStyles();
-  const { setSelectedDimension } = useContext();
+  const { setSelectedDimension } = useMetadataPanelStore(
+    (state) => ({
+      setSelectedDimension: state.setSelectedDimension,
+    }),
+    shallow
+  );
   const { description, showExpandButton } = React.useMemo(() => {
     if (expandable && dim.description && dim.description.length > 180) {
       return {
