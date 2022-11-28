@@ -23,7 +23,11 @@ import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { flag } from "@/configurator/components/flag";
+import {
+  DimensionMetadataFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -86,7 +90,7 @@ export const ChartPreviewInner = ({
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
-  const allDimensions = useMemo(() => {
+  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
     return [
       ...(metaData?.dataCubeByIri?.dimensions ?? []),
       ...(metaData?.dataCubeByIri?.measures ?? []),
@@ -148,12 +152,14 @@ export const ChartPreviewInner = ({
                   )}
                 </Typography>
 
-                <MetadataPanel
-                  datasetIri={dataSetIri}
-                  dataSource={dataSource}
-                  dimensions={allDimensions}
-                  top={96}
-                />
+                {flag("metadata") && (
+                  <MetadataPanel
+                    datasetIri={dataSetIri}
+                    dataSource={dataSource}
+                    dimensions={allDimensions}
+                    top={96}
+                  />
+                )}
               </Flex>
               <Head>
                 <title key="title">

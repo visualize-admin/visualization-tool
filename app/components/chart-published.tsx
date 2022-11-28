@@ -28,12 +28,16 @@ import {
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
+import { flag } from "@/configurator/components/flag";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
 } from "@/domain/datasource";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -120,7 +124,7 @@ export const ChartPublishedInner = ({
   } = useChartTablePreview();
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
-  const allDimensions = useMemo(() => {
+  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
     return [
       ...(metaData?.dataCubeByIri?.dimensions ?? []),
       ...(metaData?.dataCubeByIri?.measures ?? []),
@@ -177,12 +181,14 @@ export const ChartPublishedInner = ({
             {meta.title[locale]}
           </Typography>
 
-          <MetadataPanel
-            datasetIri={dataSet}
-            dataSource={dataSource}
-            dimensions={allDimensions}
-            container={rootRef.current}
-          />
+          {flag("metadata") && (
+            <MetadataPanel
+              datasetIri={dataSet}
+              dataSource={dataSource}
+              dimensions={allDimensions}
+              container={rootRef.current}
+            />
+          )}
         </Flex>
 
         {meta.description[locale] && (
