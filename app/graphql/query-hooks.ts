@@ -640,7 +640,13 @@ type HierarchyMetadata_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoor
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -654,7 +660,13 @@ type HierarchyMetadata_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDim
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -668,7 +680,13 @@ type HierarchyMetadata_NominalDimension_Fragment = { __typename: 'NominalDimensi
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -682,7 +700,13 @@ type HierarchyMetadata_NumericalMeasure_Fragment = { __typename: 'NumericalMeasu
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -696,7 +720,13 @@ type HierarchyMetadata_OrdinalDimension_Fragment = { __typename: 'OrdinalDimensi
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -710,7 +740,13 @@ type HierarchyMetadata_OrdinalMeasure_Fragment = { __typename: 'OrdinalMeasure',
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -724,7 +760,13 @@ type HierarchyMetadata_TemporalDimension_Fragment = { __typename: 'TemporalDimen
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
         { __typename: 'HierarchyValue', children?: Maybe<Array<(
-          { __typename: 'HierarchyValue' }
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
           & HierarchyValueFieldsFragment
         )>> }
         & HierarchyValueFieldsFragment
@@ -956,6 +998,12 @@ export const HierarchyMetadataFragmentDoc = gql`
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
         }
       }
     }
