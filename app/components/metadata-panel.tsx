@@ -15,6 +15,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
+import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
 import React, { useState } from "react";
 
@@ -133,7 +134,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
     },
     icon: {
       display: "inline",
-      marginLeft: -6,
+      marginLeft: -2,
       marginTop: -3,
       marginRight: 2,
     },
@@ -144,6 +145,19 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         "& > .MuiAutocomplete-input": {
           padding: `${theme.spacing(2)} 0px`,
         },
+      },
+    },
+    searchInputResultList: {
+      marginTop: theme.spacing(1),
+      padding: 0,
+      border: `1px solid ${theme.palette.grey[700]}`,
+      borderRadius: 3,
+    },
+    searchInputResult: {
+      borderBottom: `1px solid ${theme.palette.grey[400]}`,
+
+      "&:last-of-type": {
+        borderBottom: "none",
       },
     },
   };
@@ -363,6 +377,7 @@ const TabPanelData = ({
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
               options={options}
+              ListboxProps={{ className: classes.searchInputResultList }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -389,17 +404,20 @@ const TabPanelData = ({
                 const parts = parse(option.label, matches);
 
                 return (
-                  <li {...props}>
+                  <li
+                    {...props}
+                    className={clsx(props.className, classes.searchInputResult)}
+                  >
                     <div>
-                      {parts.map((part, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            fontWeight: part.highlight ? 700 : 400,
-                          }}
+                      {parts.map(({ text, highlight }, i) => (
+                        <Typography
+                          key={i}
+                          variant="body2"
+                          component="span"
+                          style={{ fontWeight: highlight ? 700 : 400 }}
                         >
-                          {part.text}
-                        </span>
+                          {text}
+                        </Typography>
                       ))}
                     </div>
                   </li>
