@@ -489,7 +489,7 @@ const InteractiveDataFilterCheckbox = ({
       }}
       {...props}
       control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={<Trans id="controls.filter.interactive.toggle">Interactive</Trans>}
+      label={<Trans id="controls.filters.interactive.toggle">Interactive</Trans>}
     />
   );
 };
