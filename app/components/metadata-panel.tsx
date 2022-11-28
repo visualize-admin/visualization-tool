@@ -1,19 +1,20 @@
 import { t, Trans } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
+  Autocomplete,
   Box,
   Button,
   Drawer,
   IconButton,
-  Input,
   InputAdornment,
   Tab,
+  TextField,
   Theme,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence, Transition } from "framer-motion";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
@@ -135,11 +136,13 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       marginRight: 2,
     },
     search: {
-      marginTop: theme.spacing(2),
-      padding: "0px 12px",
-      width: "100%",
-      height: 40,
-      minHeight: 40,
+      "& .MuiAutocomplete-inputRoot": {
+        padding: `0px ${theme.spacing(3)}`,
+
+        "& > .MuiAutocomplete-input": {
+          padding: `${theme.spacing(2)} 0px`,
+        },
+      },
     },
   };
 });
@@ -322,16 +325,13 @@ const TabPanelData = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const classes = useOtherStyles();
-  const { selectedDimension, clearSelectedDimension } = useContext();
-  const [searchInput, setSearchInput] = useState("");
+  const { selectedDimension, setSelectedDimension, clearSelectedDimension } =
+    useContext();
+  const [inputValue, setInputValue] = useState("");
 
-  const filteredDimensions = useMemo(() => {
-    return dimensions.filter(
-      (d) =>
-        d.label.toLowerCase().includes(searchInput) ||
-        d.description?.toLowerCase().includes(searchInput)
-    );
-  }, [dimensions, searchInput]);
+  const options = React.useMemo(() => {
+    return dimensions.map((d) => ({ label: d.label, value: d }));
+  }, [dimensions]);
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
@@ -354,23 +354,35 @@ const TabPanelData = ({
             className={classes.tabPanelContent}
             {...animationProps}
           >
-            {/* Extract into a component (as it's also used in MultiFilter drawer?) */}
-            <Input
+            <Autocomplete
               className={classes.search}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value.toLowerCase())}
-              placeholder={t({
-                id: "select.controls.metadata.search",
-                message: "Jump to...",
-              })}
-              startAdornment={
-                <InputAdornment position="start">
-                  <Icon name="search" size={16} />
-                </InputAdornment>
-              }
-              sx={{ typography: "body2" }}
+              disablePortal
+              onChange={(_, v) => setSelectedDimension(v?.value)}
+              inputValue={inputValue}
+              onInputChange={(_, v) => setInputValue(v.toLowerCase())}
+              options={options}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className={classes.search}
+                  placeholder={t({
+                    id: "select.controls.metadata.search",
+                    message: "Jump to...",
+                  })}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Icon name="search" size={16} />
+                      </InputAdornment>
+                    ),
+                    sx: { typography: "body2" },
+                  }}
+                />
+              )}
+              clearIcon={null}
             />
-            {filteredDimensions.map((d) => (
+            {dimensions.map((d) => (
               <TabPanelDataDimension key={d.iri} dim={d} expandable={true} />
             ))}
           </MotionBox>
