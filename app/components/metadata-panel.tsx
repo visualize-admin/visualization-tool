@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Box,
@@ -195,7 +195,9 @@ const PanelInner = ({
               value="general"
               label={
                 <Typography variant="body2" fontWeight="bold">
-                  General
+                  <Trans id="controls.metadata-panel.section.general">
+                    General
+                  </Trans>
                 </Typography>
               }
             />
@@ -203,7 +205,7 @@ const PanelInner = ({
               value="data"
               label={
                 <Typography variant="body2" fontWeight="bold">
-                  Data
+                  <Trans id="controls.metadata-panel.section.data">Data</Trans>
                 </Typography>
               }
             />
@@ -222,7 +224,9 @@ const PanelInner = ({
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <Button component="a" variant="text" size="small" onClick={onClick}>
-      <Typography variant="body2">Metadata</Typography>
+      <Typography variant="body2">
+        <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
+      </Typography>
     </Button>
   );
 };
@@ -233,7 +237,7 @@ const Header = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className={classes.header}>
       <Typography variant="body2" fontWeight="bold">
-        Metadata
+        <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
       </Typography>
 
       <IconButton size="small" onClick={onClose}>
