@@ -33,11 +33,11 @@ msgstr "Filter nach oben verschieben"
 msgid "No results"
 msgstr "Kein Ergebnis"
 
-#: app/components/chart-preview.tsx:181
+#: app/components/chart-preview.tsx:187
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx:145
+#: app/components/chart-preview.tsx:149
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
@@ -61,9 +61,9 @@ msgstr "Alle Datensätze"
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
-#: app/configurator/components/stepper.tsx:65
-#~ msgid "button.back"
-#~ msgstr "Zurück"
+#: app/components/metadata-panel.tsx:318
+msgid "button.back"
+msgstr "Zurück"
 
 #: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
@@ -445,16 +445,16 @@ msgstr "Italienisch"
 msgid "controls.measure"
 msgstr "Messwert"
 
-#: app/components/metadata-panel.tsx:228
-#: app/components/metadata-panel.tsx:240
+#: app/components/metadata-panel.tsx:251
+#: app/components/metadata-panel.tsx:263
 msgid "controls.metadata-panel.metadata"
 msgstr "Metadata"
 
-#: app/components/metadata-panel.tsx:208
+#: app/components/metadata-panel.tsx:231
 msgid "controls.metadata-panel.section.data"
 msgstr "Daten"
 
-#: app/components/metadata-panel.tsx:198
+#: app/components/metadata-panel.tsx:221
 msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
 
@@ -761,7 +761,7 @@ msgstr "Cube IRI"
 msgid "data.source"
 msgstr "Datenquelle"
 
-#: app/components/chart-published.tsx:159
+#: app/components/chart-published.tsx:163
 msgid "data.source.notTrusted"
 msgstr "Dieses Diagramm verwendet keine vertrauenswürdige Datenquelle."
 
@@ -781,7 +781,7 @@ msgstr "Datensatz"
 msgid "dataset.footnotes.updated"
 msgstr "Neuestes Update"
 
-#: app/components/chart-published.tsx:168
+#: app/components/chart-published.tsx:172
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
@@ -826,13 +826,13 @@ msgstr "Relevanz"
 msgid "dataset.order.title"
 msgstr "Titel"
 
-#: app/components/chart-preview.tsx:112
-#: app/components/chart-published.tsx:137
+#: app/components/chart-preview.tsx:116
+#: app/components/chart-published.tsx:141
 #: app/configurator/components/dataset-preview.tsx:120
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/components/chart-published.tsx:148
+#: app/components/chart-published.tsx:152
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
@@ -1019,7 +1019,7 @@ msgstr "visualize.admin.ch"
 msgid "select.controls.filters.search"
 msgstr "Suche"
 
-#: app/components/metadata-panel.tsx:295
+#: app/components/metadata-panel.tsx:329
 msgid "select.controls.metadata.search"
 msgstr "Springen zu..."
 

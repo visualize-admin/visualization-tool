@@ -12,13 +12,16 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { AnimatePresence, Transition } from "framer-motion";
 import React, { useMemo, useState } from "react";
 
-import { DataSource } from "@/configurator";
+import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { MotionBox } from "@/configurator/components/presence";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { Icon, getDimensionIconName } from "@/icons";
+import { getDimensionIconName, Icon } from "@/icons";
+import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
 
@@ -31,6 +34,9 @@ type State = {
   toggle: () => void;
   activeSection: Section;
   setActiveSection: (d: Section) => void;
+  selectedDimension: DimensionMetadataFragment | undefined;
+  setSelectedDimension: (d: DimensionMetadataFragment | undefined) => void;
+  clearSelectedDimension: () => void;
 };
 
 const Context = React.createContext<State | undefined>(undefined);
@@ -42,15 +48,21 @@ export const ContextProvider = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState<Section>("general");
+  const [selectedDimension, setSelectedDimension] = React.useState<
+    DimensionMetadataFragment | undefined
+  >(undefined);
 
-  const ctx = React.useMemo(() => {
+  const ctx: State = React.useMemo(() => {
     return {
       open,
       toggle: () => setOpen(!open),
       activeSection,
       setActiveSection,
+      selectedDimension,
+      setSelectedDimension,
+      clearSelectedDimension: () => setSelectedDimension(undefined),
     };
-  }, [open, activeSection]);
+  }, [open, activeSection, selectedDimension]);
 
   return <Context.Provider value={ctx}>{children}</Context.Provider>;
 };
@@ -109,10 +121,12 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       },
     },
     tabPanel: {
+      padding: 0,
+    },
+    tabPanelContent: {
       display: "flex",
       flexDirection: "column",
       gap: theme.spacing(4),
-      padding: 0,
     },
     icon: {
       display: "inline",
@@ -154,6 +168,21 @@ export const MetadataPanel = ({
       />
     </ContextProvider>
   );
+};
+
+const animationProps: Transition = {
+  transition: {
+    duration: 0.2,
+  },
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
 };
 
 const PanelInner = ({
@@ -217,8 +246,20 @@ const PanelInner = ({
             />
           </TabList>
 
-          <TabPanelGeneral datasetIri={datasetIri} dataSource={dataSource} />
-          <TabPanelData dimensions={dimensions} />
+          <AnimatePresence>
+            {activeSection === "general" ? (
+              <MotionBox key="general-tab" {...animationProps}>
+                <TabPanelGeneral
+                  datasetIri={datasetIri}
+                  dataSource={dataSource}
+                />
+              </MotionBox>
+            ) : activeSection === "data" ? (
+              <MotionBox key="data-tab" {...animationProps}>
+                <TabPanelData dimensions={dimensions} />
+              </MotionBox>
+            ) : null}
+          </AnimatePresence>
         </TabContext>
 
         <Content />
@@ -281,6 +322,7 @@ const TabPanelData = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const classes = useOtherStyles();
+  const { selectedDimension, clearSelectedDimension } = useContext();
   const [searchInput, setSearchInput] = useState("");
 
   const filteredDimensions = useMemo(() => {
@@ -293,36 +335,98 @@ const TabPanelData = ({
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
-      {/* Extract into a component (as it's also used in MultiFilter drawer?) */}
-      <Input
-        className={classes.search}
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value.toLowerCase())}
-        placeholder={t({
-          id: "select.controls.metadata.search",
-          message: "Jump to...",
-        })}
-        startAdornment={
-          <InputAdornment position="start">
-            <Icon name="search" size={16} />
-          </InputAdornment>
-        }
-        sx={{ typography: "body2" }}
-      />
-      {filteredDimensions.map((d) => (
-        <Box key={d.iri}>
-          <Flex>
-            <Icon
-              className={classes.icon}
-              name={getDimensionIconName(d.__typename)}
+      <AnimatePresence exitBeforeEnter={true}>
+        {selectedDimension ? (
+          <MotionBox key="dimension-selected" {...animationProps}>
+            <BackButton onClick={() => clearSelectedDimension()}>
+              <Trans id="button.back">Back</Trans>
+            </BackButton>
+            <Box sx={{ mt: 4 }}>
+              <TabPanelDataDimension
+                dim={selectedDimension}
+                expandable={false}
+              />
+            </Box>
+          </MotionBox>
+        ) : (
+          <MotionBox
+            key="dimension-not-selected"
+            className={classes.tabPanelContent}
+            {...animationProps}
+          >
+            {/* Extract into a component (as it's also used in MultiFilter drawer?) */}
+            <Input
+              className={classes.search}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value.toLowerCase())}
+              placeholder={t({
+                id: "select.controls.metadata.search",
+                message: "Jump to...",
+              })}
+              startAdornment={
+                <InputAdornment position="start">
+                  <Icon name="search" size={16} />
+                </InputAdornment>
+              }
+              sx={{ typography: "body2" }}
             />
-            <Typography variant="body2" fontWeight="bold">
-              {d.label}
-            </Typography>
-          </Flex>
-          <Typography variant="body2">{d.description}</Typography>
-        </Box>
-      ))}
+            {filteredDimensions.map((d) => (
+              <TabPanelDataDimension key={d.iri} dim={d} expandable={true} />
+            ))}
+          </MotionBox>
+        )}
+      </AnimatePresence>
     </TabPanel>
+  );
+};
+
+const TabPanelDataDimension = ({
+  dim,
+  expandable,
+}: {
+  dim: DimensionMetadataFragment;
+  expandable: boolean;
+}) => {
+  const classes = useOtherStyles();
+  const { setSelectedDimension } = useContext();
+  const { description, showExpandButton } = React.useMemo(() => {
+    if (expandable && dim.description && dim.description.length > 180) {
+      return {
+        description: dim.description.slice(0, 180) + "…",
+        showExpandButton: true,
+      };
+    }
+
+    return {
+      description: dim.description,
+      showExpandButton: false,
+    };
+  }, [dim.description, expandable]);
+  const iconName = React.useMemo(() => {
+    return getDimensionIconName(dim.__typename);
+  }, [dim.__typename]);
+
+  return (
+    <div>
+      <Flex>
+        <Icon className={classes.icon} name={iconName} />
+        <Typography variant="body2" fontWeight="bold">
+          {dim.label}
+        </Typography>
+      </Flex>
+      {description && <Typography variant="body2">{description}</Typography>}
+      {showExpandButton && (
+        <Button
+          component="a"
+          variant="text"
+          size="small"
+          onClick={() => setSelectedDimension(dim)}
+          endIcon={<SvgIcArrowRight />}
+          sx={{ p: 0 }}
+        >
+          Show more
+        </Button>
+      )}
+    </div>
   );
 };

@@ -33,11 +33,11 @@ msgstr "Sposta il filtro in alto"
 msgid "No results"
 msgstr "Nessun risultato"
 
-#: app/components/chart-preview.tsx:181
+#: app/components/chart-preview.tsx:187
 msgid "annotation.add.description"
 msgstr "[ Nessuna descrizione ]"
 
-#: app/components/chart-preview.tsx:145
+#: app/components/chart-preview.tsx:149
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
@@ -61,9 +61,9 @@ msgstr "Tutti i set di dati"
 msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
-#: app/configurator/components/stepper.tsx:65
-#~ msgid "button.back"
-#~ msgstr "Torna indietro"
+#: app/components/metadata-panel.tsx:318
+msgid "button.back"
+msgstr "Torna indietro"
 
 #: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
@@ -465,16 +465,16 @@ msgstr "Italiano"
 msgid "controls.measure"
 msgstr "Misura"
 
-#: app/components/metadata-panel.tsx:228
-#: app/components/metadata-panel.tsx:240
+#: app/components/metadata-panel.tsx:251
+#: app/components/metadata-panel.tsx:263
 msgid "controls.metadata-panel.metadata"
 msgstr "Metadata"
 
-#: app/components/metadata-panel.tsx:208
+#: app/components/metadata-panel.tsx:231
 msgid "controls.metadata-panel.section.data"
 msgstr "Dati"
 
-#: app/components/metadata-panel.tsx:198
+#: app/components/metadata-panel.tsx:221
 msgid "controls.metadata-panel.section.general"
 msgstr "Generale"
 
@@ -777,7 +777,7 @@ msgstr "Cubo IRI"
 msgid "data.source"
 msgstr "Fonte di dati"
 
-#: app/components/chart-published.tsx:159
+#: app/components/chart-published.tsx:163
 msgid "data.source.notTrusted"
 msgstr "Questo grafico non utilizza una fonte di dati affidabile."
 
@@ -797,7 +797,7 @@ msgstr "Set di dati"
 msgid "dataset.footnotes.updated"
 msgstr "Ultimo aggiornamento"
 
-#: app/components/chart-published.tsx:168
+#: app/components/chart-published.tsx:172
 msgid "dataset.hasImputedValues"
 msgstr "In questo set di dati mancano alcuni dati. Questi sono stati interpolati per colmare le lacune.."
 
@@ -842,13 +842,13 @@ msgstr "Rilevanza"
 msgid "dataset.order.title"
 msgstr "Titolo"
 
-#: app/components/chart-preview.tsx:112
-#: app/components/chart-published.tsx:137
+#: app/components/chart-preview.tsx:116
+#: app/components/chart-published.tsx:141
 #: app/configurator/components/dataset-preview.tsx:120
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Attenzione, questo set di dati è una bozza.<0/><1>Non utilizzare questo grafico per un rapporto!</1>"
 
-#: app/components/chart-published.tsx:148
+#: app/components/chart-published.tsx:152
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo grafico per un rapporto!</1>"
 
@@ -1035,7 +1035,7 @@ msgstr "visualize.admin.ch"
 msgid "select.controls.filters.search"
 msgstr "Cerca"
 
-#: app/components/metadata-panel.tsx:295
+#: app/components/metadata-panel.tsx:329
 msgid "select.controls.metadata.search"
 msgstr "Salta a..."
 
