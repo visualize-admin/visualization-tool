@@ -13,19 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:674
+#: app/configurator/components/chart-configurator.tsx:691
 msgid "Add filter"
 msgstr "Filter hinzufügen"
 
-#: app/configurator/components/chart-configurator.tsx:647
+#: app/configurator/components/chart-configurator.tsx:664
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
-#: app/configurator/components/chart-configurator.tsx:644
+#: app/configurator/components/chart-configurator.tsx:661
 msgid "Move filter down"
 msgstr "Filter nach unten verschieben"
 
-#: app/configurator/components/chart-configurator.tsx:641
+#: app/configurator/components/chart-configurator.tsx:658
 msgid "Move filter up"
 msgstr "Filter nach oben verschieben"
 
@@ -115,7 +115,7 @@ msgstr "Teilen"
 msgid "chart.map.layers.area"
 msgstr "Flächen"
 
-#: app/configurator/components/chart-configurator.tsx:727
+#: app/configurator/components/chart-configurator.tsx:744
 #: app/configurator/components/chart-options-selector.tsx:992
 #: app/configurator/components/field-i18n.ts:31
 msgid "chart.map.layers.base"
@@ -301,7 +301,7 @@ msgstr "Beschreibung hinzufügen"
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
-#: app/configurator/components/filters.tsx:417
+#: app/configurator/components/filters.tsx:428
 msgid "controls.filter.nb-elements"
 msgstr "{0} von {1}"
 
@@ -313,20 +313,25 @@ msgstr "Alle auswählen"
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
-#: app/configurator/components/chart-configurator.tsx:492
-#: app/configurator/components/filters.tsx:356
+#: app/configurator/components/chart-configurator.tsx:506
+#: app/configurator/components/filters.tsx:366
 msgid "controls.filters.interactive.toggle"
 msgstr "Interaktive"
 
-#: app/configurator/components/filters.tsx:398
+#: app/configurator/components/chart-configurator.tsx:499
+#: app/configurator/components/filters.tsx:360
+msgid "controls.filters.interactive.tooltip"
+msgstr "Erlauben Sie Benutzern, Filter zu ändern"
+
+#: app/configurator/components/filters.tsx:409
 msgid "controls.filters.select.refresh-colors"
 msgstr "Farben auffrischen"
 
-#: app/configurator/components/filters.tsx:382
+#: app/configurator/components/filters.tsx:393
 msgid "controls.filters.select.reset-colors"
 msgstr "Farben zurücksetzen"
 
-#: app/configurator/components/filters.tsx:375
+#: app/configurator/components/filters.tsx:386
 msgid "controls.filters.select.selected-filters"
 msgstr "Ausgewählte Filter"
 
@@ -436,7 +441,7 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.additional-information"
 msgstr "Zusätzliche Informationen"
 
-#: app/configurator/components/chart-configurator.tsx:563
+#: app/configurator/components/chart-configurator.tsx:580
 msgid "controls.section.chart.options"
 msgstr "Diagramm-Einstellungen"
 
@@ -448,7 +453,7 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
-#: app/configurator/components/chart-configurator.tsx:581
+#: app/configurator/components/chart-configurator.tsx:598
 msgid "controls.section.data.filters"
 msgstr "Filter"
 
@@ -506,7 +511,7 @@ msgstr "Tabellenoptionen"
 msgid "controls.section.title.warning"
 msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 
-#: app/configurator/components/chart-configurator.tsx:555
+#: app/configurator/components/chart-configurator.tsx:572
 #: app/configurator/components/chart-type-selector.tsx:131
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"
@@ -559,16 +564,16 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/filters.tsx:369
-#: app/configurator/components/filters.tsx:785
+#: app/configurator/components/filters.tsx:380
+#: app/configurator/components/filters.tsx:796
 msgid "controls.set-filters"
 msgstr "Filter bearbeiten"
 
-#: app/configurator/components/filters.tsx:793
+#: app/configurator/components/filters.tsx:804
 msgid "controls.set-filters-caption"
 msgstr "Für beste Ergebnisse wählen Sie nicht mehr als 7 Werte für die Visualisierung aus"
 
-#: app/configurator/components/filters.tsx:832
+#: app/configurator/components/filters.tsx:843
 msgid "controls.set-values-apply"
 msgstr "Filter anwenden"
 
@@ -942,7 +947,7 @@ msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
 #: app/configurator/components/dataset-browse.tsx:378
-#: app/configurator/components/filters.tsx:802
+#: app/configurator/components/filters.tsx:813
 msgid "select.controls.filters.search"
 msgstr "Suche"
 

@@ -2,6 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
+  Tooltip,
   CircularProgress,
   IconButton,
   Menu,
@@ -489,7 +490,23 @@ const InteractiveDataFilterCheckbox = ({
       }}
       {...props}
       control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={<Trans id="controls.filters.interactive.toggle">Interactive</Trans>}
+      label={
+        <Tooltip
+          enterDelay={600}
+          arrow
+          title={
+            <span>
+              <Trans id="controls.filters.interactive.tooltip">
+                Allow users to change filters
+              </Trans>
+            </span>
+          }
+        >
+          <Typography variant="caption">
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </Typography>
+        </Tooltip>
+      }
     />
   );
 };

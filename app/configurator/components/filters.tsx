@@ -353,9 +353,20 @@ const MultiFilterContent = ({
               componentsProps={{ typography: { variant: "caption" } }}
               control={<Switch {...interactiveFilterProps} />}
               label={
-                <Trans id="controls.filters.interactive.toggle">
-                  Interactive
-                </Trans>
+                <Tooltip
+                  enterDelay={600}
+                  title={
+                    <span>
+                      <Trans id="controls.filters.interactive.tooltip">
+                        Allow users to change filters
+                      </Trans>
+                    </span>
+                  }
+                >
+                  <Trans id="controls.filters.interactive.toggle">
+                    Interactive
+                  </Trans>
+                </Tooltip>
               }
             />
           ) : null}
