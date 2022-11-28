@@ -13,6 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import match from "autosuggest-highlight/match";
+import parse from "autosuggest-highlight/parse";
 import { AnimatePresence, Transition } from "framer-motion";
 import React, { useState } from "react";
 
@@ -380,6 +382,29 @@ const TabPanelData = ({
                   }}
                 />
               )}
+              renderOption={(props, option, { inputValue }) => {
+                const matches = match(option.label, inputValue, {
+                  insideWords: true,
+                });
+                const parts = parse(option.label, matches);
+
+                return (
+                  <li {...props}>
+                    <div>
+                      {parts.map((part, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            fontWeight: part.highlight ? 700 : 400,
+                          }}
+                        >
+                          {part.text}
+                        </span>
+                      ))}
+                    </div>
+                  </li>
+                );
+              }}
               clearIcon={null}
             />
             {dimensions.map((d) => (
