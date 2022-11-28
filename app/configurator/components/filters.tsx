@@ -76,7 +76,7 @@ import {
   getOptionsFromTree,
   joinParents,
   pruneTree,
-  sortTree,
+  sortHierarchy,
 } from "@/rdf/tree-utils";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -224,7 +224,7 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
-    const sortedTree = sortTree(tree);
+    const sortedTree = sortHierarchy(tree);
     const flatOptions = getOptionsFromTree(sortedTree);
     const optionsByValue = keyBy(flatOptions, (x) => x.value);
     return {

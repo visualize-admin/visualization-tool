@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   FormControlLabelProps,
   Badge,
+  BadgeProps,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
@@ -493,7 +494,7 @@ const InteractiveDataFilterCheckbox = ({
   );
 };
 
-const FiltersBadge = () => {
+const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
   return (
@@ -501,7 +502,7 @@ const FiltersBadge = () => {
       invisible={ctx.isOpen}
       badgeContent={Object.values(state.chartConfig.filters).length}
       color="secondary"
-      sx={{ display: "block", mr: 4 }}
+      sx={{ display: "block", ...sx }}
     />
   );
 };
@@ -576,11 +577,7 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
         <ControlSection className={classes.filterSection} collapse>
-          <SectionTitle
-            titleId="controls-data"
-            gutterBottom={false}
-            sx={{ justifyContent: "space-between" }}
-          >
+          <SectionTitle titleId="controls-data" gutterBottom={false}>
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -588,7 +585,7 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
-            <FiltersBadge />
+            <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
           </SectionTitle>
 
           <ControlSectionContent
