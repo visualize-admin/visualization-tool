@@ -76,7 +76,7 @@ import {
   getOptionsFromTree,
   joinParents,
   pruneTree,
-  sortTree,
+  sortHierarchy,
 } from "@/rdf/tree-utils";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -224,7 +224,7 @@ const MultiFilterContent = ({
   const classes = useStyles();
 
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
-    const sortedTree = sortTree(tree);
+    const sortedTree = sortHierarchy(tree);
     const flatOptions = getOptionsFromTree(sortedTree);
     const optionsByValue = keyBy(flatOptions, (x) => x.value);
     return {
@@ -353,9 +353,20 @@ const MultiFilterContent = ({
               componentsProps={{ typography: { variant: "caption" } }}
               control={<Switch {...interactiveFilterProps} />}
               label={
-                <Trans id="controls.filters.interactive.toggle">
-                  Interactive
-                </Trans>
+                <Tooltip
+                  enterDelay={600}
+                  title={
+                    <span>
+                      <Trans id="controls.filters.interactive.tooltip">
+                        Allow users to change filters
+                      </Trans>
+                    </span>
+                  }
+                >
+                  <Trans id="controls.filters.interactive.toggle">
+                    Interactive
+                  </Trans>
+                </Tooltip>
               }
             />
           ) : null}

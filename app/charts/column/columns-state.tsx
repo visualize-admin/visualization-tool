@@ -59,7 +59,10 @@ import {
   TimeUnit,
 } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 export interface ColumnsState extends CommonChartState {
   chartType: "column";
@@ -171,7 +174,14 @@ const useColumnsState = (
   const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain } =
     useMemo(() => {
       // x
-      const bandDomain = [...new Set(preparedData.map(getX))];
+      const sorters = makeDimensionValueSorters(xDimension, {
+        sorting: fields.x.sorting,
+      });
+      const bandDomain = orderBy(
+        [...new Set(preparedData.map(getX))],
+        sorters,
+        getSortingOrders(sorters, fields.x.sorting)
+      );
       const xScale = scaleBand()
         .domain(bandDomain)
         .paddingInner(PADDING_INNER)

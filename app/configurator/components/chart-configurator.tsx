@@ -2,6 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
+  Tooltip,
   CircularProgress,
   IconButton,
   Menu,
@@ -12,6 +13,7 @@ import {
   FormControlLabel,
   FormControlLabelProps,
   Badge,
+  BadgeProps,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
@@ -492,12 +494,28 @@ const InteractiveDataFilterCheckbox = ({
       }}
       {...props}
       control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={<Trans id="controls.filter.interactive.toggle">Interactive</Trans>}
+      label={
+        <Tooltip
+          enterDelay={600}
+          arrow
+          title={
+            <span>
+              <Trans id="controls.filters.interactive.tooltip">
+                Allow users to change filters
+              </Trans>
+            </span>
+          }
+        >
+          <Typography variant="caption">
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </Typography>
+        </Tooltip>
+      }
     />
   );
 };
 
-const FiltersBadge = () => {
+const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
   return (
@@ -505,7 +523,7 @@ const FiltersBadge = () => {
       invisible={ctx.isOpen}
       badgeContent={Object.values(state.chartConfig.filters).length}
       color="secondary"
-      sx={{ display: "block", mr: 4 }}
+      sx={{ display: "block", ...sx }}
     />
   );
 };
@@ -580,11 +598,7 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
         <ControlSection className={classes.filterSection} collapse>
-          <SectionTitle
-            titleId="controls-data"
-            gutterBottom={false}
-            sx={{ justifyContent: "space-between" }}
-          >
+          <SectionTitle titleId="controls-data" gutterBottom={false}>
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -592,7 +606,7 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
-            <FiltersBadge />
+            <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
           </SectionTitle>
 
           <ControlSectionContent

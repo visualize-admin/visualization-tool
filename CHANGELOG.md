@@ -11,6 +11,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## [3.14.0] - 2022-11-29
+
+- Add search to filters with hierarchy
+- Move interactive filters in place
+- Diminish banner height in search
+- Increase depth limit of hierarchies to 6
+
 ## [3.13.0] - 2022-11-22
 
 - Enhancements:

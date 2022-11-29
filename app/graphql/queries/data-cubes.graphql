@@ -182,6 +182,12 @@ fragment hierarchyMetadata on Dimension {
         ...hierarchyValueFields
         children {
           ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
         }
       }
     }

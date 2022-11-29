@@ -42,6 +42,7 @@ import {
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { valueComparator } from "@/utils/sorting-values";
 
 export const Label = ({
   htmlFor,
@@ -238,13 +239,7 @@ const getSelectOptions = (
   const restOptions = options.filter((o) => !o.isNoneValue);
 
   if (sortOptions) {
-    restOptions.sort((a, b) => {
-      if (a.position !== undefined && b.position !== undefined) {
-        return a.position < b.position;
-      } else {
-        return a.label.localeCompare(b.label, locale);
-      }
-    });
+    restOptions.sort(valueComparator(locale));
   }
 
   return [...noneOptions, ...restOptions];

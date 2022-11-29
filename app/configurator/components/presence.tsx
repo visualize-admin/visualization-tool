@@ -36,9 +36,11 @@ export const navPresenceProps = {
   exit: "exit",
 };
 
+export const BANNER_HEIGHT = 250;
+export const BANNER_MARGIN_TOP = 96;
 export const bannerPresenceProps: Transition = {
   transition: { duration: 0.5 },
-  initial: { marginTop: -446 },
-  animate: { marginTop: 96 },
-  exit: { marginTop: -446 },
+  initial: { marginTop: -(BANNER_HEIGHT + BANNER_MARGIN_TOP) },
+  animate: { marginTop: BANNER_MARGIN_TOP },
+  exit: { marginTop: -(BANNER_HEIGHT + BANNER_MARGIN_TOP) },
 };

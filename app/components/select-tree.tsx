@@ -6,25 +6,30 @@ import MUITreeItem, {
   TreeItemProps,
   useTreeItem,
 } from "@mui/lab/TreeItem";
-import TreeView from "@mui/lab/TreeView";
+import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
   Theme,
-  Menu,
+  Popover,
   PopoverActions,
   useEventCallback,
   OutlinedInput,
   Typography,
   Collapse,
+  TextField,
+  TextFieldProps,
+  IconButton,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
 import clsx from "clsx";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import * as React from "react";
 import { useEffect } from "react";
 
 import { Label } from "@/components/form";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
+import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme, { disabled?: boolean; open?: boolean }>(
@@ -242,12 +247,15 @@ const TreeItem = (props: TreeItemProps) => {
   return <MUITreeItem {...props} ContentComponent={TreeItemContent} />;
 };
 
-type Tree = {
-  value: string;
-  label: string;
-  children?: Tree;
+type TreeHierachyValue = Omit<
+  HierarchyValue,
+  "depth" | "dimensionIri" | "children"
+> & {
   selectable?: boolean;
-}[];
+  children?: TreeHierachyValue[];
+};
+
+type Tree = TreeHierachyValue[];
 
 type NodeId = string;
 
@@ -263,6 +271,16 @@ export type SelectTreeProps = {
   open?: boolean;
 };
 
+const getFilteredOptions = (options: Tree, value: string) => {
+  const rx = new RegExp(`^${value}|\\s${value}`, "i");
+  return value === ""
+    ? options
+    : (pruneTree(
+        options as HierarchyValue[],
+        (d) => !!d.label.match(rx)
+      ) as Tree);
+};
+
 function SelectTree({
   label,
   options,
@@ -276,20 +294,29 @@ function SelectTree({
 }: SelectTreeProps) {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
-
-  const handleClick = useEventCallback((ev: React.MouseEvent<HTMLElement>) => {
-    setOpenState(true);
-    setMinMenuWidth(ev.currentTarget.clientWidth);
-    onOpen?.();
-  });
-
-  const handleClose = useEventCallback(() => {
-    setOpenState(false);
-    onClose?.();
-  });
+  const [inputValue, setInputValue] = useState("");
   const classes = useStyles({ disabled, open });
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
+  const menuRef = React.useRef<PopoverActions>(null);
+  const id = useId();
+  const inputRef = React.useRef<HTMLDivElement>();
+
+  const defaultExpanded = useMemo(() => {
+    if (!value && options.length > 0) {
+      return options[0].value ? [options[0].value] : [];
+    }
+    const res = value ? [value] : [];
+    let cur = value;
+    const parents = parentsRef.current;
+    while (cur && parents[cur]) {
+      res.push(parents[cur]);
+      cur = parents[cur];
+    }
+    return res;
+  }, [value, options]);
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   const labelsByValue = useMemo(() => {
     parentsRef.current = {} as Record<NodeId, NodeId>;
@@ -309,20 +336,50 @@ function SelectTree({
     return res;
   }, [options]);
 
-  const defaultExpanded = useMemo(() => {
-    if (!value && options.length > 0) {
-      return options[0].value ? [options[0].value] : [];
-    }
-    const res = value ? [value] : [];
-    let cur = value;
-    const parents = parentsRef.current;
-    while (cur && parents[cur]) {
-      res.push(parents[cur]);
-      cur = parents[cur];
-    }
+  const handleOpen = useEventCallback(() => {
+    setOpenState(true);
+    setMinMenuWidth(inputRef.current?.clientLeft);
+    onOpen?.();
+  });
 
-    return res;
-  }, [value, options]);
+  const handleClose = useEventCallback(() => {
+    setOpenState(false);
+    setInputValue("");
+    setFilteredOptions(getFilteredOptions(options, ""));
+    setExpanded(defaultExpanded);
+    onClose?.();
+  });
+
+  const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
+    const value = ev.currentTarget.value;
+    setInputValue(value);
+    const filteredOptions = getFilteredOptions(options, value);
+    setFilteredOptions(filteredOptions);
+    setExpanded((curExpanded) => {
+      const newExpanded = Array.from(
+        new Set([
+          ...curExpanded,
+          ...flattenTree(filteredOptions as HierarchyValue[]).map(
+            (v) => v.value
+          ),
+        ])
+      );
+      return newExpanded;
+    });
+  });
+
+  const handleClickResetInput = useEvent(() => {
+    const newValue = "";
+    setInputValue(newValue);
+    setFilteredOptions(getFilteredOptions(options, newValue));
+    setExpanded(defaultExpanded);
+  });
+
+  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
+    (_ev, nodeIds) => {
+      setExpanded(nodeIds);
+    }
+  );
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
     onChange({ target: { value: value } });
@@ -375,15 +432,14 @@ function SelectTree({
     [defaultExpanded, treeItemClasses, treeItemTransitionProps]
   );
 
-  const menuRef = React.useRef<PopoverActions>(null);
-
-  const paperProps = useMemo(() => {
-    return {
+  const paperProps = useMemo(
+    () => ({
       style: {
-        minWidth: minMenuWidth === undefined ? 0 : minMenuWidth,
+        minWidth: minMenuWidth ?? 0,
       },
-    };
-  }, [minMenuWidth]);
+    }),
+    [minMenuWidth]
+  );
 
   const menuTransitionProps = useMemo(
     () => ({
@@ -401,8 +457,14 @@ function SelectTree({
     []
   );
 
-  const id = useId();
-  const inputRef = React.useRef<HTMLDivElement>();
+  const treeRef = useRef();
+  const handleKeyDown: React.HTMLAttributes<HTMLInputElement>["onKeyDown"] =
+    useEvent((ev) => {
+      if (ev.key === "Enter" || ev.key == " ") {
+        handleOpen();
+        ev.preventDefault();
+      }
+    });
 
   useEffect(() => {
     const inputNode = inputRef.current;
@@ -426,10 +488,11 @@ function SelectTree({
         ref={inputRef}
         size="small"
         className={classes.input}
-        onClick={disabled ? undefined : handleClick}
+        onClick={disabled ? undefined : handleOpen}
+        onKeyDown={handleKeyDown}
         endAdornment={<Icon className={classes.icon} name="caretDown" />}
       />
-      <Menu
+      <Popover
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -441,17 +504,46 @@ function SelectTree({
         PaperProps={paperProps}
         TransitionProps={menuTransitionProps}
       >
-        <TreeView
-          defaultSelected={value}
-          defaultExpanded={defaultExpanded}
-          onNodeSelect={handleNodeSelect}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          sx={{ flexGrow: 1, overflowY: "auto", pb: 2, "user-select": "none" }}
-        >
-          {renderTreeContent(options)}
-        </TreeView>
-      </Menu>
+        <TextField
+          size="small"
+          value={inputValue}
+          sx={{ p: 1, width: "100%" }}
+          InputProps={{
+            autoFocus: true,
+            startAdornment: <Icon name="search" size={16} color="#555" />,
+            endAdornment: (
+              <IconButton size="small" onClick={handleClickResetInput}>
+                <Icon name="close" size={16} />
+              </IconButton>
+            ),
+            sx: { "& input": { fontSize: "12px" }, pl: 1, pr: 1 },
+          }}
+          onChange={handleInputChange}
+        />
+        {filteredOptions.length === 0 ? (
+          <Typography variant="body2" sx={{ px: 2, py: 4 }}>
+            <Trans id="No results" />
+          </Typography>
+        ) : (
+          <TreeView
+            ref={treeRef}
+            defaultSelected={value}
+            expanded={expanded}
+            onNodeToggle={handleNodeToggle}
+            onNodeSelect={handleNodeSelect}
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{
+              flexGrow: 1,
+              overflowY: "auto",
+              pb: 2,
+              "user-select": "none",
+            }}
+          >
+            {renderTreeContent(filteredOptions)}
+          </TreeView>
+        )}
+      </Popover>
     </div>
   );
 }
