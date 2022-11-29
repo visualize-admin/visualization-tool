@@ -74,22 +74,20 @@ export const ChartPublished = ({
   );
 };
 
-const useStyles = makeStyles<Theme, { metadataPanelOpen: boolean }>(
-  (theme) => ({
-    root: {
-      position: "relative",
-      display: "flex",
-      flexGrow: 1,
-      flexDirection: "column",
-      padding: theme.spacing(5),
-      paddingLeft: ({ metadataPanelOpen }) =>
-        `calc(${theme.spacing(5)} + ${metadataPanelOpen ? DRAWER_WIDTH : 0}px)`,
-      color: theme.palette.grey[800],
-      overflowX: "auto",
-      transition: "padding 0.25s ease",
-    },
-  })
-);
+const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
+  root: {
+    position: "relative",
+    display: "flex",
+    flexGrow: 1,
+    flexDirection: "column",
+    padding: theme.spacing(5),
+    paddingLeft: ({ shrink }) =>
+      `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
+    color: theme.palette.grey[800],
+    overflowX: "auto",
+    transition: "padding 0.25s ease",
+  },
+}));
 
 export const ChartPublishedInner = ({
   dataSet,
@@ -104,14 +102,33 @@ export const ChartPublishedInner = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const {
+    state: isTablePreview,
+    setState: setIsTablePreview,
+    containerRef,
+    containerHeight,
+  } = useChartTablePreview();
+
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
   const metadataPanelOpen = useStore(metadataPanelStore, (state) => state.open);
 
-  const classes = useStyles({ metadataPanelOpen });
+  const shouldShrink = useMemo(() => {
+    const rootWidth = rootRef.current?.getBoundingClientRect().width;
+
+    if (!rootWidth) {
+      return false;
+    }
+
+    return metadataPanelOpen && rootWidth > DRAWER_WIDTH * 2;
+  }, [metadataPanelOpen]);
+
+  const classes = useStyles({
+    shrink: shouldShrink,
+  });
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
-
-  const rootRef = useRef<HTMLDivElement>(null);
 
   const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: {
@@ -129,13 +146,6 @@ export const ChartPublishedInner = ({
       chartConfig: chartConfig,
     } as ConfiguratorStatePublishing;
   }, [chartConfig, dataSource]);
-
-  const {
-    state: isTablePreview,
-    setState: setIsTablePreview,
-    containerRef,
-    containerHeight,
-  } = useChartTablePreview();
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
@@ -238,15 +248,13 @@ export const ChartPublishedInner = ({
                 )}
               </PublishedConfiguratorStateProvider>
             </Flex>
-            {chartConfig && (
-              <ChartFootnotes
-                dataSetIri={dataSet}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                configKey={configKey}
-                onToggleTableView={handleToggleTableView}
-              />
-            )}
+            <ChartFootnotes
+              dataSetIri={dataSet}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              configKey={configKey}
+              onToggleTableView={handleToggleTableView}
+            />
           </InteractiveFiltersProvider>
         </ChartErrorBoundary>
       </Box>
