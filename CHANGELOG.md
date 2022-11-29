@@ -9,7 +9,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Metadata is now shown in a dedicated panel that can be reached both from editor & published mode
 
 ## [3.14.0] - 2022-11-29
 
