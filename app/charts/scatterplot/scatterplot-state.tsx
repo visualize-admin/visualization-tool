@@ -28,6 +28,7 @@ import { ScatterPlotFields } from "@/configurator";
 import { mkNumber } from "@/configurator/components/ui-helpers";
 import { DimensionValue, Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
@@ -43,9 +44,9 @@ export interface ScatterplotState extends CommonChartState {
   getSegment: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
-  xAxisDescription: string | undefined;
+  xAxisDimension: DimensionMetadataFragment;
   yAxisLabel: string;
-  yAxisDescription: string | undefined;
+  yAxisDimension: DimensionMetadataFragment;
   getSegmentLabel: (s: string) => string;
   getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
 }
@@ -93,7 +94,6 @@ const useScatterplotState = ({
   }
 
   const xAxisLabel = getLabelWithUnit(xMeasure);
-  const xAxisDescription = xMeasure.description || undefined;
 
   const xMinValue = Math.min(mkNumber(min(preparedData, (d) => getX(d))), 0);
   const xMaxValue = max(preparedData, (d) => getX(d)) as number;
@@ -107,7 +107,6 @@ const useScatterplotState = ({
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-  const yAxisDescription = yMeasure.description || undefined;
 
   const yMinValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
   const yMaxValue = max(preparedData, getY) as number;
@@ -243,9 +242,9 @@ const useScatterplotState = ({
     getSegment,
     colors,
     xAxisLabel,
-    xAxisDescription,
+    xAxisDimension: xMeasure,
     yAxisLabel,
-    yAxisDescription,
+    yAxisDimension: yMeasure,
     getAnnotationInfo,
     getSegmentLabel,
   };

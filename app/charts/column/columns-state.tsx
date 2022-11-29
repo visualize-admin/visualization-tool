@@ -53,7 +53,11 @@ import {
   formatNumberWithUnit,
   useTimeFormatUnit,
 } from "@/formatters";
-import { TemporalDimension, TimeUnit } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  TemporalDimension,
+  TimeUnit,
+} from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
@@ -76,7 +80,7 @@ export interface ColumnsState extends CommonChartState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  yAxisDescription: string | undefined;
+  yAxisDimension: DimensionMetadataFragment;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
   showStandardError: boolean;
 }
@@ -219,7 +223,6 @@ const useColumnsState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-  const yAxisDescription = yMeasure.description || undefined;
 
   const { left, bottom } = useChartPadding(
     yScale,
@@ -348,7 +351,7 @@ const useColumnsState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
-    yAxisDescription,
+    yAxisDimension: yMeasure,
     segments,
     colors,
     getAnnotationInfo,

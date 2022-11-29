@@ -5,13 +5,13 @@ import { useEffect, useRef } from "react";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xAxisDescription } =
+  const { xScale, bounds, xAxisLabel, xAxisDimension } =
     useChartState() as ScatterplotState;
   const { chartWidth, chartHeight, margins } = bounds;
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
@@ -51,18 +51,17 @@ export const AxisWidthLinear = () => {
   return (
     <>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <MaybeTooltip text={xAxisDescription}>
+        <OpenMetadataPanelWrapper dim={xAxisDimension} svg={true}>
           <text
             x={chartWidth}
             y={chartHeight + margins.bottom}
             dy={-labelFontSize}
             fontSize={labelFontSize}
             textAnchor="end"
-            textDecoration={xAxisDescription ? "underline" : undefined}
           >
             {xAxisLabel}
           </text>
-        </MaybeTooltip>
+        </OpenMetadataPanelWrapper>
       </g>
       <g
         ref={xAxisRef}

@@ -7,6 +7,7 @@ import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import {
   ChartConfig,
@@ -25,6 +26,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
   Dimension,
+  DimensionMetadataFragment,
   HierarchyValue,
   TemporalDimension,
   TimeUnit,
@@ -248,7 +250,7 @@ const DataFilterGenericDimension = ({
     message: `No Filter`,
   });
 
-  const { label, isKeyDimension, description: tooltipText } = dimension;
+  const { label, isKeyDimension } = dimension;
   const options = propOptions || dimension.values;
 
   const allOptions = React.useMemo(() => {
@@ -267,10 +269,13 @@ const DataFilterGenericDimension = ({
   return (
     <Select
       id="dataFilterBaseDimension"
-      label={label}
+      label={
+        <OpenMetadataPanelWrapper dim={dimension as DimensionMetadataFragment}>
+          {label}
+        </OpenMetadataPanelWrapper>
+      }
       options={allOptions}
       value={value}
-      tooltipText={tooltipText || undefined}
       onChange={onChange}
     />
   );
@@ -292,12 +297,7 @@ const DataFilterHierarchyDimension = ({
     message: `No Filter`,
   });
 
-  const {
-    label,
-    isKeyDimension,
-    description: tooltipText,
-    values: dimensionValues,
-  } = dimension;
+  const { label, isKeyDimension, values: dimensionValues } = dimension;
   const options = React.useMemo(() => {
     let opts = [] as { label: string; value: string; isNoneValue?: boolean }[];
     if (hierarchy) {
@@ -320,8 +320,11 @@ const DataFilterHierarchyDimension = ({
       value={value}
       options={options}
       onChange={onChange}
-      label={label}
-      tooltipText={tooltipText || undefined}
+      label={
+        <OpenMetadataPanelWrapper dim={dimension as DimensionMetadataFragment}>
+          {label}
+        </OpenMetadataPanelWrapper>
+      }
     />
   );
 };
@@ -329,12 +332,10 @@ const DataFilterHierarchyDimension = ({
 const DataFilterTemporalDimension = ({
   dimension,
   value,
-  tooltipText,
   onChange,
 }: {
   dimension: TemporalDimension;
   value: string;
-  tooltipText?: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const {
@@ -375,9 +376,12 @@ const DataFilterTemporalDimension = ({
   return (
     <TimeInput
       id="dataFilterTemporalDimension"
-      label={label}
+      label={
+        <OpenMetadataPanelWrapper dim={dimension as DimensionMetadataFragment}>
+          {label}
+        </OpenMetadataPanelWrapper>
+      }
       value={value}
-      tooltipText={tooltipText}
       timeFormat={timeFormat}
       formatLocale={formatLocale}
       isOptional={!isKeyDimension}

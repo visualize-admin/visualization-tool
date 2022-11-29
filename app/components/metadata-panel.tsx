@@ -43,6 +43,7 @@ type MetadataPanelState = {
   selectedDimension: DimensionMetadataFragment | undefined;
   setSelectedDimension: (d: DimensionMetadataFragment) => void;
   clearSelectedDimension: () => void;
+  openDimension: (d: DimensionMetadataFragment) => void;
 };
 
 export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
@@ -60,6 +61,9 @@ export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
   },
   clearSelectedDimension: () => {
     set({ selectedDimension: undefined });
+  },
+  openDimension: (d: DimensionMetadataFragment) => {
+    set({ open: true, activeSection: "data", selectedDimension: d });
   },
 }));
 
@@ -140,6 +144,21 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         borderBottom: "none",
       },
     },
+    openDimension: {
+      minHeight: 0,
+      verticalAlign: "baseline",
+      padding: 0,
+      margin: 0,
+      fontSize: "inherit",
+      color: "inherit",
+    },
+    openDimensionSVG: {
+      cursor: "pointer",
+
+      "&:hover": {
+        fill: theme.palette.primary.hover,
+      },
+    },
   };
 });
 
@@ -156,6 +175,37 @@ const animationProps: Transition = {
   exit: {
     opacity: 0,
   },
+};
+
+export const OpenMetadataPanelWrapper = ({
+  dim,
+  svg,
+  children,
+}: {
+  dim: DimensionMetadataFragment;
+  svg?: boolean;
+  children: React.ReactNode;
+}) => {
+  const classes = useOtherStyles();
+  const openDimenion = useMetadataPanelStore((state) => state.openDimension);
+  const handleClick = useEvent(() => {
+    openDimenion(dim);
+  });
+
+  return svg ? (
+    <g className={classes.openDimensionSVG} onClick={handleClick}>
+      {children}
+    </g>
+  ) : (
+    <Button
+      className={classes.openDimension}
+      variant="text"
+      size="small"
+      onClick={handleClick}
+    >
+      {children}
+    </Button>
+  );
 };
 
 export const MetadataPanel = ({

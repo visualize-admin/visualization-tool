@@ -51,6 +51,7 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -75,7 +76,7 @@ export interface StackedColumnsState extends CommonChartState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  yAxisDescription: string | undefined;
+  yAxisDimension: DimensionMetadataFragment;
   chartWideData: ArrayLike<Observation>;
   allDataWide: ArrayLike<Observation>;
   grouped: [string, Observation[]][];
@@ -325,7 +326,6 @@ const useColumnsStackedState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-  const yAxisDescription = yMeasure.description || undefined;
 
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
@@ -507,7 +507,7 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
-    yAxisDescription,
+    yAxisDimension: yMeasure,
     segments,
     colors,
     chartWideData,

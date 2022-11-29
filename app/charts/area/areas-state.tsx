@@ -47,6 +47,7 @@ import {
   formatNumberWithUnit,
   useTimeFormatUnit,
 } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
@@ -70,7 +71,7 @@ export interface AreasState extends CommonChartState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  yAxisDescription: string | undefined;
+  yAxisDimension: DimensionMetadataFragment;
   chartWideData: ArrayLike<Observation>;
   allDataWide: ArrayLike<Observation>;
   series: $FixMe[];
@@ -202,7 +203,6 @@ const useAreasState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-  const yAxisDescription = yMeasure.description || undefined;
 
   /** Ordered segments */
   const segmentSorting = fields.segment?.sorting;
@@ -404,7 +404,7 @@ const useAreasState = (
     yScale,
     getSegment,
     yAxisLabel,
-    yAxisDescription,
+    yAxisDimension: yMeasure,
     segments,
     colors,
     chartWideData,

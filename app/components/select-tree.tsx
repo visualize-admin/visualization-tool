@@ -257,8 +257,7 @@ export type SelectTreeProps = {
   controls?: React.ReactNode;
   onChange: (ev: { target: { value: NodeId } }) => void;
   disabled?: boolean;
-  tooltipText?: string;
-  label?: string;
+  label?: React.ReactNode;
   onOpen?: () => void;
   onClose?: () => void;
   open?: boolean;
@@ -269,7 +268,6 @@ function SelectTree({
   options,
   value,
   onChange,
-  tooltipText,
   disabled,
   controls,
   onOpen,
@@ -416,7 +414,7 @@ function SelectTree({
   return (
     <div>
       {label && (
-        <Label htmlFor={id!} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
+        <Label htmlFor={id!} smaller sx={{ mb: 1 }}>
           {label} {controls}
         </Label>
       )}

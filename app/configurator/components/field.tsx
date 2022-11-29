@@ -164,18 +164,16 @@ export const DataFilterSelect = ({
   isOptional,
   controls,
   hierarchy,
-  tooltipText,
   onOpen,
   loading,
 }: {
   dimension: DimensionMetadataFragment;
-  label: string;
+  label: React.ReactNode;
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
   hierarchy?: HierarchyValue[];
-  tooltipText?: string;
   onOpen?: () => void;
   loading?: boolean;
 }) => {
@@ -238,7 +236,6 @@ export const DataFilterSelect = ({
         open={isOpen}
         disabled={disabled}
         controls={controls}
-        tooltipText={tooltipText}
         {...fieldProps}
       />
     );
@@ -252,7 +249,6 @@ export const DataFilterSelect = ({
       options={allValues}
       sortOptions={false}
       controls={controls}
-      tooltipText={tooltipText}
       open={isOpen}
       onClose={handleClose}
       onOpen={handleOpen}
@@ -273,7 +269,7 @@ export const DataFilterSelectDay = ({
   controls,
 }: {
   dimension: DimensionMetadataFragment;
-  label: string;
+  label: React.ReactNode;
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
@@ -365,10 +361,9 @@ export const DataFilterSelectTime = ({
   disabled,
   isOptional,
   controls,
-  tooltipText,
 }: {
   dimension: DimensionMetadataFragment;
-  label: string;
+  label: React.ReactNode;
   from: string;
   to: string;
   timeUnit: TimeUnit;
@@ -377,7 +372,6 @@ export const DataFilterSelectTime = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
-  tooltipText?: string;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri: dimension.iri });
   const formatLocale = useTimeFormatLocale();
@@ -432,7 +426,6 @@ export const DataFilterSelectTime = ({
         options={allOptions}
         sortOptions={false}
         controls={controls}
-        tooltipText={tooltipText}
         {...fieldProps}
       />
     );
@@ -446,7 +439,6 @@ export const DataFilterSelectTime = ({
       timeFormat={timeFormat}
       formatLocale={formatLocale}
       isOptional={isOptional}
-      tooltipText={tooltipText}
       onChange={fieldProps.onChange}
     />
   );
@@ -459,16 +451,14 @@ export const TimeInput = ({
   timeFormat,
   formatLocale,
   isOptional,
-  tooltipText,
   onChange,
 }: {
   id: string;
-  label: string;
+  label: React.ReactNode;
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
   isOptional: boolean | undefined;
-  tooltipText?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
@@ -508,7 +498,6 @@ export const TimeInput = ({
       name={id}
       label={label}
       value={inputValue}
-      tooltipText={tooltipText}
       onChange={onInputChange}
     />
   );
@@ -557,14 +546,12 @@ export const MetaInputField = ({
   locale,
   value,
   disabled,
-  tooltipText,
 }: {
   label: string | ReactNode;
   metaKey: string;
   locale: string;
   value?: string;
   disabled?: boolean;
-  tooltipText?: string;
 }) => {
   const field = useMetaField({
     metaKey,
@@ -572,14 +559,7 @@ export const MetaInputField = ({
     value,
   });
 
-  return (
-    <Input
-      label={label}
-      {...field}
-      disabled={disabled}
-      tooltipText={tooltipText}
-    />
-  );
+  return <Input label={label} {...field} disabled={disabled} />;
 };
 
 const useMultiFilterColorPicker = (value: string) => {

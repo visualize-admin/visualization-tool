@@ -2,12 +2,12 @@ import { Box, Typography } from "@mui/material";
 import { Fragment } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const ChartFiltersList = ({
   dataSetIri,
@@ -75,17 +75,11 @@ export const ChartFiltersList = ({
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
                 <Box component="span" fontWeight="bold">
-                  <MaybeTooltip text={dimension.description || undefined}>
-                    <span
-                      style={{
-                        textDecoration: dimension.description
-                          ? "underline"
-                          : undefined,
-                      }}
-                    >
+                  <OpenMetadataPanelWrapper dim={dimension}>
+                    <span style={{ fontWeight: "bold" }}>
                       {dimension.label}
                     </span>
-                  </MaybeTooltip>
+                  </OpenMetadataPanelWrapper>
 
                   {": "}
                 </Box>

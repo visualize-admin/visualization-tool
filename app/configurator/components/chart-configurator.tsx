@@ -27,6 +27,7 @@ import {
 import { useClient } from "urql";
 
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -123,12 +124,15 @@ const DataFilterSelectGeneric = ({
 
   const sharedProps = {
     dimension: dimension,
-    label: `${index + 1}. ${dimension.label}`,
+    label: (
+      <OpenMetadataPanelWrapper dim={dimension}>
+        {`${index + 1}. ${dimension.label}`}
+      </OpenMetadataPanelWrapper>
+    ),
     controls: controls,
     id: `select-single-filter-${index}`,
     disabled: disabled,
     isOptional: !dimension.isKeyDimension,
-    tooltipText: dimension.description || undefined,
   };
 
   if (isTemporalDimension(dimension)) {

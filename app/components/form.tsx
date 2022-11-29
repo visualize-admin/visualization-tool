@@ -42,39 +42,29 @@ import {
 import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const Label = ({
   htmlFor,
-  tooltipText,
   smaller = false,
   children,
   sx,
 }: {
   htmlFor: string;
-  tooltipText?: string;
   smaller?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
   return (
-    <MaybeTooltip text={tooltipText}>
-      <Typography
-        component="label"
-        htmlFor={htmlFor}
-        variant={smaller ? "caption" : "body2"}
-        color="secondary"
-        display="flex"
-        sx={{
-          ...sx,
-          ...(tooltipText
-            ? { width: "max-content", textDecoration: "underline" }
-            : {}),
-        }}
-      >
-        {children}
-      </Typography>
-    </MaybeTooltip>
+    <Typography
+      component="label"
+      htmlFor={htmlFor}
+      variant={smaller ? "caption" : "body2"}
+      color="secondary"
+      display="flex"
+      sx={sx}
+    >
+      {children}
+    </Typography>
   );
 };
 
@@ -317,7 +307,6 @@ export const Select = ({
   sortOptions = true,
   controls,
   optionGroups,
-  tooltipText,
   open,
   onClose,
   onOpen,
@@ -330,7 +319,6 @@ export const Select = ({
   sortOptions?: boolean;
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, Option[]][];
-  tooltipText?: string;
   loading?: boolean;
 } & SelectProps) => {
   const locale = useLocale();
@@ -355,7 +343,7 @@ export const Select = ({
     <LoadingMenuPaperContext.Provider value={loading}>
       <Box>
         {label && (
-          <Label htmlFor={id} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
+          <Label htmlFor={id} smaller sx={{ my: 1 }}>
             {label}
             {controls}
           </Label>
@@ -461,16 +449,14 @@ export const Input = ({
   name,
   value,
   disabled,
-  tooltipText,
   onChange,
 }: {
   label?: string | ReactNode;
-  tooltipText?: string;
   disabled?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
-      <Label htmlFor={name} smaller tooltipText={tooltipText} sx={{ mb: 1 }}>
+      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
         {label}
       </Label>
     )}
