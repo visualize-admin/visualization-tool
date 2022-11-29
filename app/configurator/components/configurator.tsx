@@ -43,7 +43,7 @@ const BackContainer = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const BackButton = ({
+export const BackButton = ({
   children,
   onClick,
 }: { children: React.ReactNode } & ButtonProps) => {

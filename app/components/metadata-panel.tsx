@@ -1,71 +1,103 @@
 import { t, Trans } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
+  Autocomplete,
   Box,
   Button,
   Drawer,
   IconButton,
-  Input,
   InputAdornment,
   Tab,
+  TextField,
   Theme,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useMemo, useState } from "react";
+import match from "autosuggest-highlight/match";
+import parse from "autosuggest-highlight/parse";
+import clsx from "clsx";
+import { AnimatePresence, Transition } from "framer-motion";
+import { useRouter } from "next/router";
+import React from "react";
+import { createStore, useStore } from "zustand";
+import shallow from "zustand/shallow";
 
-import { DataSource } from "@/configurator";
+import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { MotionBox } from "@/configurator/components/presence";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { Icon, getDimensionIconName } from "@/icons";
+import { getDimensionIconName, Icon } from "@/icons";
+import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
 
-type Section = "general" | "data";
+type MetadataPanelSection = "general" | "data";
 
-type State = {
+type MetadataPanelState = {
   open: boolean;
-  toggle: () => void;
-  activeSection: Section;
-  setActiveSection: (d: Section) => void;
+  activeSection: MetadataPanelSection;
+  selectedDimension: DimensionMetadataFragment | undefined;
+  actions: {
+    setOpen: (d: boolean) => void;
+    toggle: () => void;
+    setActiveSection: (d: MetadataPanelSection) => void;
+    setSelectedDimension: (d: DimensionMetadataFragment) => void;
+    clearSelectedDimension: () => void;
+    openDimension: (d: DimensionMetadataFragment) => void;
+    reset: () => void;
+  };
 };
 
-const Context = React.createContext<State | undefined>(undefined);
+export const createMetadataPanelStore = () =>
+  createStore<MetadataPanelState>((set, get) => ({
+    open: false,
+    activeSection: "general",
+    selectedDimension: undefined,
+    actions: {
+      setOpen: (d: boolean) => {
+        set({ open: d });
+      },
+      toggle: () => {
+        set({ open: !get().open });
+      },
+      setActiveSection: (d: MetadataPanelSection) => {
+        set({ activeSection: d });
+      },
+      setSelectedDimension: (d: DimensionMetadataFragment) => {
+        set({ selectedDimension: d });
+      },
+      clearSelectedDimension: () => {
+        set({ selectedDimension: undefined });
+      },
+      openDimension: (d: DimensionMetadataFragment) => {
+        set({ open: true, activeSection: "data", selectedDimension: d });
+      },
+      reset: () => {
+        set({ activeSection: "general", selectedDimension: undefined });
+      },
+    },
+  }));
 
-export const ContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [open, setOpen] = React.useState(false);
-  const [activeSection, setActiveSection] = React.useState<Section>("general");
+const useMetadataPanelStore: <T>(
+  selector: (state: MetadataPanelState) => T
+) => T = (selector) => {
+  const store = React.useContext(MetadataPanelStoreContext);
 
-  const ctx = React.useMemo(() => {
-    return {
-      open,
-      toggle: () => setOpen(!open),
-      activeSection,
-      setActiveSection,
-    };
-  }, [open, activeSection]);
-
-  return <Context.Provider value={ctx}>{children}</Context.Provider>;
+  return useStore(store, selector, shallow);
 };
 
-export const useContext = () => {
-  const ctx = React.useContext(Context);
+const useMetadataPanelStoreActions = () => {
+  const store = React.useContext(MetadataPanelStoreContext);
 
-  if (ctx === undefined) {
-    throw Error(
-      "You need to wrap your component in <ContextProvider /> to useContext()"
-    );
-  }
-
-  return ctx;
+  return useStore(store, (state) => state.actions);
 };
+
+const defaultStore = createMetadataPanelStore();
+
+export const MetadataPanelStoreContext = React.createContext(defaultStore);
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -109,54 +141,106 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       },
     },
     tabPanel: {
+      padding: 0,
+    },
+    tabPanelContent: {
       display: "flex",
       flexDirection: "column",
       gap: theme.spacing(4),
-      padding: 0,
     },
     icon: {
       display: "inline",
-      marginLeft: -6,
+      marginLeft: -2,
       marginTop: -3,
       marginRight: 2,
     },
     search: {
-      marginTop: theme.spacing(2),
-      padding: "0px 12px",
-      width: "100%",
-      height: 40,
-      minHeight: 40,
+      "& .MuiAutocomplete-inputRoot": {
+        padding: `0px ${theme.spacing(3)}`,
+
+        "& > .MuiAutocomplete-input": {
+          padding: `${theme.spacing(2)} 0px`,
+        },
+      },
+    },
+    searchInputResultList: {
+      marginTop: theme.spacing(1),
+      padding: 0,
+      border: `1px solid ${theme.palette.grey[700]}`,
+      borderRadius: 3,
+    },
+    searchInputResult: {
+      borderBottom: `1px solid ${theme.palette.grey[400]}`,
+
+      "&:last-of-type": {
+        borderBottom: "none",
+      },
+    },
+    openDimension: {
+      minHeight: 0,
+      verticalAlign: "baseline",
+      padding: 0,
+      margin: 0,
+      fontSize: "inherit",
+      color: "inherit",
+    },
+    openDimensionSVG: {
+      cursor: "pointer",
+
+      "&:hover": {
+        fill: theme.palette.primary.hover,
+      },
     },
   };
 });
 
-export const MetadataPanel = ({
-  datasetIri,
-  dataSource,
-  dimensions,
-  container,
-  top,
+const animationProps: Transition = {
+  transition: {
+    duration: 0.2,
+  },
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
+};
+
+export const OpenMetadataPanelWrapper = ({
+  dim,
+  svg,
+  children,
 }: {
-  datasetIri: string;
-  dataSource: DataSource;
-  dimensions: DimensionMetadataFragment[];
-  container?: HTMLDivElement | null;
-  top?: number;
+  dim: DimensionMetadataFragment;
+  svg?: boolean;
+  children: React.ReactNode;
 }) => {
-  return (
-    <ContextProvider>
-      <PanelInner
-        datasetIri={datasetIri}
-        dataSource={dataSource}
-        dimensions={dimensions}
-        container={container}
-        top={top}
-      />
-    </ContextProvider>
+  const classes = useOtherStyles();
+  const { openDimension } = useMetadataPanelStoreActions();
+  const handleClick = useEvent(() => {
+    openDimension(dim);
+  });
+
+  return svg ? (
+    <g className={classes.openDimensionSVG} onClick={handleClick}>
+      {children}
+    </g>
+  ) : (
+    <Button
+      className={classes.openDimension}
+      variant="text"
+      size="small"
+      onClick={handleClick}
+    >
+      {children}
+    </Button>
   );
 };
 
-const PanelInner = ({
+export const MetadataPanel = ({
   datasetIri,
   dataSource,
   dimensions,
@@ -166,15 +250,27 @@ const PanelInner = ({
   datasetIri: string;
   dataSource: DataSource;
   dimensions: DimensionMetadataFragment[];
-  container: HTMLDivElement | null | undefined;
+  container?: HTMLDivElement | null;
   top?: number;
 }) => {
+  const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
-  const { open, toggle, activeSection, setActiveSection } = useContext();
+  const { open, activeSection } = useMetadataPanelStore((state) => ({
+    open: state.open,
+    activeSection: state.activeSection,
+  }));
+  const { setOpen, toggle, setActiveSection, reset } =
+    useMetadataPanelStoreActions();
   const handleToggle = useEvent(() => {
     toggle();
   });
+
+  // Close and reset the metadata panel when route has changed.
+  React.useEffect(() => {
+    setOpen(false);
+    reset();
+  }, [router.pathname, setOpen, reset]);
 
   return (
     <>
@@ -217,8 +313,20 @@ const PanelInner = ({
             />
           </TabList>
 
-          <TabPanelGeneral datasetIri={datasetIri} dataSource={dataSource} />
-          <TabPanelData dimensions={dimensions} />
+          <AnimatePresence>
+            {activeSection === "general" ? (
+              <MotionBox key="general-tab" {...animationProps}>
+                <TabPanelGeneral
+                  datasetIri={datasetIri}
+                  dataSource={dataSource}
+                />
+              </MotionBox>
+            ) : activeSection === "data" ? (
+              <MotionBox key="data-tab" {...animationProps}>
+                <TabPanelData dimensions={dimensions} />
+              </MotionBox>
+            ) : null}
+          </AnimatePresence>
         </TabContext>
 
         <Content />
@@ -281,48 +389,150 @@ const TabPanelData = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const classes = useOtherStyles();
-  const [searchInput, setSearchInput] = useState("");
+  const selectedDimension = useMetadataPanelStore(
+    (state) => state.selectedDimension
+  );
+  const { setSelectedDimension, clearSelectedDimension } =
+    useMetadataPanelStoreActions();
+  const [inputValue, setInputValue] = React.useState("");
 
-  const filteredDimensions = useMemo(() => {
-    return dimensions.filter(
-      (d) =>
-        d.label.toLowerCase().includes(searchInput) ||
-        d.description?.toLowerCase().includes(searchInput)
-    );
-  }, [dimensions, searchInput]);
+  const options = React.useMemo(() => {
+    return dimensions.map((d) => ({ label: d.label, value: d }));
+  }, [dimensions]);
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
-      {/* Extract into a component (as it's also used in MultiFilter drawer?) */}
-      <Input
-        className={classes.search}
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value.toLowerCase())}
-        placeholder={t({
-          id: "select.controls.metadata.search",
-          message: "Jump to...",
-        })}
-        startAdornment={
-          <InputAdornment position="start">
-            <Icon name="search" size={16} />
-          </InputAdornment>
-        }
-        sx={{ typography: "body2" }}
-      />
-      {filteredDimensions.map((d) => (
-        <Box key={d.iri}>
-          <Flex>
-            <Icon
-              className={classes.icon}
-              name={getDimensionIconName(d.__typename)}
+      <AnimatePresence exitBeforeEnter={true}>
+        {selectedDimension ? (
+          <MotionBox key="dimension-selected" {...animationProps}>
+            <BackButton onClick={() => clearSelectedDimension()}>
+              <Trans id="button.back">Back</Trans>
+            </BackButton>
+            <Box sx={{ mt: 4 }}>
+              <TabPanelDataDimension
+                dim={selectedDimension}
+                expandable={false}
+              />
+            </Box>
+          </MotionBox>
+        ) : (
+          <MotionBox
+            key="dimension-not-selected"
+            className={classes.tabPanelContent}
+            {...animationProps}
+          >
+            <Autocomplete
+              className={classes.search}
+              disablePortal
+              onChange={(_, v) => v && setSelectedDimension(v.value)}
+              inputValue={inputValue}
+              onInputChange={(_, v) => setInputValue(v.toLowerCase())}
+              options={options}
+              ListboxProps={{ className: classes.searchInputResultList }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className={classes.search}
+                  placeholder={t({
+                    id: "select.controls.metadata.search",
+                    message: "Jump to...",
+                  })}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Icon name="search" size={16} />
+                      </InputAdornment>
+                    ),
+                    sx: { typography: "body2" },
+                  }}
+                />
+              )}
+              renderOption={(props, option, { inputValue }) => {
+                const matches = match(option.label, inputValue, {
+                  insideWords: true,
+                });
+                const parts = parse(option.label, matches);
+
+                return (
+                  <li
+                    {...props}
+                    className={clsx(props.className, classes.searchInputResult)}
+                  >
+                    <div>
+                      {parts.map(({ text, highlight }, i) => (
+                        <Typography
+                          key={i}
+                          variant="body2"
+                          component="span"
+                          style={{ fontWeight: highlight ? 700 : 400 }}
+                        >
+                          {text}
+                        </Typography>
+                      ))}
+                    </div>
+                  </li>
+                );
+              }}
+              clearIcon={null}
             />
-            <Typography variant="body2" fontWeight="bold">
-              {d.label}
-            </Typography>
-          </Flex>
-          <Typography variant="body2">{d.description}</Typography>
-        </Box>
-      ))}
+            {dimensions.map((d) => (
+              <TabPanelDataDimension key={d.iri} dim={d} expandable={true} />
+            ))}
+          </MotionBox>
+        )}
+      </AnimatePresence>
     </TabPanel>
+  );
+};
+
+const TabPanelDataDimension = ({
+  dim,
+  expandable,
+}: {
+  dim: DimensionMetadataFragment;
+  expandable: boolean;
+}) => {
+  const classes = useOtherStyles();
+  const { setSelectedDimension } = useMetadataPanelStoreActions();
+  const { description, showExpandButton } = React.useMemo(() => {
+    if (expandable && dim.description && dim.description.length > 180) {
+      return {
+        description: dim.description.slice(0, 180) + "…",
+        showExpandButton: true,
+      };
+    }
+
+    return {
+      description: dim.description,
+      showExpandButton: false,
+    };
+  }, [dim.description, expandable]);
+  const iconName = React.useMemo(() => {
+    return getDimensionIconName(dim.__typename);
+  }, [dim.__typename]);
+
+  return (
+    <div>
+      <Flex>
+        <Icon className={classes.icon} name={iconName} />
+        <Typography variant="body2" fontWeight="bold">
+          {dim.label}
+        </Typography>
+      </Flex>
+      {description && <Typography variant="body2">{description}</Typography>}
+      {showExpandButton && (
+        <Button
+          component="a"
+          variant="text"
+          size="small"
+          onClick={() => setSelectedDimension(dim)}
+          endIcon={<SvgIcArrowRight />}
+          sx={{ p: 0 }}
+        >
+          Show more
+        </Button>
+      )}
+    </div>
   );
 };

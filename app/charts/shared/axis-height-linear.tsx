@@ -10,8 +10,8 @@ import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
 
 export const TICK_MIN_HEIGHT = 50;
 
@@ -23,7 +23,7 @@ export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
-  const { yScale, yAxisLabel, yAxisDescription, bounds } = useChartState() as
+  const { yScale, yAxisLabel, yAxisDimension, bounds } = useChartState() as
     | AreasState
     | ColumnsState
     | GroupedColumnsState
@@ -61,19 +61,11 @@ export const AxisHeightLinear = () => {
 
   return (
     <>
-      <g>
-        <MaybeTooltip text={yAxisDescription}>
-          <text
-            x={0}
-            y={0}
-            dy={labelFontSize}
-            fontSize={labelFontSize}
-            textDecoration={yAxisDescription ? "underline" : undefined}
-          >
-            {yAxisLabel}
-          </text>
-        </MaybeTooltip>
-      </g>
+      <OpenMetadataPanelWrapper dim={yAxisDimension} svg={true}>
+        <text x={0} y={0} dy={labelFontSize} fontSize={labelFontSize}>
+          {yAxisLabel}
+        </text>
+      </OpenMetadataPanelWrapper>
       <g
         ref={ref}
         transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}

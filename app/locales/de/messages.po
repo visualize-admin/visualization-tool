@@ -62,6 +62,10 @@ msgstr "Alle Datensätze"
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
+#: app/components/metadata-panel.tsx:318
+msgid "button.back"
+msgstr "Zurück"
+
 #: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren und editieren"
@@ -396,16 +400,16 @@ msgstr "Italienisch"
 msgid "controls.measure"
 msgstr "Messwert"
 
-#: app/components/metadata-panel.tsx:234
-#: app/components/metadata-panel.tsx:246
+#: app/components/metadata-panel.tsx:251
+#: app/components/metadata-panel.tsx:263
 msgid "controls.metadata-panel.metadata"
 msgstr "Metadata"
 
-#: app/components/metadata-panel.tsx:214
+#: app/components/metadata-panel.tsx:231
 msgid "controls.metadata-panel.section.data"
 msgstr "Daten"
 
-#: app/components/metadata-panel.tsx:204
+#: app/components/metadata-panel.tsx:221
 msgid "controls.metadata-panel.section.general"
 msgstr "Allgemeines"
 
@@ -951,7 +955,7 @@ msgstr "visualize.admin.ch"
 msgid "select.controls.filters.search"
 msgstr "Suche"
 
-#: app/components/metadata-panel.tsx:301
+#: app/components/metadata-panel.tsx:329
 msgid "select.controls.metadata.search"
 msgstr "Springen zu..."
 

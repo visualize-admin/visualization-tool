@@ -51,6 +51,7 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -77,7 +78,7 @@ export interface GroupedColumnsState extends CommonChartState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  yAxisDescription: string | undefined;
+  yAxisDimension: DimensionMetadataFragment;
   grouped: [string, Observation[]][];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
   showStandardError: boolean;
@@ -312,7 +313,6 @@ const useGroupedColumnsState = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-  const yAxisDescription = yMeasure.description || undefined;
 
   // Group
   const grouped = useMemo(() => {
@@ -452,7 +452,7 @@ const useGroupedColumnsState = (
     getSegment,
     getSegmentLabel,
     yAxisLabel,
-    yAxisDescription,
+    yAxisDimension: yMeasure,
     segments,
     colors,
     grouped,
