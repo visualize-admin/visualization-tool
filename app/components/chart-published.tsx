@@ -126,9 +126,11 @@ export const ChartPublishedInner = ({
   }, [metadataPanelOpen]);
 
   useEffect(() => {
-    metadataPanelStore.subscribe(() => {
+    const unsubscribe = metadataPanelStore.subscribe(() => {
       computeContainerHeight();
     });
+
+    return () => unsubscribe();
   });
 
   const classes = useStyles({
