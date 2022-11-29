@@ -11,7 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
-## [3.14.0] - 2022-11-29
+## [3.15.0] - 2022-11-29
 
 - Add search to filters with hierarchy
 - Move interactive filters in place
