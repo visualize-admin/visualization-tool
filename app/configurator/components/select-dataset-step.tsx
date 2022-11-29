@@ -83,7 +83,7 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     gridTemplateColumns:
       "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
     gridTemplateAreas: `". banner ."`,
-    height: BANNER_HEIGHT,
+    minHeight: BANNER_HEIGHT,
     marginTop: BANNER_MARGIN_TOP,
     backgroundColor: theme.palette.primary.light,
   },
