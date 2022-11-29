@@ -3,6 +3,10 @@ import Head from "next/head";
 import * as React from "react";
 
 import { AppLayout } from "@/components/layout";
+import {
+  createMetadataPanelStore,
+  MetadataPanelStoreContext,
+} from "@/components/metadata-panel";
 import { Configurator, EditorConfiguratorStateProvider } from "@/configurator";
 
 type PageProps = {
@@ -23,6 +27,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 };
 
 const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
+  const metadataPanelStore = React.useMemo(
+    () => createMetadataPanelStore(),
+    []
+  );
+
   return (
     <>
       <Head>
@@ -31,7 +40,9 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
       </Head>
       <AppLayout>
         <EditorConfiguratorStateProvider chartId={chartId}>
-          <Configurator />
+          <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+            <Configurator />
+          </MetadataPanelStoreContext.Provider>
         </EditorConfiguratorStateProvider>
       </AppLayout>
     </>

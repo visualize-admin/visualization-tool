@@ -19,7 +19,11 @@ import {
 import GenericChart from "@/components/common-chart";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
-import { MetadataPanel } from "@/components/metadata-panel";
+import {
+  MetadataPanel,
+  MetadataPanelStoreContext,
+  createMetadataPanelStore,
+} from "@/components/metadata-panel";
 import {
   ChartConfig,
   ConfiguratorStatePublishing,
@@ -55,15 +59,19 @@ export const ChartPublished = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+
   return (
     <ChartTablePreviewProvider>
-      <ChartPublishedInner
-        dataSet={dataSet}
-        dataSource={dataSource}
-        meta={meta}
-        chartConfig={chartConfig}
-        configKey={configKey}
-      />
+      <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+        <ChartPublishedInner
+          dataSet={dataSet}
+          dataSource={dataSource}
+          meta={meta}
+          chartConfig={chartConfig}
+          configKey={configKey}
+        />
+      </MetadataPanelStoreContext.Provider>
     </ChartTablePreviewProvider>
   );
 };

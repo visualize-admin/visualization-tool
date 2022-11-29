@@ -18,8 +18,8 @@ import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import create from "zustand";
+import React from "react";
+import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
 import { BackButton, DataSource } from "@/configurator";
@@ -49,32 +49,45 @@ type MetadataPanelState = {
   reset: () => void;
 };
 
-export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
-  open: false,
-  setOpen: (d: boolean) => {
-    set({ open: d });
-  },
-  toggle: () => {
-    set({ open: !get().open });
-  },
-  activeSection: "general",
-  setActiveSection: (d: MetadataPanelSection) => {
-    set({ activeSection: d });
-  },
-  selectedDimension: undefined,
-  setSelectedDimension: (d: DimensionMetadataFragment) => {
-    set({ selectedDimension: d });
-  },
-  clearSelectedDimension: () => {
-    set({ selectedDimension: undefined });
-  },
-  openDimension: (d: DimensionMetadataFragment) => {
-    set({ open: true, activeSection: "data", selectedDimension: d });
-  },
-  reset: () => {
-    set({ activeSection: "general", selectedDimension: undefined });
-  },
-}));
+export const createMetadataPanelStore = () =>
+  createStore<MetadataPanelState>((set, get) => ({
+    open: false,
+    setOpen: (d: boolean) => {
+      set({ open: d });
+    },
+    toggle: () => {
+      set({ open: !get().open });
+    },
+    activeSection: "general",
+    setActiveSection: (d: MetadataPanelSection) => {
+      set({ activeSection: d });
+    },
+    selectedDimension: undefined,
+    setSelectedDimension: (d: DimensionMetadataFragment) => {
+      set({ selectedDimension: d });
+    },
+    clearSelectedDimension: () => {
+      set({ selectedDimension: undefined });
+    },
+    openDimension: (d: DimensionMetadataFragment) => {
+      set({ open: true, activeSection: "data", selectedDimension: d });
+    },
+    reset: () => {
+      set({ activeSection: "general", selectedDimension: undefined });
+    },
+  }));
+
+const useMetadataPanelStore: <T>(
+  selector: (state: MetadataPanelState) => T
+) => T = (selector) => {
+  const store = React.useContext(MetadataPanelStoreContext);
+
+  return useStore(store, selector, shallow);
+};
+
+const defaultStore = createMetadataPanelStore();
+
+export const MetadataPanelStoreContext = React.createContext(defaultStore);
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -196,9 +209,9 @@ export const OpenMetadataPanelWrapper = ({
   children: React.ReactNode;
 }) => {
   const classes = useOtherStyles();
-  const openDimenion = useMetadataPanelStore((state) => state.openDimension);
+  const openDimension = useMetadataPanelStore((state) => state.openDimension);
   const handleClick = useEvent(() => {
-    openDimenion(dim);
+    openDimension(dim);
   });
 
   return svg ? (
@@ -234,17 +247,14 @@ export const MetadataPanel = ({
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
   const { open, setOpen, toggle, activeSection, setActiveSection, reset } =
-    useMetadataPanelStore(
-      (state) => ({
-        open: state.open,
-        setOpen: state.setOpen,
-        toggle: state.toggle,
-        activeSection: state.activeSection,
-        setActiveSection: state.setActiveSection,
-        reset: state.reset,
-      }),
-      shallow
-    );
+    useMetadataPanelStore((state) => ({
+      open: state.open,
+      setOpen: state.setOpen,
+      toggle: state.toggle,
+      activeSection: state.activeSection,
+      setActiveSection: state.setActiveSection,
+      reset: state.reset,
+    }));
   const handleToggle = useEvent(() => {
     toggle();
   });
@@ -373,15 +383,12 @@ const TabPanelData = ({
 }) => {
   const classes = useOtherStyles();
   const { selectedDimension, setSelectedDimension, clearSelectedDimension } =
-    useMetadataPanelStore(
-      (state) => ({
-        selectedDimension: state.selectedDimension,
-        setSelectedDimension: state.setSelectedDimension,
-        clearSelectedDimension: state.clearSelectedDimension,
-      }),
-      shallow
-    );
-  const [inputValue, setInputValue] = useState("");
+    useMetadataPanelStore((state) => ({
+      selectedDimension: state.selectedDimension,
+      setSelectedDimension: state.setSelectedDimension,
+      clearSelectedDimension: state.clearSelectedDimension,
+    }));
+  const [inputValue, setInputValue] = React.useState("");
 
   const options = React.useMemo(() => {
     return dimensions.map((d) => ({ label: d.label, value: d }));
@@ -481,11 +488,8 @@ const TabPanelDataDimension = ({
   expandable: boolean;
 }) => {
   const classes = useOtherStyles();
-  const { setSelectedDimension } = useMetadataPanelStore(
-    (state) => ({
-      setSelectedDimension: state.setSelectedDimension,
-    }),
-    shallow
+  const setSelectedDimension = useMetadataPanelStore(
+    (state) => state.setSelectedDimension
   );
   const { description, showExpandButton } = React.useMemo(() => {
     if (expandable && dim.description && dim.description.length > 180) {
