@@ -34,7 +34,6 @@ import {
 } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { flag } from "@/configurator/components/flag";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   DEFAULT_DATA_SOURCE,
@@ -215,14 +214,12 @@ export const ChartPublishedInner = ({
               {meta.title[locale]}
             </Typography>
 
-            {flag("metadata") && (
-              <MetadataPanel
-                datasetIri={dataSet}
-                dataSource={dataSource}
-                dimensions={allDimensions}
-                container={rootRef.current}
-              />
-            )}
+            <MetadataPanel
+              datasetIri={dataSet}
+              dataSource={dataSource}
+              dimensions={allDimensions}
+              container={rootRef.current}
+            />
           </Flex>
 
           {meta.description[locale] && (

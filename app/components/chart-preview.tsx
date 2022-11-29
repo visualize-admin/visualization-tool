@@ -23,7 +23,6 @@ import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
-import { flag } from "@/configurator/components/flag";
 import {
   DimensionMetadataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
@@ -152,14 +151,12 @@ export const ChartPreviewInner = ({
                   )}
                 </Typography>
 
-                {flag("metadata") && (
-                  <MetadataPanel
-                    datasetIri={dataSetIri}
-                    dataSource={dataSource}
-                    dimensions={allDimensions}
-                    top={96}
-                  />
-                )}
+                <MetadataPanel
+                  datasetIri={dataSetIri}
+                  dataSource={dataSource}
+                  dimensions={allDimensions}
+                  top={96}
+                />
               </Flex>
               <Head>
                 <title key="title">
