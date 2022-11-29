@@ -17,6 +17,7 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import create from "zustand";
 import shallow from "zustand/shallow";
@@ -37,6 +38,7 @@ type MetadataPanelSection = "general" | "data";
 
 type MetadataPanelState = {
   open: boolean;
+  setOpen: (d: boolean) => void;
   toggle: () => void;
   activeSection: MetadataPanelSection;
   setActiveSection: (d: MetadataPanelSection) => void;
@@ -44,10 +46,14 @@ type MetadataPanelState = {
   setSelectedDimension: (d: DimensionMetadataFragment) => void;
   clearSelectedDimension: () => void;
   openDimension: (d: DimensionMetadataFragment) => void;
+  reset: () => void;
 };
 
 export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
   open: false,
+  setOpen: (d: boolean) => {
+    set({ open: d });
+  },
   toggle: () => {
     set({ open: !get().open });
   },
@@ -64,6 +70,9 @@ export const useMetadataPanelStore = create<MetadataPanelState>((set, get) => ({
   },
   openDimension: (d: DimensionMetadataFragment) => {
     set({ open: true, activeSection: "data", selectedDimension: d });
+  },
+  reset: () => {
+    set({ activeSection: "general", selectedDimension: undefined });
   },
 }));
 
@@ -221,21 +230,30 @@ export const MetadataPanel = ({
   container?: HTMLDivElement | null;
   top?: number;
 }) => {
+  const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
-  const { open, toggle, activeSection, setActiveSection } =
+  const { open, setOpen, toggle, activeSection, setActiveSection, reset } =
     useMetadataPanelStore(
       (state) => ({
         open: state.open,
+        setOpen: state.setOpen,
         toggle: state.toggle,
         activeSection: state.activeSection,
         setActiveSection: state.setActiveSection,
+        reset: state.reset,
       }),
       shallow
     );
   const handleToggle = useEvent(() => {
     toggle();
   });
+
+  // Close and reset the metadata panel when route has changed.
+  React.useEffect(() => {
+    setOpen(false);
+    reset();
+  }, [router.pathname, setOpen, reset]);
 
   return (
     <>
