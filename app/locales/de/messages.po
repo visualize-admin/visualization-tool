@@ -316,7 +316,7 @@ msgstr "Alle abwählen"
 #: app/configurator/components/chart-configurator.tsx:506
 #: app/configurator/components/filters.tsx:366
 msgid "controls.filters.interactive.toggle"
-msgstr "Interaktive"
+msgstr "Interaktiv"
 
 #: app/configurator/components/chart-configurator.tsx:499
 #: app/configurator/components/filters.tsx:360
