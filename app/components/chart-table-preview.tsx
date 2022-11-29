@@ -17,6 +17,7 @@ type Context = {
   setStateRaw: Dispatch<SetStateAction<boolean>>;
   containerRef: RefObject<HTMLDivElement>;
   containerHeight: RefObject<"auto" | number>;
+  computeContainerHeight: () => void;
 };
 
 const ChartTablePreviewContext = createContext<Context>({
@@ -25,6 +26,7 @@ const ChartTablePreviewContext = createContext<Context>({
   setStateRaw: () => {},
   containerRef: { current: null },
   containerHeight: { current: "auto" },
+  computeContainerHeight: () => undefined,
 });
 
 export const useChartTablePreview = () => {
@@ -52,13 +54,16 @@ export const ChartTablePreviewProvider = ({
   const [state, setStateRaw] = useState<boolean>(false);
   const containerHeight = useRef("auto" as "auto" | number);
   const containerRef = useRef<HTMLDivElement>(null);
+  const computeContainerHeight = () => {
+    if (!containerRef.current) {
+      return;
+    }
+    const bcr = containerRef.current.getBoundingClientRect();
+    containerHeight.current = bcr.height;
+  };
   const setState = useCallback(
     (v) => {
-      if (!containerRef.current) {
-        return;
-      }
-      const bcr = containerRef.current.getBoundingClientRect();
-      containerHeight.current = bcr.height;
+      computeContainerHeight();
       return setStateRaw(v);
     },
     [setStateRaw]
@@ -71,6 +76,7 @@ export const ChartTablePreviewProvider = ({
       setStateRaw,
       containerRef,
       containerHeight,
+      computeContainerHeight,
     };
   }, [setState, state, containerRef, containerHeight, setStateRaw]);
   return (

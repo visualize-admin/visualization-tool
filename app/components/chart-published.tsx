@@ -109,6 +109,7 @@ export const ChartPublishedInner = ({
     setState: setIsTablePreview,
     containerRef,
     containerHeight,
+    computeContainerHeight,
   } = useChartTablePreview();
 
   const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
@@ -123,6 +124,12 @@ export const ChartPublishedInner = ({
 
     return metadataPanelOpen && rootWidth > DRAWER_WIDTH * 2;
   }, [metadataPanelOpen]);
+
+  useEffect(() => {
+    metadataPanelStore.subscribe(() => {
+      computeContainerHeight();
+    });
+  });
 
   const classes = useStyles({
     shrink: shouldShrink,
