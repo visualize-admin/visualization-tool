@@ -22,9 +22,9 @@ describe("Filters", () => {
       "1. Production region",
       "2. Stand structure",
       // ---
-      "3. Evaluation type",
-      "4. Reference area",
-      "5. Grid",
+      "3. Inventory",
+      "4. Evaluation type",
+      "5. Reference area",
     ]);
 
     const productionRegionFilter = selectors.edition.dataFilterInput(
