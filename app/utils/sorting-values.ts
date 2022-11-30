@@ -33,16 +33,25 @@ export const makeDimensionValueSorters = (
       | undefined;
     sumsBySegment?: Record<string, number | null>;
     measureBySegment?: Record<string, number | null>;
+    useAbbreviations?: boolean;
   } = {}
 ): ((label: DimensionValue["label"]) => string | undefined | number)[] => {
-  const { sorting, sumsBySegment, measureBySegment } = options;
+  const { sorting, sumsBySegment, measureBySegment, useAbbreviations } =
+    options;
   const sortingType = sorting?.sortingType;
 
   if (!dimension) {
     return [];
   }
+
+  const values = useAbbreviations
+    ? (dimension.values as DimensionValue[]).map((d) => ({
+        ...d,
+        label: d.alternateName ?? d.label,
+      }))
+    : (dimension.values as DimensionValue[]);
   const valuesByLabel = new Map<string, DimensionValue>(
-    dimension.values.map((v) => [v.label, v])
+    values.map((v) => [v.label, v])
   );
 
   const getLabel = (label?: string) => label;
