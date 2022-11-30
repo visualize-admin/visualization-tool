@@ -237,3 +237,26 @@ export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
     return getOrderedTableColumns(fields);
   }, [fields]);
 };
+
+export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
+  if (!d) {
+    return false;
+  }
+
+  switch (d.__typename) {
+    case "GeoCoordinatesDimension":
+    case "GeoShapesDimension":
+    case "NominalDimension":
+    case "OrdinalDimension":
+    case "OrdinalMeasure":
+      break;
+    default:
+      return false;
+  }
+
+  const anyAbbreviationsPresent = !!(d.values as DimensionValue[]).find(
+    (d) => d.alternateName
+  );
+
+  return anyAbbreviationsPresent;
+};

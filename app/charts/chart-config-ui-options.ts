@@ -22,11 +22,13 @@ export type EncodingOption =
       type: "component";
       optional: boolean;
       componentTypes: ComponentType[];
+      enableUseAbbreviations: boolean;
     }
   | { field: "imputationType" }
   | { field: "showStandardError" }
   | { field: "sorting" }
-  | { field: "size"; componentTypes: ComponentType[]; optional: boolean };
+  | { field: "size"; componentTypes: ComponentType[]; optional: boolean }
+  | { field: "useAbbreviations" };
 
 /**
  * @todo
@@ -120,6 +122,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "color", type: "palette" },
           { field: "imputationType" },
+          { field: "useAbbreviations" },
         ],
       },
     ],
@@ -151,6 +154,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
+        options: [{ field: "useAbbreviations" }],
       },
       {
         field: "segment",
@@ -161,6 +165,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "chartSubType" },
           { field: "color", type: "palette" },
+          { field: "useAbbreviations" },
         ],
       },
     ],
@@ -187,7 +192,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
-        options: [{ field: "color", type: "palette" }],
+        options: [
+          { field: "color", type: "palette" },
+          { field: "useAbbreviations" },
+        ],
       },
     ],
     interactiveFilters: ["legend", "timeRange"],
@@ -214,6 +222,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             type: "component",
             componentTypes: ["NumericalMeasure", "OrdinalMeasure"],
             optional: false,
+            enableUseAbbreviations: true,
           },
         ],
       },
@@ -241,6 +250,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
               "OrdinalDimension",
             ],
             optional: true,
+            enableUseAbbreviations: true,
           },
         ],
       },
@@ -262,7 +272,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
-        options: [{ field: "color", type: "palette" }],
+        options: [
+          { field: "color", type: "palette" },
+          { field: "useAbbreviations" },
+        ],
       },
     ],
     interactiveFilters: ["legend"],
@@ -293,6 +306,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
     interactiveFilters: ["legend"],
   },
   table: {
+    // TODO: Add abbreviations here.
     chartType: "table",
     encodings: [],
     interactiveFilters: [],

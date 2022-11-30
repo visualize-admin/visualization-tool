@@ -146,16 +146,17 @@ export type SortingType = t.TypeOf<typeof SortingType>;
 const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
-const GenericField = t.type({ componentIri: t.string });
+const GenericField = t.intersection([
+  t.type({ componentIri: t.string }),
+  t.partial({ useAbbreviations: t.boolean }),
+]);
 export type GenericField = t.TypeOf<typeof GenericField>;
 
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
 
 const GenericSegmentField = t.intersection([
-  t.type({
-    componentIri: t.string,
-  }),
+  GenericField,
   t.type({
     palette: t.string,
   }),
@@ -184,12 +185,7 @@ export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
 const ColumnFields = t.intersection([
   t.type({
-    x: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      SortingField,
-    ]),
+    x: t.intersection([GenericField, SortingField]),
     y: GenericField,
   }),
   t.partial({
@@ -454,12 +450,15 @@ const FixedColorField = t.type({
 });
 export type FixedColorField = t.TypeOf<typeof FixedColorField>;
 
-const CategoricalColorField = t.type({
-  type: t.literal("categorical"),
-  componentIri: t.string,
-  palette: t.string,
-  colorMapping: ColorMapping,
-});
+const CategoricalColorField = t.intersection([
+  t.type({
+    type: t.literal("categorical"),
+    componentIri: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
+  }),
+  t.partial({ useAbbreviations: t.boolean }),
+]);
 
 export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 
