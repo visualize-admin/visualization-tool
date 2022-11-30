@@ -5,6 +5,7 @@ import {
   Box,
   Card as MUICard,
   CircularProgress,
+  Theme,
 } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
 import groupBy from "lodash/groupBy";
@@ -86,6 +87,22 @@ const indexHierarchy = (hierarchy: HierarchyValue[]) => {
     }
   });
   return { byLabel, parentsByIri, childrenByIri, byIri };
+};
+
+const useBarStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
+
+const Bar = ({ percent }: { percent: number }) => {
+  const classes = useBarStyles();
+  return (
+    <div
+      className={classes.root}
+      style={{ height: 4, width: (100 * percent) / 100 }}
+    ></div>
+  );
 };
 
 const Page = () => {
@@ -251,6 +268,18 @@ const Page = () => {
             .filter((m) => activeMeasures?.[m.iri])
             .map((m) => ({
               Header: m.label,
+              Cell: m.label.includes("%")
+                ? ({ cell }) => {
+                    return (
+                      <div>
+                        {cell.value}
+                        <Bar percent={parseFloat(cell.value)} />
+                      </div>
+                    );
+                  }
+                : ({ cell }) => {
+                    return <div>{cell.value}</div>;
+                  },
               id: `${pivotDimension.iri}/${uv}/${m.iri}`,
               accessor: (x) => {
                 return x[`${pivotDimension.iri}/${uv}`]?.[m.iri] || "";
