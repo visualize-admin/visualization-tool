@@ -4,22 +4,25 @@ import {
   Switch,
   Box,
   Card as MUICard,
+  CircularProgress,
 } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
+import groupBy from "lodash/groupBy";
+import mapValues from "lodash/mapValues";
 import React, { ChangeEvent, useMemo, useState } from "react";
-import { Column, useTable } from "react-table";
+import { useEffect } from "react";
+import Inspector from "react-inspector";
+import { Column, useSortBy, useTable, useExpanded } from "react-table";
 
 import { Loading } from "@/components/hint";
 import {
   Dimension,
+  HierarchyValue,
   Measure,
   useDataCubeObservationsQuery,
+  useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
-
-import mapValues from "lodash/mapValues";
-import Inspector from "react-inspector";
-import groupBy from "lodash/groupBy";
-import { useEffect } from "react";
+import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
 const Card = styled(MUICard)({
@@ -37,12 +40,12 @@ const intDatasource = {
 };
 const datasets = mapValues(
   {
-    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/7": {
-      label: "Gas",
-      datasource: intDatasource,
-    },
     "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/8": {
       label: "ausgaben",
+      datasource: intDatasource,
+    },
+    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/7": {
+      label: "Gas",
       datasource: intDatasource,
     },
   },
@@ -50,6 +53,7 @@ const datasets = mapValues(
 );
 
 type Observation = Record<string, any>;
+type PivottedObservation = Record<string, any>;
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -58,10 +62,31 @@ const useStyles = makeStyles(() => ({
     "& td, & th": {
       border: "1px solid #ccc",
       whiteSpace: "nowrap",
-      padding: 4,
+      padding: "4px",
     },
   },
 }));
+
+const indexHierarchy = (hierarchy: HierarchyValue[]) => {
+  const byLabel = new Map<string, HierarchyValue>();
+  const parentsByIri = new Map<string, HierarchyValue>();
+  const childrenByIri = new Map<string, HierarchyValue[]>();
+  const byIri = new Map<string, HierarchyValue>();
+  visitHierarchy(hierarchy, (x_) => {
+    const x = x_ as HierarchyValue;
+    byLabel.set(x.label, x);
+    byIri.set(x.value, x);
+
+    const children = x.children as HierarchyValue[];
+    if (children) {
+      childrenByIri.set(x.value, children);
+      for (let child of children) {
+        parentsByIri.set(child.value, x);
+      }
+    }
+  });
+  return { byLabel, parentsByIri, childrenByIri, byIri };
+};
 
 const Page = () => {
   const [dataset, setDataset] = useState(
@@ -69,19 +94,8 @@ const Page = () => {
   );
   const [activeMeasures, setActiveMeasures] =
     useState<Record<Measure["iri"], boolean>>();
-  const [pivot, setPivot] = useState<Dimension>();
-
-  const handleChangeDataset = (ev: ChangeEvent<HTMLSelectElement>) => {
-    const name = ev.currentTarget.value;
-    if (name in datasets) {
-      setDataset(datasets[name as keyof typeof datasets]);
-    }
-  };
-
-  const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
-    const name = ev.currentTarget.value;
-    setPivot(data?.dataCubeByIri?.dimensions.find((d) => d.iri === name));
-  };
+  const [pivotDimension, setPivotDimension] = useState<Dimension>();
+  const [hierarchyDimension, setHierarchyDimension] = useState<Dimension>();
 
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
@@ -92,54 +106,140 @@ const Page = () => {
     },
   });
 
+  const [{ data: hierarchyData, fetching: fetchingHierarchy }] =
+    useDimensionHierarchyQuery({
+      variables: {
+        cubeIri: dataset.iri,
+        dimensionIri: hierarchyDimension?.iri!,
+        sourceUrl: "https://int.lindas.admin.ch/query",
+        sourceType: "sparql",
+        locale: "en",
+      },
+      pause: !hierarchyDimension,
+    });
+
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
-
   const observations = useMemo(() => {
     return data?.dataCubeByIri?.observations?.data || [];
   }, [data]);
 
-  const { pivotted, pivotUniqueValues } = useMemo(() => {
-    if (!pivot || !dimensions || !measures) {
+  const handleChangeDataset = (ev: ChangeEvent<HTMLSelectElement>) => {
+    const name = ev.currentTarget.value;
+    if (name in datasets) {
+      setDataset(datasets[name as keyof typeof datasets]);
+    }
+  };
+
+  const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
+    const name = ev.currentTarget.value;
+    setPivotDimension(dimensions?.find((d) => d.iri === name));
+  };
+
+  const handleChangeHierarchy = (ev: ChangeEvent<HTMLSelectElement>) => {
+    const name = ev.currentTarget.value;
+    setHierarchyDimension(dimensions?.find((d) => d.iri === name));
+  };
+
+  const hierarchyIndexes = useMemo(() => {
+    const hierarchy = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
+    if (hierarchy) {
+      return indexHierarchy(hierarchy);
+    }
+  }, [hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy]);
+
+  const { pivotted, pivotUniqueValues, tree } = useMemo(() => {
+    if (!pivotDimension || !dimensions || !measures) {
       return {
         pivotted: [],
         pivotUniqueValues: [],
       };
     } else {
-      const restDimensions = dimensions.filter((f) => f !== pivot) || [];
+      const restDimensions =
+        dimensions.filter((f) => f !== pivotDimension) || [];
+      const rowKey = (row: Observation) => {
+        return restDimensions.map((d) => row[d.iri]).join("/");
+      };
       const pivotGroups = Object.values(
         groupBy(observations, (x) =>
           restDimensions?.map((d) => x[d.iri]).join("/")
         )
       );
       const pivotUniqueValues = new Set<Observation[string]>();
-      const pivotted = pivotGroups.map((g) => {
-        // Start from values that should be the same
-        const res = Object.fromEntries(
+      const rowIndex = new Map<string, { subRows?: PivottedObservation[] }>();
+
+      const pivotted: PivottedObservation[] = [];
+
+      pivotGroups.forEach((g) => {
+        // Start from values that are the same within the group
+        const row = Object.fromEntries(
           restDimensions.map((d) => [d.iri, g[0][d.iri]])
         );
+
+        // Add pivoted dimensions
         for (let item of g) {
-          res[`${pivot.iri}/${item[pivot.iri]}`] = Object.fromEntries(
-            measures.map((m) => [m.iri, item[m.iri]])
-          );
-          pivotUniqueValues.add(item[pivot.iri]);
+          row[`${pivotDimension.iri}/${item[pivotDimension.iri]}`] =
+            Object.fromEntries(measures.map((m) => [m.iri, item[m.iri]]));
+          pivotUniqueValues.add(item[pivotDimension.iri]);
         }
-        return res;
+        rowIndex.set(rowKey(row), row);
+        pivotted.push(row);
+      });
+
+      const tree: PivottedObservation[] = [];
+
+      pivotted.forEach((row) => {
+        if (hierarchyDimension && hierarchyIndexes) {
+          const hierarchyLabel = row[hierarchyDimension.iri];
+          const hierarchyNode = hierarchyIndexes.byLabel.get(hierarchyLabel);
+          const parentNode = hierarchyIndexes.parentsByIri.get(
+            hierarchyNode?.value!
+          );
+          const parentKey = rowKey({
+            ...row,
+            [hierarchyDimension.iri]: parentNode?.label,
+          });
+          const parentRow = rowIndex.get(parentKey);
+          if (parentRow) {
+            parentRow.subRows = parentRow.subRows || [];
+            parentRow.subRows.push(row);
+          } else {
+            tree.push(row);
+          }
+        } else {
+          tree.push(row);
+        }
       });
       return {
         pivotted,
+        tree,
         pivotUniqueValues: Array.from(pivotUniqueValues).sort(),
       } as const;
     }
-  }, [pivot, dimensions, measures, observations]);
+  }, [
+    pivotDimension,
+    dimensions,
+    measures,
+    observations,
+    hierarchyDimension,
+    hierarchyIndexes,
+  ]);
 
   const columns = useMemo((): Column<Observation>[] => {
     if (!dimensions || !measures) {
       return [];
-    } else if (pivot) {
+    } else if (pivotDimension) {
       const dimensionColumns: Column<Observation>[] = dimensions
-        .filter((d) => d.iri !== pivot.iri)
+        .filter((d) => d.iri !== pivotDimension.iri)
+        .sort((a) => {
+          if (a.iri === hierarchyDimension?.iri) {
+            return 1;
+          } else {
+            return 0;
+          }
+        })
         .map((d) => ({
+          id: d.iri,
           accessor: (x: Observation) => x[d.iri],
           Header: d.label,
         }));
@@ -151,15 +251,50 @@ const Page = () => {
             .filter((m) => activeMeasures?.[m.iri])
             .map((m) => ({
               Header: m.label,
-              id: `${pivot.iri}/${uv}/${m.iri}`,
+              id: `${pivotDimension.iri}/${uv}/${m.iri}`,
               accessor: (x) => {
-                return x[`${pivot.iri}/${uv}`]?.[m.iri] || "";
+                return x[`${pivotDimension.iri}/${uv}`]?.[m.iri] || "";
               },
             })),
         })
       );
 
-      return [...dimensionColumns, ...pivotColumns];
+      const dimensionAndHierarchyColumns = dimensionColumns.map((d) => {
+        if (d.id === hierarchyDimension?.iri) {
+          const col: Column<Observation> = {
+            ...d,
+            Cell: ({ cell, row }) => {
+              const style = {
+                // We can even use the row.depth property
+                // and paddingLeft to indicate the depth
+                // of the row
+                paddingLeft: `${row.depth * 1}rem`,
+              };
+              return (
+                // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+                // to build the toggle for expanding a row
+                <span
+                  {...(row.canExpand
+                    ? row.getToggleRowExpandedProps({
+                        style,
+                      })
+                    : {
+                        style,
+                      })}
+                >
+                  {row.canExpand ? (row.isExpanded ? "▼ " : "▶ ") : null}
+                  {cell.value}
+                </span>
+              );
+            },
+          };
+          return col;
+        } else {
+          return d;
+        }
+      });
+
+      return [...dimensionAndHierarchyColumns, ...pivotColumns];
     } else {
       const all = [...dimensions, ...measures];
       return all.map((d) => {
@@ -170,11 +305,11 @@ const Page = () => {
       });
     }
   }, [
-    data?.dataCubeByIri,
-    pivot,
-    pivotUniqueValues,
     dimensions,
     measures,
+    pivotDimension,
+    pivotUniqueValues,
+    hierarchyDimension?.iri,
     activeMeasures,
   ]);
 
@@ -182,8 +317,10 @@ const Page = () => {
     useTable(
       {
         columns: columns,
-        data: pivot ? pivotted : observations,
-      }
+        data: pivotDimension && tree ? tree : observations,
+      },
+      useSortBy,
+      useExpanded
       //   useExpanded // Use the useExpanded plugin hook
     );
 
@@ -191,7 +328,7 @@ const Page = () => {
     if (!activeMeasures && measures) {
       setActiveMeasures(Object.fromEntries(measures.map((m) => [m.iri, true])));
     }
-  }, [measures]);
+  }, [activeMeasures, measures]);
 
   const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
     const measureIri = ev.currentTarget.getAttribute("name");
@@ -214,7 +351,11 @@ const Page = () => {
       <select onChange={handleChangeDataset} value={dataset.iri}>
         {Object.keys(datasets).map((k) => {
           const dataset = datasets[k as keyof typeof datasets];
-          return <option value={dataset.iri}>{dataset.label}</option>;
+          return (
+            <option key={dataset.iri} value={dataset.iri}>
+              {dataset.label}
+            </option>
+          );
         })}
       </select>
       <Card>
@@ -222,18 +363,40 @@ const Page = () => {
         <Typography variant="overline" display="block">
           Pivot iri
         </Typography>
-        <select onChange={handleChangePivot} value={pivot?.iri || "-"}>
+        <select onChange={handleChangePivot} value={pivotDimension?.iri || "-"}>
           <option value="-">-</option>
-          {data?.dataCubeByIri?.dimensions.map((d) => {
-            return <option value={d.iri}>{d.label}</option>;
+          {dimensions?.map((d) => {
+            return (
+              <option key={d.iri} value={d.iri}>
+                {d.label}
+              </option>
+            );
           })}
         </select>
+        <Typography variant="overline" display="block">
+          Hierarchy iri
+        </Typography>
+        <select
+          onChange={handleChangeHierarchy}
+          value={hierarchyDimension?.iri || "-"}
+        >
+          <option value="-">-</option>
+          {dimensions?.map((d) => {
+            return (
+              <option key={d.iri} value={d.iri}>
+                {d.label}
+              </option>
+            );
+          })}
+        </select>
+        {fetchingHierarchy ? <CircularProgress size={12} /> : null}
         <Typography variant="overline" display="block">
           Measures
         </Typography>
         {measures?.map((m) => {
           return (
             <FormControlLabel
+              key={m.iri}
               label={m.label}
               componentsProps={{ typography: { variant: "body2" } }}
               control={
@@ -249,16 +412,36 @@ const Page = () => {
         })}
       </Card>
       <Card>
-        <Typography variant="h6">Debug</Typography>
+        <details>
+          <summary>
+            <Typography variant="h6" display="inline">
+              Debug
+            </Typography>
+          </summary>
 
-        <Typography variant="overline" display="block">
-          Columns
-        </Typography>
-        <Inspector data={columns} />
-        <Typography variant="overline" display="block">
-          Pivotted
-        </Typography>
-        <Inspector data={pivotted} />
+          <Typography variant="overline" display="block">
+            Columns
+          </Typography>
+          <Inspector data={columns} />
+          <Typography variant="overline" display="block">
+            Pivotted
+          </Typography>
+          <Inspector data={pivotted} />
+          <Typography variant="overline" display="block">
+            Pivotted tree
+          </Typography>
+          <Inspector data={tree} />
+          <Typography variant="overline" display="block">
+            Hierarchy
+          </Typography>
+          <Inspector
+            data={hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy}
+          />
+          <Typography variant="overline" display="block">
+            Hierarchy indexes
+          </Typography>
+          <Inspector data={hierarchyIndexes} />
+        </details>
       </Card>
       {fetching ? <Loading /> : null}
       <table {...getTableProps()} className={classes.table}>
@@ -268,7 +451,16 @@ const Page = () => {
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 // eslint-disable-next-line react/jsx-key
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? " 🔽"
+                        : " 🔼"
+                      : ""}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
