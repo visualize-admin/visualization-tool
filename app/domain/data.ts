@@ -26,6 +26,7 @@ export type DimensionValue = {
   position?: number;
   color?: string;
   identifier?: string;
+  alternateName?: string;
 };
 
 export type Observation = Record<string, ObservationValue>;

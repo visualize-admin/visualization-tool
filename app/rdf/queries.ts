@@ -304,6 +304,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
             scaleType === "Nominal" || scaleType === "Ordinal"
               ? schema.color
               : null,
+          alternateName: schema.alternateName,
         },
       }),
       dimensionIsVersioned(dimension)
@@ -311,20 +312,20 @@ export const getCubeDimensionValuesWithMetadata = async ({
         : [],
     ]);
 
-    const identifiersLookup = new Map(
-      literals.map(({ iri, identifier }) => [iri.value, identifier?.value])
+    const lookup = new Map(
+      literals.map(({ iri, alternateName, identifier, position, color }) => [
+        iri.value,
+        {
+          alternateName: alternateName?.value,
+          identifier: identifier?.value,
+          position: position?.value,
+          color: color?.value,
+        },
+      ])
     );
 
     const labelsLookup = new Map(
       labels.map(({ iri, label }) => [iri.value, label?.value])
-    );
-
-    const positionsLookup = new Map(
-      literals.map(({ iri, position }) => [iri.value, position?.value])
-    );
-
-    const colorsLookup = new Map(
-      literals.map(({ iri, color }) => [iri.value, color?.value])
     );
 
     const unversionedLookup = new Map(
@@ -332,14 +333,18 @@ export const getCubeDimensionValuesWithMetadata = async ({
     );
 
     namedNodes.forEach((iri) => {
-      const position = positionsLookup.get(iri.value);
+      const lookupValue = lookup.get(iri.value);
 
       result.push({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
-        position: position !== undefined ? parseInt(position, 10) : undefined,
-        identifier: identifiersLookup.get(iri.value) ?? undefined,
-        color: colorsLookup.get(iri.value) ?? undefined,
+        position:
+          lookupValue?.position !== undefined
+            ? parseInt(lookupValue.position, 10)
+            : undefined,
+        identifier: lookupValue?.identifier,
+        color: lookupValue?.color,
+        alternateName: lookupValue?.alternateName,
       });
     });
   } else if (literals.length > 0) {
