@@ -17,9 +17,8 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
@@ -30,18 +29,22 @@ import {
   useOptionalNumericVariable,
   usePlottableData,
   useDataAfterInteractiveFilters,
-  useSegment,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  isTemporalDimension,
+  Observation,
+} from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
@@ -112,24 +115,25 @@ const useAreasState = (
   const getX = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getGroups = useStringVariable(fields.x.componentIri);
-  const getSegment = useSegment(fields.segment?.componentIri);
 
-  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
-
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
   );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   const hasSegment = fields.segment;
   const allSegments = useMemo(
@@ -221,13 +225,12 @@ const useAreasState = (
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
     );
-    const dimension = dimensions.find(
-      (dim) => dim.iri === fields.segment?.componentIri
-    );
-    const sorters = makeDimensionValueSorters(dimension, {
+    const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting: segmentSorting,
       sumsBySegment: totalValueBySegment,
+      useAbbreviations: fields.segment?.useAbbreviations,
     });
+
     return orderBy(
       uniqueSegments,
       sorters,
@@ -235,11 +238,11 @@ const useAreasState = (
     );
   }, [
     plottableSortedData,
-    dimensions,
+    segmentDimension,
     segmentSorting,
     getY,
     getSegment,
-    fields.segment?.componentIri,
+    fields.segment?.useAbbreviations,
   ]);
 
   /** Transform data  */
@@ -285,8 +288,9 @@ const useAreasState = (
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = segments.map((segment) => {
         const dvIri =
-          segmentValuesByLabel[segment]?.value ||
-          segmentValuesByValue[segment]?.value;
+          segmentsByAbbreviationOrLabel.get(segment)?.value ||
+          segmentsByValue.get(segment)?.value ||
+          "";
 
         return {
           label: segment,
@@ -309,8 +313,8 @@ const useAreasState = (
     getX,
     plottableSortedData,
     preparedData,
-    segmentValuesByLabel,
-    segmentValuesByValue,
+    segmentsByAbbreviationOrLabel,
+    segmentsByValue,
     segments,
     series,
   ]);

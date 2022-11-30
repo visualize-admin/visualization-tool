@@ -300,7 +300,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
-        options: [{ field: "color", type: "palette" }],
+        options: [
+          { field: "color", type: "palette" },
+          { field: "useAbbreviations" },
+        ],
       },
     ],
     interactiveFilters: ["legend"],

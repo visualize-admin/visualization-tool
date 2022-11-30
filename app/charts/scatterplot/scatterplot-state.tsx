@@ -7,7 +7,6 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import keyBy from "lodash/keyBy";
 import React, { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
@@ -16,11 +15,11 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useSegment,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -70,7 +69,25 @@ const useScatterplotState = ({
 
   const getX = useOptionalNumericVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getSegment = useSegment(fields.segment?.componentIri);
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   const sortedData = data.sort((a, b) =>
     ascending(getSegment(a), getSegment(b))
@@ -120,25 +137,13 @@ const useScatterplotState = ({
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const getSegmentLabel = useMemo(() => {
-    const segmentValuesByValue = keyBy(
-      segmentDimension?.values,
-      (x) => x.value
-    );
-    return (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    };
-  }, [segmentDimension?.values]);
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (d: DimensionValue) => d.label === segment
-      )?.value;
+      const dvIri =
+        segmentsByAbbreviationOrLabel.get(segment)?.value ||
+        segmentsByValue.get(segment)?.value ||
+        "";
 
       return {
         label: segment,

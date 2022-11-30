@@ -21,7 +21,6 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import React, { ReactNode, useCallback, useMemo } from "react";
 
@@ -37,19 +36,23 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useSegment,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  isTemporalDimension,
+  Observation,
+} from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
@@ -115,9 +118,27 @@ const useColumnsStackedState = (
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xKey = fields.x.componentIri;
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   // All Data
   const xSortingType = fields.x.sorting?.sortingType;
@@ -196,35 +217,23 @@ const useColumnsStackedState = (
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
     );
-    const dimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
 
     const sorting = fields?.segment?.sorting;
-    const sorters = makeDimensionValueSorters(dimension, {
+    const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       sumsBySegment,
+      useAbbreviations: fields.segment?.useAbbreviations,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
   }, [
     plottableSortedData,
-    dimensions,
+    segmentDimension,
     fields.segment?.sorting,
-    fields.segment?.componentIri,
+    fields.segment?.useAbbreviations,
     sumsBySegment,
     getSegment,
   ]);
-
-  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
 
   // Scales
   // Map ordered segments labels to colors
@@ -238,18 +247,22 @@ const useColumnsStackedState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.segment && segmentValuesByLabel && fields.segment.colorMapping) {
+    if (
+      fields.segment &&
+      segmentsByAbbreviationOrLabel &&
+      fields.segment.colorMapping
+    ) {
       const orderedSegmentLabelsAndColors = segments.map((segment) => {
         // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
         // See https://github.com/visualize-admin/visualization-tool/issues/97
         const dvIri =
-          segmentValuesByLabel[segment]?.value ||
-          segmentValuesByValue[segment]?.value;
+          segmentsByAbbreviationOrLabel.get(segment)?.value ||
+          segmentsByValue.get(segment)?.value ||
+          "";
 
         // There is no way to gracefully recover here :(
         if (!dvIri) {
           console.warn(`Can't find color for '${segment}'.`);
-          // throw Error(`Can't find color for '${segment}'.`);
         }
 
         return {
@@ -314,8 +327,8 @@ const useColumnsStackedState = (
     getXAsDate,
     plottableSortedData,
     preparedData,
-    segmentValuesByLabel,
-    segmentValuesByValue,
+    segmentsByAbbreviationOrLabel,
+    segmentsByValue,
     segments,
   ]);
 
@@ -385,14 +398,6 @@ const useColumnsStackedState = (
   xScaleInteraction.range([0, chartWidth]);
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
-
-  /** When segment values are IRIs, we need to find show the label */
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
 
   const formatters = useChartFormatters(chartProps);
 
