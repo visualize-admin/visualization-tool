@@ -162,6 +162,9 @@ const Page = () => {
     if (name in datasets) {
       setDataset(datasets[name as keyof typeof datasets]);
       setActiveMeasures({});
+      setIgnoredDimensions({});
+      setPivotDimension(undefined);
+      setHierarchyDimension(undefined);
     }
   };
 
@@ -308,7 +311,7 @@ const Page = () => {
         (uv) => ({
           Header: uv,
           columns: measures
-            .filter((m) => activeMeasures?.[m.iri])
+            .filter((m) => activeMeasures?.[m.iri] !== false)
             .map((m) => ({
               Header: m.label,
               Cell: m.label.includes("%")
@@ -397,7 +400,7 @@ const Page = () => {
     );
 
   useEffect(() => {
-    if (!activeMeasures && measures) {
+    if (!Object.keys(activeMeasures).length && measures) {
       setActiveMeasures(Object.fromEntries(measures.map((m) => [m.iri, true])));
     }
   }, [activeMeasures, measures]);
