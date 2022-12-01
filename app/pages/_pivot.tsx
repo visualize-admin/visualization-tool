@@ -66,6 +66,11 @@ const useStyles = makeStyles(() => ({
       padding: "4px",
     },
   },
+  optionGroup: {
+    "& + &": {
+      marginTop: "0.5rem",
+    },
+  },
 }));
 
 const indexHierarchy = (hierarchy: HierarchyValue[]) => {
@@ -109,10 +114,14 @@ const Page = () => {
   const [dataset, setDataset] = useState(
     datasets[Object.keys(datasets)[0] as keyof typeof datasets]!
   );
-  const [activeMeasures, setActiveMeasures] =
-    useState<Record<Measure["iri"], boolean>>();
+  const [activeMeasures, setActiveMeasures] = useState<
+    Record<Measure["iri"], boolean>
+  >({});
   const [pivotDimension, setPivotDimension] = useState<Dimension>();
   const [hierarchyDimension, setHierarchyDimension] = useState<Dimension>();
+  const [ignoredDimensions, setIgnoredDimensions] = useState<
+    Record<Dimension["iri"], boolean>
+  >({});
 
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
@@ -135,7 +144,14 @@ const Page = () => {
       pause: !hierarchyDimension,
     });
 
-  const dimensions = data?.dataCubeByIri?.dimensions;
+  const classes = useStyles();
+
+  const allDimensions = data?.dataCubeByIri?.dimensions;
+  const dimensions = useMemo(
+    () =>
+      data?.dataCubeByIri?.dimensions.filter((d) => !ignoredDimensions[d.iri]),
+    [data?.dataCubeByIri?.dimensions, ignoredDimensions]
+  );
   const measures = data?.dataCubeByIri?.measures;
   const observations = useMemo(() => {
     return data?.dataCubeByIri?.observations?.data || [];
@@ -145,6 +161,7 @@ const Page = () => {
     const name = ev.currentTarget.value;
     if (name in datasets) {
       setDataset(datasets[name as keyof typeof datasets]);
+      setActiveMeasures({});
     }
   };
 
@@ -157,6 +174,28 @@ const Page = () => {
     const name = ev.currentTarget.value;
     setHierarchyDimension(dimensions?.find((d) => d.iri === name));
   };
+
+  const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
+    const measureIri = ev.currentTarget.getAttribute("name");
+    if (!measureIri) {
+      return;
+    }
+    setActiveMeasures((am) =>
+      am ? { ...am, [measureIri]: !am[measureIri] } : {}
+    );
+  });
+
+  const handleToggleIgnoredDimension = useEvent(
+    (ev: ChangeEvent<HTMLInputElement>) => {
+      const dimensionIri = ev.currentTarget.getAttribute("name");
+      if (!dimensionIri) {
+        return;
+      }
+      setIgnoredDimensions((ignored) =>
+        ignored ? { ...ignored, [dimensionIri]: !ignored[dimensionIri] } : {}
+      );
+    }
+  );
 
   const hierarchyIndexes = useMemo(() => {
     const hierarchy = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
@@ -185,8 +224,8 @@ const Page = () => {
       const pivotUniqueValues = new Set<Observation[string]>();
       const rowIndex = new Map<string, { subRows?: PivottedObservation[] }>();
 
+      // Create pivotted rows with pivot dimension values as columns
       const pivotted: PivottedObservation[] = [];
-
       pivotGroups.forEach((g) => {
         // Start from values that are the same within the group
         const row = Object.fromEntries(
@@ -195,16 +234,20 @@ const Page = () => {
 
         // Add pivoted dimensions
         for (let item of g) {
-          row[`${pivotDimension.iri}/${item[pivotDimension.iri]}`] =
-            Object.fromEntries(measures.map((m) => [m.iri, item[m.iri]]));
+          const pivotValueAttr = `${pivotDimension.iri}/${
+            item[pivotDimension.iri]
+          }`;
+          row[pivotValueAttr] = Object.fromEntries(
+            measures.map((m) => [m.iri, item[m.iri]])
+          );
           pivotUniqueValues.add(item[pivotDimension.iri]);
         }
         rowIndex.set(rowKey(row), row);
         pivotted.push(row);
       });
 
+      // Regroup rows with their parent row
       const tree: PivottedObservation[] = [];
-
       pivotted.forEach((row) => {
         if (hierarchyDimension && hierarchyIndexes) {
           const hierarchyLabel = row[hierarchyDimension.iri];
@@ -359,18 +402,6 @@ const Page = () => {
     }
   }, [activeMeasures, measures]);
 
-  const handleToggleMeasure = useEvent((ev: ChangeEvent<HTMLInputElement>) => {
-    const measureIri = ev.currentTarget.getAttribute("name");
-    if (!measureIri) {
-      return;
-    }
-    setActiveMeasures((am) =>
-      am ? { ...am, [measureIri]: !am[measureIri] } : undefined
-    );
-  });
-
-  const classes = useStyles();
-
   return (
     <Box m={5}>
       <Typography variant="h2">Pivot table</Typography>
@@ -388,57 +419,100 @@ const Page = () => {
         })}
       </select>
       <Card>
-        <Typography variant="h6">Config</Typography>
-        <Typography variant="overline" display="block">
-          Pivot iri
+        <Typography variant="h5" gutterBottom>
+          Options
         </Typography>
-        <select onChange={handleChangePivot} value={pivotDimension?.iri || "-"}>
-          <option value="-">-</option>
-          {dimensions?.map((d) => {
+        <div className={classes.optionGroup}>
+          <Typography variant="h6" gutterBottom display="block">
+            Pivot on
+          </Typography>
+          <select
+            onChange={handleChangePivot}
+            value={pivotDimension?.iri || "-"}
+          >
+            <option value="-">-</option>
+            {dimensions?.map((d) => {
+              return (
+                <option key={d.iri} value={d.iri}>
+                  {d.label}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+        <div className={classes.optionGroup}>
+          <Typography variant="h6" gutterBottom display="block">
+            Group by
+          </Typography>
+          <select
+            onChange={handleChangeHierarchy}
+            value={hierarchyDimension?.iri || "-"}
+          >
+            <option value="-">-</option>
+            {dimensions?.map((d) => {
+              return (
+                <option key={d.iri} value={d.iri}>
+                  {d.label}
+                </option>
+              );
+            })}
+          </select>
+
+          {fetchingHierarchy ? (
+            <CircularProgress size={12} sx={{ ml: 2 }} />
+          ) : null}
+        </div>
+        <div className={classes.optionGroup}>
+          <Typography variant="h6" gutterBottom display="block">
+            Measures
+          </Typography>
+          {measures?.map((m) => {
             return (
-              <option key={d.iri} value={d.iri}>
-                {d.label}
-              </option>
+              <FormControlLabel
+                key={m.iri}
+                label={m.label}
+                componentsProps={{ typography: { variant: "body2" } }}
+                control={
+                  <Switch
+                    size="small"
+                    checked={activeMeasures?.[m.iri]}
+                    onChange={handleToggleMeasure}
+                    name={m.iri}
+                  />
+                }
+              />
             );
           })}
-        </select>
-        <Typography variant="overline" display="block">
-          Hierarchy iri
-        </Typography>
-        <select
-          onChange={handleChangeHierarchy}
-          value={hierarchyDimension?.iri || "-"}
-        >
-          <option value="-">-</option>
-          {dimensions?.map((d) => {
+        </div>
+        <div className={classes.optionGroup}>
+          <Typography variant="h6" display="block">
+            Ignored dimensions
+          </Typography>
+          <Typography variant="caption" gutterBottom display="block">
+            If some dimensions contain duplicate information with another
+            dimension, you need to ignore them for the grouping to work.
+            <br />
+            Ex: the Hierarchy column of the Gas dataset is a duplicate of the
+            Source of emission column, it needs to be ignored.
+          </Typography>
+          {allDimensions?.map((d) => {
             return (
-              <option key={d.iri} value={d.iri}>
-                {d.label}
-              </option>
+              <FormControlLabel
+                key={d.iri}
+                label={d.label}
+                componentsProps={{ typography: { variant: "body2" } }}
+                control={
+                  <Switch
+                    size="small"
+                    checked={ignoredDimensions?.[d.iri]}
+                    onChange={handleToggleIgnoredDimension}
+                    name={d.iri}
+                  />
+                }
+              />
             );
           })}
-        </select>
-        {fetchingHierarchy ? <CircularProgress size={12} /> : null}
-        <Typography variant="overline" display="block">
-          Measures
-        </Typography>
-        {measures?.map((m) => {
-          return (
-            <FormControlLabel
-              key={m.iri}
-              label={m.label}
-              componentsProps={{ typography: { variant: "body2" } }}
-              control={
-                <Switch
-                  size="small"
-                  checked={activeMeasures?.[m.iri]}
-                  onChange={handleToggleMeasure}
-                  name={m.iri}
-                />
-              }
-            />
-          );
-        })}
+        </div>
       </Card>
       <Card>
         <details>
