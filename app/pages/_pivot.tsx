@@ -6,8 +6,10 @@ import {
   Card as MUICard,
   CircularProgress,
   Theme,
+  lighten,
 } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
+import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
 import React, { ChangeEvent, useMemo, useState } from "react";
@@ -56,7 +58,7 @@ const datasets = mapValues(
 type Observation = Record<string, any>;
 type PivottedObservation = Record<string, any>;
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   table: {
     fontSize: "12px",
     borderCollapse: "collapse",
@@ -69,6 +71,22 @@ const useStyles = makeStyles(() => ({
   optionGroup: {
     "& + &": {
       marginTop: "0.5rem",
+    },
+  },
+  expanded: {},
+  depth_0: {
+    "&$expanded": {
+      background: lighten(theme.palette.primary.light, 0.75),
+    },
+  },
+  depth_1: {
+    "&$expanded": {
+      background: lighten(theme.palette.primary.light, 0.5),
+    },
+  },
+  depth_2: {
+    "&$expanded": {
+      background: lighten(theme.palette.primary.light, 0.15),
     },
   },
 }));
@@ -312,25 +330,26 @@ const Page = () => {
           Header: uv,
           columns: measures
             .filter((m) => activeMeasures?.[m.iri] !== false)
-            .map((m) => ({
-              Header: m.label,
-              Cell: m.label.includes("%")
-                ? ({ cell }) => {
-                    return (
-                      <div>
-                        {cell.value}
+            .map((m) => {
+              const showBars = m.label.includes("%");
+              return {
+                Header: m.label,
+                Cell: ({ cell, row }) => {
+                  return (
+                    <>
+                      {cell.value}
+                      {showBars ? (
                         <Bar percent={parseFloat(cell.value)} />
-                      </div>
-                    );
-                  }
-                : ({ cell }) => {
-                    return <div>{cell.value}</div>;
-                  },
-              id: `${pivotDimension.iri}/${uv}/${m.iri}`,
-              accessor: (x) => {
-                return x[`${pivotDimension.iri}/${uv}`]?.[m.iri] || "";
-              },
-            })),
+                      ) : null}
+                    </>
+                  );
+                },
+                id: `${pivotDimension.iri}/${uv}/${m.iri}`,
+                accessor: (x) => {
+                  return x[`${pivotDimension.iri}/${uv}`]?.[m.iri] || "";
+                },
+              };
+            }),
         })
       );
 
@@ -357,7 +376,7 @@ const Page = () => {
                         style,
                       })}
                 >
-                  {row.canExpand ? (row.isExpanded ? "▼ " : "▶ ") : null}
+                  {row.canExpand ? (row.isExpanded ? "▼  " : "▶  ") : null}
                   {cell.value}
                 </span>
               );
@@ -388,17 +407,22 @@ const Page = () => {
     activeMeasures,
   ]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns: columns,
-        data: pivotDimension && tree ? tree : observations,
-      },
-      useSortBy,
-      useExpanded
-      //   useExpanded // Use the useExpanded plugin hook
-    );
-
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    expandedDepth,
+  } = useTable(
+    {
+      columns: columns,
+      data: pivotDimension && tree ? tree : observations,
+    },
+    useSortBy,
+    useExpanded
+  );
+  console.log(expandedDepth);
   useEffect(() => {
     if (!Object.keys(activeMeasures).length && measures) {
       setActiveMeasures(Object.fromEntries(measures.map((m) => [m.iri, true])));
@@ -576,7 +600,15 @@ const Page = () => {
             prepareRow(row);
             return (
               // eslint-disable-next-line react/jsx-key
-              <tr {...row.getRowProps()}>
+              <tr
+                {...row.getRowProps()}
+                className={clsx(
+                  classes[
+                    `depth_${expandedDepth - row.depth}` as keyof typeof classes
+                  ],
+                  row.isExpanded ? classes.expanded : null
+                )}
+              >
                 {row.cells.map((cell) => {
                   return (
                     // eslint-disable-next-line react/jsx-key
