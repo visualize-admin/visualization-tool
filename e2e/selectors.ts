@@ -53,12 +53,18 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         }),
       dataFilterInput: (label: string) =>
         page.locator(`div[role="button"]:has-text("${label}")`),
+      useAbbreviationsCheckbox: () =>
+        screen
+          .getByTestId("panel-drawer")
+          .within()
+          .findByText("Use abbreviations"),
     },
     published: {
       interactiveFilters: () =>
         screen.getByTestId("published-chart-interactive-filters"),
     },
     chart: {
+      axisWidthBand: async () => screen.findByTestId("axis-width-band"),
       colorLegend: (options?, waitForOptions?) =>
         screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>

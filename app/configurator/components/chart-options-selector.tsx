@@ -423,6 +423,7 @@ const ChartFieldAbbreviations = ({
 
   return (
     <ChartOptionCheckboxField
+      data-testid="use-abbreviations"
       label={getFieldLabel("abbreviations")}
       field={field}
       path={path ? `${path}.useAbbreviations` : "useAbbreviations"}

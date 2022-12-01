@@ -34,7 +34,7 @@ export const AxisWidthBand = () => {
     const fontSize =
       xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
 
-    g.call(axis);
+    g.call(axis).attr("data-testid", "axis-width-band");
 
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
