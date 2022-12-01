@@ -40,7 +40,14 @@ const intDatasource = {
   sourceUrl: "https://int.lindas.admin.ch/query",
   sourceType: "sparql",
 };
-const datasets = mapValues(
+
+type Dataset = {
+  label: string;
+  iri: string;
+  datasource: typeof intDatasource;
+};
+
+const datasets: Record<string, Dataset> = mapValues(
   {
     "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/8": {
       label: "ausgaben",
@@ -150,7 +157,7 @@ const Bar = ({ percent }: { percent: number }) => {
   );
 };
 
-const PivotTable = ({ dataset }: { dataset: typeof datasets[number] }) => {
+const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
     Record<Measure["iri"], boolean>
   >({});
@@ -342,7 +349,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[number] }) => {
               const showBars = m.label.includes("%");
               return {
                 Header: m.label,
-                Cell: ({ cell, row }) => {
+                Cell: ({ cell }) => {
                   return (
                     <>
                       {cell.value}
