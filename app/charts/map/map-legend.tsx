@@ -198,6 +198,7 @@ export const MapLegend = () => {
         <MapLegendColor
           component={areaLayer.colors.component}
           getColor={areaLayer.colors.getColor}
+          useAbbreviations={areaLayer.colors.useAbbreviations}
         />
       )}
 
@@ -207,6 +208,7 @@ export const MapLegend = () => {
           <MapLegendColor
             component={symbolLayer.colors.component}
             getColor={symbolLayer.colors.getColor}
+            useAbbreviations={symbolLayer.colors.useAbbreviations}
           />
         )}
     </Box>

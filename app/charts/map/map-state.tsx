@@ -44,6 +44,7 @@ import {
   NumericalColorField,
 } from "@/configurator/config-types";
 import {
+  DimensionValue,
   findRelatedErrorDimension,
   GeoData,
   isGeoShapesDimension,
@@ -64,6 +65,7 @@ type AreaLayerColors =
       domain: string[];
       getValue: (d: Observation) => string;
       getColor: (d: Observation) => number[];
+      useAbbreviations: boolean;
     }
   | {
       type: "continuous";
@@ -179,25 +181,45 @@ const getCategoricalColors = (
   const component = [...dimensions, ...measures].find(
     (d) => d.iri === color.componentIri
   ) as DimensionMetadataFragment;
-  const componentValuesByLabel = keyBy(component.values, (d) => d.label);
-  const domain: string[] = component.values.map((d) => d.value) || [];
+  const values = component.values as DimensionValue[];
+  const valuesByLabel = keyBy(values, (d) => d.label);
+  const valuesByAbbreviationOrLabel = keyBy(
+    values,
+    color.useAbbreviations ? (d) => d.alternateName ?? d.label : (d) => d.label
+  );
+  const domain: string[] = values.map((d) => `${d.value}`) || [];
   const rgbColorMapping = mapValues(color.colorMapping, (d) =>
     colorToRgbArray(d)
   );
-  const getValue = (d: Observation) =>
-    d[color.componentIri] !== null ? `${d[color.componentIri]}` : "";
+  const getDimensionValue = (d: Observation) => {
+    const abbreviationOrLabel = d[color.componentIri] as string;
+
+    return (
+      valuesByAbbreviationOrLabel[abbreviationOrLabel] ||
+      valuesByLabel[abbreviationOrLabel]
+    );
+  };
 
   return {
     type: "categorical" as "categorical",
     palette: color.palette,
     component,
     domain,
-    getValue,
+    getValue: color.useAbbreviations
+      ? (d: Observation) => {
+          const v = getDimensionValue(d);
+
+          return v.alternateName || v.label;
+        }
+      : (d: Observation) => {
+          return getDimensionValue(d).label;
+        },
     getColor: (d: Observation) => {
-      const label = d[color.componentIri] as string;
-      const value = componentValuesByLabel[label].value;
-      return rgbColorMapping[value];
+      const value = getDimensionValue(d);
+
+      return rgbColorMapping[value.value];
     },
+    useAbbreviations: color.useAbbreviations ?? false,
   };
 };
 

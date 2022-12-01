@@ -15,7 +15,7 @@ import {
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { DimensionValue, Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
@@ -203,20 +203,26 @@ export const LegendColor = memo(function LegendColor({
 export const MapLegendColor = memo(function LegendColor({
   component,
   getColor,
+  useAbbreviations,
 }: {
   component: DimensionMetadataFragment;
   getColor: (d: Observation) => number[];
+  useAbbreviations: boolean;
 }) {
-  const sortedValues = component.values.sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
+  const values = component.values as DimensionValue[];
+  const sortedValues = values.sort((a, b) => a.label.localeCompare(b.label));
   const groups = useLegendGroups({
-    labels: sortedValues.map((d) => d.value),
+    labels: sortedValues.map((d) => `${d.value}`),
     title: component.label,
   });
-  const getLabel = (d: string) => {
-    return component.values.find((v) => v.value === d).label as string;
-  };
+  const getLabel = useAbbreviations
+    ? (d: string) => {
+        const v = values.find((v) => v.value === d);
+        return (v?.alternateName || v?.label) as string;
+      }
+    : (d: string) => {
+        return values.find((v) => v.value === d)?.label as string;
+      };
 
   return (
     <LegendColorContent
@@ -255,7 +261,7 @@ const LegendColorContent = ({
 
   const handleToggle: CheckboxProps["onChange"] = useEvent((ev) => {
     const item = ev.target.value;
-    console.log({ item });
+
     if (activeInteractiveFilters.has(item)) {
       dispatch({
         type: "REMOVE_INTERACTIVE_FILTER",
