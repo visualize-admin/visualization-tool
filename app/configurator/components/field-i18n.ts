@@ -84,6 +84,10 @@ const fieldLabels = {
     id: "controls.sorting.byMeasure.descending",
     message: "9 → 1",
   }),
+  "controls.abbreviations": defineMessage({
+    id: "controls.abbreviations",
+    message: "Use abbreviations",
+  }),
   "controls.imputation": defineMessage({
     id: "controls.imputation",
     message: "Imputation type",
@@ -201,6 +205,8 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.sorting.sortBy"]);
     case "imputation":
       return i18n._(fieldLabels["controls.imputation"]);
+    case "abbreviations":
+      return i18n._(fieldLabels["controls.abbreviations"]);
 
     case "bar.stacked.byDimensionLabel.asc":
     case "bar.grouped.byDimensionLabel.asc":

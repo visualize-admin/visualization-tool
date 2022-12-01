@@ -308,7 +308,6 @@ export const dimensionValues: NonNullable<
   const loader = getDimensionValuesLoader(sparqlClient, loaders, filters);
   const values: Array<DimensionValue> = await loader.load(parent);
 
-  // TODO min max are now just `values` with 2 elements. Handle properly!
   return values.sort((a, b) =>
     ascending(
       a.position ?? a.value ?? undefined,

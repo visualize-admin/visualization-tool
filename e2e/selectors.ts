@@ -46,19 +46,25 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         page.locator(`[data-value="${value}"]`),
       chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
       filtersLoaded: () =>
-        screen.findByText("Selected filters", undefined, { timeout: 5000 }),
+        screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
       controlSection: (title: string) =>
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h5:text-is("${title}")`),
         }),
       dataFilterInput: (label: string) =>
         page.locator(`div[role="button"]:has-text("${label}")`),
+      useAbbreviationsCheckbox: () =>
+        screen
+          .getByTestId("panel-drawer")
+          .within()
+          .findByText("Use abbreviations"),
     },
     published: {
       interactiveFilters: () =>
         screen.getByTestId("published-chart-interactive-filters"),
     },
     chart: {
+      axisWidthBand: async () => screen.findByTestId("axis-width-band"),
       colorLegend: (options?, waitForOptions?) =>
         screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>

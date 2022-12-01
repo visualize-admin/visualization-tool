@@ -11,9 +11,8 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
@@ -23,18 +22,22 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useSegment,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  isTemporalDimension,
+  Observation,
+} from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
@@ -92,21 +95,40 @@ const useLinesState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
 
-  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+  const xKey = fields.x.componentIri;
+
+  const xDimension = dimensions.find((d) => d.iri === xKey);
 
   if (!xDimension) {
     throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
   }
+
   if (!isTemporalDimension(xDimension)) {
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const getX = useTemporalVariable(fields.x.componentIri);
+  const getX = useTemporalVariable(xKey);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getGroups = useStringVariable(fields.x.componentIri);
-  const getSegment = useSegment(fields.segment?.componentIri);
+  const getGroups = useStringVariable(xKey);
 
-  const xKey = fields.x.componentIri;
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
@@ -186,37 +208,13 @@ const useLinesState = (
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  const segmentDimension = useMemo(() => {
-    return (
-      dimensions.find((d) => d.iri === fields.segment?.componentIri) || {
-        values: [],
-      }
-    );
-  }, [dimensions, fields.segment?.componentIri]);
-
-  const { segmentValuesByLabel, segmentValuesByValue } = useMemo(() => {
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [segmentDimension]);
-
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
-
   // segments
   const segments = useMemo(() => {
     const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
-    const dimension = dimensions.find(
-      (d) => d.iri === fields?.segment?.componentIri
-    );
     const sorting = fields?.segment?.sorting;
-    const sorters = makeDimensionValueSorters(dimension, {
+    const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
+      useAbbreviations: fields.segment?.useAbbreviations,
     });
     return orderBy(
       uniqueSegments,
@@ -224,10 +222,10 @@ const useLinesState = (
       sorting?.sortingOrder === "desc" ? "desc" : "asc"
     );
   }, [
-    dimensions,
-    fields?.segment?.componentIri,
-    fields?.segment?.sorting,
+    segmentDimension,
     getSegment,
+    fields.segment?.sorting,
+    fields.segment?.useAbbreviations,
     plottableSortedData,
   ]);
 
@@ -237,8 +235,9 @@ const useLinesState = (
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
       const dvIri =
-        segmentValuesByLabel[segment]?.value ||
-        segmentValuesByValue[segment]?.value;
+        segmentsByAbbreviationOrLabel.get(segment)?.value ||
+        segmentsByValue.get(segment)?.value ||
+        "";
 
       return {
         label: segment,

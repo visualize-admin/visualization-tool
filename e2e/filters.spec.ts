@@ -17,15 +17,9 @@ describe("Filters", () => {
     const labels = filters.locator("label[for^=select-single-filter]");
 
     const texts = await labels.allTextContents();
-    expect(texts).toEqual([
-      // --- Hierarchy dimensions
-      "1. Production region",
-      "2. Stand structure",
-      // ---
-      "3. Inventory",
-      "4. Evaluation type",
-      "5. Reference area",
-    ]);
+    // Hierarchical dimensions should come first.
+    expect(texts[0]).toEqual("1. Production region");
+    expect(texts[1]).toEqual("2. Stand structure");
 
     const productionRegionFilter = selectors.edition.dataFilterInput(
       "1. Production region"

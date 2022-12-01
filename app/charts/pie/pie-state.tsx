@@ -7,18 +7,17 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useMemo, useCallback } from "react";
+import React, { ReactNode, useMemo } from "react";
 
 import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useSegment,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -31,6 +30,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+
 export interface PieState extends CommonChartState {
   chartType: "pie";
   allData: Observation[];
@@ -70,7 +70,25 @@ const usePieState = (
   }
 
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getX = useSegment(fields.segment.componentIri);
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   // Data actually sorted in pie(),
   const plottableData = usePlottableData({
@@ -82,32 +100,14 @@ const usePieState = (
   const preparedData = useDataAfterInteractiveFilters({
     sortedData: plottableData,
     interactiveFiltersConfig,
-    getSegment: getX,
+    getSegment,
   });
-
-  const { segmentValuesByValue, segmentDimension, segmentValuesByLabel } =
-    useMemo(() => {
-      const segmentDimension = dimensions.find(
-        (d) => d.iri === fields.segment?.componentIri
-      ) as $FixMe;
-      return {
-        segmentDimension,
-        segmentValuesByValue: keyBy(
-          segmentDimension.values as DimensionValue[] as DimensionValue[],
-          (x) => x.value
-        ),
-        segmentValuesByLabel: keyBy(
-          segmentDimension.values as DimensionValue[],
-          (x) => x.label
-        ),
-      };
-    }, [dimensions, fields.segment?.componentIri]);
 
   // Map ordered segments to colors
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
-      plottableData.map((d) => [getX(d), getY(d)])
+      plottableData.map((d) => [getSegment(d), getY(d)])
     );
     const uniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
@@ -117,6 +117,7 @@ const usePieState = (
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting: sorting,
       measureBySegment,
+      useAbbreviations: fields.segment.useAbbreviations,
     });
 
     const segments = orderBy(
@@ -127,7 +128,10 @@ const usePieState = (
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = segments.map((segment) => {
-        const dvIri = segmentValuesByLabel[segment]?.value;
+        const dvIri =
+          segmentsByAbbreviationOrLabel.get(segment)?.value ||
+          segmentsByValue.get(segment)?.value ||
+          "";
 
         return {
           label: segment,
@@ -147,19 +151,13 @@ const usePieState = (
     return colors;
   }, [
     fields.segment,
-    getX,
+    getSegment,
     getY,
     plottableData,
     segmentDimension,
-    segmentValuesByLabel,
+    segmentsByAbbreviationOrLabel,
+    segmentsByValue,
   ]);
-
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
 
   // Dimensions
   const margins = {
@@ -197,11 +195,11 @@ const usePieState = (
       // We do not actually use segment sort order here, because the ascending/descending
       // has already been done when segments where sorted
       return ascending(
-        segmentIndex[getX(a)] ?? -1,
-        segmentIndex[getX(b)] ?? -1
+        segmentIndex[getSegment(a)] ?? -1,
+        segmentIndex[getSegment(b)] ?? -1
       );
     };
-  }, [colors, getX]);
+  }, [colors, getSegment]);
   const getPieData = pie<Observation>()
     .value((d) => getY(d) ?? NaN)
     .sort(pieSorter);
@@ -240,10 +238,10 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getX(datum),
+      xValue: getSegment(datum),
       datum: {
         value: valueFormatter(getY(datum)),
-        color: colors(getX(datum)) as string,
+        color: colors(getSegment(datum)) as string,
       },
       values: undefined,
     };
@@ -256,7 +254,7 @@ const usePieState = (
     preparedData,
     getPieData,
     getY,
-    getX,
+    getX: getSegment,
     colors,
     getAnnotationInfo,
     getSegmentLabel,

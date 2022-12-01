@@ -700,8 +700,8 @@ export const ChartFieldField = ({
   const { fetching, ...fieldProps } = useChartFieldField({ field });
 
   const noneLabel = t({
-    id: "controls.dimension.none",
-    message: `No dimension selected`,
+    id: "controls.none",
+    message: "None",
   });
 
   const optionalLabel = t({
@@ -872,7 +872,7 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     getKey,
   });
   const noneLabel = t({
-    id: "controls.dimension.none",
+    id: "controls.none",
     message: "None",
   });
 

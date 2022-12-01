@@ -80,6 +80,9 @@ export const createActions = ({
       within,
     }),
   },
+  drawer: {
+    close: async () => await screen.locator('text="Back to main"').click(),
+  },
 });
 
 export type Actions = ReturnType<typeof createActions>;

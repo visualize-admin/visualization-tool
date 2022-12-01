@@ -30,12 +30,12 @@ import {
   useOptionalNumericVariable,
   usePlottableData,
   useSegment,
-  useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -123,7 +123,11 @@ const useColumnsState = (
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
 
-  const getX = useStringVariable(fields.x.componentIri);
+  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
+    useAbbreviations: fields.x.useAbbreviations ?? false,
+    dimension: xDimension,
+  });
+
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
@@ -176,6 +180,7 @@ const useColumnsState = (
       // x
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
+        useAbbreviations: fields.x.useAbbreviations,
       });
       const bandDomain = orderBy(
         [...new Set(preparedData.map(getX))],
@@ -223,6 +228,9 @@ const useColumnsState = (
       getYErrorRange,
       plottableSortedData,
       preparedData,
+      fields.x.sorting,
+      fields.x.useAbbreviations,
+      xDimension,
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);

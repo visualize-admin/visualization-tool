@@ -53,7 +53,11 @@ import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import { getIconName } from "@/configurator/components/ui-helpers";
+import {
+  canUseAbbreviations,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
+import { GenericField } from "@/configurator/config-types";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
@@ -260,14 +264,27 @@ const EncodingOptionsPanel = ({
     otherFieldsIris,
   ]);
 
+  const allDimensions = useMemo(() => {
+    return [...measures, ...dimensions];
+  }, [measures, dimensions]);
+
+  const fieldDimension = useMemo(() => {
+    const encodingIri = (
+      (fields as any)?.[encoding.field] as GenericField | undefined
+    )?.componentIri;
+
+    return allDimensions.find((d) => d.iri === encodingIri);
+  }, [allDimensions, fields, encoding.field]);
+
   const hasStandardError = useMemo(() => {
-    return [...measures, ...dimensions].find((m) =>
-      m.related?.some(
+    return allDimensions.find((d) =>
+      d.related?.some(
         (r) => r.type === "StandardError" && r.iri === component?.iri
       )
     );
-  }, [dimensions, measures, component]);
+  }, [allDimensions, component]);
 
+  // TODO: Add proper types here.
   const optionsByField = useMemo(
     () => keyBy(encoding.options, (enc) => enc.field),
     [encoding]
@@ -295,6 +312,14 @@ const EncodingOptionsPanel = ({
               optional={encoding.optional}
               options={options}
             />
+            {optionsByField["useAbbreviations"] && (
+              <Box mt={3}>
+                <ChartFieldAbbreviations
+                  field={field}
+                  dimension={fieldDimension}
+                />
+              </Box>
+            )}
             {encoding.options && (
               <ChartFieldOptions
                 disabled={!component}
@@ -347,6 +372,9 @@ const EncodingOptionsPanel = ({
             componentTypes={optionsByField["color"].componentTypes}
             dataSetMetadata={metaData}
             optional={optionsByField["color"].optional}
+            enableUseAbbreviations={
+              optionsByField["color"].enableUseAbbreviations
+            }
           />
         )}
       {optionsByField["showStandardError"] && hasStandardError && (
@@ -377,6 +405,30 @@ const EncodingOptionsPanel = ({
         metaData={metaData}
       />
     </div>
+  );
+};
+
+const ChartFieldAbbreviations = ({
+  field,
+  path,
+  dimension,
+}: {
+  field: string;
+  path?: string;
+  dimension: DimensionMetadataFragment | undefined;
+}) => {
+  const disabled = useMemo(() => {
+    return !canUseAbbreviations(dimension);
+  }, [dimension]);
+
+  return (
+    <ChartOptionCheckboxField
+      data-testid="use-abbreviations"
+      label={getFieldLabel("abbreviations")}
+      field={field}
+      path={path ? `${path}.useAbbreviations` : "useAbbreviations"}
+      disabled={disabled}
+    />
   );
 };
 
@@ -668,6 +720,7 @@ const ChartFieldColorComponent = ({
   componentTypes,
   dataSetMetadata,
   optional,
+  enableUseAbbreviations,
 }: {
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -675,6 +728,7 @@ const ChartFieldColorComponent = ({
   componentTypes: ComponentType[];
   dataSetMetadata: DataCubeMetadata;
   optional: boolean;
+  enableUseAbbreviations: boolean;
 }) => {
   const nbOptions = component.values.length;
   const measuresOptions = useMemo(() => {
@@ -735,6 +789,15 @@ const ChartFieldColorComponent = ({
           options={measuresOptions}
           isOptional={optional}
         />
+        {enableUseAbbreviations && (
+          <Box sx={{ mt: 1 }}>
+            <ChartFieldAbbreviations
+              field={field}
+              path="color"
+              dimension={colorComponent}
+            />
+          </Box>
+        )}
 
         {colorType === "fixed" ? (
           <>

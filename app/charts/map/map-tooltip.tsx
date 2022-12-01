@@ -140,7 +140,7 @@ export const MapTooltip = () => {
           preparedColors = {
             type: "categorical" as "categorical",
             component: colors.component,
-            value: obs[colors.component.iri] as string,
+            value: colors.getValue(obs),
             error: null,
             color,
             textColor,

@@ -16,9 +16,8 @@ import {
   sum,
 } from "d3";
 import get from "lodash/get";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -32,13 +31,12 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useSegment,
-  useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
+import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -49,7 +47,11 @@ import {
   useErrorMeasure,
   useErrorRange,
 } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  isTemporalDimension,
+  Observation,
+} from "@/domain/data";
 import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
@@ -112,32 +114,36 @@ const useGroupedColumnsState = (
 
   const xIsTime = isTemporalDimension(xDimension);
 
-  const getX = useStringVariable(fields.x.componentIri);
+  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
+    useAbbreviations: fields.x.useAbbreviations ?? false,
+    dimension: xDimension,
+  });
+
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
   const getYErrorRange = useErrorRange(errorMeasure, getY);
-  const getSegment = useSegment(fields.segment?.componentIri);
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const {
+    getAbbreviationOrLabelByValue: getSegment,
+    getLabelByAbbreviation: getSegmentLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+  } = useMaybeAbbreviations({
+    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    dimension: segmentDimension,
+  });
+
+  const segmentsByValue = useMemo(() => {
+    const values = (segmentDimension?.values || []) as DimensionValue[];
+
+    return new Map(values.map((d) => [d.value, d]));
+  }, [segmentDimension?.values]);
 
   const showStandardError = get(fields, ["y", "showStandardError"], true);
-
-  const { segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
-
-  /** When segment values are IRIs, we need to find show the label */
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
 
   // Sort
   const xSorting = fields.x.sorting;
@@ -191,22 +197,20 @@ const useGroupedColumnsState = (
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
     );
-    const dimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
 
     const sorting = fields?.segment?.sorting;
-    const sorters = makeDimensionValueSorters(dimension, {
+    const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       sumsBySegment,
+      useAbbreviations: fields.segment?.useAbbreviations,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
   }, [
     plottableSortedData,
-    dimensions,
+    segmentDimension,
     fields.segment?.sorting,
-    fields.segment?.componentIri,
+    fields.segment?.useAbbreviations,
     sumsBySegment,
     getSegment,
   ]);
@@ -228,10 +232,10 @@ const useGroupedColumnsState = (
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = segments.map((segment) => {
-        const dvIri = segmentDimension.values.find(
-          (s: { label: string; value: string }) =>
-            s.label === segment || s.value === segment
-        ).value;
+        const dvIri =
+          segmentsByAbbreviationOrLabel.get(segment)?.value ||
+          segmentsByValue.get(segment)?.value ||
+          "";
 
         return {
           label: segment,
@@ -299,6 +303,8 @@ const useGroupedColumnsState = (
     fields.segment,
     preparedData,
     segments,
+    segmentsByAbbreviationOrLabel,
+    segmentsByValue,
     plottableSortedData,
     getX,
     getXAsDate,
