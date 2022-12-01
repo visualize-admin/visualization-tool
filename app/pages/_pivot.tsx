@@ -31,7 +31,6 @@ import useEvent from "@/utils/use-event";
 const Card = styled(MUICard)({
   border: "1px solid #ccc",
   backgroundColor: "#eee",
-  borderRadius: "1rem",
   padding: "1rem",
   marginTop: 16,
   marginBottom: 16,
@@ -59,7 +58,27 @@ type Observation = Record<string, any>;
 type PivottedObservation = Record<string, any>;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  table: {
+  pivotTableRoot: {
+    display: "grid",
+    gridTemplateColumns: "280px 1fr",
+    gridTemplateAreas: `
+"options chart"
+    `,
+    gridGap: "1rem",
+  },
+  pivotTableOptions: {
+    paddingTop: "1rem",
+    gridArea: "options",
+  },
+  pivotTableChart: {
+    gridArea: "chart",
+    overflowX: "hidden",
+  },
+  pivotTableContainer: {
+    overflowX: "scroll",
+  },
+  pivotTableTable: {
+    width: "100%",
     fontSize: "12px",
     borderCollapse: "collapse",
     "& td, & th": {
@@ -70,8 +89,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   optionGroup: {
     "& + &": {
-      marginTop: "0.5rem",
+      marginTop: "0.75rem",
     },
+  },
+  row: {
+    transition: "background-color 0.3s ease",
   },
   expanded: {},
   depth_0: {
@@ -128,10 +150,7 @@ const Bar = ({ percent }: { percent: number }) => {
   );
 };
 
-const Page = () => {
-  const [dataset, setDataset] = useState(
-    datasets[Object.keys(datasets)[0] as keyof typeof datasets]!
-  );
+const PivotTable = ({ dataset }: { dataset: typeof datasets[number] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
     Record<Measure["iri"], boolean>
   >({});
@@ -174,17 +193,6 @@ const Page = () => {
   const observations = useMemo(() => {
     return data?.dataCubeByIri?.observations?.data || [];
   }, [data]);
-
-  const handleChangeDataset = (ev: ChangeEvent<HTMLSelectElement>) => {
-    const name = ev.currentTarget.value;
-    if (name in datasets) {
-      setDataset(datasets[name as keyof typeof datasets]);
-      setActiveMeasures({});
-      setIgnoredDimensions({});
-      setPivotDimension(undefined);
-      setHierarchyDimension(undefined);
-    }
-  };
 
   const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
     const name = ev.currentTarget.value;
@@ -430,25 +438,8 @@ const Page = () => {
   }, [activeMeasures, measures]);
 
   return (
-    <Box m={5}>
-      <Typography variant="h2">Pivot table</Typography>
-      <Typography variant="overline" display="block">
-        Dataset
-      </Typography>
-      <select onChange={handleChangeDataset} value={dataset.iri}>
-        {Object.keys(datasets).map((k) => {
-          const dataset = datasets[k as keyof typeof datasets];
-          return (
-            <option key={dataset.iri} value={dataset.iri}>
-              {dataset.label}
-            </option>
-          );
-        })}
-      </select>
-      <Card>
-        <Typography variant="h5" gutterBottom>
-          Options
-        </Typography>
+    <Box className={classes.pivotTableRoot}>
+      <div className={classes.pivotTableOptions}>
         <div className={classes.optionGroup}>
           <Typography variant="h6" gutterBottom display="block">
             Pivot columns
@@ -498,7 +489,7 @@ const Page = () => {
               <FormControlLabel
                 key={m.iri}
                 label={m.label}
-                componentsProps={{ typography: { variant: "body2" } }}
+                componentsProps={{ typography: { variant: "caption" } }}
                 control={
                   <Switch
                     size="small"
@@ -517,7 +508,7 @@ const Page = () => {
           </Typography>
           <Typography variant="caption" gutterBottom display="block">
             If some dimensions contain duplicate information with another
-            dimension, you need to ignore them for the grouping to work.
+            dimension, it is necessary to ignore them for the grouping to work.
             <br />
             Ex: the Hierarchy column of the Gas dataset is a duplicate of the
             Source of emission column, it needs to be ignored.
@@ -527,7 +518,7 @@ const Page = () => {
               <FormControlLabel
                 key={d.iri}
                 label={d.label}
-                componentsProps={{ typography: { variant: "body2" } }}
+                componentsProps={{ typography: { variant: "caption" } }}
                 control={
                   <Switch
                     size="small"
@@ -540,86 +531,129 @@ const Page = () => {
             );
           })}
         </div>
-      </Card>
-      <Card>
-        <details>
-          <summary>
-            <Typography variant="h6" display="inline">
-              Debug
-            </Typography>
-          </summary>
+      </div>
+      <div className={classes.pivotTableChart}>
+        <Card elevation={0}>
+          <details>
+            <summary>
+              <Typography variant="h6" display="inline">
+                Debug
+              </Typography>
+            </summary>
 
-          <Typography variant="overline" display="block">
-            Columns
-          </Typography>
-          <Inspector data={columns} />
-          <Typography variant="overline" display="block">
-            Pivotted
-          </Typography>
-          <Inspector data={pivotted} />
-          <Typography variant="overline" display="block">
-            Pivotted tree
-          </Typography>
-          <Inspector data={tree} />
-          <Typography variant="overline" display="block">
-            Hierarchy
-          </Typography>
-          <Inspector
-            data={hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy}
-          />
-          <Typography variant="overline" display="block">
-            Hierarchy indexes
-          </Typography>
-          <Inspector data={hierarchyIndexes} />
-        </details>
-      </Card>
-      {fetching ? <Loading /> : null}
-      <table {...getTableProps()} className={classes.table}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            // eslint-disable-next-line react/jsx-key
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
+            <Typography variant="overline" display="block">
+              Columns
+            </Typography>
+            <Inspector data={columns} />
+            <Typography variant="overline" display="block">
+              Pivotted
+            </Typography>
+            <Inspector data={pivotted} />
+            <Typography variant="overline" display="block">
+              Pivotted tree
+            </Typography>
+            <Inspector data={tree} />
+            <Typography variant="overline" display="block">
+              Hierarchy
+            </Typography>
+            <Inspector
+              data={hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy}
+            />
+            <Typography variant="overline" display="block">
+              Hierarchy indexes
+            </Typography>
+            <Inspector data={hierarchyIndexes} />
+          </details>
+        </Card>
+        {fetching ? <Loading /> : null}
+        <div className={classes.pivotTableContainer}>
+          <table {...getTableProps()} className={classes.pivotTableTable}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
                 // eslint-disable-next-line react/jsx-key
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
-                  </span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              // eslint-disable-next-line react/jsx-key
-              <tr
-                {...row.getRowProps()}
-                className={clsx(
-                  classes[
-                    `depth_${expandedDepth - row.depth}` as keyof typeof classes
-                  ],
-                  row.isExpanded ? classes.expanded : null
-                )}
-              >
-                {row.cells.map((cell) => {
-                  return (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
                     // eslint-disable-next-line react/jsx-key
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                    <th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                    >
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row);
+                return (
+                  // eslint-disable-next-line react/jsx-key
+                  <tr
+                    {...row.getRowProps()}
+                    className={clsx(
+                      classes.row,
+                      row.isExpanded ? classes.expanded : null,
+                      classes[
+                        `depth_${
+                          expandedDepth - row.depth
+                        }` as keyof typeof classes
+                      ]
+                    )}
+                  >
+                    {row.cells.map((cell) => {
+                      return (
+                        // eslint-disable-next-line react/jsx-key
+                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Box>
+  );
+};
+
+const Page = () => {
+  const [dataset, setDataset] = useState(
+    datasets[Object.keys(datasets)[0] as keyof typeof datasets]!
+  );
+
+  const handleChangeDataset = (ev: ChangeEvent<HTMLSelectElement>) => {
+    const name = ev.currentTarget.value;
+    if (name in datasets) {
+      setDataset(datasets[name as keyof typeof datasets]);
+    }
+  };
+
+  return (
+    <Box m={5}>
+      <Typography variant="h2">Pivot table</Typography>
+      <Typography variant="overline" display="block">
+        Dataset
+      </Typography>
+
+      <select onChange={handleChangeDataset} value={dataset.iri}>
+        {Object.keys(datasets).map((k) => {
+          const dataset = datasets[k as keyof typeof datasets];
+          return (
+            <option key={dataset.iri} value={dataset.iri}>
+              {dataset.label}
+            </option>
+          );
+        })}
+      </select>
+      <PivotTable key={dataset.iri} dataset={dataset} />
     </Box>
   );
 };
