@@ -46,7 +46,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         page.locator(`[data-value="${value}"]`),
       chartTypeSelector: () => screen.findByTestId("chart-type-selector"),
       filtersLoaded: () =>
-        screen.findByText("Selected filters", undefined, { timeout: 5000 }),
+        screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
       controlSection: (title: string) =>
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h5:text-is("${title}")`),
