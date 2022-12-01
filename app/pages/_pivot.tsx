@@ -451,7 +451,7 @@ const Page = () => {
         </Typography>
         <div className={classes.optionGroup}>
           <Typography variant="h6" gutterBottom display="block">
-            Pivot on
+            Pivot columns
           </Typography>
           <select
             onChange={handleChangePivot}
@@ -469,7 +469,7 @@ const Page = () => {
         </div>
         <div className={classes.optionGroup}>
           <Typography variant="h6" gutterBottom display="block">
-            Group by
+            Group rows by
           </Typography>
           <select
             onChange={handleChangeHierarchy}
