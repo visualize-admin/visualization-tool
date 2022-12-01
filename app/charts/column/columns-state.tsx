@@ -223,6 +223,8 @@ const useColumnsState = (
       getYErrorRange,
       plottableSortedData,
       preparedData,
+      fields.x.sorting,
+      xDimension,
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
