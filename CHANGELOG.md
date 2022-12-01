@@ -10,6 +10,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Metadata is now shown in a dedicated panel that can be reached both from editor & published mode
+- It's now possible to use abbreviations in color segmentations and X fields for dimension values with schema:alternateName properties
 
 ## [3.15.0] - 2022-11-29
 
