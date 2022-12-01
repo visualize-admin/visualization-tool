@@ -31,7 +31,6 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
@@ -115,7 +114,11 @@ const useGroupedColumnsState = (
 
   const xIsTime = isTemporalDimension(xDimension);
 
-  const getX = useStringVariable(fields.x.componentIri);
+  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
+    useAbbreviations: fields.x.useAbbreviations ?? false,
+    dimension: xDimension,
+  });
+
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);

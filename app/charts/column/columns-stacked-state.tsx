@@ -36,7 +36,6 @@ import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
@@ -107,19 +106,23 @@ const useColumnsStackedState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
-  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+  const xKey = fields.x.componentIri;
+
+  const xDimension = dimensions.find((d) => d.iri === xKey);
 
   if (!xDimension) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+    throw Error(`No dimension <${xKey}> in cube!`);
   }
 
   const xIsTime = isTemporalDimension(xDimension);
 
-  const getX = useStringVariable(fields.x.componentIri);
-  const getXAsDate = useTemporalVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
+    useAbbreviations: fields.x.useAbbreviations ?? false,
+    dimension: xDimension,
+  });
 
-  const xKey = fields.x.componentIri;
+  const getXAsDate = useTemporalVariable(xKey);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
 
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
