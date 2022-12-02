@@ -23,6 +23,7 @@ export type ObservationValue = string | number | null;
 export type DimensionValue = {
   value: string | number;
   label: string;
+  description?: string;
   position?: number;
   color?: string;
   identifier?: string;
