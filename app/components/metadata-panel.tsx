@@ -139,6 +139,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
     },
     tabPanel: {
       padding: 0,
+      paddingBottom: theme.spacing(3),
     },
     tabPanelContent: {
       display: "flex",
@@ -155,11 +156,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         marginLeft: 0,
       },
     },
-    dimensionIcon: {
-      display: "inline",
-      marginLeft: -2,
-      marginTop: -3,
-      marginRight: 2,
+    dimensionValues: {
+      flexDirection: "column",
+      gap: theme.spacing(2),
+      marginTop: theme.spacing(3),
     },
     search: {
       "& .MuiAutocomplete-inputRoot": {
@@ -408,10 +408,7 @@ const TabPanelData = ({
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
-              <TabPanelDataDimension
-                dim={selectedDimension}
-                expandable={false}
-              />
+              <TabPanelDataDimension dim={selectedDimension} expanded={true} />
             </Box>
           </MotionBox>
         ) : (
@@ -476,7 +473,7 @@ const TabPanelData = ({
               clearIcon={null}
             />
             {dimensions.map((d) => (
-              <TabPanelDataDimension key={d.iri} dim={d} expandable={true} />
+              <TabPanelDataDimension key={d.iri} dim={d} expanded={false} />
             ))}
           </MotionBox>
         )}
@@ -487,23 +484,15 @@ const TabPanelData = ({
 
 const TabPanelDataDimension = ({
   dim,
-  expandable,
+  expanded,
 }: {
   dim: DimensionMetadataFragment;
-  expandable: boolean;
+  expanded: boolean;
 }) => {
   const classes = useOtherStyles();
-  const selectedDimension = useMetadataPanelStore(
-    (state) => state.selectedDimension
-  );
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const { description, showExpandButton } = React.useMemo(() => {
-    if (
-      expandable &&
-      dim.description &&
-      dim.description.length > 180 &&
-      !(selectedDimension && selectedDimension.iri === dim.iri)
-    ) {
+    if (!expanded && dim.description && dim.description.length > 180) {
       return {
         description: dim.description.slice(0, 180) + "…",
         showExpandButton: true,
@@ -514,37 +503,70 @@ const TabPanelDataDimension = ({
       description: dim.description,
       showExpandButton: false,
     };
-  }, [dim.description, expandable, dim.iri, selectedDimension]);
+  }, [dim.description, expanded]);
   const iconName = React.useMemo(() => {
     return getDimensionIconName(dim.__typename);
   }, [dim.__typename]);
 
   const handleClick = React.useCallback(() => {
-    if (expandable) {
+    if (!expanded) {
       setSelectedDimension(dim);
     }
-  }, [expandable, dim, setSelectedDimension]);
+  }, [expanded, dim, setSelectedDimension]);
 
   return (
     <div>
-      <Flex>
-        <Button
-          className={classes.dimensionButton}
-          variant="text"
-          size="small"
-          onClick={handleClick}
-          sx={{
-            ":hover": { color: expandable ? "primary.main" : "grey.800" },
-            cursor: expandable ? "pointer" : "default",
-          }}
-        >
-          <Icon className={classes.dimensionIcon} name={iconName} />
-          <Typography variant="body2" fontWeight="bold">
-            {dim.label}
-          </Typography>
-        </Button>
+      <Flex sx={{ justifyContent: "space-between" }}>
+        <div>
+          <Button
+            className={classes.dimensionButton}
+            variant="text"
+            size="small"
+            onClick={handleClick}
+            sx={{
+              ":hover": { color: !expanded ? "primary.main" : "grey.800" },
+              cursor: !expanded ? "pointer" : "default",
+            }}
+          >
+            <Typography variant="body2" fontWeight="bold">
+              {dim.label}
+            </Typography>
+          </Button>
+          {description && (
+            <Typography variant="body2">{description}</Typography>
+          )}
+        </div>
+        <Icon name={iconName} />
       </Flex>
-      {description && <Typography variant="body2">{description}</Typography>}
+
+      <AnimatePresence>
+        {expanded && (
+          <MotionBox
+            key="dimension-values"
+            className={classes.dimensionValues}
+            component={Flex}
+            {...animationProps}
+          >
+            {dim.values.map((d) => (
+              <React.Fragment key={d.value}>
+                <Typography variant="body2" {...animationProps}>
+                  {d.label}{" "}
+                  {d.alternateName ? (
+                    <span style={{ fontStyle: "italic" }}>
+                      ({d.alternateName})
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </Typography>
+                {d.description ? (
+                  <Typography variant="caption">{d.description}</Typography>
+                ) : null}
+              </React.Fragment>
+            ))}
+          </MotionBox>
+        )}
+      </AnimatePresence>
 
       {showExpandButton && (
         <Button
