@@ -127,9 +127,6 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(4),
     },
-    content: {
-      padding: theme.spacing(4),
-    },
     tabList: {
       height: 40,
       minHeight: 40,
@@ -148,7 +145,17 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       flexDirection: "column",
       gap: theme.spacing(4),
     },
-    icon: {
+    dimensionButton: {
+      textAlign: "left",
+      minHeight: 0,
+      padding: 0,
+      color: theme.palette.grey[700],
+
+      "& > svg": {
+        marginLeft: 0,
+      },
+    },
+    dimensionIcon: {
       display: "inline",
       marginLeft: -2,
       marginTop: -3,
@@ -328,8 +335,6 @@ export const MetadataPanel = ({
             ) : null}
           </AnimatePresence>
         </TabContext>
-
-        <Content />
       </Drawer>
     </>
   );
@@ -359,12 +364,6 @@ const Header = ({ onClose }: { onClose: () => void }) => {
       </IconButton>
     </div>
   );
-};
-
-const Content = () => {
-  const classes = useOtherStyles();
-
-  return <div className={classes.content}></div>;
 };
 
 const TabPanelGeneral = ({
@@ -494,9 +493,17 @@ const TabPanelDataDimension = ({
   expandable: boolean;
 }) => {
   const classes = useOtherStyles();
+  const selectedDimension = useMetadataPanelStore(
+    (state) => state.selectedDimension
+  );
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const { description, showExpandButton } = React.useMemo(() => {
-    if (expandable && dim.description && dim.description.length > 180) {
+    if (
+      expandable &&
+      dim.description &&
+      dim.description.length > 180 &&
+      !(selectedDimension && selectedDimension.iri === dim.iri)
+    ) {
       return {
         description: dim.description.slice(0, 180) + "…",
         showExpandButton: true,
@@ -507,26 +514,44 @@ const TabPanelDataDimension = ({
       description: dim.description,
       showExpandButton: false,
     };
-  }, [dim.description, expandable]);
+  }, [dim.description, expandable, dim.iri, selectedDimension]);
   const iconName = React.useMemo(() => {
     return getDimensionIconName(dim.__typename);
   }, [dim.__typename]);
 
+  const handleClick = React.useCallback(() => {
+    if (expandable) {
+      setSelectedDimension(dim);
+    }
+  }, [expandable, dim, setSelectedDimension]);
+
   return (
     <div>
       <Flex>
-        <Icon className={classes.icon} name={iconName} />
-        <Typography variant="body2" fontWeight="bold">
-          {dim.label}
-        </Typography>
+        <Button
+          className={classes.dimensionButton}
+          variant="text"
+          size="small"
+          onClick={handleClick}
+          sx={{
+            ":hover": { color: expandable ? "primary.main" : "grey.800" },
+            cursor: expandable ? "pointer" : "default",
+          }}
+        >
+          <Icon className={classes.dimensionIcon} name={iconName} />
+          <Typography variant="body2" fontWeight="bold">
+            {dim.label}
+          </Typography>
+        </Button>
       </Flex>
       {description && <Typography variant="body2">{description}</Typography>}
+
       {showExpandButton && (
         <Button
           component="a"
           variant="text"
           size="small"
-          onClick={() => setSelectedDimension(dim)}
+          onClick={handleClick}
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
         >
