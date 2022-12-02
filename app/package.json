@@ -86,6 +86,8 @@
     "material-ui-popup-state": "^2.0.0",
     "micro-cors": "^0.1.1",
     "mitt": "^3.0.0",
+    "mobx": "^6.7.0",
+    "mobx-react": "^7.6.0",
     "nanoid": "^3.1.12",
     "next-auth": "^4.10.3",
     "nprogress": "^0.2.0",
