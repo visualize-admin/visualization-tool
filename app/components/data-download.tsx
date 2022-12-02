@@ -26,12 +26,11 @@ import React, {
 } from "react";
 import { OperationResult, useClient } from "urql";
 
-import { QueryFilters } from "@/charts/shared/chart-helpers";
-import { DataSource } from "@/configurator";
 import { getSortedColumns } from "@/configurator/components/datatable";
+import { DataSource, QueryFilters } from "@/configurator/config-types";
+import { Observation } from "@/domain/data";
 import { useLocale } from "@/src";
 
-import { Observation } from "../domain/data";
 import {
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,

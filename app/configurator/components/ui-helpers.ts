@@ -254,9 +254,7 @@ export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
       return false;
   }
 
-  const anyAbbreviationsPresent = !!(d.values as DimensionValue[]).find(
-    (d) => d.alternateName
-  );
+  const anyAbbreviationsPresent = !!d.values.find((d) => d.alternateName);
 
   return anyAbbreviationsPresent;
 };

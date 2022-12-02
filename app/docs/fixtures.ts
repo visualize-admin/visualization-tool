@@ -495,10 +495,10 @@ export const tableDimensions = [
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
     label: "Jahr",
     values: [
-      { value: "2015", label: "2015", __typename: "DimensionValue" },
-      { value: "2016", label: "2016", __typename: "DimensionValue" },
-      { value: "2017", label: "2017", __typename: "DimensionValue" },
-      { value: "2018", label: "2018", __typename: "DimensionValue" },
+      { value: "2015", label: "2015" },
+      { value: "2016", label: "2016" },
+      { value: "2017", label: "2017" },
+      { value: "2018", label: "2018" },
     ],
     __typename: "TemporalDimension",
   },
@@ -510,37 +510,31 @@ export const tableDimensions = [
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/0",
         label: "Schweiz",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/1",
         label: "Jura",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/2",
         label: "Mittelland",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/3",
         label: "Voralpen",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/4",
         label: "Alpen",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/5",
         label: "Alpen-Südseite",
-        __typename: "DimensionValue",
       },
     ],
     __typename: "NominalDimension",
@@ -553,163 +547,136 @@ export const tableDimensions = [
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/0",
         label: "Schweiz",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/1",
         label: "Zürich",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/2",
         label: "Bern / Berne",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/3",
         label: "Luzern",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/4",
         label: "Uri",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/5",
         label: "Schwyz",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/6",
         label: "Obwalden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/7",
         label: "Nidwalden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/8",
         label: "Glarus",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/9",
         label: "Zug",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/10",
         label: "Fribourg / Freiburg",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/11",
         label: "Solothurn",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/12",
         label: "Basel-Stadt",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/13",
         label: "Basel-Landschaft",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/14",
         label: "Schaffhausen",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/15",
         label: "Appenzell Ausserrhoden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/16",
         label: "Appenzell Innerrhoden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/17",
         label: "St. Gallen",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/18",
         label: "Graubünden / Grigioni / Grischun",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/19",
         label: "Aargau",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/20",
         label: "Thurgau",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/21",
         label: "Ticino",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/22",
         label: "Vaud",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/23",
         label: "Valais / Wallis",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/24",
         label: "Neuchâtel",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/25",
         label: "Genève",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2/26",
         label: "Jura",
-        __typename: "DimensionValue",
       },
     ],
     __typename: "NominalDimension",
@@ -722,37 +689,31 @@ export const tableDimensions = [
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/0",
         label: "Grössenklasse - Total",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/1",
         label: "150 - 249 ha",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/2",
         label: "250 - 499 ha",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/3",
         label: "500 - 999 ha",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/4",
         label: "1000 - 1999 ha",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3/5",
         label: ">= 2000 ha",
-        __typename: "DimensionValue",
       },
     ],
     __typename: "NominalDimension",
@@ -765,61 +726,51 @@ export const tableDimensions = [
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/0",
         label: "Steuerhoheit - Total",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/1",
         label: "Mit Steuerhoheit - Total",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/2",
         label: ">>Bund",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/3",
         label: ">>Kantone",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/4",
         label: ">>Gemeinden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/5",
         label: "Ohne Steuerhoheit - Total",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/6",
         label: ">>Bürger- Burgergemeinden",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/7",
         label: ">>übrige öffentliche ohne Steuerhoheit",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/8",
         label: ">>Private",
-        __typename: "DimensionValue",
       },
       {
         value:
           "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4/9",
         label: "Gemischte (mit/ohne) - Total",
-        __typename: "DimensionValue",
       },
     ],
     __typename: "NominalDimension",

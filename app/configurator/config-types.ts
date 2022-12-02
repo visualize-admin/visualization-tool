@@ -63,6 +63,8 @@ const Filters = t.record(t.string, FilterValue, "Filters");
 
 export type Filters = t.TypeOf<typeof Filters>;
 
+export type QueryFilters = Filters | FilterValueSingle;
+
 // Meta
 const Title = t.type({
   de: t.string,

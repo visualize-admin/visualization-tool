@@ -56,6 +56,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { DimensionValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
@@ -175,7 +176,7 @@ export const DataFilterSelect = ({
 
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
-    const sortedValues = orderBy(dimension.values, sorters);
+    const sortedValues = orderBy(dimension.values, sorters) as DimensionValue[];
 
     return sortedValues;
   }, [dimension]);
@@ -289,7 +290,7 @@ export const DataFilterSelectDay = ({
         .filter((x) => x.value !== FIELD_VALUE_NONE)
         .map((x) => {
           try {
-            return x.value;
+            return x.value as string;
           } catch (e) {
             console.warn(`Bad value ${x.value}`);
             return;

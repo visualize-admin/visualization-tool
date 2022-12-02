@@ -47,11 +47,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
-import {
-  DimensionValue,
-  isTemporalDimension,
-  Observation,
-} from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
@@ -138,7 +134,7 @@ const useColumnsStackedState = (
   });
 
   const segmentsByValue = useMemo(() => {
-    const values = (segmentDimension?.values || []) as DimensionValue[];
+    const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);

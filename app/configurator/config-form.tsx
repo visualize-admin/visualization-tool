@@ -521,13 +521,14 @@ export const MultiFilterContextProvider = ({
     : null;
 
   const allValues = useMemo(() => {
-    return dimensionData?.values.map((d) => d.value) ?? [];
+    return dimensionData?.values.map((d) => `${d.value}`) ?? [];
   }, [dimensionData?.values]);
 
   const activeKeys: Set<string> = useMemo(() => {
     if (!dimensionData) {
       return new Set();
     }
+
     const activeKeys = activeFilter
       ? activeFilter.type === "single"
         ? [String(activeFilter.value)]

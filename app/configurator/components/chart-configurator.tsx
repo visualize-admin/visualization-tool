@@ -143,8 +143,8 @@ const DataFilterSelectGeneric = ({
     } else if (dimension.timeUnit === "Month") {
       return <DataFilterSelect {...sharedProps} />;
     } else {
-      const from = values[0].value;
-      const to = values[values.length - 1]?.value || from;
+      const from = `${values[0].value}`;
+      const to = `${values[values.length - 1]?.value || from}`;
 
       return (
         <DataFilterSelectTime
@@ -353,7 +353,7 @@ const useFilterReorder = ({
       type: "CHART_CONFIG_FILTER_SET_SINGLE",
       value: {
         dimensionIri: dimension.iri,
-        value: filterValue.value,
+        value: `${filterValue.value}`,
       },
     });
   });

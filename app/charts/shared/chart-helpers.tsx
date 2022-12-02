@@ -16,17 +16,15 @@ import {
   ChartConfig,
   ChartType,
   Filters,
-  FilterValueSingle,
   ImputationType,
   InteractiveFiltersConfig,
   isAreaConfig,
+  QueryFilters,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-
-export type QueryFilters = Filters | FilterValueSingle;
 
 // Prepare filters used in data query:
 // - merges publisher data filters and interactive data filters (user-defined),

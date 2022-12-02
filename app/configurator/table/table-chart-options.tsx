@@ -350,11 +350,11 @@ export const TableColumnOptions = ({
               <DataFilterSelectTime
                 dimension={component}
                 label={component.label}
-                from={component.values[0].value}
-                to={
-                  component.values[component.values.length - 1]?.value ||
+                from={`${component.values[0].value}`}
+                to={`${
+                  component.values[component.values.length - 1]?.value ??
                   component.values[0].value
-                }
+                }`}
                 timeUnit={component.timeUnit}
                 timeFormat={component.timeFormat}
                 disabled={false}

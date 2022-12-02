@@ -273,6 +273,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
           const pivotValueAttr = `${pivotDimension.iri}/${
             item[pivotDimension.iri]
           }`;
+          // @ts-ignore
           row[pivotValueAttr] = Object.fromEntries(
             measures.map((m) => [m.iri, item[m.iri]])
           );

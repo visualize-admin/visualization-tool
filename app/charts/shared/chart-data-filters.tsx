@@ -304,6 +304,7 @@ const DataFilterHierarchyDimension = ({
     if (hierarchy) {
       opts = hierarchyToOptions(hierarchy);
     } else {
+      // @ts-ignore
       opts = dimensionValues;
     }
     if (!isKeyDimension) {
@@ -351,8 +352,8 @@ const DataFilterTemporalDimension = ({
   const timeIntervalWithProps = React.useMemo(
     () =>
       getTimeIntervalWithProps(
-        options[0].value,
-        options[1].value,
+        options[0].value as string,
+        options[1].value as string,
         timeUnit,
         timeFormat,
         formatLocale

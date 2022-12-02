@@ -23,7 +23,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieFields } from "@/configurator";
-import { DimensionValue, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
@@ -85,7 +85,7 @@ const usePieState = (
   });
 
   const segmentsByValue = useMemo(() => {
-    const values = (segmentDimension?.values || []) as DimensionValue[];
+    const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
