@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { ascending, groups } from "d3";
+import { ascending, groups, max } from "d3";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
@@ -569,7 +569,7 @@ const TreeAccordion = ({
           }
         }}
       >
-        {renderExpandButton ? (
+        {renderExpandButton && (
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
@@ -585,8 +585,6 @@ const TreeAccordion = ({
           >
             <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
           </IconButton>
-        ) : (
-          <div style={{ marginLeft: "1rem" }} />
         )}
 
         {renderColorCheckbox && (
@@ -772,6 +770,13 @@ const DrawerContent = forwardRef<
 
       return acc;
     }, {} as Record<number, { selectable: boolean; expandable: boolean }>);
+
+    const maxDepth = max(flatOptions, (d) => d.depth);
+
+    // Expand last level by default, so it's aligned correctly.
+    if (maxDepth && maxDepth > 0) {
+      depthsMetadata[maxDepth].expandable = true;
+    }
 
     return { depthsMetadata, uniqueSelectableFlatOptions };
   }, [flatOptions]);
