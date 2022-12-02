@@ -4,6 +4,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   InputAdornment,
@@ -26,6 +27,7 @@ import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
+import { DimensionValue } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getDimensionIconName, Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -547,23 +549,8 @@ const TabPanelDataDimension = ({
             component={Flex}
             {...animationProps}
           >
-            {dim.values.map((d) => (
-              <React.Fragment key={d.value}>
-                <Typography variant="body2" {...animationProps}>
-                  {d.label}{" "}
-                  {d.alternateName ? (
-                    <span style={{ fontStyle: "italic" }}>
-                      ({d.alternateName})
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </Typography>
-                {d.description ? (
-                  <Typography variant="caption">{d.description}</Typography>
-                ) : null}
-              </React.Fragment>
-            ))}
+            <Divider />
+            <DimensionValues dim={dim} />
           </MotionBox>
         )}
       </AnimatePresence>
@@ -581,5 +568,56 @@ const TabPanelDataDimension = ({
         </Button>
       )}
     </div>
+  );
+};
+
+const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+  switch (dim.__typename) {
+    case "NominalDimension":
+    case "OrdinalDimension":
+    case "OrdinalMeasure":
+    case "GeoCoordinatesDimension":
+    case "GeoShapesDimension":
+      return <DimensionValuesNominal values={dim.values} />;
+    case "NumericalMeasure":
+    case "TemporalDimension":
+      return <DimensionValuesNumeric values={dim.values} />;
+    default:
+      const _exhaustiveCheck: never = dim;
+      return _exhaustiveCheck;
+  }
+};
+
+const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
+  return (
+    <>
+      {values.map((d) => (
+        <React.Fragment key={d.value}>
+          <Typography variant="body2" {...animationProps}>
+            {d.label}{" "}
+            {d.alternateName ? (
+              <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
+            ) : (
+              ""
+            )}
+          </Typography>
+          {d.description ? (
+            <Typography variant="caption">{d.description}</Typography>
+          ) : null}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+const DimensionValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
+  const min = values[0];
+  const max = values[values.length - 1];
+
+  return (
+    <>
+      <Typography variant="body2">Min: {min.value}</Typography>
+      <Typography variant="body2">Max: {max.value}</Typography>
+    </>
   );
 };
