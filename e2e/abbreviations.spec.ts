@@ -1,6 +1,6 @@
 import { expect, sleep, test } from "./common";
 
-test("it should be possible to enable abbreviations", async ({
+test("it should be possible to enable abbreviations for colors & x field (column)", async ({
   actions,
   selectors,
 }) => {
@@ -65,4 +65,35 @@ test("it should be possible to enable abbreviations", async ({
     "ZH",
     "JU",
   ]);
+});
+
+test("hierarchies: it should be possible to enable abbreviations for colors", async ({
+  actions,
+  selectors,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/7",
+    "Int"
+  );
+
+  await actions.editor.selectActiveField("Color");
+
+  await (await selectors.panels.drawer().within().findByText("None")).click();
+
+  await actions.mui.selectOption("Gas");
+
+  const checkbox = await selectors.edition.useAbbreviationsCheckbox();
+
+  await checkbox.click();
+
+  // Wait for the data to load.
+  await selectors.chart.loaded();
+  await selectors.edition.filtersLoaded();
+  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+
+  const legendItems = await (
+    await selectors.chart.colorLegendItems()
+  ).allInnerTexts();
+
+  expect(legendItems).toEqual(["CH4", "CO2", "N2O"]);
 });

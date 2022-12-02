@@ -410,6 +410,7 @@ fragment hierarchyValueFields on HierarchyValue {
   dimensionIri
   depth
   label
+  alternateName
   hasValue
   position
   identifier

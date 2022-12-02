@@ -13,8 +13,10 @@ describe("getLegendGroups", () => {
     const groups = getLegendGroups({
       title: "",
       labels: hierarchy.map((d) => d.label),
+      getLabel: (d: string) => d,
       hierarchy,
       sort: true,
+      useAbbreviations: false,
     });
 
     expect(groups.length).toEqual(1);

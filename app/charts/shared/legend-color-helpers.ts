@@ -6,13 +6,17 @@ import { dfs } from "@/utils/dfs";
 export const getLegendGroups = ({
   title,
   labels,
+  getLabel,
   hierarchy,
   sort,
+  useAbbreviations,
 }: {
   title?: string;
   labels: string[];
+  getLabel: (d: string) => string;
   hierarchy?: HierarchyValue[] | null;
   sort: boolean;
+  useAbbreviations: boolean;
 }) => {
   const groupsMap = new Map<HierarchyValue[], string[]>();
 
@@ -23,13 +27,17 @@ export const getLegendGroups = ({
     const emptyParents: HierarchyValue[] = [];
 
     dfs(hierarchy, (node, { parents: _parents }) => {
-      if (!labelSet.has(node.label)) {
+      const label = getLabel(
+        useAbbreviations ? node.alternateName || node.label : node.label
+      );
+
+      if (!labelSet.has(label)) {
         return;
       }
 
       const parents = _parents.length === 0 ? emptyParents : _parents;
       groupsMap.set(parents, groupsMap.get(parents) || []);
-      groupsMap.get(parents)?.push(node.label);
+      groupsMap.get(parents)?.push(label);
     });
   }
 

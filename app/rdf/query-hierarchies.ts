@@ -35,6 +35,7 @@ const toTree = (
   ): HierarchyValue => {
     const res: HierarchyValue = {
       label: getName(node.resource, locale) || "-",
+      alternateName: node.resource.out(ns.schema.alternateName).term?.value,
       value: node.resource.value,
       children: node.nextInHierarchy.map((childNode) =>
         serializeNode(childNode, depth + 1)

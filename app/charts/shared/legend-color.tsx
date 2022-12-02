@@ -12,6 +12,7 @@ import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import {
   DataSource,
+  GenericSegmentField,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
@@ -121,11 +122,13 @@ const useDimension = ({
 };
 
 const useLegendGroups = ({
-  labels,
   title,
+  labels,
+  getLabel,
 }: {
-  labels: string[];
   title?: string;
+  labels: string[];
+  getLabel: (d: string) => string;
 }) => {
   const configState = useReadOnlyConfiguratorState();
 
@@ -141,9 +144,11 @@ const useLegendGroups = ({
   const locale = useLocale();
 
   // FIXME: should color field also be included here?
-  const segmentField = isSegmentInConfig(configState.chartConfig)
-    ? configState.chartConfig.fields.segment
-    : null;
+  const segmentField = (
+    isSegmentInConfig(configState.chartConfig)
+      ? configState.chartConfig.fields.segment
+      : null
+  ) as GenericSegmentField | null | undefined;
 
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
@@ -170,10 +175,12 @@ const useLegendGroups = ({
     return getLegendGroups({
       title,
       labels,
+      getLabel,
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
+      useAbbreviations: segmentField?.useAbbreviations ?? false,
     });
-  }, [title, labels, hierarchy, segmentField]);
+  }, [title, labels, getLabel, hierarchy, segmentField]);
 
   return groups;
 };
@@ -186,7 +193,10 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups({ labels: colors.domain() });
+  const groups = useLegendGroups({
+    labels: colors.domain(),
+    getLabel: getSegmentLabel,
+  });
 
   return (
     <LegendColorContent
@@ -211,10 +221,6 @@ export const MapLegendColor = memo(function LegendColor({
 }) {
   const values = component.values as DimensionValue[];
   const sortedValues = values.sort((a, b) => a.label.localeCompare(b.label));
-  const groups = useLegendGroups({
-    labels: sortedValues.map((d) => `${d.value}`),
-    title: component.label,
-  });
   const getLabel = useAbbreviations
     ? (d: string) => {
         const v = values.find((v) => v.value === d);
@@ -223,6 +229,11 @@ export const MapLegendColor = memo(function LegendColor({
     : (d: string) => {
         return values.find((v) => v.value === d)?.label as string;
       };
+  const groups = useLegendGroups({
+    labels: sortedValues.map((d) => `${d.value}`),
+    getLabel,
+    title: component.label,
+  });
 
   return (
     <LegendColorContent
