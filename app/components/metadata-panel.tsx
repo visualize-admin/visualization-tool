@@ -229,7 +229,8 @@ export const OpenMetadataPanelWrapper = ({
 }) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
-  const handleClick = useEvent(() => {
+  const handleClick = useEvent((e: React.MouseEvent) => {
+    e.stopPropagation();
     openDimension(dim);
   });
 

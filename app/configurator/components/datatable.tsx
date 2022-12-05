@@ -16,6 +16,7 @@ import { useMemo, useRef, useState } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
 import { isNumericalMeasure, Observation } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
@@ -29,19 +30,28 @@ import { useLocale } from "@/locales/use-locale";
 const DimensionLabel = ({
   dimension,
   tooltipProps,
+  linkToMetadataPanel,
 }: {
   dimension: DimensionMetadataFragment;
   tooltipProps?: Omit<TooltipProps, "title" | "children">;
+  linkToMetadataPanel: boolean;
 }) => {
   const label = dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;
-  return dimension.description ? (
+
+  return linkToMetadataPanel ? (
+    <OpenMetadataPanelWrapper dim={dimension}>
+      <span style={{ fontWeight: "bold" }}>{label}</span>
+    </OpenMetadataPanelWrapper>
+  ) : dimension.description ? (
     <Tooltip title={dimension.description} arrow {...tooltipProps}>
-      <span style={{ textDecoration: "underline" }}>{label}</span>
+      <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
+        {label}
+      </span>
     </Tooltip>
   ) : (
-    <>{label}</>
+    <span style={{ fontWeight: "bold" }}>{label}</span>
   );
 };
 
@@ -49,10 +59,12 @@ export const PreviewTable = ({
   title,
   headers,
   observations,
+  linkToMetadataPanel,
 }: {
   title: string;
   headers: DimensionMetadataFragment[];
   observations: Observation[];
+  linkToMetadataPanel: boolean;
 }) => {
   const [sortBy, setSortBy] = useState<DimensionMetadataFragment>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
@@ -127,7 +139,11 @@ export const PreviewTable = ({
                       },
                     }}
                   >
-                    <DimensionLabel dimension={d} tooltipProps={tooltipProps} />
+                    <DimensionLabel
+                      dimension={d}
+                      tooltipProps={tooltipProps}
+                      linkToMetadataPanel={linkToMetadataPanel}
+                    />
                   </TableSortLabel>
                 </TableCell>
               );
@@ -196,6 +212,7 @@ export const DataSetPreviewTable = ({
         title={title}
         headers={headers}
         observations={observations}
+        linkToMetadataPanel={false}
       />
     );
   } else {
@@ -245,6 +262,7 @@ export const DataSetTable = ({
           title={data.dataCubeByIri.title}
           headers={headers}
           observations={data.dataCubeByIri.observations.data}
+          linkToMetadataPanel={true}
         />
       </Box>
     );

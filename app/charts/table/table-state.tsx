@@ -36,12 +36,14 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useDimensionFormatters } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 export type MKColumnMeta<T> = {
+  dim: DimensionMetadataFragment;
   iri: string;
   slugifiedIri: string;
   description?: string;
@@ -293,6 +295,7 @@ const useTableState = ({
         const formatter = formatters[iri];
         const cellFormatter = (x: Cell<Observation>) => formatter(x.value);
         const common = {
+          dim: allColumnsByIri[iri],
           iri,
           slugifiedIri,
           columnComponentType,

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import React, { useMemo, useContext } from "react";
 import { HeaderGroup } from "react-table";
 
-import { MaybeTooltip } from "@/utils/maybe-tooltip";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 
 import Flex from "../../components/flex";
 import { Observation } from "../../domain/data";
@@ -87,7 +87,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
             // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => {
-                const { columnComponentType, description } =
+                const { dim, columnComponentType } =
                   tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
@@ -107,17 +107,11 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       active={isCustomSorted}
                       direction={column.isSortedDesc ? "desc" : "asc"}
                     >
-                      <MaybeTooltip text={description}>
-                        <span
-                          style={{
-                            textDecoration: description
-                              ? "underline"
-                              : undefined,
-                          }}
-                        >
+                      <OpenMetadataPanelWrapper dim={dim}>
+                        <span style={{ fontWeight: "bold" }}>
                           {column.render("Header")}
                         </span>
-                      </MaybeTooltip>
+                      </OpenMetadataPanelWrapper>
                     </TableSortLabel>
                   </Flex>
                 );
