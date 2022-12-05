@@ -502,18 +502,12 @@ const TabPanelDataDimension = ({
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
-  const { description, showExpandButton } = React.useMemo(() => {
+  const description = React.useMemo(() => {
     if (!expanded && dim.description && dim.description.length > 180) {
-      return {
-        description: dim.description.slice(0, 180) + "…",
-        showExpandButton: true,
-      };
+      return dim.description.slice(0, 180) + "…";
     }
 
-    return {
-      description: dim.description,
-      showExpandButton: false,
-    };
+    return dim.description;
   }, [dim.description, expanded]);
   // const iconName = React.useMemo(() => {
   //   return getDimensionIconName(dim.__typename);
@@ -564,7 +558,7 @@ const TabPanelDataDimension = ({
         )}
       </AnimatePresence>
 
-      {showExpandButton && (
+      {!expanded && (
         <Button
           component="a"
           variant="text"
