@@ -294,6 +294,7 @@ export const MetadataPanel = ({
         hideBackdrop
         ModalProps={{ container }}
         PaperProps={{ style: { position: "absolute" } }}
+        disableEnforceFocus
       >
         <Header onClose={handleToggle} />
 
