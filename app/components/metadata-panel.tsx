@@ -286,6 +286,7 @@ export const MetadataPanel = ({
       <ToggleButton onClick={handleToggle} />
 
       <Drawer
+        data-testid="panel-metadata"
         className={drawerClasses.root}
         open={open}
         anchor="left"
@@ -344,7 +345,13 @@ export const MetadataPanel = ({
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <Button component="a" variant="text" size="small" onClick={onClick}>
+    <Button
+      data-testid="panel-metadata-toggle"
+      component="a"
+      variant="text"
+      size="small"
+      onClick={onClick}
+    >
       <Typography variant="body2">
         <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
       </Typography>
