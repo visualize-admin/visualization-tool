@@ -29,7 +29,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
 import { DimensionValue } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { getDimensionIconName, Icon } from "@/icons";
+import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
@@ -515,9 +515,9 @@ const TabPanelDataDimension = ({
       showExpandButton: false,
     };
   }, [dim.description, expanded]);
-  const iconName = React.useMemo(() => {
-    return getDimensionIconName(dim.__typename);
-  }, [dim.__typename]);
+  // const iconName = React.useMemo(() => {
+  //   return getDimensionIconName(dim.__typename);
+  // }, [dim.__typename]);
 
   const handleClick = React.useCallback(() => {
     if (!expanded) {
@@ -547,7 +547,7 @@ const TabPanelDataDimension = ({
             <Typography variant="body2">{description}</Typography>
           )}
         </div>
-        <Icon name={iconName} />
+        {/* <Icon name={iconName} /> */}
       </Flex>
 
       <AnimatePresence>
