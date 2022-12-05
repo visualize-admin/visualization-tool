@@ -80,6 +80,12 @@ export const createActions = ({
       within,
     }),
   },
+  metadataPanel: {
+    toggle: async () => {
+      const toggleButton = await screen.findByTestId("panel-metadata-toggle");
+      await toggleButton.click();
+    },
+  },
   drawer: {
     close: async () => await screen.locator('text="Back to main"').click(),
   },

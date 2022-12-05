@@ -4,6 +4,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Divider,
   Drawer,
   IconButton,
   InputAdornment,
@@ -26,6 +27,7 @@ import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
+import { DimensionValue } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getDimensionIconName, Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -127,9 +129,6 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(4),
     },
-    content: {
-      padding: theme.spacing(4),
-    },
     tabList: {
       height: 40,
       minHeight: 40,
@@ -142,17 +141,27 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
     },
     tabPanel: {
       padding: 0,
+      paddingBottom: theme.spacing(3),
     },
     tabPanelContent: {
       display: "flex",
       flexDirection: "column",
       gap: theme.spacing(4),
     },
-    icon: {
-      display: "inline",
-      marginLeft: -2,
-      marginTop: -3,
-      marginRight: 2,
+    dimensionButton: {
+      textAlign: "left",
+      minHeight: 0,
+      padding: 0,
+      color: theme.palette.grey[700],
+
+      "& > svg": {
+        marginLeft: 0,
+      },
+    },
+    dimensionValues: {
+      flexDirection: "column",
+      gap: theme.spacing(2),
+      marginTop: theme.spacing(3),
     },
     search: {
       "& .MuiAutocomplete-inputRoot": {
@@ -220,7 +229,8 @@ export const OpenMetadataPanelWrapper = ({
 }) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
-  const handleClick = useEvent(() => {
+  const handleClick = useEvent((e: React.MouseEvent) => {
+    e.stopPropagation();
     openDimension(dim);
   });
 
@@ -277,12 +287,14 @@ export const MetadataPanel = ({
       <ToggleButton onClick={handleToggle} />
 
       <Drawer
+        data-testid="panel-metadata"
         className={drawerClasses.root}
         open={open}
         anchor="left"
         hideBackdrop
         ModalProps={{ container }}
         PaperProps={{ style: { position: "absolute" } }}
+        disableEnforceFocus
       >
         <Header onClose={handleToggle} />
 
@@ -328,8 +340,6 @@ export const MetadataPanel = ({
             ) : null}
           </AnimatePresence>
         </TabContext>
-
-        <Content />
       </Drawer>
     </>
   );
@@ -337,7 +347,13 @@ export const MetadataPanel = ({
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <Button component="a" variant="text" size="small" onClick={onClick}>
+    <Button
+      data-testid="panel-metadata-toggle"
+      component="a"
+      variant="text"
+      size="small"
+      onClick={onClick}
+    >
       <Typography variant="body2">
         <Trans id="controls.metadata-panel.metadata">Metadata</Trans>
       </Typography>
@@ -359,12 +375,6 @@ const Header = ({ onClose }: { onClose: () => void }) => {
       </IconButton>
     </div>
   );
-};
-
-const Content = () => {
-  const classes = useOtherStyles();
-
-  return <div className={classes.content}></div>;
 };
 
 const TabPanelGeneral = ({
@@ -409,10 +419,7 @@ const TabPanelData = ({
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
-              <TabPanelDataDimension
-                dim={selectedDimension}
-                expandable={false}
-              />
+              <TabPanelDataDimension dim={selectedDimension} expanded={true} />
             </Box>
           </MotionBox>
         ) : (
@@ -477,7 +484,7 @@ const TabPanelData = ({
               clearIcon={null}
             />
             {dimensions.map((d) => (
-              <TabPanelDataDimension key={d.iri} dim={d} expandable={true} />
+              <TabPanelDataDimension key={d.iri} dim={d} expanded={false} />
             ))}
           </MotionBox>
         )}
@@ -488,15 +495,15 @@ const TabPanelData = ({
 
 const TabPanelDataDimension = ({
   dim,
-  expandable,
+  expanded,
 }: {
   dim: DimensionMetadataFragment;
-  expandable: boolean;
+  expanded: boolean;
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
   const { description, showExpandButton } = React.useMemo(() => {
-    if (expandable && dim.description && dim.description.length > 180) {
+    if (!expanded && dim.description && dim.description.length > 180) {
       return {
         description: dim.description.slice(0, 180) + "…",
         showExpandButton: true,
@@ -507,26 +514,62 @@ const TabPanelDataDimension = ({
       description: dim.description,
       showExpandButton: false,
     };
-  }, [dim.description, expandable]);
+  }, [dim.description, expanded]);
   const iconName = React.useMemo(() => {
     return getDimensionIconName(dim.__typename);
   }, [dim.__typename]);
 
+  const handleClick = React.useCallback(() => {
+    if (!expanded) {
+      setSelectedDimension(dim);
+    }
+  }, [expanded, dim, setSelectedDimension]);
+
   return (
     <div>
-      <Flex>
-        <Icon className={classes.icon} name={iconName} />
-        <Typography variant="body2" fontWeight="bold">
-          {dim.label}
-        </Typography>
+      <Flex sx={{ justifyContent: "space-between" }}>
+        <div>
+          <Button
+            className={classes.dimensionButton}
+            variant="text"
+            size="small"
+            onClick={handleClick}
+            sx={{
+              ":hover": { color: !expanded ? "primary.main" : "grey.800" },
+              cursor: !expanded ? "pointer" : "default",
+            }}
+          >
+            <Typography variant="body2" fontWeight="bold">
+              {dim.label}
+            </Typography>
+          </Button>
+          {description && (
+            <Typography variant="body2">{description}</Typography>
+          )}
+        </div>
+        <Icon name={iconName} />
       </Flex>
-      {description && <Typography variant="body2">{description}</Typography>}
+
+      <AnimatePresence>
+        {expanded && (
+          <MotionBox
+            key="dimension-values"
+            className={classes.dimensionValues}
+            component={Flex}
+            {...animationProps}
+          >
+            <Divider />
+            <DimensionValues dim={dim} />
+          </MotionBox>
+        )}
+      </AnimatePresence>
+
       {showExpandButton && (
         <Button
           component="a"
           variant="text"
           size="small"
-          onClick={() => setSelectedDimension(dim)}
+          onClick={handleClick}
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
         >
@@ -534,5 +577,56 @@ const TabPanelDataDimension = ({
         </Button>
       )}
     </div>
+  );
+};
+
+const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+  switch (dim.__typename) {
+    case "NominalDimension":
+    case "OrdinalDimension":
+    case "OrdinalMeasure":
+    case "GeoCoordinatesDimension":
+    case "GeoShapesDimension":
+      return <DimensionValuesNominal values={dim.values} />;
+    case "NumericalMeasure":
+    case "TemporalDimension":
+      return <DimensionValuesNumeric values={dim.values} />;
+    default:
+      const _exhaustiveCheck: never = dim;
+      return _exhaustiveCheck;
+  }
+};
+
+const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
+  return (
+    <>
+      {values.map((d) => (
+        <React.Fragment key={d.value}>
+          <Typography variant="body2" {...animationProps}>
+            {d.label}{" "}
+            {d.alternateName ? (
+              <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
+            ) : (
+              ""
+            )}
+          </Typography>
+          {d.description ? (
+            <Typography variant="caption">{d.description}</Typography>
+          ) : null}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+const DimensionValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
+  const min = values[0];
+  const max = values[values.length - 1];
+
+  return (
+    <>
+      <Typography variant="body2">Min: {min.value}</Typography>
+      <Typography variant="body2">Max: {max.value}</Typography>
+    </>
   );
 };

@@ -11,6 +11,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { updateInteractiveTimeRangeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { DimensionValue } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
@@ -29,11 +30,7 @@ export const EditorBrush = ({
   disabled,
 }: {
   timeExtent: Date[];
-  timeDataPoints?: {
-    __typename: "DimensionValue";
-    value: string;
-    label: string;
-  }[];
+  timeDataPoints?: DimensionValue[];
   disabled: boolean;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
@@ -52,7 +49,9 @@ export const EditorBrush = ({
   const getClosestDimensionValue = useCallback(
     (date: Date): Date => {
       if (timeDataPoints) {
-        const dimensionValues = timeDataPoints.map((d) => parseDate(d.value));
+        const dimensionValues = timeDataPoints.map((d) =>
+          parseDate(d.value as string)
+        );
 
         const bisectDateLeft = bisector(
           (dvs: Date, date: Date) => dvs.getTime() - date.getTime()

@@ -33,11 +33,7 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
-import {
-  DimensionValue,
-  isTemporalDimension,
-  Observation,
-} from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   useFormatNumber,
   formatNumberWithUnit,
@@ -125,7 +121,7 @@ const useLinesState = (
   });
 
   const segmentsByValue = useMemo(() => {
-    const values = (segmentDimension?.values || []) as DimensionValue[];
+    const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);

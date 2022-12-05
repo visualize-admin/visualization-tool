@@ -306,7 +306,7 @@ export const dimensionValues: NonNullable<
   const { loaders, sparqlClient } = await setup(info);
   // Different loader if we have filters or not
   const loader = getDimensionValuesLoader(sparqlClient, loaders, filters);
-  const values: Array<DimensionValue> = await loader.load(parent);
+  const values: DimensionValue[] = await loader.load(parent);
 
   return values.sort((a, b) =>
     ascending(

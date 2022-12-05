@@ -5,7 +5,6 @@ import { AreaChart } from "@/charts/area/areas-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
@@ -16,7 +15,8 @@ import {
   AreaFields,
   DataSource,
   InteractiveFiltersConfig,
-} from "@/configurator";
+  QueryFilters,
+} from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,

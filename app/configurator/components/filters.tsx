@@ -927,6 +927,8 @@ export const DimensionValuesMultiFilter = ({
         <MultiFilterContent
           field={field}
           colorComponent={colorComponent}
+          // FIXME: types
+          // @ts-ignore
           tree={
             hierarchyTree && hierarchyTree.length > 0
               ? hierarchyTree
@@ -992,8 +994,10 @@ export const TimeFilter = ({
     const parse = formatLocale.parse(timeFormat);
     const formatDateValue = formatLocale.format(timeFormat);
 
-    const from = parse(dimension.values[0].value);
-    const to = parse(dimension.values[dimension.values.length - 1].value);
+    const from = parse(dimension.values[0].value as string);
+    const to = parse(
+      dimension.values[dimension.values.length - 1].value as string
+    );
 
     if (!from || !to) {
       return null;
@@ -1049,9 +1053,9 @@ export const DimensionValuesSingleFilter = ({
   const dimension = data?.dataCubeByIri?.dimensionByIri;
 
   const sortedDimensionValues = useMemo(() => {
-    return dimension?.values
-      ? [...dimension.values].sort(valueComparator(locale))
-      : [];
+    const values = dimension?.values ?? [];
+
+    return [...values].sort(valueComparator(locale));
   }, [dimension?.values, locale]);
 
   if (dimension) {
@@ -1063,7 +1067,7 @@ export const DimensionValuesSingleFilter = ({
               key={dv.value}
               dimensionIri={dimensionIri}
               label={dv.label}
-              value={dv.value}
+              value={`${dv.value}`}
             />
           );
         })}

@@ -16,12 +16,11 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
   DataSource,
-  Filters,
-  FilterValueSingle,
   InteractiveFiltersConfig,
+  QueryFilters,
   ScatterPlotConfig,
   ScatterPlotFields,
-} from "@/configurator";
+} from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -40,7 +39,7 @@ export const ChartScatterplotVisualization = ({
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ScatterPlotConfig;
-  queryFilters: Filters | FilterValueSingle;
+  queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [queryResp] = useDataCubeObservationsQuery({

@@ -13,12 +13,11 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   DataSource,
-  Filters,
-  FilterValueSingle,
   InteractiveFiltersConfig,
   LineConfig,
   LineFields,
-} from "@/configurator";
+  QueryFilters,
+} from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -37,7 +36,7 @@ export const ChartLinesVisualization = ({
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: LineConfig;
-  queryFilters: Filters | FilterValueSingle;
+  queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [queryResp] = useDataCubeObservationsQuery({

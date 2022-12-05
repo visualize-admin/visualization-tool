@@ -16,12 +16,11 @@ import {
 } from "@/components/hint";
 import {
   DataSource,
-  Filters,
-  FilterValueSingle,
   InteractiveFiltersConfig,
   PieConfig,
   PieFields,
-} from "@/configurator";
+  QueryFilters,
+} from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -38,7 +37,7 @@ export const ChartPieVisualization = ({
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: PieConfig;
-  queryFilters: Filters | FilterValueSingle;
+  queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({

@@ -2,12 +2,7 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
-import {
-  DimensionValue,
-  GeoFeature,
-  GeoProperties,
-  GeoShapes,
-} from "@/domain/data";
+import { GeoFeature, GeoProperties, GeoShapes } from "@/domain/data";
 import {
   DataCubeResolvers,
   QueryResolvers,
@@ -222,9 +217,7 @@ export const resolvers: Resolvers = {
     ...mkDimensionResolvers("GeoShapesDimension"),
     geoShapes: async (parent, _, { setup }, info) => {
       const { loaders } = await setup(info);
-      const dimValues = (await loaders.dimensionValues.load(
-        parent
-      )) as DimensionValue[];
+      const dimValues = await loaders.dimensionValues.load(parent);
       const dimIris = dimValues.map((d) => `${d.value}`) as string[];
       const shapes = (await loaders.geoShapes.loadMany(
         dimIris

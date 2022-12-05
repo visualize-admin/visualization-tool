@@ -35,7 +35,7 @@ export const makeDimensionValueSorters = (
     measureBySegment?: Record<string, number | null>;
     useAbbreviations?: boolean;
   } = {}
-): ((label: DimensionValue["label"]) => string | undefined | number)[] => {
+): ((label: string) => string | undefined | number)[] => {
   const { sorting, sumsBySegment, measureBySegment, useAbbreviations } =
     options;
   const sortingType = sorting?.sortingType;
@@ -45,11 +45,11 @@ export const makeDimensionValueSorters = (
   }
 
   const values = useAbbreviations
-    ? (dimension.values as DimensionValue[]).map((d) => ({
+    ? dimension.values.map((d) => ({
         ...d,
         label: d.alternateName ?? d.label,
       }))
-    : (dimension.values as DimensionValue[]);
+    : dimension.values;
   const valuesByLabel = new Map<string, DimensionValue>(
     values.map((v) => [v.label, v])
   );
@@ -70,9 +70,7 @@ export const makeDimensionValueSorters = (
   const getMeasure = (label?: string) =>
     label ? measureBySegment?.[label] ?? Infinity : Infinity;
 
-  let sorters: ((
-    dv: DimensionValue["label"]
-  ) => string | undefined | number)[] = [];
+  let sorters: ((dv: string) => string | undefined | number)[] = [];
 
   const defaultSorters = [getPosition, getIdentifier, getLabel];
 
@@ -101,7 +99,7 @@ export const makeDimensionValueSorters = (
 interface Value {
   label: string;
   position?: number;
-  identifier?: number;
+  identifier?: number | string;
 }
 
 export const valueComparator = (locale: string) => (a: Value, b: Value) => {

@@ -289,8 +289,16 @@ export const getCubeDimensionValuesWithMetadata = async ({
 
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
-    const [labels, literals, unversioned] = await Promise.all([
+    const [labels, descriptions, literals, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+      scaleType === "Ordinal" || scaleType === "Nominal"
+        ? loadResourceLabels({
+            ids: namedNodes,
+            locale,
+            sparqlClient,
+            labelTerm: schema.description,
+          })
+        : [],
       loadResourceLiterals({
         ids: namedNodes,
         sparqlClient,
@@ -328,6 +336,10 @@ export const getCubeDimensionValuesWithMetadata = async ({
       labels.map(({ iri, label }) => [iri.value, label?.value])
     );
 
+    const descriptionsLookup = new Map(
+      descriptions.map(({ iri, label }) => [iri.value, label?.value])
+    );
+
     const unversionedLookup = new Map(
       unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
     );
@@ -338,6 +350,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
       result.push({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
+        description: descriptionsLookup.get(iri.value),
         position:
           lookupValue?.position !== undefined
             ? parseInt(lookupValue.position, 10)

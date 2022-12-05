@@ -16,7 +16,7 @@ import {
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import { DimensionValue, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
@@ -219,15 +219,16 @@ export const MapLegendColor = memo(function LegendColor({
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
 }) {
-  const values = component.values as DimensionValue[];
-  const sortedValues = values.sort((a, b) => a.label.localeCompare(b.label));
+  const sortedValues = component.values.sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
   const getLabel = useAbbreviations
     ? (d: string) => {
-        const v = values.find((v) => v.value === d);
+        const v = component.values.find((v) => v.value === d);
         return (v?.alternateName || v?.label) as string;
       }
     : (d: string) => {
-        return values.find((v) => v.value === d)?.label as string;
+        return component.values.find((v) => v.value === d)?.label as string;
       };
   const groups = useLegendGroups({
     labels: sortedValues.map((d) => `${d.value}`),

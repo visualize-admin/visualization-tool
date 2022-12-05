@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DimensionValue, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const useMaybeAbbreviations = ({
@@ -11,7 +11,7 @@ export const useMaybeAbbreviations = ({
   dimension: DimensionMetadataFragment | undefined;
 }) => {
   const { labelLookup, abbreviationOrLabelLookup } = React.useMemo(() => {
-    const values: DimensionValue[] = dimension?.values ?? [];
+    const values = dimension?.values ?? [];
 
     const labelLookup = new Map(values.map((d) => [d.label, d]));
     const abbreviationOrLabelLookup = new Map(

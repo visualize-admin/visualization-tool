@@ -7,9 +7,14 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
-import { BaseLayer, DataSource, MapConfig, MapFields } from "@/configurator";
+import {
+  BaseLayer,
+  DataSource,
+  MapConfig,
+  MapFields,
+  QueryFilters,
+} from "@/configurator/config-types";
 import {
   AreaLayer,
   GeoData,

@@ -13,6 +13,13 @@ generates:
       withComponent: false
       withHooks: true
       contextType: ./context#GraphQLContext
+      scalars:
+        Observation: "../domain/data#Observation"
+        ObservationValue: "../domain/data#ObservationValue"
+        DimensionValue: "../domain/data#DimensionValue"
+        RawObservation: "../domain/data#RawObservation"
+        Filters: "../configurator#QueryFilters"
+        GeoShape: "../domain/data#GeoShape"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"

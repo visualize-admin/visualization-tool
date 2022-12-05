@@ -44,7 +44,6 @@ import {
   NumericalColorField,
 } from "@/configurator/config-types";
 import {
-  DimensionValue,
   findRelatedErrorDimension,
   GeoData,
   isGeoShapesDimension,
@@ -181,13 +180,12 @@ const getCategoricalColors = (
   const component = [...dimensions, ...measures].find(
     (d) => d.iri === color.componentIri
   ) as DimensionMetadataFragment;
-  const values = component.values as DimensionValue[];
-  const valuesByLabel = keyBy(values, (d) => d.label);
+  const valuesByLabel = keyBy(component.values, (d) => d.label);
   const valuesByAbbreviationOrLabel = keyBy(
-    values,
+    component.values,
     color.useAbbreviations ? (d) => d.alternateName ?? d.label : (d) => d.label
   );
-  const domain: string[] = values.map((d) => `${d.value}`) || [];
+  const domain: string[] = component.values.map((d) => `${d.value}`) || [];
   const rgbColorMapping = mapValues(color.colorMapping, (d) =>
     colorToRgbArray(d)
   );

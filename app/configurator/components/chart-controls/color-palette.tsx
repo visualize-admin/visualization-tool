@@ -20,7 +20,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { DimensionValue, isNumericalMeasure } from "@/domain/data";
+import { isNumericalMeasure } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   categoricalPalettes,
@@ -64,9 +64,7 @@ export const ColorPalette = ({
   const defaultPalette =
     hasColors && component
       ? getDefaultCategoricalPalette(
-          (component.values as DimensionValue[])
-            .map((d) => d.color)
-            .filter(Boolean) as string[]
+          component.values.map((d) => d.color).filter(Boolean) as string[]
         )
       : null;
 

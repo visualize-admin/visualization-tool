@@ -47,11 +47,7 @@ import {
   useErrorMeasure,
   useErrorRange,
 } from "@/configurator/components/ui-helpers";
-import {
-  DimensionValue,
-  isTemporalDimension,
-  Observation,
-} from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
@@ -138,7 +134,7 @@ const useGroupedColumnsState = (
   });
 
   const segmentsByValue = useMemo(() => {
-    const values = (segmentDimension?.values || []) as DimensionValue[];
+    const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);

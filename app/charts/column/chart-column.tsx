@@ -23,10 +23,9 @@ import {
   ColumnConfig,
   ColumnFields,
   DataSource,
-  Filters,
-  FilterValueSingle,
   InteractiveFiltersConfig,
-} from "@/configurator";
+  QueryFilters,
+} from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
@@ -46,7 +45,7 @@ export const ChartColumnsVisualization = ({
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ColumnConfig;
-  queryFilters: Filters | FilterValueSingle;
+  queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [queryResp] = useDataCubeObservationsQuery({
