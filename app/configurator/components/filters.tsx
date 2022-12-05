@@ -526,6 +526,7 @@ const TreeAccordionDetails = styled(AccordionDetails)(() => ({
 }));
 
 const TreeAccordion = ({
+  flat,
   depth,
   value,
   label,
@@ -537,6 +538,7 @@ const TreeAccordion = ({
   onSelect,
   children,
 }: {
+  flat?: boolean;
   depth: number;
   value: string;
   label: string;
@@ -552,7 +554,7 @@ const TreeAccordion = ({
   const { getValueColor } = useMultiFilterContext();
   const [expanded, setExpanded] = useState(() => (depth === 0 ? true : false));
 
-  const paddingLeft = `${(depth + 1) * 8}px`;
+  const paddingLeft = flat ? "1rem" : `${(depth + 1) * 8}px`;
 
   return (
     <StyledAccordion
@@ -656,12 +658,14 @@ const isHierarchyOptionSelectable = (d: HierarchyValue) => {
 };
 
 const Tree = ({
+  flat,
   depthsMetadata,
   options,
   selectedValues,
   showColors,
   onSelect,
 }: {
+  flat: boolean;
   depthsMetadata: Record<number, { selectable: boolean; expandable: boolean }>;
   options: HierarchyValue[];
   selectedValues: HierarchyValue[];
@@ -683,6 +687,7 @@ const Tree = ({
         return (
           <TreeAccordion
             key={value}
+            flat={flat}
             depth={depth}
             value={value}
             label={label}
@@ -704,6 +709,7 @@ const Tree = ({
           >
             {hasChildren ? (
               <Tree
+                flat={flat}
                 depthsMetadata={depthsMetadata}
                 options={children as HierarchyValue[]}
                 selectedValues={selectedValues}
@@ -831,6 +837,7 @@ const DrawerContent = forwardRef<
         />
       </Box>
       <Tree
+        flat={Object.keys(depthsMetadata).length === 1}
         depthsMetadata={depthsMetadata}
         options={filteredOptions}
         selectedValues={pendingValues}
