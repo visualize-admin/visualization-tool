@@ -222,6 +222,7 @@ export type HierarchyValue = {
   __typename: 'HierarchyValue';
   value: Scalars['String'];
   label: Scalars['String'];
+  alternateName?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['String']>;
   identifier?: Maybe<Scalars['String']>;
   dimensionIri: Scalars['String'];
@@ -935,7 +936,7 @@ export type SubthemesQueryVariables = Exact<{
 
 export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
 
-export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, hasValue?: Maybe<boolean>, position?: Maybe<string>, identifier?: Maybe<string> };
+export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, alternateName?: Maybe<string>, hasValue?: Maybe<boolean>, position?: Maybe<string>, identifier?: Maybe<string> };
 
 export type DimensionHierarchyQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -987,6 +988,7 @@ export const HierarchyValueFieldsFragmentDoc = gql`
   dimensionIri
   depth
   label
+  alternateName
   hasValue
   position
   identifier
