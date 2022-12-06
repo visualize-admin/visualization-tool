@@ -20,7 +20,7 @@ import {
   Observation,
   ObservationValue,
   parseObservationValue,
-  shouldValuesBeLoadedForResolvedDimension,
+  shouldLoadMinMaxValues,
 } from "../domain/data";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
@@ -33,7 +33,10 @@ import {
   parseCube,
   parseCubeDimension,
 } from "./parse";
-import { loadDimensionValues } from "./query-dimension-values";
+import {
+  loadDimensionValues,
+  loadMinMaxDimensionValues,
+} from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
 import { loadResourceLiterals } from "./query-literals";
 import { loadUnversionedResources } from "./query-sameas";
@@ -185,6 +188,7 @@ export const getCubeDimensionValues = async (
   filters?: Filters
 ): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
+
   if (
     typeof dimension.minInclusive !== "undefined" &&
     typeof dimension.maxInclusive !== "undefined" &&
@@ -201,7 +205,28 @@ export const getCubeDimensionValues = async (
     ];
   }
 
-  if (!shouldValuesBeLoadedForResolvedDimension(rdimension)) {
+  if (shouldLoadMinMaxValues(rdimension)) {
+    if (cube.term && dimension.path) {
+      const result = await loadMinMaxDimensionValues({
+        datasetIri: cube.term,
+        dimensionIri: dimension.path,
+        sparqlClient,
+      });
+
+      if (result) {
+        const { minValue, maxValue } = result;
+        const min = parseObservationValue({ value: minValue }) ?? 0;
+        const max = parseObservationValue({ value: maxValue }) ?? 0;
+
+        return [
+          { value: min, label: `${min}` },
+          { value: max, label: `${max}` },
+        ];
+      }
+
+      return [];
+    }
+
     return [];
   }
 

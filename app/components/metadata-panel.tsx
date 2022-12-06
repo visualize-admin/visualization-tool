@@ -26,7 +26,7 @@ import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
-import { DimensionValue } from "@/domain/data";
+import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -581,6 +581,10 @@ const TabPanelDataDimension = ({
 };
 
 const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+  if (isStandardErrorDimension(dim)) {
+    return <DimensionValuesNumeric values={dim.values} />;
+  }
+
   switch (dim.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
@@ -590,7 +594,6 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
       return <DimensionValuesNominal values={dim.values} />;
     case "NumericalMeasure":
     case "TemporalDimension":
-      // FIXME: empty values? bigger than 200? need to fetch in some other way for some dimensions
       return dim.values.length > 0 ? (
         <DimensionValuesNumeric values={dim.values} />
       ) : null;

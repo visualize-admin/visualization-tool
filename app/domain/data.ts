@@ -264,10 +264,8 @@ export const findRelatedErrorDimension = (
   );
 };
 
-export const shouldValuesBeLoadedForResolvedDimension = (
-  dim: ResolvedDimension
-) => {
-  return !(
+export const shouldLoadMinMaxValues = (dim: ResolvedDimension) => {
+  return (
     (dim.data.isNumerical && dim.data.scaleType !== "Ordinal") ||
     isStandardErrorResolvedDimension(dim)
   );
