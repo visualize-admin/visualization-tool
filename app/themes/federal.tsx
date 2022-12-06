@@ -749,7 +749,7 @@ theme.components = {
         paddingRight: 24,
         paddingBottom: 0,
         paddingLeft: 24,
-        color: theme.palette.grey[900],
+        color: theme.palette.grey[700],
 
         "&.Mui-selected": {
           color: theme.palette.primary.main,
