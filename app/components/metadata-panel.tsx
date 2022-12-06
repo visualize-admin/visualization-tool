@@ -201,17 +201,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       color: "inherit",
       textDecoration: "underline",
       textUnderlineOffset: "4px",
+      textAlign: "left",
 
       "&:hover": {
         textDecoration: "underline",
-      },
-    },
-    openDimensionSVG: {
-      cursor: "pointer",
-      textDecoration: "underline",
-
-      "&:hover": {
-        fill: theme.palette.primary.hover,
       },
     },
   };
@@ -234,11 +227,9 @@ const animationProps: Transition = {
 
 export const OpenMetadataPanelWrapper = ({
   dim,
-  svg,
   children,
 }: {
   dim: DimensionMetadataFragment;
-  svg?: boolean;
   children: React.ReactNode;
 }) => {
   const classes = useOtherStyles();
@@ -248,11 +239,7 @@ export const OpenMetadataPanelWrapper = ({
     openDimension(dim);
   });
 
-  return svg ? (
-    <g className={classes.openDimensionSVG} onClick={handleClick}>
-      {children}
-    </g>
-  ) : (
+  return (
     <Button
       className={classes.openDimension}
       variant="text"

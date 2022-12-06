@@ -13,7 +13,7 @@ export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
   const { xScale, bounds, xAxisLabel, xAxisDimension } =
     useChartState() as ScatterplotState;
-  const { chartWidth, chartHeight, margins } = bounds;
+  const { chartHeight, margins } = bounds;
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
   const xAxisRef = useRef<SVGGElement>(null);
 
@@ -50,19 +50,18 @@ export const AxisWidthLinear = () => {
 
   return (
     <>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <OpenMetadataPanelWrapper dim={xAxisDimension} svg={true}>
-          <text
-            x={chartWidth}
-            y={chartHeight + margins.bottom}
-            dy={-labelFontSize}
-            fontSize={labelFontSize}
-            textAnchor="end"
-          >
-            {xAxisLabel}
-          </text>
+      <foreignObject
+        width={`calc(100% - ${margins.left + margins.right}px)`}
+        height={labelFontSize * 2}
+        transform={`translate(${margins.left}, ${
+          chartHeight + margins.top + margins.bottom - labelFontSize * 2 - 6
+        })`}
+        style={{ textAlign: "right" }}
+      >
+        <OpenMetadataPanelWrapper dim={xAxisDimension}>
+          <span style={{ fontSize: labelFontSize }}>{xAxisLabel}</span>
         </OpenMetadataPanelWrapper>
-      </g>
+      </foreignObject>
       <g
         ref={xAxisRef}
         key="x-axis-linear"
