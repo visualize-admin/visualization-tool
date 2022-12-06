@@ -4,7 +4,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Divider,
   Drawer,
   IconButton,
   InputAdornment,
@@ -122,6 +121,10 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
+    toggleButton: {
+      alignSelf: "flex-start",
+      marginTop: theme.spacing(2),
+    },
     header: {
       display: "flex",
       alignItems: "center",
@@ -137,6 +140,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       "& .MuiTab-root": {
         height: 40,
         minHeight: 40,
+
+        "&:not(.Mui-selected)": {
+          color: theme.palette.grey[600],
+        },
       },
     },
     tabPanel: {
@@ -192,9 +199,16 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       margin: 0,
       fontSize: "inherit",
       color: "inherit",
+      textDecoration: "underline",
+      textUnderlineOffset: "4px",
+
+      "&:hover": {
+        textDecoration: "underline",
+      },
     },
     openDimensionSVG: {
       cursor: "pointer",
+      textDecoration: "underline",
 
       "&:hover": {
         fill: theme.palette.primary.hover,
@@ -346,11 +360,14 @@ export const MetadataPanel = ({
 };
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
+  const classes = useOtherStyles();
+
   return (
     <Button
       data-testid="panel-metadata-toggle"
-      component="a"
-      variant="text"
+      className={classes.toggleButton}
+      variant="contained"
+      color="secondary"
       size="small"
       onClick={onClick}
     >
@@ -415,7 +432,10 @@ const TabPanelData = ({
       <AnimatePresence exitBeforeEnter={true}>
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
-            <BackButton onClick={() => clearSelectedDimension()}>
+            <BackButton
+              onClick={() => clearSelectedDimension()}
+              sx={{ color: "primary.main" }}
+            >
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
@@ -552,7 +572,6 @@ const TabPanelDataDimension = ({
             component={Flex}
             {...animationProps}
           >
-            <Divider />
             <DimensionValues dim={dim} />
           </MotionBox>
         )}
@@ -599,7 +618,7 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
     <>
       {values.map((d) => (
         <React.Fragment key={d.value}>
-          <Typography variant="body2" {...animationProps}>
+          <Typography variant="body2" fontWeight="bold" {...animationProps}>
             {d.label}{" "}
             {d.alternateName ? (
               <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
@@ -608,7 +627,7 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
             )}
           </Typography>
           {d.description ? (
-            <Typography variant="caption">{d.description}</Typography>
+            <Typography variant="body2">{d.description}</Typography>
           ) : null}
         </React.Fragment>
       ))}

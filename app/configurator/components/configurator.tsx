@@ -46,13 +46,16 @@ const BackContainer = ({ children }: { children: React.ReactNode }) => {
 export const BackButton = ({
   children,
   onClick,
+  ...props
 }: { children: React.ReactNode } & ButtonProps) => {
+  const { sx } = props;
+
   return (
     <Button
       variant="text"
       color="inherit"
       size="small"
-      sx={{ fontWeight: "bold" }}
+      sx={{ fontWeight: "bold", ...sx }}
       startIcon={<SvgIcChevronLeft />}
       onClick={onClick}
     >

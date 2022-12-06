@@ -128,7 +128,9 @@ const DataFilterSelectGeneric = ({
     dimension: dimension,
     label: (
       <OpenMetadataPanelWrapper dim={dimension}>
-        {`${index + 1}. ${dimension.label}`}
+        <span style={{ marginBottom: 4 }}>{`${index + 1}. ${
+          dimension.label
+        }`}</span>
       </OpenMetadataPanelWrapper>
     ),
     controls: controls,
