@@ -584,7 +584,10 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
       return <DimensionValuesNominal values={dim.values} />;
     case "NumericalMeasure":
     case "TemporalDimension":
-      return <DimensionValuesNumeric values={dim.values} />;
+      // FIXME: empty values? bigger than 200? need to fetch in some other way for some dimensions
+      return dim.values.length > 0 ? (
+        <DimensionValuesNumeric values={dim.values} />
+      ) : null;
     default:
       const _exhaustiveCheck: never = dim;
       return _exhaustiveCheck;
