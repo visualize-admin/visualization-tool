@@ -29,7 +29,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
 import { DimensionValue } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { getDimensionIconName, Icon } from "@/icons";
+import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import useEvent from "@/utils/use-event";
@@ -502,22 +502,16 @@ const TabPanelDataDimension = ({
 }) => {
   const classes = useOtherStyles();
   const { setSelectedDimension } = useMetadataPanelStoreActions();
-  const { description, showExpandButton } = React.useMemo(() => {
+  const description = React.useMemo(() => {
     if (!expanded && dim.description && dim.description.length > 180) {
-      return {
-        description: dim.description.slice(0, 180) + "…",
-        showExpandButton: true,
-      };
+      return dim.description.slice(0, 180) + "…";
     }
 
-    return {
-      description: dim.description,
-      showExpandButton: false,
-    };
+    return dim.description;
   }, [dim.description, expanded]);
-  const iconName = React.useMemo(() => {
-    return getDimensionIconName(dim.__typename);
-  }, [dim.__typename]);
+  // const iconName = React.useMemo(() => {
+  //   return getDimensionIconName(dim.__typename);
+  // }, [dim.__typename]);
 
   const handleClick = React.useCallback(() => {
     if (!expanded) {
@@ -547,7 +541,7 @@ const TabPanelDataDimension = ({
             <Typography variant="body2">{description}</Typography>
           )}
         </div>
-        <Icon name={iconName} />
+        {/* <Icon name={iconName} /> */}
       </Flex>
 
       <AnimatePresence>
@@ -564,7 +558,7 @@ const TabPanelDataDimension = ({
         )}
       </AnimatePresence>
 
-      {showExpandButton && (
+      {!expanded && (
         <Button
           component="a"
           variant="text"
@@ -590,7 +584,10 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
       return <DimensionValuesNominal values={dim.values} />;
     case "NumericalMeasure":
     case "TemporalDimension":
-      return <DimensionValuesNumeric values={dim.values} />;
+      // FIXME: empty values? bigger than 200? need to fetch in some other way for some dimensions
+      return dim.values.length > 0 ? (
+        <DimensionValuesNumeric values={dim.values} />
+      ) : null;
     default:
       const _exhaustiveCheck: never = dim;
       return _exhaustiveCheck;
