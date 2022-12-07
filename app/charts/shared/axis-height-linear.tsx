@@ -61,11 +61,12 @@ export const AxisHeightLinear = () => {
 
   return (
     <>
-      <OpenMetadataPanelWrapper dim={yAxisDimension} svg={true}>
-        <text x={0} y={0} dy={labelFontSize} fontSize={labelFontSize}>
-          {yAxisLabel}
-        </text>
-      </OpenMetadataPanelWrapper>
+      {/* TODO: at some point it would make sense to allow wrapping */}
+      <foreignObject width="100%" height={labelFontSize * 2}>
+        <OpenMetadataPanelWrapper dim={yAxisDimension}>
+          <span style={{ fontSize: labelFontSize }}>{yAxisLabel}</span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
       <g
         ref={ref}
         transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}

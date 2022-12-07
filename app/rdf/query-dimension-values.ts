@@ -180,3 +180,39 @@ export async function loadDimensionValues(
     return result.map((d) => d.value);
   }
 }
+
+type MinMaxResult = {
+  minValue: Literal;
+  maxValue: Literal;
+};
+
+export const loadMinMaxDimensionValues = async ({
+  datasetIri,
+  dimensionIri,
+  sparqlClient,
+}: {
+  datasetIri: Term;
+  dimensionIri: Term;
+  sparqlClient: ParsingClient;
+}): Promise<MinMaxResult | undefined> => {
+  const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
+    .WHERE`
+    ${datasetIri} ${cubeNs.observationSet} ?observationSet .
+    ?observationSet ${cubeNs.observation} ?observation .
+    ?observation ${dimensionIri} ?value .
+
+    FILTER (STRLEN(STR(?value)) > 0)
+  `;
+
+  let result: MinMaxResult[] = [];
+
+  try {
+    result = (await query.execute(sparqlClient.query, {
+      operation: "postUrlencoded",
+    })) as unknown as MinMaxResult[];
+  } catch {
+    console.warn(`Failed to fetch min max dimension values for ${datasetIri}.`);
+  } finally {
+    return result[0];
+  }
+};

@@ -4,7 +4,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Divider,
   Drawer,
   IconButton,
   InputAdornment,
@@ -27,7 +26,7 @@ import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/configurator/components/presence";
-import { DimensionValue } from "@/domain/data";
+import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -122,6 +121,10 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
+    toggleButton: {
+      alignSelf: "flex-start",
+      marginTop: theme.spacing(2),
+    },
     header: {
       display: "flex",
       alignItems: "center",
@@ -137,6 +140,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       "& .MuiTab-root": {
         height: 40,
         minHeight: 40,
+
+        "&:not(.Mui-selected)": {
+          color: theme.palette.grey[600],
+        },
       },
     },
     tabPanel: {
@@ -192,12 +199,12 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       margin: 0,
       fontSize: "inherit",
       color: "inherit",
-    },
-    openDimensionSVG: {
-      cursor: "pointer",
+      textDecoration: "underline",
+      textUnderlineOffset: "4px",
+      textAlign: "left",
 
       "&:hover": {
-        fill: theme.palette.primary.hover,
+        textDecoration: "underline",
       },
     },
   };
@@ -220,11 +227,9 @@ const animationProps: Transition = {
 
 export const OpenMetadataPanelWrapper = ({
   dim,
-  svg,
   children,
 }: {
   dim: DimensionMetadataFragment;
-  svg?: boolean;
   children: React.ReactNode;
 }) => {
   const classes = useOtherStyles();
@@ -234,11 +239,7 @@ export const OpenMetadataPanelWrapper = ({
     openDimension(dim);
   });
 
-  return svg ? (
-    <g className={classes.openDimensionSVG} onClick={handleClick}>
-      {children}
-    </g>
-  ) : (
+  return (
     <Button
       className={classes.openDimension}
       variant="text"
@@ -346,11 +347,14 @@ export const MetadataPanel = ({
 };
 
 const ToggleButton = ({ onClick }: { onClick: () => void }) => {
+  const classes = useOtherStyles();
+
   return (
     <Button
       data-testid="panel-metadata-toggle"
-      component="a"
-      variant="text"
+      className={classes.toggleButton}
+      variant="contained"
+      color="secondary"
       size="small"
       onClick={onClick}
     >
@@ -415,7 +419,10 @@ const TabPanelData = ({
       <AnimatePresence exitBeforeEnter={true}>
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
-            <BackButton onClick={() => clearSelectedDimension()}>
+            <BackButton
+              onClick={() => clearSelectedDimension()}
+              sx={{ color: "primary.main" }}
+            >
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
@@ -533,7 +540,7 @@ const TabPanelDataDimension = ({
               cursor: !expanded ? "pointer" : "default",
             }}
           >
-            <Typography variant="body2" fontWeight="bold">
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
               {dim.label}
             </Typography>
           </Button>
@@ -552,7 +559,16 @@ const TabPanelDataDimension = ({
             component={Flex}
             {...animationProps}
           >
-            <Divider />
+            <Typography
+              sx={{ mt: 2, color: "grey.800" }}
+              variant="body2"
+              fontWeight="bold"
+              gutterBottom
+            >
+              <Trans id="controls.metadata-panel.available-values">
+                Available values
+              </Trans>
+            </Typography>
             <DimensionValues dim={dim} />
           </MotionBox>
         )}
@@ -575,6 +591,10 @@ const TabPanelDataDimension = ({
 };
 
 const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+  if (isStandardErrorDimension(dim)) {
+    return <DimensionValuesNumeric values={dim.values} />;
+  }
+
   switch (dim.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
@@ -584,7 +604,6 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
       return <DimensionValuesNominal values={dim.values} />;
     case "NumericalMeasure":
     case "TemporalDimension":
-      // FIXME: empty values? bigger than 200? need to fetch in some other way for some dimensions
       return dim.values.length > 0 ? (
         <DimensionValuesNumeric values={dim.values} />
       ) : null;
@@ -597,21 +616,23 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
 const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
   return (
     <>
-      {values.map((d) => (
-        <React.Fragment key={d.value}>
-          <Typography variant="body2" {...animationProps}>
-            {d.label}{" "}
-            {d.alternateName ? (
-              <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
-            ) : (
-              ""
-            )}
-          </Typography>
-          {d.description ? (
-            <Typography variant="caption">{d.description}</Typography>
-          ) : null}
-        </React.Fragment>
-      ))}
+      {values.map((d) =>
+        !d.label ? null : (
+          <React.Fragment key={d.value}>
+            <Typography variant="body2" fontWeight="bold" {...animationProps}>
+              {d.label}{" "}
+              {d.alternateName ? (
+                <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
+              ) : (
+                ""
+              )}
+            </Typography>
+            {d.description ? (
+              <Typography variant="body2">{d.description}</Typography>
+            ) : null}
+          </React.Fragment>
+        )
+      )}
     </>
   );
 };
