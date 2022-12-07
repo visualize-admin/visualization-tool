@@ -540,7 +540,7 @@ const TabPanelDataDimension = ({
               cursor: !expanded ? "pointer" : "default",
             }}
           >
-            <Typography variant="body2" fontWeight="bold">
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
               {dim.label}
             </Typography>
           </Button>
@@ -559,6 +559,16 @@ const TabPanelDataDimension = ({
             component={Flex}
             {...animationProps}
           >
+            <Typography
+              sx={{ mt: 2, color: "grey.800" }}
+              variant="body2"
+              fontWeight="bold"
+              gutterBottom
+            >
+              <Trans id="controls.metadata-panel.available-values">
+                Available values
+              </Trans>
+            </Typography>
             <DimensionValues dim={dim} />
           </MotionBox>
         )}
@@ -606,21 +616,23 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
 const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
   return (
     <>
-      {values.map((d) => (
-        <React.Fragment key={d.value}>
-          <Typography variant="body2" fontWeight="bold" {...animationProps}>
-            {d.label}{" "}
-            {d.alternateName ? (
-              <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
-            ) : (
-              ""
-            )}
-          </Typography>
-          {d.description ? (
-            <Typography variant="body2">{d.description}</Typography>
-          ) : null}
-        </React.Fragment>
-      ))}
+      {values.map((d) =>
+        !d.label ? null : (
+          <React.Fragment key={d.value}>
+            <Typography variant="body2" fontWeight="bold" {...animationProps}>
+              {d.label}{" "}
+              {d.alternateName ? (
+                <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
+              ) : (
+                ""
+              )}
+            </Typography>
+            {d.description ? (
+              <Typography variant="body2">{d.description}</Typography>
+            ) : null}
+          </React.Fragment>
+        )
+      )}
     </>
   );
 };
