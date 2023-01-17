@@ -24,7 +24,6 @@ import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotFields } from "@/configurator";
-import { mkNumber } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -112,7 +111,7 @@ const useScatterplotState = ({
 
   const xAxisLabel = getLabelWithUnit(xMeasure);
 
-  const xMinValue = Math.min(mkNumber(min(preparedData, (d) => getX(d))), 0);
+  const xMinValue = Math.min(min(preparedData, (d) => getX(d)) ?? 0, 0);
   const xMaxValue = max(preparedData, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
@@ -125,7 +124,7 @@ const useScatterplotState = ({
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  const yMinValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
+  const yMinValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
   const yMaxValue = max(preparedData, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();

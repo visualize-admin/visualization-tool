@@ -42,7 +42,6 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
-  mkNumber,
   useErrorMeasure,
   useErrorRange,
   useErrorVariable,
@@ -217,9 +216,7 @@ const useColumnsState = (
         0
       );
 
-      const yScale = scaleLinear()
-        .domain([mkNumber(minValue), mkNumber(maxValue)])
-        .nice();
+      const yScale = scaleLinear().domain([minValue, maxValue]).nice();
       return { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain };
     }, [
       getX,

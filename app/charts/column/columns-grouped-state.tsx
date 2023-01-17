@@ -43,12 +43,11 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
-  mkNumber,
   useErrorMeasure,
   useErrorRange,
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
-import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -267,23 +266,19 @@ const useGroupedColumnsState = (
 
     // y
     const minValue = Math.min(
-      mkNumber(
-        min(preparedData, (d) =>
-          getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
-        )
-      ),
+      min(preparedData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+      ) ?? 0,
       0
     );
     const maxValue = Math.max(
       max(preparedData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
-      ) as number,
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+      ) ?? 0,
       0
     );
 
-    const yScale = scaleLinear()
-      .domain([mkNumber(minValue), mkNumber(maxValue)])
-      .nice();
+    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
     return {
       colors,
