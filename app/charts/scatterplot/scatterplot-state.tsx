@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
@@ -98,7 +98,7 @@ const useScatterplotState = ({
   });
 
   // Data for chart
-  const preparedData = useDataAfterInteractiveFilters({
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getSegment,
@@ -111,8 +111,8 @@ const useScatterplotState = ({
 
   const xAxisLabel = getLabelWithUnit(xMeasure);
 
-  const xMinValue = Math.min(min(preparedData, (d) => getX(d)) ?? 0, 0);
-  const xMaxValue = max(preparedData, (d) => getX(d)) as number;
+  const xMinValue = Math.min(min(scalesData, (d) => getX(d)) ?? 0, 0);
+  const xMaxValue = max(scalesData, (d) => getX(d)) ?? 0;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
 
@@ -124,8 +124,8 @@ const useScatterplotState = ({
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  const yMinValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const yMaxValue = max(preparedData, getY) as number;
+  const yMinValue = Math.min(min(scalesData, (d) => getY(d)) ?? 0, 0);
+  const yMaxValue = max(scalesData, getY) ?? 0;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 

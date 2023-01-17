@@ -17,7 +17,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -168,7 +168,7 @@ const useGroupedColumnsState = (
   });
 
   // Data for chart
-  const preparedData = useDataAfterInteractiveFilters({
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX: getXAsDate,
@@ -247,7 +247,7 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -266,13 +266,13 @@ const useGroupedColumnsState = (
 
     // y
     const minValue = Math.min(
-      min(preparedData, (d) =>
+      min(scalesData, (d) =>
         getYErrorRange ? getYErrorRange(d)[0] : getY(d)
       ) ?? 0,
       0
     );
     const maxValue = Math.max(
-      max(preparedData, (d) =>
+      max(scalesData, (d) =>
         getYErrorRange ? getYErrorRange(d)[1] : getY(d)
       ) ?? 0,
       0
@@ -292,10 +292,10 @@ const useGroupedColumnsState = (
   }, [
     dimensions,
     fields.segment,
-    preparedData,
     segments,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    scalesData,
     plottableSortedData,
     getX,
     getXAsDate,

@@ -22,7 +22,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -180,8 +180,8 @@ const useColumnsStackedState = (
     plotters: [getXAsDate, getY],
   });
 
-  // Data for Chart
-  const preparedData = useDataAfterInteractiveFilters({
+  // Data for chart
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX: getXAsDate,
@@ -195,6 +195,18 @@ const useColumnsStackedState = (
 
   const chartWideData = getWideData({
     dataGroupedByX: preparedDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+  });
+
+  const scalesDataGroupedByX = useMemo(
+    () => group(scalesData, getX),
+    [scalesData, getX]
+  );
+
+  const scalesWideData = getWideData({
+    dataGroupedByX: scalesDataGroupedByX,
     xKey,
     getY,
     getSegment,
@@ -280,7 +292,7 @@ const useColumnsStackedState = (
     }
 
     // x
-    const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -297,13 +309,13 @@ const useColumnsStackedState = (
     const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
     // y
-    const minTotal = min<$FixMe, number>(chartWideData, (d) =>
+    const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
       segments
         .map((s) => d[s])
         .filter((d) => d < 0)
         .reduce((a, b) => a + b, 0)
     );
-    const maxTotal = max<$FixMe, number>(chartWideData, (d) =>
+    const maxTotal = max<$FixMe, number>(scalesWideData, (d) =>
       segments
         .map((s) => d[s])
         .filter((d) => d >= 0)
@@ -320,12 +332,12 @@ const useColumnsStackedState = (
       bandDomain,
     };
   }, [
-    chartWideData,
+    scalesWideData,
     fields.segment,
     getX,
     getXAsDate,
     plottableSortedData,
-    preparedData,
+    scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     segments,

@@ -167,7 +167,8 @@ const useColumnsState = (
     plotters: [getXAsDate, getY],
   });
 
-  const preparedData = useDataAfterInteractiveFilters({
+  // Data for chart
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX: getXAsDate,
@@ -182,7 +183,7 @@ const useColumnsState = (
         useAbbreviations: fields.x.useAbbreviations,
       });
       const bandDomain = orderBy(
-        [...new Set(preparedData.map(getX))],
+        [...new Set(scalesData.map(getX))],
         sorters,
         getSortingOrders(sorters, fields.x.sorting)
       );
@@ -204,13 +205,13 @@ const useColumnsState = (
 
       // y
       const minValue = Math.min(
-        min(preparedData, (d) =>
+        min(scalesData, (d) =>
           getYErrorRange ? getYErrorRange(d)[0] : getY(d)
         ) ?? 0,
         0
       );
       const maxValue = Math.max(
-        max(preparedData, (d) =>
+        max(scalesData, (d) =>
           getYErrorRange ? getYErrorRange(d)[1] : getY(d)
         ) ?? 0,
         0
@@ -224,7 +225,7 @@ const useColumnsState = (
       getY,
       getYErrorRange,
       plottableSortedData,
-      preparedData,
+      scalesData,
       fields.x.sorting,
       fields.x.useAbbreviations,
       xDimension,
