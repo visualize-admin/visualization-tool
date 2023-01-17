@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import {
   ColumnsGrouped,
@@ -110,6 +110,12 @@ export const ChartColumns = memo(
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
+
+            {interactiveFiltersConfig?.timeSlider.componentIri && (
+              <TimeSlider
+                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+              />
+            )}
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
           fields.segment.type === "grouped" ? (
@@ -140,6 +146,12 @@ export const ChartColumns = memo(
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
+
+            {interactiveFiltersConfig?.timeSlider.componentIri && (
+              <TimeSlider
+                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+              />
+            )}
           </GroupedColumnChart>
         ) : (
           <ColumnChart

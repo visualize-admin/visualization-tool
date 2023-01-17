@@ -21,6 +21,7 @@ import {
   ScatterPlotConfig,
   ScatterPlotFields,
 } from "@/configurator/config-types";
+import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -103,6 +104,12 @@ export const ChartScatterplot = memo(
             fields.segment && interactiveFiltersConfig?.legend.active === true
           }
         />
+
+        {interactiveFiltersConfig?.timeSlider.componentIri && (
+          <TimeSlider
+            componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+          />
+        )}
       </ScatterplotChart>
     );
   }
