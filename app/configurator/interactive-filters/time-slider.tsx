@@ -7,6 +7,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 
 // TODO: make this configurable
@@ -121,7 +122,7 @@ const Root = ({ componentIri }: { componentIri?: string }) => {
   }, [animating, progress]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
       <PlayButton />
       <Slider componentIri={componentIri} />
     </Box>
@@ -141,8 +142,18 @@ const PlayButton = () => {
   });
 
   return (
-    <Button size="small" onClick={onClick}>
-      {animating ? "STOP" : "PLAY"}
+    <Button
+      onClick={onClick}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        minHeight: 32,
+        minWidth: 32,
+        p: 0,
+        borderRadius: "50%",
+      }}
+    >
+      <Icon name={animating ? "pause" : "play"} size={16} />
     </Button>
   );
 };
