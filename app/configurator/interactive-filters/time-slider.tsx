@@ -47,7 +47,7 @@ export const TimeSlider = ({ componentIri }: { componentIri?: string }) => {
     setT(t);
 
     if (msScale) {
-      const tMs = msScale(t);
+      const tMs = Math.round(msScale(t));
       const i = bisect(sortedMs, tMs);
       const updateMs = sortedMs[i - 1];
 
