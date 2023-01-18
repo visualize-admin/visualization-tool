@@ -4,33 +4,38 @@ import {
   Box,
   BoxProps,
   ButtonBase,
-  Paper,
   Checkbox as MUICheckbox,
-  InputProps,
   FormControlLabel,
+  FormControlLabelProps,
   Input as MUIInput,
-  Radio as MUIRadio,
-  Select as MUISelect,
-  Skeleton,
-  Slider as MUISlider,
-  Switch as MUISwitch,
-  SelectProps,
-  Typography,
-  TextField,
+  InputProps,
   ListSubheader,
   MenuItem,
-  TypographyProps,
+  Paper,
+  PaperProps,
+  Radio as MUIRadio,
+  Select as MUISelect,
+  SelectProps,
+  Skeleton,
+  Slider as MUISlider,
   Stack,
   styled,
-  PaperProps,
-  FormControlLabelProps,
+  Switch as MUISwitch,
+  TextField,
+  Typography,
+  TypographyProps,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
 import flatten from "lodash/flatten";
-import React, { useContext } from "react";
-import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
-import { forwardRef } from "react";
+import React, {
+  ChangeEvent,
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
 import {
@@ -118,6 +123,7 @@ export const Slider = ({
   min,
   max,
   step,
+  renderTextInput = true,
   name,
   value,
   onChange,
@@ -128,6 +134,7 @@ export const Slider = ({
   min?: number;
   max?: number;
   step?: number;
+  renderTextInput?: boolean;
 } & ReturnType<typeof useChartOptionSliderField> &
   BoxProps) => {
   return (
@@ -155,22 +162,24 @@ export const Slider = ({
           // @ts-ignore
           onChange={onChange}
         />
-        <MUIInput
-          size="small"
-          value={value.toString()}
-          disabled={disabled}
-          onChange={onChange}
-          sx={{
-            width: 50,
-            height: 30,
-            minHeight: 0,
+        {renderTextInput && (
+          <MUIInput
+            size="small"
+            value={`${value}`}
+            disabled={disabled}
+            onChange={onChange}
+            sx={{
+              width: 50,
+              height: 30,
+              minHeight: 0,
 
-            ".MuiInput-input": {
-              p: 0,
-              textAlign: "center",
-            },
-          }}
-        />
+              ".MuiInput-input": {
+                p: 0,
+                textAlign: "center",
+              },
+            }}
+          />
+        )}
       </Stack>
     </Box>
   );

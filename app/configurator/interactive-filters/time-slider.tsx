@@ -265,6 +265,7 @@ const Slider = ({ sortedMiliseconds }: { sortedMiliseconds: number[] }) => {
       max={1}
       // TODO: base on ANIMATION_DURATION?
       step={0.0001}
+      renderTextInput={false}
       value={progress}
       onChange={onChange}
       onClick={onClick}
