@@ -141,3 +141,32 @@ export const flattenTree = (tree: HierarchyValue[]) => {
   dfs(tree, (x) => res.push(x));
   return res;
 };
+
+export const regroupTrees = (
+  trees: (HierarchyValue & { hierarchyName?: string })[][]
+): HierarchyValue[] => {
+  if (trees.length < 2) {
+    return trees[0];
+  } else {
+    // We have multiple hierarchies
+    const roots = new Set(trees.map((x) => x[0].value));
+    if (roots.size > 1) {
+      throw new Error(
+        "Cannot have multiple hierarchies not sharing the same root"
+      );
+    }
+    return [
+      {
+        ...trees[0][0],
+        children: trees.map((t) => ({
+          value: t[0].hierarchyName!,
+          hasValue: false,
+          children: t[0].children,
+          dimensionIri: t[0].dimensionIri,
+          label: t[0].hierarchyName!,
+          depth: -1,
+        })),
+      },
+    ];
+  }
+};
