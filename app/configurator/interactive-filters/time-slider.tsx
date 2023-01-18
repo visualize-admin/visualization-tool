@@ -271,15 +271,24 @@ const Slider = ({ sortedMiliseconds }: { sortedMiliseconds: number[] }) => {
       sx={{
         width: "100%",
 
-        // Disable transitions when animating, otherwise it appears to be laggy.
-        ...(animating && {
+        "& .MuiSlider-root": {
+          height: "6px",
+
           "& .MuiSlider-thumb": {
-            transition: "none",
+            width: "16px",
+            height: "16px",
+            // Disable transitions when animating, otherwise it appears to be laggy.
+            ...(animating && {
+              transition: "none",
+            }),
           },
-          "& .MuiSlider-track": {
-            transition: "none",
-          },
-        }),
+
+          ...(animating && {
+            "& .MuiSlider-track": {
+              transition: "none",
+            },
+          }),
+        },
       }}
     />
   );
