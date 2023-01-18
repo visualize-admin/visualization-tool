@@ -108,6 +108,7 @@ export const ChartScatterplot = memo(
         {interactiveFiltersConfig?.timeSlider.componentIri && (
           <TimeSlider
             componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+            dimensions={dimensions}
           />
         )}
       </ScatterplotChart>

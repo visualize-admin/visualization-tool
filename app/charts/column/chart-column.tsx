@@ -114,6 +114,7 @@ export const ChartColumns = memo(
             {interactiveFiltersConfig?.timeSlider.componentIri && (
               <TimeSlider
                 componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                dimensions={dimensions}
               />
             )}
           </StackedColumnsChart>
@@ -150,6 +151,7 @@ export const ChartColumns = memo(
             {interactiveFiltersConfig?.timeSlider.componentIri && (
               <TimeSlider
                 componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                dimensions={dimensions}
               />
             )}
           </GroupedColumnChart>
@@ -177,6 +179,7 @@ export const ChartColumns = memo(
             {interactiveFiltersConfig?.timeSlider.componentIri && (
               <TimeSlider
                 componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                dimensions={dimensions}
               />
             )}
           </ColumnChart>

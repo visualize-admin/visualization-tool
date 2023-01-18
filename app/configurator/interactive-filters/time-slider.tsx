@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material";
-import { bisect, scaleLinear } from "d3";
+import { Box, Button, Typography } from "@mui/material";
+import { ascending, bisect, scaleLinear } from "d3";
 import React, { ChangeEvent } from "react";
 
 import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
@@ -7,6 +7,9 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { useTimeFormatUnit } from "@/formatters";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 
@@ -56,15 +59,48 @@ export const TimeSliderStateProvider = ({
   );
 };
 
-export const TimeSlider = ({ componentIri }: { componentIri?: string }) => {
+export const TimeSlider = ({
+  componentIri,
+  dimensions,
+}: {
+  componentIri?: string;
+  dimensions: DimensionMetadataFragment[];
+}) => {
+  const component = React.useMemo(() => {
+    return dimensions.find((d) => d.iri === componentIri);
+  }, [componentIri, dimensions]) as TemporalDimension | undefined;
+
   return (
     <TimeSliderStateProvider>
-      <Root componentIri={componentIri} />
+      <Root component={component} />
     </TimeSliderStateProvider>
   );
 };
 
-const Root = ({ componentIri }: { componentIri?: string }) => {
+const Root = ({ component }: { component?: TemporalDimension }) => {
+  const formatDate = useTimeFormatUnit();
+  const timeUnit = component?.timeUnit ?? TimeUnit.Day;
+
+  const chartState = useChartState() as NonNullable<
+    Exclude<ChartState, TableChartState>
+  >;
+
+  const sortedMiliseconds = React.useMemo(() => {
+    // FIXME: enable interactive filters for maps!
+    if (component && chartState.chartType !== "map") {
+      const uniqueValues = [
+        ...new Set(
+          chartState.allData.map((d) => d[component.iri]).filter(Boolean)
+        ),
+      ] as string[];
+
+      return uniqueValues.map((d) => parseDate(d).getTime()).sort(ascending);
+    }
+
+    return [];
+    // @ts-ignore - allData is not yet there for the maps
+  }, [chartState.chartType, chartState.allData, component]);
+
   const { progress, setProgress, animating, setAnimating } =
     useTimeSliderState();
   // Keeping track of requestAnimationFrame to be able to cancel it.
@@ -122,9 +158,22 @@ const Root = ({ componentIri }: { componentIri?: string }) => {
   }, [animating, progress]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 5, mb: 5 }}>
       <PlayButton />
-      <Slider componentIri={componentIri} />
+      <Box sx={{ position: "relative", width: "100%" }}>
+        <Slider sortedMiliseconds={sortedMiliseconds} />
+        <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
+          {sortedMiliseconds[0] &&
+            `${formatDate(new Date(sortedMiliseconds[0]), timeUnit)}`}
+        </Typography>
+        <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
+          {sortedMiliseconds[sortedMiliseconds.length - 1] &&
+            `${formatDate(
+              new Date(sortedMiliseconds[sortedMiliseconds.length - 1]),
+              timeUnit
+            )}`}
+        </Typography>
+      </Box>
     </Box>
   );
 };
@@ -158,36 +207,20 @@ const PlayButton = () => {
   );
 };
 
-const Slider = ({ componentIri }: { componentIri?: string }) => {
+const Slider = ({ sortedMiliseconds }: { sortedMiliseconds: number[] }) => {
   const { progress, setProgress, animating, setAnimating } =
     useTimeSliderState();
   const [IFState, dispatch] = useInteractiveFilters();
-  const chartState = useChartState() as NonNullable<
-    Exclude<ChartState, TableChartState>
-  >;
-
-  const sortedMs = React.useMemo(() => {
-    // FIXME: enable interactive filters for maps!
-    if (componentIri && chartState.chartType !== "map") {
-      const uniqueValues = [
-        ...new Set(
-          chartState.allData.map((d) => d[componentIri]).filter(Boolean)
-        ),
-      ] as string[];
-
-      return uniqueValues.map((d) => parseDate(d).getTime()).sort();
-    }
-
-    return [];
-    // @ts-ignore - allData is not yet there for the maps
-  }, [chartState.chartType, chartState.allData, componentIri]);
 
   const msScale = React.useMemo(() => {
-    if (sortedMs.length) {
-      const [min, max] = [sortedMs[0], sortedMs[sortedMs.length - 1]];
+    if (sortedMiliseconds.length) {
+      const [min, max] = [
+        sortedMiliseconds[0],
+        sortedMiliseconds[sortedMiliseconds.length - 1],
+      ];
       return scaleLinear().range([min, max]);
     }
-  }, [sortedMs]);
+  }, [sortedMiliseconds]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     setProgress(+e.target.value);
@@ -201,14 +234,14 @@ const Slider = ({ componentIri }: { componentIri?: string }) => {
   React.useEffect(() => {
     setProgress(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedMs]);
+  }, [sortedMiliseconds]);
 
   // Dispatch time slider update event when progress changes.
   React.useEffect(() => {
     if (msScale) {
       const tMs = Math.round(msScale(progress));
-      const i = bisect(sortedMs, tMs);
-      const updateMs = sortedMs[i - 1];
+      const i = bisect(sortedMiliseconds, tMs);
+      const updateMs = sortedMiliseconds[i - 1];
 
       if (IFState.timeSlider.value?.getTime() !== updateMs) {
         dispatch({
@@ -217,7 +250,13 @@ const Slider = ({ componentIri }: { componentIri?: string }) => {
         });
       }
     }
-  }, [IFState.timeSlider.value, msScale, progress, sortedMs, dispatch]);
+  }, [
+    IFState.timeSlider.value,
+    msScale,
+    progress,
+    sortedMiliseconds,
+    dispatch,
+  ]);
 
   return (
     <GenericSlider

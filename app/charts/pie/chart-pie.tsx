@@ -129,6 +129,7 @@ export const ChartPie = memo(
         {interactiveFiltersConfig?.timeSlider.componentIri && (
           <TimeSlider
             componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+            dimensions={dimensions}
           />
         )}
       </PieChart>
