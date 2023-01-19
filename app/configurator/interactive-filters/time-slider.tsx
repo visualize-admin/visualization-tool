@@ -17,6 +17,11 @@ import useEvent from "@/utils/use-event";
 // TODO: make this configurable
 const ANIMATION_DURATION = 10000;
 
+type SliderDatum = {
+  ms: number;
+  formattedDate: string;
+};
+
 type TimeSliderState = {
   progress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -81,12 +86,12 @@ export const TimeSlider = ({
 const Root = ({ component }: { component?: TemporalDimension }) => {
   const formatDate = useTimeFormatUnit();
   const timeUnit = component?.timeUnit ?? TimeUnit.Day;
-
+  // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
 
-  const sortedData = React.useMemo(() => {
+  const sliderData: SliderDatum[] = React.useMemo(() => {
     // FIXME: enable interactive filters for maps!
     if (component && chartState.chartType !== "map") {
       const uniqueValues = [
@@ -185,12 +190,12 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
     >
       <PlayButton />
       <Box sx={{ position: "relative", width: "100%" }}>
-        <Slider sortedData={sortedData} />
+        <Slider data={sliderData} />
         <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
-          {sortedData[0].formattedDate}
+          {sliderData[0].formattedDate}
         </Typography>
         <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
-          {sortedData[sortedData.length - 1].formattedDate}
+          {sliderData[sliderData.length - 1].formattedDate}
         </Typography>
       </Box>
     </Box>
@@ -226,34 +231,30 @@ const PlayButton = () => {
   );
 };
 
-const Slider = ({
-  sortedData,
-}: {
-  sortedData: { ms: number; formattedDate: string }[];
-}) => {
+/** Slider component.
+ *
+ * @param data - Data to be used for the slider. Must be sorted by ms!
+ */
+const Slider = ({ data }: { data: SliderDatum[] }) => {
   const { progress, setProgress, animating, setAnimating } =
     useTimeSliderState();
   const [IFState, dispatch] = useInteractiveFilters();
 
-  const { sortedMiliseconds, msScale, marks } = React.useMemo(() => {
-    const sortedMiliseconds = sortedData.map((d) => d.ms);
+  const { sortedMs, msScale, marks } = React.useMemo(() => {
+    const sortedMs = data.map((d) => d.ms);
     const msScale = scaleLinear();
 
-    if (sortedMiliseconds.length) {
-      const [min, max] = [
-        sortedMiliseconds[0],
-        sortedMiliseconds[sortedMiliseconds.length - 1],
-      ];
-
+    if (sortedMs.length) {
+      const [min, max] = [sortedMs[0], sortedMs[sortedMs.length - 1]];
       msScale.range([min, max]);
     }
 
-    const marks: Mark[] = sortedData.map((d) => ({
+    const marks: Mark[] = data.map((d) => ({
       value: msScale.invert(d.ms),
     }));
 
-    return { sortedMiliseconds, msScale, marks };
-  }, [sortedData]);
+    return { sortedMs, msScale, marks };
+  }, [data]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     setProgress(+e.target.value);
@@ -267,27 +268,22 @@ const Slider = ({
   React.useEffect(() => {
     setProgress(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedData]);
+  }, [data]);
 
   const currentValue = React.useMemo(() => {
-    if (msScale) {
-      const tMs = Math.round(msScale(progress));
-      const i = bisect(sortedMiliseconds, tMs);
-      const updateDatum = sortedData[i - 1];
+    const tMs = Math.round(msScale(progress));
+    const i = bisect(sortedMs, tMs);
 
-      return updateDatum;
-    }
-  }, [msScale, progress, sortedData, sortedMiliseconds]);
+    return data[i - 1];
+  }, [msScale, progress, data, sortedMs]);
 
   React.useEffect(() => {
-    if (currentValue) {
-      // Dispatch time slider update event when progress changes.
-      if (IFState.timeSlider.value?.getTime() !== currentValue.ms) {
-        dispatch({
-          type: "SET_TIME_SLIDER_FILTER",
-          value: new Date(currentValue.ms),
-        });
-      }
+    // Dispatch time slider update event when progress changes.
+    if (IFState.timeSlider.value?.getTime() !== currentValue.ms) {
+      dispatch({
+        type: "SET_TIME_SLIDER_FILTER",
+        value: new Date(currentValue.ms),
+      });
     }
   }, [IFState.timeSlider.value, currentValue, dispatch]);
 
@@ -301,7 +297,6 @@ const Slider = ({
       step={0.0001}
       marks={marks}
       value={progress}
-      // @ts-ignore
       onChange={onChange}
       onClick={onClick}
       valueLabelDisplay="on"
