@@ -12,57 +12,29 @@ import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
+import { Timeline } from "@/utils/observables";
 import useEvent from "@/utils/use-event";
-
-// TODO: make this configurable
-const ANIMATION_DURATION = 10000;
 
 type SliderDatum = {
   ms: number;
   formattedDate: string;
 };
 
-type TimeSliderState = {
-  progress: number;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  animating: boolean;
-  setAnimating: React.Dispatch<React.SetStateAction<boolean>>;
-};
+const TimelineContext = React.createContext<Timeline | undefined>(undefined);
 
-const TimeSliderStateContext = React.createContext<TimeSliderState>({
-  progress: 0,
-  setProgress: () => {},
-  animating: false,
-  setAnimating: () => {},
-});
+const useTimeline = () => {
+  // This is a "hack" to force re-rendering of the component using the hook.
+  const [_, setS] = React.useState(0);
+  const timeline = React.useContext(TimelineContext);
 
-const useTimeSliderState = () => {
-  const ctx = React.useContext(TimeSliderStateContext);
+  React.useEffect(() => {
+    const callback = () => setS((s) => s + 1);
+    timeline?.subscribe(callback);
 
-  if (!ctx) {
-    throw new Error(
-      "You need to wrap your component in <TimeSliderStateProvider /> to useTimeSliderContext()"
-    );
-  }
+    return () => timeline?.unsubscribe(callback);
+  }, [timeline]);
 
-  return ctx;
-};
-
-export const TimeSliderStateProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [progress, setProgress] = React.useState(0);
-  const [animating, setAnimating] = React.useState(false);
-
-  return (
-    <TimeSliderStateContext.Provider
-      value={{ progress, setProgress, animating, setAnimating }}
-    >
-      {children}
-    </TimeSliderStateContext.Provider>
-  );
+  return timeline;
 };
 
 export const TimeSlider = ({
@@ -73,13 +45,16 @@ export const TimeSlider = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const component = React.useMemo(() => {
-    return dimensions.find((d) => d.iri === componentIri);
-  }, [componentIri, dimensions]) as TemporalDimension | undefined;
+    return dimensions.find((d) => d.iri === componentIri) as
+      | TemporalDimension
+      | undefined;
+  }, [componentIri, dimensions]);
+  const timeline = React.useMemo(() => new Timeline(), []);
 
   return (
-    <TimeSliderStateProvider>
+    <TimelineContext.Provider value={timeline}>
       <Root component={component} />
-    </TimeSliderStateProvider>
+    </TimelineContext.Provider>
   );
 };
 
@@ -122,62 +97,6 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
     timeUnit,
   ]);
 
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
-  // Keeping track of requestAnimationFrame to be able to cancel it.
-  const requestRef = React.useRef<number>();
-  // Keeping track of the start time to be able to calculate the current progress.
-  const startTimestampRef = React.useRef<number>();
-  // Animation can start from a specific progress.
-  const startProgressRef = React.useRef<number>();
-
-  const animate = React.useCallback(
-    (timestamp: number) => {
-      if (!startTimestampRef.current) {
-        if (startProgressRef.current) {
-          startTimestampRef.current =
-            timestamp - startProgressRef.current * ANIMATION_DURATION;
-        } else {
-          startTimestampRef.current = timestamp;
-        }
-      }
-
-      if (timestamp - startTimestampRef.current > ANIMATION_DURATION) {
-        setProgress(1);
-        setAnimating(false);
-      } else {
-        const progress =
-          (timestamp - startTimestampRef.current) / ANIMATION_DURATION;
-        setProgress(progress);
-
-        requestRef.current = requestAnimationFrame(animate);
-      }
-    },
-    [setProgress, setAnimating]
-  );
-
-  React.useEffect(() => {
-    if (animating) {
-      requestRef.current = requestAnimationFrame(animate);
-    } else {
-      startTimestampRef.current = undefined;
-    }
-
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [animating, animate]);
-
-  React.useEffect(() => {
-    if (animating) {
-      startProgressRef.current = progress;
-    } else {
-      startProgressRef.current = undefined;
-    }
-  }, [animating, progress]);
-
   return (
     <Box
       sx={{
@@ -203,15 +122,10 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
 };
 
 const PlayButton = () => {
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
+  const timeline = useTimeline();
 
   const onClick = useEvent(() => {
-    setAnimating(!animating);
-
-    if (progress === 1) {
-      setProgress(0);
-    }
+    timeline?.playing ? timeline.stop() : timeline?.start();
   });
 
   return (
@@ -226,7 +140,7 @@ const PlayButton = () => {
         borderRadius: "50%",
       }}
     >
-      <Icon name={animating ? "pause" : "play"} size={16} />
+      <Icon name={timeline?.playing ? "pause" : "play"} size={16} />
     </Button>
   );
 };
@@ -236,8 +150,7 @@ const PlayButton = () => {
  * @param data - Data to be used for the slider. Must be sorted by ms!
  */
 const Slider = ({ data }: { data: SliderDatum[] }) => {
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
+  const timeline = useTimeline();
   const [IFState, dispatch] = useInteractiveFilters();
 
   const { sortedMs, msScale, marks } = React.useMemo(() => {
@@ -257,25 +170,19 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
   }, [data]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    setProgress(+e.target.value);
+    timeline?.setProgress(+e.target.value);
   });
 
   const onClick = useEvent(() => {
-    setAnimating(false);
+    timeline?.stop();
   });
 
-  // Reset the slider when the data changes.
-  React.useEffect(() => {
-    setProgress(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
   const currentValue = React.useMemo(() => {
-    const tMs = Math.round(msScale(progress));
+    const tMs = Math.round(msScale(timeline?.progress ?? 0));
     const i = bisect(sortedMs, tMs);
 
     return data[i - 1];
-  }, [msScale, progress, data, sortedMs]);
+  }, [msScale, timeline?.progress, data, sortedMs]);
 
   React.useEffect(() => {
     // Dispatch time slider update event when progress changes.
@@ -296,7 +203,7 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
       // TODO: base on ANIMATION_DURATION?
       step={0.0001}
       marks={marks}
-      value={progress}
+      value={timeline?.progress ?? 0}
       onChange={onChange}
       onClick={onClick}
       valueLabelDisplay="on"
@@ -310,13 +217,13 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
           "& .MuiSlider-thumb": {
             width: "16px",
             height: "16px",
-            // Disable transitions when animating, otherwise it appears to be laggy.
-            ...(animating && {
+            // Disable transitions when playing, otherwise it appears to be laggy.
+            ...(timeline?.playing && {
               transition: "none",
             }),
           },
 
-          ...(animating && {
+          ...(timeline?.playing && {
             "& .MuiSlider-track": {
               transition: "none",
             },
