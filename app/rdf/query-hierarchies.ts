@@ -3,7 +3,6 @@ import {
   HierarchyNode,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
-import { isGraphPointer } from "is-graph-pointer";
 import uniqBy from "lodash/uniqBy";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
@@ -93,8 +92,7 @@ export const queryHierarchy = async (
     rdimension.data.iri
   );
 
-  // @ts-ignore
-  if (!isGraphPointer(hierarchies[0])) {
+  if (hierarchies.length === 0) {
     return null;
   }
   const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
