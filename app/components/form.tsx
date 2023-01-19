@@ -18,6 +18,7 @@ import {
   SelectProps,
   Skeleton,
   Slider as MUISlider,
+  SliderProps,
   Stack,
   styled,
   Switch as MUISwitch,
@@ -119,30 +120,21 @@ export const Radio = ({
 
 export const Slider = ({
   label,
-  disabled,
-  min,
-  max,
-  step,
-  renderTextInput = true,
   name,
   value,
+  disabled,
+  renderTextInput = true,
   onChange,
-  valueLabelDisplay,
-  valueLabelFormat,
+  sx,
   ...rest
 }: {
   label?: string;
-  disabled?: boolean;
-  min?: number;
-  max?: number;
-  step?: number;
   renderTextInput?: boolean;
-  valueLabelDisplay?: "auto" | "on" | "off";
-  valueLabelFormat?: (d: number) => string;
 } & ReturnType<typeof useChartOptionSliderField> &
-  BoxProps) => {
+  // To allow useEvent callbacks to be passed without complaining
+  Omit<SliderProps, "onChange">) => {
   return (
-    <Box {...rest}>
+    <Box sx={sx}>
       {label && (
         <Label htmlFor={`${name}-${value}`} smaller sx={{ mb: 1 }}>
           {label}
@@ -159,14 +151,10 @@ export const Slider = ({
           id={`${name}-${value}`}
           size="small"
           value={value}
-          min={min}
-          max={max}
-          step={step}
           disabled={disabled}
           // @ts-ignore
           onChange={onChange}
-          valueLabelDisplay={valueLabelDisplay}
-          valueLabelFormat={valueLabelFormat}
+          {...rest}
         />
         {renderTextInput && (
           <MUIInput
