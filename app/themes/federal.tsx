@@ -600,7 +600,7 @@ theme.components = {
         height: 3,
 
         "& .MuiSlider-rail": {
-          backgroundColor: theme.palette.grey[500],
+          backgroundColor: theme.palette.grey[300],
         },
         "& .MuiSlider-thumb": {
           width: 20,
@@ -623,6 +623,11 @@ theme.components = {
           width: 4,
           height: 4,
           borderRadius: "50%",
+          background: theme.palette.grey[600],
+
+          "&.MuiSlider-markActive": {
+            background: "#66AFE9",
+          },
         },
       },
     },
