@@ -174,7 +174,15 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
   }, [animating, progress]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 5, mb: 5 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 5,
+        mb: 5,
+        mr: `${chartState.bounds.margins.right}px`,
+      }}
+    >
       <PlayButton />
       <Box sx={{ position: "relative", width: "100%" }}>
         <Slider sortedData={sortedData} />
