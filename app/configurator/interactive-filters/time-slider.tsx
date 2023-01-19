@@ -1,3 +1,4 @@
+import { Mark } from "@mui/base";
 import { Box, Button, Typography } from "@mui/material";
 import { ascending, bisect, scaleLinear } from "d3";
 import React, { ChangeEvent } from "react";
@@ -226,19 +227,24 @@ const Slider = ({
     useTimeSliderState();
   const [IFState, dispatch] = useInteractiveFilters();
 
-  const sortedMiliseconds = React.useMemo(() => {
-    return sortedData.map((d) => d.ms);
-  }, [sortedData]);
+  const { sortedMiliseconds, msScale, marks } = React.useMemo(() => {
+    const sortedMiliseconds = sortedData.map((d) => d.ms);
+    const msScale = scaleLinear();
 
-  const msScale = React.useMemo(() => {
-    if (sortedData.length) {
+    if (sortedMiliseconds.length) {
       const [min, max] = [
-        sortedData[0].ms,
-        sortedData[sortedData.length - 1].ms,
+        sortedMiliseconds[0],
+        sortedMiliseconds[sortedMiliseconds.length - 1],
       ];
 
-      return scaleLinear().range([min, max]);
+      msScale.range([min, max]);
     }
+
+    const marks: Mark[] = sortedData.map((d) => ({
+      value: msScale.invert(d.ms),
+    }));
+
+    return { sortedMiliseconds, msScale, marks };
   }, [sortedData]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
@@ -280,18 +286,18 @@ const Slider = ({
   return (
     <GenericSlider
       name="time-slider"
+      renderTextInput={false}
       min={0}
       max={1}
       // TODO: base on ANIMATION_DURATION?
       step={0.0001}
-      renderTextInput={false}
+      marks={marks}
       value={progress}
+      // @ts-ignore
       onChange={onChange}
       onClick={onClick}
-      valueLabelFormat={() => {
-        return `${currentValue?.formattedDate ?? ""}`;
-      }}
       valueLabelDisplay="on"
+      valueLabelFormat={currentValue?.formattedDate}
       sx={{
         width: "100%",
 
