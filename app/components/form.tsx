@@ -127,6 +127,8 @@ export const Slider = ({
   name,
   value,
   onChange,
+  valueLabelDisplay,
+  valueLabelFormat,
   ...rest
 }: {
   label?: string;
@@ -135,6 +137,8 @@ export const Slider = ({
   max?: number;
   step?: number;
   renderTextInput?: boolean;
+  valueLabelDisplay?: "auto" | "on" | "off";
+  valueLabelFormat?: (d: number) => string;
 } & ReturnType<typeof useChartOptionSliderField> &
   BoxProps) => {
   return (
@@ -161,6 +165,8 @@ export const Slider = ({
           disabled={disabled}
           // @ts-ignore
           onChange={onChange}
+          valueLabelDisplay={valueLabelDisplay}
+          valueLabelFormat={valueLabelFormat}
         />
         {renderTextInput && (
           <MUIInput

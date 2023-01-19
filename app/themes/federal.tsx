@@ -613,6 +613,17 @@ theme.components = {
             display: "none",
           },
         },
+        "& .MuiSlider-valueLabel": {
+          background: theme.palette.background.paper,
+          color: theme.palette.primary.main,
+
+          boxShadow: "0 0 30px 0 rgba(0, 0, 0, 0.34)",
+        },
+        "& .MuiSlider-mark": {
+          width: 4,
+          height: 4,
+          borderRadius: "50%",
+        },
       },
     },
   },
