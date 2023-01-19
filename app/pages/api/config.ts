@@ -1,34 +1,17 @@
-import { NextApiRequest, NextApiResponse } from "next";
-
 import { createConfig } from "@/db/config";
+
+import { api } from "../../server/nextkit";
 
 import { getServerSideSession } from "./session";
 
-/**
- * Endpoint to write configuration to.
- */
-const route = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method } = req;
-
-  switch (method) {
-    case "POST":
-      try {
-        const session = await getServerSideSession(req, res);
-        const userId = session?.user?.id;
-        const result = await createConfig(req.body, userId);
-
-        // TODO: Make this 201 and set final URI as Location header
-        res.status(200).json(result);
-      } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: "Something went wrong!" });
-      }
-
-      break;
-    default:
-      res.setHeader("Allow", ["POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
-  }
-};
+const route = api({
+  POST: async ({ req, res }) => {
+    const session = await getServerSideSession(req, res);
+    const userId = session?.user?.id;
+    const { data } = req.body;
+    const result = await createConfig(data, userId);
+    return result;
+  },
+});
 
 export default route;
