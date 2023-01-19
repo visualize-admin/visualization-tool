@@ -76,7 +76,7 @@ export const InteractiveFiltersOptions = ({
     } else if (activeField === "timeSlider") {
       return (
         <ControlSection>
-          <SectionTitle iconName="play">
+          <SectionTitle iconName="animation">
             <Trans id="controls.interactive.filters.animation">Animation</Trans>
           </SectionTitle>
           <ControlSectionContent gap="none">

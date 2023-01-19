@@ -111,7 +111,7 @@ export const InteractiveFiltersConfigurator = ({
           {canFilterTimeSlider && (
             <InteractiveFilterTabField
               value="timeSlider"
-              icon="play"
+              icon="animation"
               label={
                 <Trans id="controls.interactive.filters.animation">
                   Animation
