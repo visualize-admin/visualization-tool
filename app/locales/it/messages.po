@@ -376,14 +376,14 @@ msgstr "Zeri"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:80
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:116
-msgid "controls.interactive.filters.timeSlider"
-msgstr "Cursore del tempo"
+msgid "controls.interactive.filters.animation"
+msgstr "Animazione"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:185
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:183
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Nessuna dimensione temporale disponibile!"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:160
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:158
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Mostra i filtri temporali"
 
@@ -434,7 +434,7 @@ msgstr "Torna all'anteprima"
 
 #: app/configurator/components/field.tsx:703
 #: app/configurator/components/field.tsx:875
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:244
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:242
 msgid "controls.none"
 msgstr "Nessuno"
 
@@ -450,7 +450,7 @@ msgstr "Inattivo"
 msgid "controls.scale.type"
 msgstr "Tipo di scala"
 
-#: app/components/form.tsx:611
+#: app/components/form.tsx:614
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
@@ -571,7 +571,7 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Stile del testo"
 
 #: app/configurator/components/chart-options-selector.tsx:223
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:262
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:260
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
@@ -881,7 +881,7 @@ msgstr "Problema di caricamento dei dati"
 msgid "hint.how.to.share"
 msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorporandola nel vostro sito Web. Puoi anche creare una nuova visualizzazione partendo da zero oppure copiando e modificando la visualizzazione sopra."
 
-#: app/components/form.tsx:282
+#: app/components/form.tsx:285
 #: app/components/hint.tsx:111
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."

@@ -113,8 +113,8 @@ export const InteractiveFiltersConfigurator = ({
               value="timeSlider"
               icon="play"
               label={
-                <Trans id="controls.interactive.filters.timeSlider">
-                  Time slider
+                <Trans id="controls.interactive.filters.animation">
+                  Animation
                 </Trans>
               }
             />

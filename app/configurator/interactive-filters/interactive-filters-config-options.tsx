@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { extent } from "d3";
 import get from "lodash/get";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { Checkbox, Select } from "@/components/form";
@@ -77,9 +77,7 @@ export const InteractiveFiltersOptions = ({
       return (
         <ControlSection>
           <SectionTitle iconName="play">
-            <Trans id="controls.interactive.filters.timeSlider">
-              Time slider
-            </Trans>
+            <Trans id="controls.interactive.filters.animation">Animation</Trans>
           </SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveTimeSliderFilterOptions state={state} />

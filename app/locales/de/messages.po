@@ -376,14 +376,14 @@ msgstr "Nullen"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:80
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:116
-msgid "controls.interactive.filters.timeSlider"
-msgstr "Zeitschieber"
+msgid "controls.interactive.filters.animation"
+msgstr "Animation"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:185
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:183
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Keine Zeitdimension verfügbar!"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:160
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:158
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Zeitfilter anzeigen"
 
@@ -434,7 +434,7 @@ msgstr "Zurück zur Vorschau"
 
 #: app/configurator/components/field.tsx:703
 #: app/configurator/components/field.tsx:875
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:244
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:242
 msgid "controls.none"
 msgstr "Keine"
 
@@ -450,7 +450,7 @@ msgstr "Aus"
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
 
-#: app/components/form.tsx:611
+#: app/components/form.tsx:614
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
@@ -571,7 +571,7 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Schriftstil"
 
 #: app/configurator/components/chart-options-selector.tsx:223
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:262
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:260
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
@@ -881,7 +881,7 @@ msgstr "Daten-Ladefehler"
 msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
 
-#: app/components/form.tsx:282
+#: app/components/form.tsx:285
 #: app/components/hint.tsx:111
 msgid "hint.loading.data"
 msgstr "Lade Daten …"
