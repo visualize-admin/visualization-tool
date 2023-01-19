@@ -80,7 +80,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
 
-  await actions.mui.selectOption("Gas");
+  await actions.mui.selectOption("Greenhouse gas");
 
   const checkbox = await selectors.edition.useAbbreviationsCheckbox();
 
