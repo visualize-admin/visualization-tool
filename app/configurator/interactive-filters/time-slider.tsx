@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import React, { ChangeEvent } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -16,20 +17,15 @@ import useEvent from "@/utils/use-event";
 const TimelineContext = React.createContext<Timeline | undefined>(undefined);
 
 const useTimeline = () => {
-  // This is a "hack" to force re-rendering of the component using the hook.
-  const [_, setS] = React.useState(0);
   const timeline = React.useContext(TimelineContext);
 
-  React.useEffect(() => {
-    const callback = () => setS((s) => s + 1);
-    timeline?.subscribe(callback);
-
-    return () => timeline?.unsubscribe(callback);
-  }, [timeline]);
-
   if (!timeline) {
-    throw new Error("No timeline found in context.");
+    throw new Error(
+      "useTimeline must be called inside a TimelineContext.Provider!"
+    );
   }
+
+  useSyncExternalStore(timeline.subscribe, timeline.getUpdateKey);
 
   return timeline;
 };

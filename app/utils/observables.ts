@@ -1,11 +1,14 @@
 import { ascending, bisect, scaleLinear } from "d3";
 
-class Observable {
+abstract class Observable {
   private observers: Function[];
 
   constructor() {
     this.observers = [];
   }
+
+  /** Used to keeping track of when to update the components using this. */
+  abstract getUpdateKey: () => string;
 
   public subscribe = (fn: Function) => {
     this.observers.push(fn);
@@ -61,6 +64,10 @@ export class Timeline extends Observable {
     this.formatMsValue = formatMsValue;
     this.formattedMsExtent = [min, max].map(formatMsValue) as [string, string];
   }
+
+  public getUpdateKey = () => {
+    return `${this.playing}_${this.progress}`;
+  };
 
   public start = () => {
     if (!this.playing) {
