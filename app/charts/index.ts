@@ -96,7 +96,6 @@ export const findPreferredDimension = (
 };
 
 const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
-  // FIXME: we shouldn't keep empty props
   legend: {
     active: false,
     componentIri: "",
@@ -109,9 +108,6 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
       from: "",
       to: "",
     },
-  },
-  timeSlider: {
-    componentIri: "",
   },
   dataFilters: {
     active: false,
