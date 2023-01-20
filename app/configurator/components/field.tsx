@@ -198,8 +198,11 @@ export const DataFilterSelect = ({
     if (!hierarchy) {
       return;
     }
-    return hierarchyToOptions(hierarchy);
-  }, [hierarchy]);
+    return hierarchyToOptions(
+      hierarchy,
+      dimension.values.map((v) => v.value)
+    );
+  }, [hierarchy, dimension.values]);
 
   const { open, close, isOpen } = useDisclosure();
   const handleOpen = () => {

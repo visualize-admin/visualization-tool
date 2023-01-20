@@ -13,19 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:697
+#: app/configurator/components/chart-configurator.tsx:709
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
-#: app/configurator/components/chart-configurator.tsx:670
+#: app/configurator/components/chart-configurator.tsx:682
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
-#: app/configurator/components/chart-configurator.tsx:667
+#: app/configurator/components/chart-configurator.tsx:679
 msgid "Move filter down"
 msgstr "Sposta il filtro in basso"
 
-#: app/configurator/components/chart-configurator.tsx:664
+#: app/configurator/components/chart-configurator.tsx:676
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
@@ -119,7 +119,7 @@ msgstr "Condividi"
 msgid "chart.map.layers.area"
 msgstr "Aree"
 
-#: app/configurator/components/chart-configurator.tsx:750
+#: app/configurator/components/chart-configurator.tsx:762
 #: app/configurator/components/chart-options-selector.tsx:1055
 #: app/configurator/components/field-i18n.ts:31
 msgid "chart.map.layers.base"
@@ -458,7 +458,7 @@ msgstr "Cancella la ricerca"
 msgid "controls.section.additional-information"
 msgstr "Informazioni aggiuntive"
 
-#: app/configurator/components/chart-configurator.tsx:586
+#: app/configurator/components/chart-configurator.tsx:595
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
 
@@ -470,9 +470,13 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
-#: app/configurator/components/chart-configurator.tsx:604
+#: app/configurator/components/chart-configurator.tsx:613
 msgid "controls.section.data.filters"
 msgstr "Filtri"
+
+#: app/configurator/components/chart-configurator.tsx:629
+msgid "controls.section.data.filters.possible-filters-error"
+msgstr "Si è verificato un errore durante il recupero dei possibili filtri. Riprova più tardi o aggiorna la pagina."
 
 #: app/configurator/components/chart-annotator.tsx:53
 msgid "controls.section.description"
@@ -528,7 +532,7 @@ msgstr "Opzioni della tabella"
 msgid "controls.section.title.warning"
 msgstr "Aggiungi un titolo o una descrizione"
 
-#: app/configurator/components/chart-configurator.tsx:578
+#: app/configurator/components/chart-configurator.tsx:587
 #: app/configurator/components/chart-type-selector.tsx:131
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"
