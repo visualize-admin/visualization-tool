@@ -1,25 +1,25 @@
 import { t, Trans } from "@lingui/macro";
 import {
+  Badge,
+  BadgeProps,
   Box,
   Button,
-  Tooltip,
   CircularProgress,
+  FormControlLabel,
+  FormControlLabelProps,
   IconButton,
   Menu,
   MenuItem,
-  Theme,
-  Typography,
   Switch,
-  FormControlLabel,
-  FormControlLabelProps,
-  Badge,
-  BadgeProps,
+  Theme,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -78,6 +78,7 @@ import { InteractiveFiltersConfigurator } from "../interactive-filters/interacti
 
 import { TitleAndDescriptionConfigurator } from "./chart-annotator";
 import { ChartTypeSelector } from "./chart-type-selector";
+import { flag } from "./flag";
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -751,18 +752,20 @@ const ChartFields = ({
             active={chartConfig.baseLayer.show}
           />
         ) : (
-          <ControlTabField
-            key={field}
-            component={
-              isMapConfig(chartConfig) && field === "symbolLayer"
-                ? chartConfig.fields.symbolLayer
-                  ? component
-                  : undefined
-                : component
-            }
-            value={field}
-            labelId={`${chartConfig.chartType}.${field}`}
-          />
+          (field !== "animation" || flag("timeslider")) && (
+            <ControlTabField
+              key={field}
+              component={
+                isMapConfig(chartConfig) && field === "symbolLayer"
+                  ? chartConfig.fields.symbolLayer
+                    ? component
+                    : undefined
+                  : component
+              }
+              value={field}
+              labelId={`${chartConfig.chartType}.${field}`}
+            />
+          )
         );
       })}
     </>
