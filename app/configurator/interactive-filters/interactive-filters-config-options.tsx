@@ -1,11 +1,10 @@
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { extent } from "d3";
-import get from "lodash/get";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { getFieldComponentIri } from "@/charts";
-import { Checkbox, Select } from "@/components/form";
+import { Checkbox } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   ControlSection,
@@ -15,21 +14,11 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
-import {
-  useInteractiveTimeRangeFiltersToggle,
-  useInteractiveTimeSliderFiltersSelect,
-} from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { useInteractiveTimeRangeFiltersToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { useFormatFullDateAuto } from "@/formatters";
-import {
-  TemporalDimension,
-  useDataCubeMetadataWithComponentValuesQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { FIELD_VALUE_NONE } from "../constants";
-
-import { getTimeSliderFilterDimensions } from "./helpers";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -70,17 +59,6 @@ export const InteractiveFiltersOptions = ({
           <SectionTitle iconName="time">{component?.label}</SectionTitle>
           <ControlSectionContent gap="none">
             <InteractiveTimeRangeFilterOptions state={state} />
-          </ControlSectionContent>
-        </ControlSection>
-      );
-    } else if (activeField === "timeSlider") {
-      return (
-        <ControlSection>
-          <SectionTitle iconName="animation">
-            <Trans id="controls.interactive.filters.animation">Animation</Trans>
-          </SectionTitle>
-          <ControlSectionContent gap="none">
-            <InteractiveTimeSliderFilterOptions state={state} />
           </ControlSectionContent>
         </ControlSection>
       );
@@ -190,80 +168,4 @@ const InteractiveTimeRangeFilterOptions = ({
   } else {
     return <Loading />;
   }
-};
-
-const InteractiveTimeSliderFilterOptions = ({
-  state: { chartConfig, dataSet, dataSource },
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
-  const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
-  const value =
-    get(chartConfig, "interactiveFiltersConfig.timeSlider.componentIri") ||
-    FIELD_VALUE_NONE;
-
-  if (data?.dataCubeByIri) {
-    const timeSliderDimensions = getTimeSliderFilterDimensions({
-      chartConfig,
-      dataCubeByIri: data.dataCubeByIri,
-    });
-
-    return (
-      <InteractiveTimeSliderFilterOptionsSelect
-        dimensions={timeSliderDimensions}
-        value={value}
-      />
-    );
-  } else {
-    return <Loading />;
-  }
-};
-
-const InteractiveTimeSliderFilterOptionsSelect = ({
-  dimensions,
-  value,
-}: {
-  dimensions: TemporalDimension[];
-  value: string;
-}) => {
-  const fieldProps = useInteractiveTimeSliderFiltersSelect();
-  const options = useMemo(() => {
-    return [
-      {
-        label: t({
-          id: "controls.none",
-          message: "None",
-        }),
-        value: FIELD_VALUE_NONE,
-        isNoneValue: true,
-      },
-      ...dimensions.map((d) => ({
-        label: d.label,
-        value: d.iri,
-      })),
-    ];
-  }, [dimensions]);
-
-  return (
-    <Select
-      id="time-slider-component-iri"
-      options={options}
-      label={t({
-        id: "controls.select.dimension",
-        message: "Select a dimension",
-      })}
-      value={value}
-      displayEmpty={true}
-      {...fieldProps}
-    />
-  );
 };

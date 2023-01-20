@@ -11,7 +11,6 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { flag } from "@/configurator/components/flag";
 import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
   isConfiguring,
@@ -20,10 +19,6 @@ import {
 import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { getTimeSliderFilterDimensions } from "./helpers";
-
-const ENABLE_TIME_SLIDER = typeof window !== "undefined" && flag("timeslider");
 
 export type InteractiveFilterType =
   | "legend"
@@ -65,21 +60,13 @@ export const InteractiveFiltersConfigurator = ({
     const xComponentIri = getFieldComponentIri(fields, "x");
     const xComponent = allComponents.find((d) => d.iri === xComponentIri);
 
-    const timeSliderDimensions = getTimeSliderFilterDimensions({
-      chartConfig,
-      dataCubeByIri: data.dataCubeByIri,
-    });
-
     const canFilterTimeRange =
       isTemporalDimension(xComponent) &&
       chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
         "timeRange"
       );
 
-    const canFilterTimeSlider =
-      ENABLE_TIME_SLIDER && timeSliderDimensions.length > 0;
-
-    if (!canFilterTimeRange && !canFilterTimeSlider) {
+    if (!canFilterTimeRange) {
       return null;
     }
 
@@ -105,18 +92,6 @@ export const InteractiveFiltersConfigurator = ({
               value="timeRange"
               icon="time"
               label={xComponent!.label}
-            />
-          )}
-          {/* Time slider */}
-          {canFilterTimeSlider && (
-            <InteractiveFilterTabField
-              value="timeSlider"
-              icon="animation"
-              label={
-                <Trans id="controls.interactive.filters.animation">
-                  Animation
-                </Trans>
-              }
             />
           )}
         </ControlSectionContent>
@@ -165,9 +140,7 @@ const InteractiveFilterTabField = ({
   const checked = state.activeField === value;
   const active = !!get(
     state,
-    `chartConfig.interactiveFiltersConfig["${value}"].${
-      value === "timeSlider" ? "componentIri" : "active"
-    }`
+    `chartConfig.interactiveFiltersConfig["${value}"].active`
   );
 
   return (

@@ -74,7 +74,6 @@ export const ChartAnnotationsSelector = ({
       case "dataFilters":
       case "legend":
       case "timeRange":
-      case "timeSlider":
         return true;
 
       default:
