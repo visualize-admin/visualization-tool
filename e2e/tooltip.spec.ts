@@ -10,12 +10,12 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
     selectors.edition.controlSection("Filters")
   );
 
-  await filterLocator.getByText("Greenhouse gas").click();
+  await filterLocator.getByText("All greenhouse gas").click();
   await selectors.mui
     .popover()
-    .findByText("Synthetic gases", undefined, { timeout: 10_000 });
+    .findByText("Methane", undefined, { timeout: 10_000 });
 
-  await actions.mui.selectOption("Synthetic gases");
+  await actions.mui.selectOption("Methane");
 
   await selectors.chart.loaded();
 
@@ -29,5 +29,5 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   const tooltip = page.locator('[data-testid="chart-tooltip"]');
   await tooltip.waitFor();
   const textContent = await tooltip.textContent();
-  expect(textContent).toEqual("1996-5.561 Mt");
+  expect(textContent).toEqual("19960.017 Mt");
 });

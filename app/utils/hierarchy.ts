@@ -3,6 +3,8 @@ import { ascending } from "d3";
 import { SelectTreeProps } from "@/components/select-tree";
 import { OptionGroup, Option } from "@/configurator";
 import { HierarchyParents } from "@/configurator/components/use-hierarchy-parents";
+import { DimensionValue } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { sortHierarchy } from "@/rdf/tree-utils";
 
@@ -32,16 +34,34 @@ export const makeOptionGroups = (
     .sort((a, b) => ascending(a[1][0].depth, b[1][0].depth));
 };
 
-export const hierarchyToOptions = (hierarchy: HierarchyValue[]) => {
-  const transform = (h: HierarchyValue): SelectTreeProps["options"][number] => {
+export const hierarchyToOptions = (
+  hierarchy: HierarchyValue[],
+  possibleValues?: DimensionValue["value"][]
+) => {
+  const possibleValuesSet = possibleValues
+    ? new Set(possibleValues)
+    : undefined;
+  const transform = (
+    h: HierarchyValue
+  ): SelectTreeProps["options"][number] | undefined => {
+    const children =
+      h.children && h.children.length > 0
+        ? h.children.map(transform).filter(truthy)
+        : undefined;
+
+    // Keep the value only if part of possibleValues or if it has children
+    if (
+      possibleValuesSet &&
+      !possibleValuesSet.has(h.value) &&
+      (!children || children.length === 0)
+    ) {
+      return undefined;
+    }
     return {
       ...h,
       selectable: !!h.hasValue,
-      children:
-        h.children && h.children.length > 0
-          ? h.children.map(transform)
-          : undefined,
+      children,
     };
   };
-  return sortHierarchy(hierarchy).map((h) => transform(h));
+  return sortHierarchy(hierarchy).map(transform).filter(truthy);
 };

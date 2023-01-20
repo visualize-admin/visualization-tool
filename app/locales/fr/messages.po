@@ -13,19 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:697
+#: app/configurator/components/chart-configurator.tsx:709
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
-#: app/configurator/components/chart-configurator.tsx:670
+#: app/configurator/components/chart-configurator.tsx:682
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
 
-#: app/configurator/components/chart-configurator.tsx:667
+#: app/configurator/components/chart-configurator.tsx:679
 msgid "Move filter down"
 msgstr "Déplacer le filtre vers le bas"
 
-#: app/configurator/components/chart-configurator.tsx:664
+#: app/configurator/components/chart-configurator.tsx:676
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
@@ -462,7 +462,7 @@ msgstr "Effacer la recherche"
 msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
-#: app/configurator/components/chart-configurator.tsx:586
+#: app/configurator/components/chart-configurator.tsx:595
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
 
@@ -474,9 +474,13 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
-#: app/configurator/components/chart-configurator.tsx:604
+#: app/configurator/components/chart-configurator.tsx:613
 msgid "controls.section.data.filters"
 msgstr "Filtres"
+
+#: app/configurator/components/chart-configurator.tsx:629
+msgid "controls.section.data.filters.possible-filters-error"
+msgstr "Une erreur s'est produite lors de la récupération des filtres possibles. Merci de réessayer plus tard ou d'actualiser la page."
 
 #: app/configurator/components/chart-annotator.tsx:53
 msgid "controls.section.description"
@@ -532,7 +536,7 @@ msgstr "Options du tableau"
 msgid "controls.section.title.warning"
 msgstr "Ajoutez un titre et une description"
 
-#: app/configurator/components/chart-configurator.tsx:578
+#: app/configurator/components/chart-configurator.tsx:587
 #: app/configurator/components/chart-type-selector.tsx:131
 #: app/configurator/table/table-chart-configurator.tsx:123
 msgid "controls.select.chart.type"

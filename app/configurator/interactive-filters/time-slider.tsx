@@ -1,7 +1,6 @@
-import { Mark } from "@mui/base";
 import { Box, Button, Typography } from "@mui/material";
-import { ascending, bisect, scaleLinear } from "d3";
 import React, { ChangeEvent } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -12,57 +11,23 @@ import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
+import { Timeline } from "@/utils/observables";
 import useEvent from "@/utils/use-event";
 
-// TODO: make this configurable
-const ANIMATION_DURATION = 10000;
+const TimelineContext = React.createContext<Timeline | undefined>(undefined);
 
-type SliderDatum = {
-  ms: number;
-  formattedDate: string;
-};
+const useTimeline = () => {
+  const timeline = React.useContext(TimelineContext);
 
-type TimeSliderState = {
-  progress: number;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  animating: boolean;
-  setAnimating: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const TimeSliderStateContext = React.createContext<TimeSliderState>({
-  progress: 0,
-  setProgress: () => {},
-  animating: false,
-  setAnimating: () => {},
-});
-
-const useTimeSliderState = () => {
-  const ctx = React.useContext(TimeSliderStateContext);
-
-  if (!ctx) {
+  if (!timeline) {
     throw new Error(
-      "You need to wrap your component in <TimeSliderStateProvider /> to useTimeSliderContext()"
+      "useTimeline must be called inside a TimelineContext.Provider!"
     );
   }
 
-  return ctx;
-};
+  useSyncExternalStore(timeline.subscribe, timeline.getUpdateKey);
 
-export const TimeSliderStateProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [progress, setProgress] = React.useState(0);
-  const [animating, setAnimating] = React.useState(false);
-
-  return (
-    <TimeSliderStateContext.Provider
-      value={{ progress, setProgress, animating, setAnimating }}
-    >
-      {children}
-    </TimeSliderStateContext.Provider>
-  );
+  return timeline;
 };
 
 export const TimeSlider = ({
@@ -73,25 +38,25 @@ export const TimeSlider = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const component = React.useMemo(() => {
-    return dimensions.find((d) => d.iri === componentIri);
-  }, [componentIri, dimensions]) as TemporalDimension | undefined;
+    return dimensions.find((d) => d.iri === componentIri) as
+      | TemporalDimension
+      | undefined;
+  }, [componentIri, dimensions]);
 
-  return (
-    <TimeSliderStateProvider>
-      <Root component={component} />
-    </TimeSliderStateProvider>
-  );
-};
-
-const Root = ({ component }: { component?: TemporalDimension }) => {
-  const formatDate = useTimeFormatUnit();
+  const timeFormatUnit = useTimeFormatUnit();
   const timeUnit = component?.timeUnit ?? TimeUnit.Day;
+  const formatDate = React.useCallback(
+    (d: number) => {
+      return timeFormatUnit(new Date(d), timeUnit);
+    },
+    [timeFormatUnit, timeUnit]
+  );
   // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
 
-  const sliderData: SliderDatum[] = React.useMemo(() => {
+  const timelineData: number[] = React.useMemo(() => {
     // FIXME: enable interactive filters for maps!
     if (component && chartState.chartType !== "map") {
       const uniqueValues = [
@@ -100,16 +65,7 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
         ),
       ] as string[];
 
-      return uniqueValues
-        .map((d) => {
-          const date = parseDate(d);
-
-          return {
-            ms: date.getTime(),
-            formattedDate: formatDate(date, timeUnit),
-          };
-        })
-        .sort((a, b) => ascending(a.ms, b.ms));
+      return uniqueValues.map((d) => parseDate(d).getTime());
     }
 
     return [];
@@ -118,65 +74,22 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
     // @ts-ignore - allData is not yet there for the maps
     chartState.allData,
     component,
-    formatDate,
-    timeUnit,
   ]);
 
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
-  // Keeping track of requestAnimationFrame to be able to cancel it.
-  const requestRef = React.useRef<number>();
-  // Keeping track of the start time to be able to calculate the current progress.
-  const startTimestampRef = React.useRef<number>();
-  // Animation can start from a specific progress.
-  const startProgressRef = React.useRef<number>();
+  const timeline = React.useMemo(() => {
+    return new Timeline(timelineData, formatDate);
+  }, [timelineData, formatDate]);
 
-  const animate = React.useCallback(
-    (timestamp: number) => {
-      if (!startTimestampRef.current) {
-        if (startProgressRef.current) {
-          startTimestampRef.current =
-            timestamp - startProgressRef.current * ANIMATION_DURATION;
-        } else {
-          startTimestampRef.current = timestamp;
-        }
-      }
-
-      if (timestamp - startTimestampRef.current > ANIMATION_DURATION) {
-        setProgress(1);
-        setAnimating(false);
-      } else {
-        const progress =
-          (timestamp - startTimestampRef.current) / ANIMATION_DURATION;
-        setProgress(progress);
-
-        requestRef.current = requestAnimationFrame(animate);
-      }
-    },
-    [setProgress, setAnimating]
+  return (
+    <TimelineContext.Provider value={timeline}>
+      <Root />
+    </TimelineContext.Provider>
   );
+};
 
-  React.useEffect(() => {
-    if (animating) {
-      requestRef.current = requestAnimationFrame(animate);
-    } else {
-      startTimestampRef.current = undefined;
-    }
-
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [animating, animate]);
-
-  React.useEffect(() => {
-    if (animating) {
-      startProgressRef.current = progress;
-    } else {
-      startProgressRef.current = undefined;
-    }
-  }, [animating, progress]);
+const Root = () => {
+  const timeline = useTimeline();
+  const chartState = useChartState();
 
   return (
     <Box
@@ -190,12 +103,12 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
     >
       <PlayButton />
       <Box sx={{ position: "relative", width: "100%" }}>
-        <Slider data={sliderData} />
+        <Slider />
         <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
-          {sliderData[0].formattedDate}
+          {timeline.formattedExtent[0]}
         </Typography>
         <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
-          {sliderData[sliderData.length - 1].formattedDate}
+          {timeline.formattedExtent[1]}
         </Typography>
       </Box>
     </Box>
@@ -203,15 +116,10 @@ const Root = ({ component }: { component?: TemporalDimension }) => {
 };
 
 const PlayButton = () => {
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
+  const timeline = useTimeline();
 
   const onClick = useEvent(() => {
-    setAnimating(!animating);
-
-    if (progress === 1) {
-      setProgress(0);
-    }
+    timeline.playing ? timeline.stop() : timeline.start();
   });
 
   return (
@@ -226,66 +134,36 @@ const PlayButton = () => {
         borderRadius: "50%",
       }}
     >
-      <Icon name={animating ? "pause" : "play"} size={16} />
+      <Icon name={timeline.playing ? "pause" : "play"} size={16} />
     </Button>
   );
 };
 
-/** Slider component.
- *
- * @param data - Data to be used for the slider. Must be sorted by ms!
- */
-const Slider = ({ data }: { data: SliderDatum[] }) => {
-  const { progress, setProgress, animating, setAnimating } =
-    useTimeSliderState();
+const Slider = () => {
+  const timeline = useTimeline();
   const [IFState, dispatch] = useInteractiveFilters();
 
-  const { sortedMs, msScale, marks } = React.useMemo(() => {
-    const sortedMs = data.map((d) => d.ms);
-    const msScale = scaleLinear();
-
-    if (sortedMs.length) {
-      const [min, max] = [sortedMs[0], sortedMs[sortedMs.length - 1]];
-      msScale.range([min, max]);
-    }
-
-    const marks: Mark[] = data.map((d) => ({
-      value: msScale.invert(d.ms),
-    }));
-
-    return { sortedMs, msScale, marks };
-  }, [data]);
+  const marks = React.useMemo(() => {
+    return timeline.domain.map((d) => ({ value: d })) ?? [];
+  }, [timeline.domain]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    setProgress(+e.target.value);
+    timeline.setProgress(+e.target.value);
   });
 
   const onClick = useEvent(() => {
-    setAnimating(false);
+    timeline.stop();
   });
-
-  // Reset the slider when the data changes.
-  React.useEffect(() => {
-    setProgress(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  const currentValue = React.useMemo(() => {
-    const tMs = Math.round(msScale(progress));
-    const i = bisect(sortedMs, tMs);
-
-    return data[i - 1];
-  }, [msScale, progress, data, sortedMs]);
 
   React.useEffect(() => {
     // Dispatch time slider update event when progress changes.
-    if (IFState.timeSlider.value?.getTime() !== currentValue.ms) {
+    if (IFState.timeSlider.value?.getTime() !== timeline.value) {
       dispatch({
         type: "SET_TIME_SLIDER_FILTER",
-        value: new Date(currentValue.ms),
+        value: new Date(timeline.value),
       });
     }
-  }, [IFState.timeSlider.value, currentValue, dispatch]);
+  }, [timeline.value, IFState.timeSlider.value, dispatch]);
 
   return (
     <GenericSlider
@@ -293,14 +171,13 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
       renderTextInput={false}
       min={0}
       max={1}
-      // TODO: base on ANIMATION_DURATION?
-      step={0.0001}
+      step={null}
       marks={marks}
-      value={progress}
+      value={timeline.progress}
       onChange={onChange}
       onClick={onClick}
       valueLabelDisplay="on"
-      valueLabelFormat={currentValue?.formattedDate}
+      valueLabelFormat={timeline.formattedValue}
       sx={{
         width: "100%",
 
@@ -310,13 +187,13 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
           "& .MuiSlider-thumb": {
             width: "16px",
             height: "16px",
-            // Disable transitions when animating, otherwise it appears to be laggy.
-            ...(animating && {
+            // Disable transitions when playing, otherwise it appears to be laggy.
+            ...(timeline.playing && {
               transition: "none",
             }),
           },
 
-          ...(animating && {
+          ...(timeline.playing && {
             "& .MuiSlider-track": {
               transition: "none",
             },

@@ -224,7 +224,7 @@ const useEnsurePossibleFilters = ({
       if (error || !data) {
         setError(error);
         setFetching(false);
-        console.warn("Could not fetch possible filters", error);
+        console.error("Could not fetch possible filters", error);
         return;
       }
       setError(undefined);
@@ -261,6 +261,7 @@ const useEnsurePossibleFilters = ({
     state.dataSource.type,
     state.dataSource.url,
   ]);
+
   return { error, fetching };
 };
 
@@ -618,7 +619,10 @@ export const ChartConfigurator = ({
           >
             {possibleFiltersError ? (
               <Typography variant="body2" color="error">
-                {possibleFiltersError.message}
+                <Trans id="controls.section.data.filters.possible-filters-error">
+                  An error happened while fetching possible filters, please
+                  retry later or reload the page.
+                </Trans>
               </Typography>
             ) : null}
             <DragDropContext onDragEnd={handleDragEnd}>
