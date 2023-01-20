@@ -219,14 +219,9 @@ const EncodingOptionsPanel = ({
   const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const getFieldLabelHint = {
+  const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    // Empty strings for optional encodings.
-    baseLayer: "",
-    areaLayer: "",
-    symbolLayer: "",
-    segment: "",
   };
 
   useEffect(() => {
@@ -308,7 +303,7 @@ const EncodingOptionsPanel = ({
           <ControlSectionContent gap="none">
             <ChartFieldField
               field={encoding.field}
-              label={getFieldLabelHint[encoding.field]}
+              label={fieldLabelHint[encoding.field]}
               optional={encoding.optional}
               options={options}
             />

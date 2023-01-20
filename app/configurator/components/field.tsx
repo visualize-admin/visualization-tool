@@ -36,19 +36,17 @@ import {
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
 import {
+  isMultiFilterFieldChecked,
   Option,
   useActiveFieldField,
   useChartFieldField,
+  useChartOptionBooleanField,
   useChartOptionRadioField,
+  useChartOptionSelectField,
   useChartOptionSliderField,
   useMetaField,
-  useSingleFilterField,
-} from "@/configurator/config-form";
-import {
-  isMultiFilterFieldChecked,
-  useChartOptionBooleanField,
-  useChartOptionSelectField,
   useMultiFilterContext,
+  useSingleFilterField,
   useSingleFilterSelect,
 } from "@/configurator/config-form";
 import {
@@ -685,13 +683,13 @@ export const ColorPickerField = ({
 };
 
 export const ChartFieldField = ({
-  label,
+  label = "",
   field,
   options,
   optional,
   disabled,
 }: {
-  label: string;
+  label?: string;
   field: string;
   options: Option[];
   optional?: boolean;
