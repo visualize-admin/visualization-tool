@@ -635,6 +635,16 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isAnimationInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ColumnConfig | ScatterPlotConfig | PieConfig => {
+  return (
+    chartConfig.chartType === "column" ||
+    chartConfig.chartType === "scatterplot" ||
+    chartConfig.chartType === "pie"
+  );
+};
+
 export const isColorFieldInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is MapConfig => {

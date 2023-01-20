@@ -31,10 +31,21 @@ import {
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
+  ChartConfig,
+  ChartType,
+  ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateSelectingDataSet,
   DataSource,
+  decodeConfiguratorState,
+  Filters,
+  FilterValue,
+  FilterValueMultiValues,
   GenericField,
+  GenericFields,
   ImputationType,
+  InteractiveFiltersConfig,
+  isAnimationInConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
@@ -44,26 +55,14 @@ import {
   MapFields,
   NumericalColorField,
 } from "@/configurator/config-types";
-import {
-  ChartConfig,
-  ChartType,
-  ConfiguratorState,
-  ConfiguratorStateSelectingDataSet,
-  decodeConfiguratorState,
-  Filters,
-  FilterValue,
-  FilterValueMultiValues,
-  GenericFields,
-  InteractiveFiltersConfig,
-} from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   canDimensionBeMultiFiltered,
   DimensionValue,
-  isOrdinalMeasure,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
+  isOrdinalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -780,15 +779,23 @@ export const handleChartFieldChanged = (
   const component = [...dimensions, ...measures].find(
     (dim) => dim.iri === componentIri
   );
-  const selectedValues = actionSelectedValues
-    ? actionSelectedValues
-    : component?.values || [];
+  const selectedValues = actionSelectedValues ?? component?.values ?? [];
+
   // The field was not defined before
   if (!f) {
     // FIXME?
-    // optionalFields = ['segment', 'areaLayer', 'symbolLayer'],
+    // optionalFields = ['animation', 'segment', 'areaLayer', 'symbolLayer'],
     // should be reflected in chart encodings
-    if (field === "segment") {
+    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
+      draft.chartConfig.fields.animation = {
+        componentIri,
+      };
+
+      if (draft.chartConfig.interactiveFiltersConfig) {
+        draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri =
+          componentIri;
+      }
+    } else if (field === "segment") {
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
       if (isSegmentInConfig(draft.chartConfig)) {
@@ -836,7 +843,16 @@ export const handleChartFieldChanged = (
     }
   } else {
     // The field is being updated
-    if (
+    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
+      draft.chartConfig.fields.animation = {
+        componentIri,
+      };
+
+      if (draft.chartConfig.interactiveFiltersConfig) {
+        draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri =
+          componentIri;
+      }
+    } else if (
       field === "segment" &&
       "segment" in draft.chartConfig.fields &&
       draft.chartConfig.fields.segment &&
@@ -1142,6 +1158,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_FIELD_DELETED":
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
+
+        if (
+          action.value.field === "animation" &&
+          draft.chartConfig.interactiveFiltersConfig
+        ) {
+          draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri =
+            "";
+        }
 
         const metadata = getCachedCubeMetadataWithComponentValues(
           draft,
