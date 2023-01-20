@@ -222,6 +222,10 @@ const EncodingOptionsPanel = ({
   const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
+    animation: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
   };
 
   useEffect(() => {
@@ -372,6 +376,7 @@ const EncodingOptionsPanel = ({
             }
           />
         )}
+
       {optionsByField["showStandardError"] && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
@@ -389,9 +394,11 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       )}
+
       {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
+
       <ChartFieldMultiFilter
         state={state}
         component={component}
