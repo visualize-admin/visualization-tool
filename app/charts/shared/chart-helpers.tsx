@@ -101,21 +101,27 @@ export const usePlottableData = ({
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
-/** Prepares the data to be used in charts.
- *
- * Different than the full dataset, because interactive filters might be applied.
- */
+/** Prepares the data to be used in charts, taking interactive filters into account. */
 export const useDataAfterInteractiveFilters = ({
   sortedData,
   interactiveFiltersConfig,
   getX,
   getSegment,
 }: {
-  sortedData: Array<Observation>;
+  sortedData: Observation[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
-}) => {
+}): {
+  /** Data to be used in the chart. */
+  preparedData: Observation[];
+  /** Data to be used to compute the scales.
+   * They are different when a time slider is present, since the scales
+   * should be computed using all the data, to prevent them from changing
+   * when the time slider is moved, while the chart should only show the data
+   * corresponding to the selected time.*/
+  scalesData: Observation[];
+} => {
   const [IFState] = useInteractiveFilters();
 
   // time range
@@ -162,23 +168,29 @@ export const useDataAfterInteractiveFilters = ({
       ).filter(truthy)
     );
   }, [
-    legendItems,
-    getSegment,
     getX,
-    getTime,
     fromTime,
     toTime,
-    interactiveFiltersConfig?.legend.active,
     interactiveFiltersConfig?.timeRange.active,
     interactiveFiltersConfig?.timeSlider.componentIri,
+    interactiveFiltersConfig?.legend.active,
     timeSliderValue,
+    getSegment,
+    getTime,
+    legendItems,
   ]);
 
   const preparedData = useMemo(() => {
     return sortedData.filter(allFilters);
   }, [allFilters, sortedData]);
 
-  return preparedData;
+  const timeSliderFilterPresent = !!(
+    interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+  );
+
+  const scalesData = timeSliderFilterPresent ? sortedData : preparedData;
+
+  return { preparedData, scalesData };
 };
 
 export const makeUseParsedVariable =
@@ -335,7 +347,11 @@ const getBaseWideData = ({
         total: sum(values, getY),
       },
       ...getOptionalObservationProps(i),
-      ...values.map((d) => ({ [getSegment(d)]: getY(d) }))
+      ...values
+        // Sorting the values in case of multiple values for the same segment
+        // (desired behavior for getting the domain when time slider is active).
+        .sort((a, b) => (getY(a) ?? 0) - (getY(b) ?? 0))
+        .map((d) => ({ [getSegment(d)]: getY(d) }))
     );
 
     wideData.push(observation);

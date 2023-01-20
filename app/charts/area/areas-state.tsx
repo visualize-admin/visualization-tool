@@ -26,9 +26,9 @@ import {
   getLabelWithUnit,
   getWideData,
   stackOffsetDivergingPositiveZeros,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
-  useDataAfterInteractiveFilters,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
@@ -42,8 +42,8 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
-  useFormatNumber,
   formatNumberWithUnit,
+  useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -169,7 +169,8 @@ const useAreasState = (
     plotters: [getX, getY],
   });
 
-  const preparedData = useDataAfterInteractiveFilters({
+  // Data for chart
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX,
@@ -267,7 +268,7 @@ const useAreasState = (
     const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
     const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
     const yDomain = [minTotal, maxTotal];
-    const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
+    const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
     const xEntireDomain = extent(plottableSortedData, (d) => getX(d)) as [
@@ -308,7 +309,7 @@ const useAreasState = (
     fields.segment,
     getX,
     plottableSortedData,
-    preparedData,
+    scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     segments,

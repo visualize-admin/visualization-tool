@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import {
   useDataAfterInteractiveFilters,
@@ -96,8 +96,8 @@ const usePieState = (
     plotters: [getY],
   });
 
-  // Apply end-user-activated interactive filters to the stack
-  const preparedData = useDataAfterInteractiveFilters({
+  // Data for chart
+  const { preparedData } = useDataAfterInteractiveFilters({
     sortedData: plottableData,
     interactiveFiltersConfig,
     getSegment,

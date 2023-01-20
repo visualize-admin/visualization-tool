@@ -1,78 +1,205 @@
-import { bisect, scaleLinear } from "d3";
+import { Box, Button, Typography } from "@mui/material";
 import React, { ChangeEvent } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
-import { Slider } from "@/components/form";
+import { Slider as GenericSlider } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { useTimeFormatUnit } from "@/formatters";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { TemporalDimension } from "@/graphql/resolver-types";
+import { Icon } from "@/icons";
+import { Timeline } from "@/utils/observables";
 import useEvent from "@/utils/use-event";
 
-export const TimeSlider = ({ componentIri }: { componentIri?: string }) => {
-  const [IFState, dispatch] = useInteractiveFilters();
-  const [t, setT] = React.useState(0);
+const TimelineContext = React.createContext<Timeline | undefined>(undefined);
+
+const useTimeline = () => {
+  const timeline = React.useContext(TimelineContext);
+
+  if (!timeline) {
+    throw new Error(
+      "useTimeline must be called inside a TimelineContext.Provider!"
+    );
+  }
+
+  useSyncExternalStore(timeline.subscribe, timeline.getUpdateKey);
+
+  return timeline;
+};
+
+export const TimeSlider = ({
+  componentIri,
+  dimensions,
+}: {
+  componentIri?: string;
+  dimensions: DimensionMetadataFragment[];
+}) => {
+  const component = React.useMemo(() => {
+    return dimensions.find((d) => d.iri === componentIri) as
+      | TemporalDimension
+      | undefined;
+  }, [componentIri, dimensions]);
+
+  const timeFormatUnit = useTimeFormatUnit();
+  const timeUnit = component?.timeUnit ?? TimeUnit.Day;
+  const formatDate = React.useCallback(
+    (d: number) => {
+      return timeFormatUnit(new Date(d), timeUnit);
+    },
+    [timeFormatUnit, timeUnit]
+  );
+  // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
 
-  const sortedMs = React.useMemo(() => {
+  const timelineData: number[] = React.useMemo(() => {
     // FIXME: enable interactive filters for maps!
-    if (componentIri && chartState.chartType !== "map") {
+    if (component && chartState.chartType !== "map") {
       const uniqueValues = [
         ...new Set(
-          chartState.allData.map((d) => d[componentIri]).filter(Boolean)
+          chartState.allData.map((d) => d[component.iri]).filter(Boolean)
         ),
       ] as string[];
-      const sortedMs = uniqueValues
-        .sort()
-        .map(parseDate)
-        .map((d) => d.getTime());
 
-      return sortedMs;
+      return uniqueValues.map((d) => parseDate(d).getTime());
     }
 
     return [];
+  }, [
+    chartState.chartType,
     // @ts-ignore - allData is not yet there for the maps
-  }, [chartState.chartType, chartState.allData, componentIri]);
+    chartState.allData,
+    component,
+  ]);
 
-  const msScale = React.useMemo(() => {
-    if (sortedMs.length) {
-      const [min, max] = [sortedMs[0], sortedMs[sortedMs.length - 1]];
-      return scaleLinear().range([min, max]);
-    }
-  }, [sortedMs]);
+  const timeline = React.useMemo(() => {
+    return new Timeline(timelineData, formatDate);
+  }, [timelineData, formatDate]);
+
+  return (
+    <TimelineContext.Provider value={timeline}>
+      <Root />
+    </TimelineContext.Provider>
+  );
+};
+
+const Root = () => {
+  const timeline = useTimeline();
+  const chartState = useChartState();
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 5,
+        mb: 5,
+        mr: `${chartState.bounds.margins.right}px`,
+      }}
+    >
+      <PlayButton />
+      <Box sx={{ position: "relative", width: "100%" }}>
+        <Slider />
+        <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
+          {timeline.formattedExtent[0]}
+        </Typography>
+        <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
+          {timeline.formattedExtent[1]}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+const PlayButton = () => {
+  const timeline = useTimeline();
+
+  const onClick = useEvent(() => {
+    timeline.playing ? timeline.stop() : timeline.start();
+  });
+
+  return (
+    <Button
+      onClick={onClick}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        minHeight: 32,
+        minWidth: 32,
+        p: 0,
+        borderRadius: "50%",
+      }}
+    >
+      <Icon name={timeline.playing ? "pause" : "play"} size={16} />
+    </Button>
+  );
+};
+
+const Slider = () => {
+  const timeline = useTimeline();
+  const [IFState, dispatch] = useInteractiveFilters();
+
+  const marks = React.useMemo(() => {
+    return timeline.domain.map((d) => ({ value: d })) ?? [];
+  }, [timeline.domain]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    const t = +e.target.value;
-    setT(t);
+    timeline.setProgress(+e.target.value);
+  });
 
-    if (msScale) {
-      const tMs = msScale(t);
-      const i = bisect(sortedMs, tMs);
-      const updateMs = sortedMs[i - 1];
-
-      if (IFState.timeSlider.value?.getTime() !== updateMs) {
-        dispatch({
-          type: "SET_TIME_SLIDER_FILTER",
-          value: new Date(updateMs),
-        });
-      }
-    }
+  const onClick = useEvent(() => {
+    timeline.stop();
   });
 
   React.useEffect(() => {
-    onChange({ target: { value: "0" } } as ChangeEvent<HTMLInputElement>);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedMs]);
+    // Dispatch time slider update event when progress changes.
+    if (IFState.timeSlider.value?.getTime() !== timeline.value) {
+      dispatch({
+        type: "SET_TIME_SLIDER_FILTER",
+        value: new Date(timeline.value),
+      });
+    }
+  }, [timeline.value, IFState.timeSlider.value, dispatch]);
 
   return (
-    <Slider
+    <GenericSlider
       name="time-slider"
+      renderTextInput={false}
       min={0}
       max={1}
-      step={0.0001}
-      value={t}
+      step={null}
+      marks={marks}
+      value={timeline.progress}
       onChange={onChange}
+      onClick={onClick}
+      valueLabelDisplay="on"
+      valueLabelFormat={timeline.formattedValue}
+      sx={{
+        width: "100%",
+
+        "& .MuiSlider-root": {
+          height: "6px",
+
+          "& .MuiSlider-thumb": {
+            width: "16px",
+            height: "16px",
+            // Disable transitions when playing, otherwise it appears to be laggy.
+            ...(timeline.playing && {
+              transition: "none",
+            }),
+          },
+
+          ...(timeline.playing && {
+            "& .MuiSlider-track": {
+              transition: "none",
+            },
+          }),
+        },
+      }}
     />
   );
 };

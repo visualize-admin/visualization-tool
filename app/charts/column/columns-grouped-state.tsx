@@ -17,7 +17,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import React, { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -43,12 +43,11 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
-  mkNumber,
   useErrorMeasure,
   useErrorRange,
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
-import { useFormatNumber, formatNumberWithUnit } from "@/formatters";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -169,7 +168,7 @@ const useGroupedColumnsState = (
   });
 
   // Data for chart
-  const preparedData = useDataAfterInteractiveFilters({
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX: getXAsDate,
@@ -248,7 +247,7 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -267,23 +266,19 @@ const useGroupedColumnsState = (
 
     // y
     const minValue = Math.min(
-      mkNumber(
-        min(preparedData, (d) =>
-          getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
-        )
-      ),
+      min(scalesData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+      ) ?? 0,
       0
     );
     const maxValue = Math.max(
-      max(preparedData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
-      ) as number,
+      max(scalesData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+      ) ?? 0,
       0
     );
 
-    const yScale = scaleLinear()
-      .domain([mkNumber(minValue), mkNumber(maxValue)])
-      .nice();
+    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
     return {
       colors,
@@ -297,10 +292,10 @@ const useGroupedColumnsState = (
   }, [
     dimensions,
     fields.segment,
-    preparedData,
     segments,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    scalesData,
     plottableSortedData,
     getX,
     getXAsDate,

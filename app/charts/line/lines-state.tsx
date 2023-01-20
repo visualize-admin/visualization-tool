@@ -35,8 +35,8 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
-  useFormatNumber,
   formatNumberWithUnit,
+  useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -148,8 +148,8 @@ const useLinesState = (
     getSegment,
   });
 
-  // All Data
-  const preparedData = useDataAfterInteractiveFilters({
+  // Data for chart
+  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
     getX,
@@ -178,8 +178,8 @@ const useLinesState = (
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
-    [plottableSortedData, getX]
+    () => extent(scalesData, (d) => getX(d)) as [Date, Date],
+    [scalesData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
@@ -187,10 +187,8 @@ const useLinesState = (
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = min(preparedData, getY)
-    ? Math.min(min(preparedData, getY) ?? 0, 0)
-    : 0;
-  const maxValue = max(preparedData, getY) as number;
+  const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
+  const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
 
   const entireMaxValue = max(plottableSortedData, getY) as number;

@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
@@ -21,6 +21,7 @@ import {
   PieFields,
   QueryFilters,
 } from "@/configurator/config-types";
+import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -124,6 +125,13 @@ export const ChartPie = memo(
             fields.segment && interactiveFiltersConfig?.legend.active === true
           }
         />
+
+        {interactiveFiltersConfig?.timeSlider.componentIri && (
+          <TimeSlider
+            componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+            dimensions={dimensions}
+          />
+        )}
       </PieChart>
     );
   }

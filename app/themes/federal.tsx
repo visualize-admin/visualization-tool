@@ -600,7 +600,7 @@ theme.components = {
         height: 3,
 
         "& .MuiSlider-rail": {
-          backgroundColor: theme.palette.grey[500],
+          backgroundColor: theme.palette.grey[300],
         },
         "& .MuiSlider-thumb": {
           width: 20,
@@ -611,6 +611,22 @@ theme.components = {
           },
           "&:before": {
             display: "none",
+          },
+        },
+        "& .MuiSlider-valueLabel": {
+          background: theme.palette.background.paper,
+          color: theme.palette.primary.main,
+
+          boxShadow: "0 0 30px 0 rgba(0, 0, 0, 0.34)",
+        },
+        "& .MuiSlider-mark": {
+          width: 4,
+          height: 4,
+          borderRadius: "50%",
+          background: theme.palette.grey[600],
+
+          "&.MuiSlider-markActive": {
+            background: "#66AFE9",
           },
         },
       },
