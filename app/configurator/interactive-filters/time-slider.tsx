@@ -200,8 +200,7 @@ const Slider = ({ data }: { data: SliderDatum[] }) => {
       renderTextInput={false}
       min={0}
       max={1}
-      // TODO: base on ANIMATION_DURATION?
-      step={0.0001}
+      step={null}
       marks={marks}
       value={timeline?.progress ?? 0}
       onChange={onChange}
