@@ -491,16 +491,16 @@ const migrations: Migration[] = [
       const { interactiveFiltersConfig } = newConfig;
 
       if (interactiveFiltersConfig) {
-        const { timeSlider } = interactiveFiltersConfig;
+        const { legend, timeRange, timeSlider, dataFilters } =
+          interactiveFiltersConfig;
 
         newConfig = produce(newConfig, (draft: any) => {
-          draft.interactiveFiltersConfig = {
-            legend: draft.interactiveFiltersConfig.legend,
-            time: draft.interactiveFiltersConfig.time,
-            dataFilters: draft.interactiveFiltersConfig.dataFilters,
-          };
+          draft.interactiveFiltersConfig = { legend, timeRange, dataFilters };
 
-          if (timeSlider && timeSlider.componentIri) {
+          if (
+            ["column", "pie", "scatterplot"].includes(draft.chartType) &&
+            timeSlider?.componentIri
+          ) {
             draft.fields.animation = timeSlider;
           }
         });
@@ -517,7 +517,12 @@ const migrations: Migration[] = [
       if (animation) {
         newConfig = produce(newConfig, (draft: any) => {
           delete draft.fields.animation;
-          draft.interactiveFiltersConfig.timeSlider = animation;
+
+          if (["column", "pie", "scatterplot"].includes(draft.chartType)) {
+            draft.interactiveFiltersConfig.timeSlider = animation;
+          } else {
+            draft.interactiveFiltersConfig.timeSlider = { componentIri: "" };
+          }
         });
       }
 
