@@ -37,17 +37,13 @@ export const prepareQueryFilters = (
   dataFilters: InteractiveFiltersState["dataFilters"]
 ): Filters => {
   let queryFilters = filters;
-  const { timeSlider } = interactiveFiltersConfig || {};
 
   if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
     queryFilters = { ...queryFilters, ...dataFilters };
   }
 
-  queryFilters = omitBy(queryFilters, (v, k) => {
-    return (
-      (v.type === "single" && v.value === FIELD_VALUE_NONE) ||
-      k === timeSlider?.componentIri
-    );
+  queryFilters = omitBy(queryFilters, (v) => {
+    return v.type === "single" && v.value === FIELD_VALUE_NONE;
   });
 
   return queryFilters;
