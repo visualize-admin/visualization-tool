@@ -486,7 +486,25 @@ const migrations: Migration[] = [
     from: "1.3.0",
     to: "1.4.0",
     up: (config: any) => {
-      const newConfig = { ...config, version: "1.4.0" };
+      let newConfig = { ...config, version: "1.4.0" };
+
+      const { interactiveFiltersConfig } = newConfig;
+
+      if (interactiveFiltersConfig) {
+        const { timeSlider } = interactiveFiltersConfig;
+
+        newConfig = produce(newConfig, (draft: any) => {
+          draft.interactiveFiltersConfig = {
+            legend: draft.interactiveFiltersConfig.legend,
+            time: draft.interactiveFiltersConfig.time,
+            dataFilters: draft.interactiveFiltersConfig.dataFilters,
+          };
+
+          if (timeSlider && timeSlider.componentIri) {
+            draft.fields.animation = timeSlider;
+          }
+        });
+      }
 
       return newConfig;
     },
@@ -494,10 +512,12 @@ const migrations: Migration[] = [
       let newConfig = { ...config, version: "1.3.0" };
 
       const { fields } = config;
+      const { animation } = fields;
 
-      if (fields.animation) {
+      if (animation) {
         newConfig = produce(newConfig, (draft: any) => {
           delete draft.fields.animation;
+          draft.interactiveFiltersConfig.timeSlider = animation;
         });
       }
 

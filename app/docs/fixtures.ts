@@ -42,9 +42,6 @@ export const states: ConfiguratorState[] = [
       filters: {},
       interactiveFiltersConfig: {
         legend: { active: false, componentIri: "" },
-        timeSlider: {
-          componentIri: "",
-        },
         timeRange: {
           active: false,
           componentIri: "",

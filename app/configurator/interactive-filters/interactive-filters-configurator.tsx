@@ -20,21 +20,12 @@ import { isTemporalDimension } from "@/domain/data";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-export type InteractiveFilterType =
-  | "legend"
-  | "timeRange"
-  | "timeSlider"
-  | "dataFilters";
+export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
 
 export const isInteractiveFilterType = (
   field: string | undefined
 ): field is InteractiveFilterType => {
-  return (
-    field === "legend" ||
-    field === "timeRange" ||
-    field === "timeSlider" ||
-    field === "dataFilters"
-  );
+  return field === "legend" || field === "timeRange" || field === "dataFilters";
 };
 
 export const InteractiveFiltersConfigurator = ({

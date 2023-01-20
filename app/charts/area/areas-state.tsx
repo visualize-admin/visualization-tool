@@ -173,6 +173,8 @@ const useAreasState = (
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
+    // No animation yet for areas
+    animationField: undefined,
     getX,
     getSegment,
   });

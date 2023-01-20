@@ -13,10 +13,10 @@ import {
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import {
+  dimensions,
   fields,
   margins,
   measures,
-  dimensions,
   observations,
 } from "@/docs/fixtures";
 
@@ -43,9 +43,6 @@ ${(
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
-          },
-          timeSlider: {
-            componentIri: "",
           },
           dataFilters: { active: false, componentIris: [] },
         }}
@@ -187,9 +184,6 @@ ${(
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
-          timeSlider: {
-            componentIri: "",
-          },
           dataFilters: { active: false, componentIris: [] },
         }}
         aspectRatio={0.4}
@@ -228,9 +222,6 @@ ${(
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
-          },
-          timeSlider: {
-            componentIri: "",
           },
           dataFilters: { active: false, componentIris: [] },
         }}

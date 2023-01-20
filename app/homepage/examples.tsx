@@ -112,9 +112,6 @@ export const Examples = ({
                 },
                 componentIri: "",
               },
-              timeSlider: {
-                componentIri: "",
-              },
               legend: {
                 active: false,
                 componentIri: "",
@@ -195,9 +192,6 @@ export const Examples = ({
                   from: "1950-12-31T23:00:00.000Z",
                   type: "range",
                 },
-                componentIri: "",
-              },
-              timeSlider: {
                 componentIri: "",
               },
               legend: {

@@ -9,13 +9,9 @@ import {
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import {
   ChartConfig,
-  ConfiguratorStateConfiguringChart,
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
-const { handleInteractiveFilterTimeSliderReset } = jest.requireActual(
-  "@/configurator/configurator-state"
-);
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
@@ -28,10 +24,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
     ],
   },
-  timeSlider: {
-    componentIri:
-      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
-  },
   timeRange: {
     active: false,
     componentIri: "https://fake-iri/dimension/2",
@@ -42,26 +34,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     },
   },
 };
-
-const configuratorState = {
-  state: "CONFIGURING_CHART",
-  chartConfig: {
-    interactiveFiltersConfig,
-  },
-} as unknown as ConfiguratorStateConfiguringChart;
-
-jest.mock("@/configurator/configurator-state", () => {
-  return {
-    useConfiguratorState: () => {
-      return [
-        configuratorState,
-        (_: { type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET" }) => {
-          handleInteractiveFilterTimeSliderReset(configuratorState);
-        },
-      ];
-    },
-  };
-});
 
 const chartConfig = {
   ...fixture.data.chartConfig,
@@ -142,10 +114,6 @@ describe("useSyncInteractiveFilters", () => {
         "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1",
     });
 
-    expect(
-      configuratorState.chartConfig.interactiveFiltersConfig?.timeSlider
-        .componentIri
-    ).toEqual("");
     expect(IFState2.timeSlider.value).toBeUndefined();
   });
 });

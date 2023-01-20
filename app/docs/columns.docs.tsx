@@ -1,5 +1,4 @@
 import { markdown, ReactSpecimen } from "catalog";
-import * as React from "react";
 
 import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
 import { ColumnChart } from "@/charts/column/columns-state";
@@ -40,9 +39,6 @@ ${(
             },
             active: false,
             componentIri: "http://fake-iri",
-          },
-          timeSlider: {
-            componentIri: "",
           },
         }}
         fields={columnFields}

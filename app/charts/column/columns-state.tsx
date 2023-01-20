@@ -48,8 +48,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
-  useFormatNumber,
   formatNumberWithUnit,
+  useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
 import {
@@ -171,6 +171,7 @@ const useColumnsState = (
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
+    animationField: fields.animation,
     getX: getXAsDate,
   });
 

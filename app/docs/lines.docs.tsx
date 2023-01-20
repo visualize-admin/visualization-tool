@@ -1,5 +1,4 @@
 import { markdown, ReactSpecimen } from "catalog";
-import * as React from "react";
 
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
@@ -22,9 +21,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: true,
     componentIri: "",
     presets: { type: "range", from: "", to: "" },
-  },
-  timeSlider: {
-    componentIri: "",
   },
   dataFilters: {
     active: false,

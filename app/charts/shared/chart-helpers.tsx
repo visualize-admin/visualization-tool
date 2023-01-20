@@ -13,6 +13,7 @@ import {
 } from "@/charts/shared/use-interactive-filters";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   Filters,
@@ -101,11 +102,13 @@ export const usePlottableData = ({
 export const useDataAfterInteractiveFilters = ({
   sortedData,
   interactiveFiltersConfig,
+  animationField,
   getX,
   getSegment,
 }: {
   sortedData: Observation[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
+  animationField: AnimationField | undefined;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }): {
@@ -125,9 +128,7 @@ export const useDataAfterInteractiveFilters = ({
   const toTime = IFState.timeRange.to?.getTime();
 
   // time slider
-  const getTime = useTemporalVariable(
-    interactiveFiltersConfig?.timeSlider.componentIri || ""
-  );
+  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
   const timeSliderValue = IFState.timeSlider.value;
 
   // legend
@@ -142,7 +143,7 @@ export const useDataAfterInteractiveFilters = ({
           }
         : null;
     const timeSliderFilter =
-      interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+      animationField?.componentIri && timeSliderValue
         ? (d: Observation) => {
             return getTime(d).getTime() === timeSliderValue.getTime();
           }
@@ -168,8 +169,8 @@ export const useDataAfterInteractiveFilters = ({
     fromTime,
     toTime,
     interactiveFiltersConfig?.timeRange.active,
-    interactiveFiltersConfig?.timeSlider.componentIri,
     interactiveFiltersConfig?.legend.active,
+    animationField,
     timeSliderValue,
     getSegment,
     getTime,
@@ -181,7 +182,7 @@ export const useDataAfterInteractiveFilters = ({
   }, [allFilters, sortedData]);
 
   const timeSliderFilterPresent = !!(
-    interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+    animationField?.componentIri && timeSliderValue
   );
 
   const scalesData = timeSliderFilterPresent ? sortedData : preparedData;

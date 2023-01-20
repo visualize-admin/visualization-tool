@@ -100,6 +100,7 @@ const usePieState = (
   const { preparedData } = useDataAfterInteractiveFilters({
     sortedData: plottableData,
     interactiveFiltersConfig,
+    animationField: fields.animation,
     getSegment,
   });
 

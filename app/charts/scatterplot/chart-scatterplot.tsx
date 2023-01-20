@@ -105,9 +105,9 @@ export const ChartScatterplot = memo(
           }
         />
 
-        {interactiveFiltersConfig?.timeSlider.componentIri && (
+        {fields.animation && (
           <TimeSlider
-            componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+            componentIri={fields.animation.componentIri}
             dimensions={dimensions}
           />
         )}

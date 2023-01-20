@@ -59,9 +59,6 @@
           },
           "componentIri": ""
         },
-        "timeSlider": {
-          "componentIri": ""
-        },
         "dataFilters": {
           "active": true,
           "componentIris": [
