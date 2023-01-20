@@ -10,9 +10,13 @@ import {
  * Related to config-types.ts.
  */
 
+type BaseEncodingFieldType = "animation";
 type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
 type XYEncodingFieldType = "x" | "y" | "segment";
-export type EncodingFieldType = MapEncodingFieldType | XYEncodingFieldType;
+export type EncodingFieldType =
+  | BaseEncodingFieldType
+  | MapEncodingFieldType
+  | XYEncodingFieldType;
 
 export type EncodingOption =
   | { field: "chartSubType" }
@@ -167,6 +171,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
         ],
+      },
+      {
+        field: "animation",
+        optional: true,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
       },
     ],
     interactiveFilters: ["legend", "timeRange"],

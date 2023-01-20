@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.3.0";
+export const CHART_CONFIG_VERSION = "1.4.0";
 
 type Migration = {
   description: string;
@@ -470,6 +470,34 @@ const migrations: Migration[] = [
             time: draft.interactiveFiltersConfig.time,
             dataFilters: draft.interactiveFiltersConfig.dataFilters,
           };
+        });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL
+    fields {
+      + animation {
+        componentIri
+      }
+    }`,
+    from: "1.3.0",
+    to: "1.4.0",
+    up: (config: any) => {
+      const newConfig = { ...config, version: "1.4.0" };
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.3.0" };
+
+      const { fields } = config;
+
+      if (fields.animation) {
+        newConfig = produce(newConfig, (draft: any) => {
+          delete draft.fields.animation;
         });
       }
 

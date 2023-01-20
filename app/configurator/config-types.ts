@@ -168,6 +168,9 @@ const GenericSegmentField = t.intersection([
 ]);
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
+const AnimationField = GenericField;
+export type AnimationField = t.TypeOf<typeof AnimationField>;
+
 const SortingField = t.partial({
   sorting: t.type({
     sortingType: SortingType,
@@ -192,6 +195,7 @@ const ColumnFields = t.intersection([
   }),
   t.partial({
     segment: ColumnSegmentField,
+    animation: AnimationField,
   }),
 ]);
 const ColumnConfig = t.type(
@@ -279,6 +283,7 @@ const ScatterPlotFields = t.intersection([
   }),
   t.partial({
     segment: ScatterPlotSegmentField,
+    animation: AnimationField,
   }),
 ]);
 const ScatterPlotConfig = t.type(
@@ -297,11 +302,14 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
-const PieFields = t.type({
-  y: GenericField,
-  // FIXME: "segment" should be "x" for consistency
-  segment: PieSegmentField,
-});
+const PieFields = t.intersection([
+  t.type({
+    y: GenericField,
+    // FIXME: "segment" should be "x" for consistency
+    segment: PieSegmentField,
+  }),
+  t.partial({ animation: AnimationField }),
+]);
 const PieConfig = t.type(
   {
     version: t.string,

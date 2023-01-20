@@ -14,6 +14,10 @@ const fieldLabels = {
     id: "controls.axis.vertical",
     message: "Vertical axis",
   }),
+  "controls.animation": defineMessage({
+    id: "controls.animation",
+    message: "Animation",
+  }),
   "controls.color": defineMessage({ id: "controls.color", message: "Color" }),
   "controls.title": defineMessage({ id: "controls.title", message: "Title" }),
   "controls.description": defineMessage({
@@ -174,6 +178,14 @@ export function getFieldLabel(field: string): string {
     case "bar.y":
     case "y":
       return i18n._(fieldLabels["controls.axis.vertical"]);
+    case "bar.animation":
+    case "column.animation":
+    case "line.animation":
+    case "area.animation":
+    case "scatterplot.animation":
+    case "pie.animation":
+    case "animation":
+      return i18n._(fieldLabels["controls.animation"]);
     case "bar.segment":
     case "column.segment":
     case "line.segment":
