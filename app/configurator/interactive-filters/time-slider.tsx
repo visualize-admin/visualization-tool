@@ -27,6 +27,10 @@ const useTimeline = () => {
     return () => timeline?.unsubscribe(callback);
   }, [timeline]);
 
+  if (!timeline) {
+    throw new Error("No timeline found in context.");
+  }
+
   return timeline;
 };
 
@@ -105,10 +109,10 @@ const Root = () => {
       <Box sx={{ position: "relative", width: "100%" }}>
         <Slider />
         <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
-          {timeline?.formattedExtent[0]}
+          {timeline.formattedExtent[0]}
         </Typography>
         <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
-          {timeline?.formattedExtent[1]}
+          {timeline.formattedExtent[1]}
         </Typography>
       </Box>
     </Box>
@@ -119,7 +123,7 @@ const PlayButton = () => {
   const timeline = useTimeline();
 
   const onClick = useEvent(() => {
-    timeline?.playing ? timeline.stop() : timeline?.start();
+    timeline.playing ? timeline.stop() : timeline.start();
   });
 
   return (
@@ -134,7 +138,7 @@ const PlayButton = () => {
         borderRadius: "50%",
       }}
     >
-      <Icon name={timeline?.playing ? "pause" : "play"} size={16} />
+      <Icon name={timeline.playing ? "pause" : "play"} size={16} />
     </Button>
   );
 };
@@ -144,29 +148,26 @@ const Slider = () => {
   const [IFState, dispatch] = useInteractiveFilters();
 
   const marks = React.useMemo(() => {
-    return timeline?.domain.map((d) => ({ value: d })) ?? [];
-  }, [timeline?.domain]);
+    return timeline.domain.map((d) => ({ value: d })) ?? [];
+  }, [timeline.domain]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    timeline?.setProgress(+e.target.value);
+    timeline.setProgress(+e.target.value);
   });
 
   const onClick = useEvent(() => {
-    timeline?.stop();
+    timeline.stop();
   });
 
   React.useEffect(() => {
     // Dispatch time slider update event when progress changes.
-    if (
-      timeline?.value !== undefined &&
-      IFState.timeSlider.value?.getTime() !== timeline.value
-    ) {
+    if (IFState.timeSlider.value?.getTime() !== timeline.value) {
       dispatch({
         type: "SET_TIME_SLIDER_FILTER",
         value: new Date(timeline.value),
       });
     }
-  }, [timeline?.value, IFState.timeSlider.value, dispatch]);
+  }, [timeline.value, IFState.timeSlider.value, dispatch]);
 
   return (
     <GenericSlider
@@ -176,11 +177,11 @@ const Slider = () => {
       max={1}
       step={null}
       marks={marks}
-      value={timeline?.progress ?? 0}
+      value={timeline.progress}
       onChange={onChange}
       onClick={onClick}
       valueLabelDisplay="on"
-      valueLabelFormat={timeline?.formattedValue}
+      valueLabelFormat={timeline.formattedValue}
       sx={{
         width: "100%",
 
@@ -191,12 +192,12 @@ const Slider = () => {
             width: "16px",
             height: "16px",
             // Disable transitions when playing, otherwise it appears to be laggy.
-            ...(timeline?.playing && {
+            ...(timeline.playing && {
               transition: "none",
             }),
           },
 
-          ...(timeline?.playing && {
+          ...(timeline.playing && {
             "& .MuiSlider-track": {
               transition: "none",
             },
