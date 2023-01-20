@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import {
   getHierarchy,
   HierarchyNode,
@@ -9,6 +11,7 @@ import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
@@ -37,22 +40,29 @@ const toTree = (
   const serializeNode = (
     node: HierarchyNode,
     depth: number
-  ): HierarchyValue => {
-    const res: HierarchyValue = {
-      label: getName(node.resource, locale) || "-",
-      alternateName: node.resource.out(ns.schema.alternateName).term?.value,
-      value: node.resource.value,
-      children: node.nextInHierarchy.map((childNode) =>
-        serializeNode(childNode, depth + 1)
-      ),
-      position: node.resource.out(ns.schema.position).term?.value,
-      identifier: node.resource.out(ns.schema.identifier).term?.value,
-      depth,
-      dimensionIri: dimensionIri,
-    };
+  ): HierarchyValue | undefined => {
+    const name = getName(node.resource, locale);
+    // TODO Find out why some hierachy nodes have no label. We filter
+    // them out at the moment
+    // @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/labels.20for.20each.20hierarchy.20level/near/312845
+    const res: HierarchyValue | undefined = name
+      ? {
+          label: name || "-",
+          alternateName: node.resource.out(ns.schema.alternateName).term?.value,
+          value: node.resource.value,
+          children: node.nextInHierarchy
+            .map((childNode) => serializeNode(childNode, depth + 1))
+            .filter(truthy)
+            .filter((d) => d.label),
+          position: node.resource.out(ns.schema.position).term?.value,
+          identifier: node.resource.out(ns.schema.identifier).term?.value,
+          depth,
+          dimensionIri: dimensionIri,
+        }
+      : undefined;
     return res;
   };
-  return results.map((r) => serializeNode(r, 0));
+  return results.map((r) => serializeNode(r, 0)).filter(truthy);
 };
 
 const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
@@ -138,7 +148,7 @@ export const queryHierarchy = async (
     .map(
       (d) =>
         ({
-          label: d.label || "-",
+          label: d.label || "ADDITIONAL",
           value: `${d.value}`,
           depth: -1,
           children: [],
@@ -149,5 +159,9 @@ export const queryHierarchy = async (
         } as HierarchyValue)
     );
 
+  fs.writeFileSync(
+    "/tmp/a.json",
+    JSON.stringify([...prunedTree, ...additionalTreeValues])
+  );
   return [...prunedTree, ...additionalTreeValues];
 };
