@@ -7,17 +7,19 @@ class Observable {
     this.observers = [];
   }
 
-  public subscribe(fn: Function) {
+  public subscribe = (fn: Function) => {
     this.observers.push(fn);
-  }
 
-  public unsubscribe(fn: Function) {
+    return () => this.unsubscribe(fn);
+  };
+
+  public unsubscribe = (fn: Function) => {
     this.observers = this.observers.filter((d) => d !== fn);
-  }
+  };
 
-  protected notify() {
+  protected notify = () => {
     this.observers.forEach((d) => d());
-  }
+  };
 }
 
 /** Observable timeline which encloses animation state and logic. */
@@ -60,7 +62,7 @@ export class Timeline extends Observable {
     this.formattedMsExtent = [min, max].map(formatMsValue) as [string, string];
   }
 
-  public start() {
+  public start = () => {
     if (!this.playing) {
       if (this.progress === 1) {
         this.setProgress(0);
@@ -71,9 +73,9 @@ export class Timeline extends Observable {
         this.animate.bind(this)
       );
     }
-  }
+  };
 
-  private animate(t: number) {
+  private animate = (t: number) => {
     if (this.t === undefined) {
       this.t = t - this.progress * this.duration;
     }
@@ -89,9 +91,9 @@ export class Timeline extends Observable {
         this.animate.bind(this)
       );
     }
-  }
+  };
 
-  public stop(notify = true) {
+  public stop = (notify = true) => {
     if (this.playing) {
       this.playing = false;
       this.t = undefined;
@@ -103,20 +105,20 @@ export class Timeline extends Observable {
 
       if (notify) this.notify();
     }
-  }
+  };
 
-  public setProgress(progress: number) {
+  public setProgress = (progress: number) => {
     this.progress = progress;
     this.setValue(progress);
     this.notify();
-  }
+  };
 
-  private setValue(progress: number) {
+  private setValue = (progress: number) => {
     const ms = Math.round(this.msValueScale(progress));
     const i = bisect(this.msValues, ms);
 
     this.msValue = this.msValues[i - 1];
-  }
+  };
 
   get domain() {
     return this.msRelativeValues;
