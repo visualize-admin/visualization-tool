@@ -86,7 +86,9 @@ afterEach(() => {
 
 describe("initChartStateFromChart", () => {
   const setup = ({ chartConfig }: { chartConfig: object }) => {
-    mockedApi.fetchChartConfig.mockResolvedValue(chartConfig);
+    mockedApi.fetchChartConfig.mockResolvedValue(
+      chartConfig as ReturnType<typeof api.fetchChartConfig>
+    );
   };
   it("should fetch work if existing chart is valid", async () => {
     setup({
