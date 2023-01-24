@@ -1,5 +1,13 @@
-import { Trans } from "@lingui/macro";
-import { Box, Popover, Tab, Tabs, Theme, Button } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import {
+  Box,
+  Popover,
+  Tab,
+  Tabs,
+  Theme,
+  Button,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, {
   createContext,
@@ -7,6 +15,7 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -18,11 +27,14 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import useDisclosure from "@/configurator/components/use-disclosure";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 
+import { Boldify } from "./boldify";
+import { CopyToClipboardTextInput } from "./copy-to-clipboard-text-input";
 import Flex from "./flex";
 
 type TabsState = {
@@ -184,6 +196,114 @@ const PublishChartButton = () => {
   );
 };
 
+const usePopoverArrowStyles = makeStyles((theme: Theme) => ({
+  paper: {
+    overflowX: "unset",
+    overflowY: "unset",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: -9,
+      right: "1rem",
+      width: 10,
+      height: 10,
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[1],
+      transform: "translate(-50%, 50%) rotate(-45deg)",
+      clipPath:
+        "polygon(-5px -5px, calc(100% + 5px) -5px, calc(100% + 5px) calc(100% + 5px))",
+    },
+  },
+}));
+
+const ShareChartEditionButton = () => {
+  const [state] = useConfiguratorState();
+  const classes = usePopoverArrowStyles();
+  const { isOpen, open, close } = useDisclosure();
+  const { key } = state as
+    | ConfiguratorStatePublishing
+    | ConfiguratorStateConfiguringChart;
+
+  const locale = useLocale();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const handleOpen = useEvent(() => {
+    open();
+  });
+  const handleClose = useEvent(() => {
+    close();
+  });
+
+  return (
+    <>
+      <Button
+        color="primary"
+        variant="outlined"
+        onClick={handleOpen}
+        ref={buttonRef}
+      >
+        <Trans id="share-creation.button">Share</Trans>
+      </Button>
+      <Popover
+        open={isOpen}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        anchorEl={buttonRef.current}
+        onClose={handleClose}
+        PaperProps={{ className: classes.paper }}
+      >
+        <Box minWidth={200} p={4} sx={{ "& > * + *": { mt: 2 } }}>
+          <Typography variant="h4" gutterBottom>
+            <Trans id="share-creation.popover.title">Share creation URL</Trans>
+          </Typography>
+          <div>
+            <Typography variant="h5" gutterBottom>
+              <Trans id="share-creation.popover.share-copy.title">
+                Share a copy
+              </Trans>
+            </Typography>
+            <CopyToClipboardTextInput
+              content={`${window.location.origin}/${locale}/create/${key}`}
+            />
+
+            <Typography variant="caption">
+              <Boldify>
+                {t({
+                  id: "share-creation.popover.share-with-editing-rights.caption",
+                  message:
+                    "The other person *will not be able* to overwrite your chart settings.",
+                })}
+              </Boldify>
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="h5" gutterBottom>
+              Share with editing rights
+            </Typography>
+            <CopyToClipboardTextInput
+              content={`${window.location.origin}/${locale}/create/new?from=${key}`}
+            />
+            <Typography variant="caption">
+              <Boldify>
+                {t({
+                  id: "share-creation.popover.share-copy.caption",
+                  message:
+                    "The other person *will be able* to overwrite your chart settings.",
+                })}
+              </Boldify>
+            </Typography>
+          </div>
+        </Box>
+      </Popover>
+    </>
+  );
+};
+
 const TabsInner = ({
   chartType,
   editable,
@@ -215,7 +335,10 @@ const TabsInner = ({
           }
         />
       </Tabs>
-      <PublishChartButton />
+      <Flex sx={{ gap: "0.5rem" }}>
+        <ShareChartEditionButton />
+        <PublishChartButton />
+      </Flex>
     </Box>
   );
 };

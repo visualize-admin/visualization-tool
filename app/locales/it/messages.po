@@ -1016,6 +1016,26 @@ msgstr "Cerca"
 msgid "select.controls.metadata.search"
 msgstr "Salta a..."
 
+#: app/components/chart-selection-tabs.tsx:244
+msgstr "share-creation.button"
+msgstr "Condividi"
+
+#: app/components/chart-selection-tabs.tsx:293
+msgstr "share-creation.popover.share-copy.caption"
+msgstr "L'altra persona *non sarà* in grado di modificare il grafico"
+
+#: app/components/chart-selection-tabs.tsx:266
+msgstr "share-creation.popover.share-copy.title"
+msgstr "Condividi una copia"
+
+#: app/components/chart-selection-tabs.tsx:276
+msgstr "share-creation.popover.share-with-editing-rights.caption"
+msgstr "L'altra persona *sarà* in grado di modificare il grafico"
+
+#: app/components/chart-selection-tabs.tsx:262
+msgstr "share-creation.popover.title"
+msgstr "Condividi indirizzo di creazione"
+
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:101
 msgid "table.column.no"
 msgstr "Colonna {0}"

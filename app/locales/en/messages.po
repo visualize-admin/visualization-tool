@@ -1016,6 +1016,26 @@ msgstr "Search"
 msgid "select.controls.metadata.search"
 msgstr "Jump to..."
 
+#: app/components/chart-selection-tabs.tsx:244
+msgid "share-creation.button"
+msgstr "Share"
+
+#: app/components/chart-selection-tabs.tsx:293
+msgid "share-creation.popover.share-copy.caption"
+msgstr "The other person *will be able* to overwrite your chart settings."
+
+#: app/components/chart-selection-tabs.tsx:266
+msgid "share-creation.popover.share-copy.title"
+msgstr "Share a copy"
+
+#: app/components/chart-selection-tabs.tsx:276
+msgid "share-creation.popover.share-with-editing-rights.caption"
+msgstr "The other person *will not be able* to overwrite your chart settings."
+
+#: app/components/chart-selection-tabs.tsx:262
+msgid "share-creation.popover.title"
+msgstr "Share creation URL"
+
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:101
 msgid "table.column.no"
 msgstr "Column {0}"
