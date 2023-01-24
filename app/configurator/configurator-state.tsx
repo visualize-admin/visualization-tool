@@ -85,9 +85,12 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
-import { fetchChartConfig, createConfig } from "@/utils/chart-config/api";
+import {
+  fetchChartConfig,
+  createChartConfigFromConfiguratorState,
+  updateChartConfigFromConfiguratorState,
+} from "@/utils/chart-config/api";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
-import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
 import { toggleInteractiveFilterDataDimension } from "./interactive-filters/interactive-filters-config-state";
@@ -1405,7 +1408,7 @@ type DatasetIri = string;
 
 export const initChartStateFromChart = async (
   from: ChartId
-): Promise<ConfiguratorState | undefined> => {
+): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
 
   if (config && config.data) {
@@ -1418,6 +1421,7 @@ export const initChartStateFromChart = async (
     const migratedChartConfig = migrateChartConfig(chartConfig);
 
     return {
+      key: undefined,
       state: "CONFIGURING_CHART",
       dataSet,
       dataSource,
@@ -1456,36 +1460,32 @@ export const initChartStateFromCube = async (
 };
 
 /**
- * Tries to parse state from localStorage.
- * If state is invalid, it is removed from localStorage.
+ * Tries to parse state from database.
  */
-export const initChartStateFromLocalStorage = async (
+export const initChartStateFromDatabase = async (
   chartId: string
 ): Promise<ConfiguratorState | undefined> => {
-  const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
-  if (storedState) {
+  const config = await fetchChartConfig(chartId);
+  if (config) {
     let parsedState;
     try {
-      const rawParsedState = JSON.parse(storedState);
-      const chartConfig = rawParsedState.chartConfig;
-      const migratedChartConfig = migrateChartConfig(chartConfig);
+      const chartConfigData = config.data;
+      const migratedChartConfig = migrateChartConfig(
+        chartConfigData.chartConfig
+      );
       parsedState = decodeConfiguratorState({
-        ...rawParsedState,
+        ...config.data,
+        state: "CONFIGURING_CHART",
+        key: config.key,
         chartConfig: migratedChartConfig,
       });
     } catch (e) {
       console.error("Error while parsing stored state", e);
       // Ignore errors since we are returning undefined and removing bad state from localStorage
     }
-    if (parsedState) {
-      return parsedState;
-    } else {
-      console.warn(
-        "Attempted to restore invalid state. Removing from localStorage.",
-        parsedState
-      );
-      window.localStorage.removeItem(getLocalStorageKey(chartId));
-    }
+    return parsedState;
+  } else {
+    throw new Error(`Cannot found chart config ${chartId}`);
   }
 };
 
@@ -1527,7 +1527,7 @@ const ConfiguratorStateProviderInternal = ({
             );
           }
         } else {
-          newChartState = await initChartStateFromLocalStorage(chartId);
+          newChartState = await initChartStateFromDatabase(chartId);
           if (!newChartState) {
             if (allowDefaultRedirect) replace(`/create/new`);
           }
@@ -1559,28 +1559,36 @@ const ConfiguratorStateProviderInternal = ({
   }, [dispatch, dataSource]);
 
   useEffect(() => {
-    try {
-      switch (state.state) {
-        case "CONFIGURING_CHART":
-          if (chartId === "new") {
-            const newChartId = createChartId();
-            window.localStorage.setItem(
-              getLocalStorageKey(newChartId),
-              JSON.stringify(state)
-            );
-            replace(`/create/${newChartId}`);
-          } else {
-            // Store current state in localstorage
-            window.localStorage.setItem(
-              getLocalStorageKey(chartId),
-              JSON.stringify(state)
-            );
+    // Automatically saves config to the database
+    const run = async () => {
+      try {
+        switch (state.state) {
+          case "CONFIGURING_CHART": {
+            if (!state.key) {
+              const result = await createChartConfigFromConfiguratorState(
+                state
+              );
+              replace(`/create/${result.key}`);
+              return;
+            } else {
+              await updateChartConfigFromConfiguratorState(
+                state.key,
+                state,
+                true
+              );
+              return;
+            }
           }
-          return;
-        case "PUBLISHING":
-          (async () => {
+          case "PUBLISHING": {
             try {
-              const result = await createConfig(state);
+              if (!state.key) {
+                throw new Error("Cannot publish chart without key");
+              }
+              const result = await updateChartConfigFromConfiguratorState(
+                state.key,
+                state,
+                false
+              );
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
@@ -1604,12 +1612,14 @@ const ConfiguratorStateProviderInternal = ({
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });
             }
-          })();
-          return;
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
+    };
+    run();
   }, [state, dispatch, chartId, push, asPath, locale, query.from, replace]);
 
   return (

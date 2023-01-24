@@ -9,7 +9,9 @@ import { apiFetch } from "../api";
 import type apiConfigs from "../../pages/api/config";
 import type apiConfig from "../../pages/api/config/[key]";
 
-export const createConfig = async (state: ConfiguratorStatePublishing) => {
+export const createChartConfigFromConfiguratorState = async (
+  state: ConfiguratorStateConfiguringChart
+) => {
   return apiFetch<InferAPIResponse<typeof apiConfigs, "POST">>("/api/config", {
     method: "POST",
     data: {
@@ -32,7 +34,8 @@ export const fetchChartConfig = async (chartId: string) => {
 
 export const updateChartConfigFromConfiguratorState = async (
   key: string,
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing,
+  isDraft: boolean
 ) => {
   return apiFetch<InferAPIResponse<typeof apiConfig, "PATCH">>(
     `/api/config/${key}`,
@@ -43,6 +46,7 @@ export const updateChartConfigFromConfiguratorState = async (
         dataSource: state.dataSource,
         meta: state.meta,
         chartConfig: state.chartConfig,
+        isDraft,
       },
     }
   );

@@ -835,12 +835,18 @@ const ConfiguratorStateConfiguringChart = t.intersection([
     state: t.literal("CONFIGURING_CHART"),
   }),
   Config,
+  t.partial({
+    key: t.string,
+  }),
 ]);
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
     state: t.literal("PUBLISHING"),
   }),
   Config,
+  t.partial({
+    key: t.string,
+  }),
 ]);
 
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
