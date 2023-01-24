@@ -1,6 +1,9 @@
 import { InferAPIResponse } from "nextkit";
 
-import { ConfiguratorStatePublishing } from "../../configurator/config-types";
+import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublishing,
+} from "../../configurator/config-types";
 import { apiFetch } from "../api";
 
 import type apiConfigs from "../../pages/api/config";
@@ -10,6 +13,7 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
   return apiFetch<InferAPIResponse<typeof apiConfigs, "POST">>("/api/config", {
     method: "POST",
     data: {
+      isDraft: true,
       data: {
         dataSet: state.dataSet,
         dataSource: state.dataSource,
@@ -23,5 +27,23 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
 export const fetchChartConfig = async (chartId: string) => {
   return await apiFetch<InferAPIResponse<typeof apiConfig, "GET">>(
     `/api/config/${chartId}`
+  );
+};
+
+export const updateChartConfigFromConfiguratorState = async (
+  key: string,
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
+) => {
+  return apiFetch<InferAPIResponse<typeof apiConfig, "PATCH">>(
+    `/api/config/${key}`,
+    {
+      method: "PATCH",
+      data: {
+        dataSet: state.dataSet,
+        dataSource: state.dataSource,
+        meta: state.meta,
+        chartConfig: state.chartConfig,
+      },
+    }
   );
 };

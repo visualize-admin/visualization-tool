@@ -12,6 +12,8 @@ model Config {
   key        String   @unique @db.Char(12)
   data       Json
   created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  is_draft   Boolean  @default(false)
 
   user    User? @relation(fields: [user_id], references: [id])
   user_id Int?

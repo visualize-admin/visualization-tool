@@ -22,15 +22,44 @@ type PublishedConfig = Omit<ConfigType, "activeField">;
 export const createConfig = async ({
   data,
   userId,
+  isDraft,
 }: {
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
+  isDraft?: boolean;
 }): Promise<{ key: string }> => {
   const result = await prisma.config.create({
     data: {
       key: createChartId(),
       data: data,
       user_id: userId,
+      is_draft: isDraft,
+    },
+  });
+
+  return result;
+};
+
+/**
+ * Updates a config in the DB.
+ *
+ * @param data Data to be stored as configuration
+ */
+export const updateConfig = async (
+  key: string,
+  data: Exclude<Prisma.ConfigUpdateInput["data"], undefined>,
+  userId?: User["id"] | undefined
+): Promise<{ key: string }> => {
+  // data
+  const result = await prisma.config.update({
+    where: {
+      key,
+    },
+    data: {
+      key,
+      data: data,
+      user_id: userId,
+      updated_at: new Date(),
     },
   });
 

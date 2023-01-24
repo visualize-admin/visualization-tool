@@ -8,8 +8,9 @@ const route = api({
   POST: async ({ req, res }) => {
     const session = await getServerSideSession(req, res);
     const userId = session?.user?.id;
-    const { data } = req.body;
+    const { data, isDraft } = req.body;
     const result = await createConfig({
+      isDraft,
       data,
       userId,
     });
