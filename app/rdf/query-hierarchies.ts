@@ -1,5 +1,3 @@
-import fs from "fs";
-
 import {
   getHierarchy,
   HierarchyNode,
@@ -116,7 +114,8 @@ export const queryHierarchy = async (
     hierarchies?.map(async (h) => ({
       // @ts-ignore
       nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
-      hierarchyName: h.out(ns.schema.name).value,
+      hierarchyName: h.out(ns.cubeMeta.nextInHierarchy).out(ns.schema.name)
+        .value,
     }))
   );
 
