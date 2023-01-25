@@ -8,16 +8,35 @@ import {
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel";
 import { Configurator, EditorConfiguratorStateProvider } from "@/configurator";
+import { getConfig } from "@/db/config";
 
 type PageProps = {
   locale: string;
   chartId: string;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+export const getServerSideProps: GetServerSideProps<PageProps | {}> = async ({
   params,
   locale,
+  query,
+  res,
 }) => {
+  const config = await getConfig(query.chartId as string);
+
+  if (!config) {
+    res.statusCode = 404;
+    return { props: { chartId: undefined } };
+  }
+
+  if (!config.is_draft) {
+    return {
+      props: {},
+      redirect: {
+        destination: `/v/${query.chartId}`,
+      },
+    };
+  }
+
   return {
     props: {
       locale: locale!,

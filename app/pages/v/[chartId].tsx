@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 }) => {
   const config = await getConfig(query.chartId as string);
 
-  if (config && config.data) {
+  if (config && config.data && !config.is_draft) {
     // TODO validate configuration
     return { props: serializeProps({ status: "found", config }) };
   }
