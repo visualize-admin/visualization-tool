@@ -84,7 +84,7 @@ msgstr "Jeu de données complet"
 
 #: app/components/data-download.tsx:205
 msgid "button.download.data.visible"
-msgstr "Jeu de données filtrées"
+msgstr "Données du graphique"
 
 #: app/components/data-download.tsx:367
 msgid "button.download.runsparqlquery.visible"

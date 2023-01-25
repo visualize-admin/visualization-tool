@@ -84,7 +84,7 @@ msgstr "Vollständiger Datensatz"
 
 #: app/components/data-download.tsx:205
 msgid "button.download.data.visible"
-msgstr "Gefilterter Datensatz"
+msgstr "Daten aus der Grafik"
 
 #: app/components/data-download.tsx:367
 msgid "button.download.runsparqlquery.visible"

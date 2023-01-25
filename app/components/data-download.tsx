@@ -202,7 +202,7 @@ const DataDownloadInnerMenu = ({
             dataSetIri={dataSetIri}
             dataSource={dataSource}
             subheader={
-              <Trans id="button.download.data.visible">Filtered dataset</Trans>
+              <Trans id="button.download.data.visible">Chart dataset</Trans>
             }
             fileName={fileName}
             filters={filters}
