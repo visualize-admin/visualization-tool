@@ -1,11 +1,12 @@
 import { current, produce } from "immer";
+import { debounce } from "lodash";
 import get from "lodash/get";
 import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import {
   createContext,
   Dispatch,
@@ -1485,6 +1486,69 @@ export const initChartStateFromDatabase = async (
   }
 };
 
+const useConfiguratorImmerReducer = (initialState: ConfiguratorState) => {
+  return useImmerReducer(reducer, initialState);
+};
+
+// Automatically saves config to the database
+const handleChartChange = async (
+  state: ConfiguratorState,
+  router: NextRouter,
+  dispatch: ReturnType<typeof useConfiguratorImmerReducer>[1]
+) => {
+  try {
+    switch (state.state) {
+      case "CONFIGURING_CHART": {
+        if (!state.key) {
+          const result = await createChartConfigFromConfiguratorState(state);
+          router.replace(`/create/${result.key}`);
+          return;
+        } else {
+          await updateChartConfigFromConfiguratorState(state.key, state, true);
+          return;
+        }
+      }
+      case "PUBLISHING": {
+        try {
+          if (!state.key) {
+            throw new Error("Cannot publish chart without key");
+          }
+          const result = await updateChartConfigFromConfiguratorState(
+            state.key,
+            state,
+            false
+          );
+
+          /**
+           * EXPERIMENTAL: Post back created chart ID to opener and close window.
+           *
+           * This allows the chart creation workflow to be integrated with other tools like a CMS
+           */
+
+          // FIXME: Check for more than just opener?
+          const opener = window.opener;
+          if (opener) {
+            opener.postMessage(`CHART_ID:${result.key}`, "*");
+            window.close();
+            return;
+          }
+
+          await router.push({
+            pathname: `/v/${result.key}`,
+            query: { publishSuccess: true },
+          });
+        } catch (e) {
+          console.error(e);
+          dispatch({ type: "PUBLISH_FAILED" });
+        }
+        return;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const ConfiguratorStateProviderInternal = ({
   chartId,
   children,
@@ -1499,9 +1563,10 @@ const ConfiguratorStateProviderInternal = ({
 }) => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
-  const stateAndDispatch = useImmerReducer(reducer, initialState);
+  const stateAndDispatch = useConfiguratorImmerReducer(initialState);
   const [state, dispatch] = stateAndDispatch;
-  const { push, replace, query } = useRouter();
+  const router = useRouter();
+  const { replace, query } = router;
   const client = useClient();
 
   // Re-initialize state on page load
@@ -1554,69 +1619,12 @@ const ConfiguratorStateProviderInternal = ({
     });
   }, [dispatch, dataSource]);
 
+  const handleChartChangeDebounced = useMemo(() => {
+    return debounce(handleChartChange, 500, { leading: false, trailing: true });
+  }, []);
   useEffect(() => {
-    // Automatically saves config to the database
-    const run = async () => {
-      try {
-        switch (state.state) {
-          case "CONFIGURING_CHART": {
-            if (!state.key) {
-              const result = await createChartConfigFromConfiguratorState(
-                state
-              );
-              replace(`/create/${result.key}`);
-              return;
-            } else {
-              await updateChartConfigFromConfiguratorState(
-                state.key,
-                state,
-                true
-              );
-              return;
-            }
-          }
-          case "PUBLISHING": {
-            try {
-              if (!state.key) {
-                throw new Error("Cannot publish chart without key");
-              }
-              const result = await updateChartConfigFromConfiguratorState(
-                state.key,
-                state,
-                false
-              );
-
-              /**
-               * EXPERIMENTAL: Post back created chart ID to opener and close window.
-               *
-               * This allows the chart creation workflow to be integrated with other tools like a CMS
-               */
-
-              // FIXME: Check for more than just opener?
-              const opener = window.opener;
-              if (opener) {
-                opener.postMessage(`CHART_ID:${result.key}`, "*");
-                window.close();
-                return;
-              }
-
-              await push({
-                pathname: `/v/${result.key}`,
-                query: { publishSuccess: true },
-              });
-            } catch (e) {
-              console.error(e);
-              dispatch({ type: "PUBLISH_FAILED" });
-            }
-            return;
-          }
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    run();
-  }, [dispatch, push, replace, state]);
+    handleChartChangeDebounced(state, router, dispatch);
+  }, [dispatch, handleChartChangeDebounced, router, state]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
