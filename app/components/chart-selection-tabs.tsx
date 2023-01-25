@@ -233,6 +233,10 @@ const ShareChartEditionButton = () => {
     close();
   });
 
+  if (!key) {
+    return null;
+  }
+
   return (
     <>
       <Button
