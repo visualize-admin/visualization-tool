@@ -29,6 +29,7 @@ import {
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { dfs } from "@/utils/dfs";
+import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
 export type Option = {
@@ -46,10 +47,22 @@ export type FieldProps = Pick<
   "onChange" | "id" | "name" | "value" | "checked" | "type"
 >;
 
-const getLeaves = (tree: HierarchyValue[], limit?: number) => {
+const getLeaves = (
+  tree: HierarchyValue[],
+  {
+    limit,
+    ignoreNode,
+  }: {
+    limit?: number;
+    ignoreNode: (hv: HierarchyValue) => boolean;
+  }
+) => {
   const leaves = tree ? ([] as HierarchyValue[]) : undefined;
   if (tree && leaves) {
     dfs(tree, (node) => {
+      if (ignoreNode && ignoreNode(node)) {
+        return dfs.IGNORE;
+      }
       if (
         (!node.children || node.children.length === 0) &&
         node.hasValue &&
@@ -105,7 +118,23 @@ export const useChartFieldField = ({
         .toPromise();
       const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
         ?.hierarchy as HierarchyValue[];
-      const leaves = getLeaves(tree);
+
+      let hasSeenMultiHierarchyNode = false;
+      const leaves = getLeaves(tree, {
+        ignoreNode: (hv) => {
+          if (isMultiHierarchyNode(hv)) {
+            if (hasSeenMultiHierarchyNode) {
+              return true;
+            } else {
+              hasSeenMultiHierarchyNode = true;
+              return false;
+            }
+          } else {
+            // normal node
+            return false;
+          }
+        },
+      });
 
       if (!unmountedRef.current) {
         dispatch({

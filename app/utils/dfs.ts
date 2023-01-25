@@ -1,5 +1,7 @@
 import { HierarchyValue } from "@/graphql/resolver-types";
 
+export const IGNORE = {};
+
 export const dfs = function <T extends unknown>(
   tree: HierarchyValue[],
   visitor: (
@@ -16,9 +18,13 @@ export const dfs = function <T extends unknown>(
   ].reverse();
   const res = [];
   while (q.length > 0) {
-    const popped = q.pop()!;
+    const popped = q.shift()!;
     const { node, depth, parents } = popped;
-    res.push(visitor(node, { depth, parents }));
+    const visitResult = visitor(node, { depth, parents });
+    if (visitResult === dfs.IGNORE) {
+      continue;
+    }
+    res.push(visitResult);
     const childrenParents = [...parents, node];
     if (node?.children && node.children.length > 0) {
       for (let child of node.children) {
@@ -28,3 +34,10 @@ export const dfs = function <T extends unknown>(
   }
   return res;
 };
+
+/**
+ * Sentinel value meant to be returned from visitor callbacks
+ * if the concerned nodes and its children should be ignored
+ * by the DFS.
+ */
+dfs.IGNORE = IGNORE;
