@@ -159,9 +159,5 @@ export const queryHierarchy = async (
         } as HierarchyValue)
     );
 
-  fs.writeFileSync(
-    "/tmp/a.json",
-    JSON.stringify([...prunedTree, ...additionalTreeValues])
-  );
   return [...prunedTree, ...additionalTreeValues];
 };
