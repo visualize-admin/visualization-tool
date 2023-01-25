@@ -1501,7 +1501,7 @@ const ConfiguratorStateProviderInternal = ({
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
-  const { asPath, push, replace, query } = useRouter();
+  const { push, replace, query } = useRouter();
   const client = useClient();
 
   // Re-initialize state on page load
@@ -1616,7 +1616,7 @@ const ConfiguratorStateProviderInternal = ({
       }
     };
     run();
-  }, [state, dispatch, chartId, push, asPath, locale, query.from, replace]);
+  }, [dispatch, push, replace, state]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
