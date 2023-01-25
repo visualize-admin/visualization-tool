@@ -17,12 +17,10 @@ import {
   applyTableDimensionToFilters,
   deriveFiltersFromFields,
   getFiltersByMappingStatus,
-  getLocalStorageKey,
   handleChartFieldChanged,
   handleChartOptionChanged,
   initChartStateFromChart,
   initChartStateFromCube,
-  initChartStateFromLocalStorage,
   moveFilterField,
   updateColorMapping,
 } from "@/configurator/configurator-state";
@@ -111,27 +109,6 @@ describe("initChartStateFromChart", () => {
     });
     const state = await initChartStateFromChart("abcde");
     expect(state).toEqual(undefined);
-  });
-});
-
-describe("initChartFromLocalStorage", () => {
-  it("should initialize from localStorage if valid", async () => {
-    localStorage.setItem(
-      getLocalStorageKey("viz1234"),
-      JSON.stringify({ state: "CONFIGURING_CHART", ...fakeVizFixture })
-    );
-    const state = await initChartStateFromLocalStorage("viz1234");
-    expect(state).not.toBeUndefined();
-  });
-
-  it("should return undefined and remove key from localStorage if invalid", async () => {
-    jest.spyOn(console, "warn").mockImplementation(() => {});
-    jest.spyOn(console, "error").mockImplementation(() => {});
-
-    localStorage.setItem(getLocalStorageKey("viz1234"), "abcde");
-    const state = await initChartStateFromLocalStorage("viz1234");
-    expect(state).toBeUndefined();
-    expect(localStorage.getItem(getLocalStorageKey("viz1234"))).toBe(null);
   });
 });
 

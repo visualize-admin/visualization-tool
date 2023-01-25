@@ -257,10 +257,6 @@ export type ConfiguratorStateAction =
 export type ActionType<ConfiguratorStateAction> =
   ConfiguratorStateAction[keyof ConfiguratorStateAction];
 
-const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
-export const getLocalStorageKey = (chartId: string) =>
-  `${LOCALSTORAGE_PREFIX}:${chartId}`;
-
 const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
   const dataSource = getDataSourceFromLocalStorage();
 
