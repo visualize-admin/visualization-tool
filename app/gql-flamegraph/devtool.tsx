@@ -332,9 +332,14 @@ function GqlDebug() {
     };
     const handleResult = (result: OperationResult) => {
       opsEndMapRef.current.set(result.operation.key, Date.now());
-      setResults((results) =>
-        uniqBy([...results, result], (x) => x.operation.key)
-      );
+      // Calls setState out of band since handleResult can be called while
+      // rendering a component. setState cannot be called while rendering
+      // a component.
+      setTimeout(() => {
+        setResults((results) =>
+          uniqBy([...results, result], (x) => x.operation.key)
+        );
+      }, 0);
     };
     urqlEE.on("urql-received-operation", handleOperation);
     urqlEE.on("urql-received-result", handleResult);
