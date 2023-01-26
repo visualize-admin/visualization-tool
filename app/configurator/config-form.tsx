@@ -119,6 +119,10 @@ export const useChartFieldField = ({
       const tree = hierarchyData?.dataCubeByIri?.dimensionByIri
         ?.hierarchy as HierarchyValue[];
 
+      /**
+       * When there are multiple hierarchies, we only want to select leaves from
+       * the first hierarchy.
+       */
       let hasSeenMultiHierarchyNode = false;
       const leaves = getLeaves(tree, {
         ignoreNode: (hv) => {
