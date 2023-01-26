@@ -151,6 +151,12 @@ const useLegendGroups = ({
       : null
   ) as GenericSegmentField | null | undefined;
 
+  const segmentFilters = segmentField?.componentIri
+    ? configState.chartConfig.filters[segmentField.componentIri]
+    : null;
+  const segmentValues =
+    segmentFilters?.type === "multi" ? segmentFilters.values : {};
+
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
     dataset,
@@ -180,8 +186,9 @@ const useLegendGroups = ({
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
       useAbbreviations: segmentField?.useAbbreviations ?? false,
+      labelIris: segmentValues,
     });
-  }, [title, labels, getLabel, hierarchy, segmentField]);
+  }, [title, labels, getLabel, hierarchy, segmentField, segmentValues]);
 
   return groups;
 };
