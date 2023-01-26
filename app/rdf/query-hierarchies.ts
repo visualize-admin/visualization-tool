@@ -71,7 +71,7 @@ const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
       .has(ns.cubeMeta.inHierarchy)
       .out(ns.cubeMeta.inHierarchy)
       .toArray(),
-    (x) => x.out(ns.schema.name).value
+    (x) => x.value
   );
   if (newHierarchies) {
     return newHierarchies;
@@ -83,7 +83,6 @@ const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
     .out(ns.cubeMeta.hasHierarchy)
     .toArray();
   if (legacyHierarchies) {
-    console.log("legacy");
     return legacyHierarchies;
   }
   return [];
