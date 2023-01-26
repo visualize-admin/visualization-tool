@@ -59,6 +59,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   groupHeader: {
     marginBottom: theme.spacing(1),
+    flexWrap: "wrap",
   },
 }));
 
