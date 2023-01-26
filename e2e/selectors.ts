@@ -66,8 +66,10 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
     },
     chart: {
       axisWidthBand: async () => screen.findByTestId("axis-width-band"),
-      colorLegend: (options?, waitForOptions?) =>
-        screen.findByTestId("colorLegend", options, waitForOptions),
+      colorLegend: (
+        options?,
+        waitForOptions?: Parameters<typeof screen.findByTestId>[2]
+      ) => screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
       loaded: async (options: { timeout?: number } = {}) => {
