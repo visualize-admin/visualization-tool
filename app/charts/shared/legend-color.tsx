@@ -297,6 +297,7 @@ const LegendColorContent = ({
       {groups
         ? groups.map(([g, colorValues]) => {
             const headerLabelsArray = g.map((n) => n.label);
+            let chevronKey = 0;
             return (
               <div
                 className={classes.legendGroup}
@@ -312,7 +313,7 @@ const LegendColorContent = ({
                   >
                     {interlace(
                       g.map((n) => n.label),
-                      <SvgIcChevronRight />
+                      <SvgIcChevronRight key={chevronKey++} />
                     )}
                   </Typography>
                 ) : null}
