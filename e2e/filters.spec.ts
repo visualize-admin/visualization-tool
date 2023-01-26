@@ -29,7 +29,7 @@ describe("Filters", () => {
       .locator("input[name^=select-single-filter]")
       .inputValue();
     expect(productionRegionFilterValue).toEqual(
-      "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland"
+      "https://ld.admin.ch/country/CHE"
     );
 
     const standStructureFilter =

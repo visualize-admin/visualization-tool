@@ -2,7 +2,7 @@
   [
     {
       "label": "Switzerland",
-      "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
       "children": [
         {
           "label": "ZH",
@@ -290,7 +290,7 @@
   [
     {
       "label": "Switzerland",
-      "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
       "children": [
         {
           "label": "-",
@@ -678,7 +678,7 @@
   [
     {
       "label": "Switzerland",
-      "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
       "children": [
         {
           "label": "-",
