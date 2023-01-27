@@ -171,22 +171,26 @@ export const createCubeDimensionValuesLoader =
     const result: DimensionValue[][] = [];
 
     for (const dimension of dimensions) {
-      const dimensionValues = await getCubeDimensionValues(
+      const dimensionValues = await getCubeDimensionValues({
         sparqlClient,
-        dimension,
-        filters
-      );
+        rdimension: dimension,
+        filters,
+      });
       result.push(dimensionValues);
     }
 
     return result;
   };
 
-export const getCubeDimensionValues = async (
-  sparqlClient: ParsingClient,
-  rdimension: ResolvedDimension,
-  filters?: Filters
-): Promise<DimensionValue[]> => {
+export const getCubeDimensionValues = async ({
+  sparqlClient,
+  rdimension,
+  filters,
+}: {
+  sparqlClient: ParsingClient;
+  rdimension: ResolvedDimension;
+  filters?: Filters;
+}): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
 
   if (
@@ -315,7 +319,12 @@ export const getCubeDimensionValuesWithMetadata = async ({
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
     const [labels, descriptions, literals, unversioned] = await Promise.all([
-      loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+      loadResourceLabels({
+        ids: namedNodes,
+        locale,
+        sparqlClient,
+        labelTerm: schema.name,
+      }),
       scaleType === "Ordinal" || scaleType === "Nominal"
         ? loadResourceLabels({
             ids: namedNodes,

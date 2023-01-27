@@ -1,4 +1,3 @@
-import { schema } from "@tpluscode/rdf-ns-builders";
 import { sparql } from "@tpluscode/rdf-string";
 import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
 import { SELECT } from "@tpluscode/sparql-builder";
@@ -59,12 +58,12 @@ const buildResourceLabelsQuery = (
 export async function loadResourceLabels({
   ids,
   locale,
-  labelTerm = schema.name,
+  labelTerm,
   sparqlClient,
 }: {
   ids: NamedNode[];
   locale: string;
-  labelTerm?: NamedNode;
+  labelTerm: NamedNode;
   sparqlClient: ParsingClient;
 }): Promise<ResourceLabel[]> {
   const localesFilter = makeLocalesFilter("?iri", labelTerm, "?label", locale);
