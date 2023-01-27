@@ -66,7 +66,7 @@ msgstr "Explore datasets provided by the LINDAS Linked Data Service by either fi
 msgid "button.back"
 msgstr "Back"
 
-#: app/pages/v/[chartId].tsx:154
+#: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"
 
@@ -103,7 +103,7 @@ msgstr "Click to copy"
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/pages/v/[chartId].tsx:139
+#: app/pages/v/[chartId].tsx:151
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
@@ -865,7 +865,7 @@ msgstr "There was a problem with loading the coordinates from geographical dimen
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Coordinates loading error"
 
-#: app/pages/v/[chartId].tsx:117
+#: app/pages/v/[chartId].tsx:128
 msgid "hint.create.your.own.chart"
 msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
 
@@ -881,7 +881,7 @@ msgstr "Check the status page for more information"
 msgid "hint.dataloadingerror.title"
 msgstr "Data loading error"
 
-#: app/pages/v/[chartId].tsx:111
+#: app/pages/v/[chartId].tsx:122
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 
@@ -931,6 +931,10 @@ msgstr "Logo of the Swiss Confederation"
 msgid "metadata.link.created.with.visualize"
 msgstr "Created with visualize.admin.ch"
 
+#: app/components/chart-published.tsx:285
+msgid "metadata.link.created.with.visualize.alternate"
+msgstr "More information"
+
 #: app/components/chart-footnotes.tsx:168
 msgid "metadata.source"
 msgstr "Source"
@@ -964,16 +968,16 @@ msgid "publication.embed.style.minimal"
 msgstr "Minimal"
 
 #: app/components/publish-actions.tsx:291
-msgid "publication.embed.style.minimal.caption"
-msgstr "Only the chart and a link for more information."
+#~ msgid "publication.embed.style.minimal.caption"
+#~ msgstr "Only the chart and a link for more information."
 
 #: app/components/publish-actions.tsx:266
 msgid "publication.embed.style.standard"
 msgstr "Standard"
 
 #: app/components/publish-actions.tsx:271
-msgid "publication.embed.style.standard.caption"
-msgstr "Chart, download the data links, attribution etc..."
+#~ msgid "publication.embed.style.standard.caption"
+#~ msgstr "Chart, download the data links, attribution etc..."
 
 #: app/components/publish-actions.tsx:117
 msgid "publication.popup.share"

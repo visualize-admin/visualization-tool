@@ -66,7 +66,7 @@ msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datens�
 msgid "button.back"
 msgstr "Zurück"
 
-#: app/pages/v/[chartId].tsx:154
+#: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren und editieren"
 
@@ -103,7 +103,7 @@ msgstr "Kopieren"
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
-#: app/pages/v/[chartId].tsx:139
+#: app/pages/v/[chartId].tsx:151
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
@@ -865,7 +865,7 @@ msgstr "Es gab ein Problem beim Laden der Koordinaten aus den geografischen Dime
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Koordinaten-Ladefehler"
 
-#: app/pages/v/[chartId].tsx:117
+#: app/pages/v/[chartId].tsx:128
 msgid "hint.create.your.own.chart"
 msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
 
@@ -881,7 +881,7 @@ msgstr "Weitere Informationen finden Sie auf der Statusseite"
 msgid "hint.dataloadingerror.title"
 msgstr "Daten-Ladefehler"
 
-#: app/pages/v/[chartId].tsx:111
+#: app/pages/v/[chartId].tsx:122
 msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
 
@@ -931,6 +931,10 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 msgid "metadata.link.created.with.visualize"
 msgstr "Erstellt mit visualize.admin.ch"
 
+#: app/components/chart-published.tsx:285
+msgid "metadata.link.created.with.visualize.alternate"
+msgstr "Mehr Informationen"
+
 #: app/components/chart-footnotes.tsx:168
 msgid "metadata.source"
 msgstr "Quelle"
@@ -964,16 +968,16 @@ msgid "publication.embed.style.minimal"
 msgstr "Minimale"
 
 #: app/components/publish-actions.tsx:291
-msgid "publication.embed.style.minimal.caption"
-msgstr ""
+#~ msgid "publication.embed.style.minimal.caption"
+#~ msgstr ""
 
 #: app/components/publish-actions.tsx:266
 msgid "publication.embed.style.standard"
 msgstr "Standard"
 
 #: app/components/publish-actions.tsx:271
-msgid "publication.embed.style.standard.caption"
-msgstr ""
+#~ msgid "publication.embed.style.standard.caption"
+#~ msgstr ""
 
 #: app/components/publish-actions.tsx:117
 msgid "publication.popup.share"

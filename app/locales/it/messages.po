@@ -66,7 +66,7 @@ msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando p
 msgid "button.back"
 msgstr "Torna indietro"
 
-#: app/pages/v/[chartId].tsx:154
+#: app/pages/v/[chartId].tsx:166
 msgid "button.copy.visualization"
 msgstr "Copia e modifica questa visualizzazione"
 
@@ -103,7 +103,7 @@ msgstr "Clicca per copiare"
 msgid "button.hint.copied"
 msgstr "Copiato!"
 
-#: app/pages/v/[chartId].tsx:139
+#: app/pages/v/[chartId].tsx:151
 msgid "button.new.visualization"
 msgstr "Crea una nuova visualizzazione"
 
@@ -865,7 +865,7 @@ msgstr "C'è stato un problema con il caricamento delle coordinate dalle dimensi
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Errore di caricamento delle coordinate"
 
-#: app/pages/v/[chartId].tsx:117
+#: app/pages/v/[chartId].tsx:128
 msgid "hint.create.your.own.chart"
 msgstr "Copia questa visualizzazione o crea una nuova visualizzazione usando «dati aperti» dell’amministrazione pubblica svizzera"
 
@@ -881,7 +881,7 @@ msgstr "Controlla la pagina di stato per ulteriori informazioni”"
 msgid "hint.dataloadingerror.title"
 msgstr "Problema di caricamento dei dati"
 
-#: app/pages/v/[chartId].tsx:111
+#: app/pages/v/[chartId].tsx:122
 msgid "hint.how.to.share"
 msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorporandola nel vostro sito Web. Puoi anche creare una nuova visualizzazione partendo da zero oppure copiando e modificando la visualizzazione sopra."
 
@@ -931,6 +931,10 @@ msgstr "Logo della Confederazione svizzera"
 msgid "metadata.link.created.with.visualize"
 msgstr "Creato con visualize.admin.ch"
 
+#: app/components/chart-published.tsx:285
+msgid "metadata.link.created.with.visualize.alternate"
+msgstr "Più informazioni"
+
 #: app/components/chart-footnotes.tsx:168
 msgid "metadata.source"
 msgstr "Fonte"
@@ -964,16 +968,16 @@ msgid "publication.embed.style.minimal"
 msgstr "Minimal"
 
 #: app/components/publish-actions.tsx:291
-msgid "publication.embed.style.minimal.caption"
-msgstr ""
+#~ msgid "publication.embed.style.minimal.caption"
+#~ msgstr ""
 
 #: app/components/publish-actions.tsx:266
 msgid "publication.embed.style.standard"
 msgstr "Standard"
 
 #: app/components/publish-actions.tsx:271
-msgid "publication.embed.style.standard.caption"
-msgstr ""
+#~ msgid "publication.embed.style.standard.caption"
+#~ msgstr ""
 
 #: app/components/publish-actions.tsx:117
 msgid "publication.popup.share"
