@@ -88,13 +88,76 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           width="100%"
           overflow="hidden"
         >
-          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
+          <Box sx={{ py: 4, maxWidth: "70rem", margin: "auto" }}>
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <Success />
               </Box>
             )}
 
+            <Box sx={{ mr: 5, float: "left", width: "20rem" }}>
+              <PublishActions configKey={key} />
+              <Typography
+                component="div"
+                variant="body1"
+                mt={3}
+                mb={4}
+                sx={{
+                  color: "grey.800",
+                  fontWeight: "regular",
+                }}
+              >
+                {publishSuccess ? (
+                  <Trans id="hint.how.to.share">
+                    You can share this chart either by sharing its URL or by
+                    embedding it on your website. You can also create a new
+                    visualization or duplicate the above chart.
+                  </Trans>
+                ) : (
+                  <Trans id="hint.create.your.own.chart">
+                    Create your own graphic now! With the visualization tool,
+                    you can create your own graphics, based on a large number of
+                    Swiss federal data.
+                  </Trans>
+                )}
+              </Typography>
+              <Stack
+                alignItems="flex-start"
+                direction={{ xs: "column", sm: "row" }}
+                // We need to use responsive syntax for spacing when using responsive
+                // syntax for direction, otherwise it does not work
+                spacing={{ xs: 2, sm: 2 }}
+                sx={{ mb: 5 }}
+              >
+                <NextLink href="/create/new" passHref>
+                  <Button
+                    component="a"
+                    size="large"
+                    variant="contained"
+                    color="secondary"
+                  >
+                    <Trans id="button.new.visualization">
+                      Create a new visualization
+                    </Trans>
+                  </Button>
+                </NextLink>
+                <NextLink
+                  href={{ pathname: "/create/new", query: { from: key } }}
+                  passHref
+                >
+                  <Button
+                    component="a"
+                    size="large"
+                    variant="contained"
+                    color="secondary"
+                  >
+                    <Trans id="button.copy.visualization">
+                      Copy and edit this visualization
+                    </Trans>
+                  </Button>
+                </NextLink>
+              </Stack>
+            </Box>
             <ChartPanelPublished chartType={chartConfig.chartType}>
               <ChartPublished
                 dataSet={dataSet}
@@ -104,71 +167,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 configKey={key}
               />
             </ChartPanelPublished>
-
-            <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
-
-            <Typography
-              component="div"
-              variant="h3"
-              mt={3}
-              mb={4}
-              sx={{
-                color: "grey.800",
-                fontSize: "1.125rem",
-                fontWeight: "regular",
-              }}
-            >
-              {publishSuccess ? (
-                <Trans id="hint.how.to.share">
-                  You can share this chart either by sharing its URL or by
-                  embedding it on your website. You can also create a new
-                  visualization or duplicate the above chart.
-                </Trans>
-              ) : (
-                <Trans id="hint.create.your.own.chart">
-                  Create your own graphic now! With the visualization tool, you
-                  can create your own graphics, based on a large number of Swiss
-                  federal data.
-                </Trans>
-              )}
-            </Typography>
-
-            <Stack
-              alignItems="flex-start"
-              direction={{ xs: "column", sm: "row" }}
-              // We need to use responsive syntax for spacing when using responsive
-              // syntax for direction, otherwise it does not work
-              spacing={{ xs: 2, sm: 2 }}
-              sx={{ mb: 5 }}
-            >
-              <NextLink href="/create/new" passHref>
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
-                  <Trans id="button.new.visualization">
-                    Create a new visualization
-                  </Trans>
-                </Button>
-              </NextLink>
-              <NextLink
-                href={{ pathname: "/create/new", query: { from: key } }}
-                passHref
-              >
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
-                  <Trans id="button.copy.visualization">
-                    Copy and edit this visualization
-                  </Trans>
-                </Button>
-              </NextLink>
-            </Stack>
           </Box>
         </Box>
       </ContentLayout>
