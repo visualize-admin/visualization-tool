@@ -216,6 +216,8 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       });
     }
   };
+  const isMinimal = embedOptions.showDatasetTitle === false;
+  const iFrameHeight = isMinimal ? "560px" : "640px";
 
   useEffect(() => {
     const embedOptionsParam = encodeURIComponent(JSON.stringify(embedOptions));
@@ -310,7 +312,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           </Typography>
 
           <CopyToClipboardTextInput
-            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
+            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${iFrameHeight}" width="600px" allowfullscreen></iframe>`}
           />
         </div>
 
