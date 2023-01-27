@@ -267,11 +267,11 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
                         Standard
                       </Trans>
                     </Typography>
-                    <Typography variant="caption" display="block">
+                    {/* <Typography variant="caption" display="block">
                       <Trans id="publication.embed.style.standard.caption">
                         Chart, download the data links, attribution etc...
                       </Trans>
-                    </Typography>
+                    </Typography> */}
                   </div>
                 }
                 disableTypography
@@ -287,11 +287,11 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
                         Minimal
                       </Trans>
                     </Typography>
-                    <Typography variant="caption" display="block">
+                    {/* <Typography variant="caption" display="block">
                       <Trans id="publication.embed.style.minimal.caption">
                         Only the chart and a link for more information.
                       </Trans>
-                    </Typography>
+                    </Typography> */}
                   </div>
                 }
                 disableTypography
@@ -305,7 +305,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           </Typography>
           <Typography variant="caption">
             <Trans id="publication.embed.iframe.caption">
-              Use this link to insert this visualization into other webpages.
+              Use this link to embed the chart into other webpages.
             </Trans>
           </Typography>
 
@@ -322,8 +322,8 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           </Typography>
           <Typography variant="caption">
             <Trans id="publication.embed.AEM.caption">
-              Use this link to insert this visualization into Adobe Experience
-              Manager assets.
+              Use this link to embed the chart into Adobe Experience Manager
+              assets.
             </Trans>
           </Typography>
 

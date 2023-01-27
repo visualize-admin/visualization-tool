@@ -949,7 +949,7 @@ msgstr "Embed Code for AEM \"External Application\""
 
 #: app/components/publish-actions.tsx:324
 msgid "publication.embed.AEM.caption"
-msgstr "Use this link to insert this visualization into Adobe Experience Manager assets."
+msgstr "Use this link to embed the chart into Adobe Experience Manager assets."
 
 #: app/components/publish-actions.tsx:304
 msgid "publication.embed.iframe"
@@ -957,7 +957,7 @@ msgstr "Embed Code"
 
 #: app/components/publish-actions.tsx:307
 msgid "publication.embed.iframe.caption"
-msgstr "Use this link to insert this visualization into other webpages."
+msgstr "Use this link to embed the chart into other webpages."
 
 #: app/components/publish-actions.tsx:286
 msgid "publication.embed.style.minimal"
