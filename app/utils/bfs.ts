@@ -2,7 +2,12 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 
 export const IGNORE = {};
 
-export const dfs = function <T extends unknown>(
+/**
+ * TODO check if can be deduplicated with visitHierarchy
+ * ⚠️ visitHierarchy is a depth-first-search while we have
+ * a bread-first-search here.
+ */
+export const bfs = function <T extends unknown>(
   tree: HierarchyValue[],
   visitor: (
     node: HierarchyValue,
@@ -21,7 +26,7 @@ export const dfs = function <T extends unknown>(
     const popped = q.shift()!;
     const { node, depth, parents } = popped;
     const visitResult = visitor(node, { depth, parents });
-    if (visitResult === dfs.IGNORE) {
+    if (visitResult === bfs.IGNORE) {
       continue;
     }
     res.push(visitResult);
@@ -40,4 +45,4 @@ export const dfs = function <T extends unknown>(
  * if the concerned nodes and its children should be ignored
  * by the DFS.
  */
-dfs.IGNORE = IGNORE;
+bfs.IGNORE = IGNORE;

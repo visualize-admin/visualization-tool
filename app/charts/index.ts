@@ -30,8 +30,8 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { getDefaultCategoricalPaletteName } from "@/palettes";
+import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
-import { dfs } from "@/utils/dfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
@@ -136,10 +136,10 @@ export const DEFAULT_SORTING: SortingOption = {
 const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
   const leaves = [] as HierarchyValue[];
   let hasSeenMultiHierarchyNode = false;
-  dfs(dimension?.hierarchy as HierarchyValue[], (node) => {
+  bfs(dimension?.hierarchy as HierarchyValue[], (node) => {
     if (isMultiHierarchyNode(node)) {
       if (hasSeenMultiHierarchyNode) {
-        return dfs.IGNORE;
+        return bfs.IGNORE;
       } else {
         hasSeenMultiHierarchyNode = true;
       }

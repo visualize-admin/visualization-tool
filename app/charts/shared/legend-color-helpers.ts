@@ -1,7 +1,7 @@
 import { ascending } from "d3";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 
 export const getLegendGroups = ({
   title,
@@ -29,7 +29,7 @@ export const getLegendGroups = ({
 
     const emptyParents: HierarchyValue[] = [];
 
-    dfs(hierarchy, (node, { parents: _parents }) => {
+    bfs(hierarchy, (node, { parents: _parents }) => {
       const label = getLabel(
         useAbbreviations ? node.alternateName || node.label : node.label
       );

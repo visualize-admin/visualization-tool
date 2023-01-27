@@ -28,7 +28,7 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
 
@@ -59,9 +59,9 @@ const getLeaves = (
 ) => {
   const leaves = tree ? ([] as HierarchyValue[]) : undefined;
   if (tree && leaves) {
-    dfs(tree, (node) => {
+    bfs(tree, (node) => {
       if (ignoreNode && ignoreNode(node)) {
-        return dfs.IGNORE;
+        return bfs.IGNORE;
       }
       if (
         (!node.children || node.children.length === 0) &&
