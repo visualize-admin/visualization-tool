@@ -193,13 +193,16 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [embedOptions, setEmbedOptions] = useEmbedOptions();
+  console.log([embedOptions, setEmbedOptions]);
   const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
+    console.log(setEmbedOptions);
     if (value === "minimal") {
       setEmbedOptions({
         showDatasetTitle: false,
         showDownload: false,
         showLandingPage: false,
-        showSource: false,
+        showSource: true,
+        showMetadata: false,
         showSparqlQuery: false,
         showDatePublished: false,
         showTableSwitch: false,
@@ -213,6 +216,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
         showSparqlQuery: true,
         showDatePublished: true,
         showTableSwitch: true,
+        showMetadata: true,
       });
     }
   };

@@ -6,6 +6,7 @@ import { ChartPublished } from "@/components/chart-published";
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
+import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -49,13 +50,15 @@ const EmbedPage = (props: PageProps) => {
   } = props;
 
   return (
-    <ChartPublished
-      dataSet={dataSet}
-      dataSource={dataSource}
-      chartConfig={chartConfig}
-      meta={meta}
-      configKey={key}
-    />
+    <EmbedOptionsProvider>
+      <ChartPublished
+        dataSet={dataSet}
+        dataSource={dataSource}
+        chartConfig={chartConfig}
+        meta={meta}
+        configKey={key}
+      />
+    </EmbedOptionsProvider>
   );
 };
 

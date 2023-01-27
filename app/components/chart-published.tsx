@@ -45,9 +45,8 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
-
-import { useEmbedOptions } from "../utils/embed";
 
 export const ChartPublished = ({
   dataSet,
@@ -89,16 +88,6 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
     transition: "padding 0.25s ease",
   },
 }));
-
-export type EmbedOptions = {
-  showDownload?: boolean;
-  showLandingPage?: boolean;
-  showTableSwitch?: boolean;
-  showSparqlQuery?: boolean;
-  showDatePublished?: boolean;
-  showSource?: boolean;
-  showDatasetTitle?: boolean;
-};
 
 export const ChartPublishedInner = ({
   dataSet,
@@ -175,7 +164,8 @@ export const ChartPublishedInner = ({
     ];
   }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
 
-  const [embedOptions] = useEmbedOptions();
+  const [{ showDownload }] = useEmbedOptions();
+
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
@@ -273,15 +263,8 @@ export const ChartPublishedInner = ({
               chartConfig={chartConfig}
               configKey={configKey}
               onToggleTableView={handleToggleTableView}
-              showDownload={embedOptions.showDownload}
-              showLandingPage={embedOptions.showLandingPage}
-              showTableSwitch={embedOptions.showTableSwitch}
-              showSparqlQuery={embedOptions.showSparqlQuery}
-              showDatePublished={embedOptions.showDatePublished}
-              showSource={embedOptions.showSource}
-              showDatasetTitle={embedOptions.showDatasetTitle}
               visualizeLinkText={
-                embedOptions.showDownload === false ? (
+                showDownload === false ? (
                   <Trans id="metadata.link.created.with.visualize.alternate">
                     More information
                   </Trans>

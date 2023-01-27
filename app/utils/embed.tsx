@@ -1,11 +1,30 @@
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 
 import useEvent from "@/utils/use-event";
+import React from "react";
 
-import { EmbedOptions } from "../components/chart-published";
+export type EmbedOptions = {
+  showDownload?: boolean;
+  showLandingPage?: boolean;
+  showTableSwitch?: boolean;
+  showSparqlQuery?: boolean;
+  showDatePublished?: boolean;
+  showSource?: boolean;
+  showDatasetTitle?: boolean;
+  showMetadata?: boolean;
+};
 
-export const useEmbedOptions = () => {
+const EmbedOptionsContext = React.createContext([
+  {} as EmbedOptions,
+  (() => undefined) as (n: Partial<EmbedOptions>) => void,
+] as const);
+
+export const EmbedOptionsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const router = useRouter();
   const embedOptions = useMemo(() => {
     try {
@@ -31,5 +50,15 @@ export const useEmbedOptions = () => {
       },
     });
   });
-  return [embedOptions, setEmbedOptions] as const;
+  return (
+    <EmbedOptionsContext.Provider
+      value={[embedOptions, setEmbedOptions] as const}
+    >
+      {children}
+    </EmbedOptionsContext.Provider>
+  );
+};
+
+export const useEmbedOptions = () => {
+  return useContext(EmbedOptionsContext);
 };

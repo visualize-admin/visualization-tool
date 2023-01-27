@@ -13,6 +13,7 @@ import {
 } from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import { makeOpenDataLink } from "@/utils/opendata";
 
 import { useQueryFilters } from "../charts/shared/chart-helpers";
@@ -57,27 +58,13 @@ export const ChartFootnotes = ({
   chartConfig,
   configKey,
   onToggleTableView,
-  showDownload,
-  showTableSwitch,
-  showSparqlQuery,
   visualizeLinkText,
-  showLandingPage,
-  showSource,
-  showDatasetTitle,
-  showDatePublished,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   configKey?: string;
   onToggleTableView: () => void;
-  showDownload?: boolean;
-  showLandingPage?: boolean;
-  showTableSwitch?: boolean;
-  showSparqlQuery?: boolean;
-  showSource?: boolean;
-  showDatasetTitle?: boolean;
-  showDatePublished?: boolean;
   visualizeLinkText?: JSX.Element;
 }) => {
   const classes = useFootnotesStyles({ useMarginTop: true });
@@ -122,6 +109,18 @@ export const ChartFootnotes = ({
   const cubeLink = useMemo(() => {
     return makeOpenDataLink(locale, data?.dataCubeByIri);
   }, [locale, data?.dataCubeByIri]);
+
+  const [
+    {
+      showDownload,
+      showLandingPage,
+      showTableSwitch,
+      showSparqlQuery,
+      showDatePublished,
+      showSource,
+      showDatasetTitle,
+    },
+  ] = useEmbedOptions();
 
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;

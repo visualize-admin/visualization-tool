@@ -16,6 +16,7 @@ import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
+import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -72,7 +73,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   } = (props as Exclude<PageProps, { status: "notfound" }>).config;
 
   return (
-    <>
+    <EmbedOptionsProvider>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:title" content={meta.title[locale]} />
@@ -172,7 +173,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           </Box>
         </Box>
       </ContentLayout>
-    </>
+    </EmbedOptionsProvider>
   );
 };
 
