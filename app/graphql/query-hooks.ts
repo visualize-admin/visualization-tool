@@ -22,6 +22,8 @@ export type Scalars = {
   GeoShapes: any;
   Observation: Observation;
   RawObservation: RawObservation;
+  ValueIdentifier: any;
+  ValuePosition: any;
 };
 
 export type DataCube = {
@@ -223,8 +225,8 @@ export type HierarchyValue = {
   value: Scalars['String'];
   label: Scalars['String'];
   alternateName?: Maybe<Scalars['String']>;
-  position?: Maybe<Scalars['String']>;
-  identifier?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['ValuePosition']>;
+  identifier?: Maybe<Scalars['ValueIdentifier']>;
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;
@@ -492,6 +494,8 @@ export enum TimeUnit {
   Minute = 'Minute',
   Second = 'Second'
 }
+
+
 
 export type DataCubesQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -936,7 +940,7 @@ export type SubthemesQueryVariables = Exact<{
 
 export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
 
-export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, alternateName?: Maybe<string>, hasValue?: Maybe<boolean>, position?: Maybe<string>, identifier?: Maybe<string> };
+export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, alternateName?: Maybe<string>, hasValue?: Maybe<boolean>, position?: Maybe<any>, identifier?: Maybe<any> };
 
 export type DimensionHierarchyQueryVariables = Exact<{
   sourceType: Scalars['String'];

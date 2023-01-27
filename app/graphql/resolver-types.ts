@@ -24,6 +24,8 @@ export type Scalars = {
   GeoShapes: any;
   Observation: Observation;
   RawObservation: RawObservation;
+  ValueIdentifier: any;
+  ValuePosition: any;
 };
 
 export type DataCube = {
@@ -225,8 +227,8 @@ export type HierarchyValue = {
   value: Scalars['String'];
   label: Scalars['String'];
   alternateName?: Maybe<Scalars['String']>;
-  position?: Maybe<Scalars['String']>;
-  identifier?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['ValuePosition']>;
+  identifier?: Maybe<Scalars['ValueIdentifier']>;
   dimensionIri: Scalars['String'];
   depth: Scalars['Int'];
   children?: Maybe<Array<HierarchyValue>>;
@@ -495,6 +497,8 @@ export enum TimeUnit {
   Second = 'Second'
 }
 
+
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -595,6 +599,8 @@ export type ResolversTypes = ResolversObject<{
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TimeUnit: TimeUnit;
+  ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
+  ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -630,6 +636,8 @@ export type ResolversParentTypes = ResolversObject<{
   RawObservation: Scalars['RawObservation'];
   RelatedDimension: RelatedDimension;
   TemporalDimension: ResolvedDimension;
+  ValueIdentifier: Scalars['ValueIdentifier'];
+  ValuePosition: Scalars['ValuePosition'];
 }>;
 
 export type DataCubeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
@@ -760,8 +768,8 @@ export type HierarchyValueResolvers<ContextType = GraphQLContext, ParentType ext
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   alternateName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  position?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  identifier?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  position?: Resolver<Maybe<ResolversTypes['ValuePosition']>, ParentType, ContextType>;
+  identifier?: Resolver<Maybe<ResolversTypes['ValueIdentifier']>, ParentType, ContextType>;
   dimensionIri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   children?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
@@ -898,6 +906,14 @@ export type TemporalDimensionResolvers<ContextType = GraphQLContext, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface ValueIdentifierScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ValueIdentifier'], any> {
+  name: 'ValueIdentifier';
+}
+
+export interface ValuePositionScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ValuePosition'], any> {
+  name: 'ValuePosition';
+}
+
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   DataCube?: DataCubeResolvers<ContextType>;
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
@@ -925,6 +941,8 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   RawObservation?: GraphQLScalarType;
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
+  ValueIdentifier?: GraphQLScalarType;
+  ValuePosition?: GraphQLScalarType;
 }>;
 
 

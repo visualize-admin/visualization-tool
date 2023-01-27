@@ -1,0 +1,1065 @@
+[
+  [
+    {
+      "label": "Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
+      "children": [
+        {
+          "label": "ZH",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/1",
+          "children": [],
+          "identifier": "1",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "FR",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/10",
+          "children": [],
+          "identifier": "10",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "SO",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/11",
+          "children": [],
+          "identifier": "11",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "BL/BS",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/13",
+          "children": [],
+          "identifier": "13",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "SH",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/14",
+          "children": [],
+          "identifier": "14",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "AR",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/15",
+          "children": [],
+          "identifier": "15",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "AI",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/16",
+          "children": [],
+          "identifier": "16",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "SG",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/17",
+          "children": [],
+          "identifier": "17",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "GR",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/18",
+          "children": [],
+          "identifier": "18",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "AG",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/19",
+          "children": [],
+          "identifier": "19",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "BE",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/2",
+          "children": [],
+          "identifier": "2",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "TG",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/20",
+          "children": [],
+          "identifier": "20",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "TI",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/21",
+          "children": [],
+          "identifier": "21",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "VS",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/23",
+          "children": [],
+          "identifier": "23",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "NE",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/24",
+          "children": [],
+          "identifier": "24",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "GE",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/25",
+          "children": [],
+          "identifier": "25",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "JU",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/26",
+          "children": [],
+          "identifier": "26",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "LU",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/3",
+          "children": [],
+          "identifier": "3",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "UR",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/4",
+          "children": [],
+          "identifier": "4",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "SZ",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/5",
+          "children": [],
+          "identifier": "5",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "OW",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/6",
+          "children": [],
+          "identifier": "6",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "NW",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/7",
+          "children": [],
+          "identifier": "7",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "GL",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/8",
+          "children": [],
+          "identifier": "8",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "ZG",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/9",
+          "children": [],
+          "identifier": "9",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/-1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/6",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        }
+      ],
+      "identifier": "0",
+      "depth": 0,
+      "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "hierarchyName": "Switzerland - Canton"
+    }
+  ],
+  [
+    {
+      "label": "Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
+      "children": [
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/10",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/11",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/13",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/14",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/15",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/16",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/17",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/18",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/19",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/20",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/21",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/23",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/24",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/25",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/26",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/6",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/7",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/8",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/9",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/-1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Jura + Plateau",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/1",
+          "children": [
+            {
+              "label": "Western Jura",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/1",
+              "children": [],
+              "identifier": "1",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Jura",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/2",
+              "children": [],
+              "identifier": "2",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Western Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/3",
+              "children": [],
+              "identifier": "3",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Central Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/4",
+              "children": [],
+              "identifier": "4",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/5",
+              "children": [],
+              "identifier": "5",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "1",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Northwestern Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/2",
+          "children": [
+            {
+              "label": "Western Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/6",
+              "children": [],
+              "identifier": "6",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Central Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/7",
+              "children": [],
+              "identifier": "7",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Northwestern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/9",
+              "children": [],
+              "identifier": "9",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "2",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Northeastern Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/3",
+          "children": [
+            {
+              "label": "Central Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/10",
+              "children": [],
+              "identifier": "10",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Northeastern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/11",
+              "children": [],
+              "identifier": "11",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/8",
+              "children": [],
+              "identifier": "8",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "3",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Southwestern Alps ",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/4",
+          "children": [
+            {
+              "label": "Southwestern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/12",
+              "children": [],
+              "identifier": "12",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "4",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Southeastern Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/5",
+          "children": [
+            {
+              "label": "Southeastern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/13",
+              "children": [],
+              "identifier": "13",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "5",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Southern Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/6",
+          "children": [
+            {
+              "label": "Southern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/14",
+              "children": [],
+              "identifier": "14",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "6",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        }
+      ],
+      "identifier": "0",
+      "depth": 0,
+      "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "hierarchyName": "Switzerland - Protection Region - Economic Region"
+    }
+  ],
+  [
+    {
+      "label": "Switzerland",
+      "value": "https://ld.admin.ch/country/CHE",
+      "children": [
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/10",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/11",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/13",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/14",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/15",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/16",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/17",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/18",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/19",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/20",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/21",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/23",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/24",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/25",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/26",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/6",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/7",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/8",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Ktbsl/9",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "N/a",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/-1",
+          "children": [],
+          "identifier": "99",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Jura",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/1",
+          "children": [
+            {
+              "label": "Western Jura",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/1",
+              "children": [],
+              "identifier": "1",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Jura",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/2",
+              "children": [],
+              "identifier": "2",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "1",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Plateau",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/2",
+          "children": [
+            {
+              "label": "Western Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/3",
+              "children": [],
+              "identifier": "3",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Central Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/4",
+              "children": [],
+              "identifier": "4",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Plateau",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/5",
+              "children": [],
+              "identifier": "5",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "2",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Pre-Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/3",
+          "children": [
+            {
+              "label": "Western Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/6",
+              "children": [],
+              "identifier": "6",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Central Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/7",
+              "children": [],
+              "identifier": "7",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Eastern Pre-Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/8",
+              "children": [],
+              "identifier": "8",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "3",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/4",
+          "children": [
+            {
+              "label": "Central Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/10",
+              "children": [],
+              "identifier": "10",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Northeastern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/11",
+              "children": [],
+              "identifier": "11",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Southwestern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/12",
+              "children": [],
+              "identifier": "12",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Southeastern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/13",
+              "children": [],
+              "identifier": "13",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            },
+            {
+              "label": "Northwestern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/9",
+              "children": [],
+              "identifier": "9",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "4",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "Southern Alps",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/5",
+          "children": [
+            {
+              "label": "Southern Alps",
+              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Wiregr0704/14",
+              "children": [],
+              "identifier": "14",
+              "depth": 2,
+              "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+            }
+          ],
+          "identifier": "5",
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/1",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/2",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/3",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/4",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/5",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        },
+        {
+          "label": "-",
+          "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Schureg/6",
+          "children": [],
+          "depth": 1,
+          "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference"
+        }
+      ],
+      "identifier": "0",
+      "depth": 0,
+      "dimensionIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "hierarchyName": "Switzerland - Production Region - Economic Region"
+    }
+  ]
+]

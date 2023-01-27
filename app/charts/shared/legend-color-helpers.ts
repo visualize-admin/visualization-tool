@@ -1,7 +1,7 @@
 import { ascending } from "d3";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 
 export const getLegendGroups = ({
   title,
@@ -10,6 +10,7 @@ export const getLegendGroups = ({
   hierarchy,
   sort,
   useAbbreviations,
+  labelIris,
 }: {
   title?: string;
   labels: string[];
@@ -17,6 +18,7 @@ export const getLegendGroups = ({
   hierarchy?: HierarchyValue[] | null;
   sort: boolean;
   useAbbreviations: boolean;
+  labelIris?: Record<string, any>;
 }) => {
   const groupsMap = new Map<HierarchyValue[], string[]>();
 
@@ -24,14 +26,19 @@ export const getLegendGroups = ({
     groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
   } else {
     const labelSet = new Set(labels);
+
     const emptyParents: HierarchyValue[] = [];
 
-    dfs(hierarchy, (node, { parents: _parents }) => {
+    bfs(hierarchy, (node, { parents: _parents }) => {
       const label = getLabel(
         useAbbreviations ? node.alternateName || node.label : node.label
       );
 
       if (!labelSet.has(label)) {
+        return;
+      }
+
+      if (labelIris && !labelIris?.[node.value]) {
         return;
       }
 

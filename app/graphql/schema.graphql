@@ -4,6 +4,8 @@ scalar FilterValue
 scalar RawObservation
 scalar Filters
 scalar GeoShapes
+scalar ValueIdentifier
+scalar ValuePosition
 
 type ObservationsQuery {
   "Observations with their values parsed to native JS types"
@@ -63,8 +65,8 @@ type HierarchyValue {
   value: String!
   label: String!
   alternateName: String
-  position: String
-  identifier: String
+  position: ValuePosition
+  identifier: ValueIdentifier
   dimensionIri: String!
   depth: Int!
   children: [HierarchyValue!]

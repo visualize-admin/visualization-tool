@@ -3,18 +3,26 @@ import {
   HierarchyNode,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
-import { isGraphPointer } from "is-graph-pointer";
+import orderBy from "lodash/orderBy";
+import uniqBy from "lodash/uniqBy";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { parseTerm } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 import * as ns from "./namespace";
 import { getCubeDimensionValuesWithMetadata } from "./queries";
-import { pruneTree, mapTree, getOptionsFromTree } from "./tree-utils";
+import {
+  pruneTree,
+  mapTree,
+  getOptionsFromTree,
+  regroupTrees,
+} from "./tree-utils";
 
 const getName = (pointer: AnyPointer, language: string) => {
   const name = pointer.out(ns.schema.name, { language })?.value;
@@ -29,46 +37,64 @@ const toTree = (
   dimensionIri: string,
   locale: string
 ): HierarchyValue[] => {
+  const sortChildren = (children: HierarchyValue[]) =>
+    orderBy(children, ["position", "identifier"]);
   const serializeNode = (
     node: HierarchyNode,
     depth: number
-  ): HierarchyValue => {
-    const res: HierarchyValue = {
-      label: getName(node.resource, locale) || "-",
-      alternateName: node.resource.out(ns.schema.alternateName).term?.value,
-      value: node.resource.value,
-      children: node.nextInHierarchy.map((childNode) =>
-        serializeNode(childNode, depth + 1)
-      ),
-      position: node.resource.out(ns.schema.position).term?.value,
-      identifier: node.resource.out(ns.schema.identifier).term?.value,
-      depth,
-      dimensionIri: dimensionIri,
-    };
+  ): HierarchyValue | undefined => {
+    const name = getName(node.resource, locale);
+    // TODO Find out why some hierachy nodes have no label. We filter
+    // them out at the moment
+    // @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/labels.20for.20each.20hierarchy.20level/near/312845
+
+    const identifier = parseTerm(node.resource.out(ns.schema.identifier)?.term);
+    const res: HierarchyValue | undefined = name
+      ? {
+          label: name || "-",
+          alternateName: node.resource.out(ns.schema.alternateName).term?.value,
+          value: node.resource.value,
+          children: sortChildren(
+            node.nextInHierarchy
+              .map((childNode) => serializeNode(childNode, depth + 1))
+              .filter(truthy)
+              .filter((d) => d.label)
+          ),
+          position: parseTerm(node.resource.out(ns.schema.position).term),
+          identifier: identifier,
+          depth,
+          dimensionIri: dimensionIri,
+        }
+      : undefined;
     return res;
   };
-  return results.map((r) => serializeNode(r, 0));
+
+  return sortChildren(results.map((r) => serializeNode(r, 0)).filter(truthy));
 };
 
-const findHierarchyForDimension = (cube: Cube, dimensionIri: string) => {
-  const newHierarchy = cube.ptr
-    .any()
-    .has(ns.sh.path, rdf.namedNode(dimensionIri))
-    .has(ns.cubeMeta.inHierarchy)
-    .out(ns.cubeMeta.inHierarchy)
-    .toArray()[0];
-  if (newHierarchy) {
-    return newHierarchy;
+const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
+  const newHierarchies = uniqBy(
+    cube.ptr
+      .any()
+      .has(ns.sh.path, rdf.namedNode(dimensionIri))
+      .has(ns.cubeMeta.inHierarchy)
+      .out(ns.cubeMeta.inHierarchy)
+      .toArray(),
+    (x) => x.value
+  );
+  if (newHierarchies) {
+    return newHierarchies;
   }
-  const legacyHierarchy = cube.ptr
+  const legacyHierarchies = cube.ptr
     .any()
     .has(ns.sh.path, rdf.namedNode(dimensionIri))
     .has(ns.cubeMeta.hasHierarchy)
     .out(ns.cubeMeta.hasHierarchy)
-    .toArray()[0];
-  if (legacyHierarchy) {
-    return legacyHierarchy;
+    .toArray();
+  if (legacyHierarchies) {
+    return legacyHierarchies;
   }
+  return [];
 };
 
 export const queryHierarchy = async (
@@ -77,13 +103,12 @@ export const queryHierarchy = async (
   sparqlClient: ParsingClient,
   sparqlClientStream: StreamClient
 ): Promise<HierarchyValue[] | null> => {
-  const hierarchy = findHierarchyForDimension(
+  const hierarchies = findHierarchiesForDimension(
     rdimension.cube,
     rdimension.data.iri
   );
 
-  // @ts-ignore
-  if (!isGraphPointer(hierarchy)) {
+  if (hierarchies.length === 0) {
     return null;
   }
   const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
@@ -93,13 +118,29 @@ export const queryHierarchy = async (
     locale,
   });
 
-  const results = await getHierarchy(hierarchy).execute(
-    // @ts-ignore
-    sparqlClientStream,
-    rdf
+  const allHierarchies = await Promise.all(
+    hierarchies?.map(async (h) => ({
+      // @ts-ignore
+      nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
+      hierarchyName: getName(h.out(ns.cubeMeta.nextInHierarchy), locale),
+    }))
   );
 
-  const tree = toTree(results, rdimension.data.iri, locale);
+  const trees = allHierarchies.map((h) => {
+    const tree: (HierarchyValue & { hierarchyName?: string })[] = toTree(
+      h.nodes,
+      rdimension.data.iri,
+      locale
+    );
+
+    // Augment hierarchy value with hierarchyName so that when regrouping
+    // below, we can create the fake nodes
+    tree[0].hierarchyName = h.hierarchyName;
+    return tree;
+  });
+
+  const tree = regroupTrees(trees);
+
   const treeValues = new Set(getOptionsFromTree(tree).map((d) => d.value));
   const dimensionValues = new Set(
     dimensionValuesWithLabels.map((d) => `${d.value}`)
@@ -113,7 +154,7 @@ export const queryHierarchy = async (
     .map(
       (d) =>
         ({
-          label: d.label || "-",
+          label: d.label || "ADDITIONAL",
           value: `${d.value}`,
           depth: -1,
           children: [],

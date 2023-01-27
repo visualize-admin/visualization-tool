@@ -170,7 +170,7 @@
               "label": "Southern Alps"
             },
             {
-              "value": "https://environment.ld.admin.ch/foen/nfi/UnitOfReference/Prodreg/Switzerland",
+              "value": "https://ld.admin.ch/country/CHE",
               "label": "Switzerland"
             }
           ],

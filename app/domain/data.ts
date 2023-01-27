@@ -1,4 +1,4 @@
-import { Literal, NamedNode } from "rdf-js";
+import { Literal, NamedNode, Term } from "rdf-js";
 
 import { ComponentType } from "@/configurator/config-types";
 
@@ -71,7 +71,7 @@ export type GeoData = {
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
-const parseRDFLiteral = (value: Literal): ObservationValue => {
+export const parseRDFLiteral = (value: Literal): ObservationValue => {
   const v = value.value;
   const dt = value.datatype.value.replace(xmlSchema, "");
   switch (dt) {
@@ -106,6 +106,16 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
     default:
       return v;
   }
+};
+
+export const parseTerm = (term?: Term) => {
+  if (!term) {
+    return;
+  }
+  if (term.termType !== "Literal") {
+    return term.value;
+  }
+  return parseRDFLiteral(term);
 };
 
 /**

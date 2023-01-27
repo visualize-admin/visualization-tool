@@ -59,6 +59,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   groupHeader: {
     marginBottom: theme.spacing(1),
+    flexWrap: "wrap",
   },
 }));
 
@@ -150,6 +151,12 @@ const useLegendGroups = ({
       : null
   ) as GenericSegmentField | null | undefined;
 
+  const segmentFilters = segmentField?.componentIri
+    ? configState.chartConfig.filters[segmentField.componentIri]
+    : null;
+  const segmentValues =
+    segmentFilters?.type === "multi" ? segmentFilters.values : {};
+
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
     dataset,
@@ -179,8 +186,9 @@ const useLegendGroups = ({
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
       useAbbreviations: segmentField?.useAbbreviations ?? false,
+      labelIris: segmentValues,
     });
-  }, [title, labels, getLabel, hierarchy, segmentField]);
+  }, [title, labels, getLabel, hierarchy, segmentField, segmentValues]);
 
   return groups;
 };
@@ -297,6 +305,7 @@ const LegendColorContent = ({
       {groups
         ? groups.map(([g, colorValues]) => {
             const headerLabelsArray = g.map((n) => n.label);
+            let chevronKey = 0;
             return (
               <div
                 className={classes.legendGroup}
@@ -312,7 +321,7 @@ const LegendColorContent = ({
                   >
                     {interlace(
                       g.map((n) => n.label),
-                      <SvgIcChevronRight />
+                      <SvgIcChevronRight key={chevronKey++} />
                     )}
                   </Typography>
                 ) : null}

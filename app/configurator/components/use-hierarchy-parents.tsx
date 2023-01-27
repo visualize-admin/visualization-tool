@@ -8,7 +8,7 @@ import {
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { DataCubeMetadata } from "@/graphql/types";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 
 type NN<T> = NonNullable<T>;
 export type DimensionHierarchyQueryHierarchy = NN<
@@ -23,7 +23,7 @@ export type HierarchyParents = [
 ][];
 
 export const groupByParents = (hierarchy: DimensionHierarchyQueryHierarchy) => {
-  const allHierarchyValues = dfs(hierarchy, (node, { depth, parents }) => ({
+  const allHierarchyValues = bfs(hierarchy, (node, { depth, parents }) => ({
     node,
     parents,
     depth,
@@ -95,7 +95,7 @@ export const hierarchyToGraphviz = (
   hierarchy: DimensionHierarchyQueryHierarchy
 ) => {
   const lines = [] as string[];
-  dfs(hierarchy, (node, { parents }) => {
+  bfs(hierarchy, (node, { parents }) => {
     lines.push(`"${node.value}"[label="${node.label.replace(/"/g, "")}"]`);
     if (parents.length > 0) {
       const parent = parents[parents.length - 1];

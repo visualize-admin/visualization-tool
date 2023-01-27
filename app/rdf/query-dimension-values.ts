@@ -211,7 +211,9 @@ export const loadMinMaxDimensionValues = async ({
       operation: "postUrlencoded",
     })) as unknown as MinMaxResult[];
   } catch {
-    console.warn(`Failed to fetch min max dimension values for ${datasetIri}.`);
+    console.warn(
+      `Failed to fetch min max dimension values for ${datasetIri}, ${dimensionIri}.`
+    );
   } finally {
     return result[0];
   }

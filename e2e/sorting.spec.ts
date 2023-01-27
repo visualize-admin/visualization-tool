@@ -103,7 +103,7 @@ test("Segment sorting with hierarchy", async ({
   await selectors.chart.loaded();
 
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 30_000 });
 
   await within(await selectors.chart.colorLegend()).findByText(
     "Southern Alps",

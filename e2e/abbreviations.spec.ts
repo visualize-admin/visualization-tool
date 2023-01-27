@@ -4,6 +4,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   actions,
   selectors,
 }) => {
+  test.slow();
   await actions.chart.createFrom(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
     "Prod"

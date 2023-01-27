@@ -2,7 +2,7 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 
 export const mapTree = <T extends { children?: T[] | null }>(
   tree: T[],
@@ -124,7 +124,7 @@ export const makeTreeFromValues = (
 
 export const getOptionsFromTree = (tree: HierarchyValue[]) => {
   return sortBy(
-    dfs(tree, (node, { parents }) => ({
+    bfs(tree, (node, { parents }) => ({
       ...node,
       parents,
     })),
@@ -138,6 +138,35 @@ export const joinParents = (parents?: HierarchyValue[]) => {
 
 export const flattenTree = (tree: HierarchyValue[]) => {
   const res: HierarchyValue[] = [];
-  dfs(tree, (x) => res.push(x));
+  bfs(tree, (x) => res.push(x));
   return res;
+};
+
+export const regroupTrees = (
+  trees: (HierarchyValue & { hierarchyName?: string })[][]
+): HierarchyValue[] => {
+  if (trees.length < 2) {
+    return trees[0];
+  } else {
+    // We have multiple hierarchies
+    const roots = new Set(trees.map((x) => x[0].value));
+    if (roots.size > 1) {
+      throw new Error(
+        "Cannot have multiple hierarchies not sharing the same root"
+      );
+    }
+    return [
+      {
+        ...trees[0][0],
+        children: trees.map((t) => ({
+          value: t[0].hierarchyName!,
+          hasValue: false,
+          children: t[0].children,
+          dimensionIri: t[0].dimensionIri,
+          label: t[0].hierarchyName!,
+          depth: -1,
+        })),
+      },
+    ];
+  }
 };
