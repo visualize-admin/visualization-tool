@@ -4,9 +4,14 @@ import {
   BoxProps,
   Button,
   Divider,
+  FormControl,
+  FormControlLabel,
   Input,
   Link,
   Popover,
+  Radio,
+  RadioGroup,
+  RadioGroupProps,
   Theme,
   Typography,
 } from "@mui/material";
@@ -24,6 +29,7 @@ import Flex from "@/components/flex";
 import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import { useI18n } from "@/utils/use-i18n";
 
 export const PublishActions = ({
@@ -38,7 +44,7 @@ export const PublishActions = ({
   return (
     <Stack direction="row" spacing={2} sx={sx}>
       <Share configKey={configKey} locale={locale} />
-      <Embed configKey={configKey} locale={locale}></Embed>
+      <Embed configKey={configKey} locale={locale} />
     </Stack>
   );
 };
@@ -186,12 +192,40 @@ type EmbedShareProps = {
 export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
+  const [embedOptions, setEmbedOptions] = useEmbedOptions();
+  const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
+    if (value === "minimal") {
+      setEmbedOptions({
+        showDatasetTitle: false,
+        showDownload: false,
+        showLandingPage: false,
+        showSource: false,
+        showSparqlQuery: false,
+        showDatePublished: false,
+        showTableSwitch: false,
+      });
+    } else {
+      setEmbedOptions({
+        showDatasetTitle: true,
+        showDownload: true,
+        showLandingPage: true,
+        showSource: true,
+        showSparqlQuery: true,
+        showDatePublished: true,
+        showTableSwitch: true,
+      });
+    }
+  };
+
   useEffect(() => {
-    setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
-    setEmbedAEMUrl(
-      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`
+    const embedOptionsParam = encodeURIComponent(JSON.stringify(embedOptions));
+    setEmbedIframeUrl(
+      `${window.location.origin}/${locale}/embed/${configKey}?embedOptions=${embedOptionsParam}`
     );
-  }, [configKey, locale]);
+    setEmbedAEMUrl(
+      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}?embedOptions=${embedOptionsParam}`
+    );
+  }, [configKey, locale, embedOptions]);
 
   return (
     <PopUp
@@ -207,20 +241,95 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
         </Button>
       )}
     >
-      <Typography component="div" variant="body1" color="grey.700" mt={2}>
-        <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
-      </Typography>
+      <Box sx={{ "& > * + *": { mt: 4 } }}>
+        <div>
+          <FormControl>
+            <Typography variant="h5" gutterBottom>
+              Embed style
+            </Typography>
 
-      <CopyToClipboardTextInput
-        iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
-      />
-      <Typography component="div" variant="body1" color="grey.700" mt={2}>
-        <Trans id="publication.embed.AEM">
-          Embed Code for AEM &quot;External Application&quot;:{" "}
-        </Trans>
-      </Typography>
+            <RadioGroup
+              aria-labelledby="published-chart-embed-options"
+              name="controlled-radio-buttons-group"
+              value={
+                embedOptions.showDatasetTitle === false ? "minimal" : "standard"
+              }
+              onChange={handleChange}
+            >
+              <FormControlLabel
+                value="standard"
+                control={<Radio />}
+                sx={{ alignItems: "flex-start", mb: 2 }}
+                label={
+                  <div>
+                    <Typography variant="body2" display="block">
+                      <Trans id="publication.embed.style.standard">
+                        Standard
+                      </Trans>
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      <Trans id="publication.embed.style.standard.caption">
+                        Chart, download the data links, attribution etc...
+                      </Trans>
+                    </Typography>
+                  </div>
+                }
+                disableTypography
+              />
+              <FormControlLabel
+                value="minimal"
+                control={<Radio />}
+                sx={{ alignItems: "flex-start" }}
+                label={
+                  <div>
+                    <Typography variant="body2" display="block">
+                      <Trans id="publication.embed.style.minimal">
+                        Minimal
+                      </Trans>
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      <Trans id="publication.embed.style.minimal.caption">
+                        Only the chart and a link for more information.
+                      </Trans>
+                    </Typography>
+                  </div>
+                }
+                disableTypography
+              />
+            </RadioGroup>
+          </FormControl>
+        </div>
+        <div>
+          <Typography component="div" variant="h5">
+            <Trans id="publication.embed.iframe">Iframe Embed Code</Trans>
+          </Typography>
+          <Typography variant="caption">
+            <Trans id="publication.embed.iframe.caption">
+              Use this link to insert this visualization into other webpages.
+            </Trans>
+          </Typography>
 
-      <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
+          <CopyToClipboardTextInput
+            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
+          />
+        </div>
+
+        <div>
+          <Typography component="div" variant="h5">
+            <Trans id="publication.embed.AEM">
+              Embed Code for AEM &quot;External Application&quot;
+            </Trans>
+          </Typography>
+          <Typography variant="caption">
+            <Trans id="publication.embed.AEM.caption">
+              Use this link to insert this visualization into Adobe Experience
+              Manager assets.
+            </Trans>
+          </Typography>
+
+          <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
+        </div>
+      </Box>
     </PopUp>
   );
 };
