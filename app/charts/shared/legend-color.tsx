@@ -122,6 +122,7 @@ const useDimension = ({
   }, [cubeMetadata?.dataCubeByIri?.dimensions, dimensionIri]);
 };
 
+const emptyObj = {};
 const useLegendGroups = ({
   title,
   labels,
@@ -155,7 +156,7 @@ const useLegendGroups = ({
     ? configState.chartConfig.filters[segmentField.componentIri]
     : null;
   const segmentValues =
-    segmentFilters?.type === "multi" ? segmentFilters.values : {};
+    segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
