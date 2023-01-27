@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
-import { useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 
 import useEvent from "@/utils/use-event";
-import React from "react";
 
 export type EmbedOptions = {
   showDownload?: boolean;
