@@ -949,7 +949,7 @@ msgstr "Einbett-Code für AEM «Externe Applikation»"
 
 #: app/components/publish-actions.tsx:324
 msgid "publication.embed.AEM.caption"
-msgstr ""
+msgstr "Verwenden Sie diesen Code, um das Diagramm in Adobe Experience Manager einzubetten"
 
 #: app/components/publish-actions.tsx:304
 msgid "publication.embed.iframe"
@@ -957,11 +957,11 @@ msgstr "Einbett-Code"
 
 #: app/components/publish-actions.tsx:307
 msgid "publication.embed.iframe.caption"
-msgstr ""
+msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
 
 #: app/components/publish-actions.tsx:286
 msgid "publication.embed.style.minimal"
-msgstr ""
+msgstr "Minimale"
 
 #: app/components/publish-actions.tsx:291
 msgid "publication.embed.style.minimal.caption"
@@ -969,7 +969,7 @@ msgstr ""
 
 #: app/components/publish-actions.tsx:266
 msgid "publication.embed.style.standard"
-msgstr ""
+msgstr "Standard"
 
 #: app/components/publish-actions.tsx:271
 msgid "publication.embed.style.standard.caption"

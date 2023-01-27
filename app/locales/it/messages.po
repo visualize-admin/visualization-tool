@@ -949,7 +949,7 @@ msgstr "Codice da incorporare su AEM come \"External Application\""
 
 #: app/components/publish-actions.tsx:324
 msgid "publication.embed.AEM.caption"
-msgstr ""
+msgstr "Utilisez ce code pour intégrer le graphique sur une application Adobe Experience Manager"
 
 #: app/components/publish-actions.tsx:304
 msgid "publication.embed.iframe"
@@ -957,11 +957,11 @@ msgstr "Codice di incorporamento"
 
 #: app/components/publish-actions.tsx:307
 msgid "publication.embed.iframe.caption"
-msgstr ""
+msgstr "Usa questo codice per incorporare il grafico in una pagina web"
 
 #: app/components/publish-actions.tsx:286
 msgid "publication.embed.style.minimal"
-msgstr ""
+msgstr "Minimal"
 
 #: app/components/publish-actions.tsx:291
 msgid "publication.embed.style.minimal.caption"
@@ -969,7 +969,7 @@ msgstr ""
 
 #: app/components/publish-actions.tsx:266
 msgid "publication.embed.style.standard"
-msgstr ""
+msgstr "Standard"
 
 #: app/components/publish-actions.tsx:271
 msgid "publication.embed.style.standard.caption"
