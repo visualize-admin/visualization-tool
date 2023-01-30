@@ -151,7 +151,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               sx={{ mb: 5 }}
             >
               <NextLink href="/create/new" passHref>
-                <Button component="a" variant="contained" color="secondary">
+                <Button component="a" variant="outlined" color="primary">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -161,7 +161,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button component="a" variant="contained" color="secondary">
+                <Button component="a" variant="outlined" color="primary">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

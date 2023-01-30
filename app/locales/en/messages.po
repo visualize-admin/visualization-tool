@@ -62,11 +62,11 @@ msgstr "All datasets"
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
-#: app/components/metadata-panel.tsx:426
+#: app/components/metadata-panel.tsx:438
 msgid "button.back"
 msgstr "Back"
 
-#: app/pages/v/[chartId].tsx:166
+#: app/pages/v/[chartId].tsx:165
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"
 
@@ -90,20 +90,20 @@ msgstr "Chart dataset"
 msgid "button.download.runsparqlquery.visible"
 msgstr "Run SPARQL query"
 
-#: app/components/publish-actions.tsx:240
+#: app/components/publish-actions.tsx:258
 msgid "button.embed"
 msgstr "Embed"
 
-#: app/components/publish-actions.tsx:390
-#: app/components/publish-actions.tsx:396
+#: app/components/publish-actions.tsx:409
+#: app/components/publish-actions.tsx:415
 msgid "button.hint.click.to.copy"
 msgstr "Click to copy"
 
-#: app/components/publish-actions.tsx:420
+#: app/components/publish-actions.tsx:439
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/pages/v/[chartId].tsx:151
+#: app/pages/v/[chartId].tsx:155
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
@@ -111,7 +111,7 @@ msgstr "Create New Visualization"
 msgid "button.publish"
 msgstr "Publish this visualization"
 
-#: app/components/publish-actions.tsx:102
+#: app/components/publish-actions.tsx:107
 msgid "button.share"
 msgstr "Share"
 
@@ -407,20 +407,20 @@ msgstr "Italian"
 msgid "controls.measure"
 msgstr "Measure"
 
-#: app/components/metadata-panel.tsx:568
+#: app/components/metadata-panel.tsx:580
 msgid "controls.metadata-panel.available-values"
 msgstr "Available values"
 
-#: app/components/metadata-panel.tsx:362
 #: app/components/metadata-panel.tsx:374
+#: app/components/metadata-panel.tsx:386
 msgid "controls.metadata-panel.metadata"
 msgstr "Metadata"
 
-#: app/components/metadata-panel.tsx:323
+#: app/components/metadata-panel.tsx:335
 msgid "controls.metadata-panel.section.data"
 msgstr "Data"
 
-#: app/components/metadata-panel.tsx:313
+#: app/components/metadata-panel.tsx:325
 msgid "controls.metadata-panel.section.general"
 msgstr "General"
 
@@ -726,7 +726,7 @@ msgstr "Cube IRI"
 msgid "data.source"
 msgstr "Data source"
 
-#: app/components/chart-published.tsx:209
+#: app/components/chart-published.tsx:199
 msgid "data.source.notTrusted"
 msgstr "This chart is not using a trusted data source."
 
@@ -738,15 +738,15 @@ msgstr "Back to the datasets"
 msgid "dataset-preview.keywords"
 msgstr "Keywords"
 
-#: app/components/chart-footnotes.tsx:134
+#: app/components/chart-footnotes.tsx:133
 msgid "dataset.footnotes.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:156
+#: app/components/chart-footnotes.tsx:155
 msgid "dataset.footnotes.updated"
 msgstr "Latest update"
 
-#: app/components/chart-published.tsx:218
+#: app/components/chart-published.tsx:208
 msgid "dataset.hasImputedValues"
 msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
 
@@ -766,7 +766,7 @@ msgstr "Contact points"
 msgid "dataset.metadata.furtherinformation"
 msgstr "Further information"
 
-#: app/components/chart-footnotes.tsx:234
+#: app/components/chart-footnotes.tsx:233
 #: app/configurator/components/dataset-metadata.tsx:107
 msgid "dataset.metadata.learnmore"
 msgstr "Learn more about the dataset"
@@ -792,12 +792,12 @@ msgid "dataset.order.title"
 msgstr "Title"
 
 #: app/components/chart-preview.tsx:115
-#: app/components/chart-published.tsx:187
+#: app/components/chart-published.tsx:177
 #: app/configurator/components/dataset-preview.tsx:120
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1>"
 
-#: app/components/chart-published.tsx:198
+#: app/components/chart-published.tsx:188
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
@@ -865,7 +865,7 @@ msgstr "There was a problem with loading the coordinates from geographical dimen
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Coordinates loading error"
 
-#: app/pages/v/[chartId].tsx:128
+#: app/pages/v/[chartId].tsx:137
 msgid "hint.create.your.own.chart"
 msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
 
@@ -881,7 +881,7 @@ msgstr "Check the status page for more information"
 msgid "hint.dataloadingerror.title"
 msgstr "Data loading error"
 
-#: app/pages/v/[chartId].tsx:122
+#: app/pages/v/[chartId].tsx:131
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 
@@ -927,83 +927,83 @@ msgstr "Show Filters"
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/components/chart-footnotes.tsx:254
+#: app/components/chart-footnotes.tsx:253
 msgid "metadata.link.created.with.visualize"
 msgstr "Created with visualize.admin.ch"
 
-#: app/components/chart-published.tsx:285
+#: app/components/chart-published.tsx:268
 msgid "metadata.link.created.with.visualize.alternate"
 msgstr "More information"
 
-#: app/components/chart-footnotes.tsx:168
+#: app/components/chart-footnotes.tsx:167
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/chart-footnotes.tsx:211
+#: app/components/chart-footnotes.tsx:210
 msgid "metadata.switch.chart"
 msgstr "Switch to chart view"
 
-#: app/components/chart-footnotes.tsx:215
+#: app/components/chart-footnotes.tsx:214
 msgid "metadata.switch.table"
 msgstr "Switch to table view"
 
-#: app/components/publish-actions.tsx:319
+#: app/components/publish-actions.tsx:338
 msgid "publication.embed.AEM"
 msgstr "Embed Code for AEM \"External Application\""
 
-#: app/components/publish-actions.tsx:324
+#: app/components/publish-actions.tsx:343
 msgid "publication.embed.AEM.caption"
 msgstr "Use this link to embed the chart into Adobe Experience Manager assets."
 
-#: app/components/publish-actions.tsx:304
+#: app/components/publish-actions.tsx:323
 msgid "publication.embed.iframe"
 msgstr "Embed Code"
 
-#: app/components/publish-actions.tsx:307
+#: app/components/publish-actions.tsx:326
 msgid "publication.embed.iframe.caption"
-msgstr "Use this link to embed the chart into other webpages."
+msgstr "Use this link to embed the chart in any webpage."
 
-#: app/components/publish-actions.tsx:286
+#: app/components/publish-actions.tsx:304
 msgid "publication.embed.style.minimal"
 msgstr "Minimal"
 
-#: app/components/publish-actions.tsx:291
-#~ msgid "publication.embed.style.minimal.caption"
-#~ msgstr "Only the chart and a link for more information."
+#: app/components/publish-actions.tsx:309
+msgid "publication.embed.style.minimal.caption"
+msgstr "Chart only with link to full information on visualize.admin.ch."
 
-#: app/components/publish-actions.tsx:266
+#: app/components/publish-actions.tsx:284
 msgid "publication.embed.style.standard"
 msgstr "Standard"
 
-#: app/components/publish-actions.tsx:271
-#~ msgid "publication.embed.style.standard.caption"
-#~ msgstr "Chart, download the data links, attribution etc..."
+#: app/components/publish-actions.tsx:289
+msgid "publication.embed.style.standard.caption"
+msgstr "Provides metadata and download links for the dataset"
 
-#: app/components/publish-actions.tsx:117
+#: app/components/publish-actions.tsx:122
 msgid "publication.popup.share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:165
+#: app/components/publish-actions.tsx:170
 msgid "publication.share.chart.url"
 msgstr "Chart URL:"
 
-#: app/components/publish-actions.tsx:123
+#: app/components/publish-actions.tsx:128
 msgid "publication.share.linktitle.facebook"
 msgstr "Share on Facebook"
 
-#: app/components/publish-actions.tsx:143
+#: app/components/publish-actions.tsx:148
 msgid "publication.share.linktitle.mail"
 msgstr "Share via Email"
 
-#: app/components/publish-actions.tsx:133
+#: app/components/publish-actions.tsx:138
 msgid "publication.share.linktitle.twitter"
 msgstr "Share on Twitter"
 
-#: app/components/publish-actions.tsx:154
+#: app/components/publish-actions.tsx:159
 msgid "publication.share.mail.body"
 msgstr "Here is a visualization I created using visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:149
+#: app/components/publish-actions.tsx:154
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
@@ -1012,7 +1012,7 @@ msgstr "visualize.admin.ch"
 msgid "select.controls.filters.search"
 msgstr "Search"
 
-#: app/components/metadata-panel.tsx:450
+#: app/components/metadata-panel.tsx:462
 msgid "select.controls.metadata.search"
 msgstr "Jump to..."
 
@@ -1020,8 +1020,8 @@ msgstr "Jump to..."
 msgid "table.column.no"
 msgstr "Column {0}"
 
-#: app/components/chart-footnotes.tsx:136
-#: app/components/chart-footnotes.tsx:158
-#: app/components/chart-footnotes.tsx:170
+#: app/components/chart-footnotes.tsx:135
+#: app/components/chart-footnotes.tsx:157
+#: app/components/chart-footnotes.tsx:169
 msgid "typography.colon"
 msgstr ": "

@@ -103,7 +103,6 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               setAnchorEl(ev.target as HTMLElement);
             }}
             startIcon={<Icon name="linkExternal" size={16} />}
-            variant="outlined"
           >
             <Trans id="button.share">Share</Trans>
           </Button>
@@ -286,11 +285,11 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
                         Standard
                       </Trans>
                     </Typography>
-                    {/* <Typography variant="caption" display="block">
+                    <Typography variant="caption" display="block">
                       <Trans id="publication.embed.style.standard.caption">
-                        Chart, download the data links, attribution etc...
+                        Provides metadata and download links for the dataset
                       </Trans>
-                    </Typography> */}
+                    </Typography>
                   </div>
                 }
                 disableTypography
@@ -306,11 +305,12 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
                         Minimal
                       </Trans>
                     </Typography>
-                    {/* <Typography variant="caption" display="block">
+                    <Typography variant="caption" display="block">
                       <Trans id="publication.embed.style.minimal.caption">
-                        Only the chart and a link for more information.
+                        Chart only with link to full information on
+                        visualize.admin.ch.
                       </Trans>
-                    </Typography> */}
+                    </Typography>
                   </div>
                 }
                 disableTypography
