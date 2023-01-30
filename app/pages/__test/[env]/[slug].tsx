@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ChartPublished } from "@/components/chart-published";
 import { ChartConfig, DataSource, Meta } from "@/configurator";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import { EmbedOptionsProvider } from "@/utils/embed";
 
 type DbConfig = {
   dataSet: string;
@@ -33,13 +34,15 @@ const Page: NextPage = () => {
     const migratedConfig = migrateChartConfig(chartConfig);
 
     return (
-      <ChartPublished
-        dataSet={dataSet}
-        dataSource={dataSource}
-        chartConfig={migratedConfig}
-        meta={meta}
-        configKey={config.key}
-      />
+      <EmbedOptionsProvider>
+        <ChartPublished
+          dataSet={dataSet}
+          dataSource={dataSource}
+          chartConfig={migratedConfig}
+          meta={meta}
+          configKey={config.key}
+        />
+      </EmbedOptionsProvider>
     );
   }
   return null;

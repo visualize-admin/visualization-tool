@@ -45,6 +45,7 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
 export const ChartPublished = ({
@@ -163,6 +164,8 @@ export const ChartPublishedInner = ({
     ];
   }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
 
+  const [{ showDownload }] = useEmbedOptions();
+
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
@@ -260,6 +263,13 @@ export const ChartPublishedInner = ({
               chartConfig={chartConfig}
               configKey={configKey}
               onToggleTableView={handleToggleTableView}
+              visualizeLinkText={
+                showDownload === false ? (
+                  <Trans id="metadata.link.created.with.visualize.alternate">
+                    More information
+                  </Trans>
+                ) : undefined
+              }
             />
           </InteractiveFiltersProvider>
         </ChartErrorBoundary>

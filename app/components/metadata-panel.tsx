@@ -31,6 +31,7 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -239,6 +240,11 @@ export const OpenMetadataPanelWrapper = ({
     openDimension(dim);
   });
 
+  const [embedOptions] = useEmbedOptions();
+  if (embedOptions.showMetadata === false) {
+    return <>{children}</>;
+  }
+
   return (
     <Button
       className={classes.openDimension}
@@ -282,6 +288,12 @@ export const MetadataPanel = ({
     setOpen(false);
     reset();
   }, [router.pathname, setOpen, reset]);
+
+  const [embedOptions] = useEmbedOptions();
+
+  if (embedOptions.showMetadata === false) {
+    return null;
+  }
 
   return (
     <>

@@ -4,9 +4,15 @@ import {
   BoxProps,
   Button,
   Divider,
+  FormControl,
+  FormControlLabel,
   Input,
   Link,
   Popover,
+  PopoverProps,
+  Radio,
+  RadioGroup,
+  RadioGroupProps,
   Theme,
   Typography,
 } from "@mui/material";
@@ -24,6 +30,7 @@ import Flex from "@/components/flex";
 import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import { useI18n } from "@/utils/use-i18n";
 
 export const PublishActions = ({
@@ -38,19 +45,21 @@ export const PublishActions = ({
   return (
     <Stack direction="row" spacing={2} sx={sx}>
       <Share configKey={configKey} locale={locale} />
-      <Embed configKey={configKey} locale={locale}></Embed>
+      <Embed configKey={configKey} locale={locale} />
     </Stack>
   );
 };
 
-const PopUp = ({
+const TriggeredPopover = ({
   children,
   renderTrigger,
+  popoverProps,
 }: {
   children: ReactNode;
   renderTrigger: (
     setAnchorEl: (el: HTMLElement | undefined) => void
   ) => React.ReactNode;
+  popoverProps: Omit<PopoverProps, "open" | "anchorEl" | "onClose">;
 }) => {
   const [anchorEl, setAnchorEl] = useState<Element | undefined>();
 
@@ -60,17 +69,10 @@ const PopUp = ({
       <Popover
         open={!!anchorEl}
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 48,
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
+        {...popoverProps}
         onClose={() => setAnchorEl(undefined)}
       >
-        <Box m={4}>{children}</Box>
+        {children}
       </Popover>
     </>
   );
@@ -83,22 +85,31 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
   return (
-    <PopUp
+    <TriggeredPopover
+      popoverProps={{
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+        transformOrigin: {
+          vertical: -4,
+          horizontal: "right",
+        },
+      }}
       renderTrigger={(setAnchorEl) => {
         return (
           <Button
             onClick={(ev) => {
               setAnchorEl(ev.target as HTMLElement);
             }}
-            size="large"
-            startIcon={<Icon name="linkExternal" />}
+            startIcon={<Icon name="linkExternal" size={16} />}
           >
             <Trans id="button.share">Share</Trans>
           </Button>
         );
       }}
     >
-      <>
+      <Box m={4}>
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -173,8 +184,8 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             {/* <Icon name="share"></Icon> */}
           </Box>
         </Box>
-      </>
-    </PopUp>
+      </Box>
+    </TriggeredPopover>
   );
 };
 
@@ -186,19 +197,60 @@ type EmbedShareProps = {
 export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
+  const [embedOptions, setEmbedOptions] = useEmbedOptions();
+  const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
+    if (value === "minimal") {
+      setEmbedOptions({
+        showDatasetTitle: false,
+        showDownload: false,
+        showLandingPage: false,
+        showSource: true,
+        showMetadata: false,
+        showSparqlQuery: false,
+        showDatePublished: false,
+        showTableSwitch: false,
+      });
+    } else {
+      setEmbedOptions({
+        showDatasetTitle: true,
+        showDownload: true,
+        showLandingPage: true,
+        showSource: true,
+        showSparqlQuery: true,
+        showDatePublished: true,
+        showTableSwitch: true,
+        showMetadata: true,
+      });
+    }
+  };
+  const isMinimal = embedOptions.showDatasetTitle === false;
+  const iFrameHeight = isMinimal ? "560px" : "640px";
+
   useEffect(() => {
-    setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
-    setEmbedAEMUrl(
-      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`
+    const embedOptionsParam = encodeURIComponent(JSON.stringify(embedOptions));
+    setEmbedIframeUrl(
+      `${window.location.origin}/${locale}/embed/${configKey}?embedOptions=${embedOptionsParam}`
     );
-  }, [configKey, locale]);
+    setEmbedAEMUrl(
+      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}?embedOptions=${embedOptionsParam}`
+    );
+  }, [configKey, locale, embedOptions]);
 
   return (
-    <PopUp
+    <TriggeredPopover
+      popoverProps={{
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+        transformOrigin: {
+          vertical: -4,
+          horizontal: "right",
+        },
+      }}
       renderTrigger={(setAnchorEl) => (
         <Button
-          startIcon={<Icon name="embed" />}
-          size="large"
+          startIcon={<Icon name="embed" size={16} />}
           variant="contained"
           color="primary"
           onClick={(ev) => setAnchorEl(ev.currentTarget)}
@@ -207,21 +259,97 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
         </Button>
       )}
     >
-      <Typography component="div" variant="body1" color="grey.700" mt={2}>
-        <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
-      </Typography>
+      <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
+        <div>
+          <FormControl>
+            <Typography variant="h5" gutterBottom>
+              Embed style
+            </Typography>
 
-      <CopyToClipboardTextInput
-        iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
-      />
-      <Typography component="div" variant="body1" color="grey.700" mt={2}>
-        <Trans id="publication.embed.AEM">
-          Embed Code for AEM &quot;External Application&quot;:{" "}
-        </Trans>
-      </Typography>
+            <RadioGroup
+              aria-labelledby="published-chart-embed-options"
+              name="controlled-radio-buttons-group"
+              value={
+                embedOptions.showDatasetTitle === false ? "minimal" : "standard"
+              }
+              onChange={handleChange}
+            >
+              <FormControlLabel
+                value="standard"
+                control={<Radio />}
+                sx={{ alignItems: "flex-start", mb: 2 }}
+                label={
+                  <div>
+                    <Typography variant="body2" display="block">
+                      <Trans id="publication.embed.style.standard">
+                        Standard
+                      </Trans>
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      <Trans id="publication.embed.style.standard.caption">
+                        Provides metadata and download links for the dataset
+                      </Trans>
+                    </Typography>
+                  </div>
+                }
+                disableTypography
+              />
+              <FormControlLabel
+                value="minimal"
+                control={<Radio />}
+                sx={{ alignItems: "flex-start" }}
+                label={
+                  <div>
+                    <Typography variant="body2" display="block">
+                      <Trans id="publication.embed.style.minimal">
+                        Minimal
+                      </Trans>
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      <Trans id="publication.embed.style.minimal.caption">
+                        Chart only with link to full information on
+                        visualize.admin.ch.
+                      </Trans>
+                    </Typography>
+                  </div>
+                }
+                disableTypography
+              />
+            </RadioGroup>
+          </FormControl>
+        </div>
+        <div>
+          <Typography component="div" variant="h5">
+            <Trans id="publication.embed.iframe">Iframe Embed Code</Trans>
+          </Typography>
+          <Typography variant="caption">
+            <Trans id="publication.embed.iframe.caption">
+              Use this link to embed the chart into other webpages.
+            </Trans>
+          </Typography>
 
-      <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
-    </PopUp>
+          <CopyToClipboardTextInput
+            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${iFrameHeight}" width="600px" allowfullscreen></iframe>`}
+          />
+        </div>
+
+        <div>
+          <Typography component="div" variant="h5">
+            <Trans id="publication.embed.AEM">
+              Embed Code for AEM &quot;External Application&quot;
+            </Trans>
+          </Typography>
+          <Typography variant="caption">
+            <Trans id="publication.embed.AEM.caption">
+              Use this link to embed the chart into Adobe Experience Manager
+              assets.
+            </Trans>
+          </Typography>
+
+          <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
+        </div>
+      </Box>
+    </TriggeredPopover>
   );
 };
 
