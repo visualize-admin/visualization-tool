@@ -9,6 +9,7 @@ import {
   Input,
   Link,
   Popover,
+  PopoverProps,
   Radio,
   RadioGroup,
   RadioGroupProps,
@@ -49,14 +50,16 @@ export const PublishActions = ({
   );
 };
 
-const PopUp = ({
+const TriggeredPopover = ({
   children,
   renderTrigger,
+  popoverProps,
 }: {
   children: ReactNode;
   renderTrigger: (
     setAnchorEl: (el: HTMLElement | undefined) => void
   ) => React.ReactNode;
+  popoverProps: Omit<PopoverProps, "open" | "anchorEl" | "onClose">;
 }) => {
   const [anchorEl, setAnchorEl] = useState<Element | undefined>();
 
@@ -66,17 +69,10 @@ const PopUp = ({
       <Popover
         open={!!anchorEl}
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 48,
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
+        {...popoverProps}
         onClose={() => setAnchorEl(undefined)}
       >
-        <Box m={4}>{children}</Box>
+        {children}
       </Popover>
     </>
   );
@@ -89,7 +85,17 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
   return (
-    <PopUp
+    <TriggeredPopover
+      popoverProps={{
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+        transformOrigin: {
+          vertical: -4,
+          horizontal: "right",
+        },
+      }}
       renderTrigger={(setAnchorEl) => {
         return (
           <Button
@@ -104,7 +110,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
         );
       }}
     >
-      <>
+      <Box m={4}>
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -179,8 +185,8 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             {/* <Icon name="share"></Icon> */}
           </Box>
         </Box>
-      </>
-    </PopUp>
+      </Box>
+    </TriggeredPopover>
   );
 };
 
@@ -234,7 +240,17 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   }, [configKey, locale, embedOptions]);
 
   return (
-    <PopUp
+    <TriggeredPopover
+      popoverProps={{
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+        transformOrigin: {
+          vertical: -4,
+          horizontal: "right",
+        },
+      }}
       renderTrigger={(setAnchorEl) => (
         <Button
           startIcon={<Icon name="embed" />}
@@ -247,7 +263,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
         </Button>
       )}
     >
-      <Box sx={{ "& > * + *": { mt: 4 } }}>
+      <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
         <div>
           <FormControl>
             <Typography variant="h5" gutterBottom>
@@ -336,7 +352,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
         </div>
       </Box>
-    </PopUp>
+    </TriggeredPopover>
   );
 };
 

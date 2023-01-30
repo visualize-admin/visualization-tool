@@ -912,7 +912,7 @@ msgstr "Negative Werte"
 
 #: app/components/hint.tsx:226
 msgid "hint.publication.success"
-msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü unten verwenden."
+msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü oben verwenden."
 
 #: app/charts/shared/chart-data-filters.tsx:96
 msgid "interactive.data.filters.hide"
