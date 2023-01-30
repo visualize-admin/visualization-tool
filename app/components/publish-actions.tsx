@@ -102,8 +102,8 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             onClick={(ev) => {
               setAnchorEl(ev.target as HTMLElement);
             }}
-            size="large"
-            startIcon={<Icon name="linkExternal" />}
+            startIcon={<Icon name="linkExternal" size={16} />}
+            variant="outlined"
           >
             <Trans id="button.share">Share</Trans>
           </Button>
@@ -199,9 +199,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedIframeUrl, setEmbedIframeUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [embedOptions, setEmbedOptions] = useEmbedOptions();
-  console.log([embedOptions, setEmbedOptions]);
   const handleChange: RadioGroupProps["onChange"] = (_ev, value) => {
-    console.log(setEmbedOptions);
     if (value === "minimal") {
       setEmbedOptions({
         showDatasetTitle: false,
@@ -253,8 +251,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       }}
       renderTrigger={(setAnchorEl) => (
         <Button
-          startIcon={<Icon name="embed" />}
-          size="large"
+          startIcon={<Icon name="embed" size={16} />}
           variant="contained"
           color="primary"
           onClick={(ev) => setAnchorEl(ev.currentTarget)}

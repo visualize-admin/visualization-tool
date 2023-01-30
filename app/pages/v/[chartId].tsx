@@ -126,17 +126,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               />
             </ChartPanelPublished>
 
-            <Typography
-              component="div"
-              variant="h3"
-              mt={3}
-              mb={4}
-              sx={{
-                color: "grey.800",
-                fontSize: "1.125rem",
-                fontWeight: "regular",
-              }}
-            >
+            <Typography component="div" my={4}>
               {publishSuccess ? (
                 <Trans id="hint.how.to.share">
                   You can share this chart either by sharing its URL or by
@@ -161,12 +151,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               sx={{ mb: 5 }}
             >
               <NextLink href="/create/new" passHref>
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
+                <Button component="a" variant="contained" color="secondary">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -176,12 +161,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
+                <Button component="a" variant="contained" color="secondary">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>
