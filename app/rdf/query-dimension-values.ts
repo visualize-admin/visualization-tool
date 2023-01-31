@@ -5,6 +5,7 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
+import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";
@@ -194,7 +195,7 @@ export const loadMinMaxDimensionValues = async ({
   datasetIri: Term;
   dimensionIri: Term;
   sparqlClient: ParsingClient;
-}): Promise<MinMaxResult | undefined> => {
+}): Promise<[string | number, string | number] | undefined> => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
@@ -215,6 +216,10 @@ export const loadMinMaxDimensionValues = async ({
       `Failed to fetch min max dimension values for ${datasetIri}, ${dimensionIri}.`
     );
   } finally {
-    return result[0];
+    const { minValue, maxValue } = result[0];
+    const min = parseObservationValue({ value: minValue }) ?? 0;
+    const max = parseObservationValue({ value: maxValue }) ?? 0;
+
+    return [min, max];
   }
 };
