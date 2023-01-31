@@ -202,7 +202,9 @@ export const loadMinMaxDimensionValues = async ({
     ?observationSet ${cubeNs.observation} ?observation .
     ?observation ${dimensionIri} ?value .
 
-    FILTER (STRLEN(STR(?value)) > 0)
+    FILTER (
+      (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
+    )
   `;
 
   let result: MinMaxResult[] = [];
