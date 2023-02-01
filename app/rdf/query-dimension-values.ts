@@ -104,6 +104,18 @@ export async function unversionObservation({
   return mapValues(observation, (v) => (v ? unversionedIndex[v] || v : v));
 }
 
+const getFilterOrder = (filter: Filters[number]) => {
+  if (filter.type !== "single") {
+    return 0;
+  } else {
+    // Heuristic to put non discriminant filter at the end
+    // Seems like we could also do it based on the column order
+    return filter.value.toString().startsWith("https://ld.admin.ch")
+      ? Infinity
+      : 0;
+  }
+};
+
 /**
  * Load dimension values.
  *
@@ -130,9 +142,12 @@ export async function loadDimensionValues(
 
   // Consider filters before the current filter to fetch the values for
   // the current filter
-  const filterList = allFiltersList.slice(
-    0,
-    allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
+  const filterList = sortBy(
+    allFiltersList.slice(
+      0,
+      allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
+    ),
+    ([, filterValue]) => getFilterOrder(filterValue)
   );
 
   const query = SELECT.DISTINCT`?value`.WHERE`
