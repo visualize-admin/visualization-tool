@@ -33,11 +33,11 @@ import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-ta
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
-import * as api from "@/utils/chart-config/exchange";
+import * as api from "@/utils/chart-config/api";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-jest.mock("@/utils/chart-config/exchange", () => ({
+jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
@@ -86,7 +86,9 @@ afterEach(() => {
 
 describe("initChartStateFromChart", () => {
   const setup = ({ chartConfig }: { chartConfig: object }) => {
-    mockedApi.fetchChartConfig.mockResolvedValue(chartConfig);
+    mockedApi.fetchChartConfig.mockResolvedValue(
+      chartConfig as ReturnType<typeof api.fetchChartConfig>
+    );
   };
   it("should fetch work if existing chart is valid", async () => {
     setup({

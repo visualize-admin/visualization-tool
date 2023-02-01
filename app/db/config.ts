@@ -19,10 +19,13 @@ type PublishedConfig = Omit<ConfigType, "activeField">;
  *
  * @param data Data to be stored as configuration
  */
-export const createConfig = async (
-  data: Prisma.ConfigCreateInput["data"],
-  userId?: User["id"] | undefined
-): Promise<{ key: string }> => {
+export const createConfig = async ({
+  data,
+  userId,
+}: {
+  data: Prisma.ConfigCreateInput["data"];
+  userId?: User["id"] | undefined;
+}): Promise<{ key: string }> => {
   const result = await prisma.config.create({
     data: {
       key: createChartId(),

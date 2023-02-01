@@ -85,10 +85,7 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
-import {
-  fetchChartConfig,
-  saveChartConfig,
-} from "@/utils/chart-config/exchange";
+import { fetchChartConfig, createConfig } from "@/utils/chart-config/api";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
@@ -1583,7 +1580,7 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await saveChartConfig(state);
+              const result = await createConfig(state);
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.

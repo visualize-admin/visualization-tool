@@ -88,6 +88,7 @@
     "mitt": "^3.0.0",
     "nanoid": "^3.1.12",
     "next-auth": "^4.10.3",
+    "nextkit": "^3.4.3",
     "nprogress": "^0.2.0",
     "pg": "^8.3.3",
     "pg-connection-string": "^2.3.0",
