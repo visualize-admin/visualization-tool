@@ -15,7 +15,10 @@ export const makeExecuteWithCache = <T>({
   parse: (v: any) => T;
   cacheOptions: LRUCacheOptions<string, T>;
 }) => {
-  const cache = new LRUCache(cacheOptions);
+  const cache = new LRUCache({
+    entryExpirationTimeInMS: 60 * 10_000,
+    ...cacheOptions,
+  });
   return async (
     sparqlClient: SparqlClient,
     query: SparqlQuery & SparqlQueryExecutable
