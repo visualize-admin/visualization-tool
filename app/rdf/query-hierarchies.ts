@@ -138,9 +138,11 @@ export const queryHierarchy = async (
       locale
     );
 
-    // Augment hierarchy value with hierarchyName so that when regrouping
-    // below, we can create the fake nodes
-    tree[0].hierarchyName = h.hierarchyName;
+    if (tree.length > 0) {
+      // Augment hierarchy value with hierarchyName so that when regrouping
+      // below, we can create the fake nodes
+      tree[0].hierarchyName = h.hierarchyName;
+    }
     return tree;
   });
 
