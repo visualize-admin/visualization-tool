@@ -1,5 +1,5 @@
-import { Theme, useTheme } from "@mui/material";
 import type {} from "@mui/lab/themeAugmentation";
+import { Theme, useTheme } from "@mui/material";
 
 export interface ThemeModule {
   theme: Theme;
@@ -57,4 +57,3 @@ declare module "@mui/material" {
 }
 
 export { useTheme };
-export { theme as federal } from "./federal";
