@@ -1,10 +1,10 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import merge from "lodash/merge";
-import omit from "lodash/omit";
 
 import { Icon } from "@/icons";
 import shadows from "@/themes/shadows";
+import { createTypographyVariant } from "@/themes/typography";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0
@@ -12,21 +12,6 @@ const isSafari15 =
         .match(/Version[/\s]([\d]+)/g)?.[0]
         ?.split("/")?.[1] === "15"
     : false;
-
-const breakpoints = ["xs", "md"] as Breakpoint[];
-
-const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
-  const res = omit(spec, ["lineHeight", "fontSize"]);
-  for (let i = 0; i < spec.fontSize.length; i++) {
-    const lineHeight = `${spec.lineHeight[i]}px`;
-    const fontSize = `${spec.fontSize[i]}px`;
-    res[theme.breakpoints.up(breakpoints[i])] = {
-      fontSize,
-      lineHeight,
-    };
-  }
-  return res;
-};
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
