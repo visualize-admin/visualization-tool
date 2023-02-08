@@ -16,32 +16,30 @@ export const theme = createTheme(
     palette: {
       primary: {
         main: "#00304D",
-        light: "#F2F4F6",
-        hover: "#F2F4F6",
+        dark: "#F2F4F6",
       },
       secondary: {
         main: "#FFB400",
-        light: "#FFF0D9",
-        hover: "#FFF0D9",
+        dark: "#FFF0D9",
       },
       success: {
         main: "#008030",
-        hover: "#D9ECE0",
+        light: "#D9ECE0",
       },
       error: {
         main: "#BF2626",
-        hover: "#F6DFDF",
+        light: "#F6DFDF",
       },
       brand: {
         main: "#FFB400",
       },
       organization: {
         main: "#00304D",
-        light: "#F2F4F6", // same as primaryLight
+        light: "#F2F4F6",
       },
       category: {
         main: "#FFB400",
-        light: "#FFF0D9", // same as successLight
+        light: "#FFF0D9",
       },
     },
     typography: {

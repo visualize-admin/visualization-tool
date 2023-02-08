@@ -15,7 +15,6 @@ declare module "@mui/material" {
   interface PaletteColorOptions {
     light?: string;
     main: string;
-    hover?: string;
     active?: string;
     disabled?: string;
     colored?: string;
@@ -32,7 +31,6 @@ declare module "@mui/material" {
   }
 
   interface PaletteColor {
-    hover?: string;
     disabled?: string;
     active?: string;
   }

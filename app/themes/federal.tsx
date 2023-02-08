@@ -21,24 +21,18 @@ export const theme = createTheme({
     primary: {
       light: "#d8e8ef",
       main: "#006699",
-      hover: "#004B70",
       active: "#00334D",
       disabled: "#599cbd",
     },
     divider: "#CCCCCC",
-    action: {
-      hover: "#F2F7F9",
-    },
     secondary: {
       main: "#757575",
-      hover: "#616161",
       active: "#454545",
       disabled: "#a6a6a6",
     },
     success: {
       main: "#3c763d",
       light: "#DFF0D8",
-      hover: "#3c763d",
       active: "#3c763d",
       disabled: "#DFF0D8",
     },

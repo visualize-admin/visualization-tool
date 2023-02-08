@@ -197,10 +197,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     transition: "background-color .2s",
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.muted.dark,
     },
     "&:active": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.muted.dark,
     },
     "&:disabled": {
       cursor: "initial",
@@ -239,7 +239,7 @@ export const ControlTabButton = ({
       onClick={() => onClick(value)}
       className={classes.controlTabButton}
       sx={{
-        backgroundColor: checked ? "action.hover" : "grey.100",
+        backgroundColor: checked ? "muted.dark" : "grey.100",
       }}
     >
       {children}

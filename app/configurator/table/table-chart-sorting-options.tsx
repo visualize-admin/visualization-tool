@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3";
-import React, { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -427,7 +427,7 @@ export const TableSortingOptions = ({
                                     ? "secondary.active"
                                     : "secondary.disabled",
                                   ":hover": {
-                                    color: "secondary.hover",
+                                    color: "secondary.dark",
                                   },
                                 }}
                                 {...dragHandleProps}

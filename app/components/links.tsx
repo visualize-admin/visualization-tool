@@ -24,7 +24,7 @@ export const IconLink = ({
         color: "primary.disabled",
       },
       "&:hover": {
-        color: "primary.hover",
+        color: "primary.dark",
       },
       "&:active": {
         color: "primary.active",

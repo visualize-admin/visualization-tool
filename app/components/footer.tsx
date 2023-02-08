@@ -168,10 +168,10 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
     textDecoration: "none",
     cursor: "pointer",
     "&:hover": {
-      color: theme.palette.primary.hover,
+      color: theme.palette.primary.dark,
     },
     "&:active": {
-      color: theme.palette.primary.hover,
+      color: theme.palette.primary.dark,
     },
     "&:disabled": {
       cursor: "initial",
@@ -186,10 +186,10 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
     textDecoration: "none",
     cursor: "pointer",
     "&:hover": {
-      color: theme.palette.primary.hover,
+      color: theme.palette.primary.dark,
     },
     "&:active": {
-      color: theme.palette.primary.hover,
+      color: theme.palette.primary.dark,
     },
     "&:disabled": {
       cursor: "initial",

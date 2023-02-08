@@ -35,7 +35,7 @@ const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
     cursor: "pointer",
 
     "&:hover": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.muted.dark,
     },
     "& svg": {
       color: theme.palette.primary.main,
