@@ -113,6 +113,11 @@ theme.typography = merge(theme.typography, {
 });
 
 theme.components = merge(theme.components, {
+  VizHero: {
+    styleOverrides: {
+      backgroundColor: "#eee",
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         svg {

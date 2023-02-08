@@ -1,6 +1,14 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  styled,
+  Theme,
+  Typography,
+  useThemeProps,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { BoxProps } from "@mui/system";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -85,7 +93,6 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     gridTemplateAreas: `". banner ."`,
     minHeight: BANNER_HEIGHT,
     marginTop: BANNER_MARGIN_TOP,
-    backgroundColor: theme.palette.primary.light,
   },
   panelBanner: {
     maxWidth: 1400,
@@ -99,11 +106,10 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     maxWidth: 720,
   },
   panelBannerTitle: {
-    color: theme.palette.grey[700],
     marginBottom: theme.spacing(4),
   },
   panelBannerDescription: {
-    color: theme.palette.grey[600],
+    color: theme.palette.text.secondary,
     marginBottom: theme.spacing(3),
   },
   filters: {
@@ -111,6 +117,25 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
     marginBottom: theme.spacing(4),
     color: theme.palette.grey[800],
   },
+}));
+
+const VizHeroBase = ({ children, ...inProps }: BoxProps) => {
+  const props = useThemeProps({ props: inProps, name: "VizHero" });
+  return (
+    <Box {...props} className={props.className}>
+      {children}
+    </Box>
+  );
+};
+
+const VizHero = styled(VizHeroBase, {
+  name: "VizHero",
+  slot: "root",
+  overridesResolver: (_props, styles) => {
+    return styles;
+  },
+})(({ theme }) => ({
+  backgroundColor: theme.palette.primary.light,
 }));
 
 export const formatBackLink = (
@@ -169,7 +194,7 @@ const SelectDatasetStepContent = () => {
       <AnimatePresence>
         {!dataset && (
           <MotionBox {...bannerPresenceProps} key="banner">
-            <Box
+            <VizHero
               component="section"
               role="banner"
               className={classes.panelBannerWrapper}
@@ -194,7 +219,7 @@ const SelectDatasetStepContent = () => {
                   <SearchDatasetInput browseState={browseState} />
                 </Flex>
               </div>
-            </Box>
+            </VizHero>
           </MotionBox>
         )}
       </AnimatePresence>

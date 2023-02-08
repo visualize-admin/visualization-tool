@@ -37,6 +37,21 @@ declare module "@mui/material" {
     active?: string;
   }
 
+  interface ComponentsProps<Theme = unknown> {
+    VizHero?: {};
+  }
+
+  interface ComponentsOverrides<Theme = unknown> {
+    VizHero?: {};
+  }
+
+  interface Components<Theme = unknown> {
+    VizHero?: {
+      defaultProps?: ComponentsProps["VizHero"];
+      styleOverrides?: ComponentsOverrides<Theme>["VizHero"];
+    };
+  }
+
   interface Palette {
     muted: PaletteColor;
     alert: PaletteColor;
