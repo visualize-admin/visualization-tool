@@ -1,7 +1,5 @@
 import produce from "immer";
 
-import { ChartConfig } from "@/configurator";
-
 export const CHART_CONFIG_VERSION = "1.3.0";
 
 type Migration = {
@@ -486,7 +484,7 @@ export const migrateChartConfig = (
     fromVersion,
     toVersion = CHART_CONFIG_VERSION,
   }: { fromVersion?: string; toVersion?: string } = {}
-): ChartConfig => {
+) => {
   const _migrateChartConfig = (
     config: any,
     {

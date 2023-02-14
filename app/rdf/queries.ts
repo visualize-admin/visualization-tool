@@ -218,9 +218,7 @@ export const getCubeDimensionValues = async ({
       });
 
       if (result) {
-        const { minValue, maxValue } = result;
-        const min = parseObservationValue({ value: minValue }) ?? 0;
-        const max = parseObservationValue({ value: maxValue }) ?? 0;
+        const [min, max] = result;
 
         return [
           { value: min, label: `${min}` },

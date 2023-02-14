@@ -30,12 +30,23 @@ import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/configurator/components/use-disclosure";
+import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
 export type Timings = Record<
   string,
   { start: number; end: number; children?: Timings }
 >;
+
+export type VisualizeOperationResult<TData = any, TVariables = any> = Omit<
+  OperationResult<TData, TVariables>,
+  "extensions"
+> & {
+  extensions: {
+    queries: RequestQueryMeta[];
+    timings: Timings;
+  };
+};
 
 const visit = (
   t: Timings,
@@ -165,13 +176,15 @@ const AccordionOperation = ({
   end,
   ...accordionProps
 }: {
-  result: OperationResult | undefined;
+  result: VisualizeOperationResult | undefined;
   operation: Operation;
   start: number;
   end: number;
 } & Omit<AccordionProps, "children">) => {
   const duration = useMemo(() => {
-    const all = flatten(result?.extensions?.timings).sort(byStart);
+    const all = result?.extensions?.timings
+      ? flatten(result?.extensions?.timings).sort(byStart)
+      : [];
     if (all.length === 0) {
       return 0;
     }
@@ -248,7 +261,11 @@ const AccordionOperation = ({
               <Typography variant="h5" gutterBottom>
                 SPARQL queries ({result?.extensions?.queries.length})
               </Typography>
-              <Queries queries={result?.extensions?.queries} />
+              <Queries
+                queries={sortBy(result?.extensions?.queries, (q) => {
+                  return -(q.endTime - q.startTime);
+                })}
+              />
             </div>
           </Box>
         </AccordionDetails>
@@ -322,7 +339,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 function GqlDebug() {
-  const [results, setResults] = useState([] as OperationResult[]);
+  const [results, setResults] = useState([] as VisualizeOperationResult[]);
   const opsStartMapRef = useRef(new Map<Operation["key"], number>());
   const opsEndMapRef = useRef(new Map<Operation["key"], number>());
   useEffect(() => {
@@ -330,7 +347,7 @@ function GqlDebug() {
       opsStartMapRef.current.set(operation.key, Date.now());
       opsEndMapRef.current.set(operation.key, Date.now());
     };
-    const handleResult = (result: OperationResult) => {
+    const handleResult = (result: VisualizeOperationResult) => {
       opsEndMapRef.current.set(result.operation.key, Date.now());
       // Calls setState out of band since handleResult can be called while
       // rendering a component. setState cannot be called while rendering
@@ -408,7 +425,7 @@ function GqlDebug() {
  */
 export const urqlEE = mitt<{
   "urql-received-operation": Operation<any, any>;
-  "urql-received-result": OperationResult<any, any>;
+  "urql-received-result": VisualizeOperationResult<any, any>;
 }>();
 
 export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
@@ -417,7 +434,9 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
       ops$,
       tap((operation) => urqlEE.emit("urql-received-operation", operation)),
       forward,
-      tap((result) => urqlEE.emit("urql-received-result", result))
+      tap((result) =>
+        urqlEE.emit("urql-received-result", result as VisualizeOperationResult)
+      )
     );
 };
 

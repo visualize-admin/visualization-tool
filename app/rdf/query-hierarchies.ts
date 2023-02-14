@@ -72,7 +72,11 @@ const toTree = (
   return sortChildren(results.map((r) => serializeNode(r, 0)).filter(truthy));
 };
 
-const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
+const findHierarchiesForDimension = (
+  cube: Cube,
+  dimensionIri: string,
+  locale: string
+) => {
   const newHierarchies = uniqBy(
     cube.ptr
       .any()
@@ -80,7 +84,7 @@ const findHierarchiesForDimension = (cube: Cube, dimensionIri: string) => {
       .has(ns.cubeMeta.inHierarchy)
       .out(ns.cubeMeta.inHierarchy)
       .toArray(),
-    (x) => x.value
+    (x) => getName(x, locale)
   );
   if (newHierarchies) {
     return newHierarchies;
@@ -105,7 +109,8 @@ export const queryHierarchy = async (
 ): Promise<HierarchyValue[] | null> => {
   const hierarchies = findHierarchiesForDimension(
     rdimension.cube,
-    rdimension.data.iri
+    rdimension.data.iri,
+    locale
   );
 
   if (hierarchies.length === 0) {
@@ -133,9 +138,11 @@ export const queryHierarchy = async (
       locale
     );
 
-    // Augment hierarchy value with hierarchyName so that when regrouping
-    // below, we can create the fake nodes
-    tree[0].hierarchyName = h.hierarchyName;
+    if (tree.length > 0) {
+      // Augment hierarchy value with hierarchyName so that when regrouping
+      // below, we can create the fake nodes
+      tree[0].hierarchyName = h.hierarchyName;
+    }
     return tree;
   });
 
