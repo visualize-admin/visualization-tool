@@ -168,6 +168,10 @@ export const searchCubes = async ({
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
 
+    FILTER(LANG(?name) = LANG(?description))
+    FILTER(LANG(?name) = LANG(?creatorLabel))
+    FILTER(LANG(?name) = LANG(?themeName))
+
       ${
         query
           ? `FILTER(
