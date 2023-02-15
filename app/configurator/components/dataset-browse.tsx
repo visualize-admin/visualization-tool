@@ -518,6 +518,8 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     width: "auto",
     padding: 0,
+    borderRadius: 2,
+    marginRight: 2,
     "&:hover": {
       background: "rgba(0, 0, 0, 0.25)",
     },
@@ -649,7 +651,6 @@ const NavItem = ({
       sx={{
         mb: 1,
         pl: 4,
-        py: 1,
         backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
         "&:hover": {
           background: active ? undefined : "rgba(0, 0, 0, 0.05)",
@@ -663,13 +664,19 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Typography variant="body2">{children}</Typography>
+          <Typography variant="body2" sx={{ py: 1 }}>
+            {children}
+          </Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
-            <MUILink sx={{ flexGrow: 1 }} underline="none" variant="body2">
+            <MUILink
+              sx={{ flexGrow: 1, py: 1 }}
+              underline="none"
+              variant="body2"
+            >
               {children}
             </MUILink>
           </Link>

@@ -242,6 +242,9 @@ const AccordionOperation = ({
               Copy variables
             </CopyLink>
           </span>
+          <Typography variant="caption" display="inline">
+            SPARQL queries ({result?.extensions?.queries.length})
+          </Typography>
         </Box>
       </AccordionSummary>
       {accordionProps.expanded ? (
