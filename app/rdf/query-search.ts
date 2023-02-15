@@ -133,6 +133,8 @@ export const searchCubes = async ({
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
 
+    BIND(LANG(?name) as ?lang)
+
     OPTIONAL {
       ?cube ${ns.schema.description} ?description.
     }
@@ -168,9 +170,9 @@ export const searchCubes = async ({
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
 
-    FILTER(!BOUND(?description) || LANG(?name) = LANG(?description))
-    FILTER(!BOUND(?creatorLabel) || LANG(?name) = LANG(?creatorLabel))
-    FILTER(!BOUND(?themeName) || LANG(?name) = LANG(?themeName))
+    FILTER(!BOUND(?description) || ?lang = LANG(?description))
+    FILTER(!BOUND(?creatorLabel) || ?lang = LANG(?creatorLabel))
+    FILTER(!BOUND(?themeName) || ?lang = LANG(?themeName))
 
       ${
         query
