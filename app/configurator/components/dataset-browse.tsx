@@ -518,6 +518,8 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     width: "auto",
     padding: 0,
+    borderRadius: 2,
+    marginRight: 2,
     "&:hover": {
       background: "rgba(0, 0, 0, 0.25)",
     },
