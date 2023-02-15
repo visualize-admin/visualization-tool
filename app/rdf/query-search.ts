@@ -4,6 +4,7 @@ import clownface from "clownface";
 import { descending } from "d3";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
+import { Quad, Stream } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -86,6 +87,15 @@ const parseResultRow = (row: ResultRow) =>
 
 const identity = <T>(str: TemplateResult<T>) => str;
 const optional = <T>(str: TemplateResult<T>) => sparql`OPTIONAL { ${str} }`;
+
+const extractCubesFromStream = async (cubeStream: Stream<Quad>) => {
+  const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
+  const cf = clownface({ dataset: cubeDataset });
+  return cf.has(
+    cf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+    ns.cube.Cube
+  );
+};
 
 export const searchCubes = async ({
   query: rawQuery,
@@ -220,23 +230,20 @@ export const searchCubes = async ({
     throw new Error("Must pass locale");
   }
 
-  const { data: cubeStream, meta: cubesMeta } = await executeAndMeasure(
-    sparqlClientStream,
-    cubesQuery
-  );
-  queries.push({
-    ...cubesMeta,
-    label: "cubes",
-  });
-  const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
-  const cf = clownface({ dataset: cubeDataset });
+  const { data: cubeStream, meta: cubesMeta } =
+    sortedCubeIris.length > 0
+      ? await executeAndMeasure(sparqlClientStream, cubesQuery)
+      : { data: undefined, meta: undefined };
 
+  if (cubesMeta) {
+    queries.push({
+      ...cubesMeta,
+      label: "cubes",
+    });
+  }
+  const cubeNodes = cubeStream ? await extractCubesFromStream(cubeStream) : [];
   const seen = new Set();
-  const cubes = cf
-    .has(
-      cf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-      ns.cube.Cube
-    )
+  const cubes = cubeNodes
     .map((cubeNode) => {
       const cube = cubeNode as unknown as Cube;
       const iri = parseIri(cube);
