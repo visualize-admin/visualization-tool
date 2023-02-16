@@ -124,6 +124,18 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 
 ℹ️ GeoShape dimensions can be shown on a map as _shapes_
 
+#### Values
+
+The `sh:in` predicate on the dimension is used to attach what values are available
+on the dimension. It is used by visualize as an optimization to list the values that
+are available on the dimension. This list of possible values can be used for example
+on dimension filters, or inside the legend.
+
+- It is provided automatically by `cube-creator` if the number of distinct values is
+  inferior to `100`.
+- If this property is not present, visualize dynamically loads all distinct values from
+  the dimension, which results in poorer performance than if the values are present.
+
 #### Currencies
 
 If the dimension is related to a currency (`?dimension a qudt:CurrencyUnit`), when the
