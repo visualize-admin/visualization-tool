@@ -11,6 +11,32 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+## 3.19
+
+A particular focus was given on data fetching performance. Interactions
+with visualize.admin.ch are now noticeable faster.
+
+### Performance
+
+- Improved performance of cube data fetching
+
+  - Added LRU cache to min max queries
+  - Added query cache to bulk queries
+  - Ordered filter so that non-discriminant filter are last
+
+- Fixed search performance through removal of combinatorial explosion due
+  to language values
+
+- Improved GraphQL query devtool
+  - Display number of SPARQL queries in query list
+  - Sorted queries by duration
+
+### Features
+
+- Embed options (ability to either embed minimal or standard chart).
+  Publish actions have moved to the top of the published chart for
+  better visibility.
+
 ## [3.17.0] - 2022-12-06
 
 - Metadata is now shown in a dedicated panel that can be reached both from editor & published mode
