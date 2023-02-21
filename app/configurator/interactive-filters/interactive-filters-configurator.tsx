@@ -11,7 +11,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { flag } from "@/configurator/components/flag";
+import { flag } from "@/flags/flag";
 import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
   isConfiguring,

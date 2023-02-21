@@ -9,8 +9,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
-import { flag } from "@/configurator/components/flag";
 import { PUBLIC_URL } from "@/domain/env";
+import { flag } from "@/flags/flag";
 import DebugPanel from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import "@/utils/nprogress.css";
