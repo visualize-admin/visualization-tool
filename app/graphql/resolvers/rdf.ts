@@ -93,7 +93,7 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
     const cube = await loaders.cube.load(iri);
 
     if (!cube) {
-      return null;
+      throw new Error("Cube not found");
     }
 
     return getResolvedCube({ cube, locale: locale || "de", latest });
