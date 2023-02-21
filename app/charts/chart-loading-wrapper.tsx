@@ -75,7 +75,7 @@ export const ChartLoadingWrapper = <
   } else if (error) {
     return (
       <Flex flexGrow={1} justifyContent="center" minHeight={300}>
-        <LoadingDataError />
+        <LoadingDataError message={error.message} />
       </Flex>
     );
   } else {

@@ -61,7 +61,11 @@ export const ChartMapVisualization = ({
       filters: queryFilters,
     },
   });
-  const { data, fetching, error } = observationsQueryResp;
+  const {
+    data,
+    fetching,
+    error: observationsQueryError,
+  } = observationsQueryResp;
 
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
@@ -69,7 +73,7 @@ export const ChartMapVisualization = ({
     | Observation[]
     | undefined;
 
-  const [{ data: fetchedGeoCoordinates }] =
+  const [{ data: fetchedGeoCoordinates, error: geoCoordinatesError }] =
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
         dataCubeIri: dataSetIri,
@@ -212,7 +216,7 @@ export const ChartMapVisualization = ({
       ready
         ? observationsQueryResp["data"]
         : undefined,
-    error,
+    error: observationsQueryError || geoCoordinatesError,
   };
   return (
     <ChartLoadingWrapper
