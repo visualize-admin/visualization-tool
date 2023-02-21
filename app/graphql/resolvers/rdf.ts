@@ -221,6 +221,9 @@ export const dataCubeDimensionByIri: NonNullable<
       dimensionIris: [iri],
     })
   ).find((d) => iri === d.data.iri);
+  if (!dimension) {
+    throw new Error(`Cannot find dimension ${iri}`);
+  }
   return dimension ?? null;
 };
 
