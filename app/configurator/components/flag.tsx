@@ -5,6 +5,9 @@ import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 const FLAG_PREFIX = "flag__";
 
 export const flag = (name: string, value?: any) => {
+  if (typeof window === "undefined") {
+    return false;
+  }
   const flagName = `${FLAG_PREFIX}${name}`;
   if (value !== undefined) {
     localStorage.setItem(flagName, JSON.stringify(value));

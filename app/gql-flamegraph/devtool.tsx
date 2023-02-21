@@ -379,46 +379,29 @@ function GqlDebug() {
     return null;
   }
   return (
-    <>
-      <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
-        <Grow in>
-          <IconButton size="small" onClick={open}>
-            🛠
-          </IconButton>
-        </Grow>
+    <div>
+      <Box className={classes.toolbar}>
+        <EmojiIconButton onClick={handleReset}>🧹</EmojiIconButton>
+        <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
       </Box>
-
-      <Drawer
-        open={isOpen}
-        anchor="bottom"
-        elevation={2}
-        onBackdropClick={close}
-      >
-        <div>
-          <Box className={classes.toolbar}>
-            <EmojiIconButton onClick={handleReset}>🧹</EmojiIconButton>
-            <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
-          </Box>
-          <Box sx={{ maxHeight: "500px" }}>
-            {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
-              .filter((x) => x?.extensions?.timings)
-              .map((result, i) => (
-                <AccordionOperation
-                  key={i}
-                  result={result}
-                  operation={result.operation}
-                  expanded={expandedId === result.operation.key}
-                  start={opsStartMapRef.current.get(result.operation.key)!}
-                  end={opsEndMapRef.current.get(result.operation.key)!}
-                  onChange={(_e, expanded) =>
-                    setExpandedId(expanded ? result.operation.key : undefined)
-                  }
-                />
-              ))}
-          </Box>
-        </div>
-      </Drawer>
-    </>
+      <Box sx={{ maxHeight: "500px" }}>
+        {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
+          .filter((x) => x?.extensions?.timings)
+          .map((result, i) => (
+            <AccordionOperation
+              key={i}
+              result={result}
+              operation={result.operation}
+              expanded={expandedId === result.operation.key}
+              start={opsStartMapRef.current.get(result.operation.key)!}
+              end={opsEndMapRef.current.get(result.operation.key)!}
+              onChange={(_e, expanded) =>
+                setExpandedId(expanded ? result.operation.key : undefined)
+              }
+            />
+          ))}
+      </Box>
+    </div>
   );
 }
 
@@ -443,4 +426,28 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
     );
 };
 
-export default GqlDebug;
+const DebugPanel = () => {
+  const { isOpen, open, close } = useDisclosure();
+
+  return (
+    <>
+      <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
+        <Grow in>
+          <IconButton size="small" onClick={open}>
+            🛠
+          </IconButton>
+        </Grow>
+      </Box>
+      <Drawer
+        open={isOpen}
+        anchor="bottom"
+        elevation={2}
+        onBackdropClick={close}
+      >
+        <GqlDebug />
+      </Drawer>
+    </>
+  );
+};
+
+export default DebugPanel;
