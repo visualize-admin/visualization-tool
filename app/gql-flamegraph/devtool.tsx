@@ -330,19 +330,7 @@ const EmojiIconButton = ({
   );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-  toolbar: {
-    textAlign: "right",
-    width: "100%",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    borderBottom: "1px solid",
-    borderBottomColor: "divider",
-  },
-}));
-
-function GqlDebug() {
-  const [results, setResults] = useState([] as VisualizeOperationResult[]);
+const useGraphqlOperationsController = () => {
   const opsStartMapRef = useRef(new Map<Operation["key"], number>());
   const opsEndMapRef = useRef(new Map<Operation["key"], number>());
   useEffect(() => {
@@ -368,24 +356,39 @@ function GqlDebug() {
       urqlEE.off("urql-received-result", handleResult);
     };
   });
-  const [expandedId, setExpandedId] =
-    useState<OperationResult["operation"]["key"]>();
+  const [results, setResults] = useState([] as VisualizeOperationResult[]);
   const handleReset = useEvent(() => {
     setResults([]);
   });
-  const { isOpen, open, close } = useDisclosure();
-  const classes = useStyles();
+
+  return {
+    opsStartMap: opsStartMapRef.current,
+    opsEndMap: opsEndMapRef.current,
+    reset: handleReset,
+    results,
+  };
+};
+
+type GraphqlOperationsController = ReturnType<
+  typeof useGraphqlOperationsController
+>;
+
+function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
+  const { opsStartMap, opsEndMap, reset, results } = controller;
+  const [expandedId, setExpandedId] =
+    useState<OperationResult["operation"]["key"]>();
   if (typeof window === "undefined") {
     return null;
   }
   return (
     <div>
-      <Box className={classes.toolbar}>
-        <EmojiIconButton onClick={handleReset}>🧹</EmojiIconButton>
-        <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
+      <Box>
+        <Button variant="text" size="small" onClick={reset}>
+          Empty operations
+        </Button>
       </Box>
       <Box sx={{ maxHeight: "500px" }}>
-        {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
+        {sortBy(results, (r) => opsStartMap.get(r.operation.key))
           .filter((x) => x?.extensions?.timings)
           .map((result, i) => (
             <AccordionOperation
@@ -393,8 +396,8 @@ function GqlDebug() {
               result={result}
               operation={result.operation}
               expanded={expandedId === result.operation.key}
-              start={opsStartMapRef.current.get(result.operation.key)!}
-              end={opsEndMapRef.current.get(result.operation.key)!}
+              start={opsStartMap.get(result.operation.key)!}
+              end={opsEndMap.get(result.operation.key)!}
               onChange={(_e, expanded) =>
                 setExpandedId(expanded ? result.operation.key : undefined)
               }
@@ -428,7 +431,8 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
 
 const DebugPanel = () => {
   const { isOpen, open, close } = useDisclosure();
-
+  const [tab, setTab] = useState("graphql" as "graphql" | "flags");
+  const gqlOperationsController = useGraphqlOperationsController();
   return (
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
@@ -444,7 +448,19 @@ const DebugPanel = () => {
         elevation={2}
         onBackdropClick={close}
       >
-        <GqlDebug />
+        <TabContext value={tab}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <TabList value={tab} onChange={(_ev, tab) => setTab(tab)}>
+              <Tab value="graphql" label="graphql" />
+              <Tab value="flags" label="flags" />
+            </TabList>
+            <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
+          </Box>
+          <Divider />
+          <TabPanel value="graphql">
+            <GqlDebug controller={gqlOperationsController} />
+          </TabPanel>
+        </TabContext>
       </Drawer>
     </>
   );
