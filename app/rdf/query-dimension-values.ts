@@ -6,6 +6,7 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import LiteralExt from "rdf-ext/lib/Literal";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
@@ -211,9 +212,6 @@ const parseMinMax = (result: MinMaxResult) => {
 };
 
 const executeMinMaxQueryWithCache = makeExecuteWithCache({
-  cacheOptions: {
-    maxSize: 10_000,
-  },
   parse: parseMinMax,
 });
 
@@ -221,11 +219,14 @@ export const loadMinMaxDimensionValues = async ({
   datasetIri,
   dimensionIri,
   sparqlClient,
+  cache,
 }: {
   datasetIri: Term;
   dimensionIri: Term;
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
 }) => {
+  console.log({ cache });
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
@@ -238,7 +239,11 @@ export const loadMinMaxDimensionValues = async ({
   `;
 
   try {
-    const result = await executeMinMaxQueryWithCache(sparqlClient, query);
+    const result = await executeMinMaxQueryWithCache(
+      sparqlClient,
+      query,
+      cache
+    );
     return result;
   } catch {
     console.warn(

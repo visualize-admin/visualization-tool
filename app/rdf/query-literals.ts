@@ -2,6 +2,7 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import uniqBy from "lodash/uniqBy";
 import { NamedNode, Literal } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
@@ -45,14 +46,17 @@ export const loadResourceLiterals = async <Predicates extends PredicateOption>({
   ids,
   sparqlClient,
   predicates,
+  cache,
 }: {
   ids: NamedNode[];
   sparqlClient: ParsingClient;
   predicates: Predicates;
+  cache: LRUCache | undefined;
 }) => {
   return batchLoad<ResourceLiteral<Predicates>, NamedNode>({
     ids,
     sparqlClient,
     buildQuery: (values) => buildResourceLiteralQuery({ values, predicates }),
+    cache,
   });
 };

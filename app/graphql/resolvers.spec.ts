@@ -1,3 +1,5 @@
+import { IncomingMessage } from "http";
+
 import { GraphQLResolveInfo } from "graphql";
 
 import { createSource as createSource_ } from "@/rdf/create-source";
@@ -84,7 +86,7 @@ describe("possible filters", () => {
           "https://fake-dimension-iri-2": { type: "single", value: 2 },
         },
       },
-      createContext(),
+      createContext({ req: null as unknown as IncomingMessage }),
       {
         variableValues: {
           locale: "en",

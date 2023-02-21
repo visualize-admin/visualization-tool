@@ -3,6 +3,7 @@ import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
@@ -60,17 +61,21 @@ export async function loadResourceLabels({
   locale,
   labelTerm,
   sparqlClient,
+  cache,
 }: {
   ids: NamedNode[];
   locale: string;
   labelTerm: NamedNode;
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
 }): Promise<ResourceLabel[]> {
+  console.log("loadResourceLabels", { cache });
   const localesFilter = makeLocalesFilter("?iri", labelTerm, "?label", locale);
   return batchLoad({
     ids,
     sparqlClient,
     buildQuery: (values: NamedNode[]) =>
       buildResourceLabelsQuery(values, localesFilter),
+    cache,
   });
 }

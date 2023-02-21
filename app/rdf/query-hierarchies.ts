@@ -9,6 +9,7 @@ import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -105,7 +106,8 @@ export const queryHierarchy = async (
   rdimension: ResolvedDimension,
   locale: string,
   sparqlClient: ParsingClient,
-  sparqlClientStream: StreamClient
+  sparqlClientStream: StreamClient,
+  cache: LRUCache | undefined
 ): Promise<HierarchyValue[] | null> => {
   const hierarchies = findHierarchiesForDimension(
     rdimension.cube,
@@ -121,6 +123,7 @@ export const queryHierarchy = async (
     dimension: rdimension.dimension,
     sparqlClient,
     locale,
+    cache,
   });
 
   const allHierarchies = await Promise.all(

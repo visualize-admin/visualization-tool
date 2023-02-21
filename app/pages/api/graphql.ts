@@ -4,7 +4,7 @@ import configureCors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
-import { createContext, GraphQLContext } from "../../graphql/context";
+import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../utils/run-middleware";
@@ -21,7 +21,7 @@ const server = new ApolloServer({
     return err;
   },
   formatResponse: (response, reqCtx) => {
-    const context = reqCtx.context as GraphQLContext;
+    const context = reqCtx.context as VisualizeGraphQLContext;
     response.extensions = {
       queries: context.queries,
       timings: context.timings,

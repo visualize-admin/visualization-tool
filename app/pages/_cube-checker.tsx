@@ -83,6 +83,7 @@ const getCubeDimensions = async (
           cube: rawCube,
           locale: "en",
           sparqlClient,
+          cache: undefined,
         });
       }
     })

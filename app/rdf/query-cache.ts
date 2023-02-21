@@ -4,27 +4,22 @@ import {
 } from "@tpluscode/sparql-builder/lib";
 import StreamClient from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
-import { LRUCache, LRUCacheOptions } from "typescript-lru-cache";
+import { LRUCache } from "typescript-lru-cache";
 
 type SparqlClient = StreamClient | ParsingClient;
 
 export const makeExecuteWithCache = <T>({
   parse,
-  cacheOptions,
 }: {
   parse: (v: any) => T;
-  cacheOptions: LRUCacheOptions<string, T>;
 }) => {
-  const cache = new LRUCache({
-    entryExpirationTimeInMS: 60 * 10_000,
-    ...cacheOptions,
-  });
   return async (
     sparqlClient: SparqlClient,
-    query: SparqlQuery & SparqlQueryExecutable
+    query: SparqlQuery & SparqlQueryExecutable,
+    cache: LRUCache | undefined
   ) => {
     const key = `${sparqlClient.query.endpoint.endpointUrl} - ${query.build()}`;
-    const cached = cache.get(key);
+    const cached = cache?.get(key);
     if (cached) {
       return cached;
     } else {
@@ -32,7 +27,9 @@ export const makeExecuteWithCache = <T>({
         operation: "postUrlencoded",
       });
       const parsed = parse(result) as T;
-      cache.set(key, parsed);
+      if (cache) {
+        cache.set(key, parsed);
+      }
       return parsed;
     }
   };

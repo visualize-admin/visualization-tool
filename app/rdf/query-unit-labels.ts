@@ -2,6 +2,7 @@ import { SELECT } from "@tpluscode/sparql-builder";
 import uniqBy from "lodash/uniqBy";
 import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
@@ -41,14 +42,17 @@ export async function loadUnits({
   ids,
   locale = "en",
   sparqlClient,
+  cache,
 }: {
   ids: Term[];
   locale?: string;
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
 }): Promise<ResourceLabel[]> {
   return batchLoad({
     ids,
     sparqlClient,
     buildQuery: (values: Term[]) => buildUnitsQuery(values, locale),
+    cache,
   });
 }

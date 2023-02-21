@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
@@ -101,7 +102,7 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
   async (_, { iri, filters }, { setup }, info) => {
-    const { sparqlClient, loaders } = await setup(info);
+    const { sparqlClient, loaders, cache } = await setup(info);
 
     const cube = await loaders.cube.load(iri);
     if (!cube) {
@@ -121,6 +122,7 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
         limit: 1,
         raw: true,
         dimensions: null,
+        cache,
       });
       if (obs.length === 0) {
         continue;
@@ -197,28 +199,39 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, _, { setup }, info) => {
-    const { sparqlClient } = await setup(info);
-    const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
+    const { sparqlClient, cache } = await setup(info);
+    const dimensions = await getCubeDimensions({
+      cube,
+      locale,
+      sparqlClient,
+      cache,
+    });
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
   async ({ cube, locale }, _, { setup }, info) => {
-    const { sparqlClient } = await setup(info);
-    const dimensions = await getCubeDimensions({ cube, locale, sparqlClient });
+    const { sparqlClient, cache } = await setup(info);
+    const dimensions = await getCubeDimensions({
+      cube,
+      locale,
+      sparqlClient,
+      cache,
+    });
     return dimensions.filter((d) => d.data.isMeasureDimension);
   };
 
 export const dataCubeDimensionByIri: NonNullable<
   DataCubeResolvers["dimensionByIri"]
 > = async ({ cube, locale }, { iri }, { setup }, info) => {
-  const { sparqlClient } = await setup(info);
+  const { sparqlClient, cache } = await setup(info);
   const dimension = (
     await getCubeDimensions({
       cube,
       locale,
       sparqlClient,
       dimensionIris: [iri],
+      cache,
     })
   ).find((d) => iri === d.data.iri);
   if (!dimension) {
@@ -235,7 +248,7 @@ export const dataCubeObservations: NonNullable<
   { setup },
   info
 ) => {
-  const { sparqlClient } = await setup(info);
+  const { sparqlClient, cache } = await setup(info);
   const { query, observations, observationsRaw } = await getCubeObservations({
     cube,
     locale,
@@ -243,6 +256,7 @@ export const dataCubeObservations: NonNullable<
     filters: filters ?? undefined,
     limit: limit ?? undefined,
     dimensions,
+    cache,
   });
 
   return {
@@ -260,6 +274,7 @@ export const dataCubeObservations: NonNullable<
 const getDimensionValuesLoader = (
   sparqlClient: ParsingClient,
   loaders: Loaders,
+  cache: LRUCache | undefined,
   filters?: Filters | null
 ): DataLoader<any, any> => {
   let loader: typeof loaders.dimensionValues | undefined;
@@ -268,7 +283,7 @@ const getDimensionValuesLoader = (
     let existingLoader = loaders.filteredDimensionValues.get(filterKey);
     if (!existingLoader) {
       loader = new DataLoader(
-        createCubeDimensionValuesLoader(sparqlClient, filters)
+        createCubeDimensionValuesLoader(sparqlClient, cache, filters)
       );
       loaders.filteredDimensionValues.set(filterKey, loader);
       return loader;
@@ -287,7 +302,7 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
   info
 ) => {
   const { locale } = info.variableValues;
-  const { sparqlClient, sparqlClientStream } = await setup(info);
+  const { sparqlClient, sparqlClientStream, cache } = await setup(info);
 
   if (!rdimension.cube) {
     throw new Error("Could not find cube");
@@ -297,7 +312,8 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
     rdimension,
     locale,
     sparqlClient,
-    sparqlClientStream
+    sparqlClientStream,
+    cache
   );
 
   return res;
@@ -306,9 +322,14 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
 > = async (parent, { filters }, { setup }, info) => {
-  const { loaders, sparqlClient } = await setup(info);
+  const { loaders, sparqlClient, cache } = await setup(info);
   // Different loader if we have filters or not
-  const loader = getDimensionValuesLoader(sparqlClient, loaders, filters);
+  const loader = getDimensionValuesLoader(
+    sparqlClient,
+    loaders,
+    cache,
+    filters
+  );
   const values: DimensionValue[] = await loader.load(parent);
 
   return values.sort((a, b) =>
