@@ -1,3 +1,4 @@
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Accordion,
   AccordionSummary,
@@ -10,10 +11,12 @@ import {
   Grow,
   IconButtonProps,
   Link,
-  Theme,
   LinkProps,
+  Tab,
+  Button,
+  Divider,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Switch, SwitchProps } from "@mui/material";
 import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
@@ -30,6 +33,7 @@ import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/configurator/components/use-disclosure";
+import { useFlag, flag, useFlags } from "@/flags";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
@@ -460,10 +464,46 @@ const DebugPanel = () => {
           <TabPanel value="graphql">
             <GqlDebug controller={gqlOperationsController} />
           </TabPanel>
+          <TabPanel value="flags">
+            <FlagList />
+          </TabPanel>
         </TabContext>
       </Drawer>
     </>
   );
+};
+
+const FlagList = () => {
+  const flags = useFlags();
+  return (
+    <>
+      {flags.map((f) => {
+        return (
+          <Box key={f} sx={{ display: "flex", gap: "1rem" }}>
+            <Typography variant="body2">{f}</Typography>
+            <FlagSwitch flagName={f} />
+          </Box>
+        );
+      })}
+    </>
+  );
+};
+
+const FlagSwitch = ({
+  flagName,
+  onChange,
+  ...props
+}: { flagName: string; onChange?: (value: Boolean) => void } & Omit<
+  SwitchProps,
+  "onChange"
+>) => {
+  const flagValue = useFlag(flagName);
+  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    flag(flagName, ev.target.checked);
+    onChange?.(ev.target.checked);
+  };
+
+  return <Switch checked={!!flagValue} onChange={handleChange} {...props} />;
 };
 
 export default DebugPanel;
