@@ -138,7 +138,16 @@ export const NoDataHint = () => (
 );
 
 export const LoadingDataError = ({ message }: { message?: string }) => (
-  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+  <Alert
+    severity="error"
+    icon={<Icon name="hintWarning" size={64} />}
+    sx={{
+      "& > .MuiAlert-icon": {
+        ml: "2rem",
+        mr: "1.5rem",
+      },
+    }}
+  >
     <AlertTitle>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </AlertTitle>
