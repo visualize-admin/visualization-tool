@@ -53,7 +53,7 @@
       },
       "fields": {
         "areaLayer": {
-          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
           "color": {
             "type": "numerical",
             "componentIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
@@ -63,7 +63,7 @@
           }
         },
         "symbolLayer": {
-          "componentIri": "https://environment.ld.admin.ch/foen/nfi/prodreg",
+          "componentIri": "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
           "measureIri": "https://environment.ld.admin.ch/foen/nfi/forestArea",
           "color": {
             "type": "fixed",

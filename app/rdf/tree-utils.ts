@@ -149,7 +149,8 @@ export const regroupTrees = (
     return trees[0];
   } else {
     // We have multiple hierarchies
-    const roots = new Set(trees.map((x) => x[0].value));
+    const goodTrees = trees.filter((x) => !!x[0] && !!x[0].hierarchyName);
+    const roots = new Set(goodTrees.map((x) => x[0].value));
     if (roots.size > 1) {
       throw new Error(
         "Cannot have multiple hierarchies not sharing the same root"
@@ -157,8 +158,8 @@ export const regroupTrees = (
     }
     return [
       {
-        ...trees[0][0],
-        children: trees.map((t) => ({
+        ...goodTrees[0][0],
+        children: goodTrees.map((t) => ({
           value: t[0].hierarchyName!,
           hasValue: false,
           children: t[0].children,

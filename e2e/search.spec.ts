@@ -48,6 +48,8 @@ test("search results count coherence", async ({ page, selectors }) => {
     await selectors.search.resultsCount();
 
     const panelLeft = await selectors.panels.left();
+    await (await within(panelLeft).findByText("Show all")).click();
+
     await within(panelLeft).findByText(t, undefined, { timeout: 5000 });
 
     const countChip = panelLeft.locator(`:text("${t}") + *`);
