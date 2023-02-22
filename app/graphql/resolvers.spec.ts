@@ -86,7 +86,7 @@ describe("possible filters", () => {
           "https://fake-dimension-iri-2": { type: "single", value: 2 },
         },
       },
-      createContext({ req: null as unknown as IncomingMessage }),
+      createContext({ req: { headers: {} } as unknown as IncomingMessage }),
       {
         variableValues: {
           locale: "en",
