@@ -12,7 +12,7 @@ generates:
       preResolveTypes: true
       withComponent: false
       withHooks: true
-      contextType: ./context#GraphQLContext
+      contextType: ./context#VisualizeGraphQLContext
       scalars:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
@@ -27,7 +27,7 @@ generates:
     config:
       useIndexSignature: true
       noSchemaStitching: true
-      contextType: ./context#GraphQLContext
+      contextType: ./context#VisualizeGraphQLContext
       scalars:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
