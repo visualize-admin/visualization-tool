@@ -224,7 +224,7 @@ const AccordionOperation = ({
             fontSize="small"
             whiteSpace="break-spaces"
             color="primary"
-            href={`http://localhost:3000/api/graphql?query=${encodeURIComponent(
+            href={`/api/graphql?query=${encodeURIComponent(
               print(operation.query)
             )}`}
             sx={{ my: 0 }}
