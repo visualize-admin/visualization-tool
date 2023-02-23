@@ -16,7 +16,6 @@ const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
     return store.get(args[0]);
   } else {
     const [name, value] = args;
-    console.log("setting", name, value);
     store.set(name, value);
     return value;
   }
@@ -37,19 +36,10 @@ export const resetFlags = () => {
  *
  * Supports passing either  object flagName -> flagValue
  *
- * @param {string[]|Object} flagsToEnable
+ * @param {Record<string, boolean>} flagsToEnable
  */
 export const enable = (flagsToEnable: FlagName[]) => {
-  let flagNameToValue;
-  if (Array.isArray(flagsToEnable)) {
-    // eslint-disable-next-line no-console
-    console.log(
-      "flags.enable: Deprecation warning: prefer to use an object { flag1: true, flag2: true } instead of an array when using flags.enable"
-    );
-    flagNameToValue = flagsToEnable.map((flagName) => [flagName, true]);
-  } else if (typeof flagsToEnable === "object") {
-    flagNameToValue = Object.entries(flagsToEnable);
-  }
+  const flagNameToValue = Object.entries(flagsToEnable);
 
   if (!flagNameToValue) {
     return;

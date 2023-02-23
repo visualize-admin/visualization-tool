@@ -69,7 +69,6 @@ export async function loadResourceLabels({
   sparqlClient: ParsingClient;
   cache: LRUCache | undefined;
 }): Promise<ResourceLabel[]> {
-  console.log("loadResourceLabels", { cache });
   const localesFilter = makeLocalesFilter("?iri", labelTerm, "?label", locale);
   return batchLoad({
     ids,

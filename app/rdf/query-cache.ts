@@ -21,7 +21,7 @@ export const makeExecuteWithCache = <T>({
     const key = `${sparqlClient.query.endpoint.endpointUrl} - ${query.build()}`;
     const cached = cache?.get(key);
     if (cached) {
-      return cached;
+      return cached as T;
     } else {
       const result = await query.execute(sparqlClient.query, {
         operation: "postUrlencoded",

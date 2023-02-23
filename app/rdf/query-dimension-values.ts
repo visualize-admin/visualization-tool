@@ -226,7 +226,6 @@ export const loadMinMaxDimensionValues = async ({
   sparqlClient: ParsingClient;
   cache: LRUCache | undefined;
 }) => {
-  console.log({ cache });
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
