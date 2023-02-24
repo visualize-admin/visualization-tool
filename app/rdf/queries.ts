@@ -376,11 +376,13 @@ export const getCubeDimensionValuesWithMetadata = async ({
         iri.value,
         {
           alternateName: alternateName
-            ? parseRDFLiteral(alternateName)
+            ? parseRDFLiteral<string>(alternateName)
             : undefined,
-          identifier: identifier ? parseRDFLiteral(identifier) : undefined,
-          position: position ? parseRDFLiteral(position) : undefined,
-          color: color ? parseRDFLiteral(color) : undefined,
+          identifier: identifier
+            ? parseRDFLiteral<number>(identifier)
+            : undefined,
+          position: position ? parseRDFLiteral<number>(position) : undefined,
+          color: color ? parseRDFLiteral<string>(color) : undefined,
         },
       ])
     );
@@ -404,10 +406,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
         description: descriptionsLookup.get(iri.value),
-        position:
-          lookupValue?.position !== undefined
-            ? parseInt(lookupValue.position, 10)
-            : undefined,
+        position: lookupValue?.position,
         identifier: lookupValue?.identifier,
         color: lookupValue?.color,
         alternateName: lookupValue?.alternateName,

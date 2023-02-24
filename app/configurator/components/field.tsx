@@ -56,7 +56,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { DimensionValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
@@ -176,7 +175,10 @@ export const DataFilterSelect = ({
 
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
-    const sortedValues = orderBy(dimension.values, sorters) as DimensionValue[];
+    const sortedValues = orderBy(
+      dimension.values,
+      sorters.map((s) => (dv) => s(dv.label))
+    );
 
     return sortedValues;
   }, [dimension]);

@@ -3,9 +3,13 @@ import { DimensionValue } from "@/domain/data";
 
 import { DataCubeObservationsQuery } from "../graphql/query-hooks";
 
-const maybeInt = (value?: string): number | string => {
+const maybeInt = (value?: string | number): number | string => {
   if (!value) {
     return Infinity;
+  }
+
+  if (typeof value === "number") {
+    return value;
   }
 
   const maybeInt = parseInt(value, 10);

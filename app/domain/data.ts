@@ -26,7 +26,7 @@ export type DimensionValue = {
   description?: string;
   position?: number;
   color?: string;
-  identifier?: string;
+  identifier?: string | number;
   alternateName?: string;
 };
 
@@ -71,13 +71,13 @@ export type GeoData = {
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
-export const parseRDFLiteral = (value: Literal): ObservationValue => {
+export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;
   const dt = value.datatype.value.replace(xmlSchema, "");
   switch (dt) {
     case "string":
     case "boolean":
-      return v;
+      return v as T;
     // return v === "true" ? true : false;
     case "float":
     case "integer":
@@ -95,7 +95,7 @@ export const parseRDFLiteral = (value: Literal): ObservationValue => {
     case "byte":
     case "unsignedShort":
     case "unsignedByte":
-      return +v;
+      return +v as T;
     // TODO: Figure out how to preserve granularity of date (maybe include interval?)
     // case "date":
     // case "time":
@@ -104,7 +104,7 @@ export const parseRDFLiteral = (value: Literal): ObservationValue => {
     // case "gYearMonth":
     //   return new Date(v);
     default:
-      return v;
+      return v as T;
   }
 };
 
