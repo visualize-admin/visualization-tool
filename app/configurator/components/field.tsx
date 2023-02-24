@@ -80,6 +80,14 @@ const FieldEditIcon = () => {
 };
 
 const useStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.25rem",
+  },
+  optional: {
+    paddingBottom: "4px",
+  },
   loadingIndicator: {
     color: theme.palette.grey[700],
     display: "inline-block",
@@ -168,11 +176,6 @@ export const DataFilterSelect = ({
     message: `No Filter`,
   });
 
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: `optional`,
-  });
-
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
     const sortedValues = orderBy(
@@ -219,7 +222,7 @@ export const DataFilterSelect = ({
   if (hierarchy && hierarchyOptions) {
     return (
       <SelectTree
-        label={isOptional ? `${label} (${optionalLabel})` : label}
+        label={<FieldLabel label={label} isOptional={isOptional} />}
         options={hierarchyOptions}
         onClose={handleClose}
         onOpen={handleOpen}
@@ -234,7 +237,7 @@ export const DataFilterSelect = ({
   return (
     <Select
       id={id}
-      label={isOptional ? `${label} (${optionalLabel})` : label}
+      label={<FieldLabel label={label} isOptional={isOptional} />}
       disabled={disabled}
       options={allValues}
       sortOptions={false}
@@ -689,6 +692,34 @@ export const ColorPickerField = ({
   );
 };
 
+const FieldLabel = ({
+  label,
+  isOptional,
+  isFetching,
+}: {
+  label: React.ReactNode;
+  isOptional?: boolean;
+  isFetching?: boolean;
+}) => {
+  const classes = useStyles();
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: `optional`,
+  });
+  return (
+    <div className={classes.root}>
+      {label}
+
+      {isOptional ? (
+        <span className={classes.optional}>({optionalLabel})</span>
+      ) : null}
+      {isFetching ? (
+        <CircularProgress size={12} className={classes.loadingIndicator} />
+      ) : null}
+    </div>
+  );
+};
+
 export const ChartFieldField = ({
   label,
   field,
@@ -702,7 +733,6 @@ export const ChartFieldField = ({
   optional?: boolean;
   disabled?: boolean;
 }) => {
-  const classes = useStyles();
   const { fetching, ...fieldProps } = useChartFieldField({ field });
 
   const noneLabel = t({
@@ -710,28 +740,16 @@ export const ChartFieldField = ({
     message: "None",
   });
 
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: `optional`,
-  });
-
   return (
     <Select
       key={`select-${field}-dimension`}
       id={field}
       label={
-        <>
-          {optional ? (
-            <span>
-              {label} ({optionalLabel})
-            </span>
-          ) : (
-            <span>{label}</span>
-          )}
-          {fetching ? (
-            <CircularProgress size={12} className={classes.loadingIndicator} />
-          ) : null}
-        </>
+        <FieldLabel
+          isOptional={optional || false}
+          isFetching={fetching}
+          label={label}
+        />
       }
       disabled={disabled || fetching}
       options={
@@ -882,11 +900,6 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     message: "None",
   });
 
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: "optional",
-  });
-
   const allOptions = useMemo(() => {
     return isOptional
       ? [
@@ -904,7 +917,9 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     <Select
       id={id}
       disabled={disabled}
-      label={isOptional ? `${label} (${optionalLabel})` : label}
+      label={
+        <FieldLabel isOptional={isOptional} isFetching={false} label={label} />
+      }
       options={allOptions}
       {...fieldProps}
     />
