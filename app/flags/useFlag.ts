@@ -7,7 +7,6 @@ export default function useFlag(name: string) {
   useEffect(() => {
     const handleChange = (changed: string) => {
       if (changed === name) {
-        console.log("ahndle change", changed);
         setFlag(flag(name));
       }
     };

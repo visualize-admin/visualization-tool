@@ -17,6 +17,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   formatError: (err) => {
+    console.log(err.source);
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
