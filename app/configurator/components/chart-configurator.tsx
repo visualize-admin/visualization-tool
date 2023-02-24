@@ -119,7 +119,7 @@ const DataFilterSelectGeneric = ({
         onClick={onRemove}
         size="small"
       >
-        <Icon name="trash" width="16" height="16" />
+        <Icon name="trash" size="16" />
       </IconButton>
     </Box>
   );
