@@ -324,7 +324,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           <CopyToClipboardTextInput
             mt={1}
             mb={2}
-            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${iFrameHeight}" width="600px" allowfullscreen></iframe>`}
+            content={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none; max-width: 100%" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="${iFrameHeight}" width="600px" allowfullscreen></iframe>`}
           />
         </div>
 
