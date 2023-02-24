@@ -17,8 +17,9 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
 import { AnimatePresence, Transition } from "framer-motion";
+import orderBy from "lodash/orderBy";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useMemo } from "react";
 import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
@@ -32,6 +33,7 @@ import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import { useEmbedOptions } from "@/utils/embed";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -603,8 +605,16 @@ const TabPanelDataDimension = ({
 };
 
 const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
+  const sortedValues = useMemo(() => {
+    const sorters = makeDimensionValueSorters(dim);
+    return orderBy(
+      dim.values,
+      sorters.map((s) => (dv) => s(dv.label))
+    ) as DimensionValue[];
+  }, [dim]);
+
   if (isStandardErrorDimension(dim)) {
-    return <DimensionValuesNumeric values={dim.values} />;
+    return <DimensionValuesNumeric values={sortedValues} />;
   }
 
   switch (dim.__typename) {
@@ -613,11 +623,11 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
     case "OrdinalMeasure":
     case "GeoCoordinatesDimension":
     case "GeoShapesDimension":
-      return <DimensionValuesNominal values={dim.values} />;
+      return <DimensionValuesNominal values={sortedValues} />;
     case "NumericalMeasure":
     case "TemporalDimension":
-      return dim.values.length > 0 ? (
-        <DimensionValuesNumeric values={dim.values} />
+      return sortedValues.length > 0 ? (
+        <DimensionValuesNumeric values={sortedValues} />
       ) : null;
     default:
       const _exhaustiveCheck: never = dim;
