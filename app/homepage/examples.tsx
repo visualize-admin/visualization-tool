@@ -136,7 +136,7 @@ export const Examples = ({
         description={example2Description}
         reverse
       >
-        {/* <ChartPublished
+        <ChartPublished
           dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
           dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
           meta={{
@@ -213,7 +213,7 @@ export const Examples = ({
             },
           }}
           configKey={""}
-        /> */}
+        />
       </Example>
       {example3Headline && example3Description && (
         <Example
