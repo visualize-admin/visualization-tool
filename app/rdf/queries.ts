@@ -10,6 +10,7 @@ import {
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
 import { pragmas } from "@/rdf/create-source";
@@ -127,11 +128,13 @@ export const getCubeDimensions = async ({
   locale,
   sparqlClient,
   dimensionIris,
+  cache,
 }: {
   cube: Cube;
   locale: string;
   sparqlClient: ParsingClient;
   dimensionIris?: string[];
+  cache: LRUCache | undefined;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions
@@ -146,6 +149,7 @@ export const getCubeDimensions = async ({
         ids: dimensionUnits,
         locale: "en", // No other locales exist yet
         sparqlClient,
+        cache,
       }),
       (d) => d.iri.value
     );
@@ -166,7 +170,11 @@ export const getCubeDimensions = async ({
 };
 
 export const createCubeDimensionValuesLoader =
-  (sparqlClient: ParsingClient, filters?: Filters) =>
+  (
+    sparqlClient: ParsingClient,
+    cache: LRUCache | undefined,
+    filters?: Filters
+  ) =>
   async (dimensions: readonly ResolvedDimension[]) => {
     const result: DimensionValue[][] = [];
 
@@ -175,6 +183,7 @@ export const createCubeDimensionValuesLoader =
         sparqlClient,
         rdimension: dimension,
         filters,
+        cache,
       });
       result.push(dimensionValues);
     }
@@ -186,10 +195,12 @@ export const getCubeDimensionValues = async ({
   sparqlClient,
   rdimension,
   filters,
+  cache,
 }: {
   sparqlClient: ParsingClient;
   rdimension: ResolvedDimension;
   filters?: Filters;
+  cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
 
@@ -215,6 +226,7 @@ export const getCubeDimensionValues = async ({
         datasetIri: cube.term,
         dimensionIri: dimension.path,
         sparqlClient,
+        cache,
       });
 
       if (result) {
@@ -238,6 +250,7 @@ export const getCubeDimensionValues = async ({
     sparqlClient,
     locale,
     filters,
+    cache,
   });
 };
 
@@ -250,12 +263,14 @@ export const getCubeDimensionValuesWithMetadata = async ({
   sparqlClient,
   locale,
   filters,
+  cache,
 }: {
   dimension: CubeDimension;
   cube: Cube;
   sparqlClient: ParsingClient;
   locale: string;
   filters?: Filters;
+  cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
   const load = async () => {
     const loaders = [
@@ -322,6 +337,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
         locale,
         sparqlClient,
         labelTerm: schema.name,
+        cache,
       }),
       scaleType === "Ordinal" || scaleType === "Nominal"
         ? loadResourceLabels({
@@ -329,6 +345,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
             locale,
             sparqlClient,
             labelTerm: schema.description,
+            cache,
           })
         : [],
       loadResourceLiterals({
@@ -346,9 +363,10 @@ export const getCubeDimensionValuesWithMetadata = async ({
               : null,
           alternateName: schema.alternateName,
         },
+        cache,
       }),
       dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
+        ? loadUnversionedResources({ ids: namedNodes, sparqlClient, cache })
         : [],
     ]);
 
@@ -436,6 +454,7 @@ export const getCubeObservations = async ({
   limit,
   raw,
   dimensions,
+  cache,
 }: {
   cube: Cube;
   locale: string;
@@ -447,6 +466,7 @@ export const getCubeObservations = async ({
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
   dimensions: Maybe<string[]> | undefined;
+  cache: LRUCache | undefined;
 }): Promise<{
   query: string;
   observations: Observation[];
@@ -458,6 +478,7 @@ export const getCubeObservations = async ({
     cube,
     locale,
     sparqlClient,
+    cache,
   });
 
   const cubeDimensions = allResolvedDimensions.filter((d) =>

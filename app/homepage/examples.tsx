@@ -52,6 +52,7 @@ export const Examples = ({
             },
           }}
           chartConfig={{
+            dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
             version: "1.2.1",
             fields: {
               x: {
@@ -136,7 +137,7 @@ export const Examples = ({
         description={example2Description}
         reverse
       >
-        <ChartPublished
+        {/* <ChartPublished
           dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
           dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
           meta={{
@@ -213,7 +214,7 @@ export const Examples = ({
             },
           }}
           configKey={""}
-        />
+        /> */}
       </Example>
       {example3Headline && example3Description && (
         <Example

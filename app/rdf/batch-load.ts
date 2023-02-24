@@ -5,6 +5,7 @@ import {
 import { groups } from "d3";
 import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { makeExecuteWithCache } from "./query-cache";
 
@@ -12,9 +13,6 @@ const BATCH_SIZE = 500;
 
 const executeWithCache = makeExecuteWithCache({
   parse: (t) => t,
-  cacheOptions: {
-    maxSize: 10_000,
-  },
 });
 
 export default async function batchLoad<
@@ -23,11 +21,13 @@ export default async function batchLoad<
 >({
   ids,
   sparqlClient,
+  cache,
   buildQuery,
   batchSize = BATCH_SIZE,
 }: {
   ids: TId[];
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
   buildQuery: (
     values: TId[],
     key: number
@@ -43,7 +43,8 @@ export default async function batchLoad<
       try {
         return (await executeWithCache(
           sparqlClient,
-          query
+          query,
+          cache
         )) as unknown as TReturn[];
       } catch (e) {
         console.log(

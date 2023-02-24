@@ -11,13 +11,13 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { flag } from "@/configurator/components/flag";
 import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isTemporalDimension } from "@/domain/data";
+import { flag } from "@/flags/flag";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 

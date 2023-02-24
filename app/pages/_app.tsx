@@ -10,7 +10,8 @@ import { useEffect } from "react";
 
 import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
-import GqlDebug from "@/gql-flamegraph/devtool";
+import { flag } from "@/flags/flag";
+import DebugPanel from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
@@ -20,11 +21,6 @@ import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import { useNProgress } from "@/utils/use-nprogress";
-
-const pageLaunchedWithDebug =
-  typeof window !== "undefined" &&
-  (process.env.NODE_ENV === "development" ||
-    new URL(window.location.toString()).searchParams?.get("debug") === "true");
 
 export default function App({
   Component,
@@ -64,7 +60,7 @@ export default function App({
 
   const shouldShowDebug =
     typeof window !== "undefined" &&
-    (process.env.NODE_ENV === "development" || pageLaunchedWithDebug);
+    (process.env.NODE_ENV === "development" || flag("debug"));
 
   return (
     <>
@@ -91,7 +87,7 @@ export default function App({
               <ThemeProvider theme={federalTheme.theme}>
                 <CssBaseline />
                 <Flashes />
-                {shouldShowDebug ? <GqlDebug /> : null}
+                {shouldShowDebug ? <DebugPanel /> : null}
                 <ContentMDXProvider>
                   <AsyncLocalizationProvider locale={locale}>
                     <Component {...pageProps} />
