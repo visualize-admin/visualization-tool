@@ -21,6 +21,7 @@ import {
   Observation,
   ObservationValue,
   parseObservationValue,
+  parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -374,10 +375,12 @@ export const getCubeDimensionValuesWithMetadata = async ({
       literals.map(({ iri, alternateName, identifier, position, color }) => [
         iri.value,
         {
-          alternateName: alternateName?.value,
-          identifier: identifier?.value,
-          position: position?.value,
-          color: color?.value,
+          alternateName: alternateName
+            ? parseRDFLiteral(alternateName)
+            : undefined,
+          identifier: identifier ? parseRDFLiteral(identifier) : undefined,
+          position: position ? parseRDFLiteral(position) : undefined,
+          color: color ? parseRDFLiteral(color) : undefined,
         },
       ])
     );
