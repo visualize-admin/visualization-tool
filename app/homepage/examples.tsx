@@ -52,7 +52,6 @@ export const Examples = ({
             },
           }}
           chartConfig={{
-            dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
             version: "1.2.1",
             fields: {
               x: {

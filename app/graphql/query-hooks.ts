@@ -1693,9 +1693,6 @@ export function useDataCubeMetadataWithComponentValuesQuery(
     "query"
   > = {}
 ) {
-  if (options.pause === false && !options.variables.iri) {
-    debugger;
-  }
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({
     query: DataCubeMetadataWithComponentValuesDocument,
     ...options,
