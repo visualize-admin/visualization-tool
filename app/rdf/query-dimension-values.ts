@@ -17,7 +17,7 @@ import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
-import { makeExecuteWithCache } from "./query-cache";
+import { executeWithCache } from "./query-cache";
 
 interface DimensionValue {
   value: Literal | NamedNode<string>;
@@ -211,10 +211,6 @@ const parseMinMax = (result: MinMaxResult) => {
   return [min, max] as const;
 };
 
-const executeMinMaxQueryWithCache = makeExecuteWithCache({
-  parse: parseMinMax,
-});
-
 export const loadMinMaxDimensionValues = async ({
   datasetIri,
   dimensionIri,
@@ -238,10 +234,11 @@ export const loadMinMaxDimensionValues = async ({
   `;
 
   try {
-    const result = await executeMinMaxQueryWithCache(
+    const result = await executeWithCache(
       sparqlClient,
       query,
-      cache
+      cache,
+      parseMinMax
     );
     return result;
   } catch {

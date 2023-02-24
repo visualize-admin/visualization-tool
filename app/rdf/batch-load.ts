@@ -7,13 +7,9 @@ import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { makeExecuteWithCache } from "./query-cache";
+import { executeWithCache } from "./query-cache";
 
 const BATCH_SIZE = 500;
-
-const executeWithCache = makeExecuteWithCache({
-  parse: (t) => t,
-});
 
 export default async function batchLoad<
   TReturn extends unknown,
@@ -44,7 +40,8 @@ export default async function batchLoad<
         return (await executeWithCache(
           sparqlClient,
           query,
-          cache
+          cache,
+          (t) => t
         )) as unknown as TReturn[];
       } catch (e) {
         console.log(
