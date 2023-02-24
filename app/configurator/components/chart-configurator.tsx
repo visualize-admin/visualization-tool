@@ -624,6 +624,17 @@ export const ChartConfigurator = ({
                 </Trans>
               </Typography>
             ) : null}
+            {filterDimensions.length === 0 ? (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: -4 }}
+              >
+                <Trans id="controls.section.data.filters.none">
+                  No filters
+                </Trans>
+              </Typography>
+            ) : null}
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
