@@ -4,7 +4,7 @@ import get from "lodash/get";
 import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { getFieldComponentIri } from "@/charts";
+import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
   EncodingFieldType,
@@ -552,7 +552,7 @@ const ChartFieldSorting = ({
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
 
-  const getSortingTypeLabel = (type: SortingType) => {
+  const getSortingTypeLabel = (type: SortingType): string => {
     switch (type) {
       case "byDimensionLabel":
         return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
@@ -565,7 +565,7 @@ const ChartFieldSorting = ({
       default:
         const _sanityCheck: never = type;
         console.warn(`Sorting type label is ${_sanityCheck}`);
-        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+        return getSortingTypeLabel(DEFAULT_SORTING["sortingType"]);
     }
   };
 
@@ -593,7 +593,7 @@ const ChartFieldSorting = ({
   const activeSortingType = get(
     state,
     ["chartConfig", "fields", field, "sorting", "sortingType"],
-    "byDimensionLabel"
+    DEFAULT_SORTING["sortingType"]
   );
 
   // FIXME: Remove this once it's properly encoded in chart-config-ui-options

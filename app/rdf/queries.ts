@@ -21,6 +21,7 @@ import {
   Observation,
   ObservationValue,
   parseObservationValue,
+  parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -374,10 +375,14 @@ export const getCubeDimensionValuesWithMetadata = async ({
       literals.map(({ iri, alternateName, identifier, position, color }) => [
         iri.value,
         {
-          alternateName: alternateName?.value,
-          identifier: identifier?.value,
-          position: position?.value,
-          color: color?.value,
+          alternateName: alternateName
+            ? parseRDFLiteral<string>(alternateName)
+            : undefined,
+          identifier: identifier
+            ? parseRDFLiteral<number>(identifier)
+            : undefined,
+          position: position ? parseRDFLiteral<number>(position) : undefined,
+          color: color ? parseRDFLiteral<string>(color) : undefined,
         },
       ])
     );
@@ -401,10 +406,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
         description: descriptionsLookup.get(iri.value),
-        position:
-          lookupValue?.position !== undefined
-            ? parseInt(lookupValue.position, 10)
-            : undefined,
+        position: lookupValue?.position,
         identifier: lookupValue?.identifier,
         color: lookupValue?.color,
         alternateName: lookupValue?.alternateName,

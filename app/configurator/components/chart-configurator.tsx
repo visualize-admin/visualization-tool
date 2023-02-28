@@ -119,7 +119,7 @@ const DataFilterSelectGeneric = ({
         onClick={onRemove}
         size="small"
       >
-        <Icon name="trash" width="16" height="16" />
+        <Icon name="trash" size="16" />
       </IconButton>
     </Box>
   );
@@ -621,6 +621,17 @@ export const ChartConfigurator = ({
                 <Trans id="controls.section.data.filters.possible-filters-error">
                   An error happened while fetching possible filters, please
                   retry later or reload the page.
+                </Trans>
+              </Typography>
+            ) : null}
+            {filterDimensions.length === 0 ? (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: -4 }}
+              >
+                <Trans id="controls.section.data.filters.none">
+                  No filters
                 </Trans>
               </Typography>
             ) : null}
