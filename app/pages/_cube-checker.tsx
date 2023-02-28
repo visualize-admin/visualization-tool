@@ -145,6 +145,15 @@ const checks: Check[] = [
     },
   },
   {
+    name: "Number of dimensions",
+    description: "Should have a number of dimensions",
+    run: async ({ cubeIri, loaders }) => {
+      const dimensions = await loaders.getCubeDimensions.load(cubeIri);
+      console.log(dimensions);
+      return { ok: true, message: `Has ${dimensions?.length} dimensions` };
+    },
+  },
+  {
     name: "Is published",
     description:
       "Should have a status (schema:creativeWorkStatus: [Published, Draft])",
