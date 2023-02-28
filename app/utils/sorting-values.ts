@@ -21,6 +21,19 @@ const maybeInt = (value?: string | number): number | string => {
   return maybeInt;
 };
 
+const uniqueMapBy = <T, K>(arr: T[], keyFn: (t: T) => K) => {
+  const res = new Map<K, T>();
+  for (const item of arr) {
+    const key = keyFn(item);
+    if (res.has(key)) {
+      console.log(`uniqueMapBy: duplicate detected ${key}, ignoring it`);
+    } else {
+      res.set(key, item);
+    }
+  }
+  return res;
+};
+
 export const makeDimensionValueSorters = (
   dimension:
     | NonNullable<
@@ -48,15 +61,16 @@ export const makeDimensionValueSorters = (
     return [];
   }
 
-  const values = useAbbreviations
-    ? dimension.values.map((d) => ({
-        ...d,
-        label: d.alternateName ?? d.label,
-      }))
+  const addAlternateName = (d: DimensionValue) => ({
+    ...d,
+    label: d.alternateName ?? d.label,
+  });
+
+  let values = useAbbreviations
+    ? dimension.values.map(addAlternateName)
     : dimension.values;
-  const valuesByLabel = new Map<string, DimensionValue>(
-    values.map((v) => [v.label, v])
-  );
+
+  const valuesByLabel = uniqueMapBy(values, (dv) => dv.label);
 
   const getLabel = (label?: string) => label;
   const getIdentifier = (label?: string) => {

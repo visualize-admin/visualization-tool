@@ -103,14 +103,12 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-
             <LegendColor
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-
             {interactiveFiltersConfig?.timeSlider.componentIri && (
               <TimeSlider
                 componentIri={interactiveFiltersConfig.timeSlider.componentIri}
@@ -140,14 +138,12 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-
             <LegendColor
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-
             {interactiveFiltersConfig?.timeSlider.componentIri && (
               <TimeSlider
                 componentIri={interactiveFiltersConfig.timeSlider.componentIri}
