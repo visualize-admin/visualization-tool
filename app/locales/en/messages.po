@@ -723,6 +723,10 @@ msgstr "Cube checker helps you understand if a cube has all the necessary attrib
 msgid "cube-checker.field-placeholder"
 msgstr "Cube IRI"
 
+#: app/pages/_cube-checker.tsx
+msgid "cube-checker.help"
+msgstr "More information here."
+
 #: app/components/data-source-menu.tsx
 msgid "data.source"
 msgstr "Data source"

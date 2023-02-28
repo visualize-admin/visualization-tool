@@ -5,6 +5,7 @@ import clownface, { AnyPointer } from "clownface";
 import DataLoader from "dataloader";
 import omit from "lodash/omit";
 import { GetServerSideProps, NextPage } from "next";
+import NextLink from "next/link";
 import rdf from "rdf-ext";
 import React from "react";
 import StreamClient from "sparql-http-client";
@@ -253,17 +254,28 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
     <>
       <ContentLayout>
         <Stack maxWidth={1024} mx="auto" mt={8} spacing={4}>
-          <Stack spacing={2}>
+          <Stack spacing={3}>
             <Typography variant="h1">
               <Trans id="cube-checker.cube-checker">Cube checker</Trans>
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              <Trans id="cube-checker.description">
-                Cube checker helps you understand if a cube has all the
-                necessary attributes and properties to be viewable in
-                visualize.admin.ch.
-              </Trans>
-            </Typography>
+            <div>
+              <Typography variant="body1" gutterBottom>
+                <Trans id="cube-checker.description">
+                  Cube checker helps you understand if a cube has all the
+                  necessary attributes and properties to be viewable in
+                  visualize.admin.ch.
+                </Trans>
+              </Typography>
+              <NextLink
+                href="/docs/charts/rdf-to-visualize#cube-checker"
+                passHref
+              >
+                <Link variant="body2">
+                  ℹ️{" "}
+                  <Trans id="cube-checker.help">More information here.</Trans>
+                </Link>
+              </NextLink>
+            </div>
             <form>
               <Stack spacing={1} alignItems="start">
                 <TextField
@@ -278,14 +290,21 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
                     }),
                   }}
                 />
-                <input
-                  type="hidden"
-                  name="dataSource"
-                  value={sourceToLabel(datasource)}
-                />
-                <Button type="submit" variant="contained" size="large">
-                  Check
-                </Button>
+                <div>
+                  <input
+                    type="hidden"
+                    name="dataSource"
+                    value={sourceToLabel(datasource)}
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    sx={{ mt: 4, display: "block" }}
+                  >
+                    Check
+                  </Button>
+                </div>
               </Stack>
             </form>
           </Stack>
