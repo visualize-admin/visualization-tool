@@ -70,7 +70,13 @@ export const makeDimensionValueSorters = (
     ? dimension.values.map(addAlternateName)
     : dimension.values;
 
-  const valuesByLabel = uniqueMapBy(values, (dv) => dv.label);
+  // Index values that have an identifier or a position
+  // Warning: if two values have the same label and have an identifier / position
+  // there could be problems as we could select the "wrong" value for the order
+  const valuesByLabel = uniqueMapBy(
+    values.filter((x) => x.identifier || x.position),
+    (dv) => dv.label
+  );
 
   const getLabel = (label?: string) => label;
   const getIdentifier = (label?: string) => {
