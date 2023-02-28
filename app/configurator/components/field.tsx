@@ -745,11 +745,7 @@ export const ChartFieldField = ({
       key={`select-${field}-dimension`}
       id={field}
       label={
-        <FieldLabel
-          isOptional={optional || false}
-          isFetching={fetching}
-          label={label}
-        />
+        <FieldLabel isOptional={optional} isFetching={fetching} label={label} />
       }
       disabled={disabled || fetching}
       options={
