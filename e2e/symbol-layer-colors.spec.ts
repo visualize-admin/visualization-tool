@@ -36,11 +36,11 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   expect(await legendItems.count()).toBe(6);
   const legendTexts = await legendItems.allTextContents();
   expect(legendTexts).toEqual([
-    "Alps",
+    "Switzerland",
     "Jura",
     "Plateau",
     "Pre-Alps",
+    "Alps",
     "Southern Alps",
-    "Switzerland",
   ]);
 });
