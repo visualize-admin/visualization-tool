@@ -130,3 +130,25 @@ test("Segment sorting with hierarchy", async ({
     "Jura",
   ]);
 });
+
+test("Map legend categorical values sorting", async ({
+  actions,
+  selectors,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    "Int"
+  );
+  await actions.editor.changeChartType("Map");
+  await selectors.chart.loaded();
+
+  const legendItems = await selectors.chart.colorLegendItems();
+
+  expect(await legendItems.allInnerTexts()).toEqual([
+    "low danger",
+    "moderate danger",
+    "considerable danger",
+    "high danger",
+    "very high danger",
+  ]);
+});
