@@ -152,3 +152,41 @@ test("Map legend categorical values sorting", async ({
     "very high danger",
   ]);
 });
+
+const uniqueWithoutSorting = <T>(arr: T[]) => {
+  const res: T[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const prev = i > 0 ? arr[i - 1] : undefined;
+    const cur = arr[i];
+    if (prev !== cur) {
+      res.push(cur);
+    }
+  }
+  return res;
+};
+
+test("Map legend preview table sorting", async ({
+  actions,
+  selectors,
+  page,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    "Int"
+  );
+  await actions.editor.changeChartType("Map");
+  await selectors.chart.loaded();
+
+  await actions.chart.switchToTableView();
+  await actions.datasetPreview.sortBy("Danger ratings");
+  const cells = await selectors.datasetPreview.columnCells("Danger ratings");
+
+  const texts = await cells.allInnerTexts();
+  expect(uniqueWithoutSorting(texts)).toEqual([
+    "low danger",
+    "moderate danger",
+    "considerable danger",
+    "high danger",
+    "very high danger",
+  ]);
+});

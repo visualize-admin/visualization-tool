@@ -29,6 +29,19 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
           .first()
           .waitFor({ timeout: 20 * 1000 }),
       cells: () => page.locator("table td"),
+      headerCell: async (columnName: string) => {
+        return await page.locator(
+          `th[role=columnheader]:text("${columnName}")`
+        );
+      },
+      columnCells: async (columnName: string) => {
+        const headerCells = page.locator("th[role=columnheader]");
+        const headerTexts = await headerCells.allInnerTexts();
+        const columnIndex = headerTexts.findIndex((t) => t === columnName);
+        return page
+          .locator("tbody")
+          .locator(`td:nth-child(${columnIndex + 1})`);
+      },
     },
     panels: {
       left: () => screen.getByTestId("panel-left"),
@@ -81,6 +94,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
           await page.locator('[data-map-loaded="true"]');
           await sleep(500); // Waits for tile to fade in
         }
+      },
+      tablePreviewSwitch: async () => {
+        return await screen.findByText("Switch to table view");
       },
     },
   };
