@@ -225,16 +225,20 @@ export const dataCubeDimensionByIri: NonNullable<
   DataCubeResolvers["dimensionByIri"]
 > = async ({ cube, locale }, { iri }, { setup }, info) => {
   const { sparqlClient, cache } = await setup(info);
-  const dimension = (
-    await getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      dimensionIris: [iri],
-      cache,
-    })
-  ).find((d) => iri === d.data.iri);
+  const dimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    dimensionIris: [iri],
+    cache,
+  });
+  const dimension = dimensions.find((d) => iri === d.data.iri);
   if (!dimension) {
+    console.warn(
+      `Available dimensions: \n  ${dimensions
+        .map((d) => `${d.data.name}: ${d.dimension.path}`)
+        .join("\n  ")}`
+    );
     throw new Error(`Cannot find dimension ${iri}`);
   }
   return dimension ?? null;
