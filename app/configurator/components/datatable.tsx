@@ -26,6 +26,7 @@ import {
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
+import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
 const DimensionLabel = ({
   dimension,
@@ -72,9 +73,16 @@ export const PreviewTable = ({
   const sortedObservations = useMemo(() => {
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
+      const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
       const convert = isNumericalMeasure(sortBy)
         ? (d: string) => +d
-        : (d: string) => d;
+        : (d: string) => {
+            const value = valuesIndex.get(d);
+            if (value?.position) {
+              return value.position;
+            }
+            return d;
+          };
 
       return [...observations].sort((a, b) =>
         compare(
