@@ -82,6 +82,7 @@ export const ChartMapVisualization = ({
         dimensionIri: symbolDimensionIri,
         locale,
       },
+      pause: !symbolDimensionIri || symbolDimensionIri === "",
     });
 
   const geoCoordinatesDimension =
@@ -90,15 +91,18 @@ export const ChartMapVisualization = ({
       ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
       : undefined;
 
-  const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
-    variables: {
-      dataCubeIri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      dimensionIri: areaDimensionIri || symbolDimensionIri,
-      locale,
-    },
-  });
+  const geoShapesIri = areaDimensionIri || symbolDimensionIri;
+  const [{ data: fetchedGeoShapes, error: geoShapesError }] =
+    useGeoShapesByDimensionIriQuery({
+      variables: {
+        dataCubeIri: dataSetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        dimensionIri: geoShapesIri,
+        locale,
+      },
+      pause: !geoShapesIri || geoShapesIri === "",
+    });
 
   const geoShapesDimension =
     fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
@@ -216,7 +220,7 @@ export const ChartMapVisualization = ({
       ready
         ? observationsQueryResp["data"]
         : undefined,
-    error: observationsQueryError || geoCoordinatesError,
+    error: observationsQueryError || geoCoordinatesError || geoShapesError,
   };
   return (
     <ChartLoadingWrapper

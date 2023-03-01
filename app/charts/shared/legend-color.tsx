@@ -1,6 +1,7 @@
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import orderBy from "lodash/orderBy";
 import React, { memo, useMemo } from "react";
 
 import {
@@ -25,6 +26,7 @@ import {
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { interlace } from "@/utils/interlace";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import { rgbArrayToHex } from "./colors";
@@ -228,9 +230,18 @@ export const MapLegendColor = memo(function LegendColor({
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
 }) {
-  const sortedValues = component.values.sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
+  const sortedValues = useMemo(() => {
+    const sorters = makeDimensionValueSorters(component, {
+      sorting: {
+        sortingType: "byAuto",
+        sortingOrder: "asc",
+      },
+    });
+    return orderBy(
+      component.values,
+      sorters.map((s) => (dv) => s(dv.label))
+    ) as typeof component.values;
+  }, [component]);
   const getLabel = useAbbreviations
     ? (d: string) => {
         const v = component.values.find((v) => v.value === d);
