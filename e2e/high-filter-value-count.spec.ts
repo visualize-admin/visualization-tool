@@ -1,10 +1,10 @@
 import { test } from "./common";
 
+/**
+ * @todo Works locally but not on CI
+ */
 const testFn = process.env.CI ? test.skip : test;
 
-/**
- * Works locally but not on CI
- */
 testFn(
   "should be able to load a map with a dimension with a large number of values",
   async ({ page, selectors, actions }) => {
