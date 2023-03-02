@@ -20,8 +20,7 @@ import {
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
-  useDimensionHierarchyQuery,
+  useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
@@ -108,9 +107,10 @@ const useDimension = ({
   locale: string;
   dimensionIri?: string;
 }) => {
-  const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: cubeMetadata }] = useDimensionValuesQuery({
     variables: {
-      iri: dataset,
+      dataCubeIri: dataset,
+      dimensionIri: dimensionIri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale: locale,
@@ -118,10 +118,8 @@ const useDimension = ({
     pause: !dimensionIri,
   });
   return useMemo(() => {
-    return cubeMetadata?.dataCubeByIri?.dimensions.find(
-      (d) => d.iri === dimensionIri
-    );
-  }, [cubeMetadata?.dataCubeByIri?.dimensions, dimensionIri]);
+    return cubeMetadata?.dataCubeByIri?.dimensionByIri;
+  }, [cubeMetadata?.dataCubeByIri?.dimensionByIri]);
 };
 
 const emptyObj = {};
@@ -168,9 +166,9 @@ const useLegendGroups = ({
     dimensionIri: segmentField?.componentIri,
   });
 
-  const [hierarchyResp] = useDimensionHierarchyQuery({
+  const [hierarchyResp] = useDimensionValuesQuery({
     variables: {
-      cubeIri: dataset,
+      dataCubeIri: dataset,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
