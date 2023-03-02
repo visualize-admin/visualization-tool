@@ -5,6 +5,13 @@ import { ReactNode } from "react";
 import { ContentLayout, StaticContentLayout } from "@/components/layout";
 import { Intro, Tutorial, Examples, Contribute } from "@/homepage";
 
+const castContentId = (contentId: unknown) => {
+  if (typeof contentId === "string") {
+    return contentId;
+  }
+  return undefined;
+};
+
 const Wrapper = ({
   contentId,
   children,
@@ -12,13 +19,12 @@ const Wrapper = ({
   contentId: unknown;
   children: ReactNode;
 }) => {
-  if (typeof contentId !== "string") {
-    return <StaticContentLayout>{children}</StaticContentLayout>;
-  }
   return contentId === "home" ? (
     <ContentLayout contentId={contentId}>{children}</ContentLayout>
   ) : (
-    <StaticContentLayout>{children}</StaticContentLayout>
+    <StaticContentLayout contentId={castContentId(contentId)}>
+      {children}
+    </StaticContentLayout>
   );
 };
 

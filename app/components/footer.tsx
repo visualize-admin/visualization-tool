@@ -95,20 +95,13 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           alignItems: ["flex-start", "center"],
         }}
       >
-        <Flex sx={{ flexDirection: ["column", "row"] }} pb={[4, 0]}>
-          {/* <FooterLink>
-            <Trans id="footer.help">Help</Trans>
-          </FooterLink>
-          <FooterLink>
-            <Trans id="footer.contact">Contact</Trans>
-          </FooterLink> */}
-        </Flex>
-
         <Box
           sx={{
             display: ["block", "none"],
 
             width: ["100%", "auto"],
+            mx: [2, 0],
+            mb: [4],
           }}
         >
           <Logo />
@@ -117,8 +110,10 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
         <Flex
           sx={{
             justifyContent: "flex-end",
-            alignItems: "center",
+            alignItems: ["flex-start", "center"],
             width: ["100%", "auto"],
+            flexDirection: ["column", "row"],
+            mt: [4, 0],
           }}
         >
           <Typography
@@ -127,6 +122,7 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
               px: [4, 3],
               py: [3, 4],
               color: "secondary.main",
+              order: [7, 0],
             }}
           >
             <Version />
@@ -181,8 +177,9 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
   bottomLink: {
     fontSize: "0.875rem",
 
-    borderLeftStyle: "solid",
-    borderLeftColor: theme.palette.grey[500],
+    borderTopStyle: "solid",
+    borderTopColor: theme.palette.grey[500],
+
     textDecoration: "none",
     cursor: "pointer",
     "&:hover": {
@@ -236,7 +233,8 @@ const FooterLinkBottom = forwardRef<
       sx={{
         px: [4, 3],
         py: [3, 4],
-        borderLeftWidth: ["1px", 0],
+        borderTopWidth: ["1px", 0],
+        width: ["100%", "auto"],
       }}
     >
       {children}

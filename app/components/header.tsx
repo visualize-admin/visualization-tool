@@ -94,8 +94,10 @@ const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
 
 export const Header = ({
   pageType = "app",
+  contentId,
 }: {
   pageType?: "content" | "app";
+  contentId: string | undefined;
 }) => {
   const router = useRouter();
   const isConfiguring = router.pathname === "/create/[chartId]";
@@ -113,7 +115,7 @@ export const Header = ({
         }}
       >
         <Logo />
-        <MetadataMenu />
+        <MetadataMenu contentId={contentId} />
       </Flex>
       <HeaderBorder />
     </Box>
