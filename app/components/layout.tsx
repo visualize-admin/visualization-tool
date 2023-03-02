@@ -51,7 +51,13 @@ export const ContentLayout = ({
   );
 };
 
-export const StaticContentLayout = ({ children }: { children?: ReactNode }) => {
+export const StaticContentLayout = ({
+  children,
+  contentId,
+}: {
+  children?: ReactNode;
+  contentId: string | undefined;
+}) => {
   return (
     <Flex
       sx={{
@@ -60,7 +66,7 @@ export const StaticContentLayout = ({ children }: { children?: ReactNode }) => {
         backgroundColor: "grey.100",
       }}
     >
-      <Header pageType="content" />
+      <Header pageType="content" contentId={contentId} />
       <Flex
         component="main"
         role="main"
@@ -69,8 +75,13 @@ export const StaticContentLayout = ({ children }: { children?: ReactNode }) => {
           flex: 1,
           width: "100%",
           maxWidth: 1024,
+          my: [4, 6],
           mx: [0, 0, "auto"],
           px: 4,
+
+          "& h2": {
+            mb: 1,
+          },
         }}
       >
         {children}
