@@ -169,6 +169,12 @@ const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
   );
 };
 
+const getOperationQueryName = (operation: Operation) => {
+  return operation.query.definitions.find(
+    (d): d is OperationDefinitionNode => d.kind === "OperationDefinition"
+  )?.name?.value;
+};
+
 /**
  * Collapsible according showing for each request that has been made
  * a accordion with name
@@ -208,13 +214,7 @@ const AccordionOperation = ({
           }}
         >
           <Typography variant="body2" sx={{ mb: 0 }}>
-            {operation.key}{" "}
-            {
-              operation.query.definitions.find(
-                (d): d is OperationDefinitionNode =>
-                  d.kind === "OperationDefinition"
-              )?.name?.value
-            }
+            {operation.key} {getOperationQueryName(operation)}
             <Box component="span" sx={{ ml: 2 }}>
               {result ? "✅" : "🔄"}
             </Box>
