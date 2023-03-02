@@ -7,7 +7,7 @@ import { Header, HeaderProgressProvider } from "@/components/header";
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
     <HeaderProgressProvider>
-      <Header pageType="app" />
+      <Header pageType="app" contentId={undefined} />
       <Flex
         component="main"
         role="main"
@@ -34,7 +34,7 @@ export const ContentLayout = ({
         backgroundColor: contentId === "home" ? "grey.100" : "muted.main",
       }}
     >
-      <Header pageType="content" />
+      <Header pageType="content" contentId={contentId} />
       <Flex
         component="main"
         role="main"

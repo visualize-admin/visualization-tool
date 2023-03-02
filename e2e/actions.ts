@@ -97,6 +97,11 @@ export const createActions = ({
   drawer: {
     close: async () => await screen.locator('text="Back to main"').click(),
   },
+  common: {
+    switchLang: async (lang: "de" | "fr" | "en" | "it") => {
+      await page.locator(`a[hreflang="${lang}"]`).click();
+    },
+  },
 });
 
 export type Actions = ReturnType<typeof createActions>;
