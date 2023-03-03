@@ -98,3 +98,34 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 
   expect(legendItems).toEqual(["CH4", "CO2", "N2O"]);
 });
+
+test("localized abbreviations", async ({ actions, selectors }) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
+    "Int"
+  );
+
+  await actions.editor.changeChartType("Map");
+  await actions.editor.selectActiveField("Warning region");
+
+  const checkbox = await selectors.edition.useAbbreviationsCheckbox();
+
+  await checkbox.click();
+
+  // Wait for the data to load.
+  await selectors.chart.loaded();
+  await selectors.edition.filtersLoaded();
+  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+
+  const legendItems = await (
+    await selectors.chart.colorLegendItems()
+  ).allInnerTexts();
+
+  expect(legendItems).toEqual([
+    "No measures",
+    "Warning",
+    "Conditional ban on fires",
+    "Fire ban in the forest",
+    "Ban on fires",
+  ]);
+});

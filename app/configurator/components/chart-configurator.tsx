@@ -18,6 +18,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import omitBy from "lodash/omitBy";
 import sortBy from "lodash/sortBy";
 import { useEffect, useRef, useState, useMemo } from "react";
 import {
@@ -283,27 +284,30 @@ const useFilterReorder = ({
     return getFiltersByMappingStatus(state.chartConfig);
   }, [state.chartConfig]);
 
-  const variables = useMemo(
-    () => ({
+  const variables = useMemo(() => {
+    const hasUnmappedFilters = Object.keys(unmappedFilters).length > 0;
+    const vars = {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: unmappedFilters,
+      filters: hasUnmappedFilters ? unmappedFilters : undefined,
       // This is important for urql not to think that filters
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      filterKeys: Object.keys(unmappedFilters).join(", "),
-    }),
-    [
-      state.dataSet,
-      state.dataSource.type,
-      state.dataSource.url,
-      locale,
-      unmappedFilters,
-    ]
-  );
+      filterKeys: hasUnmappedFilters
+        ? Object.keys(unmappedFilters).join(", ")
+        : undefined,
+    };
+    return omitBy(vars, (x) => x === undefined) as typeof vars;
+  }, [
+    state.dataSet,
+    state.dataSource.type,
+    state.dataSource.url,
+    locale,
+    unmappedFilters,
+  ]);
 
   const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({

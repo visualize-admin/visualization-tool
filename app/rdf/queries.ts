@@ -355,14 +355,24 @@ export const getCubeDimensionValuesWithMetadata = async ({
         predicates: {
           identifier:
             scaleType === "Ordinal" || scaleType === "Nominal"
-              ? schema.identifier
+              ? {
+                  predicate: schema.identifier,
+                }
               : null,
-          position: scaleType === "Ordinal" ? schema.position : null,
+          position:
+            scaleType === "Ordinal"
+              ? {
+                  predicate: schema.position,
+                }
+              : null,
           color:
             scaleType === "Nominal" || scaleType === "Ordinal"
-              ? schema.color
+              ? { predicate: schema.color }
               : null,
-          alternateName: schema.alternateName,
+          alternateName: {
+            predicate: schema.alternateName,
+            locale: locale,
+          },
         },
         cache,
       }),

@@ -30,7 +30,6 @@ import {
   HierarchyValue,
   TemporalDimension,
   TimeUnit,
-  useDimensionHierarchyQuery,
   useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -154,21 +153,7 @@ const DataFilter = ({
     },
   });
 
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
-
-  const [hierarchyResp] = useDimensionHierarchyQuery({
-    variables: {
-      cubeIri: dataSetIri,
-      dimensionIri: dimension?.iri!,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale: locale,
-    },
-    pause: !dimension,
-  });
-
-  const hierarchy =
-    hierarchyResp.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
+  const hierarchy = data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
   const setDataFilter = (
     e: SelectChangeEvent<unknown> | { target: { value: string } }

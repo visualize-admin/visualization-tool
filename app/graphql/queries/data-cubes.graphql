@@ -216,6 +216,7 @@ query DimensionValues(
       sourceUrl: $sourceUrl
     ) {
       ...dimensionMetadata
+      ...hierarchyMetadata
     }
   }
 }
