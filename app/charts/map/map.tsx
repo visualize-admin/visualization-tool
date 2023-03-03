@@ -123,6 +123,7 @@ export const MapComponent = () => {
         center: [longitude, latitude] as LngLatLike,
         zoom,
         duration: RESET_DURATION,
+        essential: true,
       };
       mapNodeRef.current?.flyTo(newViewState);
     }
@@ -139,6 +140,7 @@ export const MapComponent = () => {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
       duration: FLY_TO_DURATION,
+      essential: true,
     };
     mapNodeRef.current?.flyTo(newViewState);
   });
@@ -148,6 +150,7 @@ export const MapComponent = () => {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
       duration: FLY_TO_DURATION,
+      essential: true,
     };
     mapNodeRef.current?.flyTo(newViewState);
   });
