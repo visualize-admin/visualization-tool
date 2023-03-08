@@ -5,7 +5,6 @@ import clownface, { AnyPointer } from "clownface";
 import DataLoader from "dataloader";
 import omit from "lodash/omit";
 import { GetServerSideProps, NextPage } from "next";
-import NextLink from "next/link";
 import rdf from "rdf-ext";
 import React from "react";
 import StreamClient from "sparql-http-client";
@@ -275,15 +274,13 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
                   visualize.admin.ch.
                 </Trans>
               </Typography>
-              <NextLink
+
+              <Link
+                variant="body2"
                 href="/docs/charts/rdf-to-visualize#cube-checker"
-                passHref
               >
-                <Link variant="body2">
-                  ℹ️{" "}
-                  <Trans id="cube-checker.help">More information here.</Trans>
-                </Link>
-              </NextLink>
+                ℹ️ <Trans id="cube-checker.help">More information here.</Trans>
+              </Link>
             </div>
             <form>
               <Stack spacing={1} alignItems="start">
