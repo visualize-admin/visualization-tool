@@ -13,6 +13,12 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
+import {
+  Feature,
+  FeatureCollection,
+  GeoJsonProperties,
+  Geometry,
+} from "geojson";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import { ReactNode, useMemo } from "react";
@@ -426,6 +432,19 @@ const useLayerState = ({
   };
 };
 
+const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
+  fc: TFeatureCollection | undefined,
+  predicate: (feature: Feature<Geometry, GeoJsonProperties>) => boolean
+) => {
+  if (!fc) {
+    return fc;
+  }
+  return {
+    ...fc,
+    features: fc.features.filter(predicate),
+  };
+};
+
 const useMapState = (
   chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
     features: GeoData;
@@ -528,10 +547,13 @@ const useMapState = (
   const featuresBBox = useMemo(() => {
     return getBBox(
       areaLayer?.componentIri !== undefined
-        ? features.areaLayer?.shapes
+        ? filterFeatureCollection(
+            features.areaLayer?.shapes,
+            (f) => f?.properties?.observation !== undefined
+          )
         : undefined,
       symbolLayer?.componentIri !== undefined
-        ? features.symbolLayer?.points
+        ? features.symbolLayer?.points.filter((p) => p?.properties?.observation !== undefined)
         : undefined
     );
   }, [
