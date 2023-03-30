@@ -30,7 +30,7 @@ export const makeDimensionValueSorters = (
       >["dimensions"][number]
     | undefined,
   options: {
-    dimensionFilter: FilterValue | undefined;
+    dimensionFilter?: FilterValue;
     sorting?:
       | NonNullable<SortingField["sorting"]>
       | {
