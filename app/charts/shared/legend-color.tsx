@@ -15,6 +15,7 @@ import {
   DataSource,
   GenericSegmentField,
   isSegmentInConfig,
+  MapConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -223,23 +224,27 @@ export const MapLegendColor = memo(function LegendColor({
   component,
   getColor,
   useAbbreviations,
+  chartConfig,
 }: {
   component: DimensionMetadataFragment;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
+  chartConfig: MapConfig;
 }) {
+  const componentFilter = chartConfig.filters[component.iri];
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component, {
       sorting: {
         sortingType: "byAuto",
         sortingOrder: "asc",
       },
+      dimensionFilter: componentFilter,
     });
     return orderBy(
       component.values,
       sorters.map((s) => (dv) => s(dv.label))
     ) as typeof component.values;
-  }, [component]);
+  }, [component, componentFilter]);
   const getLabel = useAbbreviations
     ? (d: string) => {
         const v = component.values.find((v) => v.value === d);

@@ -203,6 +203,9 @@ const useAreasState = (
   const segmentSortingType = segmentSorting?.sortingType;
   const segmentSortingOrder = segmentSorting?.sortingOrder;
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const totalValueBySegment = Object.fromEntries([
       ...rollup(
@@ -215,10 +218,12 @@ const useAreasState = (
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
     );
+
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting: segmentSorting,
       sumsBySegment: totalValueBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(
@@ -230,6 +235,7 @@ const useAreasState = (
     plottableSortedData,
     segmentDimension,
     segmentSorting,
+    segmentFilter,
     getY,
     getSegment,
     fields.segment?.useAbbreviations,

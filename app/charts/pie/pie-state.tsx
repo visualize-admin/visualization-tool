@@ -95,6 +95,9 @@ const usePieState = (
   });
 
   // Map ordered segments to colors
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension.iri]
+    : undefined;
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
@@ -109,6 +112,7 @@ const usePieState = (
       sorting: sorting,
       measureBySegment,
       useAbbreviations: fields.segment.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     const segments = orderBy(

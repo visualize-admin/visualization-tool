@@ -197,12 +197,16 @@ const useLinesState = (
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
     return orderBy(
       uniqueSegments,
@@ -215,6 +219,7 @@ const useLinesState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     plottableSortedData,
+    segmentFilter,
   ]);
 
   // Map ordered segments to colors

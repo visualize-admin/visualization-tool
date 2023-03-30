@@ -219,6 +219,9 @@ const useColumnsStackedState = (
     [getSegment, getY, plottableSortedData]
   );
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
@@ -229,6 +232,7 @@ const useColumnsStackedState = (
       sorting,
       sumsBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
@@ -238,6 +242,7 @@ const useColumnsStackedState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     sumsBySegment,
+    segmentFilter,
     getSegment,
   ]);
 

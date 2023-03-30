@@ -181,11 +181,15 @@ const useColumnsState = (
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
         useAbbreviations: fields.x.useAbbreviations,
+        dimensionFilter: xDimension?.iri
+          ? chartConfig.filters[xDimension?.iri]
+          : undefined,
       });
+      const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
       const bandDomain = orderBy(
         [...new Set(scalesData.map(getX))],
         sorters,
-        getSortingOrders(sorters, fields.x.sorting)
+        sortingOrders
       );
       const xScale = scaleBand()
         .domain(bandDomain)
@@ -413,6 +417,7 @@ export const ColumnChart = ({
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
+  chartConfig: ChartConfig;
 }) => {
   return (
     <Observer>

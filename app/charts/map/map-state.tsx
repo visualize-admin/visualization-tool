@@ -554,7 +554,9 @@ const useMapState = (
           )
         : undefined,
       symbolLayer?.componentIri !== undefined
-        ? features.symbolLayer?.points.filter((p) => p?.properties?.observation !== undefined)
+        ? features.symbolLayer?.points.filter(
+            (p) => p?.properties?.observation !== undefined
+          )
         : undefined
     );
   }, [

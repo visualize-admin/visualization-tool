@@ -183,6 +183,9 @@ const useGroupedColumnsState = (
     ]);
   }, [plottableSortedData, getY, getSegment]);
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
@@ -193,6 +196,7 @@ const useGroupedColumnsState = (
       sorting,
       sumsBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
@@ -202,6 +206,7 @@ const useGroupedColumnsState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     sumsBySegment,
+    segmentFilter,
     getSegment,
   ]);
 

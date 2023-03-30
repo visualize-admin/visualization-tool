@@ -22,6 +22,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useWidth } from "@/charts/shared/use-width";
 import Flex from "@/components/flex";
+import { MapConfig } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -71,7 +72,7 @@ const makeAxis = (
     .attr("text-anchor", "start");
 };
 
-export const MapLegend = () => {
+export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
     areaLayer &&
@@ -196,6 +197,7 @@ export const MapLegend = () => {
 
       {areaLayer?.colors.type === "categorical" && (
         <MapLegendColor
+          chartConfig={chartConfig}
           component={areaLayer.colors.component}
           getColor={areaLayer.colors.getColor}
           useAbbreviations={areaLayer.colors.useAbbreviations}
@@ -206,6 +208,7 @@ export const MapLegend = () => {
         symbolLayer.colors.component.iri !==
           areaLayer?.colors.component.iri && (
           <MapLegendColor
+            chartConfig={chartConfig}
             component={symbolLayer.colors.component}
             getColor={symbolLayer.colors.getColor}
             useAbbreviations={symbolLayer.colors.useAbbreviations}

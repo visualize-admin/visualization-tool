@@ -1,4 +1,4 @@
-import { SortingField } from "@/configurator";
+import { FilterValue, SortingField } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
 
 import { DataCubeObservationsQuery } from "../graphql/query-hooks";
@@ -30,6 +30,7 @@ export const makeDimensionValueSorters = (
       >["dimensions"][number]
     | undefined,
   options: {
+    dimensionFilter: FilterValue | undefined;
     sorting?:
       | NonNullable<SortingField["sorting"]>
       | {
@@ -40,10 +41,17 @@ export const makeDimensionValueSorters = (
     sumsBySegment?: Record<string, number | null>;
     measureBySegment?: Record<string, number | null>;
     useAbbreviations?: boolean;
-  } = {}
+  } = {
+    dimensionFilter: undefined,
+  }
 ): ((label: string) => string | undefined | number)[] => {
-  const { sorting, sumsBySegment, measureBySegment, useAbbreviations } =
-    options;
+  const {
+    sorting,
+    sumsBySegment,
+    measureBySegment,
+    useAbbreviations,
+    dimensionFilter,
+  } = options;
   const sortingType = sorting?.sortingType;
 
   if (!dimension) {
@@ -59,6 +67,10 @@ export const makeDimensionValueSorters = (
     ? dimension.values.map(addAlternateName)
     : dimension.values;
 
+  if (dimensionFilter?.type === "multi") {
+    const filterValues = dimensionFilter.values;
+    values = values.filter((dv) => filterValues[dv.value]);
+  }
   // Index values that have an identifier or a position
   // Warning: if two values have the same label and have an identifier / position
   // there could be problems as we could select the "wrong" value for the order
