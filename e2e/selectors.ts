@@ -85,6 +85,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       ) => screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
+      legendTicks: async () => {},
       loaded: async (options: { timeout?: number } = {}) => {
         await page
           .locator(`[data-chart-loaded="true"]`)

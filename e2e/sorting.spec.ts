@@ -1,4 +1,6 @@
+import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect } from "./common";
+import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
 
 /**
  * - Creates a chart from the photovoltaik dataset
@@ -45,7 +47,7 @@ test("Segment sorting", async ({
     // Wait for chart to be loaded
     await selectors.chart.loaded();
     await selectors.edition.filtersLoaded();
-    await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+    await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
     const legendItems = await selectors.chart.colorLegendItems();
     const legendTexts = await legendItems.allInnerTexts();
@@ -189,4 +191,27 @@ test("Map legend preview table sorting", async ({
     "high danger",
     "very high danger",
   ]);
+});
+
+test("Sorting with values with same label as other values in the tree", async ({
+  actions,
+  selectors,
+  page,
+}) => {
+  const key = "sorting-hierarchy-values-same-label.spec";
+  const config = hierarchyTest13;
+  await loadChartInLocalStorage(page, key, config);
+  page.goto(`/en/create/${key}`);
+  await selectors.chart.loaded({ timeout: 30_000 });
+
+  const texts = await Promise.all(
+    await (
+      await page.locator('[data-testid="axis-width-band"] text').all()
+    ).map((loc) => {
+      return loc.innerHTML();
+    })
+  );
+
+  // Zürich has id 261 while Bern has id 351
+  expect(texts).toEqual(["Zürich", "Bern"]);
 });
