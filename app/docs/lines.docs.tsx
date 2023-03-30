@@ -9,7 +9,11 @@ import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { InteractiveFiltersConfig, SortingField } from "@/configurator";
+import {
+  InteractiveFiltersConfig,
+  LineConfig,
+  SortingField,
+} from "@/configurator";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -58,10 +62,9 @@ ${(
       <InteractiveFiltersProvider>
         <LineChart
           data={observations}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={{ interactiveFiltersConfig } as unknown as LineConfig}
           aspectRatio={0.4}
         >
           <ChartContainer>
