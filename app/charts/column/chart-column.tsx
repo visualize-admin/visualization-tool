@@ -151,7 +151,6 @@ export const ChartColumns = memo(
         ) : (
           <ColumnChart
             data={observations}
-            fields={fields}
             measures={measures}
             dimensions={dimensions}
             aspectRatio={0.4}
