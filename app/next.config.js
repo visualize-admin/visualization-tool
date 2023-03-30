@@ -1,4 +1,3 @@
-
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -63,7 +62,6 @@ module.exports = withPreconstruct(
           exclude: /node_modules/,
           loader: "graphql-tag/loader",
         });
-
         /* Enable source maps in production */
         if (!dev) {
           config.devtool = "source-map";
@@ -90,8 +88,6 @@ module.exports = withPreconstruct(
           ...config.resolve.alias,
           "mapbox-gl": "maplibre-gl",
         };
-        // For some reason these need to be ignored for serverless target
-        config.plugins.push(new IgnorePlugin(/^(pg-native|vue)$/));
 
         return config;
       },
