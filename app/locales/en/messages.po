@@ -892,8 +892,13 @@ msgstr "You can share this visualization by copying the URL or by embedding it o
 
 #: app/components/form.tsx
 #: app/components/hint.tsx
+#: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Loading data..."
+
+#: app/components/hint.tsx
+msgid "hint.loading.data.large.datasets"
+msgstr "May take more than 30 seconds for large datasets."
 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "hint.no.visualization.with.dataset"

@@ -892,8 +892,13 @@ msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem könne
 
 #: app/components/form.tsx
 #: app/components/hint.tsx
+#: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Lade Daten …"
+
+#: app/components/hint.tsx
+msgid "hint.loading.data.large.datasets"
+msgstr "Kann bei großen Datensätzen mehr als 30 Sekunden dauern."
 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "hint.no.visualization.with.dataset"
