@@ -39,7 +39,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { AreaFields } from "@/configurator";
+import { AreaConfig, AreaFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -80,20 +80,13 @@ export interface AreasState extends CommonChartState {
 const useAreasState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
-    fields: AreaFields;
     aspectRatio: number;
   }
 ): AreasState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const { fields, interactiveFiltersConfig } = chartConfig as AreaConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
@@ -418,25 +411,20 @@ const useAreasState = (
 
 const AreaChartProvider = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   aspectRatio: number;
-} & { fields: AreaFields }) => {
+}) => {
   const state = useAreasState({
     data,
-    fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -446,16 +434,12 @@ const AreaChartProvider = ({
 
 export const AreaChart = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   fields: AreaFields;
   aspectRatio: number;
@@ -465,10 +449,9 @@ export const AreaChart = ({
       <InteractionProvider>
         <AreaChartProvider
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

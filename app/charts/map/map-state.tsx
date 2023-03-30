@@ -45,7 +45,7 @@ import {
   CategoricalColorField,
   ColorScaleInterpolationType,
   FixedColorField,
-  MapFields,
+  MapConfig,
   MapSymbolLayer,
   NumericalColorField,
 } from "@/configurator/config-types";
@@ -448,13 +448,14 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
 const useMapState = (
   chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
     features: GeoData;
-    fields: MapFields;
+    chartConfig: MapConfig;
     baseLayer: BaseLayer;
   }
 ): MapState => {
   const width = useWidth();
-  const { data, features, fields, measures, dimensions, baseLayer } =
+  const { data, features, chartConfig, measures, dimensions, baseLayer } =
     chartProps;
+  const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
@@ -580,7 +581,7 @@ const useMapState = (
 const MapChartProvider = ({
   data,
   features,
-  fields,
+  chartConfig,
   measures,
   dimensions,
   baseLayer,
@@ -588,13 +589,13 @@ const MapChartProvider = ({
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   children: ReactNode;
-  fields: MapFields;
+  chartConfig: MapConfig;
   baseLayer: BaseLayer;
 }) => {
   const state = useMapState({
     data,
     features,
-    fields,
+    chartConfig,
     measures,
     dimensions,
     baseLayer,
@@ -607,14 +608,14 @@ const MapChartProvider = ({
 export const MapChart = ({
   data,
   features,
-  fields,
   measures,
+  chartConfig,
   dimensions,
   baseLayer,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
-  fields: MapFields;
+  chartConfig: MapConfig;
   baseLayer: BaseLayer;
   children: ReactNode;
 }) => {
@@ -624,7 +625,7 @@ export const MapChart = ({
         <MapChartProvider
           data={data}
           features={features}
-          fields={fields}
+          chartConfig={chartConfig}
           measures={measures}
           dimensions={dimensions}
           baseLayer={baseLayer}

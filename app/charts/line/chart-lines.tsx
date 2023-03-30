@@ -13,7 +13,6 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   DataSource,
-  InteractiveFiltersConfig,
   LineConfig,
   LineFields,
   QueryFilters,
@@ -64,21 +63,21 @@ export const ChartLines = memo(function ChartLines({
   dimensions,
   measures,
   fields,
-  interactiveFiltersConfig,
+  chartConfig,
 }: {
   observations: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
   fields: LineFields;
-  interactiveFiltersConfig: InteractiveFiltersConfig;
+  chartConfig: LineConfig;
 }) {
+  const { interactiveFiltersConfig } = chartConfig;
   return (
     <LineChart
       data={observations}
-      fields={fields}
       dimensions={dimensions}
       measures={measures}
-      interactiveFiltersConfig={interactiveFiltersConfig}
+      chartConfig={chartConfig}
       aspectRatio={0.4}
     >
       <ChartContainer>

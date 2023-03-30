@@ -12,9 +12,7 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   AreaConfig,
-  AreaFields,
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
 } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
@@ -62,22 +60,21 @@ export const ChartAreas = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    fields: AreaFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
+    chartConfig: AreaConfig;
   }) => {
+    const { fields, interactiveFiltersConfig } = chartConfig;
     return (
       <AreaChart
         data={observations}
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
+        chartConfig={chartConfig}
         aspectRatio={0.4}
       >
         <ChartContainer>

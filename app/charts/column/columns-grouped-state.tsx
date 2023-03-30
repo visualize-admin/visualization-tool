@@ -84,20 +84,15 @@ export interface GroupedColumnsState extends CommonChartState {
 const useGroupedColumnsState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
     fields: ColumnFields;
     aspectRatio: number;
   }
 ): GroupedColumnsState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, fields, dimensions, measures, chartConfig, aspectRatio } =
+    chartProps;
+  const { interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -464,13 +459,10 @@ const GroupedColumnChartProvider = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -480,7 +472,7 @@ const GroupedColumnChartProvider = ({
     fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -493,13 +485,10 @@ export const GroupedColumnChart = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -512,7 +501,7 @@ export const GroupedColumnChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

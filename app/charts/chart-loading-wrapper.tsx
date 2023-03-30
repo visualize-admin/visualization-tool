@@ -22,7 +22,7 @@ type ChartCommonProps<TChartConfig extends ChartConfig> = {
   observations: Observation[];
   measures: DimensionMetadataFragment[];
   dimensions: DimensionMetadataFragment[];
-  interactiveFiltersConfig: TChartConfig["interactiveFiltersConfig"];
+  chartConfig: TChartConfig;
 };
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
@@ -63,8 +63,7 @@ export const ChartLoadingWrapper = <
           observations: observations.data,
           dimensions: dimensions,
           measures: measures,
-          fields: chartConfig.fields,
-          interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
+          chartConfig: chartConfig,
           ...ComponentProps,
         } as ChartCommonProps<TChartConfig> & TOtherProps)}
         {fetching && <LoadingOverlay />}

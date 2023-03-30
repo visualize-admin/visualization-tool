@@ -40,7 +40,12 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import {
+  ChartConfig,
+  ColumnFields,
+  SortingOrder,
+  SortingType,
+} from "@/configurator";
 import {
   useErrorMeasure,
   useErrorRange,
@@ -90,20 +95,15 @@ export interface ColumnsState extends CommonChartState {
 const useColumnsState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+    "data" | "measures" | "dimensions" | "chartConfig"
   > & {
     fields: ColumnFields;
     aspectRatio: number;
   }
 ): ColumnsState => {
-  const {
-    data,
-    fields,
-    measures,
-    dimensions,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, fields, measures, dimensions, aspectRatio, chartConfig } =
+    chartProps;
+  const { interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -380,13 +380,10 @@ const ColumnChartProvider = ({
   fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+  chartConfig,
+}: Pick<ChartProps, "data" | "measures" | "dimensions" | "chartConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -396,8 +393,8 @@ const ColumnChartProvider = ({
     fields,
     measures,
     dimensions,
-    interactiveFiltersConfig,
     aspectRatio,
+    chartConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -409,13 +406,10 @@ export const ColumnChart = ({
   fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions" | "chartConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -428,8 +422,8 @@ export const ColumnChart = ({
           fields={fields}
           measures={measures}
           dimensions={dimensions}
-          interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
+          chartConfig={chartConfig}
         >
           {children}
         </ColumnChartProvider>

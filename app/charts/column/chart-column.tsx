@@ -21,9 +21,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import {
   ColumnConfig,
-  ColumnFields,
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
 } from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
@@ -73,15 +71,14 @@ export const ChartColumns = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    interactiveFiltersConfig: InteractiveFiltersConfig;
-    fields: ColumnFields;
+    chartConfig: ColumnConfig;
   }) => {
+    const { fields, interactiveFiltersConfig } = chartConfig;
     return (
       <>
         {/* FIXME: These checks should probably be handled somewhere else */}
@@ -91,8 +88,8 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>
@@ -123,8 +120,8 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>
@@ -157,8 +154,8 @@ export const ChartColumns = memo(
             fields={fields}
             measures={measures}
             dimensions={dimensions}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>
