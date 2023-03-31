@@ -82,14 +82,16 @@ test("Segment sorting", async ({
   }
 });
 
-test("Segment sorting with hierarchy", async ({
+// TODO Find correct cube
+// @see https://github.com/visualize-admin/visualization-tool/discussions/1007
+test.skip("Segment sorting with hierarchy", async ({
   actions,
   selectors,
   screen,
   within,
 }) => {
   await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1",
+    "https://environment.ld.admin.ch/foen/nfi/C-96/cube/1",
     "Int"
   );
   await actions.editor.selectActiveField("Color");
@@ -101,7 +103,7 @@ test("Segment sorting with hierarchy", async ({
     .getByText("None")
     .click();
 
-  await actions.mui.selectOption("Production region");
+  await actions.mui.selectOption("Region");
   await selectors.chart.loaded();
 
   await selectors.edition.filtersLoaded();
