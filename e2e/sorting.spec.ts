@@ -149,9 +149,7 @@ test("Map legend categorical values sorting", async ({
   expect(await legendItems.allInnerTexts()).toEqual([
     "low danger",
     "moderate danger",
-    "considerable danger",
     "high danger",
-    "very high danger",
   ]);
 });
 
@@ -187,9 +185,7 @@ test("Map legend preview table sorting", async ({
   expect(uniqueWithoutSorting(texts)).toEqual([
     "low danger",
     "moderate danger",
-    "considerable danger",
     "high danger",
-    "very high danger",
   ]);
 });
 
