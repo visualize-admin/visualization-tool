@@ -898,7 +898,7 @@ msgstr "Chargement des données..."
 
 #: app/components/hint.tsx
 msgid "hint.loading.data.large.datasets"
-msgstr "Peut prendre plus de 30 secondes pour les grands ensembles de données."
+msgstr "Cela peut prendre plus de 30 secondes pour les grands ensembles de données."
 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "hint.no.visualization.with.dataset"

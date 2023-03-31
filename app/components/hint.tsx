@@ -128,7 +128,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
         {variant === "long" && (
           <Typography>
             <Trans id="hint.loading.data.large.datasets">
-              May take more than 30 seconds for large datasets.
+              It may take more than 30 seconds for large datasets.
             </Trans>
           </Typography>
         )}
