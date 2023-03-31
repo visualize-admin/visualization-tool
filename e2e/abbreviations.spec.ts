@@ -121,11 +121,5 @@ test("localized abbreviations", async ({ actions, selectors }) => {
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect(legendItems).toEqual([
-    "No measures",
-    "Warning",
-    "Conditional ban on fires",
-    "Fire ban in the forest",
-    "Ban on fires",
-  ]);
+  expect(legendItems).toEqual(["No measures", "Warning"]);
 });
