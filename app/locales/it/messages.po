@@ -892,8 +892,13 @@ msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorpo
 
 #: app/components/form.tsx
 #: app/components/hint.tsx
+#: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."
+
+#: app/components/hint.tsx
+msgid "hint.loading.data.large.datasets"
+msgstr "Per i dataset di grandi dimensioni possono essere necessari più di 30 secondi."
 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "hint.no.visualization.with.dataset"

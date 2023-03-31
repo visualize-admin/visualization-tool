@@ -6,9 +6,12 @@ import React from "react";
 
 import { ChartPanelConfigurator } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
+import { HEADER_HEIGHT } from "@/components/header";
+import { Loading } from "@/components/hint";
 import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
+import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
@@ -25,8 +28,6 @@ import useEvent from "@/utils/use-event";
 
 import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
 import { isInteractiveFilterType } from "../interactive-filters/interactive-filters-configurator";
-
-import { ChartOptionsSelector } from "./chart-options-selector";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -183,16 +184,37 @@ const PublishStep = () => {
 };
 
 export const Configurator = () => {
+  const { pathname } = useRouter();
   // Local state, the dataset preview doesn't need to be persistent.
   // FIXME: for a11y, "updateDataSetPreviewIri" should also move focus to "Weiter" button (?)
-  const [state] = useConfiguratorState();
+  const [{ state }] = useConfiguratorState();
+  const isLoadingConfigureChartStep =
+    state === "INITIAL" && pathname === "/create/[chartId]";
 
-  return state.state === "SELECTING_DATASET" ? (
+  return isLoadingConfigureChartStep ? (
+    <LoadingConfigureChartStep />
+  ) : state === "SELECTING_DATASET" ? (
     <SelectDatasetStep />
   ) : (
     <PanelLayout>
-      {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
-      {state.state === "PUBLISHING" ? <PublishStep /> : null}
+      {state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
+      {state === "PUBLISHING" ? <PublishStep /> : null}
     </PanelLayout>
+  );
+};
+
+const LoadingConfigureChartStep = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+      }}
+    >
+      <Loading delayMs={0} />
+    </Box>
   );
 };
