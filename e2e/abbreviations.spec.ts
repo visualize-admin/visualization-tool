@@ -90,7 +90,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()
@@ -115,17 +115,11 @@ test("localized abbreviations", async ({ actions, selectors }) => {
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect(legendItems).toEqual([
-    "No measures",
-    "Warning",
-    "Conditional ban on fires",
-    "Fire ban in the forest",
-    "Ban on fires",
-  ]);
+  expect(legendItems).toEqual(["No measures", "Warning"]);
 });

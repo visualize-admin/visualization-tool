@@ -40,7 +40,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnConfig, SortingOrder, SortingType } from "@/configurator";
 import {
   useErrorMeasure,
   useErrorRange,
@@ -88,22 +88,13 @@ export interface ColumnsState extends CommonChartState {
 }
 
 const useColumnsState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-  > & {
-    fields: ColumnFields;
+  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
+    chartConfig: ColumnConfig;
     aspectRatio: number;
   }
 ): ColumnsState => {
-  const {
-    data,
-    fields,
-    measures,
-    dimensions,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, measures, dimensions, aspectRatio, chartConfig } = chartProps;
+  const { interactiveFiltersConfig, fields } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -181,11 +172,15 @@ const useColumnsState = (
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
         useAbbreviations: fields.x.useAbbreviations,
+        dimensionFilter: xDimension?.iri
+          ? chartConfig.filters[xDimension?.iri]
+          : undefined,
       });
+      const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
       const bandDomain = orderBy(
         [...new Set(scalesData.map(getX))],
         sorters,
-        getSortingOrders(sorters, fields.x.sorting)
+        sortingOrders
       );
       const xScale = scaleBand()
         .domain(bandDomain)
@@ -377,27 +372,22 @@ const useColumnsState = (
 
 const ColumnChartProvider = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+  chartConfig,
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   children: ReactNode;
-  fields: ColumnFields;
   aspectRatio: number;
+  chartConfig: ColumnConfig;
 }) => {
   const state = useColumnsState({
     data,
-    fields,
     measures,
     dimensions,
-    interactiveFiltersConfig,
     aspectRatio,
+    chartConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -406,30 +396,25 @@ const ColumnChartProvider = ({
 
 export const ColumnChart = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   aspectRatio: number;
   children: ReactNode;
-  fields: ColumnFields;
+  chartConfig: ColumnConfig;
 }) => {
   return (
     <Observer>
       <InteractionProvider>
         <ColumnChartProvider
           data={data}
-          fields={fields}
           measures={measures}
           dimensions={dimensions}
-          interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
+          chartConfig={chartConfig}
         >
           {children}
         </ColumnChartProvider>

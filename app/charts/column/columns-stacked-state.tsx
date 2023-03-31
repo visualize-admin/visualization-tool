@@ -85,20 +85,15 @@ export interface StackedColumnsState extends CommonChartState {
 const useColumnsStackedState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
     fields: ColumnFields;
     aspectRatio: number;
   }
 ): StackedColumnsState => {
-  const {
-    data,
-    fields,
-    measures,
-    dimensions,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, fields, measures, dimensions, chartConfig, aspectRatio } =
+    chartProps;
+  const { interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -224,6 +219,9 @@ const useColumnsStackedState = (
     [getSegment, getY, plottableSortedData]
   );
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
@@ -234,6 +232,7 @@ const useColumnsStackedState = (
       sorting,
       sumsBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
@@ -243,6 +242,7 @@ const useColumnsStackedState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     sumsBySegment,
+    segmentFilter,
     getSegment,
   ]);
 
@@ -540,13 +540,10 @@ const StackedColumnsChartProvider = ({
   fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -555,7 +552,7 @@ const StackedColumnsChartProvider = ({
     data,
     fields,
     dimensions,
-    interactiveFiltersConfig,
+    chartConfig,
     measures,
     aspectRatio,
   });
@@ -569,13 +566,10 @@ export const StackedColumnsChart = ({
   fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -588,7 +582,7 @@ export const StackedColumnsChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

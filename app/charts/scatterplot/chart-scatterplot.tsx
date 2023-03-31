@@ -16,10 +16,8 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
   ScatterPlotConfig,
-  ScatterPlotFields,
 } from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
@@ -68,22 +66,20 @@ export const ChartScatterplot = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    fields: ScatterPlotFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
+    chartConfig: ScatterPlotConfig;
   }) => {
+    const { interactiveFiltersConfig, fields } = chartConfig;
     return (
       <ScatterplotChart
         data={observations}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
+        chartConfig={chartConfig}
         aspectRatio={1}
       >
         <ChartContainer>

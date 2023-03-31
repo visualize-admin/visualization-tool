@@ -23,7 +23,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ScatterPlotFields } from "@/configurator";
+import { ScatterPlotConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -51,19 +51,16 @@ export interface ScatterplotState extends CommonChartState {
 
 const useScatterplotState = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: ScatterPlotFields;
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
+  chartConfig: ScatterPlotConfig;
 }): ScatterplotState => {
   const width = useWidth();
+  const { fields } = chartConfig;
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
   const getX = useOptionalNumericVariable(fields.x.componentIri);
@@ -98,6 +95,7 @@ const useScatterplotState = ({
   });
 
   // Data for chart
+  const { interactiveFiltersConfig } = chartConfig;
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
@@ -256,26 +254,21 @@ const useScatterplotState = ({
 
 const ScatterplotChartProvider = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: ScatterPlotFields;
   aspectRatio: number;
+  chartConfig: ScatterPlotConfig;
 }) => {
   const state = useScatterplotState({
     data,
-    fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -285,29 +278,24 @@ const ScatterplotChartProvider = ({
 
 export const ScatterplotChart = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
-  fields: ScatterPlotFields;
   children: ReactNode;
+  chartConfig: ScatterPlotConfig;
 }) => {
   return (
     <Observer>
       <InteractionProvider>
         <ScatterplotChartProvider
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

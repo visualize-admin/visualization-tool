@@ -11,6 +11,7 @@ import {
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { ColumnConfig } from "@/configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
@@ -23,29 +24,34 @@ ${(
       <ColumnChart
         data={columnObservations}
         dimensions={columnDimensions}
-        interactiveFiltersConfig={{
-          legend: {
-            active: false,
-            componentIri: "",
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-          timeRange: {
-            presets: {
-              type: "range",
-              from: "0",
-              to: "0",
+        chartConfig={
+          {
+            fields: columnFields,
+
+            interactiveFiltersConfig: {
+              legend: {
+                active: false,
+                componentIri: "",
+              },
+              dataFilters: {
+                active: false,
+                componentIris: [],
+              },
+              timeRange: {
+                presets: {
+                  type: "range",
+                  from: "0",
+                  to: "0",
+                },
+                active: false,
+                componentIri: "http://fake-iri",
+              },
+              timeSlider: {
+                componentIri: "",
+              },
             },
-            active: false,
-            componentIri: "http://fake-iri",
-          },
-          timeSlider: {
-            componentIri: "",
-          },
-        }}
-        fields={columnFields}
+          } as unknown as ColumnConfig
+        }
         measures={columnMeasures}
         aspectRatio={0.4}
       >

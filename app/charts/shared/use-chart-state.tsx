@@ -9,17 +9,16 @@ import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { TableChartState } from "@/charts/table/table-state";
-import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
+import { ChartConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export interface ChartProps {
   data: Observation[];
-  fields: ChartFields;
-  interactiveFiltersConfig: InteractiveFiltersConfig;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
+  chartConfig: ChartConfig;
 }
 
 export type ChartState =

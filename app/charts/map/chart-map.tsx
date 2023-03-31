@@ -12,7 +12,6 @@ import {
   BaseLayer,
   DataSource,
   MapConfig,
-  MapFields,
   QueryFilters,
 } from "@/configurator/config-types";
 import {
@@ -238,7 +237,7 @@ export const ChartMapVisualization = ({
 export const ChartMap = ({
   observations,
   features,
-  fields,
+  chartConfig,
   measures,
   dimensions,
   baseLayer,
@@ -247,23 +246,23 @@ export const ChartMap = ({
   observations: Observation[];
   measures: DimensionMetadataFragment[];
   dimensions: DimensionMetadataFragment[];
-  fields: MapFields;
+  chartConfig: MapConfig;
   baseLayer: BaseLayer;
 }) => {
   return (
     <MapChart
       data={observations}
       features={features}
-      fields={fields}
       measures={measures}
       dimensions={dimensions}
       baseLayer={baseLayer}
+      chartConfig={chartConfig}
     >
       <ChartContainer>
         <MapComponent />
         <MapTooltip />
       </ChartContainer>
-      <MapLegend />
+      <MapLegend chartConfig={chartConfig} />
     </MapChart>
   );
 };

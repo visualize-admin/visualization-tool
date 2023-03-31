@@ -84,20 +84,15 @@ export interface GroupedColumnsState extends CommonChartState {
 const useGroupedColumnsState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
     fields: ColumnFields;
     aspectRatio: number;
   }
 ): GroupedColumnsState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, fields, dimensions, measures, chartConfig, aspectRatio } =
+    chartProps;
+  const { interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -188,6 +183,9 @@ const useGroupedColumnsState = (
     ]);
   }, [plottableSortedData, getY, getSegment]);
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
@@ -198,6 +196,7 @@ const useGroupedColumnsState = (
       sorting,
       sumsBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
@@ -207,6 +206,7 @@ const useGroupedColumnsState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     sumsBySegment,
+    segmentFilter,
     getSegment,
   ]);
 
@@ -464,13 +464,10 @@ const GroupedColumnChartProvider = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -480,7 +477,7 @@ const GroupedColumnChartProvider = ({
     fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -493,13 +490,10 @@ export const GroupedColumnChart = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -512,7 +506,7 @@ export const GroupedColumnChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

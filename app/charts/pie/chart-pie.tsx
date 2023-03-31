@@ -16,9 +16,7 @@ import {
 } from "@/components/hint";
 import {
   DataSource,
-  InteractiveFiltersConfig,
   PieConfig,
-  PieFields,
   QueryFilters,
 } from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
@@ -67,8 +65,7 @@ export const ChartPieVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
+          chartConfig={chartConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -87,15 +84,14 @@ export const ChartPie = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    fields: PieFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
+    chartConfig: PieConfig;
   }) => {
+    const { fields } = chartConfig;
     const somePositive = observations.some(
       (d) => d[fields?.y?.componentIri]! > 0
     );
@@ -104,13 +100,13 @@ export const ChartPie = memo(
       return <OnlyNegativeDataHint />;
     }
 
+    const { interactiveFiltersConfig } = chartConfig;
     return (
       <PieChart
         data={observations}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
+        chartConfig={chartConfig}
         aspectRatio={0.5}
       >
         <ChartContainer>
