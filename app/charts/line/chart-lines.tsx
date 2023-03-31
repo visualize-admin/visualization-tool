@@ -14,7 +14,6 @@ import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   DataSource,
   LineConfig,
-  LineFields,
   QueryFilters,
 } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
@@ -62,16 +61,15 @@ export const ChartLines = memo(function ChartLines({
   observations,
   dimensions,
   measures,
-  fields,
+
   chartConfig,
 }: {
   observations: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  fields: LineFields;
   chartConfig: LineConfig;
 }) {
-  const { interactiveFiltersConfig } = chartConfig;
+  const { interactiveFiltersConfig, fields } = chartConfig;
   return (
     <LineChart
       data={observations}
