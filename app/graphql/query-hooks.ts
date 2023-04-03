@@ -547,6 +547,22 @@ type DimensionMetadata_TemporalDimension_Fragment = (
 
 export type DimensionMetadataFragment = DimensionMetadata_GeoCoordinatesDimension_Fragment | DimensionMetadata_GeoShapesDimension_Fragment | DimensionMetadata_NominalDimension_Fragment | DimensionMetadata_NumericalMeasure_Fragment | DimensionMetadata_OrdinalDimension_Fragment | DimensionMetadata_OrdinalMeasure_Fragment | DimensionMetadata_TemporalDimension_Fragment;
 
+type DimensionMetadataWithoutHierarchies_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_NumericalMeasure_Fragment = { __typename: 'NumericalMeasure', isCurrency?: Maybe<boolean>, currencyExponent?: Maybe<number>, resolution?: Maybe<number>, isDecimal?: Maybe<boolean>, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_OrdinalMeasure_Fragment = { __typename: 'OrdinalMeasure', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+type DimensionMetadataWithoutHierarchies_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
+export type DimensionMetadataWithoutHierarchiesFragment = DimensionMetadataWithoutHierarchies_GeoCoordinatesDimension_Fragment | DimensionMetadataWithoutHierarchies_GeoShapesDimension_Fragment | DimensionMetadataWithoutHierarchies_NominalDimension_Fragment | DimensionMetadataWithoutHierarchies_NumericalMeasure_Fragment | DimensionMetadataWithoutHierarchies_OrdinalDimension_Fragment | DimensionMetadataWithoutHierarchies_OrdinalMeasure_Fragment | DimensionMetadataWithoutHierarchies_TemporalDimension_Fragment;
+
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -559,31 +575,31 @@ export type DataCubePreviewQueryVariables = Exact<{
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
-      & DimensionMetadata_GeoCoordinatesDimension_Fragment
+      & DimensionMetadataWithoutHierarchies_GeoCoordinatesDimension_Fragment
     ) | (
       { __typename: 'GeoShapesDimension' }
-      & DimensionMetadata_GeoShapesDimension_Fragment
+      & DimensionMetadataWithoutHierarchies_GeoShapesDimension_Fragment
     ) | (
       { __typename: 'NominalDimension' }
-      & DimensionMetadata_NominalDimension_Fragment
+      & DimensionMetadataWithoutHierarchies_NominalDimension_Fragment
     ) | (
       { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
+      & DimensionMetadataWithoutHierarchies_NumericalMeasure_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
-      & DimensionMetadata_OrdinalDimension_Fragment
+      & DimensionMetadataWithoutHierarchies_OrdinalDimension_Fragment
     ) | (
       { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
+      & DimensionMetadataWithoutHierarchies_OrdinalMeasure_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
-      & DimensionMetadata_TemporalDimension_Fragment
+      & DimensionMetadataWithoutHierarchies_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
+      & DimensionMetadataWithoutHierarchies_NumericalMeasure_Fragment
     ) | (
       { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
+      & DimensionMetadataWithoutHierarchies_OrdinalMeasure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type DataCubeMetadataQueryVariables = Exact<{
@@ -1055,6 +1071,33 @@ export const DimensionMetadataFragmentDoc = gql`
   }
 }
     ${HierarchyMetadataFragmentDoc}`;
+export const DimensionMetadataWithoutHierarchiesFragmentDoc = gql`
+    fragment dimensionMetadataWithoutHierarchies on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+}
+    `;
 export const DataCubesDocument = gql`
     query DataCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
   dataCubes(
@@ -1105,10 +1148,10 @@ export const DataCubePreviewDocument = gql`
     description
     publicationStatus
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
+      ...dimensionMetadataWithoutHierarchies
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
+      ...dimensionMetadataWithoutHierarchies
     }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
@@ -1117,7 +1160,7 @@ export const DataCubePreviewDocument = gql`
     }
   }
 }
-    ${DimensionMetadataFragmentDoc}`;
+    ${DimensionMetadataWithoutHierarchiesFragmentDoc}`;
 
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });

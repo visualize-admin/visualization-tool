@@ -3,12 +3,12 @@ import {
   SxProps,
   Table,
   TableBody,
-  Tooltip,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
   Theme,
+  Tooltip,
   TooltipProps,
 } from "@mui/material";
 import { ascending, descending } from "d3";
@@ -18,10 +18,11 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
-import { isNumericalMeasure, Observation } from "@/domain/data";
+import { Observation, isNumericalMeasure } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  DimensionMetadataWithoutHierarchiesFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
@@ -280,8 +281,8 @@ export const DataSetTable = ({
 };
 
 export const getSortedColumns = (
-  dimensions: DimensionMetadataFragment[],
-  measures: DimensionMetadataFragment[]
+  dimensions: DimensionMetadataWithoutHierarchiesFragment[],
+  measures: DimensionMetadataWithoutHierarchiesFragment[]
 ) => {
   const allDimensions = [...dimensions, ...measures];
   allDimensions.sort((a, b) =>
