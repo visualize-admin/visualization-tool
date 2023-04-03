@@ -4,3 +4,9 @@ node_modules/
 /playwright/.cache/
 
 **/tsconfig.tsbuildinfo
+
+# Sentry
+.sentryclirc
+
+# Sentry
+next.config.original.js
