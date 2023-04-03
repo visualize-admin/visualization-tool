@@ -14,6 +14,6 @@ Sentry.init({
   ignoreErrors: [
     // The ResizeObserver error is actually not problematic
     // @see https://forum.sentry.io/t/resizeobserver-loop-limit-exceeded/8402
-    "ResizeObserver loop limit exceeded",
+    "ResizeObserver loop",
   ],
 });
