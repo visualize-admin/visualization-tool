@@ -64,6 +64,32 @@ fragment dimensionMetadata on Dimension {
   }
 }
 
+fragment dimensionMetadataWithoutHierarchies on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+}
+
 query DataCubePreview(
   $iri: String!
   $sourceType: String!
@@ -84,10 +110,10 @@ query DataCubePreview(
     description
     publicationStatus
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
+      ...dimensionMetadataWithoutHierarchies
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
+      ...dimensionMetadataWithoutHierarchies
     }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
