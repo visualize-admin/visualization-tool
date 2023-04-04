@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Alert, Typography } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import get from "lodash/get";
-import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
 import { Checkbox } from "@/components/form";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
@@ -330,8 +330,10 @@ export const TableColumnOptions = ({
             ) : (
               <DimensionValuesMultiFilter
                 key={component.iri}
+                field={component.iri}
                 dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
+                colorComponent={component}
                 colorConfigPath="columnStyle"
               />
             )}
