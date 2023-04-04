@@ -50,6 +50,7 @@ export const useRedirectToVersionedCube = ({
         router.replace({
           pathname: `/${locale}/browse`,
           query: {
+            ...router.query,
             dataset: resp.iri,
           },
         });
@@ -57,6 +58,7 @@ export const useRedirectToVersionedCube = ({
         router.replace({
           pathname: `/`,
           query: getErrorQueryParams("CANNOT_FIND_CUBE", {
+            ...router.query,
             iri: datasetIri,
           }),
         });
