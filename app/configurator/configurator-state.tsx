@@ -7,9 +7,9 @@ import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import {
-  createContext,
   Dispatch,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useMemo,
@@ -31,39 +31,37 @@ import {
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
+  ChartConfig,
+  ChartType,
+  ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateSelectingDataSet,
   DataSource,
+  FilterValue,
+  FilterValueMultiValues,
+  Filters,
   GenericField,
+  GenericFields,
   ImputationType,
+  InteractiveFiltersConfig,
+  MapConfig,
+  MapFields,
+  NumericalColorField,
+  decodeConfiguratorState,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
-  MapConfig,
-  MapFields,
-  NumericalColorField,
-} from "@/configurator/config-types";
-import {
-  ChartConfig,
-  ChartType,
-  ConfiguratorState,
-  ConfiguratorStateSelectingDataSet,
-  decodeConfiguratorState,
-  Filters,
-  FilterValue,
-  FilterValueMultiValues,
-  GenericFields,
-  InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  canDimensionBeMultiFiltered,
   DimensionValue,
-  isOrdinalMeasure,
+  canDimensionBeMultiFiltered,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
+  isOrdinalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -85,7 +83,7 @@ import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
-import { fetchChartConfig, createConfig } from "@/utils/chart-config/api";
+import { createConfig, fetchChartConfig } from "@/utils/chart-config/api";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
@@ -1031,9 +1029,10 @@ export const updateColorMapping = (
   if (draft.state === "CONFIGURING_CHART") {
     const { field, colorConfigPath, dimensionIri, values, random } =
       action.value;
-    const path = `fields.${field}${
-      colorConfigPath ? `.${colorConfigPath}` : ""
-    }`;
+    const path = colorConfigPath
+      ? [`fields.${field}`, colorConfigPath]
+      : [`fields.${field}`];
+
     const fieldValue = get(draft.chartConfig, path) as
       | (GenericField & { palette: string })
       | undefined;
@@ -1044,7 +1043,7 @@ export const updateColorMapping = (
         dimensionValues: values,
         random,
       });
-      setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
+      setWith(draft.chartConfig, path.concat("colorMapping"), colorMapping);
     }
   }
 
