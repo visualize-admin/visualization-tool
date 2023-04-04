@@ -4,6 +4,7 @@ import configureCors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
+import sentryPlugin from "../../graphql/apollo-sentry-plugin";
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -33,6 +34,7 @@ const server = new ApolloServer({
   // Enable playground in production
   introspection: true,
   playground: true,
+  plugins: [sentryPlugin],
 });
 
 export const config = {
