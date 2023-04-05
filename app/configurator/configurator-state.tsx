@@ -33,6 +33,8 @@ import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
+  ColorMapping,
+  ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingDataSet,
@@ -53,8 +55,10 @@ import {
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
+  isTableConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
   DimensionValue,
   canDimensionBeMultiFiltered,
@@ -88,8 +92,6 @@ import { createConfig, fetchChartConfig } from "@/utils/chart-config/api";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
-
-import { toggleInteractiveFilterDataDimension } from "./interactive-filters/interactive-filters-config-state";
 
 export type ConfiguratorStateAction =
   | {
@@ -1033,20 +1035,39 @@ export const updateColorMapping = (
   if (draft.state === "CONFIGURING_CHART") {
     const { field, colorConfigPath, dimensionIri, values, random } =
       action.value;
-    const path = `fields.${field}${
-      colorConfigPath ? `.${colorConfigPath}` : ""
-    }`;
-    const fieldValue = get(draft.chartConfig, path) as
-      | (GenericField & { palette: string })
-      | undefined;
+    const path = colorConfigPath
+      ? ["fields", field, colorConfigPath]
+      : ["fields", field];
+    let colorMapping: ColorMapping | undefined;
 
-    if (fieldValue?.componentIri === dimensionIri) {
-      const colorMapping = mapValueIrisToColor({
-        palette: fieldValue.palette,
-        dimensionValues: values,
-        random,
-      });
-      setWith(draft.chartConfig, `${path}.colorMapping`, colorMapping);
+    if (isTableConfig(draft.chartConfig)) {
+      const fieldValue = get(draft.chartConfig, path) as
+        | ColumnStyleCategory
+        | undefined;
+
+      if (fieldValue) {
+        colorMapping = mapValueIrisToColor({
+          palette: fieldValue.palette,
+          dimensionValues: values,
+          random,
+        });
+      }
+    } else {
+      const fieldValue = get(draft.chartConfig, path) as
+        | (GenericField & { palette: string })
+        | undefined;
+
+      if (fieldValue?.componentIri === dimensionIri) {
+        colorMapping = mapValueIrisToColor({
+          palette: fieldValue.palette,
+          dimensionValues: values,
+          random,
+        });
+      }
+    }
+
+    if (colorMapping) {
+      setWith(draft.chartConfig, path.concat("colorMapping"), colorMapping);
     }
   }
 
