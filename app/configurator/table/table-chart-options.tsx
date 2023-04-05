@@ -194,6 +194,13 @@ export const TableColumnOptions = ({
           label: t({ id: "columnStyle.bar", message: `Bar Chart` }),
         },
       ]
+    : isTemporalDimension(component)
+    ? [
+        {
+          value: "text",
+          label: t({ id: "columnStyle.text", message: `Text` }),
+        },
+      ]
     : [
         {
           value: "text",
@@ -204,6 +211,7 @@ export const TableColumnOptions = ({
           label: t({ id: "columnStyle.categories", message: `Categories` }),
         },
       ];
+
   return (
     <div
       key={`control-panel-table-column-${activeField}`}
