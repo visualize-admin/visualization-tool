@@ -48,8 +48,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
-  useFormatNumber,
   formatNumberWithUnit,
+  useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
 import {
@@ -224,6 +224,7 @@ const useColumnsState = (
       fields.x.sorting,
       fields.x.useAbbreviations,
       xDimension,
+      chartConfig.filters,
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
