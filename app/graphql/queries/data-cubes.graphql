@@ -1,3 +1,77 @@
+fragment dimensionMetadata on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+}
+
+fragment dimensionMetadataWithHierarchies on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+  ...hierarchyMetadata
+}
+
+fragment hierarchyMetadata on Dimension {
+  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    ...hierarchyValueFields
+    children {
+      ...hierarchyValueFields
+      children {
+        ...hierarchyValueFields
+        children {
+          ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 query DataCubes(
   $sourceType: String!
   $sourceUrl: String!
@@ -37,59 +111,6 @@ query DataCubes(
   }
 }
 
-fragment dimensionMetadata on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  dataType
-  order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
-  unit
-  related {
-    iri
-    type
-  }
-  ...hierarchyMetadata
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
-  }
-}
-
-fragment dimensionMetadataWithoutHierarchies on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  dataType
-  order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
-  unit
-  related {
-    iri
-    type
-  }
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
-  }
-}
-
 query DataCubePreview(
   $iri: String!
   $sourceType: String!
@@ -110,10 +131,10 @@ query DataCubePreview(
     description
     publicationStatus
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadataWithoutHierarchies
+      ...dimensionMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadataWithoutHierarchies
+      ...dimensionMetadata
     }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
@@ -190,32 +211,44 @@ query DataCubeMetadataWithComponentValues(
     landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
-      ...hierarchyMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
-      ...hierarchyMetadata
     }
   }
 }
 
-fragment hierarchyMetadata on Dimension {
-  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-    ...hierarchyValueFields
-    children {
-      ...hierarchyValueFields
-      children {
-        ...hierarchyValueFields
-        children {
-          ...hierarchyValueFields
-          children {
-            ...hierarchyValueFields
-            children {
-              ...hierarchyValueFields
-            }
-          }
-        }
-      }
+query DataCubeMetadataWithComponentValuesAndHierarchies(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $latest: Boolean
+  $filters: Filters
+) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    iri
+    title
+    publisher
+    publicationStatus
+    expires
+    identifier
+    workExamples
+    creator {
+      iri
+    }
+    landingPage
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
     }
   }
 }
@@ -241,8 +274,7 @@ query DimensionValues(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      ...dimensionMetadata
-      ...hierarchyMetadata
+      ...dimensionMetadataWithHierarchies
     }
   }
 }

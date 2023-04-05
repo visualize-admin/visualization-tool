@@ -67,10 +67,11 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
+  DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+  DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables,
   DataCubeMetadataWithComponentValuesDocument,
-  DataCubeMetadataWithComponentValuesQuery,
-  DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetadataFragment,
+  DimensionMetadataWithHierarchiesFragment,
   NumericalMeasure,
   OrdinalMeasure,
 } from "@/graphql/query-hooks";
@@ -299,8 +300,8 @@ const getCachedCubeMetadataWithComponentValues = (
   locale: Locale
 ) => {
   const query = client.readQuery<
-    DataCubeMetadataWithComponentValuesQuery,
-    DataCubeMetadataWithComponentValuesQueryVariables
+    DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+    DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
   >(DataCubeMetadataWithComponentValuesDocument, {
     iri: draft.dataSet,
     locale,
@@ -383,7 +384,10 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (chartConfig: ChartConfig, dimensions: DimensionMetadataFragment[]) => {
+  (
+    chartConfig: ChartConfig,
+    dimensions: DimensionMetadataWithHierarchiesFragment[]
+  ) => {
     const { chartType, fields, filters } = chartConfig;
 
     if (chartType === "table") {
@@ -484,7 +488,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetadataFragment;
+  dimension: DimensionMetadataWithHierarchiesFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
@@ -1434,8 +1438,8 @@ export const initChartStateFromCube = async (
 ): Promise<ConfiguratorState | undefined> => {
   const { data } = await client
     .query<
-      DataCubeMetadataWithComponentValuesQuery,
-      DataCubeMetadataWithComponentValuesQueryVariables
+      DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+      DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
     >(DataCubeMetadataWithComponentValuesDocument, {
       iri: datasetIri,
       sourceType: dataSource.type,

@@ -52,7 +52,10 @@ import {
   NumericalMeasure,
   OrdinalMeasure,
 } from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
 
 import {
@@ -133,7 +136,9 @@ export const DEFAULT_SORTING: SortingOption = {
 /**
  * Finds bottomost layer for the first hierarchy
  */
-const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
+const findBottommostLayers = (
+  dimension: DataCubeMetadataWithHierarchies["dimensions"][0]
+) => {
   const leaves = [] as HierarchyValue[];
   let hasSeenMultiHierarchyNode = false;
   bfs(dimension?.hierarchy as HierarchyValue[], (node) => {
@@ -222,8 +227,8 @@ export const getInitialConfig = ({
   measures,
 }: {
   chartType: ChartType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: DataCubeMetadataWithHierarchies["dimensions"];
+  measures: DataCubeMetadataWithHierarchies["measures"];
 }): ChartConfig => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
 
