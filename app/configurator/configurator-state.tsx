@@ -71,10 +71,11 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
+  DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+  DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables,
   DataCubeMetadataWithComponentValuesDocument,
-  DataCubeMetadataWithComponentValuesQuery,
-  DataCubeMetadataWithComponentValuesQueryVariables,
   DimensionMetadataFragment,
+  DimensionMetadataWithHierarchiesFragment,
   NumericalMeasure,
   OrdinalMeasure,
 } from "@/graphql/query-hooks";
@@ -301,8 +302,8 @@ const getCachedCubeMetadataWithComponentValues = (
   locale: Locale
 ) => {
   const query = client.readQuery<
-    DataCubeMetadataWithComponentValuesQuery,
-    DataCubeMetadataWithComponentValuesQueryVariables
+    DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+    DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
   >(DataCubeMetadataWithComponentValuesDocument, {
     iri: draft.dataSet,
     locale,
@@ -385,7 +386,10 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (chartConfig: ChartConfig, dimensions: DimensionMetadataFragment[]) => {
+  (
+    chartConfig: ChartConfig,
+    dimensions: DimensionMetadataWithHierarchiesFragment[]
+  ) => {
     const { chartType, fields, filters } = chartConfig;
 
     if (chartType === "table") {
@@ -486,7 +490,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetadataFragment;
+  dimension: DimensionMetadataWithHierarchiesFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
@@ -1455,8 +1459,8 @@ export const initChartStateFromCube = async (
 ): Promise<ConfiguratorState | undefined> => {
   const { data } = await client
     .query<
-      DataCubeMetadataWithComponentValuesQuery,
-      DataCubeMetadataWithComponentValuesQueryVariables
+      DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+      DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
     >(DataCubeMetadataWithComponentValuesDocument, {
       iri: datasetIri,
       sourceType: dataSource.type,
@@ -1521,15 +1525,18 @@ const ConfiguratorStateProviderInternal = ({
   allowDefaultRedirect?: boolean;
 }) => {
   const { dataSource } = useDataSourceStore();
+  const initialStateWithDataSource = useMemo(() => {
+    return { ...initialState, dataSource };
+  }, [initialState, dataSource]);
   const locale = useLocale();
-  const stateAndDispatch = useImmerReducer(reducer, initialState);
+  const stateAndDispatch = useImmerReducer(reducer, initialStateWithDataSource);
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize = getStateWithCurrentDataSource(initialState);
+    let stateToInitialize = initialStateWithDataSource;
 
     const initialize = async () => {
       try {
@@ -1563,7 +1570,7 @@ const ConfiguratorStateProviderInternal = ({
     dispatch,
     chartId,
     replace,
-    initialState,
+    initialStateWithDataSource,
     allowDefaultRedirect,
     query,
     locale,

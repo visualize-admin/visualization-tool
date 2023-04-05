@@ -22,7 +22,6 @@ import { Observation, isNumericalMeasure } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
-  DimensionMetadataWithoutHierarchiesFragment,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
@@ -281,8 +280,8 @@ export const DataSetTable = ({
 };
 
 export const getSortedColumns = (
-  dimensions: DimensionMetadataWithoutHierarchiesFragment[],
-  measures: DimensionMetadataWithoutHierarchiesFragment[]
+  dimensions: DimensionMetadataFragment[],
+  measures: DimensionMetadataFragment[]
 ) => {
   const allDimensions = [...dimensions, ...measures];
   allDimensions.sort((a, b) =>
