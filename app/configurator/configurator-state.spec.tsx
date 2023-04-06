@@ -26,7 +26,10 @@ import {
   moveFilterField,
   updateColorMapping,
 } from "@/configurator/configurator-state";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  DimensionMetadataWithHierarchiesFragment,
+} from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
@@ -181,6 +184,38 @@ describe("applyDimensionToFilters", () => {
     __typename: "NominalDimension",
   } as DimensionMetadataFragment;
 
+  const keyDimensionWithHierarchy = {
+    __typename: "NominalDimension",
+    iri: "nominalDimensionIri",
+    label: "Nominal Dimension with Hierarchy",
+    isKeyDimension: true,
+    isNumerical: false,
+    values: [
+      { value: "brienz", label: "Brienz" },
+      { value: "switzerland", label: "Switzerland" },
+    ],
+    hierarchy: [
+      {
+        __typename: "HierarchyValue",
+        dimensionIri: "nominalDimensionIri",
+        value: "brienz",
+        label: "Brienz",
+        depth: 0,
+        hasValue: true,
+        children: [],
+      },
+      {
+        __typename: "HierarchyValue",
+        dimensionIri: "nominalDimensionIri",
+        value: "switzerland",
+        label: "Switzerland",
+        depth: -1,
+        hasValue: true,
+        children: [],
+      },
+    ],
+  } as DimensionMetadataWithHierarchiesFragment;
+
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
@@ -243,6 +278,24 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: optionalDimension,
         isField: true,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should select top-most hierarchy value by default", () => {
+      const initialFilters = {};
+      const expectedFilters = {
+        nominalDimensionIri: {
+          type: "single",
+          value: "switzerland",
+        },
+      };
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimensionWithHierarchy,
+        isField: false,
       });
 
       expect(initialFilters).toEqual(expectedFilters);
