@@ -750,24 +750,24 @@ function parseObservation(
   raw: boolean | undefined
 ): (value: RDFObservation) => Observation {
   return (obs) => {
-    return Object.fromEntries(
-      cubeDimensions.map((d) => {
-        const label = obs[labelDimensionIri(d.data.iri)]?.value;
-        const termType = obs[d.data.iri]?.termType;
+    const res = {} as Observation;
+    for (let d of cubeDimensions) {
+      const label = obs[labelDimensionIri(d.data.iri)]?.value;
+      const termType = obs[d.data.iri]?.termType;
 
-        const value =
-          termType === "Literal" &&
-          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
-            ? null
-            : termType === "NamedNode" &&
-              ns.cube.Undefined.equals(obs[d.data.iri])
-            ? "–"
-            : obs[d.data.iri]?.value;
+      const value =
+        termType === "Literal" &&
+        ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+          ? null
+          : termType === "NamedNode" &&
+            ns.cube.Undefined.equals(obs[d.data.iri])
+          ? "–"
+          : obs[d.data.iri]?.value;
 
-        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-        return [d.data.iri, raw ? rawValue : label ?? value ?? null];
-      })
-    );
+      const rawValue = parseObservationValue({ value: obs[d.data.iri] });
+      res[d.data.iri] = raw ? rawValue : label ?? value ?? null;
+    }
+    return res;
   };
 }
 
