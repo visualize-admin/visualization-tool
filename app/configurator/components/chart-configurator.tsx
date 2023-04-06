@@ -1,26 +1,26 @@
 import { t, Trans } from "@lingui/macro";
 import {
+  Badge,
+  BadgeProps,
   Box,
   Button,
-  Tooltip,
   CircularProgress,
+  FormControlLabel,
+  FormControlLabelProps,
   IconButton,
   Menu,
   MenuItem,
-  Theme,
-  Typography,
   Switch,
-  FormControlLabel,
-  FormControlLabelProps,
-  Badge,
-  BadgeProps,
+  Theme,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
 import sortBy from "lodash/sortBy";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -66,7 +66,7 @@ import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeMetadataWithComponentValuesAndHierarchiesQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -310,7 +310,7 @@ const useFilterReorder = ({
   ]);
 
   const [{ data, fetching: dataFetching }, executeQuery] =
-    useDataCubeMetadataWithComponentValuesQuery({
+    useDataCubeMetadataWithComponentValuesAndHierarchiesQuery({
       variables: variables,
     });
 

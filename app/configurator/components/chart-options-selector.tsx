@@ -67,7 +67,7 @@ import {
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeMetadataWithComponentValuesAndHierarchiesQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
@@ -93,14 +93,15 @@ export const ChartOptionsSelector = ({
   });
 
   // Unfiltered dimensions & measures values.
-  const [{ data: metadataData }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
+  const [{ data: metadataData }] =
+    useDataCubeMetadataWithComponentValuesAndHierarchiesQuery({
+      variables: {
+        iri: dataSet,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+      },
+    });
 
   const imputationNeeded = useImputationNeeded({
     chartConfig,

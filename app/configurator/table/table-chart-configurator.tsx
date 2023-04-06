@@ -21,7 +21,7 @@ import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { TableFields } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesAndHierarchiesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { ChartTypeSelector } from "../components/chart-type-selector";
@@ -55,7 +55,7 @@ export const ChartConfiguratorTable = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useDataCubeMetadataWithComponentValuesAndHierarchiesQuery({
     variables: {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
