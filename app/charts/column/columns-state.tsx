@@ -126,24 +126,6 @@ const useColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const { segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
-
-  /** When segment values are IRIs, we need to find show the label */
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
-
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
@@ -267,27 +249,13 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
 
   // segments
-  const segments = useMemo(() => {
-    return Array.from(new Set(plottableSortedData.map(getSegment)));
-  }, [getSegment, plottableSortedData]);
-  const sortedSegments = useMemo(() => {
-    const rawSegments = getPalette(fields.segment?.palette);
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
-    const sorters = makeDimensionValueSorters(segmentDimension);
-    return orderBy(
-      rawSegments,
-      sorters,
-      fields.segment?.sorting?.sortingOrder === "desc" ? "desc" : "asc"
-    );
-  }, [
-    fields.segment?.palette,
-    fields.segment?.sorting?.sortingOrder,
-    fields.segment?.componentIri,
-    dimensions,
-  ]);
-  const colors = scaleOrdinal(sortedSegments).domain(segments);
+  const { segments, colors, getSegmentLabel } = useMemo(() => {
+    const segments: string[] = [];
+    const colors = scaleOrdinal(segments).domain(segments);
+    const getSegmentLabel = (segment: string) => segment;
+
+    return { segments, colors, getSegmentLabel };
+  }, []);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
