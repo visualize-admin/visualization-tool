@@ -152,6 +152,7 @@ const usePieState = (
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    segmentFilter,
   ]);
 
   // Dimensions
