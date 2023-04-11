@@ -7,7 +7,7 @@ export const useMaybeAbbreviations = ({
   useAbbreviations,
   dimension,
 }: {
-  useAbbreviations: boolean;
+  useAbbreviations: boolean | undefined;
   dimension: DimensionMetadataFragment | undefined;
 }) => {
   const {

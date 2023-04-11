@@ -108,7 +108,7 @@ const useColumnsStackedState = (
   const xIsTime = isTemporalDimension(xDimension);
 
   const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
-    useAbbreviations: fields.x.useAbbreviations ?? false,
+    useAbbreviations: fields.x.useAbbreviations,
     dimension: xDimension,
   });
 
@@ -124,7 +124,7 @@ const useColumnsStackedState = (
     getLabelByAbbreviation: getSegmentLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
 

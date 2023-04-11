@@ -107,7 +107,7 @@ const useGroupedColumnsState = (
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations ?? false,
+      useAbbreviations: fields.x.useAbbreviations,
       dimension: xDimension,
     });
 
@@ -155,7 +155,7 @@ const useGroupedColumnsState = (
     getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
 

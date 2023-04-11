@@ -114,7 +114,7 @@ const useColumnsState = (
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations ?? false,
+      useAbbreviations: fields.x.useAbbreviations,
       dimension: xDimension,
     });
 
