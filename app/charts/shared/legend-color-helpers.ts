@@ -6,18 +6,14 @@ import { bfs } from "@/utils/bfs";
 export const getLegendGroups = ({
   title,
   labels,
-  getLabel,
   hierarchy,
   sort,
-  useAbbreviations,
   labelIris,
 }: {
   title?: string;
   labels: string[];
-  getLabel: (d: string) => string;
   hierarchy?: HierarchyValue[] | null;
   sort: boolean;
-  useAbbreviations: boolean;
   labelIris?: Record<string, any>;
 }) => {
   const groupsMap = new Map<HierarchyValue[], string[]>();
@@ -25,26 +21,16 @@ export const getLegendGroups = ({
   if (!hierarchy) {
     groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
   } else {
-    const labelSet = new Set(labels);
-
     const emptyParents: HierarchyValue[] = [];
 
     bfs(hierarchy, (node, { parents: _parents }) => {
-      const label = getLabel(
-        useAbbreviations ? node.alternateName || node.label : node.label
-      );
-
-      if (!labelSet.has(label)) {
-        return;
-      }
-
       if (labelIris && !labelIris?.[node.value]) {
         return;
       }
 
       const parents = _parents.length === 0 ? emptyParents : _parents;
       groupsMap.set(parents, groupsMap.get(parents) || []);
-      groupsMap.get(parents)?.push(label);
+      groupsMap.get(parents)?.push(node.value);
     });
   }
 

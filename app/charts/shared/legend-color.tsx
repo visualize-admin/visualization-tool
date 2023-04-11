@@ -2,7 +2,7 @@ import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import React, { memo, useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import {
   ColorsChartState,
@@ -14,8 +14,8 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import {
   DataSource,
   GenericSegmentField,
-  isSegmentInConfig,
   MapConfig,
+  isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -127,11 +127,9 @@ const emptyObj = {};
 const useLegendGroups = ({
   title,
   labels,
-  getLabel,
 }: {
   title?: string;
   labels: string[];
-  getLabel: (d: string) => string;
 }) => {
   const configState = useReadOnlyConfiguratorState();
 
@@ -184,13 +182,11 @@ const useLegendGroups = ({
     return getLegendGroups({
       title,
       labels,
-      getLabel,
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
-      useAbbreviations: segmentField?.useAbbreviations ?? false,
       labelIris: segmentValues,
     });
-  }, [title, labels, getLabel, hierarchy, segmentField, segmentValues]);
+  }, [title, labels, hierarchy, segmentField, segmentValues]);
 
   return groups;
 };
@@ -203,10 +199,7 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups({
-    labels: colors.domain(),
-    getLabel: getSegmentLabel,
-  });
+  const groups = useLegendGroups({ labels: colors.domain() });
 
   return (
     <LegendColorContent
@@ -254,9 +247,8 @@ export const MapLegendColor = memo(function LegendColor({
         return component.values.find((v) => v.value === d)?.label as string;
       };
   const groups = useLegendGroups({
-    labels: sortedValues.map((d) => `${d.value}`),
-    getLabel,
     title: component.label,
+    labels: sortedValues.map((d) => `${d.value}`),
   });
 
   return (
