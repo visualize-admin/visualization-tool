@@ -126,10 +126,10 @@ const useDimension = ({
 const emptyObj = {};
 const useLegendGroups = ({
   title,
-  labels,
+  values,
 }: {
   title?: string;
-  labels: string[];
+  values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
 
@@ -181,12 +181,12 @@ const useLegendGroups = ({
   const groups = useMemo(() => {
     return getLegendGroups({
       title,
-      labels,
+      values,
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
       labelIris: segmentValues,
     });
-  }, [title, labels, hierarchy, segmentField, segmentValues]);
+  }, [title, values, hierarchy, segmentField, segmentValues]);
 
   return groups;
 };
@@ -199,7 +199,7 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups({ labels: colors.domain() });
+  const groups = useLegendGroups({ values: colors.domain() });
 
   return (
     <LegendColorContent
@@ -248,7 +248,7 @@ export const MapLegendColor = memo(function LegendColor({
       };
   const groups = useLegendGroups({
     title: component.label,
-    labels: sortedValues.map((d) => `${d.value}`),
+    values: sortedValues.map((d) => `${d.value}`),
   });
 
   return (

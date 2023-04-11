@@ -5,13 +5,13 @@ import { bfs } from "@/utils/bfs";
 
 export const getLegendGroups = ({
   title,
-  labels,
+  values,
   hierarchy,
   sort,
   labelIris,
 }: {
   title?: string;
-  labels: string[];
+  values: string[];
   hierarchy?: HierarchyValue[] | null;
   sort: boolean;
   labelIris?: Record<string, any>;
@@ -19,7 +19,7 @@ export const getLegendGroups = ({
   const groupsMap = new Map<HierarchyValue[], string[]>();
 
   if (!hierarchy) {
-    groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
+    groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], values);
   } else {
     const emptyParents: HierarchyValue[] = [];
 
@@ -37,9 +37,9 @@ export const getLegendGroups = ({
   const groups = Array.from(groupsMap.entries());
   if (sort) {
     // Re-sort hierarchy groups against the label order that we have received
-    const labelOrder = Object.fromEntries(labels.map((x, i) => [x, i]));
+    const valueOrder = Object.fromEntries(values.map((x, i) => [x, i]));
     groups.forEach(([_, entries]) => {
-      entries.sort((a, b) => ascending(labelOrder[a], labelOrder[b]));
+      entries.sort((a, b) => ascending(valueOrder[a], valueOrder[b]));
     });
   }
 
