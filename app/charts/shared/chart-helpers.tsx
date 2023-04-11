@@ -339,15 +339,16 @@ const getBaseWideData = ({
   const sortedDataGroupedByXEntries = [...dataGroupedByX.entries()].sort();
 
   for (let i = 0; i < dataGroupedByX.size; i++) {
-    const [date, values] = sortedDataGroupedByXEntries[i];
+    const [k, v] = sortedDataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {
-        [xKey]: date,
-        total: sum(values, getY),
+        [xKey]: k,
+        [`${xKey}/__iri__`]: v[0][`${xKey}/__iri__`],
+        total: sum(v, getY),
       },
       ...getOptionalObservationProps(i),
-      ...values
+      ...v
         // Sorting the values in case of multiple values for the same segment
         // (desired behavior for getting the domain when time slider is active).
         .sort((a, b) => (getY(a) ?? 0) - (getY(b) ?? 0))
