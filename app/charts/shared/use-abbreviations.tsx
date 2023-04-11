@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DimensionValue, Observation } from "@/domain/data";
+import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const useMaybeAbbreviations = ({
@@ -10,63 +10,85 @@ export const useMaybeAbbreviations = ({
   useAbbreviations: boolean;
   dimension: DimensionMetadataFragment | undefined;
 }) => {
-  const { labelLookup, abbreviationOrLabelLookup } = React.useMemo(() => {
+  const {
+    valueLookup,
+    labelLookup,
+    abbreviationOrValueLookup,
+    abbreviationOrLabelLookup,
+  } = React.useMemo(() => {
     const values = dimension?.values ?? [];
 
-    const labelLookup = new Map<DimensionValue["label"], DimensionValue>();
-    for (let dv of values) {
-      const existing = labelLookup.get(dv.label);
-      if (existing) {
-        console.info(
-          "Value with iri ",
-          dv.value,
-          "has same label as",
-          existing
-        );
-      } else {
-        labelLookup.set(dv.label, dv);
-      }
+    const valueLookup = new Map<
+      NonNullable<ObservationValue>,
+      DimensionValue
+    >();
+    const labelLookup = new Map<string, DimensionValue>();
+
+    for (const d of values) {
+      valueLookup.set(d.value, d);
+      labelLookup.set(d.label, d);
     }
+
+    const abbreviationOrValueLookup = new Map(
+      Array.from(valueLookup, ([k, v]) => [
+        useAbbreviations ? v.alternateName ?? k : k,
+        v,
+      ])
+    );
     const abbreviationOrLabelLookup = new Map(
-      Array.from(labelLookup, (d) => [
-        useAbbreviations ? d[1].alternateName ?? d[1].label : d[1].label,
-        d[1],
+      Array.from(labelLookup, ([k, v]) => [
+        useAbbreviations ? v.alternateName ?? k : k,
+        v,
       ])
     );
 
     return {
+      valueLookup,
       labelLookup,
+      abbreviationOrValueLookup,
       abbreviationOrLabelLookup,
     };
   }, [dimension?.values, useAbbreviations]);
 
   const getAbbreviationOrLabelByValue = React.useCallback(
     (d: Observation) => {
-      const v = d[dimension?.iri || ""] as string | undefined;
-
-      if (!v) {
+      if (!dimension) {
         return "";
       }
 
-      const lookedUpValue = labelLookup.get(v);
+      const value = d[`${dimension.iri}/__iri__`] as string | undefined;
+      const label = d[dimension.iri] as string | undefined;
+
+      if (value === undefined && label === undefined) {
+        return "";
+      }
+
+      const lookedUpObservation =
+        (value ? valueLookup.get(value) : null) ??
+        (label ? labelLookup.get(label) : null);
+      const lookedUpLabel = lookedUpObservation?.label ?? "";
 
       return useAbbreviations
-        ? lookedUpValue?.alternateName ?? lookedUpValue?.label ?? ""
-        : v;
+        ? lookedUpObservation?.alternateName ?? lookedUpLabel
+        : lookedUpLabel;
     },
-    [dimension?.iri, labelLookup, useAbbreviations]
+    [dimension, valueLookup, labelLookup, useAbbreviations]
   );
 
   const getLabelByAbbreviation = React.useCallback(
     (d: string) => {
-      const v = abbreviationOrLabelLookup.get(d);
+      const observation =
+        abbreviationOrValueLookup.get(d) ?? abbreviationOrLabelLookup.get(d);
 
-      return useAbbreviations ? v?.alternateName ?? v?.label ?? "" : d;
+      return useAbbreviations
+        ? observation?.alternateName ?? observation?.label ?? ""
+        : d;
     },
-    [abbreviationOrLabelLookup, useAbbreviations]
+    [abbreviationOrValueLookup, abbreviationOrLabelLookup, useAbbreviations]
   );
 
   return {
+    abbreviationOrValueLookup,
     abbreviationOrLabelLookup,
     getAbbreviationOrLabelByValue,
     getLabelByAbbreviation,
