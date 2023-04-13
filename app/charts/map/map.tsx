@@ -219,6 +219,13 @@ export const MapComponent = () => {
       data: sortedShapes,
       pickable: true,
       autoHighlight: true,
+      parameters: {
+        /**
+         * Fixes hover on overlapping layers
+         * @see https://deck.gl/docs/developer-guide/tips-and-tricks#z-fighting-and-depth-testing
+         */
+        depthTest: false,
+      },
       extruded: false,
       filled: true,
       stroked: false,
@@ -382,8 +389,11 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
-          <div data-map-loaded={loaded} />
-          <DeckGLOverlay layers={[geoJsonLayer, scatterplotLayer]} />
+          <div data-map-loaded={loaded ? "true" : "false"} />
+          <DeckGLOverlay
+            interleaved
+            layers={[geoJsonLayer, scatterplotLayer]}
+          />
         </Map>
       ) : null}
     </>
