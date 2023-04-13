@@ -346,7 +346,7 @@ const useColumnsState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: xIsTime && timeUnit ? timeFormatUnit(xLabel, timeUnit) : xLabel,
       datum: {
-        label: fields.segment?.componentIri && getSegment(d),
+        label: undefined,
         value: `${yValueFormatter(getY(d))}`,
         error: getYError
           ? `${getYError(d)}${errorMeasure?.unit ?? ""}`

@@ -530,7 +530,6 @@ const useColumnsStackedState = (
           : xRef + xOffset * 2;
       };
       const xAnchor = getXAnchor();
-      const rawSegment = fields.segment && getSegment(datum);
 
       const yValueFormatter = (value: number | null) =>
         formatNumberWithUnit(
@@ -545,7 +544,7 @@ const useColumnsStackedState = (
         placement: { x: xPlacement, y: yPlacement },
         xValue: getXAbbreviationOrLabel(datum),
         datum: {
-          label: rawSegment,
+          label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum)),
           color: colors(getSegment(datum)) as string,
         },

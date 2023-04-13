@@ -312,7 +312,7 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map(getX))];
     const bandDomainLabels = bandDomain.map(getXLabel);
     const xScale = scaleBand()
       .domain(bandDomain)
@@ -485,7 +485,7 @@ const useGroupedColumnsState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: getXAbbreviationOrLabel(datum),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
