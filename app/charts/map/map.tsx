@@ -383,10 +383,7 @@ export const MapComponent = () => {
           {...viewState}
         >
           <div data-map-loaded={loaded} />
-          <DeckGLOverlay
-            interleaved
-            layers={[geoJsonLayer, scatterplotLayer]}
-          />
+          <DeckGLOverlay layers={[geoJsonLayer, scatterplotLayer]} />
         </Map>
       ) : null}
     </>
