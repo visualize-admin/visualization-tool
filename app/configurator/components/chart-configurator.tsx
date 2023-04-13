@@ -65,10 +65,14 @@ import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeMetadataWithComponentValuesAndHierarchiesQuery,
+  useComponentsWithHierarchiesQuery,
+  useDataCubeMetadataQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -306,31 +310,48 @@ const useFilterReorder = ({
     unmappedFilters,
   ]);
 
-  const [{ data, fetching: dataFetching }, executeQuery] =
-    useDataCubeMetadataWithComponentValuesAndHierarchiesQuery({
+  const [{ data: metadata, fetching: metadataFetching }, executeMetadataQuery] =
+    useDataCubeMetadataQuery({
       variables: variables,
     });
+  const [
+    { data: components, fetching: componentsFetching },
+    exectueComponentsQuery,
+  ] = useComponentsWithHierarchiesQuery({
+    variables: variables,
+  });
 
   useEffect(() => {
-    executeQuery({
+    executeMetadataQuery({
       variables,
     });
-  }, [variables, executeQuery]);
+    exectueComponentsQuery({
+      variables,
+    });
+  }, [variables, executeMetadataQuery, exectueComponentsQuery]);
 
   const dimensions = useMemo(() => {
-    const dimensions = data?.dataCubeByIri?.dimensions;
+    const dimensions = components?.dataCubeByIri?.dimensions;
     type T = Exclude<typeof dimensions, undefined>;
-    if (!data?.dataCubeByIri?.dimensions) {
+
+    if (!components?.dataCubeByIri?.dimensions) {
       return [] as T;
     }
-    return dimensions as T;
-  }, [data?.dataCubeByIri?.dimensions]);
 
-  const metaData = data?.dataCubeByIri;
+    return dimensions as T;
+  }, [components?.dataCubeByIri?.dimensions]);
+
+  const data =
+    metadata && components
+      ? ({
+          ...metadata.dataCubeByIri,
+          ...components.dataCubeByIri,
+        } as DataCubeMetadataWithHierarchies)
+      : null;
 
   // Handlers
   const handleMove = useEvent((dimensionIri: string, delta: number) => {
-    if (!metaData) {
+    if (!data) {
       return;
     }
 
@@ -345,7 +366,7 @@ const useFilterReorder = ({
       type: "CHART_CONFIG_REPLACED",
       value: {
         chartConfig,
-        dataSetMetadata: metaData,
+        dataSetMetadata: data,
       },
     });
   });
@@ -388,7 +409,8 @@ const useFilterReorder = ({
   const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
     state,
   });
-  const fetching = possibleFiltersFetching || dataFetching;
+  const fetching =
+    possibleFiltersFetching || metadataFetching || componentsFetching;
 
   const { filterDimensions, addableDimensions } = useMemo(() => {
     const keysOrder = Object.fromEntries(
@@ -564,7 +586,7 @@ export const ChartConfigurator = ({
 
   const classes = useStyles({ fetching });
 
-  if (!data?.dataCubeByIri) {
+  if (!data) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -593,10 +615,7 @@ export const ChartConfigurator = ({
           role="tablist"
           aria-labelledby="controls-design"
         >
-          <ChartFields
-            chartConfig={state.chartConfig}
-            metaData={data.dataCubeByIri}
-          />
+          <ChartFields chartConfig={state.chartConfig} metaData={data} />
         </ControlSectionContent>
       </ControlSection>
       {filterDimensions.length === 0 &&

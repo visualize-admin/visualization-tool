@@ -71,15 +71,15 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
+  ComponentsDocument,
+  ComponentsQuery,
+  ComponentsQueryVariables,
   ComponentsWithHierarchiesDocument,
   ComponentsWithHierarchiesQuery,
   ComponentsWithHierarchiesQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataQuery,
   DataCubeMetadataQueryVariables,
-  DataCubeMetadataWithComponentValuesAndHierarchiesDocument,
-  DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-  DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables,
   DimensionMetadataFragment,
   DimensionMetadataWithHierarchiesFragment,
   NumericalMeasure,
@@ -313,17 +313,32 @@ const getCachedCubeMetadataWithComponentValuesAndHierarchies = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ) => {
-  const query = client.readQuery<
-    DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-    DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
-  >(DataCubeMetadataWithComponentValuesAndHierarchiesDocument, {
+  const metadataQuery = client.readQuery<
+    DataCubeMetadataQuery,
+    DataCubeMetadataQueryVariables
+  >(DataCubeMetadataDocument, {
+    iri: draft.dataSet,
+    locale,
+    sourceType: draft.dataSource.type,
+    sourceUrl: draft.dataSource.url,
+  });
+  const componentsQuery = client.readQuery<
+    ComponentsQuery,
+    ComponentsQueryVariables
+  >(ComponentsDocument, {
     iri: draft.dataSet,
     locale,
     sourceType: draft.dataSource.type,
     sourceUrl: draft.dataSource.url,
   });
 
-  return query?.data?.dataCubeByIri;
+  return metadataQuery?.data?.dataCubeByIri &&
+    componentsQuery?.data?.dataCubeByIri
+    ? {
+        ...metadataQuery.data.dataCubeByIri,
+        ...componentsQuery.data.dataCubeByIri,
+      }
+    : null;
 };
 
 export const getFilterValue = (
