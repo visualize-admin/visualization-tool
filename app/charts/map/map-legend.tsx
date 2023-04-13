@@ -1,18 +1,18 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
-  axisBottom,
   NumberValue,
-  range,
   ScaleLinear,
-  scaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  select,
   Selection,
+  axisBottom,
+  range,
+  scaleLinear,
+  select,
 } from "d3";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -267,6 +267,9 @@ const Circle = (props: CircleProps) => {
             fill={stroke}
             textAnchor="start"
             fontSize={fontSize}
+            paintOrder="stroke"
+            stroke="white"
+            strokeWidth={2}
           >
             {value} {label}
           </text>
