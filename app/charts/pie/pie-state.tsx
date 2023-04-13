@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import {
   useDataAfterInteractiveFilters,
@@ -67,13 +67,45 @@ const usePieState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const getSegmentIri = useCallback(
+    (d: Observation) => {
+      return (
+        fields.segment ? d[`${fields.segment.componentIri}/__iri__`] : undefined
+      ) as string | undefined;
+    },
+    [fields.segment]
+  );
+
+  const observationSegmentLabelsLookup = useMemo(() => {
+    const lookup = new Map<string, string>();
+    data.forEach((d) => {
+      const iri = getSegmentIri(d);
+      const label = getSegmentAbbreviationOrLabel(d);
+      lookup.set(iri ?? label, label);
+    });
+
+    return lookup;
+  }, [data, getSegmentIri, getSegmentAbbreviationOrLabel]);
+
+  const getSegment = useCallback(
+    (d: Observation) => {
+      return getSegmentIri(d) ?? getSegmentAbbreviationOrLabel(d);
+    },
+    [getSegmentIri, getSegmentAbbreviationOrLabel]
+  );
+  const getSegmentLabel = useCallback(
+    (d: string) => {
+      return observationSegmentLabelsLookup.get(d) ?? d;
+    },
+    [observationSegmentLabelsLookup]
+  );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -234,7 +266,7 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getSegment(datum),
+      xValue: getSegmentAbbreviationOrLabel(datum),
       datum: {
         value: valueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
