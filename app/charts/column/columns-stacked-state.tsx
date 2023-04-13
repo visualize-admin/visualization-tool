@@ -45,6 +45,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -114,35 +115,10 @@ const useColumnsStackedState = (
       dimension: xDimension,
     });
 
-  const getXIri = useCallback(
-    (d: Observation) => {
-      return d[`${fields.x.componentIri}/__iri__`] as string | undefined;
-    },
-    [fields.x.componentIri]
-  );
-
-  const observationLabelsLookup = useMemo(() => {
-    const lookup = new Map<string, string>();
-    data.forEach((d) => {
-      const iri = getXIri(d);
-      const label = getXAbbreviationOrLabel(d);
-      lookup.set(iri ?? label, label);
-    });
-
-    return lookup;
-  }, [data, getXAbbreviationOrLabel, getXIri]);
-
-  const getX = useCallback(
-    (d: Observation) => {
-      return getXIri(d) ?? getXAbbreviationOrLabel(d);
-    },
-    [getXIri, getXAbbreviationOrLabel]
-  );
-  const getXLabel = useCallback(
-    (d: string) => {
-      return observationLabelsLookup.get(d) ?? d;
-    },
-    [observationLabelsLookup]
+  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
+    data,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
   );
 
   const getXAsDate = useTemporalVariable(xKey);
@@ -160,38 +136,12 @@ const useColumnsStackedState = (
     dimension: segmentDimension,
   });
 
-  const getSegmentIri = useCallback(
-    (d: Observation) => {
-      return (
-        fields.segment ? d[`${fields.segment.componentIri}/__iri__`] : undefined
-      ) as string | undefined;
-    },
-    [fields.segment]
-  );
-
-  const observationSegmentLabelsLookup = useMemo(() => {
-    const lookup = new Map<string, string>();
-    data.forEach((d) => {
-      const iri = getSegmentIri(d);
-      const label = getSegmentAbbreviationOrLabel(d);
-      lookup.set(iri ?? label, label);
-    });
-
-    return lookup;
-  }, [data, getSegmentIri, getSegmentAbbreviationOrLabel]);
-
-  const getSegment = useCallback(
-    (d: Observation) => {
-      return getSegmentIri(d) ?? getSegmentAbbreviationOrLabel(d);
-    },
-    [getSegmentIri, getSegmentAbbreviationOrLabel]
-  );
-  const getSegmentLabel = useCallback(
-    (d: string) => {
-      return observationSegmentLabelsLookup.get(d) ?? d;
-    },
-    [observationSegmentLabelsLookup]
-  );
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];

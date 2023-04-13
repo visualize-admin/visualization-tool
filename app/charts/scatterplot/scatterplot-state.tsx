@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
@@ -22,6 +22,7 @@ import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content"
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -78,38 +79,12 @@ const useScatterplotState = ({
     dimension: segmentDimension,
   });
 
-  const getSegmentIri = useCallback(
-    (d: Observation) => {
-      return (
-        fields.segment ? d[`${fields.segment.componentIri}/__iri__`] : undefined
-      ) as string | undefined;
-    },
-    [fields.segment]
-  );
-
-  const observationSegmentLabelsLookup = useMemo(() => {
-    const lookup = new Map<string, string>();
-    data.forEach((d) => {
-      const iri = getSegmentIri(d);
-      const label = getSegmentAbbreviationOrLabel(d);
-      lookup.set(iri ?? label, label);
-    });
-
-    return lookup;
-  }, [data, getSegmentIri, getSegmentAbbreviationOrLabel]);
-
-  const getSegment = useCallback(
-    (d: Observation) => {
-      return getSegmentIri(d) ?? getSegmentAbbreviationOrLabel(d);
-    },
-    [getSegmentIri, getSegmentAbbreviationOrLabel]
-  );
-  const getSegmentLabel = useCallback(
-    (d: string) => {
-      return observationSegmentLabelsLookup.get(d) ?? d;
-    },
-    [observationSegmentLabelsLookup]
-  );
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
