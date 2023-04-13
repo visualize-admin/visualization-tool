@@ -1,18 +1,21 @@
-import { AccordionProps, Box, Button, Typography } from "@mui/material";
 import {
-  Stack,
   Accordion,
   AccordionDetails,
+  AccordionProps,
   AccordionSummary,
+  Box,
+  Button,
   CircularProgress,
+  Stack,
+  Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Inspector } from "react-inspector";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { DataSource, useConfiguratorState } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
@@ -40,16 +43,15 @@ const CubeMetadata = ({
 }) => {
   const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
-  const [{ data: metadata, fetching }] =
-    useDataCubeMetadataWithComponentValuesQuery({
-      variables: {
-        iri: datasetIri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale: locale,
-      },
-      pause: expanded === false,
-    });
+  const [{ data, fetching }] = useComponentsWithHierarchiesQuery({
+    variables: {
+      iri: datasetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale: locale,
+    },
+    pause: !expanded,
+  });
   const handleChange: AccordionProps["onChange"] = useEvent((_ev, expanded) =>
     setExpanded(expanded)
   );
@@ -64,12 +66,14 @@ const CubeMetadata = ({
         <AccordionDetails>
           {fetching ? <CircularProgress size={12} color="secondary" /> : null}
 
-          {expanded && metadata ? (
+          {expanded && data?.dataCubeByIri ? (
             <Inspector
-              data={Object.fromEntries(
-                metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) ||
-                  []
-              )}
+              data={Object.fromEntries([
+                [
+                  ...data.dataCubeByIri.dimensions,
+                  ...data.dataCubeByIri.measures,
+                ].map((d) => [d.label, d]),
+              ])}
             />
           ) : null}
         </AccordionDetails>
