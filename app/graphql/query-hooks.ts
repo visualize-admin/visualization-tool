@@ -833,6 +833,84 @@ export type DataCubeMetadataWithComponentValuesAndHierarchiesQuery = { __typenam
       & DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment
     )> }> };
 
+export type ComponentsQueryVariables = Exact<{
+  iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
+}>;
+
+
+export type ComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensions: Array<(
+      { __typename: 'GeoCoordinatesDimension' }
+      & DimensionMetadata_GeoCoordinatesDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapesDimension' }
+      & DimensionMetadata_GeoShapesDimension_Fragment
+    ) | (
+      { __typename: 'NominalDimension' }
+      & DimensionMetadata_NominalDimension_Fragment
+    ) | (
+      { __typename: 'NumericalMeasure' }
+      & DimensionMetadata_NumericalMeasure_Fragment
+    ) | (
+      { __typename: 'OrdinalDimension' }
+      & DimensionMetadata_OrdinalDimension_Fragment
+    ) | (
+      { __typename: 'OrdinalMeasure' }
+      & DimensionMetadata_OrdinalMeasure_Fragment
+    ) | (
+      { __typename: 'TemporalDimension' }
+      & DimensionMetadata_TemporalDimension_Fragment
+    )>, measures: Array<(
+      { __typename: 'NumericalMeasure' }
+      & DimensionMetadata_NumericalMeasure_Fragment
+    ) | (
+      { __typename: 'OrdinalMeasure' }
+      & DimensionMetadata_OrdinalMeasure_Fragment
+    )> }> };
+
+export type ComponentsWithHierarchiesQueryVariables = Exact<{
+  iri: Scalars['String'];
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
+}>;
+
+
+export type ComponentsWithHierarchiesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensions: Array<(
+      { __typename: 'GeoCoordinatesDimension' }
+      & DimensionMetadataWithHierarchies_GeoCoordinatesDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapesDimension' }
+      & DimensionMetadataWithHierarchies_GeoShapesDimension_Fragment
+    ) | (
+      { __typename: 'NominalDimension' }
+      & DimensionMetadataWithHierarchies_NominalDimension_Fragment
+    ) | (
+      { __typename: 'NumericalMeasure' }
+      & DimensionMetadataWithHierarchies_NumericalMeasure_Fragment
+    ) | (
+      { __typename: 'OrdinalDimension' }
+      & DimensionMetadataWithHierarchies_OrdinalDimension_Fragment
+    ) | (
+      { __typename: 'OrdinalMeasure' }
+      & DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment
+    ) | (
+      { __typename: 'TemporalDimension' }
+      & DimensionMetadataWithHierarchies_TemporalDimension_Fragment
+    )>, measures: Array<(
+      { __typename: 'NumericalMeasure' }
+      & DimensionMetadataWithHierarchies_NumericalMeasure_Fragment
+    ) | (
+      { __typename: 'OrdinalMeasure' }
+      & DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment
+    )> }> };
+
 export type DimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
@@ -1291,6 +1369,50 @@ export const DataCubeMetadataWithComponentValuesAndHierarchiesDocument = gql`
 
 export function useDataCubeMetadataWithComponentValuesAndHierarchiesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataWithComponentValuesAndHierarchiesQuery>({ query: DataCubeMetadataWithComponentValuesAndHierarchiesDocument, ...options });
+};
+export const ComponentsDocument = gql`
+    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadata
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadata
+    }
+  }
+}
+    ${DimensionMetadataFragmentDoc}`;
+
+export function useComponentsQuery(options: Omit<Urql.UseQueryArgs<ComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ComponentsQuery>({ query: ComponentsDocument, ...options });
+};
+export const ComponentsWithHierarchiesDocument = gql`
+    query ComponentsWithHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+  }
+}
+    ${DimensionMetadataWithHierarchiesFragmentDoc}`;
+
+export function useComponentsWithHierarchiesQuery(options: Omit<Urql.UseQueryArgs<ComponentsWithHierarchiesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ComponentsWithHierarchiesQuery>({ query: ComponentsWithHierarchiesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
     query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {

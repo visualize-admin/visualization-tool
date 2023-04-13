@@ -253,6 +253,54 @@ query DataCubeMetadataWithComponentValuesAndHierarchies(
   }
 }
 
+query Components(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $latest: Boolean
+  $filters: Filters
+) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadata
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadata
+    }
+  }
+}
+
+query ComponentsWithHierarchies(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $latest: Boolean
+  $filters: Filters
+) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+  }
+}
+
 query DimensionValues(
   $dataCubeIri: String!
   $dimensionIri: String!
