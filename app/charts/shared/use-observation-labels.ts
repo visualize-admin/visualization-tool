@@ -2,6 +2,13 @@ import React from "react";
 
 import { Observation } from "@/domain/data";
 
+/** Use this hook to be able to retrieve observation values and labels,
+ * where the value is the iri if present, otherwise the label.
+ *
+ * @param data The data to retrieve the labels from.
+ * @param getLabel A function that returns the label (or abbreviation) for a given observation.
+ * @param componentIri The iri of the component to extract value / label for.
+ */
 export const useObservationLabels = (
   data: Observation[],
   getLabel: (d: Observation) => string,
