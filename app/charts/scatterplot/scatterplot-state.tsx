@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
@@ -71,13 +71,45 @@ const useScatterplotState = ({
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const getSegmentIri = useCallback(
+    (d: Observation) => {
+      return (
+        fields.segment ? d[`${fields.segment.componentIri}/__iri__`] : undefined
+      ) as string | undefined;
+    },
+    [fields.segment]
+  );
+
+  const observationSegmentLabelsLookup = useMemo(() => {
+    const lookup = new Map<string, string>();
+    data.forEach((d) => {
+      const iri = getSegmentIri(d);
+      const label = getSegmentAbbreviationOrLabel(d);
+      lookup.set(iri ?? label, label);
+    });
+
+    return lookup;
+  }, [data, getSegmentIri, getSegmentAbbreviationOrLabel]);
+
+  const getSegment = useCallback(
+    (d: Observation) => {
+      return getSegmentIri(d) ?? getSegmentAbbreviationOrLabel(d);
+    },
+    [getSegmentIri, getSegmentAbbreviationOrLabel]
+  );
+  const getSegmentLabel = useCallback(
+    (d: string) => {
+      return observationSegmentLabelsLookup.get(d) ?? d;
+    },
+    [observationSegmentLabelsLookup]
+  );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -205,7 +237,7 @@ const useScatterplotState = ({
       xValue: formatNumber(getX(datum)),
       tooltipContent: (
         <TooltipScatterplot
-          firstLine={fields.segment && getSegment(datum)}
+          firstLine={fields.segment && getSegmentAbbreviationOrLabel(datum)}
           secondLine={
             xMeasure.unit
               ? `${xMeasure.label}: ${formatNumber(getX(datum))} ${
@@ -223,7 +255,7 @@ const useScatterplotState = ({
         />
       ),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
