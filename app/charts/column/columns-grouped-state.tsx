@@ -40,6 +40,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
@@ -61,6 +62,7 @@ export interface GroupedColumnsState extends CommonChartState {
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;
+  getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
   xScale: ScaleBand<string>;
@@ -104,10 +106,17 @@ const useGroupedColumnsState = (
 
   const xIsTime = isTemporalDimension(xDimension);
 
-  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
-    useAbbreviations: fields.x.useAbbreviations ?? false,
-    dimension: xDimension,
-  });
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    useMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimension: xDimension,
+    });
+
+  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
+    data,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
+  );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
@@ -119,13 +128,19 @@ const useGroupedColumnsState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -184,7 +199,7 @@ const useGroupedColumnsState = (
   }, [plottableSortedData, getY, getSegment]);
 
   const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
+    ? chartConfig.filters[segmentDimension.iri]
     : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
@@ -212,7 +227,7 @@ const useGroupedColumnsState = (
 
   /* Scales */
   const {
-    bandDomain,
+    bandDomainLabels,
     colors,
     yScale,
     xEntireScale,
@@ -247,7 +262,8 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map(getX))];
+    const bandDomainLabels = bandDomain.map(getXLabel);
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -287,7 +303,7 @@ const useGroupedColumnsState = (
       xScale,
       xScaleIn,
       xScaleInteraction,
-      bandDomain,
+      bandDomainLabels,
     };
   }, [
     dimensions,
@@ -298,6 +314,7 @@ const useGroupedColumnsState = (
     scalesData,
     plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     getYErrorRange,
     getY,
@@ -338,7 +355,7 @@ const useGroupedColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomain
+    bandDomainLabels
   );
 
   const margins = {
@@ -416,14 +433,14 @@ const useGroupedColumnsState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getX(datum),
+      xValue: getXAbbreviationOrLabel(datum),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
-        label: getSegment(td),
+        label: getSegmentAbbreviationOrLabel(td),
         value: yMeasure.unit
           ? `${formatNumber(getY(td))} ${yMeasure.unit}`
           : formatNumber(getY(td)),
@@ -438,6 +455,7 @@ const useGroupedColumnsState = (
     preparedData,
     allData: plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     xScale,
     xScaleInteraction,

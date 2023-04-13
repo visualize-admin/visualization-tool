@@ -151,10 +151,11 @@ export const ChartPublishedInner = ({
   const publishedConfiguratorState = useMemo(() => {
     return {
       state: "PUBLISHING",
+      dataSet,
       dataSource,
-      chartConfig: chartConfig,
+      chartConfig,
     } as ConfiguratorStatePublishing;
-  }, [chartConfig, dataSource]);
+  }, [dataSet, dataSource, chartConfig]);
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   const allDimensions: DimensionMetadataFragment[] = useMemo(() => {

@@ -1,18 +1,18 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
-  axisBottom,
   NumberValue,
-  range,
   ScaleLinear,
-  scaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  select,
   Selection,
+  axisBottom,
+  range,
+  scaleLinear,
+  select,
 } from "d3";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -76,10 +76,10 @@ export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
     areaLayer &&
-    areaLayer.data.length >= 3 &&
+    areaLayer.data.length > 1 &&
     areaLayer.colors.type === "continuous" &&
     (areaLayer.colors.interpolationType === "linear" ||
-      areaLayer.colors.scale.range().length >= 3);
+      areaLayer.colors.scale.range().length > 1);
   const measureDimensions = [
     areaLayer?.colors.component,
     symbolLayer?.measureDimension,
@@ -267,6 +267,9 @@ const Circle = (props: CircleProps) => {
             fill={stroke}
             textAnchor="start"
             fontSize={fontSize}
+            paintOrder="stroke"
+            stroke="white"
+            strokeWidth={2}
           >
             {value} {label}
           </text>

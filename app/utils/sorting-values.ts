@@ -71,6 +71,11 @@ export const makeDimensionValueSorters = (
     const filterValues = dimensionFilter.values;
     values = values.filter((dv) => filterValues[dv.value]);
   }
+
+  const valuesByValue = uniqueMapBy(
+    values.filter((x) => x.identifier || x.position),
+    (dv) => dv.value
+  );
   // Index values that have an identifier or a position
   // Warning: if two values have the same label and have an identifier / position
   // there could be problems as we could select the "wrong" value for the order
@@ -79,21 +84,32 @@ export const makeDimensionValueSorters = (
     (dv) => dv.label
   );
 
-  const getLabel = (label?: string) => label;
-  const getIdentifier = (label?: string) => {
-    const identifier = label
-      ? maybeInt(valuesByLabel.get(label)?.identifier) ?? Infinity
+  const getByValueOrLabel = (valueOrLabel: string) => {
+    return valuesByValue.get(valueOrLabel) ?? valuesByLabel.get(valueOrLabel);
+  };
+
+  const getLabel = (valueOrLabel?: string) => {
+    const label = valueOrLabel ? getByValueOrLabel(valueOrLabel)?.label : "";
+    return label;
+  };
+  const getIdentifier = (valueOrLabel?: string) => {
+    const identifier = valueOrLabel
+      ? maybeInt(getByValueOrLabel(valueOrLabel)?.identifier) ?? Infinity
       : Infinity;
     return identifier;
   };
-  const getPosition = (label?: string) =>
-    label ? valuesByLabel.get(label)?.position ?? Infinity : Infinity;
+  const getPosition = (valueOrLabel?: string) => {
+    const position = valueOrLabel
+      ? getByValueOrLabel(valueOrLabel)?.position ?? Infinity
+      : Infinity;
+    return position;
+  };
 
-  const getSum = (label?: string) =>
-    label ? sumsBySegment?.[label] ?? Infinity : Infinity;
+  const getSum = (valueOrLabel?: string) =>
+    valueOrLabel ? sumsBySegment?.[valueOrLabel] ?? Infinity : Infinity;
 
-  const getMeasure = (label?: string) =>
-    label ? measureBySegment?.[label] ?? Infinity : Infinity;
+  const getMeasure = (valueOrLabel?: string) =>
+    valueOrLabel ? measureBySegment?.[valueOrLabel] ?? Infinity : Infinity;
 
   let sorters: ((dv: string) => string | undefined | number)[] = [];
 

@@ -14,7 +14,6 @@ import {
   ScaleTime,
 } from "d3";
 import get from "lodash/get";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
@@ -57,7 +56,6 @@ import {
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/query-hooks";
-import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -68,6 +66,7 @@ export interface ColumnsState extends CommonChartState {
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;
+  getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
   timeUnit: TimeUnit | undefined;
@@ -113,10 +112,42 @@ const useColumnsState = (
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
 
-  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
-    useAbbreviations: fields.x.useAbbreviations ?? false,
-    dimension: xDimension,
-  });
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    useMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimension: xDimension,
+    });
+
+  const getXIri = useCallback(
+    (d: Observation) => {
+      return d[`${fields.x.componentIri}/__iri__`] as string | undefined;
+    },
+    [fields.x.componentIri]
+  );
+
+  const observationXLabelsLookup = useMemo(() => {
+    const lookup = new Map<string, string>();
+    data.forEach((d) => {
+      const iri = getXIri(d);
+      const label = getXAbbreviationOrLabel(d);
+      lookup.set(iri ?? label, label);
+    });
+
+    return lookup;
+  }, [data, getXAbbreviationOrLabel, getXIri]);
+
+  const getX = useCallback(
+    (d: Observation) => {
+      return getXIri(d) ?? getXAbbreviationOrLabel(d);
+    },
+    [getXIri, getXAbbreviationOrLabel]
+  );
+  const getXLabel = useCallback(
+    (d: string) => {
+      return observationXLabelsLookup.get(d) ?? d;
+    },
+    [observationXLabelsLookup]
+  );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
@@ -126,30 +157,18 @@ const useColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const { segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
-
-  /** When segment values are IRIs, we need to find show the label */
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
-
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
   // All data
   const sortedData = useMemo(() => {
-    return sortData({ data, sortingType, sortingOrder, getX, getY });
+    return sortData({
+      data,
+      sortingType,
+      sortingOrder,
+      getX,
+      getY,
+    });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // Data
@@ -166,14 +185,14 @@ const useColumnsState = (
   });
 
   // Scales
-  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain } =
+  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
     useMemo(() => {
       // x
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
         useAbbreviations: fields.x.useAbbreviations,
         dimensionFilter: xDimension?.iri
-          ? chartConfig.filters[xDimension?.iri]
+          ? chartConfig.filters[xDimension.iri]
           : undefined,
       });
       const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
@@ -182,6 +201,7 @@ const useColumnsState = (
         sorters,
         sortingOrders
       );
+      const bandDomainLabels = bandDomain.map(getXLabel);
       const xScale = scaleBand()
         .domain(bandDomain)
         .paddingInner(PADDING_INNER)
@@ -213,9 +233,17 @@ const useColumnsState = (
       );
 
       const yScale = scaleLinear().domain([minValue, maxValue]).nice();
-      return { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain };
+
+      return {
+        xScale,
+        yScale,
+        xEntireScale,
+        xScaleInteraction,
+        bandDomainLabels,
+      };
     }, [
       getX,
+      getXLabel,
       getXAsDate,
       getY,
       getYErrorRange,
@@ -242,7 +270,7 @@ const useColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomain
+    bandDomainLabels
   );
 
   const margins = {
@@ -267,33 +295,19 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
 
   // segments
-  const segments = useMemo(() => {
-    return Array.from(new Set(plottableSortedData.map(getSegment)));
-  }, [getSegment, plottableSortedData]);
-  const sortedSegments = useMemo(() => {
-    const rawSegments = getPalette(fields.segment?.palette);
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
-    const sorters = makeDimensionValueSorters(segmentDimension);
-    return orderBy(
-      rawSegments,
-      sorters,
-      fields.segment?.sorting?.sortingOrder === "desc" ? "desc" : "asc"
-    );
-  }, [
-    fields.segment?.palette,
-    fields.segment?.sorting?.sortingOrder,
-    fields.segment?.componentIri,
-    dimensions,
-  ]);
-  const colors = scaleOrdinal(sortedSegments).domain(segments);
+  const { segments, colors, getSegmentLabel } = useMemo(() => {
+    const segments: string[] = [];
+    const colors = scaleOrdinal(segments).domain(segments);
+    const getSegmentLabel = (segment: string) => segment;
+
+    return { segments, colors, getSegmentLabel };
+  }, []);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xRef = xScale(getX(datum)) as number;
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+    const xRef = xScale(getX(d)) as number;
     const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(Math.max(getY(datum) ?? NaN, 0));
+    const yRef = yScale(Math.max(getY(d) ?? NaN, 0));
     const yAnchor = yRef;
 
     const yPlacement = "top";
@@ -317,6 +331,7 @@ const useColumnsState = (
         : xRef + xOffset * 2;
     };
     const xAnchor = getXAnchor();
+    const xLabel = getXAbbreviationOrLabel(d);
 
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -329,17 +344,14 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue:
-        xIsTime && timeUnit
-          ? timeFormatUnit(getX(datum), timeUnit)
-          : getX(datum),
+      xValue: xIsTime && timeUnit ? timeFormatUnit(xLabel, timeUnit) : xLabel,
       datum: {
-        label: fields.segment?.componentIri && getSegment(datum),
-        value: `${yValueFormatter(getY(datum))}`,
+        label: undefined,
+        value: `${yValueFormatter(getY(d))}`,
         error: getYError
-          ? `${getYError(datum)}${errorMeasure?.unit ?? ""}`
+          ? `${getYError(d)}${errorMeasure?.unit ?? ""}`
           : undefined,
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(d)) as string,
       },
       values: undefined,
     };
@@ -351,6 +363,7 @@ const useColumnsState = (
     preparedData,
     allData: plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     xScale,
     xEntireScale,

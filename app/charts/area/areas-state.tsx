@@ -38,6 +38,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig, AreaFields } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -110,13 +111,19 @@ const useAreasState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -377,13 +384,13 @@ const useAreasState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
-        label: hasSegment ? getSegment(datum) : undefined,
+        label: hasSegment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: hasSegment
         ? sortedTooltipValues.map((td) => ({
-            label: getSegment(td),
+            label: getSegmentAbbreviationOrLabel(td),
             value: yValueFormatter(getY(td)),
             color: colors(getSegment(td)) as string,
           }))

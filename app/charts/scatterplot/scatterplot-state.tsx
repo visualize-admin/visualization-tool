@@ -22,6 +22,7 @@ import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content"
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -71,13 +72,19 @@ const useScatterplotState = ({
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -205,7 +212,7 @@ const useScatterplotState = ({
       xValue: formatNumber(getX(datum)),
       tooltipContent: (
         <TooltipScatterplot
-          firstLine={fields.segment && getSegment(datum)}
+          firstLine={fields.segment && getSegmentAbbreviationOrLabel(datum)}
           secondLine={
             xMeasure.unit
               ? `${xMeasure.label}: ${formatNumber(getX(datum))} ${
@@ -223,7 +230,7 @@ const useScatterplotState = ({
         />
       ),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },

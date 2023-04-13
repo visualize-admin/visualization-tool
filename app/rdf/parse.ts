@@ -20,6 +20,7 @@ import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 
 import * as ns from "./namespace";
+import { hasHierarchy } from "./queries";
 
 export const getQueryLocales = (locale: string): string[] => [
   locale,
@@ -247,6 +248,8 @@ export const parseCubeDimension = ({
       : undefined;
 
   const isDecimal = dataType?.equals(ns.xsd.decimal) ?? false;
+  const dimensionHasHierarchy = hasHierarchy(dim);
+
   return {
     cube,
     dimension: dim,
@@ -263,6 +266,7 @@ export const parseCubeDimension = ({
       isKeyDimension,
       isMeasureDimension,
       hasUndefinedValues,
+      hasHierarchy: dimensionHasHierarchy,
       unit: dimensionUnitLabel,
       dataType: dataType?.value,
       resolution,

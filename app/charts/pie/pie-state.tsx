@@ -21,6 +21,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -67,13 +68,19 @@ const usePieState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
+    useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -152,6 +159,7 @@ const usePieState = (
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    segmentFilter,
   ]);
 
   // Dimensions
@@ -233,7 +241,7 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getSegment(datum),
+      xValue: getSegmentAbbreviationOrLabel(datum),
       datum: {
         value: valueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,

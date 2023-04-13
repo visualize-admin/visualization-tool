@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
@@ -93,10 +93,12 @@ export const ChartLines = memo(function ChartLines({
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>
 
-      <LegendColor
-        symbol="line"
-        interactive={fields.segment && interactiveFiltersConfig?.legend.active}
-      />
+      {fields.segment && (
+        <LegendColor
+          symbol="line"
+          interactive={interactiveFiltersConfig?.legend.active}
+        />
+      )}
     </LineChart>
   );
 });

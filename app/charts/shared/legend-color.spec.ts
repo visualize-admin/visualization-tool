@@ -12,14 +12,12 @@ describe("getLegendGroups", () => {
   it("should properly create groups when encountering top-level values", () => {
     const groups = getLegendGroups({
       title: "",
-      labels: hierarchy.map((d) => d.label),
-      getLabel: (d: string) => d,
+      values: hierarchy.map((d) => d.value),
       hierarchy,
       sort: true,
-      useAbbreviations: false,
     });
 
     expect(groups.length).toEqual(1);
-    expect(groups[0][1]).toEqual(["one", "two", "three"]);
+    expect(groups[0][1]).toEqual(["1", "2", "3"]);
   });
 });
