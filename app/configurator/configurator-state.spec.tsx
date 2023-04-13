@@ -485,7 +485,7 @@ describe("moveField", () => {
 
 describe("retainChartConfigWhenSwitchingChartType", () => {
   const dataSetMetadata = covid19Metadata.data
-    .dataCubeByIri as DataCubeMetadata;
+    .dataCubeByIri as unknown as DataCubeMetadata;
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,
