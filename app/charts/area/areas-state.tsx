@@ -18,7 +18,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
@@ -110,13 +110,45 @@ const useAreasState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
     dimension: segmentDimension,
   });
+
+  const getSegmentIri = useCallback(
+    (d: Observation) => {
+      return (
+        fields.segment ? d[`${fields.segment.componentIri}/__iri__`] : undefined
+      ) as string | undefined;
+    },
+    [fields.segment]
+  );
+
+  const observationSegmentLabelsLookup = useMemo(() => {
+    const lookup = new Map<string, string>();
+    data.forEach((d) => {
+      const iri = getSegmentIri(d);
+      const label = getSegmentAbbreviationOrLabel(d);
+      lookup.set(iri ?? label, label);
+    });
+
+    return lookup;
+  }, [data, getSegmentIri, getSegmentAbbreviationOrLabel]);
+
+  const getSegment = useCallback(
+    (d: Observation) => {
+      return getSegmentIri(d) ?? getSegmentAbbreviationOrLabel(d);
+    },
+    [getSegmentIri, getSegmentAbbreviationOrLabel]
+  );
+  const getSegmentLabel = useCallback(
+    (d: string) => {
+      return observationSegmentLabelsLookup.get(d) ?? d;
+    },
+    [observationSegmentLabelsLookup]
+  );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -377,13 +409,13 @@ const useAreasState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
-        label: hasSegment ? getSegment(datum) : undefined,
+        label: hasSegment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: hasSegment
         ? sortedTooltipValues.map((td) => ({
-            label: getSegment(td),
+            label: getSegmentAbbreviationOrLabel(td),
             value: yValueFormatter(getY(td)),
             color: colors(getSegment(td)) as string,
           }))
