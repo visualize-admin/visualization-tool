@@ -183,41 +183,6 @@ query DataCubeMetadata(
   }
 }
 
-query DataCubeMetadataWithComponentValues(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-  $filters: Filters
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-  }
-}
-
 query DataCubeMetadataWithComponentValuesAndHierarchies(
   $iri: String!
   $sourceType: String!

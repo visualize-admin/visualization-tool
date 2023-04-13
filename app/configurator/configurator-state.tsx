@@ -71,6 +71,12 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
+  ComponentsWithHierarchiesDocument,
+  ComponentsWithHierarchiesQuery,
+  ComponentsWithHierarchiesQueryVariables,
+  DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataQueryVariables,
   DataCubeMetadataWithComponentValuesAndHierarchiesDocument,
   DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
   DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables,
@@ -565,7 +571,8 @@ const transitionStepNext = (
     case "SELECTING_DATASET":
       if (draft.dataSet) {
         const possibleChartTypes = getPossibleChartType({
-          metadata: dataSetMetadata,
+          dimensions: dataSetMetadata.dimensions,
+          measures: dataSetMetadata.measures,
         });
 
         const chartConfig = deriveFiltersFromFields(
@@ -1466,25 +1473,37 @@ export const initChartStateFromCube = async (
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  const { data } = await client
+  const { data: metadata } = await client
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
+      {
+        iri: datasetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+      }
+    )
+    .toPromise();
+  const { data: components } = await client
     .query<
-      DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-      DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
-    >(DataCubeMetadataWithComponentValuesAndHierarchiesDocument, {
+      ComponentsWithHierarchiesQuery,
+      ComponentsWithHierarchiesQueryVariables
+    >(ComponentsWithHierarchiesDocument, {
       iri: datasetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
     })
     .toPromise();
-  if (!data || !data?.dataCubeByIri) {
+
+  if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
+    return transitionStepNext(
+      getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
+      { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
+    );
+  } else {
     console.warn(`Could not fetch cube with iri ${datasetIri}`);
-    return;
   }
-  return transitionStepNext(
-    getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
-    data.dataCubeByIri
-  );
 };
 
 /**

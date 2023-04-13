@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import { extent } from "d3";
 import get from "lodash/get";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { Checkbox, Select } from "@/components/form";
@@ -21,10 +21,7 @@ import {
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { useFormatFullDateAuto } from "@/formatters";
-import {
-  TemporalDimension,
-  useDataCubeMetadataWithComponentValuesQuery,
-} from "@/graphql/query-hooks";
+import { TemporalDimension, useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { FIELD_VALUE_NONE } from "../constants";
@@ -40,7 +37,7 @@ export const InteractiveFiltersOptions = ({
   const activeField = state.activeField as InteractiveFilterType;
   const locale = useLocale();
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -123,7 +120,7 @@ const InteractiveTimeRangeFilterOptions = ({
   const locale = useLocale();
   const formatDateAuto = useFormatFullDateAuto();
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
@@ -200,7 +197,7 @@ const InteractiveTimeSliderFilterOptions = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,

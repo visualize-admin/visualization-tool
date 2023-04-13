@@ -6,7 +6,7 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartFiltersList = ({
@@ -21,7 +21,7 @@ export const ChartFiltersList = ({
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,

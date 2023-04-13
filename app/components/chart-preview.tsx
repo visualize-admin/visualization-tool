@@ -24,8 +24,8 @@ import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import {
-  DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -72,7 +72,15 @@ export const ChartPreviewInner = ({
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const classes = useStyles();
-  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: components }] = useComponentsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -89,12 +97,16 @@ export const ChartPreviewInner = ({
 
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
-  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
+  const allComponents = useMemo(() => {
+    if (!components?.dataCubeByIri) {
+      return [];
+    }
+
     return [
-      ...(metaData?.dataCubeByIri?.dimensions ?? []),
-      ...(metaData?.dataCubeByIri?.measures ?? []),
+      ...components.dataCubeByIri.dimensions,
+      ...components.dataCubeByIri.measures,
     ];
-  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
+  }, [components?.dataCubeByIri]);
 
   return (
     <Flex
@@ -108,7 +120,7 @@ export const ChartPreviewInner = ({
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>
-        {metaData?.dataCubeByIri?.publicationStatus ===
+        {metadata?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
             <HintYellow iconName="datasetError" iconSize={64}>
@@ -154,14 +166,14 @@ export const ChartPreviewInner = ({
                 <MetadataPanel
                   datasetIri={dataSetIri}
                   dataSource={dataSource}
-                  dimensions={allDimensions}
+                  dimensions={allComponents}
                   top={96}
                 />
               </Flex>
               <Head>
                 <title key="title">
                   {state.meta.title[locale] === ""
-                    ? metaData?.dataCubeByIri?.title
+                    ? metadata?.dataCubeByIri?.title
                     : state.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>

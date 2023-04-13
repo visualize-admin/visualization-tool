@@ -61,7 +61,6 @@ import {
 } from "@/configurator/configurator-state";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
-  DataCubeMetadataWithComponentValuesQuery,
   HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -266,9 +265,7 @@ const useEnsurePossibleFilters = ({
 };
 
 type Dimension = NonNullable<
-  NonNullable<
-    DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-  >["dimensions"]
+  NonNullable<DataCubeMetadata>["dimensions"]
 >[number];
 
 const useFilterReorder = ({

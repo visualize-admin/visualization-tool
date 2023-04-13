@@ -1,12 +1,14 @@
 import {
-  DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-  DataCubeMetadataWithComponentValuesQuery,
+  ComponentsQuery,
+  ComponentsWithHierarchiesQuery,
+  DataCubeMetadataQuery,
 } from "./query-hooks";
 
 export type DataCubeMetadata = NonNullable<
-  DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+  DataCubeMetadataQuery["dataCubeByIri"] & ComponentsQuery["dataCubeByIri"]
 >;
 
 export type DataCubeMetadataWithHierarchies = NonNullable<
-  DataCubeMetadataWithComponentValuesAndHierarchiesQuery["dataCubeByIri"]
+  DataCubeMetadataQuery["dataCubeByIri"] &
+    ComponentsWithHierarchiesQuery["dataCubeByIri"]
 >;

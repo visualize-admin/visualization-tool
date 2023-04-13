@@ -755,45 +755,6 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, dateModified?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
-export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
-  iri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
-}>;
-
-
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, publicationStatus: DataCubePublicationStatus, expires?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
-      { __typename: 'GeoCoordinatesDimension' }
-      & DimensionMetadata_GeoCoordinatesDimension_Fragment
-    ) | (
-      { __typename: 'GeoShapesDimension' }
-      & DimensionMetadata_GeoShapesDimension_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetadata_NominalDimension_Fragment
-    ) | (
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetadata_OrdinalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    ) | (
-      { __typename: 'TemporalDimension' }
-      & DimensionMetadata_TemporalDimension_Fragment
-    )>, measures: Array<(
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    )> }> };
-
 export type DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -1303,39 +1264,6 @@ export const DataCubeMetadataDocument = gql`
 
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
-};
-export const DataCubeMetadataWithComponentValuesDocument = gql`
-    query DataCubeMetadataWithComponentValues($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-  }
-}
-    ${DimensionMetadataFragmentDoc}`;
-
-export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
 };
 export const DataCubeMetadataWithComponentValuesAndHierarchiesDocument = gql`
     query DataCubeMetadataWithComponentValuesAndHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {

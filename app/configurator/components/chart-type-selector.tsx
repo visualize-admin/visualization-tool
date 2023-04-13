@@ -11,7 +11,7 @@ import { ControlSectionSkeleton } from "@/configurator/components/chart-controls
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useComponentsQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -109,7 +109,7 @@ export const ChartTypeSelector = ({
 } & BoxProps) => {
   const locale = useLocale();
   const { value: chartType, onChange: onChangeChartType } = useChartType();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
@@ -117,13 +117,15 @@ export const ChartTypeSelector = ({
       locale,
     },
   });
-  const metadata = data?.dataCubeByIri;
 
-  if (!metadata) {
+  if (!data?.dataCubeByIri) {
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartType({ metadata });
+  const possibleChartTypes = getPossibleChartType({
+    dimensions: data.dataCubeByIri.dimensions,
+    measures: data.dataCubeByIri.measures,
+  });
 
   return (
     <Box sx={sx} {...props}>
