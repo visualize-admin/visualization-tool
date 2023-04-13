@@ -10,45 +10,34 @@ export const useMaybeAbbreviations = ({
   useAbbreviations: boolean | undefined;
   dimension: DimensionMetadataFragment | undefined;
 }) => {
-  const {
-    valueLookup,
-    labelLookup,
-    abbreviationOrValueLookup,
-    abbreviationOrLabelLookup,
-  } = React.useMemo(() => {
-    const values = dimension?.values ?? [];
+  const { valueLookup, labelLookup, abbreviationOrLabelLookup } =
+    React.useMemo(() => {
+      const values = dimension?.values ?? [];
 
-    const valueLookup = new Map<
-      NonNullable<ObservationValue>,
-      DimensionValue
-    >();
-    const labelLookup = new Map<string, DimensionValue>();
+      const valueLookup = new Map<
+        NonNullable<ObservationValue>,
+        DimensionValue
+      >();
+      const labelLookup = new Map<string, DimensionValue>();
 
-    for (const d of values) {
-      valueLookup.set(d.value, d);
-      labelLookup.set(d.label, d);
-    }
+      for (const d of values) {
+        valueLookup.set(d.value, d);
+        labelLookup.set(d.label, d);
+      }
 
-    const abbreviationOrValueLookup = new Map(
-      Array.from(valueLookup, ([k, v]) => [
-        useAbbreviations ? v.alternateName ?? k : k,
-        v,
-      ])
-    );
-    const abbreviationOrLabelLookup = new Map(
-      Array.from(labelLookup, ([k, v]) => [
-        useAbbreviations ? v.alternateName ?? k : k,
-        v,
-      ])
-    );
+      const abbreviationOrLabelLookup = new Map(
+        Array.from(labelLookup, ([k, v]) => [
+          useAbbreviations ? v.alternateName ?? k : k,
+          v,
+        ])
+      );
 
-    return {
-      valueLookup,
-      labelLookup,
-      abbreviationOrValueLookup,
-      abbreviationOrLabelLookup,
-    };
-  }, [dimension?.values, useAbbreviations]);
+      return {
+        valueLookup,
+        labelLookup,
+        abbreviationOrLabelLookup,
+      };
+    }, [dimension?.values, useAbbreviations]);
 
   const getAbbreviationOrLabelByValue = React.useCallback(
     (d: Observation) => {
@@ -75,22 +64,8 @@ export const useMaybeAbbreviations = ({
     [dimension, valueLookup, labelLookup, useAbbreviations]
   );
 
-  const getLabelByAbbreviation = React.useCallback(
-    (d: string) => {
-      const observation =
-        abbreviationOrValueLookup.get(d) ?? abbreviationOrLabelLookup.get(d);
-
-      return useAbbreviations
-        ? observation?.alternateName ?? observation?.label ?? ""
-        : d;
-    },
-    [abbreviationOrValueLookup, abbreviationOrLabelLookup, useAbbreviations]
-  );
-
   return {
-    abbreviationOrValueLookup,
     abbreviationOrLabelLookup,
     getAbbreviationOrLabelByValue,
-    getLabelByAbbreviation,
   };
 };
