@@ -2,7 +2,7 @@ import { WebMercatorViewport } from "@deck.gl/core/typed";
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
 import { extent, geoBounds } from "d3";
 import { useMemo, useState } from "react";
-import { useControl, ViewState } from "react-map-gl";
+import { ViewState, useControl } from "react-map-gl";
 import { feature as topojsonFeature } from "topojson-client";
 
 import { BBox, Filters } from "@/configurator/config-types";
@@ -210,10 +210,16 @@ export const prepareTopojson = ({
   }
 
   topojson.features.forEach((d: GeoFeature) => {
-    // Should we match by labels?
-    const observation = observations.find(
-      (o) => o[dimensionIri] === d.properties.label
-    );
+    const observation = observations.find((o) => {
+      const iri = o[`${dimensionIri}/__iri__`];
+      const label = o[dimensionIri];
+
+      if (iri) {
+        return iri === d.properties.iri;
+      } else {
+        return label === d.properties.label;
+      }
+    });
 
     d.properties = { ...d.properties, observation };
   });
