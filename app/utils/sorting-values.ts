@@ -1,7 +1,6 @@
 import { FilterValue, SortingField } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
-
-import { DataCubeObservationsQuery } from "../graphql/query-hooks";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 import { uniqueMapBy } from "./uniqueMapBy";
 
@@ -24,11 +23,7 @@ const maybeInt = (value?: string | number): number | string => {
 };
 
 export const makeDimensionValueSorters = (
-  dimension:
-    | NonNullable<
-        DataCubeObservationsQuery["dataCubeByIri"]
-      >["dimensions"][number]
-    | undefined,
+  dimension: DimensionMetadataFragment | undefined,
   options: {
     dimensionFilter?: FilterValue;
     sorting?:
