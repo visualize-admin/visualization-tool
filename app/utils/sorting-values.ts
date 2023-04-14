@@ -129,7 +129,7 @@ export const makeDimensionValueSorters = (
 
   let sorters: ((dv: string) => string | undefined | number)[] = [];
 
-  const defaultSorters = [getPosition, getIdentifier, getLabel];
+  const defaultSorters = [getHierarchy, getPosition, getIdentifier, getLabel];
 
   switch (sortingType) {
     case "byDimensionLabel":
@@ -142,7 +142,7 @@ export const makeDimensionValueSorters = (
       sorters = [getMeasure];
       break;
     case "byAuto":
-      sorters = [getHierarchy, getPosition, getIdentifier, getLabel];
+      sorters = defaultSorters;
       break;
     case "byTableSortingType":
       sorters = [getPosition, getLabel];
