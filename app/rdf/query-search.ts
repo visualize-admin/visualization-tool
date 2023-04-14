@@ -8,8 +8,7 @@ import { Quad, Stream } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { truthy } from "@/domain/types";
-import { Awaited } from "@/domain/types";
+import { Awaited, truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
@@ -65,18 +64,6 @@ const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
   };
 };
 
-const enhanceQuery = (rawQuery: string) => {
-  const enhancedQuery = rawQuery
-    .toLowerCase()
-    .split(" ")
-    // Filter out lowercase, small tokens
-    .filter((t) => t.length > 2 || t.toLowerCase() !== t)
-    // Wildcard Searches on each term
-    .map((t) => `${t}`)
-    .join(" ");
-  return enhancedQuery;
-};
-
 const icontains = (left: string, right: string) => {
   return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
 };
@@ -98,7 +85,7 @@ const extractCubesFromStream = async (cubeStream: Stream<Quad>) => {
 };
 
 export const searchCubes = async ({
-  query: rawQuery,
+  query,
   locale,
   filters,
   includeDrafts,
@@ -114,8 +101,6 @@ export const searchCubes = async ({
 }) => {
   const queries = [] as RequestQueryMeta[];
 
-  const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
-
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ||
@@ -128,7 +113,7 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
+  const scoresQuery = SELECT.DISTINCT`?lang ?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
@@ -216,8 +201,9 @@ export const searchCubes = async ({
     data.map((d) => [d.cube, d.versionHistory])
   );
   const infoPerCube = computeScores(data, {
-    query: query,
+    query,
     identifierName: "cube",
+    lang: locale,
   });
 
   // Find information on cubes
