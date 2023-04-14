@@ -7,13 +7,15 @@ export const parseFloatZeroed = (s: string) => {
   }
 };
 
-export const weights: Record<string, number> = {
+export const weights = {
   name: 5,
   description: 2,
   themeName: 1,
   publisher: 1,
   creatorLabel: 1,
 };
+export const langMultiplier = 1.5;
+export const exactMatchPoints = weights["name"] * 2;
 
 const isStopword = (d: string) => {
   return d.length < 3 && d.toLowerCase() === d;
@@ -53,14 +55,14 @@ export const computeScores = (
 
         // Bonus points for exact match.
         if (val.includes(query.toLowerCase())) {
-          score += weight * 2;
+          score += exactMatchPoints;
         }
       }
 
       // Cubes with properties in the current language get a bonus,
       // as generally we expect the user to be interested in those.
       if (scoreRow["lang"] === lang) {
-        score *= 1.5;
+        score *= langMultiplier;
       }
 
       if (
