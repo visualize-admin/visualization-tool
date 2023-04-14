@@ -13,8 +13,8 @@ import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";
 
-import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
+import { cube as cubeNs } from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
 import { executeWithCache } from "./query-cache";
@@ -80,9 +80,14 @@ export async function unversionObservation({
     cube.dimensions,
     (x) => x.path?.value
   ) as Record<string, CubeDimension>;
-  const versionedDimensions = Object.keys(observation).filter((x) =>
-    dimensionIsVersioned(dimensionsByPath[x])
-  );
+  const versionedDimensions = Object.keys(observation).filter((x) => {
+    // Ignore the artificial __iri__ dimensions.
+    if (x.endsWith("/__iri__")) {
+      return false;
+    }
+
+    return dimensionIsVersioned(dimensionsByPath[x]);
+  });
   const query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
     VALUES (?versioned) {
       ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
