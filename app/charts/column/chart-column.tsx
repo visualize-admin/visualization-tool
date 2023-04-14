@@ -28,7 +28,7 @@ import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
-  useComponentsQuery,
+  useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
@@ -56,7 +56,7 @@ export const ChartColumnsVisualization = ({
       locale,
     },
   });
-  const [componentsQuery] = useComponentsQuery({
+  const [componentsWithHierarchiesQuery] = useComponentsWithHierarchiesQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -78,7 +78,7 @@ export const ChartColumnsVisualization = ({
   return (
     <ChartLoadingWrapper
       metadataQuery={metadataQuery}
-      componentsQuery={componentsQuery}
+      componentsQuery={componentsWithHierarchiesQuery}
       observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartColumns}
