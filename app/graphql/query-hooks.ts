@@ -919,34 +919,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
-      { __typename: 'GeoCoordinatesDimension' }
-      & DimensionMetadata_GeoCoordinatesDimension_Fragment
-    ) | (
-      { __typename: 'GeoShapesDimension' }
-      & DimensionMetadata_GeoShapesDimension_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetadata_NominalDimension_Fragment
-    ) | (
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetadata_OrdinalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    ) | (
-      { __typename: 'TemporalDimension' }
-      & DimensionMetadata_TemporalDimension_Fragment
-    )>, measures: Array<(
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    )>, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparqlEditorUrl?: Maybe<string> } }> };
+export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type PossibleFiltersQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1384,15 +1357,6 @@ export const DataCubeObservationsDocument = gql`
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    description
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
@@ -1405,7 +1369,7 @@ export const DataCubeObservationsDocument = gql`
     }
   }
 }
-    ${DimensionMetadataFragmentDoc}`;
+    `;
 
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });

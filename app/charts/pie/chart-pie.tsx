@@ -1,19 +1,12 @@
-import { Box } from "@mui/material";
 import { memo } from "react";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
-import { A11yTable } from "@/charts/shared/a11y-table";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-  OnlyNegativeDataHint,
-} from "@/components/hint";
+import { OnlyNegativeDataHint } from "@/components/hint";
 import {
   DataSource,
   PieConfig,
@@ -23,6 +16,8 @@ import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -39,7 +34,23 @@ export const ChartPieVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [componentsQuery] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -50,33 +61,15 @@ export const ChartPieVisualization = ({
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-        />
-        <ChartPie
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          chartConfig={chartConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
-    );
-  } else if (error) {
-    return <LoadingDataError />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <ChartLoadingWrapper
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsQuery}
+      observationsQuery={observationsQuery}
+      chartConfig={chartConfig}
+      Component={ChartPie}
+    />
+  );
 };
 
 export const ChartPie = memo(
@@ -93,7 +86,7 @@ export const ChartPie = memo(
   }) => {
     const { fields } = chartConfig;
     const somePositive = observations.some(
-      (d) => d[fields?.y?.componentIri]! > 0
+      (d) => (d[fields?.y?.componentIri] as number) > 0
     );
 
     if (!somePositive) {

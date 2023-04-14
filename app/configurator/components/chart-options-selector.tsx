@@ -83,16 +83,6 @@ export const ChartOptionsSelector = ({
 }) => {
   const { activeField, chartConfig, dataSet, dataSource } = state;
   const locale = useLocale();
-  const [{ data: observationsData }] = useDataCubeObservationsQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      filters: chartConfig.filters,
-    },
-  });
-
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSet,
@@ -107,6 +97,15 @@ export const ChartOptionsSelector = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+    },
+  });
+  const [{ data: observationsData }] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      filters: chartConfig.filters,
     },
   });
 
