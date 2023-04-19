@@ -15,7 +15,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -38,6 +38,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig, SortingOrder, SortingType } from "@/configurator";
 import {
@@ -118,35 +119,10 @@ const useColumnsState = (
       dimension: xDimension,
     });
 
-  const getXIri = useCallback(
-    (d: Observation) => {
-      return d[`${fields.x.componentIri}/__iri__`] as string | undefined;
-    },
-    [fields.x.componentIri]
-  );
-
-  const observationXLabelsLookup = useMemo(() => {
-    const lookup = new Map<string, string>();
-    data.forEach((d) => {
-      const iri = getXIri(d);
-      const label = getXAbbreviationOrLabel(d);
-      lookup.set(iri ?? label, label);
-    });
-
-    return lookup;
-  }, [data, getXAbbreviationOrLabel, getXIri]);
-
-  const getX = useCallback(
-    (d: Observation) => {
-      return getXIri(d) ?? getXAbbreviationOrLabel(d);
-    },
-    [getXIri, getXAbbreviationOrLabel]
-  );
-  const getXLabel = useCallback(
-    (d: string) => {
-      return observationXLabelsLookup.get(d) ?? d;
-    },
-    [observationXLabelsLookup]
+  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
+    data,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
   );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);

@@ -10,7 +10,6 @@ import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
-  ObservationFilter,
   DimensionResolvers,
   QueryResolvers,
   Resolvers,
@@ -124,22 +123,25 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
         dimensions: null,
         cache,
       });
+
       if (obs.length === 0) {
         continue;
       }
+
       const unversioned = await unversionObservation({
         observation: obs[0],
         cube: cube,
         sparqlClient,
       });
-      const ret = Object.keys(filters).map((f) => ({
+      const result = Object.keys(filters).map((f) => ({
         iri: f,
         type: "single",
-        // TODO figure out why I need to do the as here
-        value: unversioned[f] as ObservationFilter["value"],
+        value: unversioned[f],
       }));
-      return ret;
+
+      return result;
     }
+
     return [];
   };
 

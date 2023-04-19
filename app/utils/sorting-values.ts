@@ -1,8 +1,8 @@
 import { FilterValue, SortingField } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks";
 
-import { DataCubeObservationsQuery } from "../graphql/query-hooks";
-
+import { bfs } from "./bfs";
 import { uniqueMapBy } from "./uniqueMapBy";
 
 const maybeInt = (value?: string | number): number | string => {
@@ -24,11 +24,7 @@ const maybeInt = (value?: string | number): number | string => {
 };
 
 export const makeDimensionValueSorters = (
-  dimension:
-    | NonNullable<
-        DataCubeObservationsQuery["dataCubeByIri"]
-      >["dimensions"][number]
-    | undefined,
+  dimension: DimensionMetadataWithHierarchiesFragment | undefined,
   options: {
     dimensionFilter?: FilterValue;
     sorting?:
@@ -72,6 +68,13 @@ export const makeDimensionValueSorters = (
     values = values.filter((dv) => filterValues[dv.value]);
   }
 
+  const allHierarchyValues = bfs(dimension.hierarchy ?? [], (node) => node);
+
+  // For hierarchies, we always fetch /__iri__.
+  const hierarchyValuesByValue = uniqueMapBy(
+    allHierarchyValues,
+    (dv) => dv.value
+  );
   const valuesByValue = uniqueMapBy(
     values.filter((x) => x.identifier || x.position),
     (dv) => dv.value
@@ -104,6 +107,19 @@ export const makeDimensionValueSorters = (
       : Infinity;
     return position;
   };
+  const getHierarchy = (value?: string) => {
+    const hierarchyValue = value
+      ? hierarchyValuesByValue.get(value)
+      : undefined;
+
+    // A depth of -1 means that the value was not originally in the hierarchy,
+    // but was added artificially.
+    if (hierarchyValue?.depth === -1) {
+      return Infinity;
+    }
+
+    return hierarchyValue?.depth;
+  };
 
   const getSum = (valueOrLabel?: string) =>
     valueOrLabel ? sumsBySegment?.[valueOrLabel] ?? Infinity : Infinity;
@@ -113,7 +129,7 @@ export const makeDimensionValueSorters = (
 
   let sorters: ((dv: string) => string | undefined | number)[] = [];
 
-  const defaultSorters = [getPosition, getIdentifier, getLabel];
+  const defaultSorters = [getHierarchy, getPosition, getIdentifier, getLabel];
 
   switch (sortingType) {
     case "byDimensionLabel":
@@ -126,7 +142,7 @@ export const makeDimensionValueSorters = (
       sorters = [getMeasure];
       break;
     case "byAuto":
-      sorters = [getPosition, getIdentifier];
+      sorters = defaultSorters;
       break;
     case "byTableSortingType":
       sorters = [getPosition, getLabel];

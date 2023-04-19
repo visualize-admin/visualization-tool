@@ -22,6 +22,8 @@ import { Observation, isNumericalMeasure } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
@@ -241,7 +243,23 @@ export const DataSetTable = ({
 }) => {
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
+  const [{ data: metadataData }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: componentsData }] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -253,23 +271,27 @@ export const DataSetTable = ({
   });
 
   const headers = useMemo(() => {
-    if (!data?.dataCubeByIri) {
+    if (!componentsData?.dataCubeByIri) {
       return [];
     }
 
     return getSortedColumns(
-      data.dataCubeByIri.dimensions,
-      data.dataCubeByIri.measures
+      componentsData.dataCubeByIri.dimensions,
+      componentsData.dataCubeByIri.measures
     );
-  }, [data?.dataCubeByIri]);
+  }, [componentsData?.dataCubeByIri]);
 
-  if (!fetching && data?.dataCubeByIri) {
+  if (
+    metadataData?.dataCubeByIri &&
+    componentsData?.dataCubeByIri &&
+    observationsData?.dataCubeByIri
+  ) {
     return (
       <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
         <PreviewTable
-          title={data.dataCubeByIri.title}
+          title={metadataData.dataCubeByIri.title}
           headers={headers}
-          observations={data.dataCubeByIri.observations.data}
+          observations={observationsData.dataCubeByIri.observations.data}
           linkToMetadataPanel={true}
         />
       </Box>

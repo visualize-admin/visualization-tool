@@ -363,15 +363,6 @@ query DataCubeObservations(
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    description
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl

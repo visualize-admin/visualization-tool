@@ -1,6 +1,6 @@
 import { geoCentroid } from "d3";
 import keyBy from "lodash/keyBy";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { mesh as topojsonMesh } from "topojson-client";
 
 import { MapComponent } from "@/charts/map/map";
@@ -19,13 +19,15 @@ import {
   GeoData,
   GeoPoint,
   GeoShapes,
-  isGeoCoordinatesDimension,
-  isGeoShapesDimension,
   Observation,
   SymbolLayer,
+  isGeoCoordinatesDimension,
+  isGeoShapesDimension,
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
@@ -50,7 +52,23 @@ export const ChartMapVisualization = ({
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
-  const [observationsQueryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [componentsQuery] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -60,17 +78,12 @@ export const ChartMapVisualization = ({
       filters: queryFilters,
     },
   });
-  const {
-    data,
-    fetching,
-    error: observationsQueryError,
-  } = observationsQueryResp;
+  const { data: componentsData } = componentsQuery;
+  const { data: observationsData } = observationsQuery;
 
-  const dimensions = data?.dataCubeByIri?.dimensions;
-  const measures = data?.dataCubeByIri?.measures;
-  const observations = data?.dataCubeByIri?.observations.data as
-    | Observation[]
-    | undefined;
+  const dimensions = componentsData?.dataCubeByIri?.dimensions;
+  const measures = componentsData?.dataCubeByIri?.measures;
+  const observations = observationsData?.dataCubeByIri?.observations.data;
 
   const [{ data: fetchedGeoCoordinates, error: geoCoordinatesError }] =
     useGeoCoordinatesByDimensionIriQuery({
@@ -208,8 +221,8 @@ export const ChartMapVisualization = ({
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
-  const queryResp = {
-    fetching,
+  const observationsQueryResp = {
+    ...observationsQuery,
     data:
       measures &&
       dimensions &&
@@ -217,13 +230,16 @@ export const ChartMapVisualization = ({
       areaLayerPrepared &&
       symbolLayerPrepared &&
       ready
-        ? observationsQueryResp["data"]
+        ? observationsQuery["data"]
         : undefined,
-    error: observationsQueryError || geoCoordinatesError || geoShapesError,
+    error: observationsQuery.error ?? geoCoordinatesError ?? geoShapesError,
   };
+
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsQuery}
+      observationsQuery={observationsQueryResp}
       Component={ChartMap}
       ComponentProps={{
         features: { areaLayer, symbolLayer },

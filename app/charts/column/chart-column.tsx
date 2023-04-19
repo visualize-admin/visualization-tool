@@ -28,6 +28,8 @@ import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsWithHierarchiesQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -46,7 +48,23 @@ export const ChartColumnsVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [queryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [componentsWithHierarchiesQuery] = useComponentsWithHierarchiesQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -59,7 +77,9 @@ export const ChartColumnsVisualization = ({
 
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsWithHierarchiesQuery}
+      observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartColumns}
     />
