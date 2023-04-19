@@ -1108,12 +1108,12 @@ const adjustSegmentSorting = ({
 
 // Helpers
 export const getPossibleChartType = ({
-  metadata,
+  dimensions,
+  measures,
 }: {
-  metadata: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }): ChartType[] => {
-  const { measures, dimensions } = metadata;
-
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);

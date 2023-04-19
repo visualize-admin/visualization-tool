@@ -7,7 +7,8 @@ const getDataCubeIri = (req: GraphQLRequest) => {
     operationName === "DataCubePreview" ||
     operationName === "DataCubeMetadata" ||
     operationName === "DataCubeObservations" ||
-    operationName === "DataCubeMetadataWithComponentValues" ||
+    operationName === "Components" ||
+    operationName === "ComponentsWithHierarchies" ||
     operationName === "PossibleFilters"
   ) {
     return variables?.iri;

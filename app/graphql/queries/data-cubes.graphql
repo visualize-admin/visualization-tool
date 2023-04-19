@@ -183,7 +183,7 @@ query DataCubeMetadata(
   }
 }
 
-query DataCubeMetadataWithComponentValues(
+query Components(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
@@ -198,17 +198,6 @@ query DataCubeMetadataWithComponentValues(
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
     }
@@ -218,7 +207,7 @@ query DataCubeMetadataWithComponentValues(
   }
 }
 
-query DataCubeMetadataWithComponentValuesAndHierarchies(
+query ComponentsWithHierarchies(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
@@ -233,17 +222,6 @@ query DataCubeMetadataWithComponentValuesAndHierarchies(
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadataWithHierarchies
     }

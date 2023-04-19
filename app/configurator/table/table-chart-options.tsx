@@ -45,7 +45,10 @@ import {
   isTemporalDimension,
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "@/graphql/types";
 import {
   getDefaultCategoricalPalette,
   getDefaultCategoricalPaletteName,
@@ -135,7 +138,7 @@ export const TableColumnOptions = ({
   metaData,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
 }) => {
   const { activeField, chartConfig } = state;
 

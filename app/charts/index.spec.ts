@@ -1,6 +1,5 @@
 import { TableFields } from "@/configurator";
-import { DataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import { ComponentsQuery } from "@/graphql/query-hooks";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
@@ -12,10 +11,10 @@ describe("initial config", () => {
     const config = getInitialConfig({
       chartType: "table",
       dimensions: forestAreaData.data.dataCubeByIri.dimensions as NonNullable<
-        DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+        ComponentsQuery["dataCubeByIri"]
       >["dimensions"],
       measures: forestAreaData.data.dataCubeByIri.measures as NonNullable<
-        DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+        ComponentsQuery["dataCubeByIri"]
       >["measures"],
     });
     expect(
@@ -40,28 +39,31 @@ describe("possible chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
     const possibleChartTypes = getPossibleChartType({
-      metadata: bathingWaterData.data.dataCubeByIri as DataCubeMetadata,
+      dimensions: bathingWaterData.data.dataCubeByIri.dimensions as NonNullable<
+        ComponentsQuery["dataCubeByIri"]
+      >["dimensions"],
+      measures: bathingWaterData.data.dataCubeByIri.measures as NonNullable<
+        ComponentsQuery["dataCubeByIri"]
+      >["measures"],
     }).sort();
 
     expect(possibleChartTypes).toEqual(expectedChartTypes);
   });
 
   it("should only allow table if there are only measures available", () => {
-    const metadata = {
+    const possibleChartTypes = getPossibleChartType({
       dimensions: [],
-      measures: [{ __typename: "NumericalMeasure" }],
-    } as any;
-    const possibleChartTypes = getPossibleChartType({ metadata }).sort();
+      measures: [{ __typename: "NumericalMeasure" }] as any,
+    });
 
     expect(possibleChartTypes).toEqual(["table"]);
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const metadata = {
-      dimensions: [{ __typename: "GeoShapesDimension" }],
-      measures: [{ __typename: "NumericalMeasure" }],
-    } as any;
-    const possibleChartTypes = getPossibleChartType({ metadata }).sort();
+    const possibleChartTypes = getPossibleChartType({
+      dimensions: [{ __typename: "GeoShapesDimension" }] as any,
+      measures: [{ __typename: "NumericalMeasure" }] as any,
+    }).sort();
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
   });

@@ -755,7 +755,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, dateModified?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
-export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
+export type ComponentsQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -765,7 +765,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, publicationStatus: DataCubePublicationStatus, expires?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
+export type ComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetadata_GeoCoordinatesDimension_Fragment
     ) | (
@@ -794,7 +794,7 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
       & DimensionMetadata_OrdinalMeasure_Fragment
     )> }> };
 
-export type DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables = Exact<{
+export type ComponentsWithHierarchiesQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -804,7 +804,7 @@ export type DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables = Ex
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesAndHierarchiesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, publicationStatus: DataCubePublicationStatus, expires?: Maybe<string>, identifier?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, landingPage?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string }>, dimensions: Array<(
+export type ComponentsWithHierarchiesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensions: Array<(
       { __typename: 'GeoCoordinatesDimension' }
       & DimensionMetadataWithHierarchies_GeoCoordinatesDimension_Fragment
     ) | (
@@ -1226,8 +1226,8 @@ export const DataCubeMetadataDocument = gql`
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
-export const DataCubeMetadataWithComponentValuesDocument = gql`
-    query DataCubeMetadataWithComponentValues($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+export const ComponentsDocument = gql`
+    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1235,17 +1235,6 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
     }
@@ -1256,11 +1245,11 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
 }
     ${DimensionMetadataFragmentDoc}`;
 
-export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
+export function useComponentsQuery(options: Omit<Urql.UseQueryArgs<ComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ComponentsQuery>({ query: ComponentsDocument, ...options });
 };
-export const DataCubeMetadataWithComponentValuesAndHierarchiesDocument = gql`
-    query DataCubeMetadataWithComponentValuesAndHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+export const ComponentsWithHierarchiesDocument = gql`
+    query ComponentsWithHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1268,17 +1257,6 @@ export const DataCubeMetadataWithComponentValuesAndHierarchiesDocument = gql`
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadataWithHierarchies
     }
@@ -1289,8 +1267,8 @@ export const DataCubeMetadataWithComponentValuesAndHierarchiesDocument = gql`
 }
     ${DimensionMetadataWithHierarchiesFragmentDoc}`;
 
-export function useDataCubeMetadataWithComponentValuesAndHierarchiesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeMetadataWithComponentValuesAndHierarchiesQuery>({ query: DataCubeMetadataWithComponentValuesAndHierarchiesDocument, ...options });
+export function useComponentsWithHierarchiesQuery(options: Omit<Urql.UseQueryArgs<ComponentsWithHierarchiesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ComponentsWithHierarchiesQuery>({ query: ComponentsWithHierarchiesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
     query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {

@@ -71,15 +71,24 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
-  DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-  DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables,
-  DataCubeMetadataWithComponentValuesDocument,
+  ComponentsDocument,
+  ComponentsQuery,
+  ComponentsQueryVariables,
+  ComponentsWithHierarchiesDocument,
+  ComponentsWithHierarchiesQuery,
+  ComponentsWithHierarchiesQueryVariables,
+  DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataQueryVariables,
   DimensionMetadataFragment,
   DimensionMetadataWithHierarchiesFragment,
   NumericalMeasure,
   OrdinalMeasure,
 } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { getDefaultCategoricalPaletteName } from "@/palettes";
@@ -196,7 +205,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_REPLACED";
-      value: { chartConfig: ChartConfig; dataSetMetadata: DataCubeMetadata };
+      value: {
+        chartConfig: ChartConfig;
+        dataSetMetadata: DataCubeMetadataWithHierarchies;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
@@ -297,21 +309,36 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
   activeField: undefined,
 };
 
-const getCachedCubeMetadataWithComponentValues = (
+const getCachedCubeMetadataWithComponentValuesAndHierarchies = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ) => {
-  const query = client.readQuery<
-    DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-    DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
-  >(DataCubeMetadataWithComponentValuesDocument, {
+  const metadataQuery = client.readQuery<
+    DataCubeMetadataQuery,
+    DataCubeMetadataQueryVariables
+  >(DataCubeMetadataDocument, {
+    iri: draft.dataSet,
+    locale,
+    sourceType: draft.dataSource.type,
+    sourceUrl: draft.dataSource.url,
+  });
+  const componentsQuery = client.readQuery<
+    ComponentsQuery,
+    ComponentsQueryVariables
+  >(ComponentsDocument, {
     iri: draft.dataSet,
     locale,
     sourceType: draft.dataSource.type,
     sourceUrl: draft.dataSource.url,
   });
 
-  return query?.data?.dataCubeByIri;
+  return metadataQuery?.data?.dataCubeByIri &&
+    componentsQuery?.data?.dataCubeByIri
+    ? {
+        ...metadataQuery.data.dataCubeByIri,
+        ...componentsQuery.data.dataCubeByIri,
+      }
+    : null;
 };
 
 export const getFilterValue = (
@@ -553,13 +580,14 @@ export const applyNonTableDimensionToFilters = ({
 
 const transitionStepNext = (
   draft: ConfiguratorState,
-  dataSetMetadata: DataCubeMetadata
+  dataSetMetadata: DataCubeMetadataWithHierarchies
 ): ConfiguratorState => {
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (draft.dataSet) {
         const possibleChartTypes = getPossibleChartType({
-          metadata: dataSetMetadata,
+          dimensions: dataSetMetadata.dimensions,
+          measures: dataSetMetadata.measures,
         });
 
         const chartConfig = deriveFiltersFromFields(
@@ -771,7 +799,10 @@ export const handleChartFieldChanged = (
     selectedValues: actionSelectedValues,
   } = action.value;
 
-  const metadata = getCachedCubeMetadataWithComponentValues(draft, locale);
+  const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
+    draft,
+    locale
+  );
   const { dimensions = [], measures = [] } = metadata || {
     dimensions: [],
     measures: [],
@@ -933,7 +964,7 @@ export const handleChartOptionChanged = (
           `chartConfig.fields.${action.value.field}.color.componentIri`
         ) as string;
 
-        const metadata = getCachedCubeMetadataWithComponentValues(
+        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
           draft,
           action.value.locale
         );
@@ -1126,7 +1157,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartType } = action.value;
-        const metadata = getCachedCubeMetadataWithComponentValues(
+        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
           draft,
           locale
         );
@@ -1163,7 +1194,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
-        const metadata = getCachedCubeMetadataWithComponentValues(
+        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
           draft,
           action.value.locale
         );
@@ -1457,25 +1488,37 @@ export const initChartStateFromCube = async (
   dataSource: DataSource,
   locale: string
 ): Promise<ConfiguratorState | undefined> => {
-  const { data } = await client
+  const { data: metadata } = await client
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
+      {
+        iri: datasetIri,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+      }
+    )
+    .toPromise();
+  const { data: components } = await client
     .query<
-      DataCubeMetadataWithComponentValuesAndHierarchiesQuery,
-      DataCubeMetadataWithComponentValuesAndHierarchiesQueryVariables
-    >(DataCubeMetadataWithComponentValuesDocument, {
+      ComponentsWithHierarchiesQuery,
+      ComponentsWithHierarchiesQueryVariables
+    >(ComponentsWithHierarchiesDocument, {
       iri: datasetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
     })
     .toPromise();
-  if (!data || !data?.dataCubeByIri) {
+
+  if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
+    return transitionStepNext(
+      getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
+      { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
+    );
+  } else {
     console.warn(`Could not fetch cube with iri ${datasetIri}`);
-    return;
   }
-  return transitionStepNext(
-    getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
-    data.dataCubeByIri
-  );
 };
 
 /**

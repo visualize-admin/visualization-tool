@@ -40,8 +40,8 @@ import {
   useIsTrustedDataSource,
 } from "@/domain/datasource";
 import {
-  DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -139,7 +139,15 @@ export const ChartPublishedInner = ({
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
 
-  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: components }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -158,12 +166,16 @@ export const ChartPublishedInner = ({
   }, [dataSet, dataSource, chartConfig]);
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
-  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
+  const allComponents = useMemo(() => {
+    if (!components?.dataCubeByIri) {
+      return [];
+    }
+
     return [
-      ...(metaData?.dataCubeByIri?.dimensions ?? []),
-      ...(metaData?.dataCubeByIri?.measures ?? []),
+      ...components.dataCubeByIri.dimensions,
+      ...components.dataCubeByIri.measures,
     ];
-  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
+  }, [components?.dataCubeByIri]);
 
   const [{ showDownload }] = useEmbedOptions();
 
@@ -171,7 +183,7 @@ export const ChartPublishedInner = ({
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
         <ChartErrorBoundary resetKeys={[chartConfig]}>
-          {metaData?.dataCubeByIri?.publicationStatus ===
+          {metadata?.dataCubeByIri?.publicationStatus ===
             DataCubePublicationStatus.Draft && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
@@ -183,7 +195,7 @@ export const ChartPublishedInner = ({
               </HintRed>
             </Box>
           )}
-          {metaData?.dataCubeByIri?.expires && (
+          {metadata?.dataCubeByIri?.expires && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
                 <Trans id="dataset.publicationStatus.expires.warning">
@@ -221,7 +233,7 @@ export const ChartPublishedInner = ({
             <MetadataPanel
               datasetIri={dataSet}
               dataSource={dataSource}
-              dimensions={allDimensions}
+              dimensions={allComponents}
               container={rootRef.current}
             />
           </Flex>
