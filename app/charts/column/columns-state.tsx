@@ -26,6 +26,7 @@ import {
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
+  useMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useSegment,
@@ -112,12 +113,13 @@ const useColumnsState = (
   const timeUnit = xIsTime
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
+  const xDimensionValues = useMaybeTemporalDimensionValues(xDimension, data);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
       useAbbreviations: fields.x.useAbbreviations,
       dimensionIri: xDimension.iri,
-      dimensionValues: xDimension.values,
+      dimensionValues: xDimensionValues,
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(

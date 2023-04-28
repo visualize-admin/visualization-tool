@@ -34,6 +34,7 @@ import {
   getLabelWithUnit,
   getWideData,
   useDataAfterInteractiveFilters,
+  useMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useTemporalVariable,
@@ -108,12 +109,13 @@ const useColumnsStackedState = (
   }
 
   const xIsTime = isTemporalDimension(xDimension);
+  const xDimensionValues = useMaybeTemporalDimensionValues(xDimension, data);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
       useAbbreviations: fields.x.useAbbreviations,
       dimensionIri: xDimension.iri,
-      dimensionValues: xDimension.values,
+      dimensionValues: xDimensionValues,
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
@@ -134,7 +136,8 @@ const useColumnsStackedState = (
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
-    dimension: segmentDimension,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =

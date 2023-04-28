@@ -1,6 +1,7 @@
 import { group, InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
 import overEvery from "lodash/overEvery";
+import uniq from "lodash/uniq";
 import { useCallback, useMemo } from "react";
 
 import {
@@ -22,7 +23,11 @@ import {
   QueryFilters,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
+import {
+  DimensionValue,
+  isTemporalDimension,
+  Observation,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -410,4 +415,24 @@ export const useImputationNeeded = ({
   }, [chartConfig, data]);
 
   return imputationNeeded;
+};
+
+/** Use to potentially extract temporal values from data. This is needed for
+ * column charts, where the temporal dimension is used as X axis (and we
+ * do not fetch all values for temporal dimensions, only the min and max).
+ */
+export const useMaybeTemporalDimensionValues = (
+  dimension: DimensionMetadataFragment,
+  data: Observation[]
+) => {
+  const maybeTemporalDimensionValues: DimensionValue[] = useMemo(() => {
+    if (isTemporalDimension(dimension)) {
+      const dates = data.map((d) => d[dimension.iri] as string);
+      return uniq(dates).map((d) => ({ label: d, value: d }));
+    } else {
+      return dimension.values;
+    }
+  }, [dimension, data]);
+
+  return maybeTemporalDimensionValues;
 };

@@ -1,14 +1,17 @@
+import { renderHook } from "@testing-library/react-hooks";
 import { InternMap } from "d3";
 import merge from "lodash/merge";
 
 import {
   getWideData,
   prepareQueryFilters,
+  useMaybeTemporalDimensionValues,
 } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
 import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
 const makeCubeNsGetters = (cubeIri: string) => ({
@@ -135,5 +138,52 @@ describe("getWideData", () => {
       "2021-01-02",
       "2028-12-12",
     ]);
+  });
+});
+
+describe("useMaybeTemporalDimensionValues", () => {
+  it("should return data values if dimension is temporal", () => {
+    const temporalDimension = {
+      __typename: "TemporalDimension",
+      iri: "year",
+      values: [
+        { label: "1996", value: "1996" },
+        { label: "2023", value: "2023" },
+      ],
+    } as DimensionMetadataFragment;
+    const data: Observation[] = [
+      { [temporalDimension.iri]: "1997" },
+      { [temporalDimension.iri]: "2002" },
+      { [temporalDimension.iri]: "2023" },
+    ];
+
+    const { result } = renderHook(() => {
+      return useMaybeTemporalDimensionValues(temporalDimension, data);
+    });
+
+    expect(result.current).toEqual([
+      { label: "1997", value: "1997" },
+      { label: "2002", value: "2002" },
+      { label: "2023", value: "2023" },
+    ]);
+  });
+
+  it("should return dimension values if dimension is not temporal", () => {
+    const dimension = {
+      __typename: "NominalDimension",
+      iri: "year",
+      values: [
+        { label: "A", value: "A" },
+        { label: "B", value: "B" },
+        { label: "C", value: "C" },
+      ],
+    } as DimensionMetadataFragment;
+    const data: Observation[] = [];
+
+    const { result } = renderHook(() => {
+      return useMaybeTemporalDimensionValues(dimension, data);
+    });
+
+    expect(result.current).toEqual(dimension.values);
   });
 });
