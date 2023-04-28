@@ -116,7 +116,8 @@ const useColumnsState = (
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
       useAbbreviations: fields.x.useAbbreviations,
-      dimension: xDimension,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimension.values,
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(

@@ -1,18 +1,19 @@
 import React from "react";
 
 import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const useMaybeAbbreviations = ({
   useAbbreviations,
-  dimension,
+  dimensionIri,
+  dimensionValues,
 }: {
   useAbbreviations: boolean | undefined;
-  dimension: DimensionMetadataFragment | undefined;
+  dimensionIri: string | undefined;
+  dimensionValues: DimensionValue[] | undefined;
 }) => {
   const { valueLookup, labelLookup, abbreviationOrLabelLookup } =
     React.useMemo(() => {
-      const values = dimension?.values ?? [];
+      const values = dimensionValues ?? [];
 
       const valueLookup = new Map<
         NonNullable<ObservationValue>,
@@ -37,16 +38,16 @@ export const useMaybeAbbreviations = ({
         labelLookup,
         abbreviationOrLabelLookup,
       };
-    }, [dimension?.values, useAbbreviations]);
+    }, [dimensionValues, useAbbreviations]);
 
   const getAbbreviationOrLabelByValue = React.useCallback(
     (d: Observation) => {
-      if (!dimension) {
+      if (!dimensionIri) {
         return "";
       }
 
-      const value = d[`${dimension.iri}/__iri__`] as string | undefined;
-      const label = d[dimension.iri] as string | undefined;
+      const value = d[`${dimensionIri}/__iri__`] as string | undefined;
+      const label = d[dimensionIri] as string | undefined;
 
       if (value === undefined && label === undefined) {
         return "";
@@ -55,13 +56,14 @@ export const useMaybeAbbreviations = ({
       const lookedUpObservation =
         (value ? valueLookup.get(value) : null) ??
         (label ? labelLookup.get(label) : null);
+
       const lookedUpLabel = lookedUpObservation?.label ?? "";
 
       return useAbbreviations
         ? lookedUpObservation?.alternateName ?? lookedUpLabel
         : lookedUpLabel;
     },
-    [dimension, valueLookup, labelLookup, useAbbreviations]
+    [dimensionIri, valueLookup, labelLookup, useAbbreviations]
   );
 
   return {

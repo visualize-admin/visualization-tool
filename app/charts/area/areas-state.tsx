@@ -115,7 +115,8 @@ const useAreasState = (
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
-    dimension: segmentDimension,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
