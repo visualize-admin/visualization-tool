@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
@@ -174,6 +174,11 @@ export const ChartFootnotes = ({
                 dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
               ></Box>
             )}
+            {configKey && shareUrl && visualizeLinkText && (
+              <>
+                / <LinkButton href={shareUrl}> {visualizeLinkText}</LinkButton>
+              </>
+            )}
           </Typography>
         ) : null}
 
@@ -238,23 +243,12 @@ export const ChartFootnotes = ({
           {sparqlEditorUrl && showSparqlQuery !== false && (
             <RunSparqlQuery url={sparqlEditorUrl as string} />
           )}
-          {configKey && shareUrl && (
-            <Button
-              component="a"
-              variant="text"
-              color="primary"
-              size="small"
-              sx={{ p: 0, typography: "caption" }}
-              href={shareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {visualizeLinkText ?? (
-                <Trans id="metadata.link.created.with.visualize">
-                  Created with visualize.admin.ch
-                </Trans>
-              )}
-            </Button>
+          {configKey && shareUrl && !visualizeLinkText && (
+            <LinkButton href={shareUrl}>
+              <Trans id="metadata.link.created.with.visualize">
+                Created with visualize.admin.ch
+              </Trans>
+            </LinkButton>
           )}
         </Box>
       </Box>
@@ -262,4 +256,19 @@ export const ChartFootnotes = ({
   } else {
     return null;
   }
+};
+
+const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
+  return (
+    <Button
+      component="a"
+      variant="text"
+      color="primary"
+      size="small"
+      sx={{ p: 0, typography: "caption", verticalAlign: "unset" }}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  );
 };
