@@ -41,11 +41,7 @@ export const ControlTab = ({
           iconName={getIconName(value)}
           upperLabel={getFieldLabel(labelId)}
           mainLabel={
-            component ? (
-              component.label
-            ) : (
-              <Trans id="controls.color.add">Add ...</Trans>
-            )
+            component?.label ?? <Trans id="controls.color.add">Add…</Trans>
           }
           checked={checked}
           optional={!component}

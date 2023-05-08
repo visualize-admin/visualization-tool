@@ -176,13 +176,12 @@ msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Paramètres d'origine"
 
 #: app/configurator/components/field-i18n.ts
-msgid "controls.animation"
-msgstr "Animation"
-
-#: app/configurator/components/chart-annotator.tsx
-#: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
 msgstr "Utiliser des abréviations"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.animation"
+msgstr "Animation"
 
 #: app/configurator/components/chart-annotator.tsx
 msgid "controls.annotator.add-description-warning"
@@ -382,8 +381,8 @@ msgstr "Zéros"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
-msgid "controls.interactive.filters.animation"
-msgstr "Animation"
+#~ msgid "controls.interactive.filters.animation"
+#~ msgstr "Animation"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 msgid "controls.interactiveFilters.time.noTimeDimension"
@@ -440,7 +439,6 @@ msgstr "Retour à l'aperçu"
 
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 msgid "controls.none"
 msgstr "Aucun"
 
@@ -585,7 +583,7 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Style du texte"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
 msgstr "Sélectionner une dimension"
 
