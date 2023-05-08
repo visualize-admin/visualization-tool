@@ -60,7 +60,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
-import { flag } from "@/flags";
 import {
   HierarchyValue,
   PossibleFiltersDocument,
@@ -787,20 +786,18 @@ const ChartFields = ({
             active={chartConfig.baseLayer.show}
           />
         ) : (
-          (field !== "animation" || flag("timeslider")) && (
-            <ControlTabField
-              key={field}
-              component={
-                isMapConfig(chartConfig) && field === "symbolLayer"
-                  ? chartConfig.fields.symbolLayer
-                    ? component
-                    : undefined
-                  : component
-              }
-              value={field}
-              labelId={`${chartConfig.chartType}.${field}`}
-            />
-          )
+          <ControlTabField
+            key={field}
+            component={
+              isMapConfig(chartConfig) && field === "symbolLayer"
+                ? chartConfig.fields.symbolLayer
+                  ? component
+                  : undefined
+                : component
+            }
+            value={field}
+            labelId={`${chartConfig.chartType}.${field}`}
+          />
         );
       })}
     </>
