@@ -60,6 +60,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
+import { flag } from "@/flags";
 import {
   HierarchyValue,
   PossibleFiltersDocument,
@@ -82,7 +83,6 @@ import { InteractiveFiltersConfigurator } from "../interactive-filters/interacti
 
 import { TitleAndDescriptionConfigurator } from "./chart-annotator";
 import { ChartTypeSelector } from "./chart-type-selector";
-import { flag } from "./flag";
 
 const DataFilterSelectGeneric = ({
   dimension,
