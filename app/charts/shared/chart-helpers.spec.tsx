@@ -1,11 +1,10 @@
-import { renderHook } from "@testing-library/react-hooks";
 import { InternMap } from "d3";
 import merge from "lodash/merge";
 
 import {
   getWideData,
   prepareQueryFilters,
-  useMaybeTemporalDimensionValues,
+  getMaybeTemporalDimensionValues,
 } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
 import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
@@ -141,7 +140,7 @@ describe("getWideData", () => {
   });
 });
 
-describe("useMaybeTemporalDimensionValues", () => {
+describe("getMaybeTemporalDimensionValues", () => {
   it("should return data values if dimension is temporal", () => {
     const temporalDimension = {
       __typename: "TemporalDimension",
@@ -157,11 +156,9 @@ describe("useMaybeTemporalDimensionValues", () => {
       { [temporalDimension.iri]: "2023" },
     ];
 
-    const { result } = renderHook(() => {
-      return useMaybeTemporalDimensionValues(temporalDimension, data);
-    });
+    const result = getMaybeTemporalDimensionValues(temporalDimension, data);
 
-    expect(result.current).toEqual([
+    expect(result).toEqual([
       { label: "1997", value: "1997" },
       { label: "2002", value: "2002" },
       { label: "2023", value: "2023" },
@@ -180,10 +177,8 @@ describe("useMaybeTemporalDimensionValues", () => {
     } as DimensionMetadataFragment;
     const data: Observation[] = [];
 
-    const { result } = renderHook(() => {
-      return useMaybeTemporalDimensionValues(dimension, data);
-    });
+    const result = getMaybeTemporalDimensionValues(dimension, data);
 
-    expect(result.current).toEqual(dimension.values);
+    expect(result).toEqual(dimension.values);
   });
 });

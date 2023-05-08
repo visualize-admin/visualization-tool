@@ -26,7 +26,7 @@ import {
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
-  useMaybeTemporalDimensionValues,
+  getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useSegment,
@@ -113,7 +113,9 @@ const useColumnsState = (
   const timeUnit = xIsTime
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
-  const xDimensionValues = useMaybeTemporalDimensionValues(xDimension, data);
+  const xDimensionValues = useMemo(() => {
+    return getMaybeTemporalDimensionValues(xDimension, data);
+  }, [xDimension, data]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({

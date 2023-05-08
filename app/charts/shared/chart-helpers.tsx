@@ -23,11 +23,7 @@ import {
   QueryFilters,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  DimensionValue,
-  isTemporalDimension,
-  Observation,
-} from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -421,18 +417,14 @@ export const useImputationNeeded = ({
  * column charts, where the temporal dimension is used as X axis (and we
  * do not fetch all values for temporal dimensions, only the min and max).
  */
-export const useMaybeTemporalDimensionValues = (
+export const getMaybeTemporalDimensionValues = (
   dimension: DimensionMetadataFragment,
   data: Observation[]
 ) => {
-  const maybeTemporalDimensionValues: DimensionValue[] = useMemo(() => {
-    if (isTemporalDimension(dimension)) {
-      const dates = data.map((d) => d[dimension.iri] as string);
-      return uniq(dates).map((d) => ({ label: d, value: d }));
-    } else {
-      return dimension.values;
-    }
-  }, [dimension, data]);
-
-  return maybeTemporalDimensionValues;
+  if (isTemporalDimension(dimension)) {
+    const dates = data.map((d) => d[dimension.iri] as string);
+    return uniq(dates).map((d) => ({ label: d, value: d }));
+  } else {
+    return dimension.values;
+  }
 };
