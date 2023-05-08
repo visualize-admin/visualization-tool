@@ -83,6 +83,7 @@ const getCubeDimensions = async (
           cube: rawCube,
           locale: "en",
           sparqlClient,
+          cache: undefined,
         });
       }
     })
@@ -140,6 +141,15 @@ const checks: Check[] = [
       } else {
         return { ok: false, message: "No description" };
       }
+    },
+  },
+  {
+    name: "Number of dimensions",
+    description: "Should have a number of dimensions",
+    run: async ({ cubeIri, loaders }) => {
+      const dimensions = await loaders.getCubeDimensions.load(cubeIri);
+      console.log(dimensions);
+      return { ok: true, message: `Has ${dimensions?.length} dimensions` };
     },
   },
   {
@@ -252,17 +262,26 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
     <>
       <ContentLayout>
         <Stack maxWidth={1024} mx="auto" mt={8} spacing={4}>
-          <Stack spacing={2}>
+          <Stack spacing={3}>
             <Typography variant="h1">
               <Trans id="cube-checker.cube-checker">Cube checker</Trans>
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              <Trans id="cube-checker.description">
-                Cube checker helps you understand if a cube has all the
-                necessary attributes and properties to be viewable in
-                visualize.admin.ch.
-              </Trans>
-            </Typography>
+            <div>
+              <Typography variant="body1" gutterBottom>
+                <Trans id="cube-checker.description">
+                  Cube checker helps you understand if a cube has all the
+                  necessary attributes and properties to be viewable in
+                  visualize.admin.ch.
+                </Trans>
+              </Typography>
+
+              <Link
+                variant="body2"
+                href="/docs/charts/rdf-to-visualize#cube-checker"
+              >
+                ℹ️ <Trans id="cube-checker.help">More information here.</Trans>
+              </Link>
+            </div>
             <form>
               <Stack spacing={1} alignItems="start">
                 <TextField
@@ -277,14 +296,21 @@ const Page: NextPage<PageProps> = ({ checks, cubeIri }) => {
                     }),
                   }}
                 />
-                <input
-                  type="hidden"
-                  name="dataSource"
-                  value={sourceToLabel(datasource)}
-                />
-                <Button type="submit" variant="contained" size="large">
-                  Check
-                </Button>
+                <div>
+                  <input
+                    type="hidden"
+                    name="dataSource"
+                    value={sourceToLabel(datasource)}
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    sx={{ mt: 4, display: "block" }}
+                  >
+                    Check
+                  </Button>
+                </div>
               </Stack>
             </form>
           </Stack>

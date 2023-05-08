@@ -1,11 +1,17 @@
-import { SortingField } from "@/configurator";
+import { FilterValue, SortingField } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks";
 
-import { DataCubeObservationsQuery } from "../graphql/query-hooks";
+import { bfs } from "./bfs";
+import { uniqueMapBy } from "./uniqueMapBy";
 
-const maybeInt = (value?: string): number | string => {
+const maybeInt = (value?: string | number): number | string => {
   if (!value) {
     return Infinity;
+  }
+
+  if (typeof value === "number") {
+    return value;
   }
 
   const maybeInt = parseInt(value, 10);
@@ -18,12 +24,9 @@ const maybeInt = (value?: string): number | string => {
 };
 
 export const makeDimensionValueSorters = (
-  dimension:
-    | NonNullable<
-        DataCubeObservationsQuery["dataCubeByIri"]
-      >["dimensions"][number]
-    | undefined,
+  dimension: DimensionMetadataWithHierarchiesFragment | undefined,
   options: {
+    dimensionFilter?: FilterValue;
     sorting?:
       | NonNullable<SortingField["sorting"]>
       | {
@@ -34,45 +37,99 @@ export const makeDimensionValueSorters = (
     sumsBySegment?: Record<string, number | null>;
     measureBySegment?: Record<string, number | null>;
     useAbbreviations?: boolean;
-  } = {}
+  } = {
+    dimensionFilter: undefined,
+  }
 ): ((label: string) => string | undefined | number)[] => {
-  const { sorting, sumsBySegment, measureBySegment, useAbbreviations } =
-    options;
+  const {
+    sorting,
+    sumsBySegment,
+    measureBySegment,
+    useAbbreviations,
+    dimensionFilter,
+  } = options;
   const sortingType = sorting?.sortingType;
 
   if (!dimension) {
     return [];
   }
 
-  const values = useAbbreviations
-    ? dimension.values.map((d) => ({
-        ...d,
-        label: d.alternateName ?? d.label,
-      }))
+  const addAlternateName = (d: DimensionValue) => ({
+    ...d,
+    label: d.alternateName ?? d.label,
+  });
+
+  let values = useAbbreviations
+    ? dimension.values.map(addAlternateName)
     : dimension.values;
-  const valuesByLabel = new Map<string, DimensionValue>(
-    values.map((v) => [v.label, v])
+
+  if (dimensionFilter?.type === "multi") {
+    const filterValues = dimensionFilter.values;
+    values = values.filter((dv) => filterValues[dv.value]);
+  }
+
+  const allHierarchyValues = bfs(dimension.hierarchy ?? [], (node) => node);
+
+  // For hierarchies, we always fetch /__iri__.
+  const hierarchyValuesByValue = uniqueMapBy(
+    allHierarchyValues,
+    (dv) => dv.value
+  );
+  const valuesByValue = uniqueMapBy(
+    values.filter((x) => x.identifier || x.position),
+    (dv) => dv.value
+  );
+  // Index values that have an identifier or a position
+  // Warning: if two values have the same label and have an identifier / position
+  // there could be problems as we could select the "wrong" value for the order
+  const valuesByLabel = uniqueMapBy(
+    values.filter((x) => x.identifier || x.position),
+    (dv) => dv.label
   );
 
-  const getLabel = (label?: string) => label;
-  const getIdentifier = (label?: string) => {
-    const identifier = label
-      ? maybeInt(valuesByLabel.get(label)?.identifier) ?? Infinity
+  const getByValueOrLabel = (valueOrLabel: string) => {
+    return valuesByValue.get(valueOrLabel) ?? valuesByLabel.get(valueOrLabel);
+  };
+
+  const getLabel = (valueOrLabel?: string) => {
+    const label = valueOrLabel ? getByValueOrLabel(valueOrLabel)?.label : "";
+    return label;
+  };
+  const getIdentifier = (valueOrLabel?: string) => {
+    const identifier = valueOrLabel
+      ? maybeInt(getByValueOrLabel(valueOrLabel)?.identifier) ?? Infinity
       : Infinity;
     return identifier;
   };
-  const getPosition = (label?: string) =>
-    label ? valuesByLabel.get(label)?.position ?? Infinity : Infinity;
+  const getPosition = (valueOrLabel?: string) => {
+    const position = valueOrLabel
+      ? getByValueOrLabel(valueOrLabel)?.position ?? Infinity
+      : Infinity;
+    return position;
+  };
+  const getHierarchy = (value?: string) => {
+    const hierarchyValue = value
+      ? hierarchyValuesByValue.get(value)
+      : undefined;
 
-  const getSum = (label?: string) =>
-    label ? sumsBySegment?.[label] ?? Infinity : Infinity;
+    // A depth of -1 means that the value was not originally in the hierarchy,
+    // but was added artificially.
+    if (hierarchyValue?.depth === -1) {
+      return Infinity;
+    }
 
-  const getMeasure = (label?: string) =>
-    label ? measureBySegment?.[label] ?? Infinity : Infinity;
+    return hierarchyValue?.depth;
+  };
+
+  const getSum = (valueOrLabel?: string) =>
+    valueOrLabel ? sumsBySegment?.[valueOrLabel] ?? Infinity : Infinity;
+
+  const getMeasure = (valueOrLabel?: string) =>
+    valueOrLabel ? measureBySegment?.[valueOrLabel] ?? Infinity : Infinity;
 
   let sorters: ((dv: string) => string | undefined | number)[] = [];
 
-  const defaultSorters = [getPosition, getIdentifier, getLabel];
+  const defaultSorters = [getHierarchy, getPosition, getIdentifier, getLabel];
 
   switch (sortingType) {
     case "byDimensionLabel":
@@ -85,7 +142,7 @@ export const makeDimensionValueSorters = (
       sorters = [getMeasure];
       break;
     case "byAuto":
-      sorters = [getPosition, getIdentifier];
+      sorters = defaultSorters;
       break;
     case "byTableSortingType":
       sorters = [getPosition, getLabel];

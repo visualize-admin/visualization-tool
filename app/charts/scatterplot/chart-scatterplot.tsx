@@ -16,15 +16,15 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import {
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
   ScatterPlotConfig,
-  ScatterPlotFields,
 } from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -43,20 +43,38 @@ export const ChartScatterplotVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [queryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null, // FIXME: Other fields may also be measures
+    },
+  });
+  const [componentsQuery] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dimensions: null,
       filters: queryFilters,
     },
   });
 
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsQuery}
+      observationsQuery={observationsQuery}
       Component={ChartScatterplot}
       chartConfig={chartConfig}
     />
@@ -68,22 +86,20 @@ export const ChartScatterplot = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    fields: ScatterPlotFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
+    chartConfig: ScatterPlotConfig;
   }) => {
+    const { interactiveFiltersConfig, fields } = chartConfig;
     return (
       <ScatterplotChart
         data={observations}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
+        chartConfig={chartConfig}
         aspectRatio={1}
       >
         <ChartContainer>

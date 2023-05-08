@@ -1,18 +1,24 @@
 import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
+import sortBy from "lodash/sortBy";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
+import LiteralExt from "rdf-ext/lib/Literal";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
+import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";
 
-import { cube as cubeNs } from "./namespace";
 import * as ns from "./namespace";
+import { cube as cubeNs } from "./namespace";
 import { parseDimensionDatatype } from "./parse";
 import { dimensionIsVersioned } from "./queries";
+import { executeWithCache } from "./query-cache";
+
 interface DimensionValue {
   value: Literal | NamedNode<string>;
 }
@@ -74,9 +80,14 @@ export async function unversionObservation({
     cube.dimensions,
     (x) => x.path?.value
   ) as Record<string, CubeDimension>;
-  const versionedDimensions = Object.keys(observation).filter((x) =>
-    dimensionIsVersioned(dimensionsByPath[x])
-  );
+  const versionedDimensions = Object.keys(observation).filter((x) => {
+    // Ignore the artificial __iri__ dimensions.
+    if (x.endsWith("/__iri__")) {
+      return false;
+    }
+
+    return dimensionIsVersioned(dimensionsByPath[x]);
+  });
   const query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
     VALUES (?versioned) {
       ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
@@ -98,6 +109,18 @@ export async function unversionObservation({
 
   return mapValues(observation, (v) => (v ? unversionedIndex[v] || v : v));
 }
+
+const getFilterOrder = (filter: Filters[number]) => {
+  if (filter.type !== "single") {
+    return 0;
+  } else {
+    // Heuristic to put non discriminant filter at the end
+    // Seems like we could also do it based on the column order
+    return filter.value.toString().startsWith("https://ld.admin.ch")
+      ? Infinity
+      : 0;
+  }
+};
 
 /**
  * Load dimension values.
@@ -125,9 +148,12 @@ export async function loadDimensionValues(
 
   // Consider filters before the current filter to fetch the values for
   // the current filter
-  const filterList = allFiltersList.slice(
-    0,
-    allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
+  const filterList = sortBy(
+    allFiltersList.slice(
+      0,
+      allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
+    ),
+    ([, filterValue]) => getFilterOrder(filterValue)
   );
 
   const query = SELECT.DISTINCT`?value`.WHERE`
@@ -181,38 +207,48 @@ export async function loadDimensionValues(
   }
 }
 
-type MinMaxResult = {
-  minValue: Literal;
-  maxValue: Literal;
+type MinMaxResult = [{ minValue: LiteralExt; maxValue: LiteralExt }];
+
+const parseMinMax = (result: MinMaxResult) => {
+  const { minValue, maxValue } = result[0];
+  const min = parseObservationValue({ value: minValue }) ?? 0;
+  const max = parseObservationValue({ value: maxValue }) ?? 0;
+  return [min, max] as const;
 };
 
 export const loadMinMaxDimensionValues = async ({
   datasetIri,
   dimensionIri,
   sparqlClient,
+  cache,
 }: {
   datasetIri: Term;
   dimensionIri: Term;
   sparqlClient: ParsingClient;
-}): Promise<MinMaxResult | undefined> => {
+  cache: LRUCache | undefined;
+}) => {
   const query = SELECT`(MIN(?value) as ?minValue) (MAX(?value) as ?maxValue)`
     .WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
     ?observationSet ${cubeNs.observation} ?observation .
     ?observation ${dimensionIri} ?value .
 
-    FILTER (STRLEN(STR(?value)) > 0)
+    FILTER (
+      (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN")
+    )
   `;
 
-  let result: MinMaxResult[] = [];
-
   try {
-    result = (await query.execute(sparqlClient.query, {
-      operation: "postUrlencoded",
-    })) as unknown as MinMaxResult[];
+    const result = await executeWithCache(
+      sparqlClient,
+      query,
+      cache,
+      parseMinMax
+    );
+    return result;
   } catch {
-    console.warn(`Failed to fetch min max dimension values for ${datasetIri}.`);
-  } finally {
-    return result[0];
+    console.warn(
+      `Failed to fetch min max dimension values for ${datasetIri}, ${dimensionIri}.`
+    );
   }
 };

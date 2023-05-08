@@ -1,10 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { Box, Popover, Tab, Tabs, Theme, Button } from "@mui/material";
+import { Box, Button, Popover, Tab, Tabs, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, {
-  createContext,
   Dispatch,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useState,
@@ -18,7 +18,10 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import {
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
+} from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
@@ -155,7 +158,16 @@ const PublishChartButton = () => {
     | ConfiguratorStatePublishing
     | ConfiguratorStateConfiguringChart;
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri ?? "",
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+    },
+    pause: !dataSetIri,
+  });
+  const [{ data: components }] = useComponentsQuery({
     variables: {
       iri: dataSetIri ?? "",
       sourceType: state.dataSource.type,
@@ -165,10 +177,13 @@ const PublishChartButton = () => {
     pause: !dataSetIri,
   });
   const goNext = useEvent(() => {
-    if (data?.dataCubeByIri) {
+    if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
       dispatch({
         type: "STEP_NEXT",
-        dataSetMetadata: data?.dataCubeByIri,
+        dataSetMetadata: {
+          ...metadata.dataCubeByIri,
+          ...components.dataCubeByIri,
+        },
       });
     }
   });
@@ -177,7 +192,7 @@ const PublishChartButton = () => {
     <Button
       color="primary"
       variant="contained"
-      onClick={data ? goNext : undefined}
+      onClick={metadata && components ? goNext : undefined}
     >
       <Trans id="button.publish">Publish the chart</Trans>
     </Button>

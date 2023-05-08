@@ -1,5 +1,4 @@
-import { axisBottom } from "d3";
-import { select, Selection } from "d3";
+import { axisBottom, select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -9,7 +8,7 @@ import { useTimeFormatUnit } from "@/formatters";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, yScale, bounds, xIsTime, timeUnit } =
+  const { xScale, yScale, bounds, xIsTime, timeUnit, getXLabel } =
     useChartState() as ColumnsState;
 
   const formatDate = useTimeFormatUnit();
@@ -29,8 +28,9 @@ export const AxisWidthBand = () => {
 
     if (xIsTime && timeUnit) {
       axis.tickFormat((d) => formatDate(d, timeUnit));
+    } else {
+      axis.tickFormat((d) => getXLabel(d));
     }
-
     const fontSize =
       xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
 

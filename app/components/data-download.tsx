@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import {
   Button,
   CircularProgress,
@@ -14,32 +14,34 @@ import {
   bindMenu,
   usePopupState,
 } from "material-ui-popup-state/hooks";
-import React, {
-  createContext,
+import {
   Dispatch,
-  memo,
   PropsWithChildren,
   ReactNode,
+  createContext,
+  memo,
   useCallback,
   useContext,
   useState,
 } from "react";
 import { OperationResult, useClient } from "urql";
 
+import Flex from "@/components/flex";
 import { getSortedColumns } from "@/configurator/components/datatable";
 import { DataSource, QueryFilters } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
-import { useLocale } from "@/src";
-
 import {
+  ComponentsDocument,
+  ComponentsQuery,
+  ComponentsQueryVariables,
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
   DimensionMetadataFragment,
-} from "../graphql/query-hooks";
-import { Icon } from "../icons";
-
-import Flex from "./flex";
+} from "@/graphql/query-hooks";
+import { Icon } from "@/icons";
+import { useLocale } from "@/src";
+import { useI18n } from "@/utils/use-i18n";
 
 type DataDownloadState = {
   isDownloading: boolean;
@@ -202,7 +204,7 @@ const DataDownloadInnerMenu = ({
             dataSetIri={dataSetIri}
             dataSource={dataSource}
             subheader={
-              <Trans id="button.download.data.visible">Filtered dataset</Trans>
+              <Trans id="button.download.data.visible">Chart dataset</Trans>
             }
             fileName={fileName}
             filters={filters}
@@ -276,14 +278,18 @@ const DownloadMenuItem = ({
   filters?: QueryFilters;
 }) => {
   const locale = useLocale();
+  const i18n = useI18n();
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
 
   const download = useCallback(
-    (fetchedData: DataCubeObservationsQuery) => {
-      if (fetchedData?.dataCubeByIri) {
-        const { measures, dimensions, observations } =
-          fetchedData.dataCubeByIri;
+    (
+      componentsData: ComponentsQuery,
+      observationsData: DataCubeObservationsQuery
+    ) => {
+      if (componentsData?.dataCubeByIri && observationsData?.dataCubeByIri) {
+        const { dimensions, measures } = componentsData.dataCubeByIri;
+        const { observations } = observationsData.dataCubeByIri;
         const preparedData = prepareData({
           dimensions,
           measures,
@@ -318,7 +324,19 @@ const DownloadMenuItem = ({
         dispatch({ isDownloading: true });
 
         try {
-          const result: OperationResult<DataCubeObservationsQuery> =
+          const componentsResult: OperationResult<ComponentsQuery> =
+            await urqlClient
+              .query<ComponentsQuery, ComponentsQueryVariables>(
+                ComponentsDocument,
+                {
+                  iri: dataSetIri,
+                  sourceType: dataSource.type,
+                  sourceUrl: dataSource.url,
+                  locale,
+                }
+              )
+              .toPromise();
+          const observationsResult: OperationResult<DataCubeObservationsQuery> =
             await urqlClient
               .query<
                 DataCubeObservationsQuery,
@@ -333,13 +351,29 @@ const DownloadMenuItem = ({
               })
               .toPromise();
 
-          if (result.data) {
-            await download(result.data);
-          } else if (result.error) {
-            dispatch({ ...state, error: result.error.message });
+          if (componentsResult.data && observationsResult.data) {
+            await download(componentsResult.data, observationsResult.data);
+          } else if (componentsResult.error || observationsResult.error) {
+            dispatch({
+              ...state,
+              error: i18n._(
+                t({
+                  id: "hint.dataloadingerror.message",
+                  message: "The data could not be loaded.",
+                })
+              ),
+            });
           }
         } catch (e) {
-          console.error("Could not download the data!", e);
+          console.error(
+            i18n._(
+              t({
+                id: "hint.dataloadingerror.message",
+                message: "The data could not be loaded.",
+              })
+            ),
+            e
+          );
         } finally {
           dispatch({ ...state, isDownloading: false });
         }

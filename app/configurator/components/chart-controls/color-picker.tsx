@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Input, Popover, styled } from "@mui/material";
+import { Box, Button, Input, Popover, styled, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
 import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
@@ -53,6 +53,27 @@ type Props = {
   disabled?: boolean;
 };
 
+const useColorPickerStyles = makeStyles((theme: Theme) => ({
+  root: {
+    width: 160,
+    backgroundColor: theme.palette.grey[100],
+    borderRadius: 1.5,
+    padding: theme.spacing(3),
+  },
+  swatches: {
+    gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
+    gap: 2,
+    marginBottom: 2,
+  },
+  input: {
+    color: theme.palette.grey[700],
+    borderColor: theme.palette.grey[500],
+    backgroundColor: theme.palette.grey[100],
+    fontSize: "0.875rem",
+    "&:focus": { outline: "none", borderColor: theme.palette.primary.main },
+  },
+}));
+
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   const [inputColorValue, setInputColorValue] = useState(selectedColor);
 
@@ -81,24 +102,11 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     [setInputColorValue]
   );
 
+  const classes = useColorPickerStyles();
+
   return (
-    <Box
-      sx={{
-        width: 160,
-        backgroundColor: "grey.100",
-        borderRadius: 1.5,
-        boxShadow: "tooltip",
-        p: 3,
-      }}
-    >
-      <Box
-        display="grid"
-        sx={{
-          gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
-          gap: 2,
-          mb: 2,
-        }}
-      >
+    <Box className={classes.root}>
+      <Box display="grid" className={classes.swatches}>
         {colors.map((color) => (
           <Swatch
             key={color}
@@ -112,13 +120,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       </Box>
       <Box sx={{ position: "relative" }}>
         <Input
-          sx={{
-            color: "grey.700",
-            borderColor: "grey.500",
-            backgroundColor: "grey.100",
-            fontSize: "0.875rem",
-            ":focus": { outline: "none", borderColor: "primary" },
-          }}
+          className={classes.input}
           value={inputColorValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             selectColor(e.currentTarget.value);

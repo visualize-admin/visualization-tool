@@ -29,6 +29,7 @@ import {
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
+  getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useTemporalVariable,
@@ -40,6 +41,7 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnFields, SortingField } from "@/configurator";
 import {
@@ -61,6 +63,7 @@ export interface GroupedColumnsState extends CommonChartState {
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;
+  getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
   xScale: ScaleBand<string>;
@@ -84,20 +87,15 @@ export interface GroupedColumnsState extends CommonChartState {
 const useGroupedColumnsState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
     fields: ColumnFields;
     aspectRatio: number;
   }
 ): GroupedColumnsState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, fields, dimensions, measures, chartConfig, aspectRatio } =
+    chartProps;
+  const { interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -108,11 +106,22 @@ const useGroupedColumnsState = (
   }
 
   const xIsTime = isTemporalDimension(xDimension);
+  const xDimensionValues = useMemo(() => {
+    return getMaybeTemporalDimensionValues(xDimension, data);
+  }, [xDimension, data]);
 
-  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
-    useAbbreviations: fields.x.useAbbreviations ?? false,
-    dimension: xDimension,
-  });
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    useMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimensionValues,
+    });
+
+  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
+    data,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
+  );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
@@ -124,13 +133,20 @@ const useGroupedColumnsState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
-    dimension: segmentDimension,
+    useAbbreviations: fields.segment?.useAbbreviations,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -189,6 +205,9 @@ const useGroupedColumnsState = (
     ]);
   }, [plottableSortedData, getY, getSegment]);
 
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = Array.from(
       new Set(plottableSortedData.map((d) => getSegment(d)))
@@ -199,6 +218,7 @@ const useGroupedColumnsState = (
       sorting,
       sumsBySegment,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
@@ -208,12 +228,13 @@ const useGroupedColumnsState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     sumsBySegment,
+    segmentFilter,
     getSegment,
   ]);
 
   /* Scales */
   const {
-    bandDomain,
+    bandDomainLabels,
     colors,
     yScale,
     xEntireScale,
@@ -248,7 +269,8 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(scalesData.map((d) => getX(d) as string))];
+    const bandDomain = [...new Set(scalesData.map(getX))];
+    const bandDomainLabels = bandDomain.map(getXLabel);
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -288,7 +310,7 @@ const useGroupedColumnsState = (
       xScale,
       xScaleIn,
       xScaleInteraction,
-      bandDomain,
+      bandDomainLabels,
     };
   }, [
     dimensions,
@@ -299,6 +321,7 @@ const useGroupedColumnsState = (
     scalesData,
     plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     getYErrorRange,
     getY,
@@ -339,7 +362,7 @@ const useGroupedColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomain
+    bandDomainLabels
   );
 
   const margins = {
@@ -417,14 +440,14 @@ const useGroupedColumnsState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getX(datum),
+      xValue: getXAbbreviationOrLabel(datum),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
-        label: getSegment(td),
+        label: getSegmentAbbreviationOrLabel(td),
         value: yMeasure.unit
           ? `${formatNumber(getY(td))} ${yMeasure.unit}`
           : formatNumber(getY(td)),
@@ -439,6 +462,7 @@ const useGroupedColumnsState = (
     preparedData,
     allData: plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     xScale,
     xScaleInteraction,
@@ -465,13 +489,10 @@ const GroupedColumnChartProvider = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -481,7 +502,7 @@ const GroupedColumnChartProvider = ({
     fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -494,13 +515,10 @@ export const GroupedColumnChart = ({
   fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -513,7 +531,7 @@ export const GroupedColumnChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

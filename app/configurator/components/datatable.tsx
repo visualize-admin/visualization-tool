@@ -3,12 +3,12 @@ import {
   SxProps,
   Table,
   TableBody,
-  Tooltip,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
   Theme,
+  Tooltip,
   TooltipProps,
 } from "@mui/material";
 import { ascending, descending } from "d3";
@@ -18,14 +18,17 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
-import { isNumericalMeasure, Observation } from "@/domain/data";
+import { Observation, isNumericalMeasure } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
+import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
 const DimensionLabel = ({
   dimension,
@@ -72,9 +75,16 @@ export const PreviewTable = ({
   const sortedObservations = useMemo(() => {
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
+      const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
       const convert = isNumericalMeasure(sortBy)
         ? (d: string) => +d
-        : (d: string) => d;
+        : (d: string) => {
+            const value = valuesIndex.get(d);
+            if (value?.position) {
+              return value.position;
+            }
+            return d;
+          };
 
       return [...observations].sort((a, b) =>
         compare(
@@ -233,7 +243,23 @@ export const DataSetTable = ({
 }) => {
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
+  const [{ data: metadataData }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: componentsData }] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -245,23 +271,27 @@ export const DataSetTable = ({
   });
 
   const headers = useMemo(() => {
-    if (!data?.dataCubeByIri) {
+    if (!componentsData?.dataCubeByIri) {
       return [];
     }
 
     return getSortedColumns(
-      data.dataCubeByIri.dimensions,
-      data.dataCubeByIri.measures
+      componentsData.dataCubeByIri.dimensions,
+      componentsData.dataCubeByIri.measures
     );
-  }, [data?.dataCubeByIri]);
+  }, [componentsData?.dataCubeByIri]);
 
-  if (!fetching && data?.dataCubeByIri) {
+  if (
+    metadataData?.dataCubeByIri &&
+    componentsData?.dataCubeByIri &&
+    observationsData?.dataCubeByIri
+  ) {
     return (
       <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
         <PreviewTable
-          title={data.dataCubeByIri.title}
+          title={metadataData.dataCubeByIri.title}
           headers={headers}
-          observations={data.dataCubeByIri.observations.data}
+          observations={observationsData.dataCubeByIri.observations.data}
           linkToMetadataPanel={true}
         />
       </Box>

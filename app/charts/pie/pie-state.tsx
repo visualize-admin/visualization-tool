@@ -21,8 +21,9 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { PieFields } from "@/configurator";
+import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
@@ -44,22 +45,13 @@ export interface PieState extends CommonChartState {
 }
 
 const usePieState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-  > & {
-    fields: PieFields;
+  chartProps: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+    chartConfig: PieConfig;
     aspectRatio: number;
   }
 ): PieState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const { interactiveFiltersConfig, fields } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -76,13 +68,20 @@ const usePieState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
-    dimension: segmentDimension,
+    useAbbreviations: fields.segment?.useAbbreviations,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -105,6 +104,9 @@ const usePieState = (
   });
 
   // Map ordered segments to colors
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension.iri]
+    : undefined;
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
@@ -119,6 +121,7 @@ const usePieState = (
       sorting: sorting,
       measureBySegment,
       useAbbreviations: fields.segment.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
 
     const segments = orderBy(
@@ -158,6 +161,7 @@ const usePieState = (
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    segmentFilter,
   ]);
 
   // Dimensions
@@ -239,7 +243,7 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getSegment(datum),
+      xValue: getSegmentAbbreviationOrLabel(datum),
       datum: {
         value: valueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
@@ -264,26 +268,21 @@ const usePieState = (
 
 const PieChartProvider = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: PieFields;
+  chartConfig: PieConfig;
   aspectRatio: number;
 }) => {
   const state = usePieState({
     data,
-    fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -293,18 +292,14 @@ const PieChartProvider = ({
 
 export const PieChart = ({
   data,
-  fields,
   measures,
   dimensions,
   aspectRatio,
-  interactiveFiltersConfig,
+  chartConfig,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
-  fields: PieFields;
+  chartConfig: PieConfig;
   children: ReactNode;
 }) => {
   return (
@@ -312,10 +307,9 @@ export const PieChart = ({
       <InteractionProvider>
         <PieChartProvider
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

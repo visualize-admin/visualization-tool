@@ -13,6 +13,12 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
+import {
+  Feature,
+  FeatureCollection,
+  GeoJsonProperties,
+  Geometry,
+} from "geojson";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import { ReactNode, useMemo } from "react";
@@ -39,7 +45,7 @@ import {
   CategoricalColorField,
   ColorScaleInterpolationType,
   FixedColorField,
-  MapFields,
+  MapConfig,
   MapSymbolLayer,
   NumericalColorField,
 } from "@/configurator/config-types";
@@ -426,16 +432,30 @@ const useLayerState = ({
   };
 };
 
+const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
+  fc: TFeatureCollection | undefined,
+  predicate: (feature: Feature<Geometry, GeoJsonProperties>) => boolean
+) => {
+  if (!fc) {
+    return fc;
+  }
+  return {
+    ...fc,
+    features: fc.features.filter(predicate),
+  };
+};
+
 const useMapState = (
   chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
     features: GeoData;
-    fields: MapFields;
+    chartConfig: MapConfig;
     baseLayer: BaseLayer;
   }
 ): MapState => {
   const width = useWidth();
-  const { data, features, fields, measures, dimensions, baseLayer } =
+  const { data, features, chartConfig, measures, dimensions, baseLayer } =
     chartProps;
+  const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
@@ -528,10 +548,15 @@ const useMapState = (
   const featuresBBox = useMemo(() => {
     return getBBox(
       areaLayer?.componentIri !== undefined
-        ? features.areaLayer?.shapes
+        ? filterFeatureCollection(
+            features.areaLayer?.shapes,
+            (f) => f?.properties?.observation !== undefined
+          )
         : undefined,
       symbolLayer?.componentIri !== undefined
-        ? features.symbolLayer?.points
+        ? features.symbolLayer?.points.filter(
+            (p) => p?.properties?.observation !== undefined
+          )
         : undefined
     );
   }, [
@@ -558,7 +583,7 @@ const useMapState = (
 const MapChartProvider = ({
   data,
   features,
-  fields,
+  chartConfig,
   measures,
   dimensions,
   baseLayer,
@@ -566,13 +591,13 @@ const MapChartProvider = ({
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   children: ReactNode;
-  fields: MapFields;
+  chartConfig: MapConfig;
   baseLayer: BaseLayer;
 }) => {
   const state = useMapState({
     data,
     features,
-    fields,
+    chartConfig,
     measures,
     dimensions,
     baseLayer,
@@ -585,14 +610,14 @@ const MapChartProvider = ({
 export const MapChart = ({
   data,
   features,
-  fields,
   measures,
+  chartConfig,
   dimensions,
   baseLayer,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
-  fields: MapFields;
+  chartConfig: MapConfig;
   baseLayer: BaseLayer;
   children: ReactNode;
 }) => {
@@ -602,7 +627,7 @@ export const MapChart = ({
         <MapChartProvider
           data={data}
           features={features}
-          fields={fields}
+          chartConfig={chartConfig}
           measures={measures}
           dimensions={dimensions}
           baseLayer={baseLayer}

@@ -1,6 +1,7 @@
 import { group, InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
 import overEvery from "lodash/overEvery";
+import uniq from "lodash/uniq";
 import { useCallback, useMemo } from "react";
 
 import {
@@ -23,7 +24,7 @@ import {
   QueryFilters,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -336,15 +337,16 @@ const getBaseWideData = ({
   const sortedDataGroupedByXEntries = [...dataGroupedByX.entries()].sort();
 
   for (let i = 0; i < dataGroupedByX.size; i++) {
-    const [date, values] = sortedDataGroupedByXEntries[i];
+    const [k, v] = sortedDataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {
-        [xKey]: date,
-        total: sum(values, getY),
+        [xKey]: k,
+        [`${xKey}/__iri__`]: v[0][`${xKey}/__iri__`],
+        total: sum(v, getY),
       },
       ...getOptionalObservationProps(i),
-      ...values
+      ...v
         // Sorting the values in case of multiple values for the same segment
         // (desired behavior for getting the domain when time slider is active).
         .sort((a, b) => (getY(a) ?? 0) - (getY(b) ?? 0))
@@ -406,4 +408,20 @@ export const useImputationNeeded = ({
   }, [chartConfig, data]);
 
   return imputationNeeded;
+};
+
+/** Use to potentially extract temporal values from data. This is needed for
+ * column charts, where the temporal dimension is used as X axis (and we
+ * do not fetch all values for temporal dimensions, only the min and max).
+ */
+export const getMaybeTemporalDimensionValues = (
+  dimension: DimensionMetadataFragment,
+  data: Observation[]
+) => {
+  if (isTemporalDimension(dimension)) {
+    const dates = data.map((d) => d[dimension.iri] as string);
+    return uniq(dates).map((d) => ({ label: d, value: d }));
+  } else {
+    return dimension.values;
+  }
 };

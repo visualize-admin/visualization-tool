@@ -1,7 +1,10 @@
+import { IncomingMessage } from "http";
+
 import DataLoader from "dataloader";
 import { GraphQLResolveInfo } from "graphql";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
@@ -48,12 +51,13 @@ const createCubeLoader = (sourceUrl: string) => {
 const createLoaders = async (
   locale: string,
   sparqlClient: ParsingClient,
-  sourceUrl: string
+  sourceUrl: string,
+  cache: LRUCache | undefined
 ) => {
   return {
     cube: new DataLoader(createCubeLoader(sourceUrl)),
     dimensionValues: new DataLoader(
-      createCubeDimensionValuesLoader(sparqlClient),
+      createCubeDimensionValuesLoader(sparqlClient, cache),
       {
         cacheKeyFn: (dim) => dim.dimension.path?.value,
       }
@@ -75,7 +79,10 @@ const createLoaders = async (
 
 export type Loaders = Awaited<ReturnType<typeof createLoaders>>;
 
-const setupSparqlClients = (ctx: GraphQLContext, sourceUrl: string) => {
+const setupSparqlClients = (
+  ctx: VisualizeGraphQLContext,
+  sourceUrl: string
+) => {
   const sparqlClient = new ParsingClient({
     endpointUrl: sourceUrl,
   });
@@ -99,23 +106,41 @@ const setupSparqlClients = (ctx: GraphQLContext, sourceUrl: string) => {
   return { sparqlClient, sparqlClientStream };
 };
 
+const sparqlCache = new LRUCache({
+  entryExpirationTimeInMS: 60 * 10_000,
+  maxSize: 10_000,
+});
+
+const shouldUseServerSideCache = (req: IncomingMessage) => {
+  return req.headers["x-visualize-cache-control"] !== "no-cache";
+};
+
 const createContextContent = async ({
   sourceUrl,
   locale,
   ctx,
+  req,
 }: {
   sourceUrl: string;
   locale: string;
-  ctx: GraphQLContext;
+  ctx: VisualizeGraphQLContext;
+  req: IncomingMessage;
 }) => {
   const { sparqlClient, sparqlClientStream } = setupSparqlClients(
     ctx,
     sourceUrl
   );
-  const loaders = await createLoaders(locale, sparqlClient, sourceUrl);
+
+  const contextCache = shouldUseServerSideCache(req) ? sparqlCache : undefined;
+  const loaders = await createLoaders(
+    locale,
+    sparqlClient,
+    sourceUrl,
+    contextCache
+  );
 
   return new Proxy(
-    { loaders, sparqlClient, sparqlClientStream },
+    { loaders, sparqlClient, sparqlClientStream, cache: contextCache },
     {
       get(target, prop, receiver) {
         if (prop === "sparqlClient" || prop === "sparqlClientStream") {
@@ -131,7 +156,7 @@ const createContextContent = async ({
   );
 };
 
-export const createContext = () => {
+export const createContext = ({ req }: { req: IncomingMessage }) => {
   let setupping: ReturnType<typeof createContextContent>;
 
   const ctx = {
@@ -141,7 +166,8 @@ export const createContext = () => {
     setup: async ({
       variableValues: { locale, sourceUrl },
     }: GraphQLResolveInfo) => {
-      setupping = setupping || createContextContent({ locale, sourceUrl, ctx });
+      setupping =
+        setupping || createContextContent({ locale, sourceUrl, ctx, req });
       const res = await setupping;
       return res;
     },
@@ -150,4 +176,4 @@ export const createContext = () => {
   return ctx;
 };
 
-export type GraphQLContext = ReturnType<typeof createContext>;
+export type VisualizeGraphQLContext = ReturnType<typeof createContext>;

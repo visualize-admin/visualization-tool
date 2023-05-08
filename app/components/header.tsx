@@ -20,6 +20,8 @@ import LoginMenu from "./login-menu";
 
 const DEFAULT_HEADER_PROGRESS = 100;
 
+export const HEADER_HEIGHT = 92;
+
 export const useHeaderProgressContext = () => {
   const [value, setValue] = useState(DEFAULT_HEADER_PROGRESS);
   return useMemo(() => ({ value, setValue }), [value, setValue]);
@@ -83,7 +85,7 @@ const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
       backgroundColor: theme.palette.grey[100],
     },
     content: {
-      minHeight: 92,
+      minHeight: HEADER_HEIGHT,
       maxWidth: ({ isConfiguring }) => (isConfiguring ? undefined : 1400),
       marginLeft: "auto",
       marginRight: "auto",
@@ -94,8 +96,10 @@ const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
 
 export const Header = ({
   pageType = "app",
+  contentId,
 }: {
   pageType?: "content" | "app";
+  contentId: string | undefined;
 }) => {
   const router = useRouter();
   const isConfiguring = router.pathname === "/create/[chartId]";
@@ -113,7 +117,7 @@ export const Header = ({
         }}
       >
         <Logo />
-        <MetadataMenu />
+        <MetadataMenu contentId={contentId} />
       </Flex>
       <HeaderBorder />
     </Box>

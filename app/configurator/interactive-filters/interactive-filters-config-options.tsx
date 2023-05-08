@@ -17,7 +17,7 @@ import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brus
 import { useInteractiveTimeRangeFiltersToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { useFormatFullDateAuto } from "@/formatters";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export const InteractiveFiltersOptions = ({
@@ -29,7 +29,7 @@ export const InteractiveFiltersOptions = ({
   const activeField = state.activeField as InteractiveFilterType;
   const locale = useLocale();
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -99,7 +99,7 @@ const InteractiveTimeRangeFilterOptions = ({
   const locale = useLocale();
   const formatDateAuto = useFormatFullDateAuto();
 
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: state.dataSet,
       sourceType: state.dataSource.type,

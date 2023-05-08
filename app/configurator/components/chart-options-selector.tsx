@@ -4,7 +4,7 @@ import get from "lodash/get";
 import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { getFieldComponentIri } from "@/charts";
+import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
   EncodingFieldType,
@@ -67,10 +67,11 @@ import {
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useComponentsWithHierarchiesQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
 
 import { ColorRampField } from "./chart-controls/color-ramp";
@@ -82,6 +83,22 @@ export const ChartOptionsSelector = ({
 }) => {
   const { activeField, chartConfig, dataSet, dataSource } = state;
   const locale = useLocale();
+  const [{ data: metadataData }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: componentsData }] = useComponentsWithHierarchiesQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSet,
@@ -92,36 +109,27 @@ export const ChartOptionsSelector = ({
     },
   });
 
-  // Unfiltered dimensions & measures values.
-  const [{ data: metadataData }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
   const imputationNeeded = useImputationNeeded({
     chartConfig,
     data: observationsData?.dataCubeByIri?.observations.data,
   });
 
   const metaData = useMemo(() => {
-    if (metadataData?.dataCubeByIri) {
+    if (metadataData?.dataCubeByIri && componentsData?.dataCubeByIri) {
       return {
         ...metadataData.dataCubeByIri,
+        measures: componentsData.dataCubeByIri.measures,
         dimensions: isTableConfig(chartConfig)
-          ? metadataData.dataCubeByIri.dimensions
+          ? componentsData.dataCubeByIri.dimensions
           : [
               // There are no fields that make use of numeric dimensions at the moment.
-              ...metadataData.dataCubeByIri.dimensions.filter(
+              ...componentsData.dataCubeByIri.dimensions.filter(
                 (d) => !d.isNumerical
               ),
             ],
       };
     }
-  }, [chartConfig, metadataData?.dataCubeByIri]);
+  }, [chartConfig, metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
 
   if (metaData) {
     return (
@@ -161,7 +169,7 @@ const ActiveFieldSwitch = ({
   imputationNeeded,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
   imputationNeeded: boolean;
 }) => {
   const { activeField } = state;
@@ -181,8 +189,8 @@ const ActiveFieldSwitch = ({
     activeField
   );
 
-  const allDimensions = [...metaData.dimensions, ...metaData.measures];
-  const component = allDimensions.find(
+  const allComponents = [...metaData.dimensions, ...metaData.measures];
+  const component = allComponents.find(
     (d) => d.iri === activeFieldComponentIri
   );
 
@@ -192,8 +200,9 @@ const ActiveFieldSwitch = ({
       state={state}
       field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
-      metaData={metaData}
       component={component}
+      dimensions={metaData.dimensions}
+      measures={metaData.measures}
       imputationNeeded={imputationNeeded}
     />
   );
@@ -205,7 +214,8 @@ const EncodingOptionsPanel = ({
   field,
   chartType,
   component,
-  metaData,
+  dimensions,
+  measures,
   imputationNeeded,
 }: {
   encoding: EncodingSpec;
@@ -213,10 +223,10 @@ const EncodingOptionsPanel = ({
   field: string;
   chartType: ChartType;
   component: DimensionMetadataFragment | undefined;
-  metaData: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   imputationNeeded: boolean;
 }) => {
-  const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
 
   const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
@@ -263,7 +273,7 @@ const EncodingOptionsPanel = ({
     otherFieldsIris,
   ]);
 
-  const allDimensions = useMemo(() => {
+  const allComponents = useMemo(() => {
     return [...measures, ...dimensions];
   }, [measures, dimensions]);
 
@@ -272,16 +282,16 @@ const EncodingOptionsPanel = ({
       (fields as any)?.[encoding.field] as GenericField | undefined
     )?.componentIri;
 
-    return allDimensions.find((d) => d.iri === encodingIri);
-  }, [allDimensions, fields, encoding.field]);
+    return allComponents.find((d) => d.iri === encodingIri);
+  }, [allComponents, fields, encoding.field]);
 
   const hasStandardError = useMemo(() => {
-    return allDimensions.find((d) =>
+    return allComponents.find((d) =>
       d.related?.some(
         (r) => r.type === "StandardError" && r.iri === component?.iri
       )
     );
-  }, [allDimensions, component]);
+  }, [allComponents, component]);
 
   // TODO: Add proper types here.
   const optionsByField = useMemo(
@@ -356,7 +366,8 @@ const EncodingOptionsPanel = ({
         <ChartFieldSize
           field={field}
           componentTypes={optionsByField["size"].componentTypes}
-          dataSetMetadata={metaData}
+          dimensions={dimensions}
+          measures={measures}
           optional={optionsByField["size"].optional}
         />
       )}
@@ -365,11 +376,13 @@ const EncodingOptionsPanel = ({
         optionsByField["color"].type === "component" &&
         component && (
           <ChartFieldColorComponent
+            state={state}
             chartConfig={state.chartConfig}
             field={encoding.field}
             component={component}
             componentTypes={optionsByField["color"].componentTypes}
-            dataSetMetadata={metaData}
+            dimensions={dimensions}
+            measures={measures}
             optional={optionsByField["color"].optional}
             enableUseAbbreviations={
               optionsByField["color"].enableUseAbbreviations
@@ -404,7 +417,8 @@ const EncodingOptionsPanel = ({
         component={component}
         encoding={encoding}
         field={field}
-        metaData={metaData}
+        dimensions={dimensions}
+        measures={measures}
       />
     </div>
   );
@@ -439,19 +453,21 @@ const ChartFieldMultiFilter = ({
   component,
   encoding,
   field,
-  metaData,
+  dimensions,
+  measures,
 }: {
   state: ConfiguratorStateConfiguringChart;
   component: DimensionMetadataFragment | undefined;
   encoding: EncodingSpec;
   field: string;
-  metaData: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }) => {
   const colorComponentIri = get(
     state.chartConfig,
     `fields.${field}.color.componentIri`
   );
-  const colorComponent = [...metaData.dimensions, ...metaData.measures].find(
+  const colorComponent = [...dimensions, ...measures].find(
     (d) => d.iri === colorComponentIri
   );
   const colorType = get(state.chartConfig, `fields.${field}.color.type`) as
@@ -475,14 +491,14 @@ const ChartFieldMultiFilter = ({
           <TimeFilter
             key={component.iri}
             dimensionIri={component.iri}
-            dataSetIri={metaData.iri}
+            dataSetIri={state.dataSet}
           />
         ) : (
           component && (
             <DimensionValuesMultiFilter
               key={component.iri}
               dimensionIri={component.iri}
-              dataSetIri={metaData.iri}
+              dataSetIri={state.dataSet}
               field={field}
               colorComponent={colorComponent || component}
               // If colorType is defined, we are dealing with color field and
@@ -554,7 +570,7 @@ const ChartFieldSorting = ({
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
 
-  const getSortingTypeLabel = (type: SortingType) => {
+  const getSortingTypeLabel = (type: SortingType): string => {
     switch (type) {
       case "byDimensionLabel":
         return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
@@ -567,7 +583,7 @@ const ChartFieldSorting = ({
       default:
         const _sanityCheck: never = type;
         console.warn(`Sorting type label is ${_sanityCheck}`);
-        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+        return getSortingTypeLabel(DEFAULT_SORTING["sortingType"]);
     }
   };
 
@@ -595,7 +611,7 @@ const ChartFieldSorting = ({
   const activeSortingType = get(
     state,
     ["chartConfig", "fields", field, "sorting", "sortingType"],
-    "byDimensionLabel"
+    DEFAULT_SORTING["sortingType"]
   );
 
   // FIXME: Remove this once it's properly encoded in chart-config-ui-options
@@ -674,21 +690,23 @@ const ChartFieldSorting = ({
 const ChartFieldSize = ({
   field,
   componentTypes,
-  dataSetMetadata,
+  dimensions,
+  measures,
   optional,
 }: {
   field: string;
   componentTypes: ComponentType[];
-  dataSetMetadata: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   optional: boolean;
 }) => {
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
       dimensionTypes: componentTypes,
-      dimensions: dataSetMetadata.dimensions,
-      measures: dataSetMetadata.measures,
+      dimensions,
+      measures,
     }).map(({ iri, label }) => ({ value: iri, label }));
-  }, [dataSetMetadata.dimensions, dataSetMetadata.measures, componentTypes]);
+  }, [dimensions, measures, componentTypes]);
 
   return (
     <ControlSection>
@@ -716,19 +734,23 @@ const ChartFieldSize = ({
 };
 
 const ChartFieldColorComponent = ({
+  state,
   chartConfig,
   field,
   component,
   componentTypes,
-  dataSetMetadata,
+  dimensions,
+  measures,
   optional,
   enableUseAbbreviations,
 }: {
+  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
   component: DimensionMetadataFragment;
   componentTypes: ComponentType[];
-  dataSetMetadata: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
   optional: boolean;
   enableUseAbbreviations: boolean;
 }) => {
@@ -736,10 +758,10 @@ const ChartFieldColorComponent = ({
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
       dimensionTypes: componentTypes,
-      dimensions: dataSetMetadata.dimensions,
-      measures: dataSetMetadata.measures,
+      dimensions,
+      measures,
     }).map(({ iri, label }) => ({ value: iri, label }));
-  }, [dataSetMetadata.dimensions, dataSetMetadata.measures, componentTypes]);
+  }, [dimensions, measures, componentTypes]);
   const nbColorOptions = useMemo(() => {
     return Array.from(
       { length: Math.min(7, Math.max(0, nbOptions - 2)) },
@@ -753,10 +775,9 @@ const ChartFieldColorComponent = ({
     "color",
     "componentIri",
   ]) as string | undefined;
-  const colorComponent = [
-    ...dataSetMetadata.dimensions,
-    ...dataSetMetadata.measures,
-  ].find((d) => d.iri === colorComponentIri);
+  const colorComponent = [...dimensions, ...measures].find(
+    (d) => d.iri === colorComponentIri
+  );
   const colorType = get(chartConfig, [
     "fields",
     field,
@@ -828,7 +849,7 @@ const ChartFieldColorComponent = ({
           colorComponentIri && component.iri !== colorComponentIri ? (
             <DimensionValuesMultiFilter
               key={component.iri}
-              dataSetIri={dataSetMetadata.iri}
+              dataSetIri={state.dataSet}
               dimensionIri={colorComponentIri}
               field={field}
               colorConfigPath="color"

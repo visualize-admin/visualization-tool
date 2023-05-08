@@ -65,3 +65,8 @@ export const hierarchyToOptions = (
   };
   return sortHierarchy(hierarchy).map(transform).filter(truthy);
 };
+
+export const isMultiHierarchyNode = (hv: HierarchyValue) => {
+  // A bit hackish but should be fine for now
+  return hv.depth === -1;
+};

@@ -28,9 +28,9 @@ describe("The Home Page", () => {
     expect(await page.locator("html").getAttribute("lang")).toEqual("fr");
   });
 
-  test("language switch should work", async ({ page, screen }) => {
+  test("language switch should work", async ({ page, screen, actions }) => {
     await page.goto("/");
-    await page.locator('a[hreflang="fr"]').click();
+    await actions.common.switchLang("fr");
     await screen.findByText(
       "Visualisez les données ouvertes de l’administration publique suisse",
       undefined,
@@ -38,6 +38,22 @@ describe("The Home Page", () => {
     );
 
     expect(new URL(page.url()).pathname).toEqual("/fr");
+    expect(await page.locator("html").getAttribute("lang")).toBe("fr");
+  });
+});
+
+describe("content pages", () => {
+  test("language switch should work", async ({ page, actions, screen }) => {
+    await page.goto("/en/legal-framework");
+
+    await actions.common.switchLang("fr");
+    await screen.findByText(
+      "Utilisation des jeux de données publiés sur visualize.admin.ch",
+      undefined,
+      {
+        timeout: 20 * 1000,
+      }
+    );
     expect(await page.locator("html").getAttribute("lang")).toBe("fr");
   });
 });

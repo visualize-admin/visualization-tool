@@ -26,18 +26,21 @@ import {
   moveFilterField,
   updateColorMapping,
 } from "@/configurator/configurator-state";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  DimensionMetadataWithHierarchiesFragment,
+} from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
-import * as api from "@/utils/chart-config/exchange";
+import * as api from "@/utils/chart-config/api";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-jest.mock("@/utils/chart-config/exchange", () => ({
+jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));
 
@@ -86,7 +89,9 @@ afterEach(() => {
 
 describe("initChartStateFromChart", () => {
   const setup = ({ chartConfig }: { chartConfig: object }) => {
-    mockedApi.fetchChartConfig.mockResolvedValue(chartConfig);
+    mockedApi.fetchChartConfig.mockResolvedValue(
+      chartConfig as ReturnType<typeof api.fetchChartConfig>
+    );
   };
   it("should fetch work if existing chart is valid", async () => {
     setup({
@@ -179,6 +184,38 @@ describe("applyDimensionToFilters", () => {
     __typename: "NominalDimension",
   } as DimensionMetadataFragment;
 
+  const keyDimensionWithHierarchy = {
+    __typename: "NominalDimension",
+    iri: "nominalDimensionIri",
+    label: "Nominal Dimension with Hierarchy",
+    isKeyDimension: true,
+    isNumerical: false,
+    values: [
+      { value: "brienz", label: "Brienz" },
+      { value: "switzerland", label: "Switzerland" },
+    ],
+    hierarchy: [
+      {
+        __typename: "HierarchyValue",
+        dimensionIri: "nominalDimensionIri",
+        value: "brienz",
+        label: "Brienz",
+        depth: 0,
+        hasValue: true,
+        children: [],
+      },
+      {
+        __typename: "HierarchyValue",
+        dimensionIri: "nominalDimensionIri",
+        value: "switzerland",
+        label: "Switzerland",
+        depth: -1,
+        hasValue: true,
+        children: [],
+      },
+    ],
+  } as DimensionMetadataWithHierarchiesFragment;
+
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
     label: "Parameter",
@@ -241,6 +278,24 @@ describe("applyDimensionToFilters", () => {
         filters: initialFilters,
         dimension: optionalDimension,
         isField: true,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should select top-most hierarchy value by default", () => {
+      const initialFilters = {};
+      const expectedFilters = {
+        nominalDimensionIri: {
+          type: "single",
+          value: "switzerland",
+        },
+      };
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimensionWithHierarchy,
+        isField: false,
       });
 
       expect(initialFilters).toEqual(expectedFilters);
@@ -430,7 +485,7 @@ describe("moveField", () => {
 
 describe("retainChartConfigWhenSwitchingChartType", () => {
   const dataSetMetadata = covid19Metadata.data
-    .dataCubeByIri as DataCubeMetadata;
+    .dataCubeByIri as unknown as DataCubeMetadata;
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,

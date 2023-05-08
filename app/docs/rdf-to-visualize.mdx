@@ -53,6 +53,12 @@ In the future, more checks could be implemented, for example checks on dimension
 do not hesitate to [post an issue](https://github.com/visualize-admin/visualization-tool/issues)
 if you have an idea of a check.
 
+⚠️ For now, the cube checker only supports versioned iris, so make sure the IRI you're using has a
+version at the end.
+
+- ❌ https://environment.ld.admin.ch/foen/ubd000502
+- ✅ https://environment.ld.admin.ch/foen/ubd000502/3
+
 ### Cube
 
 | RDF                                                                            | Visualize            |
@@ -123,6 +129,18 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 ℹ️ GeoCoordinates dimensions can be shown on a map as _points_
 
 ℹ️ GeoShape dimensions can be shown on a map as _shapes_
+
+#### Values
+
+The `sh:in` predicate on the dimension is used to attach what values are available
+on the dimension. It is used by visualize as an optimization to list the values that
+are available on the dimension. This list of possible values can be used for example
+on dimension filters, or inside the legend.
+
+- It is provided automatically by `cube-creator` if the number of distinct values is
+  inferior to `100`.
+- If this property is not present, visualize dynamically loads all distinct values from
+  the dimension, which results in poorer performance than if the values are present.
 
 #### Currencies
 
@@ -202,6 +220,7 @@ To enable particular chart types the following conditions have to be met:
     {
       "Chart Type": "Maps",
       Conditions: `- 1 or more **Numerical Measures**
+- 1 or more **Ordinal Measures**
 - 1 or more **Geo Dimensions**`,
     },
   ]}

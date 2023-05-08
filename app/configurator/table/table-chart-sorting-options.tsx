@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3";
-import React, { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -39,7 +39,7 @@ import {
   removeSortingOption,
 } from "@/configurator/table/table-config-state";
 import { isNumericalMeasure } from "@/domain/data";
-import { DataCubeMetadata } from "@/graphql/types";
+import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 
@@ -102,7 +102,7 @@ const TableSortingOptionItem = ({
   sortingOrder,
   metaData,
 }: {
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
   index: number;
   chartConfig: TableConfig;
 } & TableSortingOption) => {
@@ -188,7 +188,7 @@ const AddTableSortingOption = ({
   metaData,
   chartConfig,
 }: {
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
   chartConfig: TableConfig;
 }) => {
   const [, dispatch] = useConfiguratorState();
@@ -275,7 +275,7 @@ const ChangeTableSortingOption = ({
   chartConfig,
   index,
 }: {
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
   chartConfig: TableConfig;
   index: number;
 }) => {
@@ -343,7 +343,7 @@ export const TableSortingOptions = ({
   dataSetMetadata,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  dataSetMetadata: DataCubeMetadata;
+  dataSetMetadata: DataCubeMetadataWithHierarchies;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const { activeField, chartConfig } = state;

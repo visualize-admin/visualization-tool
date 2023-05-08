@@ -1,33 +1,17 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextkitError } from "nextkit";
 
 import { getConfig } from "../../../db/config";
+import { api } from "../../../server/nextkit";
 
-/**
- * Endpoint to read configuration from
- */
-const route = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method } = req;
+const route = api({
+  GET: async ({ req }) => {
+    const result = await getConfig(req.query.key as string);
+    if (result) {
+      return result;
+    } else {
+      throw new NextkitError(404, "Not found");
+    }
+  },
+});
 
-  switch (method) {
-    case "GET":
-      try {
-        const result = await getConfig(req.query.key as string);
-
-        if (result) {
-          res.status(200).json(result);
-        } else {
-          res.status(404).json({ message: "Not found." });
-        }
-      } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: "Something went wrong!" });
-      }
-
-      break;
-    default:
-      res.setHeader("Allow", ["GET"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
-  }
-};
-
-export default route
+export default route;

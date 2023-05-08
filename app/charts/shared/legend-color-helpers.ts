@@ -1,52 +1,45 @@
 import { ascending } from "d3";
 
 import { HierarchyValue } from "@/graphql/resolver-types";
-import { dfs } from "@/utils/dfs";
+import { bfs } from "@/utils/bfs";
 
 export const getLegendGroups = ({
   title,
-  labels,
-  getLabel,
+  values,
   hierarchy,
   sort,
-  useAbbreviations,
+  labelIris,
 }: {
   title?: string;
-  labels: string[];
-  getLabel: (d: string) => string;
+  values: string[];
   hierarchy?: HierarchyValue[] | null;
   sort: boolean;
-  useAbbreviations: boolean;
+  labelIris?: Record<string, any>;
 }) => {
   const groupsMap = new Map<HierarchyValue[], string[]>();
 
   if (!hierarchy) {
-    groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], labels);
+    groupsMap.set(title ? [{ label: title } as HierarchyValue] : [], values);
   } else {
-    const labelSet = new Set(labels);
     const emptyParents: HierarchyValue[] = [];
 
-    dfs(hierarchy, (node, { parents: _parents }) => {
-      const label = getLabel(
-        useAbbreviations ? node.alternateName || node.label : node.label
-      );
-
-      if (!labelSet.has(label)) {
+    bfs(hierarchy, (node, { parents: _parents }) => {
+      if (labelIris && !labelIris?.[node.value]) {
         return;
       }
 
       const parents = _parents.length === 0 ? emptyParents : _parents;
       groupsMap.set(parents, groupsMap.get(parents) || []);
-      groupsMap.get(parents)?.push(label);
+      groupsMap.get(parents)?.push(node.value);
     });
   }
 
   const groups = Array.from(groupsMap.entries());
   if (sort) {
     // Re-sort hierarchy groups against the label order that we have received
-    const labelOrder = Object.fromEntries(labels.map((x, i) => [x, i]));
+    const valueOrder = Object.fromEntries(values.map((x, i) => [x, i]));
     groups.forEach(([_, entries]) => {
-      entries.sort((a, b) => ascending(labelOrder[a], labelOrder[b]));
+      entries.sort((a, b) => ascending(valueOrder[a], valueOrder[b]));
     });
   }
 

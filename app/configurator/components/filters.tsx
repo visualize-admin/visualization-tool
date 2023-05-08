@@ -1,20 +1,20 @@
 import { t, Trans } from "@lingui/macro";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   ClickAwayListener,
-  Typography,
   Divider,
-  Theme,
-  IconButton,
-  Tooltip,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  InputAdornment,
-  Input,
   FormControlLabel,
+  IconButton,
+  Input,
+  InputAdornment,
   Switch,
+  Theme,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -25,7 +25,7 @@ import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import React, {
+import {
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -165,9 +165,9 @@ const getColorConfig = (
     return;
   }
 
-  const path = `${config.activeField}${
-    colorConfigPath ? `.${colorConfigPath}` : ""
-  }`;
+  const path = colorConfigPath
+    ? [config.activeField, colorConfigPath]
+    : [config.activeField];
 
   return get(config.chartConfig.fields, path) as
     | GenericSegmentField
@@ -438,7 +438,9 @@ const MultiFilterContent = ({
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
             <Typography variant="h5" sx={{ mb: 3 }}>
-              {interlace(explodeParents(parentLabel), <BreadcrumbChevron />)}
+              {interlace(explodeParents(parentLabel), (i) => (
+                <BreadcrumbChevron key={i} />
+              ))}
             </Typography>
             {children.map((v) => {
               return (

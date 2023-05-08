@@ -40,11 +40,12 @@ import {
   useIsTrustedDataSource,
 } from "@/domain/datasource";
 import {
-  DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
 export const ChartPublished = ({
@@ -138,7 +139,15 @@ export const ChartPublishedInner = ({
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
 
-  const [{ data: metaData }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [{ data: components }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,
@@ -150,24 +159,31 @@ export const ChartPublishedInner = ({
   const publishedConfiguratorState = useMemo(() => {
     return {
       state: "PUBLISHING",
+      dataSet,
       dataSource,
-      chartConfig: chartConfig,
+      chartConfig,
     } as ConfiguratorStatePublishing;
-  }, [chartConfig, dataSource]);
+  }, [dataSet, dataSource, chartConfig]);
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
-  const allDimensions: DimensionMetadataFragment[] = useMemo(() => {
+  const allComponents = useMemo(() => {
+    if (!components?.dataCubeByIri) {
+      return [];
+    }
+
     return [
-      ...(metaData?.dataCubeByIri?.dimensions ?? []),
-      ...(metaData?.dataCubeByIri?.measures ?? []),
+      ...components.dataCubeByIri.dimensions,
+      ...components.dataCubeByIri.measures,
     ];
-  }, [metaData?.dataCubeByIri?.dimensions, metaData?.dataCubeByIri?.measures]);
+  }, [components?.dataCubeByIri]);
+
+  const [{ showDownload }] = useEmbedOptions();
 
   return (
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
         <ChartErrorBoundary resetKeys={[chartConfig]}>
-          {metaData?.dataCubeByIri?.publicationStatus ===
+          {metadata?.dataCubeByIri?.publicationStatus ===
             DataCubePublicationStatus.Draft && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
@@ -179,7 +195,7 @@ export const ChartPublishedInner = ({
               </HintRed>
             </Box>
           )}
-          {metaData?.dataCubeByIri?.expires && (
+          {metadata?.dataCubeByIri?.expires && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
                 <Trans id="dataset.publicationStatus.expires.warning">
@@ -217,7 +233,7 @@ export const ChartPublishedInner = ({
             <MetadataPanel
               datasetIri={dataSet}
               dataSource={dataSource}
-              dimensions={allDimensions}
+              dimensions={allComponents}
               container={rootRef.current}
             />
           </Flex>
@@ -260,6 +276,13 @@ export const ChartPublishedInner = ({
               chartConfig={chartConfig}
               configKey={configKey}
               onToggleTableView={handleToggleTableView}
+              visualizeLinkText={
+                showDownload === false ? (
+                  <Trans id="metadata.link.created.with.visualize.alternate">
+                    visualize.admin.ch
+                  </Trans>
+                ) : undefined
+              }
             />
           </InteractiveFiltersProvider>
         </ChartErrorBoundary>

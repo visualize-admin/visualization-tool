@@ -1,4 +1,6 @@
+import { loadChartInLocalStorage } from "./charts-utils";
 import { test, expect } from "./common";
+import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
 
 /**
  * - Creates a chart from the photovoltaik dataset
@@ -45,7 +47,7 @@ test("Segment sorting", async ({
     // Wait for chart to be loaded
     await selectors.chart.loaded();
     await selectors.edition.filtersLoaded();
-    await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+    await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
     const legendItems = await selectors.chart.colorLegendItems();
     const legendTexts = await legendItems.allInnerTexts();
@@ -80,14 +82,16 @@ test("Segment sorting", async ({
   }
 });
 
-test("Segment sorting with hierarchy", async ({
+// TODO Find correct cube
+// @see https://github.com/visualize-admin/visualization-tool/discussions/1007
+test.skip("Segment sorting with hierarchy", async ({
   actions,
   selectors,
   screen,
   within,
 }) => {
   await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1",
+    "https://environment.ld.admin.ch/foen/nfi/C-96/cube/1",
     "Int"
   );
   await actions.editor.selectActiveField("Color");
@@ -99,11 +103,11 @@ test("Segment sorting with hierarchy", async ({
     .getByText("None")
     .click();
 
-  await actions.mui.selectOption("Production region");
+  await actions.mui.selectOption("Region");
   await selectors.chart.loaded();
 
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 30_000 });
 
   await within(await selectors.chart.colorLegend()).findByText(
     "Southern Alps",
@@ -129,4 +133,83 @@ test("Segment sorting with hierarchy", async ({
     "Plateau",
     "Jura",
   ]);
+});
+
+test("Map legend categorical values sorting", async ({
+  actions,
+  selectors,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    "Int"
+  );
+  await actions.editor.changeChartType("Map");
+  await selectors.chart.loaded();
+
+  const legendItems = await selectors.chart.colorLegendItems();
+
+  expect(await legendItems.allInnerTexts()).toEqual([
+    "low danger",
+    "moderate danger",
+    "high danger",
+  ]);
+});
+
+const uniqueWithoutSorting = <T>(arr: T[]) => {
+  const res: T[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const prev = i > 0 ? arr[i - 1] : undefined;
+    const cur = arr[i];
+    if (prev !== cur) {
+      res.push(cur);
+    }
+  }
+  return res;
+};
+
+test("Map legend preview table sorting", async ({
+  actions,
+  selectors,
+  page,
+}) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
+    "Int"
+  );
+  await actions.editor.changeChartType("Map");
+  await selectors.chart.loaded();
+
+  await actions.chart.switchToTableView();
+  await actions.datasetPreview.sortBy("Danger ratings");
+  const cells = await selectors.datasetPreview.columnCells("Danger ratings");
+
+  const texts = await cells.allInnerTexts();
+  expect(uniqueWithoutSorting(texts)).toEqual([
+    "low danger",
+    "moderate danger",
+    "high danger",
+  ]);
+});
+
+test("Sorting with values with same label as other values in the tree", async ({
+  actions,
+  selectors,
+  page,
+}) => {
+  const key = "sorting-hierarchy-values-same-label.spec";
+  const config = hierarchyTest13;
+  await loadChartInLocalStorage(page, key, config);
+  page.goto(`/en/create/${key}`);
+  await selectors.chart.loaded({ timeout: 30_000 });
+
+  const texts = await Promise.all(
+    await (
+      await page.locator('[data-testid="axis-width-band"] text').all()
+    ).map((loc) => {
+      return loc.innerHTML();
+    })
+  );
+
+  // Zürich has id 261 while Bern has id 351
+  expect(texts).toEqual(["Zürich", "Bern"]);
 });

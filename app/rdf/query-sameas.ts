@@ -2,6 +2,7 @@ import { schema } from "@tpluscode/rdf-ns-builders";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
@@ -26,13 +27,16 @@ const buildUnversionedResourceQuery = (values: NamedNode[]) => {
 export async function loadUnversionedResources({
   ids,
   sparqlClient,
+  cache,
 }: {
   ids: NamedNode[];
   sparqlClient: ParsingClient;
+  cache: LRUCache | undefined;
 }): Promise<UnversionedResource[]> {
   return batchLoad({
     ids,
     sparqlClient,
     buildQuery: buildUnversionedResourceQuery,
+    cache,
   });
 }

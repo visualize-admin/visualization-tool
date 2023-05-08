@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import Head from "next/head";
@@ -16,6 +17,7 @@ import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
+import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
   | {
@@ -45,9 +47,25 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return { props: { status: "notfound" } };
 };
 
+const useStyles = makeStyles((theme: Theme) => ({
+  actionBar: {
+    backgroundColor: "white",
+    padding: `${theme.spacing(3)} 2.25rem`,
+    justifyContent: "flex-end",
+    display: "flex",
+    width: "100%",
+    borderBottom: "1px solid",
+    borderBottomColor: theme.palette.divider,
+    [theme.breakpoints.down("md")]: {
+      padding: `${theme.spacing(3)} 0.75rem`,
+    },
+  },
+}));
+
 const VisualizationPage = (props: Serialized<PageProps>) => {
   const locale = useLocale();
   const { query, replace } = useRouter();
+  const classes = useStyles();
 
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
@@ -72,7 +90,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   } = (props as Exclude<PageProps, { status: "notfound" }>).config;
 
   return (
-    <>
+    <EmbedOptionsProvider>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:title" content={meta.title[locale]} />
@@ -80,6 +98,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
+        <Box className={classes.actionBar}>
+          <PublishActions configKey={key} sx={{ m: 0 }} />
+        </Box>
         <Box
           px={[2, 4]}
           sx={{ backgroundColor: "muted.main" }}
@@ -105,19 +126,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               />
             </ChartPanelPublished>
 
-            <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
-
-            <Typography
-              component="div"
-              variant="h3"
-              mt={3}
-              mb={4}
-              sx={{
-                color: "grey.800",
-                fontSize: "1.125rem",
-                fontWeight: "regular",
-              }}
-            >
+            <Typography component="div" my={4}>
               {publishSuccess ? (
                 <Trans id="hint.how.to.share">
                   You can share this chart either by sharing its URL or by
@@ -142,12 +151,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               sx={{ mb: 5 }}
             >
               <NextLink href="/create/new" passHref>
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
+                <Button component="a" variant="outlined" color="primary">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -157,12 +161,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button
-                  component="a"
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                >
+                <Button component="a" variant="outlined" color="primary">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>
@@ -172,7 +171,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
           </Box>
         </Box>
       </ContentLayout>
-    </>
+    </EmbedOptionsProvider>
   );
 };
 

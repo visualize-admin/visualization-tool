@@ -31,8 +31,9 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { LineFields } from "@/configurator";
+import { LineConfig } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -73,20 +74,14 @@ export interface LinesState extends CommonChartState {
 const useLinesState = (
   chartProps: Pick<
     ChartProps,
-    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+    "data" | "dimensions" | "measures" | "chartConfig"
   > & {
-    fields: LineFields;
+    chartConfig: LineConfig;
     aspectRatio: number;
   }
 ): LinesState => {
-  const {
-    data,
-    fields,
-    dimensions,
-    measures,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -112,13 +107,20 @@ const useLinesState = (
   );
 
   const {
-    getAbbreviationOrLabelByValue: getSegment,
-    getLabelByAbbreviation: getSegmentLabel,
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations ?? false,
-    dimension: segmentDimension,
+    useAbbreviations: fields.segment?.useAbbreviations,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
+
+  const { getValue: getSegment, getLabel: getSegmentLabel } =
+    useObservationLabels(
+      data,
+      getSegmentAbbreviationOrLabel,
+      fields.segment?.componentIri
+    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -205,12 +207,16 @@ const useLinesState = (
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
   const segments = useMemo(() => {
     const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
     });
     return orderBy(
       uniqueSegments,
@@ -223,6 +229,7 @@ const useLinesState = (
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
     plottableSortedData,
+    segmentFilter,
   ]);
 
   // Map ordered segments to colors
@@ -311,13 +318,13 @@ const useLinesState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
         hide: getY(td) === null,
-        label: getSegment(td),
+        label: getSegmentAbbreviationOrLabel(td),
         value: yValueFormatter(getY(td)),
         color: colors(getSegment(td)) as string,
         yPos: yScale(getY(td) ?? 0),
@@ -353,26 +360,21 @@ const useLinesState = (
 
 const LineChartProvider = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: LineFields;
+  chartConfig: LineConfig;
   aspectRatio: number;
 }) => {
   const state = useLinesState({
     data,
-    fields,
     dimensions,
     measures,
-    interactiveFiltersConfig,
+    chartConfig,
     aspectRatio,
   });
   return (
@@ -382,18 +384,14 @@ const LineChartProvider = ({
 
 export const LineChart = ({
   data,
-  fields,
   dimensions,
   measures,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
-  fields: LineFields;
+  chartConfig: LineConfig;
   children: ReactNode;
 }) => {
   return (
@@ -401,10 +399,9 @@ export const LineChart = ({
       <InteractionProvider>
         <LineChartProvider
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

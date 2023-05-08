@@ -2,17 +2,17 @@ import { Trans } from "@lingui/macro";
 import {
   Alert,
   AlertProps,
-  useTheme,
   AlertTitle,
   Box,
   BoxProps,
-  Typography,
+  keyframes,
   Link,
   Theme,
-  keyframes,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
 import { Icon, IconName } from "@/icons";
@@ -97,8 +97,20 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+type LoadingHintVariant = "regular" | "long";
+
 export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
+  const [variant, setVariant] = React.useState<LoadingHintVariant>("regular");
   const classes = useLoadingStyles();
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setVariant("long");
+    }, 7500);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <Flex
       className={classes.root}
@@ -107,9 +119,20 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
       }}
     >
       <Spinner />
-      <Typography component="div" variant="body1">
-        <Trans id="hint.loading.data">Loading data…</Trans>
-      </Typography>
+
+      <Box>
+        <Typography>
+          <Trans id="hint.loading.data">Loading data…</Trans>
+        </Typography>
+
+        {variant === "long" && (
+          <Typography>
+            <Trans id="hint.loading.data.large.datasets">
+              It may take more than 30 seconds for large datasets.
+            </Trans>
+          </Typography>
+        )}
+      </Box>
     </Flex>
   );
 };
@@ -138,7 +161,16 @@ export const NoDataHint = () => (
 );
 
 export const LoadingDataError = ({ message }: { message?: string }) => (
-  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+  <Alert
+    severity="error"
+    icon={<Icon name="hintWarning" size={64} />}
+    sx={{
+      "& > .MuiAlert-icon": {
+        ml: "2rem",
+        mr: "1.5rem",
+      },
+    }}
+  >
     <AlertTitle>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </AlertTitle>

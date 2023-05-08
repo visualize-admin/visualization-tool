@@ -13,6 +13,8 @@ import {
 import { ChartConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
+  ComponentsQuery,
+  DataCubeMetadataQuery,
   DataCubeObservationsQuery,
   DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
@@ -22,7 +24,7 @@ type ChartCommonProps<TChartConfig extends ChartConfig> = {
   observations: Observation[];
   measures: DimensionMetadataFragment[];
   dimensions: DimensionMetadataFragment[];
-  interactiveFiltersConfig: TChartConfig["interactiveFiltersConfig"];
+  chartConfig: TChartConfig;
 };
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
@@ -32,12 +34,22 @@ export const ChartLoadingWrapper = <
   TOtherProps,
   TChartComponent extends React.ElementType
 >({
-  query,
+  metadataQuery,
+  componentsQuery,
+  observationsQuery,
   chartConfig,
   Component,
   ComponentProps,
 }: {
-  query: Pick<
+  metadataQuery: Pick<
+    UseQueryResponse<DataCubeMetadataQuery>[0],
+    "data" | "fetching" | "error"
+  >;
+  componentsQuery: Pick<
+    UseQueryResponse<ComponentsQuery>[0],
+    "data" | "fetching" | "error"
+  >;
+  observationsQuery: Pick<
     UseQueryResponse<DataCubeObservationsQuery>[0],
     "data" | "fetching" | "error"
   >;
@@ -48,11 +60,38 @@ export const ChartLoadingWrapper = <
     keyof ChartCommonProps<TChartConfig>
   >;
 }) => {
-  const { data, fetching, error } = query;
-  if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+  const {
+    data: metadataData,
+    fetching: fetchingMetadata,
+    error: metadataError,
+  } = metadataQuery;
+  const {
+    data: componentsData,
+    fetching: fetchingComponents,
+    error: componentsError,
+  } = componentsQuery;
+  const {
+    data: observationsData,
+    fetching: fetchingObservations,
+    error: observationsError,
+  } = observationsQuery;
+
+  if (
+    metadataData?.dataCubeByIri &&
+    componentsData?.dataCubeByIri &&
+    observationsData?.dataCubeByIri
+  ) {
+    const { title } = metadataData.dataCubeByIri;
+    const { dimensions, measures } = componentsData.dataCubeByIri;
+    const { observations } = observationsData.dataCubeByIri;
+
     return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
+      <Box
+        data-chart-loaded={
+          !(fetchingMetadata && fetchingComponents && fetchingObservations)
+        }
+        sx={{ position: "relative" }}
+      >
         <A11yTable
           title={title}
           observations={observations.data}
@@ -61,21 +100,24 @@ export const ChartLoadingWrapper = <
         />
         {React.createElement(Component, {
           observations: observations.data,
-          dimensions: dimensions,
-          measures: measures,
-          fields: chartConfig.fields,
-          interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
+          dimensions,
+          measures,
+          chartConfig,
           ...ComponentProps,
         } as ChartCommonProps<TChartConfig> & TOtherProps)}
-        {fetching && <LoadingOverlay />}
+        {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
+          <LoadingOverlay />
+        )}
       </Box>
     ) : (
       <NoDataHint />
     );
-  } else if (error) {
+  } else if (metadataError || componentsError || observationsError) {
     return (
-      <Flex flexGrow={1} justifyContent="center" minHeight={300}>
-        <LoadingDataError />
+      <Flex sx={{ flexDirection: "column", gap: 3 }}>
+        {metadataError && <Error message={metadataError.message} />}
+        {componentsError && <Error message={componentsError.message} />}
+        {observationsError && <Error message={observationsError.message} />}
       </Flex>
     );
   } else {
@@ -85,4 +127,12 @@ export const ChartLoadingWrapper = <
       </Flex>
     );
   }
+};
+
+const Error = ({ message }: { message: string }) => {
+  return (
+    <Flex flexGrow={1} justifyContent="center" minHeight={300}>
+      <LoadingDataError message={message} />
+    </Flex>
+  );
 };

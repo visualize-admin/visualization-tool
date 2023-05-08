@@ -4,11 +4,11 @@ import clownface from "clownface";
 import { descending } from "d3";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
+import { Quad, Stream } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { truthy } from "@/domain/types";
-import { Awaited } from "@/domain/types";
+import { Awaited, truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
 import { ResolvedDataCube } from "@/graphql/shared-types";
@@ -64,18 +64,6 @@ const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
   };
 };
 
-const enhanceQuery = (rawQuery: string) => {
-  const enhancedQuery = rawQuery
-    .toLowerCase()
-    .split(" ")
-    // Filter out lowercase, small tokens
-    .filter((t) => t.length > 2 || t.toLowerCase() !== t)
-    // Wildcard Searches on each term
-    .map((t) => `${t}`)
-    .join(" ");
-  return enhancedQuery;
-};
-
 const icontains = (left: string, right: string) => {
   return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
 };
@@ -87,8 +75,17 @@ const parseResultRow = (row: ResultRow) =>
 const identity = <T>(str: TemplateResult<T>) => str;
 const optional = <T>(str: TemplateResult<T>) => sparql`OPTIONAL { ${str} }`;
 
+const extractCubesFromStream = async (cubeStream: Stream<Quad>) => {
+  const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
+  const cf = clownface({ dataset: cubeDataset });
+  return cf.has(
+    cf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+    ns.cube.Cube
+  );
+};
+
 export const searchCubes = async ({
-  query: rawQuery,
+  query,
   locale,
   filters,
   includeDrafts,
@@ -104,8 +101,6 @@ export const searchCubes = async ({
 }) => {
   const queries = [] as RequestQueryMeta[];
 
-  const query = rawQuery ? enhanceQuery(rawQuery) : undefined;
-
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ||
@@ -118,10 +113,12 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
+  const scoresQuery = SELECT.DISTINCT`?lang ?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
     .WHERE`
     ?cube a ${ns.cube.Cube}.
     ?cube ${ns.schema.name} ?name.
+
+    BIND(LANG(?name) as ?lang)
 
     OPTIONAL {
       ?cube ${ns.schema.description} ?description.
@@ -157,6 +154,10 @@ export const searchCubes = async ({
     ${makeInFilter("about", aboutValues)}
     ${makeInFilter("theme", themeValues)}
     ${makeInFilter("creator", creatorValues)}
+
+    FILTER(!BOUND(?description) || ?lang = LANG(?description))
+    FILTER(!BOUND(?creatorLabel) || ?lang = LANG(?creatorLabel))
+    FILTER(!BOUND(?themeName) || ?lang = LANG(?themeName))
 
       ${
         query
@@ -200,8 +201,9 @@ export const searchCubes = async ({
     data.map((d) => [d.cube, d.versionHistory])
   );
   const infoPerCube = computeScores(data, {
-    query: query,
+    query,
     identifierName: "cube",
+    lang: locale,
   });
 
   // Find information on cubes
@@ -220,23 +222,20 @@ export const searchCubes = async ({
     throw new Error("Must pass locale");
   }
 
-  const { data: cubeStream, meta: cubesMeta } = await executeAndMeasure(
-    sparqlClientStream,
-    cubesQuery
-  );
-  queries.push({
-    ...cubesMeta,
-    label: "cubes",
-  });
-  const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
-  const cf = clownface({ dataset: cubeDataset });
+  const { data: cubeStream, meta: cubesMeta } =
+    sortedCubeIris.length > 0
+      ? await executeAndMeasure(sparqlClientStream, cubesQuery)
+      : { data: undefined, meta: undefined };
 
+  if (cubesMeta) {
+    queries.push({
+      ...cubesMeta,
+      label: "cubes",
+    });
+  }
+  const cubeNodes = cubeStream ? await extractCubesFromStream(cubeStream) : [];
   const seen = new Set();
-  const cubes = cf
-    .has(
-      cf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-      ns.cube.Cube
-    )
+  const cubes = cubeNodes
     .map((cubeNode) => {
       const cube = cubeNode as unknown as Cube;
       const iri = parseIri(cube);

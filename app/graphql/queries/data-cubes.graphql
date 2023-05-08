@@ -1,3 +1,77 @@
+fragment dimensionMetadata on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+}
+
+fragment dimensionMetadataWithHierarchies on Dimension {
+  iri
+  label
+  description
+  isNumerical
+  isKeyDimension
+  dataType
+  order
+  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  unit
+  related {
+    iri
+    type
+  }
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
+  ... on NumericalMeasure {
+    isCurrency
+    currencyExponent
+    resolution
+    isDecimal
+  }
+  ...hierarchyMetadata
+}
+
+fragment hierarchyMetadata on Dimension {
+  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    ...hierarchyValueFields
+    children {
+      ...hierarchyValueFields
+      children {
+        ...hierarchyValueFields
+        children {
+          ...hierarchyValueFields
+          children {
+            ...hierarchyValueFields
+            children {
+              ...hierarchyValueFields
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 query DataCubes(
   $sourceType: String!
   $sourceUrl: String!
@@ -34,33 +108,6 @@ query DataCubes(
         label
       }
     }
-  }
-}
-
-fragment dimensionMetadata on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  dataType
-  order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
-  unit
-  related {
-    iri
-    type
-  }
-  ...hierarchyMetadata
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
   }
 }
 
@@ -136,7 +183,7 @@ query DataCubeMetadata(
   }
 }
 
-query DataCubeMetadataWithComponentValues(
+query Components(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
@@ -151,45 +198,35 @@ query DataCubeMetadataWithComponentValues(
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    publisher
-    publicationStatus
-    expires
-    identifier
-    workExamples
-    creator {
-      iri
-    }
-    landingPage
     dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
-      ...hierarchyMetadata
     }
     measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
       ...dimensionMetadata
-      ...hierarchyMetadata
     }
   }
 }
 
-fragment hierarchyMetadata on Dimension {
-  hierarchy(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-    ...hierarchyValueFields
-    children {
-      ...hierarchyValueFields
-      children {
-        ...hierarchyValueFields
-        children {
-          ...hierarchyValueFields
-          children {
-            ...hierarchyValueFields
-            children {
-              ...hierarchyValueFields
-            }
-          }
-        }
-      }
+query ComponentsWithHierarchies(
+  $iri: String!
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $latest: Boolean
+  $filters: Filters
+) {
+  dataCubeByIri(
+    iri: $iri
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    latest: $latest
+  ) {
+    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
+    }
+    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+      ...dimensionMetadataWithHierarchies
     }
   }
 }
@@ -215,7 +252,7 @@ query DimensionValues(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
     ) {
-      ...dimensionMetadata
+      ...dimensionMetadataWithHierarchies
     }
   }
 }
@@ -326,15 +363,6 @@ query DataCubeObservations(
     locale: $locale
     latest: $latest
   ) {
-    iri
-    title
-    description
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
-      ...dimensionMetadata
-    }
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl

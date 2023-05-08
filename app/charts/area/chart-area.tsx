@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
@@ -12,14 +12,14 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   AreaConfig,
-  AreaFields,
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
 } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -38,19 +38,38 @@ export const ChartAreasVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [queryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null, // FIXME: Try to load less dimensions
+    },
+  });
+  const [componentsQuery] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dimensions: null,
       filters: queryFilters,
     },
   });
+
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsQuery}
+      observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartAreas}
     />
@@ -62,22 +81,21 @@ export const ChartAreas = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    fields: AreaFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
+    chartConfig: AreaConfig;
   }) => {
+    const { fields, interactiveFiltersConfig } = chartConfig;
     return (
       <AreaChart
         data={observations}
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
+        chartConfig={chartConfig}
         aspectRatio={0.4}
       >
         <ChartContainer>

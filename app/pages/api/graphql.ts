@@ -4,7 +4,8 @@ import configureCors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
-import { createContext, GraphQLContext } from "../../graphql/context";
+import sentryPlugin from "../../graphql/apollo-sentry-plugin";
+import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../utils/run-middleware";
@@ -17,11 +18,12 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   formatError: (err) => {
+    console.log(err.source);
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
   formatResponse: (response, reqCtx) => {
-    const context = reqCtx.context as GraphQLContext;
+    const context = reqCtx.context as VisualizeGraphQLContext;
     response.extensions = {
       queries: context.queries,
       timings: context.timings,
@@ -32,6 +34,7 @@ const server = new ApolloServer({
   // Enable playground in production
   introspection: true,
   playground: true,
+  plugins: [sentryPlugin],
 });
 
 export const config = {

@@ -12,6 +12,7 @@ import {
 } from "@/charts/shared/interaction/tooltip-content";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
+import { ColumnConfig } from "@/configurator";
 import {
   dimensions,
   fields,
@@ -34,18 +35,25 @@ ${(
     <InteractiveFiltersProvider>
       <ColumnChart
         data={observations}
-        fields={fields}
         measures={measures}
         dimensions={dimensions}
-        interactiveFiltersConfig={{
-          legend: { active: false, componentIri: "" },
-          timeRange: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: { active: false, componentIris: [] },
-        }}
+        chartConfig={
+          {
+            fields,
+            interactiveFiltersConfig: {
+              legend: { active: false, componentIri: "" },
+              timeRange: {
+                active: false,
+                componentIri: "",
+                presets: { type: "range", from: "", to: "" },
+              },
+              timeSlider: {
+                componentIri: "",
+              },
+              dataFilters: { active: false, componentIris: [] },
+            },
+          } as unknown as ColumnConfig
+        }
         aspectRatio={0.4}
       >
         <Flex>
@@ -174,18 +182,22 @@ ${(
     <InteractiveFiltersProvider>
       <ColumnChart
         data={observations}
-        fields={fields}
         measures={measures}
         dimensions={dimensions}
-        interactiveFiltersConfig={{
-          legend: { active: false, componentIri: "" },
-          timeRange: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: { active: false, componentIris: [] },
-        }}
+        chartConfig={
+          {
+            fields,
+            interactiveFiltersConfig: {
+              legend: { active: false, componentIri: "" },
+              timeRange: {
+                active: false,
+                componentIri: "",
+                presets: { type: "range", from: "", to: "" },
+              },
+              dataFilters: { active: false, componentIris: [] },
+            },
+          } as unknown as ColumnConfig
+        }
         aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>
@@ -213,18 +225,22 @@ ${(
     <InteractiveFiltersProvider>
       <ColumnChart
         data={observations}
-        fields={fields}
         measures={measures}
         dimensions={dimensions}
-        interactiveFiltersConfig={{
-          legend: { active: false, componentIri: "" },
-          timeRange: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: { active: false, componentIris: [] },
-        }}
+        chartConfig={
+          {
+            fields,
+            interactiveFiltersConfig: {
+              legend: { active: false, componentIri: "" },
+              timeRange: {
+                active: false,
+                componentIri: "",
+                presets: { type: "range", from: "", to: "" },
+              },
+              dataFilters: { active: false, componentIris: [] },
+            },
+          } as unknown as ColumnConfig
+        }
         aspectRatio={0.4}
       >
         <div style={{ width: 200, height: 150, position: "relative" }}>

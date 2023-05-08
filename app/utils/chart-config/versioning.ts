@@ -537,25 +537,33 @@ export const migrateChartConfig = (
     fromVersion,
     toVersion = CHART_CONFIG_VERSION,
   }: { fromVersion?: string; toVersion?: string } = {}
-): any => {
-  const fromVersionFinal = fromVersion || config.version || "1.0.0";
-  const direction = upOrDown(fromVersionFinal, toVersion);
+) => {
+  const _migrateChartConfig = (
+    config: any,
+    {
+      fromVersion,
+      toVersion = CHART_CONFIG_VERSION,
+    }: { fromVersion?: string; toVersion?: string } = {}
+  ): any => {
+    const fromVersionFinal = fromVersion || config.version || "1.0.0";
+    const direction = upOrDown(fromVersionFinal, toVersion);
 
-  if (direction === "same") {
-    return config;
-  }
+    if (direction === "same") {
+      return config;
+    }
 
-  const currentMigration = migrations.find(
-    (migration) =>
-      migration[direction === "up" ? "from" : "to"] === fromVersionFinal
-  );
+    const currentMigration = migrations.find(
+      (migration) =>
+        migration[direction === "up" ? "from" : "to"] === fromVersionFinal
+    );
 
-  if (currentMigration) {
-    const newConfig = currentMigration[direction](config);
-    return migrateChartConfig(newConfig, { fromVersion, toVersion });
-  }
+    if (currentMigration) {
+      const newConfig = currentMigration[direction](config);
+      return _migrateChartConfig(newConfig, { fromVersion, toVersion });
+    }
+  };
 
-  return config;
+  return _migrateChartConfig(config, { fromVersion, toVersion });
 };
 
 const upOrDown = (

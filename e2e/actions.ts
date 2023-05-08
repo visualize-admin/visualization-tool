@@ -33,6 +33,11 @@ export const createActions = ({
 
       await selectors.datasetPreview.loaded();
     },
+    sortBy: (columnName: string) => {
+      return page
+        .locator(`th[role=columnheader]:has-text("${columnName}") svg`)
+        .click();
+    },
   },
   chart: {
     createFrom: async (
@@ -45,6 +50,9 @@ export const createActions = ({
       );
 
       await selectors.chart.loaded(chartLoadedOptions);
+    },
+    switchToTableView: async () => {
+      await (await selectors.chart.tablePreviewSwitch()).click();
     },
   },
   /** Actions on MUI elements, options, selects, dialogs */
@@ -88,6 +96,11 @@ export const createActions = ({
   },
   drawer: {
     close: async () => await screen.locator('text="Back to main"').click(),
+  },
+  common: {
+    switchLang: async (lang: "de" | "fr" | "en" | "it") => {
+      await page.locator(`a[hreflang="${lang}"]`).click();
+    },
   },
 });
 

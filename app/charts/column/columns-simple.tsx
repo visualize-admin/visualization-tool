@@ -51,13 +51,13 @@ export const Columns = () => {
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {preparedData.map((d, i) => {
         const y = getY(d) ?? NaN;
-
+        const x = xScale(getX(d)) as number;
         return (
           <Column
             key={i}
-            x={xScale(getX(d)) as number}
             data-index={i}
             width={xScale.bandwidth()}
+            x={x}
             y={yScale(Math.max(y, 0))}
             height={Math.abs(yScale(y) - yScale(0))}
             color={

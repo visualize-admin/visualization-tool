@@ -10,6 +10,7 @@ import {
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
 import { pragmas } from "@/rdf/create-source";
@@ -20,6 +21,7 @@ import {
   Observation,
   ObservationValue,
   parseObservationValue,
+  parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -46,6 +48,7 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
+const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 
 const getLatestCube = async (cube: Cube): Promise<Cube> => {
   const source = cube.source;
@@ -127,11 +130,13 @@ export const getCubeDimensions = async ({
   locale,
   sparqlClient,
   dimensionIris,
+  cache,
 }: {
   cube: Cube;
   locale: string;
   sparqlClient: ParsingClient;
   dimensionIris?: string[];
+  cache: LRUCache | undefined;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions
@@ -146,6 +151,7 @@ export const getCubeDimensions = async ({
         ids: dimensionUnits,
         locale: "en", // No other locales exist yet
         sparqlClient,
+        cache,
       }),
       (d) => d.iri.value
     );
@@ -166,27 +172,38 @@ export const getCubeDimensions = async ({
 };
 
 export const createCubeDimensionValuesLoader =
-  (sparqlClient: ParsingClient, filters?: Filters) =>
+  (
+    sparqlClient: ParsingClient,
+    cache: LRUCache | undefined,
+    filters?: Filters
+  ) =>
   async (dimensions: readonly ResolvedDimension[]) => {
     const result: DimensionValue[][] = [];
 
     for (const dimension of dimensions) {
-      const dimensionValues = await getCubeDimensionValues(
+      const dimensionValues = await getCubeDimensionValues({
         sparqlClient,
-        dimension,
-        filters
-      );
+        rdimension: dimension,
+        filters,
+        cache,
+      });
       result.push(dimensionValues);
     }
 
     return result;
   };
 
-export const getCubeDimensionValues = async (
-  sparqlClient: ParsingClient,
-  rdimension: ResolvedDimension,
-  filters?: Filters
-): Promise<DimensionValue[]> => {
+export const getCubeDimensionValues = async ({
+  sparqlClient,
+  rdimension,
+  filters,
+  cache,
+}: {
+  sparqlClient: ParsingClient;
+  rdimension: ResolvedDimension;
+  filters?: Filters;
+  cache: LRUCache | undefined;
+}): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
 
   if (
@@ -211,12 +228,11 @@ export const getCubeDimensionValues = async (
         datasetIri: cube.term,
         dimensionIri: dimension.path,
         sparqlClient,
+        cache,
       });
 
       if (result) {
-        const { minValue, maxValue } = result;
-        const min = parseObservationValue({ value: minValue }) ?? 0;
-        const max = parseObservationValue({ value: maxValue }) ?? 0;
+        const [min, max] = result;
 
         return [
           { value: min, label: `${min}` },
@@ -236,6 +252,7 @@ export const getCubeDimensionValues = async (
     sparqlClient,
     locale,
     filters,
+    cache,
   });
 };
 
@@ -248,12 +265,14 @@ export const getCubeDimensionValuesWithMetadata = async ({
   sparqlClient,
   locale,
   filters,
+  cache,
 }: {
   dimension: CubeDimension;
   cube: Cube;
   sparqlClient: ParsingClient;
   locale: string;
   filters?: Filters;
+  cache: LRUCache | undefined;
 }): Promise<DimensionValue[]> => {
   const load = async () => {
     const loaders = [
@@ -315,13 +334,20 @@ export const getCubeDimensionValuesWithMetadata = async ({
   if (namedNodes.length > 0) {
     const scaleType = getScaleType(dimension);
     const [labels, descriptions, literals, unversioned] = await Promise.all([
-      loadResourceLabels({ ids: namedNodes, locale, sparqlClient }),
+      loadResourceLabels({
+        ids: namedNodes,
+        locale,
+        sparqlClient,
+        labelTerm: schema.name,
+        cache,
+      }),
       scaleType === "Ordinal" || scaleType === "Nominal"
         ? loadResourceLabels({
             ids: namedNodes,
             locale,
             sparqlClient,
             labelTerm: schema.description,
+            cache,
           })
         : [],
       loadResourceLiterals({
@@ -330,18 +356,29 @@ export const getCubeDimensionValuesWithMetadata = async ({
         predicates: {
           identifier:
             scaleType === "Ordinal" || scaleType === "Nominal"
-              ? schema.identifier
+              ? {
+                  predicate: schema.identifier,
+                }
               : null,
-          position: scaleType === "Ordinal" ? schema.position : null,
+          position:
+            scaleType === "Ordinal"
+              ? {
+                  predicate: schema.position,
+                }
+              : null,
           color:
             scaleType === "Nominal" || scaleType === "Ordinal"
-              ? schema.color
+              ? { predicate: schema.color }
               : null,
-          alternateName: schema.alternateName,
+          alternateName: {
+            predicate: schema.alternateName,
+            locale: locale,
+          },
         },
+        cache,
       }),
       dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: namedNodes, sparqlClient })
+        ? loadUnversionedResources({ ids: namedNodes, sparqlClient, cache })
         : [],
     ]);
 
@@ -349,10 +386,14 @@ export const getCubeDimensionValuesWithMetadata = async ({
       literals.map(({ iri, alternateName, identifier, position, color }) => [
         iri.value,
         {
-          alternateName: alternateName?.value,
-          identifier: identifier?.value,
-          position: position?.value,
-          color: color?.value,
+          alternateName: alternateName
+            ? parseRDFLiteral<string>(alternateName)
+            : undefined,
+          identifier: identifier
+            ? parseRDFLiteral<number>(identifier)
+            : undefined,
+          position: position ? parseRDFLiteral<number>(position) : undefined,
+          color: color ? parseRDFLiteral<string>(color) : undefined,
         },
       ])
     );
@@ -376,10 +417,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelsLookup.get(iri.value) ?? "",
         description: descriptionsLookup.get(iri.value),
-        position:
-          lookupValue?.position !== undefined
-            ? parseInt(lookupValue.position, 10)
-            : undefined,
+        position: lookupValue?.position,
         identifier: lookupValue?.identifier,
         color: lookupValue?.color,
         alternateName: lookupValue?.alternateName,
@@ -429,6 +467,7 @@ export const getCubeObservations = async ({
   limit,
   raw,
   dimensions,
+  cache,
 }: {
   cube: Cube;
   locale: string;
@@ -440,6 +479,7 @@ export const getCubeObservations = async ({
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
   dimensions: Maybe<string[]> | undefined;
+  cache: LRUCache | undefined;
 }): Promise<{
   query: string;
   observations: Observation[];
@@ -451,6 +491,7 @@ export const getCubeObservations = async ({
     cube,
     locale,
     sparqlClient,
+    cache,
   });
 
   const cubeDimensions = allResolvedDimensions.filter((d) =>
@@ -710,24 +751,27 @@ function parseObservation(
   raw: boolean | undefined
 ): (value: RDFObservation) => Observation {
   return (obs) => {
-    return Object.fromEntries(
-      cubeDimensions.map((d) => {
-        const label = obs[labelDimensionIri(d.data.iri)]?.value;
-        const termType = obs[d.data.iri]?.termType;
+    const res = {} as Observation;
+    for (let d of cubeDimensions) {
+      const label = obs[labelDimensionIri(d.data.iri)]?.value;
+      const termType = obs[d.data.iri]?.termType;
 
-        const value =
-          termType === "Literal" &&
-          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
-            ? null
-            : termType === "NamedNode" &&
-              ns.cube.Undefined.equals(obs[d.data.iri])
-            ? "–"
-            : obs[d.data.iri]?.value;
+      const value =
+        termType === "Literal" &&
+        ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+          ? null
+          : termType === "NamedNode" &&
+            ns.cube.Undefined.equals(obs[d.data.iri])
+          ? "–"
+          : obs[d.data.iri]?.value;
 
-        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-        return [d.data.iri, raw ? rawValue : label ?? value ?? null];
-      })
-    );
+      const rawValue = parseObservationValue({ value: obs[d.data.iri] });
+      if (d.data.hasHierarchy) {
+        res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value;
+      }
+      res[d.data.iri] = raw ? rawValue : label ?? value ?? null;
+    }
+    return res;
   };
 }
 

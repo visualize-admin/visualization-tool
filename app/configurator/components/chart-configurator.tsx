@@ -18,6 +18,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
+import omitBy from "lodash/omitBy";
 import sortBy from "lodash/sortBy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -60,15 +61,18 @@ import {
 } from "@/configurator/configurator-state";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
-  DataCubeMetadataWithComponentValuesQuery,
   HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useComponentsWithHierarchiesQuery,
+  useDataCubeMetadataQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -120,7 +124,7 @@ const DataFilterSelectGeneric = ({
         onClick={onRemove}
         size="small"
       >
-        <Icon name="trash" width="16" height="16" />
+        <Icon name="trash" size="16" />
       </IconButton>
     </Box>
   );
@@ -266,9 +270,7 @@ const useEnsurePossibleFilters = ({
 };
 
 type Dimension = NonNullable<
-  NonNullable<
-    DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
-  >["dimensions"]
+  NonNullable<DataCubeMetadata>["dimensions"]
 >[number];
 
 const useFilterReorder = ({
@@ -284,53 +286,73 @@ const useFilterReorder = ({
     return getFiltersByMappingStatus(state.chartConfig);
   }, [state.chartConfig]);
 
-  const variables = useMemo(
-    () => ({
+  const variables = useMemo(() => {
+    const hasUnmappedFilters = Object.keys(unmappedFilters).length > 0;
+    const vars = {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
-      filters: unmappedFilters,
+      filters: hasUnmappedFilters ? unmappedFilters : undefined,
       // This is important for urql not to think that filters
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      filterKeys: Object.keys(unmappedFilters).join(", "),
-    }),
-    [
-      state.dataSet,
-      state.dataSource.type,
-      state.dataSource.url,
-      locale,
-      unmappedFilters,
-    ]
-  );
+      filterKeys: hasUnmappedFilters
+        ? Object.keys(unmappedFilters).join(", ")
+        : undefined,
+    };
+    return omitBy(vars, (x) => x === undefined) as typeof vars;
+  }, [
+    state.dataSet,
+    state.dataSource.type,
+    state.dataSource.url,
+    locale,
+    unmappedFilters,
+  ]);
 
-  const [{ data, fetching: dataFetching }, executeQuery] =
-    useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: metadata, fetching: metadataFetching }, executeMetadataQuery] =
+    useDataCubeMetadataQuery({
       variables: variables,
     });
+  const [
+    { data: components, fetching: componentsFetching },
+    exectueComponentsQuery,
+  ] = useComponentsWithHierarchiesQuery({
+    variables: variables,
+  });
 
   useEffect(() => {
-    executeQuery({
+    executeMetadataQuery({
       variables,
     });
-  }, [variables, executeQuery]);
+    exectueComponentsQuery({
+      variables,
+    });
+  }, [variables, executeMetadataQuery, exectueComponentsQuery]);
 
   const dimensions = useMemo(() => {
-    const dimensions = data?.dataCubeByIri?.dimensions;
+    const dimensions = components?.dataCubeByIri?.dimensions;
     type T = Exclude<typeof dimensions, undefined>;
-    if (!data?.dataCubeByIri?.dimensions) {
+
+    if (!components?.dataCubeByIri?.dimensions) {
       return [] as T;
     }
-    return dimensions as T;
-  }, [data?.dataCubeByIri?.dimensions]);
 
-  const metaData = data?.dataCubeByIri;
+    return dimensions as T;
+  }, [components?.dataCubeByIri?.dimensions]);
+
+  const data =
+    metadata && components
+      ? ({
+          ...metadata.dataCubeByIri,
+          ...components.dataCubeByIri,
+        } as DataCubeMetadataWithHierarchies)
+      : null;
 
   // Handlers
   const handleMove = useEvent((dimensionIri: string, delta: number) => {
-    if (!metaData) {
+    if (!data) {
       return;
     }
 
@@ -345,7 +367,7 @@ const useFilterReorder = ({
       type: "CHART_CONFIG_REPLACED",
       value: {
         chartConfig,
-        dataSetMetadata: metaData,
+        dataSetMetadata: data,
       },
     });
   });
@@ -388,7 +410,8 @@ const useFilterReorder = ({
   const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
     state,
   });
-  const fetching = possibleFiltersFetching || dataFetching;
+  const fetching =
+    possibleFiltersFetching || metadataFetching || componentsFetching;
 
   const { filterDimensions, addableDimensions } = useMemo(() => {
     const keysOrder = Object.fromEntries(
@@ -564,7 +587,7 @@ export const ChartConfigurator = ({
 
   const classes = useStyles({ fetching });
 
-  if (!data?.dataCubeByIri) {
+  if (!data) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -593,10 +616,7 @@ export const ChartConfigurator = ({
           role="tablist"
           aria-labelledby="controls-design"
         >
-          <ChartFields
-            chartConfig={state.chartConfig}
-            metaData={data.dataCubeByIri}
-          />
+          <ChartFields chartConfig={state.chartConfig} metaData={data} />
         </ControlSectionContent>
       </ControlSection>
       {filterDimensions.length === 0 &&
@@ -622,6 +642,17 @@ export const ChartConfigurator = ({
                 <Trans id="controls.section.data.filters.possible-filters-error">
                   An error happened while fetching possible filters, please
                   retry later or reload the page.
+                </Trans>
+              </Typography>
+            ) : null}
+            {filterDimensions.length === 0 ? (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: -4 }}
+              >
+                <Trans id="controls.section.data.filters.none">
+                  No filters
                 </Trans>
               </Typography>
             ) : null}

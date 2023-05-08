@@ -1,27 +1,27 @@
 import {
-  Typography,
-  FormControlLabel,
-  Switch,
   Box,
-  Card as MUICard,
   CircularProgress,
+  FormControlLabel,
+  Card as MUICard,
+  Switch,
   Theme,
+  Typography,
   lighten,
 } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
-import React, { ChangeEvent, useMemo, useState } from "react";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Inspector from "react-inspector";
-import { Column, useSortBy, useTable, useExpanded } from "react-table";
+import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
 import {
   Dimension,
   HierarchyValue,
   Measure,
+  useComponentsQuery,
   useDataCubeObservationsQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
@@ -167,14 +167,24 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
     Record<Dimension["iri"], boolean>
   >({});
 
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
-    variables: {
-      iri: dataset.iri,
-      sourceUrl: "https://int.lindas.admin.ch/query",
-      sourceType: "sparql",
-      locale: "en",
-    },
-  });
+  const [{ data: componentsData, fetching: fetchingComponents }] =
+    useComponentsQuery({
+      variables: {
+        iri: dataset.iri,
+        sourceUrl: "https://int.lindas.admin.ch/query",
+        sourceType: "sparql",
+        locale: "en",
+      },
+    });
+  const [{ data: observationsData, fetching: fetchingObservations }] =
+    useDataCubeObservationsQuery({
+      variables: {
+        iri: dataset.iri,
+        sourceUrl: "https://int.lindas.admin.ch/query",
+        sourceType: "sparql",
+        locale: "en",
+      },
+    });
 
   const [{ data: hierarchyData, fetching: fetchingHierarchy }] =
     useDimensionHierarchyQuery({
@@ -190,16 +200,14 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
 
   const classes = useStyles();
 
-  const allDimensions = data?.dataCubeByIri?.dimensions;
-  const dimensions = useMemo(
-    () =>
-      data?.dataCubeByIri?.dimensions.filter((d) => !ignoredDimensions[d.iri]),
-    [data?.dataCubeByIri?.dimensions, ignoredDimensions]
-  );
-  const measures = data?.dataCubeByIri?.measures;
+  const allDimensions = componentsData?.dataCubeByIri?.dimensions;
+  const dimensions = useMemo(() => {
+    return allDimensions?.filter((d) => !ignoredDimensions[d.iri]);
+  }, [allDimensions, ignoredDimensions]);
+  const measures = componentsData?.dataCubeByIri?.measures;
   const observations = useMemo(() => {
-    return data?.dataCubeByIri?.observations?.data || [];
-  }, [data]);
+    return observationsData?.dataCubeByIri?.observations.data || [];
+  }, [observationsData?.dataCubeByIri?.observations.data]);
 
   const handleChangePivot = (ev: ChangeEvent<HTMLSelectElement>) => {
     const name = ev.currentTarget.value;
@@ -573,7 +581,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
             <Inspector data={hierarchyIndexes} />
           </details>
         </Card>
-        {fetching ? <Loading /> : null}
+        {fetchingComponents || fetchingObservations ? <Loading /> : null}
         <div className={classes.pivotTableContainer}>
           <table {...getTableProps()} className={classes.pivotTableTable}>
             <thead>

@@ -25,5 +25,9 @@ export const setURLParam = (param: string, value: string) => {
   qs.delete(param);
   qs.append(param, value);
   const newUrl = `${protocol}//${host}${pathname}?${qs}`;
-  window.history.replaceState({ path: newUrl }, "", newUrl);
+  window.history.replaceState(
+    { ...window.history.state, path: newUrl },
+    "",
+    newUrl
+  );
 };

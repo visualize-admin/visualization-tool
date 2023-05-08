@@ -4,6 +4,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   actions,
   selectors,
 }) => {
+  test.slow();
   await actions.chart.createFrom(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
     "Prod"
@@ -89,11 +90,36 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
   expect(legendItems).toEqual(["CH4", "CO2", "N2O"]);
+});
+
+test("localized abbreviations", async ({ actions, selectors }) => {
+  await actions.chart.createFrom(
+    "https://environment.ld.admin.ch/foen/gefahren-waldbrand-praeventionsmassnahmen-kantone/1",
+    "Int"
+  );
+
+  await actions.editor.changeChartType("Map");
+  await actions.editor.selectActiveField("Warning region");
+
+  const checkbox = await selectors.edition.useAbbreviationsCheckbox();
+
+  await checkbox.click();
+
+  // Wait for the data to load.
+  await selectors.chart.loaded();
+  await selectors.edition.filtersLoaded();
+  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
+
+  const legendItems = await (
+    await selectors.chart.colorLegendItems()
+  ).allInnerTexts();
+
+  expect(legendItems).toEqual(["No measures", "Warning"]);
 });

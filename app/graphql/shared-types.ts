@@ -65,6 +65,7 @@ export type ResolvedDimension = {
     timeUnit?: TimeUnit;
     timeFormat?: string;
     scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
+    hasHierarchy?: boolean;
   };
 };
 

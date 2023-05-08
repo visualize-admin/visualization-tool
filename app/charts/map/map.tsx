@@ -6,7 +6,7 @@ import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibregl from "maplibre-gl";
 import React, { useState } from "react";
-import Map, { LngLatLike, MapboxEvent, MapRef } from "react-map-gl";
+import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -23,7 +23,7 @@ import { useMapStyle } from "./get-base-layer-style";
 import { DeckGLOverlay, useViewState } from "./helpers";
 import { MapState } from "./map-state";
 import { HoverObjectType, useMapTooltip } from "./map-tooltip";
-import { setMap } from "./ref";
+import { getMap, setMap } from "./ref";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
@@ -98,15 +98,6 @@ export const MapComponent = () => {
     featuresBBox,
   });
 
-  const mapNodeRef = React.useRef<MapRef | null>(null);
-  const handleMapNodeRef = (ref: MapRef) => {
-    if (!ref) {
-      return;
-    }
-
-    mapNodeRef.current = ref;
-  };
-
   const currentBBox = React.useRef<BBox>();
 
   const lockedRef = React.useRef(locked);
@@ -123,8 +114,9 @@ export const MapComponent = () => {
         center: [longitude, latitude] as LngLatLike,
         zoom,
         duration: RESET_DURATION,
+        essential: true,
       };
-      mapNodeRef.current?.flyTo(newViewState);
+      getMap()?.flyTo(newViewState);
     }
   });
 
@@ -139,8 +131,9 @@ export const MapComponent = () => {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
       duration: FLY_TO_DURATION,
+      essential: true,
     };
-    mapNodeRef.current?.flyTo(newViewState);
+    getMap()?.flyTo(newViewState);
   });
 
   const zoomOut = useEvent(() => {
@@ -148,8 +141,9 @@ export const MapComponent = () => {
       center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
       duration: FLY_TO_DURATION,
+      essential: true,
     };
-    mapNodeRef.current?.flyTo(newViewState);
+    getMap()?.flyTo(newViewState);
   });
 
   const mapStyle = useMapStyle({
@@ -225,6 +219,13 @@ export const MapComponent = () => {
       data: sortedShapes,
       pickable: true,
       autoHighlight: true,
+      parameters: {
+        /**
+         * Fixes hover on overlapping layers
+         * @see https://deck.gl/docs/developer-guide/tips-and-tricks#z-fighting-and-depth-testing
+         */
+        depthTest: false,
+      },
       extruded: false,
       filled: true,
       stroked: false,
@@ -310,10 +311,12 @@ export const MapComponent = () => {
     (areaLayer === undefined && symbolLayer === undefined);
 
   const redrawMap = useEvent(() => {
-    if (!mapNodeRef.current) {
+    const map = getMap();
+
+    if (!map) {
       return;
     }
-    const map = mapNodeRef.current.getMap() as mapboxgl.Map;
+
     const bbox = map.getBounds().toArray() as BBox;
     currentBBox.current = bbox;
     resizeAndFit(map, lockedBBox || bbox);
@@ -338,7 +341,6 @@ export const MapComponent = () => {
 
       {dataLoaded ? (
         <Map
-          ref={handleMapNodeRef}
           initialViewState={defaultViewState}
           mapLib={maplibregl}
           mapStyle={mapStyle}
@@ -389,7 +391,7 @@ export const MapComponent = () => {
         >
           <div data-map-loaded={loaded ? "true" : "false"} />
           <DeckGLOverlay
-            interleaved={true}
+            interleaved
             layers={[geoJsonLayer, scatterplotLayer]}
           />
         </Map>

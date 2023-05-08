@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
@@ -13,14 +13,14 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   DataSource,
-  InteractiveFiltersConfig,
   LineConfig,
-  LineFields,
   QueryFilters,
 } from "@/configurator/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -39,20 +39,38 @@ export const ChartLinesVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [queryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null, // FIXME: Try to load less dimensions
+    },
+  });
+  const [componentsQuery] = useComponentsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      dimensions: null,
       filters: queryFilters,
     },
   });
 
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsQuery}
+      observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartLines}
     />
@@ -63,22 +81,21 @@ export const ChartLines = memo(function ChartLines({
   observations,
   dimensions,
   measures,
-  fields,
-  interactiveFiltersConfig,
+
+  chartConfig,
 }: {
   observations: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  fields: LineFields;
-  interactiveFiltersConfig: InteractiveFiltersConfig;
+  chartConfig: LineConfig;
 }) {
+  const { interactiveFiltersConfig, fields } = chartConfig;
   return (
     <LineChart
       data={observations}
-      fields={fields}
       dimensions={dimensions}
       measures={measures}
-      interactiveFiltersConfig={interactiveFiltersConfig}
+      chartConfig={chartConfig}
       aspectRatio={0.4}
     >
       <ChartContainer>
@@ -96,10 +113,12 @@ export const ChartLines = memo(function ChartLines({
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>
 
-      <LegendColor
-        symbol="line"
-        interactive={fields.segment && interactiveFiltersConfig?.legend.active}
-      />
+      {fields.segment && (
+        <LegendColor
+          symbol="line"
+          interactive={interactiveFiltersConfig?.legend.active}
+        />
+      )}
     </LineChart>
   );
 });

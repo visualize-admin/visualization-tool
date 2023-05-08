@@ -1,7 +1,13 @@
-import { SparqlQueryExecutable } from "@tpluscode/sparql-builder/lib";
+import {
+  SparqlQuery,
+  SparqlQueryExecutable,
+} from "@tpluscode/sparql-builder/lib";
 import { groups } from "d3";
 import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { LRUCache } from "typescript-lru-cache";
+
+import { executeWithCache } from "./query-cache";
 
 const BATCH_SIZE = 500;
 
@@ -11,12 +17,17 @@ export default async function batchLoad<
 >({
   ids,
   sparqlClient,
+  cache,
   buildQuery,
   batchSize = BATCH_SIZE,
 }: {
   ids: TId[];
   sparqlClient: ParsingClient;
-  buildQuery: (values: TId[], key: number) => SparqlQueryExecutable;
+  cache: LRUCache | undefined;
+  buildQuery: (
+    values: TId[],
+    key: number
+  ) => SparqlQueryExecutable & SparqlQuery;
   batchSize?: number;
 }): Promise<TReturn[]> {
   const batched = groups(ids, (_, i) => Math.floor(i / batchSize));
@@ -26,9 +37,12 @@ export default async function batchLoad<
       const query = buildQuery(values, key);
 
       try {
-        return (await query.execute(sparqlClient.query, {
-          operation: "postUrlencoded",
-        })) as unknown as TReturn[];
+        return (await executeWithCache(
+          sparqlClient,
+          query,
+          cache,
+          (t) => t
+        )) as unknown as TReturn[];
       } catch (e) {
         console.log(
           `Error while querying. First ID of ${ids.length}: <${ids[0].value}>`

@@ -15,7 +15,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { InteractiveFiltersConfig } from "@/configurator";
+import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/configurator";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -61,10 +61,11 @@ ${(
       <InteractiveFiltersProvider>
         <ScatterplotChart
           data={scatterplotObservations}
-          fields={scatterplotFields}
           dimensions={scatterplotDimensions}
           measures={scatterplotMeasures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
+          chartConfig={
+            { interactiveFiltersConfig } as unknown as ScatterPlotConfig
+          }
           aspectRatio={1}
         >
           <ChartContainer>

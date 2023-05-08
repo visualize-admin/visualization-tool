@@ -9,12 +9,12 @@ import { DataSource } from "@/configurator";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
+  ComponentsDocument,
+  ComponentsQuery,
+  ComponentsQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataQuery,
   DataCubeMetadataQueryVariables,
-  DataCubeMetadataWithComponentValuesDocument,
-  DataCubeMetadataWithComponentValuesQuery,
-  DataCubeMetadataWithComponentValuesQueryVariables,
   DataCubePreviewDocument,
   DataCubePreviewQuery,
   DataCubePreviewQueryVariables,
@@ -80,10 +80,7 @@ const showCubeComponents = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query<
-      DataCubeMetadataWithComponentValuesQuery,
-      DataCubeMetadataWithComponentValuesQueryVariables
-    >(DataCubeMetadataWithComponentValuesDocument, {
+    .query<ComponentsQuery, ComponentsQueryVariables>(ComponentsDocument, {
       iri,
       sourceType,
       sourceUrl,
@@ -109,16 +106,16 @@ const previewCube = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const { data: info, error } = await client
-    .query<
-      DataCubeMetadataWithComponentValuesQuery,
-      DataCubeMetadataWithComponentValuesQueryVariables
-    >(DataCubeMetadataWithComponentValuesDocument, {
-      iri,
-      sourceType,
-      sourceUrl,
-      locale,
-      latest,
-    })
+    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
+      DataCubeMetadataDocument,
+      {
+        iri,
+        sourceType,
+        sourceUrl,
+        locale,
+        latest,
+      }
+    )
     .toPromise();
 
   if (error) {

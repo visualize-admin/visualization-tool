@@ -1,4 +1,4 @@
-import { decodeChartConfig } from "@/configurator/config-types";
+import { decodeChartConfig, MapConfig } from "@/configurator/config-types";
 
 import { migrateChartConfig } from "./versioning";
 
@@ -56,17 +56,19 @@ describe("config migrations", () => {
 
     const migratedOldConfig = migrateChartConfig(decodedConfig, {
       toVersion: "1.0.0",
-    });
+    }) as MapConfig;
     expect(migratedOldConfig.version).toEqual("1.0.0");
-    expect(migratedOldConfig.fields.symbolLayer.show).toEqual(false);
+    const symbolLayer = migratedOldConfig.fields.symbolLayer!;
+    // @ts-ignore - show does not existing in the newer version of the types
+    expect(symbolLayer.show).toEqual(false);
     // Should migrate "GeoCoordinatesDimensionIri" to iri defined in Area Layer.
-    expect(migratedOldConfig.fields.symbolLayer.componentIri).toEqual(
+    expect(symbolLayer.componentIri).toEqual(
       oldConfig.fields.areaLayer.componentIri
     );
-    expect(migratedOldConfig.fields.symbolLayer.measureIri).toEqual(
+    expect(symbolLayer.measureIri).toEqual(
       oldConfig.fields.areaLayer.measureIri
     );
-    expect(migratedOldConfig.fields.symbolLayer.color).toEqual("#1f77b4");
+    expect(symbolLayer.color).toEqual("#1f77b4");
   });
 
   it("should migrate to initial config from migrated config for minor version changes", () => {

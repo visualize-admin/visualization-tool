@@ -1,18 +1,18 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
-  axisBottom,
   NumberValue,
-  range,
   ScaleLinear,
-  scaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  select,
   Selection,
+  axisBottom,
+  range,
+  scaleLinear,
+  select,
 } from "d3";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
@@ -22,6 +22,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useWidth } from "@/charts/shared/use-width";
 import Flex from "@/components/flex";
+import { MapConfig } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -71,14 +72,14 @@ const makeAxis = (
     .attr("text-anchor", "start");
 };
 
-export const MapLegend = () => {
+export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
     areaLayer &&
-    areaLayer.data.length >= 3 &&
+    areaLayer.data.length > 1 &&
     areaLayer.colors.type === "continuous" &&
     (areaLayer.colors.interpolationType === "linear" ||
-      areaLayer.colors.scale.range().length >= 3);
+      areaLayer.colors.scale.range().length > 1);
   const measureDimensions = [
     areaLayer?.colors.component,
     symbolLayer?.measureDimension,
@@ -196,6 +197,7 @@ export const MapLegend = () => {
 
       {areaLayer?.colors.type === "categorical" && (
         <MapLegendColor
+          chartConfig={chartConfig}
           component={areaLayer.colors.component}
           getColor={areaLayer.colors.getColor}
           useAbbreviations={areaLayer.colors.useAbbreviations}
@@ -206,6 +208,7 @@ export const MapLegend = () => {
         symbolLayer.colors.component.iri !==
           areaLayer?.colors.component.iri && (
           <MapLegendColor
+            chartConfig={chartConfig}
             component={symbolLayer.colors.component}
             getColor={symbolLayer.colors.getColor}
             useAbbreviations={symbolLayer.colors.useAbbreviations}
@@ -264,6 +267,9 @@ const Circle = (props: CircleProps) => {
             fill={stroke}
             textAnchor="start"
             fontSize={fontSize}
+            paintOrder="stroke"
+            stroke="white"
+            strokeWidth={2}
           >
             {value} {label}
           </text>

@@ -1,6 +1,8 @@
 import { HierarchyValue } from "@/graphql/query-hooks";
 
-import { pruneTree, mapTree } from "./tree-utils";
+import multipleRootHierarchy from "../test/__fixtures/data/multiple-root-hierarchy.json";
+
+import { pruneTree, mapTree, regroupTrees } from "./tree-utils";
 
 // Country > Canton > Municipality
 // Countries have no value
@@ -74,6 +76,17 @@ describe("filterTree", () => {
           },
         ],
       },
+    ]);
+  });
+});
+
+describe("multiple hierarchy handling", () => {
+  it("should regroup trees", () => {
+    const tree = regroupTrees(multipleRootHierarchy);
+    expect(tree[0].children?.map((x) => x.value)).toEqual([
+      "Switzerland - Canton",
+      "Switzerland - Protection Region - Economic Region",
+      "Switzerland - Production Region - Economic Region",
     ]);
   });
 });

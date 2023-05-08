@@ -17,7 +17,8 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isTemporalDimension } from "@/domain/data";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { flag } from "@/flags/flag";
+import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
@@ -35,7 +36,7 @@ export const InteractiveFiltersConfigurator = ({
 }) => {
   const { chartType, fields } = chartConfig;
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSet,
       sourceType: dataSource.type,

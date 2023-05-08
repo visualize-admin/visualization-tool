@@ -14,9 +14,8 @@ import {
   ScaleTime,
 } from "d3";
 import get from "lodash/get";
-import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -27,6 +26,7 @@ import {
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
+  getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useSegment,
@@ -39,8 +39,9 @@ import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnConfig, SortingOrder, SortingType } from "@/configurator";
 import {
   useErrorMeasure,
   useErrorRange,
@@ -57,7 +58,6 @@ import {
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/query-hooks";
-import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -68,6 +68,7 @@ export interface ColumnsState extends CommonChartState {
   preparedData: Observation[];
   allData: Observation[];
   getX: (d: Observation) => string;
+  getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
   timeUnit: TimeUnit | undefined;
@@ -88,22 +89,13 @@ export interface ColumnsState extends CommonChartState {
 }
 
 const useColumnsState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-  > & {
-    fields: ColumnFields;
+  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
+    chartConfig: ColumnConfig;
     aspectRatio: number;
   }
 ): ColumnsState => {
-  const {
-    data,
-    fields,
-    measures,
-    dimensions,
-    interactiveFiltersConfig,
-    aspectRatio,
-  } = chartProps;
+  const { data, measures, dimensions, aspectRatio, chartConfig } = chartProps;
+  const { interactiveFiltersConfig, fields } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -121,11 +113,22 @@ const useColumnsState = (
   const timeUnit = xIsTime
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
+  const xDimensionValues = useMemo(() => {
+    return getMaybeTemporalDimensionValues(xDimension, data);
+  }, [xDimension, data]);
 
-  const { getAbbreviationOrLabelByValue: getX } = useMaybeAbbreviations({
-    useAbbreviations: fields.x.useAbbreviations ?? false,
-    dimension: xDimension,
-  });
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    useMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimensionValues,
+    });
+
+  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
+    data,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
+  );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
@@ -135,30 +138,18 @@ const useColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const { segmentValuesByValue } = useMemo(() => {
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) || { values: [] };
-    return {
-      segmentValuesByValue: keyBy(segmentDimension.values, (x) => x.value),
-      segmentValuesByLabel: keyBy(segmentDimension.values, (x) => x.label),
-    };
-  }, [dimensions, fields.segment?.componentIri]);
-
-  /** When segment values are IRIs, we need to find show the label */
-  const getSegmentLabel = useCallback(
-    (segment: string): string => {
-      return segmentValuesByValue[segment]?.label || segment;
-    },
-    [segmentValuesByValue]
-  );
-
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
   // All data
   const sortedData = useMemo(() => {
-    return sortData({ data, sortingType, sortingOrder, getX, getY });
+    return sortData({
+      data,
+      sortingType,
+      sortingOrder,
+      getX,
+      getY,
+    });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // Data
@@ -176,18 +167,23 @@ const useColumnsState = (
   });
 
   // Scales
-  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain } =
+  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
     useMemo(() => {
       // x
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
         useAbbreviations: fields.x.useAbbreviations,
+        dimensionFilter: xDimension?.iri
+          ? chartConfig.filters[xDimension.iri]
+          : undefined,
       });
+      const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
       const bandDomain = orderBy(
         [...new Set(scalesData.map(getX))],
         sorters,
-        getSortingOrders(sorters, fields.x.sorting)
+        sortingOrders
       );
+      const bandDomainLabels = bandDomain.map(getXLabel);
       const xScale = scaleBand()
         .domain(bandDomain)
         .paddingInner(PADDING_INNER)
@@ -219,9 +215,17 @@ const useColumnsState = (
       );
 
       const yScale = scaleLinear().domain([minValue, maxValue]).nice();
-      return { xScale, yScale, xEntireScale, xScaleInteraction, bandDomain };
+
+      return {
+        xScale,
+        yScale,
+        xEntireScale,
+        xScaleInteraction,
+        bandDomainLabels,
+      };
     }, [
       getX,
+      getXLabel,
       getXAsDate,
       getY,
       getYErrorRange,
@@ -230,6 +234,7 @@ const useColumnsState = (
       fields.x.sorting,
       fields.x.useAbbreviations,
       xDimension,
+      chartConfig.filters,
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -247,7 +252,7 @@ const useColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomain
+    bandDomainLabels
   );
 
   const margins = {
@@ -272,33 +277,19 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
 
   // segments
-  const segments = useMemo(() => {
-    return Array.from(new Set(plottableSortedData.map(getSegment)));
-  }, [getSegment, plottableSortedData]);
-  const sortedSegments = useMemo(() => {
-    const rawSegments = getPalette(fields.segment?.palette);
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    );
-    const sorters = makeDimensionValueSorters(segmentDimension);
-    return orderBy(
-      rawSegments,
-      sorters,
-      fields.segment?.sorting?.sortingOrder === "desc" ? "desc" : "asc"
-    );
-  }, [
-    fields.segment?.palette,
-    fields.segment?.sorting?.sortingOrder,
-    fields.segment?.componentIri,
-    dimensions,
-  ]);
-  const colors = scaleOrdinal(sortedSegments).domain(segments);
+  const { segments, colors, getSegmentLabel } = useMemo(() => {
+    const segments: string[] = [];
+    const colors = scaleOrdinal(segments).domain(segments);
+    const getSegmentLabel = (segment: string) => segment;
+
+    return { segments, colors, getSegmentLabel };
+  }, []);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xRef = xScale(getX(datum)) as number;
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+    const xRef = xScale(getX(d)) as number;
     const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(Math.max(getY(datum) ?? NaN, 0));
+    const yRef = yScale(Math.max(getY(d) ?? NaN, 0));
     const yAnchor = yRef;
 
     const yPlacement = "top";
@@ -322,6 +313,7 @@ const useColumnsState = (
         : xRef + xOffset * 2;
     };
     const xAnchor = getXAnchor();
+    const xLabel = getXAbbreviationOrLabel(d);
 
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -334,17 +326,14 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue:
-        xIsTime && timeUnit
-          ? timeFormatUnit(getX(datum), timeUnit)
-          : getX(datum),
+      xValue: xIsTime && timeUnit ? timeFormatUnit(xLabel, timeUnit) : xLabel,
       datum: {
-        label: fields.segment?.componentIri && getSegment(datum),
-        value: `${yValueFormatter(getY(datum))}`,
+        label: undefined,
+        value: `${yValueFormatter(getY(d))}`,
         error: getYError
-          ? `${getYError(datum)}${errorMeasure?.unit ?? ""}`
+          ? `${getYError(d)}${errorMeasure?.unit ?? ""}`
           : undefined,
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(d)) as string,
       },
       values: undefined,
     };
@@ -356,6 +345,7 @@ const useColumnsState = (
     preparedData,
     allData: plottableSortedData,
     getX,
+    getXLabel,
     getXAsDate,
     xScale,
     xEntireScale,
@@ -378,27 +368,22 @@ const useColumnsState = (
 
 const ColumnChartProvider = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+  chartConfig,
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   children: ReactNode;
-  fields: ColumnFields;
   aspectRatio: number;
+  chartConfig: ColumnConfig;
 }) => {
   const state = useColumnsState({
     data,
-    fields,
     measures,
     dimensions,
-    interactiveFiltersConfig,
     aspectRatio,
+    chartConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -407,30 +392,25 @@ const ColumnChartProvider = ({
 
 export const ColumnChart = ({
   data,
-  fields,
   measures,
   dimensions,
-  interactiveFiltersConfig,
+  chartConfig,
   aspectRatio,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   aspectRatio: number;
   children: ReactNode;
-  fields: ColumnFields;
+  chartConfig: ColumnConfig;
 }) => {
   return (
     <Observer>
       <InteractionProvider>
         <ColumnChartProvider
           data={data}
-          fields={fields}
           measures={measures}
           dimensions={dimensions}
-          interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
+          chartConfig={chartConfig}
         >
           {children}
         </ColumnChartProvider>

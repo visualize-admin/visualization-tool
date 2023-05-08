@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useEffect, useState, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
@@ -11,8 +11,9 @@ import {
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-import { getChartIcon, Icon } from "@/icons";
+import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { useEmbedOptions } from "@/utils/embed";
 import { makeOpenDataLink } from "@/utils/opendata";
 
 import { useQueryFilters } from "../charts/shared/chart-helpers";
@@ -57,12 +58,14 @@ export const ChartFootnotes = ({
   chartConfig,
   configKey,
   onToggleTableView,
+  visualizeLinkText,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   configKey?: string;
   onToggleTableView: () => void;
+  visualizeLinkText?: JSX.Element;
 }) => {
   const classes = useFootnotesStyles({ useMarginTop: true });
   const locale = useLocale();
@@ -107,31 +110,45 @@ export const ChartFootnotes = ({
     return makeOpenDataLink(locale, data?.dataCubeByIri);
   }, [locale, data?.dataCubeByIri]);
 
+  const [
+    {
+      showDownload,
+      showLandingPage,
+      showTableSwitch,
+      showSparqlQuery,
+      showDatePublished,
+      showSource,
+      showDatasetTitle,
+    },
+  ] = useEmbedOptions();
+
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
     return (
       <Box sx={{ mt: 2 }}>
-        <Typography component="span" variant="caption" color="grey.600">
-          <strong>
-            <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-          </strong>
-          <Trans id="typography.colon">: </Trans>
-          {cubeLink ? (
-            <Link target="_blank" href={cubeLink} rel="noreferrer">
-              {dataCubeByIri.title}{" "}
-              <Icon
-                name="linkExternal"
-                size="1em"
-                style={{ display: "inline" }}
-              />
-            </Link>
-          ) : (
-            dataCubeByIri.title
-          )}
-        </Typography>
+        {showDatasetTitle !== false ? (
+          <Typography component="span" variant="caption" color="grey.600">
+            <strong>
+              <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+            </strong>
+            <Trans id="typography.colon">: </Trans>
+            {cubeLink ? (
+              <Link target="_blank" href={cubeLink} rel="noreferrer">
+                {dataCubeByIri.title}{" "}
+                <Icon
+                  name="linkExternal"
+                  size="1em"
+                  style={{ display: "inline" }}
+                />
+              </Link>
+            ) : (
+              dataCubeByIri.title
+            )}
+          </Typography>
+        ) : null}
 
-        {dataCubeByIri.dateModified ? (
+        {dataCubeByIri.dateModified && showDatePublished !== false ? (
           <Typography component="span" variant="caption" color="grey.600">
             ,&nbsp;
             <strong>
@@ -144,53 +161,71 @@ export const ChartFootnotes = ({
           </Typography>
         ) : null}
 
-        <Typography component="div" variant="caption" color="grey.600">
-          <strong>
-            <Trans id="metadata.source">Source</Trans>
-          </strong>
-          <Trans id="typography.colon">: </Trans>
-          {dataCubeByIri.publisher && (
-            <Box
-              component="span"
-              sx={{ "> a": { color: "grey.600" } }}
-              dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
-            ></Box>
-          )}
-        </Typography>
+        {showSource !== false ? (
+          <Typography component="div" variant="caption" color="grey.600">
+            <strong>
+              <Trans id="metadata.source">Source</Trans>
+            </strong>
+            <Trans id="typography.colon">: </Trans>
+            {dataCubeByIri.publisher && (
+              <Box
+                component="span"
+                sx={{ "> a": { color: "grey.600" } }}
+                dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
+              ></Box>
+            )}
+            {configKey && shareUrl && visualizeLinkText && (
+              <>
+                {" "}
+                / <LinkButton href={shareUrl}> {visualizeLinkText}</LinkButton>
+              </>
+            )}
+          </Typography>
+        ) : null}
 
         <Box className={classes.actions}>
-          <DataDownloadMenu
-            dataSetIri={dataSetIri}
-            dataSource={dataSource}
-            title={dataCubeByIri.title}
-            filters={filters}
-          />
-          {chartConfig.chartType !== "table" && (
-            <Button
-              component="a"
-              color="primary"
-              variant="text"
-              size="small"
-              startIcon={
-                <Icon
-                  name={
-                    isTablePreview
-                      ? getChartIcon(chartConfig.chartType)
-                      : "table"
+          {showDownload !== false ? (
+            <DataDownloadMenu
+              dataSetIri={dataSetIri}
+              dataSource={dataSource}
+              title={dataCubeByIri.title}
+              filters={filters}
+            />
+          ) : null}
+          {showTableSwitch !== false ? (
+            <>
+              {chartConfig.chartType !== "table" && (
+                <Button
+                  component="a"
+                  color="primary"
+                  variant="text"
+                  size="small"
+                  startIcon={
+                    <Icon
+                      name={
+                        isTablePreview
+                          ? getChartIcon(chartConfig.chartType)
+                          : "table"
+                      }
+                    />
                   }
-                />
-              }
-              onClick={onToggleTableView}
-              sx={{ p: 0, typography: "caption" }}
-            >
-              {isTablePreview ? (
-                <Trans id="metadata.switch.chart">Switch to chart view</Trans>
-              ) : (
-                <Trans id="metadata.switch.table">Switch to table view</Trans>
+                  onClick={onToggleTableView}
+                  sx={{ p: 0, typography: "caption" }}
+                >
+                  {isTablePreview ? (
+                    <Trans id="metadata.switch.chart">
+                      Switch to chart view
+                    </Trans>
+                  ) : (
+                    <Trans id="metadata.switch.table">
+                      Switch to table view
+                    </Trans>
+                  )}
+                </Button>
               )}
-            </Button>
-          )}
-          {dataCubeByIri.landingPage && (
+            </>
+          ) : null}
+          {dataCubeByIri.landingPage && showLandingPage !== false && (
             <Button
               variant="text"
               component="a"
@@ -206,24 +241,15 @@ export const ChartFootnotes = ({
               </Trans>
             </Button>
           )}
-          {sparqlEditorUrl && (
+          {sparqlEditorUrl && showSparqlQuery !== false && (
             <RunSparqlQuery url={sparqlEditorUrl as string} />
           )}
-          {configKey && shareUrl && (
-            <Button
-              component="a"
-              variant="text"
-              color="primary"
-              size="small"
-              sx={{ p: 0, typography: "caption" }}
-              href={shareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+          {configKey && shareUrl && !visualizeLinkText && (
+            <LinkButton href={shareUrl}>
               <Trans id="metadata.link.created.with.visualize">
                 Created with visualize.admin.ch
               </Trans>
-            </Button>
+            </LinkButton>
           )}
         </Box>
       </Box>
@@ -231,4 +257,19 @@ export const ChartFootnotes = ({
   } else {
     return null;
   }
+};
+
+const LinkButton = (props: PropsWithChildren<{ href: string }>) => {
+  return (
+    <Button
+      component="a"
+      variant="text"
+      color="primary"
+      size="small"
+      sx={{ p: 0, typography: "caption", verticalAlign: "unset" }}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  );
 };

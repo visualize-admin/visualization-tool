@@ -1,3 +1,4 @@
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Accordion,
   AccordionSummary,
@@ -10,10 +11,12 @@ import {
   Grow,
   IconButtonProps,
   Link,
-  Theme,
   LinkProps,
+  Tab,
+  Button,
+  Divider,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Switch, SwitchProps } from "@mui/material";
 import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
@@ -30,12 +33,24 @@ import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/configurator/components/use-disclosure";
+import { useFlag, flag, useFlags } from "@/flags";
+import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
 export type Timings = Record<
   string,
   { start: number; end: number; children?: Timings }
 >;
+
+export type VisualizeOperationResult<TData = any, TVariables = any> = Omit<
+  OperationResult<TData, TVariables>,
+  "extensions"
+> & {
+  extensions: {
+    queries: RequestQueryMeta[];
+    timings: Timings;
+  };
+};
 
 const visit = (
   t: Timings,
@@ -154,6 +169,12 @@ const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
   );
 };
 
+const getOperationQueryName = (operation: Operation) => {
+  return operation.query.definitions.find(
+    (d): d is OperationDefinitionNode => d.kind === "OperationDefinition"
+  )?.name?.value;
+};
+
 /**
  * Collapsible according showing for each request that has been made
  * a accordion with name
@@ -165,13 +186,15 @@ const AccordionOperation = ({
   end,
   ...accordionProps
 }: {
-  result: OperationResult | undefined;
+  result: VisualizeOperationResult | undefined;
   operation: Operation;
   start: number;
   end: number;
 } & Omit<AccordionProps, "children">) => {
   const duration = useMemo(() => {
-    const all = flatten(result?.extensions?.timings).sort(byStart);
+    const all = result?.extensions?.timings
+      ? flatten(result?.extensions?.timings).sort(byStart)
+      : [];
     if (all.length === 0) {
       return 0;
     }
@@ -191,13 +214,7 @@ const AccordionOperation = ({
           }}
         >
           <Typography variant="body2" sx={{ mb: 0 }}>
-            {operation.key}{" "}
-            {
-              operation.query.definitions.find(
-                (d): d is OperationDefinitionNode =>
-                  d.kind === "OperationDefinition"
-              )?.name?.value
-            }
+            {operation.key} {getOperationQueryName(operation)}
             <Box component="span" sx={{ ml: 2 }}>
               {result ? "✅" : "🔄"}
             </Box>
@@ -207,7 +224,7 @@ const AccordionOperation = ({
             fontSize="small"
             whiteSpace="break-spaces"
             color="primary"
-            href={`http://localhost:3000/api/graphql?query=${encodeURIComponent(
+            href={`/api/graphql?query=${encodeURIComponent(
               print(operation.query)
             )}`}
             sx={{ my: 0 }}
@@ -229,6 +246,9 @@ const AccordionOperation = ({
               Copy variables
             </CopyLink>
           </span>
+          <Typography variant="caption" display="inline">
+            SPARQL queries ({result?.extensions?.queries.length})
+          </Typography>
         </Box>
       </AccordionSummary>
       {accordionProps.expanded ? (
@@ -248,7 +268,11 @@ const AccordionOperation = ({
               <Typography variant="h5" gutterBottom>
                 SPARQL queries ({result?.extensions?.queries.length})
               </Typography>
-              <Queries queries={result?.extensions?.queries} />
+              <Queries
+                queries={sortBy(result?.extensions?.queries, (q) => {
+                  return -(q.endTime - q.startTime);
+                })}
+              />
             </div>
           </Box>
         </AccordionDetails>
@@ -310,19 +334,7 @@ const EmojiIconButton = ({
   );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-  toolbar: {
-    textAlign: "right",
-    width: "100%",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    borderBottom: "1px solid",
-    borderBottomColor: "divider",
-  },
-}));
-
-function GqlDebug() {
-  const [results, setResults] = useState([] as OperationResult[]);
+const useGraphqlOperationsController = () => {
   const opsStartMapRef = useRef(new Map<Operation["key"], number>());
   const opsEndMapRef = useRef(new Map<Operation["key"], number>());
   useEffect(() => {
@@ -330,11 +342,16 @@ function GqlDebug() {
       opsStartMapRef.current.set(operation.key, Date.now());
       opsEndMapRef.current.set(operation.key, Date.now());
     };
-    const handleResult = (result: OperationResult) => {
+    const handleResult = (result: VisualizeOperationResult) => {
       opsEndMapRef.current.set(result.operation.key, Date.now());
-      setResults((results) =>
-        uniqBy([...results, result], (x) => x.operation.key)
-      );
+      // Calls setState out of band since handleResult can be called while
+      // rendering a component. setState cannot be called while rendering
+      // a component.
+      setTimeout(() => {
+        setResults((results) =>
+          uniqBy([...results, result], (x) => x.operation.key)
+        );
+      }, 0);
     };
     urqlEE.on("urql-received-operation", handleOperation);
     urqlEE.on("urql-received-result", handleResult);
@@ -343,57 +360,55 @@ function GqlDebug() {
       urqlEE.off("urql-received-result", handleResult);
     };
   });
-  const [expandedId, setExpandedId] =
-    useState<OperationResult["operation"]["key"]>();
+  const [results, setResults] = useState([] as VisualizeOperationResult[]);
   const handleReset = useEvent(() => {
     setResults([]);
   });
-  const { isOpen, open, close } = useDisclosure();
-  const classes = useStyles();
+
+  return {
+    opsStartMap: opsStartMapRef.current,
+    opsEndMap: opsEndMapRef.current,
+    reset: handleReset,
+    results,
+  };
+};
+
+type GraphqlOperationsController = ReturnType<
+  typeof useGraphqlOperationsController
+>;
+
+function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
+  const { opsStartMap, opsEndMap, reset, results } = controller;
+  const [expandedId, setExpandedId] =
+    useState<OperationResult["operation"]["key"]>();
   if (typeof window === "undefined") {
     return null;
   }
   return (
-    <>
-      <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
-        <Grow in>
-          <IconButton size="small" onClick={open}>
-            🛠
-          </IconButton>
-        </Grow>
+    <div>
+      <Box>
+        <Button variant="text" size="small" onClick={reset}>
+          Empty operations
+        </Button>
       </Box>
-
-      <Drawer
-        open={isOpen}
-        anchor="bottom"
-        elevation={2}
-        onBackdropClick={close}
-      >
-        <div>
-          <Box className={classes.toolbar}>
-            <EmojiIconButton onClick={handleReset}>🧹</EmojiIconButton>
-            <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
-          </Box>
-          <Box sx={{ maxHeight: "500px" }}>
-            {sortBy(results, (r) => opsStartMapRef.current.get(r.operation.key))
-              .filter((x) => x?.extensions?.timings)
-              .map((result, i) => (
-                <AccordionOperation
-                  key={i}
-                  result={result}
-                  operation={result.operation}
-                  expanded={expandedId === result.operation.key}
-                  start={opsStartMapRef.current.get(result.operation.key)!}
-                  end={opsEndMapRef.current.get(result.operation.key)!}
-                  onChange={(_e, expanded) =>
-                    setExpandedId(expanded ? result.operation.key : undefined)
-                  }
-                />
-              ))}
-          </Box>
-        </div>
-      </Drawer>
-    </>
+      <Box sx={{ maxHeight: "500px" }}>
+        {sortBy(results, (r) => opsStartMap.get(r.operation.key))
+          .filter((x) => x?.extensions?.timings)
+          .map((result, i) => (
+            <AccordionOperation
+              key={i}
+              result={result}
+              operation={result.operation}
+              expanded={expandedId === result.operation.key}
+              start={opsStartMap.get(result.operation.key)!}
+              end={opsEndMap.get(result.operation.key)!}
+              onChange={(_e, expanded) =>
+                setExpandedId(expanded ? result.operation.key : undefined)
+              }
+            />
+          ))}
+      </Box>
+    </div>
   );
 }
 
@@ -403,7 +418,7 @@ function GqlDebug() {
  */
 export const urqlEE = mitt<{
   "urql-received-operation": Operation<any, any>;
-  "urql-received-result": OperationResult<any, any>;
+  "urql-received-result": VisualizeOperationResult<any, any>;
 }>();
 
 export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
@@ -412,8 +427,83 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
       ops$,
       tap((operation) => urqlEE.emit("urql-received-operation", operation)),
       forward,
-      tap((result) => urqlEE.emit("urql-received-result", result))
+      tap((result) =>
+        urqlEE.emit("urql-received-result", result as VisualizeOperationResult)
+      )
     );
 };
 
-export default GqlDebug;
+const DebugPanel = () => {
+  const { isOpen, open, close } = useDisclosure();
+  const [tab, setTab] = useState("graphql" as "graphql" | "flags");
+  const gqlOperationsController = useGraphqlOperationsController();
+  return (
+    <>
+      <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
+        <Grow in>
+          <IconButton size="small" onClick={open}>
+            🛠
+          </IconButton>
+        </Grow>
+      </Box>
+      <Drawer
+        open={isOpen}
+        anchor="bottom"
+        elevation={2}
+        onBackdropClick={close}
+      >
+        <TabContext value={tab}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <TabList value={tab} onChange={(_ev, tab) => setTab(tab)}>
+              <Tab value="graphql" label="graphql" />
+              <Tab value="flags" label="flags" />
+            </TabList>
+            <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
+          </Box>
+          <Divider />
+          <TabPanel value="graphql">
+            <GqlDebug controller={gqlOperationsController} />
+          </TabPanel>
+          <TabPanel value="flags">
+            <FlagList />
+          </TabPanel>
+        </TabContext>
+      </Drawer>
+    </>
+  );
+};
+
+const FlagList = () => {
+  const flags = useFlags();
+  return (
+    <>
+      {flags.map((f) => {
+        return (
+          <Box key={f} sx={{ display: "flex", gap: "1rem" }}>
+            <Typography variant="body2">{f}</Typography>
+            <FlagSwitch flagName={f} />
+          </Box>
+        );
+      })}
+    </>
+  );
+};
+
+const FlagSwitch = ({
+  flagName,
+  onChange,
+  ...props
+}: { flagName: string; onChange?: (value: Boolean) => void } & Omit<
+  SwitchProps,
+  "onChange"
+>) => {
+  const flagValue = useFlag(flagName);
+  const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    flag(flagName, ev.target.checked);
+    onChange?.(ev.target.checked);
+  };
+
+  return <Switch checked={!!flagValue} onChange={handleChange} {...props} />;
+};
+
+export default DebugPanel;

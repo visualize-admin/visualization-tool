@@ -30,8 +30,9 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { getDefaultCategoricalPaletteName } from "@/palettes";
-import { visitHierarchy } from "@/rdf/tree-utils";
+import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { isMultiHierarchyNode } from "@/utils/hierarchy";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
@@ -51,7 +52,10 @@ import {
   NumericalMeasure,
   OrdinalMeasure,
 } from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
+import {
+  DataCubeMetadata,
+  DataCubeMetadataWithHierarchies,
+} from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
 
 import {
@@ -125,9 +129,22 @@ export const DEFAULT_SORTING: SortingOption = {
   sortingOrder: "asc",
 };
 
-const findBottommostLayers = (dimension: DataCubeMetadata["dimensions"][0]) => {
+/**
+ * Finds bottomost layer for the first hierarchy
+ */
+const findBottommostLayers = (
+  dimension: DataCubeMetadataWithHierarchies["dimensions"][0]
+) => {
   const leaves = [] as HierarchyValue[];
-  visitHierarchy(dimension?.hierarchy as HierarchyValue[], (node) => {
+  let hasSeenMultiHierarchyNode = false;
+  bfs(dimension?.hierarchy as HierarchyValue[], (node) => {
+    if (isMultiHierarchyNode(node)) {
+      if (hasSeenMultiHierarchyNode) {
+        return bfs.IGNORE;
+      } else {
+        hasSeenMultiHierarchyNode = true;
+      }
+    }
     if ((!node.children || node.children.length === 0) && node.hasValue) {
       leaves.push(node);
     }
@@ -206,8 +223,8 @@ export const getInitialConfig = ({
   measures,
 }: {
   chartType: ChartType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: DataCubeMetadataWithHierarchies["dimensions"];
+  measures: DataCubeMetadataWithHierarchies["measures"];
 }): ChartConfig => {
   const numericalMeasures = measures.filter(isNumericalMeasure);
 
@@ -1087,12 +1104,12 @@ const adjustSegmentSorting = ({
 
 // Helpers
 export const getPossibleChartType = ({
-  metadata,
+  dimensions,
+  measures,
 }: {
-  metadata: DataCubeMetadata;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
 }): ChartType[] => {
-  const { measures, dimensions } = metadata;
-
   const numericalMeasures = measures.filter(isNumericalMeasure);
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);

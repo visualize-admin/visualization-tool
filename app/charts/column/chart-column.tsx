@@ -21,15 +21,15 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import {
   ColumnConfig,
-  ColumnFields,
   DataSource,
-  InteractiveFiltersConfig,
   QueryFilters,
 } from "@/configurator/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
+  useComponentsWithHierarchiesQuery,
+  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -48,7 +48,23 @@ export const ChartColumnsVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [queryResp] = useDataCubeObservationsQuery({
+  const [metadataQuery] = useDataCubeMetadataQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [componentsWithHierarchiesQuery] = useComponentsWithHierarchiesQuery({
+    variables: {
+      iri: dataSetIri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+  });
+  const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
@@ -61,7 +77,9 @@ export const ChartColumnsVisualization = ({
 
   return (
     <ChartLoadingWrapper
-      query={queryResp}
+      metadataQuery={metadataQuery}
+      componentsQuery={componentsWithHierarchiesQuery}
+      observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartColumns}
     />
@@ -73,15 +91,14 @@ export const ChartColumns = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    interactiveFiltersConfig,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
-    interactiveFiltersConfig: InteractiveFiltersConfig;
-    fields: ColumnFields;
+    chartConfig: ColumnConfig;
   }) => {
+    const { fields, interactiveFiltersConfig } = chartConfig;
     return (
       <>
         {/* FIXME: These checks should probably be handled somewhere else */}
@@ -91,8 +108,8 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>
@@ -103,14 +120,12 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-
             <LegendColor
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-
             {fields.animation && (
               <TimeSlider
                 componentIri={fields.animation.componentIri}
@@ -125,8 +140,8 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>
@@ -140,14 +155,12 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-
             <LegendColor
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-
             {fields.animation && (
               <TimeSlider
                 componentIri={fields.animation.componentIri}
@@ -158,11 +171,10 @@ export const ChartColumns = memo(
         ) : (
           <ColumnChart
             data={observations}
-            fields={fields}
             measures={measures}
             dimensions={dimensions}
-            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
+            chartConfig={chartConfig}
           >
             <ChartContainer>
               <ChartSvg>

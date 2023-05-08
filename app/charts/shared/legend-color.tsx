@@ -1,7 +1,8 @@
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { memo, useMemo } from "react";
+import orderBy from "lodash/orderBy";
+import { memo, useMemo } from "react";
 
 import {
   ColorsChartState,
@@ -13,18 +14,19 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import {
   DataSource,
   GenericSegmentField,
+  MapConfig,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
-  useDimensionHierarchyQuery,
+  useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { interlace } from "@/utils/interlace";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 import { rgbArrayToHex } from "./colors";
@@ -59,6 +61,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   groupHeader: {
     marginBottom: theme.spacing(1),
+    flexWrap: "wrap",
   },
 }));
 
@@ -105,9 +108,10 @@ const useDimension = ({
   locale: string;
   dimensionIri?: string;
 }) => {
-  const [{ data: cubeMetadata }] = useDataCubeMetadataWithComponentValuesQuery({
+  const [{ data: cubeMetadata }] = useDimensionValuesQuery({
     variables: {
-      iri: dataset,
+      dataCubeIri: dataset,
+      dimensionIri: dimensionIri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale: locale,
@@ -115,20 +119,17 @@ const useDimension = ({
     pause: !dimensionIri,
   });
   return useMemo(() => {
-    return cubeMetadata?.dataCubeByIri?.dimensions.find(
-      (d) => d.iri === dimensionIri
-    );
-  }, [cubeMetadata?.dataCubeByIri?.dimensions, dimensionIri]);
+    return cubeMetadata?.dataCubeByIri?.dimensionByIri;
+  }, [cubeMetadata?.dataCubeByIri?.dimensionByIri]);
 };
 
+const emptyObj = {};
 const useLegendGroups = ({
   title,
-  labels,
-  getLabel,
+  values,
 }: {
   title?: string;
-  labels: string[];
-  getLabel: (d: string) => string;
+  values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
 
@@ -150,6 +151,12 @@ const useLegendGroups = ({
       : null
   ) as GenericSegmentField | null | undefined;
 
+  const segmentFilters = segmentField?.componentIri
+    ? configState.chartConfig.filters[segmentField.componentIri]
+    : null;
+  const segmentValues =
+    segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
+
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
     dataset,
@@ -158,9 +165,9 @@ const useLegendGroups = ({
     dimensionIri: segmentField?.componentIri,
   });
 
-  const [hierarchyResp] = useDimensionHierarchyQuery({
+  const [hierarchyResp] = useDimensionValuesQuery({
     variables: {
-      cubeIri: dataset,
+      dataCubeIri: dataset,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -174,13 +181,12 @@ const useLegendGroups = ({
   const groups = useMemo(() => {
     return getLegendGroups({
       title,
-      labels,
-      getLabel,
+      values,
       hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
-      useAbbreviations: segmentField?.useAbbreviations ?? false,
+      labelIris: segmentValues,
     });
-  }, [title, labels, getLabel, hierarchy, segmentField]);
+  }, [title, values, hierarchy, segmentField, segmentValues]);
 
   return groups;
 };
@@ -193,10 +199,7 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups({
-    labels: colors.domain(),
-    getLabel: getSegmentLabel,
-  });
+  const groups = useLegendGroups({ values: colors.domain() });
 
   return (
     <LegendColorContent
@@ -214,14 +217,27 @@ export const MapLegendColor = memo(function LegendColor({
   component,
   getColor,
   useAbbreviations,
+  chartConfig,
 }: {
   component: DimensionMetadataFragment;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
+  chartConfig: MapConfig;
 }) {
-  const sortedValues = component.values.sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
+  const componentFilter = chartConfig.filters[component.iri];
+  const sortedValues = useMemo(() => {
+    const sorters = makeDimensionValueSorters(component, {
+      sorting: {
+        sortingType: "byAuto",
+        sortingOrder: "asc",
+      },
+      dimensionFilter: componentFilter,
+    });
+    return orderBy(
+      component.values,
+      sorters.map((s) => (dv) => s(dv.label))
+    ) as typeof component.values;
+  }, [component, componentFilter]);
   const getLabel = useAbbreviations
     ? (d: string) => {
         const v = component.values.find((v) => v.value === d);
@@ -231,9 +247,8 @@ export const MapLegendColor = memo(function LegendColor({
         return component.values.find((v) => v.value === d)?.label as string;
       };
   const groups = useLegendGroups({
-    labels: sortedValues.map((d) => `${d.value}`),
-    getLabel,
     title: component.label,
+    values: sortedValues.map((d) => `${d.value}`),
   });
 
   return (
@@ -312,7 +327,9 @@ const LegendColorContent = ({
                   >
                     {interlace(
                       g.map((n) => n.label),
-                      <SvgIcChevronRight />
+                      (chevronKey) => (
+                        <SvgIcChevronRight key={chevronKey} />
+                      )
                     )}
                   </Typography>
                 ) : null}

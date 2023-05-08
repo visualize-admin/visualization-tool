@@ -14,7 +14,7 @@ import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
 import { TableColumn } from "@/configurator/config-types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { Icon } from "@/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,7 +36,7 @@ type Props = {
   id: string;
   title: ReactNode;
   items: TableColumn[];
-  metaData: DataCubeMetadata;
+  metaData: DataCubeMetadataWithHierarchies;
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
 };
