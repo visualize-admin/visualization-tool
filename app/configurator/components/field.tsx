@@ -80,11 +80,7 @@ const FieldEditIcon = () => {
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
-    alignItems: "center",
     gap: "0.25rem",
-  },
-  optional: {
-    paddingBottom: "4px",
   },
   loadingIndicator: {
     color: theme.palette.grey[700],
@@ -704,13 +700,11 @@ const FieldLabel = ({
     id: "controls.select.optional",
     message: `optional`,
   });
+
   return (
     <div className={classes.root}>
       {label}
-
-      {isOptional ? (
-        <span className={classes.optional}>({optionalLabel})</span>
-      ) : null}
+      {isOptional ? <span>({optionalLabel})</span> : null}
       {isFetching ? (
         <CircularProgress size={12} className={classes.loadingIndicator} />
       ) : null}
