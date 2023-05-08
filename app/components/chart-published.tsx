@@ -279,7 +279,7 @@ export const ChartPublishedInner = ({
               visualizeLinkText={
                 showDownload === false ? (
                   <Trans id="metadata.link.created.with.visualize.alternate">
-                    More information
+                    visualize.admin.ch
                   </Trans>
                 ) : undefined
               }

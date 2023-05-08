@@ -159,6 +159,7 @@ msgstr "Mappa di calore"
 
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.text"
 msgstr "Testo"
 
@@ -874,6 +875,8 @@ msgstr "Errore di caricamento delle coordinate"
 msgid "hint.create.your.own.chart"
 msgstr "Copia questa visualizzazione o crea una nuova visualizzazione usando «dati aperti» dell’amministrazione pubblica svizzera"
 
+#: app/components/data-download.tsx
+#: app/components/data-download.tsx
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.message"
 msgstr "I dati non possono essere caricati."
@@ -891,7 +894,6 @@ msgid "hint.how.to.share"
 msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorporandola nel vostro sito Web. Puoi anche creare una nuova visualizzazione partendo da zero oppure copiando e modificando la visualizzazione sopra."
 
 #: app/components/form.tsx
-#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."
@@ -943,7 +945,7 @@ msgstr "Creato con visualize.admin.ch"
 
 #: app/components/chart-published.tsx
 msgid "metadata.link.created.with.visualize.alternate"
-msgstr "Più informazioni"
+msgstr "visualize.admin.ch"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.source"

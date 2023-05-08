@@ -159,6 +159,7 @@ msgstr "Heatmap"
 
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.text"
 msgstr "Schrift"
 
@@ -874,6 +875,8 @@ msgstr "Koordinaten-Ladefehler"
 msgid "hint.create.your.own.chart"
 msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
 
+#: app/components/data-download.tsx
+#: app/components/data-download.tsx
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.message"
 msgstr "Die Daten konnten nicht geladen werden."
@@ -891,7 +894,6 @@ msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
 
 #: app/components/form.tsx
-#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Lade Daten …"
@@ -943,7 +945,7 @@ msgstr "Erstellt mit visualize.admin.ch"
 
 #: app/components/chart-published.tsx
 msgid "metadata.link.created.with.visualize.alternate"
-msgstr "Mehr Informationen"
+msgstr "visualize.admin.ch"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.source"

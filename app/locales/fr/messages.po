@@ -159,6 +159,7 @@ msgstr "Heatmap"
 
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.text"
 msgstr "Texte"
 
@@ -874,6 +875,8 @@ msgstr "Erreur de chargement des coordonnées"
 msgid "hint.create.your.own.chart"
 msgstr "Copiez cette visualisation ou créez une nouvelle visualisation à partir des données ouvertes de l’administration publique suisse."
 
+#: app/components/data-download.tsx
+#: app/components/data-download.tsx
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.message"
 msgstr "Les données n'ont pas pu être téléchargées."
@@ -891,7 +894,6 @@ msgid "hint.how.to.share"
 msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
 
 #: app/components/form.tsx
-#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
@@ -943,7 +945,7 @@ msgstr "Créé avec visualize.admin.ch"
 
 #: app/components/chart-published.tsx
 msgid "metadata.link.created.with.visualize.alternate"
-msgstr "Plus d'informations"
+msgstr "visualize.admin.ch"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.source"

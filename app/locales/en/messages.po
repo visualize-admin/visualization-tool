@@ -159,6 +159,7 @@ msgstr "Heat Map"
 
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.text"
 msgstr "Text"
 
@@ -874,6 +875,8 @@ msgstr "Coordinates loading error"
 msgid "hint.create.your.own.chart"
 msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
 
+#: app/components/data-download.tsx
+#: app/components/data-download.tsx
 #: app/components/hint.tsx
 msgid "hint.dataloadingerror.message"
 msgstr "The data could not be loaded."
@@ -891,7 +894,6 @@ msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 
 #: app/components/form.tsx
-#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Loading data..."
@@ -943,7 +945,7 @@ msgstr "Created with visualize.admin.ch"
 
 #: app/components/chart-published.tsx
 msgid "metadata.link.created.with.visualize.alternate"
-msgstr "More information"
+msgstr "visualize.admin.ch"
 
 #: app/components/chart-footnotes.tsx
 msgid "metadata.source"
