@@ -176,6 +176,7 @@ export const ChartFootnotes = ({
             )}
             {configKey && shareUrl && visualizeLinkText && (
               <>
+                {" "}
                 / <LinkButton href={shareUrl}> {visualizeLinkText}</LinkButton>
               </>
             )}
