@@ -29,6 +29,7 @@ import {
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
+  getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useTemporalVariable,
@@ -105,11 +106,15 @@ const useGroupedColumnsState = (
   }
 
   const xIsTime = isTemporalDimension(xDimension);
+  const xDimensionValues = useMemo(() => {
+    return getMaybeTemporalDimensionValues(xDimension, data);
+  }, [xDimension, data]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
       useAbbreviations: fields.x.useAbbreviations,
-      dimension: xDimension,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimensionValues,
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
@@ -132,7 +137,8 @@ const useGroupedColumnsState = (
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
   } = useMaybeAbbreviations({
     useAbbreviations: fields.segment?.useAbbreviations,
-    dimension: segmentDimension,
+    dimensionIri: segmentDimension?.iri,
+    dimensionValues: segmentDimension?.values,
   });
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
