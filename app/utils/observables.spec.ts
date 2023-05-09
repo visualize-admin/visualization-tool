@@ -4,7 +4,7 @@ describe("Timeline", () => {
   const values = [1, 100, 200, 500, 750, 1000];
   const [min, max] = [values[0], values[values.length - 1]];
   const formatValue = (d: number) => `${d}ms`;
-  const timeline = new Timeline(values, formatValue);
+  const timeline = new Timeline(30000, values, formatValue);
 
   beforeEach(() => timeline.setProgress(0));
 

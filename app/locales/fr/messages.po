@@ -458,6 +458,10 @@ msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.duration"
+msgstr "Durée de l'animation"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
 msgstr "Paramètres d'animation"
 

@@ -821,6 +821,7 @@ export const handleChartFieldChanged = (
       draft.chartConfig.fields.animation = {
         componentIri,
         showPlayButton: true,
+        duration: 30,
       };
     } else if (field === "segment") {
       // FIXME: This should be more chart specific
@@ -875,6 +876,7 @@ export const handleChartFieldChanged = (
         componentIri,
         showPlayButton:
           draft.chartConfig.fields.animation?.showPlayButton ?? true,
+        duration: draft.chartConfig.fields.animation?.duration ?? 30,
       };
     } else if (
       field === "segment" &&

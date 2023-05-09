@@ -34,10 +34,13 @@ export const TimeSlider = ({
   componentIri,
   dimensions,
   showPlayButton,
+  animationDuration,
 }: {
   componentIri?: string;
   dimensions: DimensionMetadataFragment[];
   showPlayButton: boolean;
+  /** Animation duration in seconds. */
+  animationDuration: number;
 }) => {
   const component = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri) as
@@ -79,8 +82,8 @@ export const TimeSlider = ({
   ]);
 
   const timeline = React.useMemo(() => {
-    return new Timeline(timelineData, formatDate);
-  }, [timelineData, formatDate]);
+    return new Timeline(animationDuration * 1000, timelineData, formatDate);
+  }, [animationDuration, timelineData, formatDate]);
 
   return (
     <TimelineContext.Provider value={timeline}>

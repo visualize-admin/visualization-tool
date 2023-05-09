@@ -753,7 +753,7 @@ export const ChartOptionRadioField = ({
   label: string;
   field: string | null;
   path: string;
-  value: string;
+  value: string | number;
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {

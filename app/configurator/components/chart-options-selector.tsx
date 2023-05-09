@@ -471,6 +471,29 @@ const ChartFieldAnimation = () => {
           field="animation"
           path="showPlayButton"
         />
+        <Box component="fieldset" mt={4}>
+          <FieldSetLegend
+            legendTitle={
+              <Trans id="controls.section.animation.duration">
+                Animation Duration
+              </Trans>
+            }
+          />
+          <Flex sx={{ justifyContent: "flex-start" }}>
+            <ChartOptionRadioField
+              label="30s"
+              field="animation"
+              path="duration"
+              value={30}
+            />
+            <ChartOptionRadioField
+              label="60s"
+              field="animation"
+              path="duration"
+              value={60}
+            />
+          </Flex>
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );
@@ -557,7 +580,6 @@ const ChartFieldOptions = ({
         chartType === "column" && (
           <Box component="fieldset" mt={4}>
             <FieldSetLegend
-              sx={{ mb: 1 }}
               legendTitle={
                 <Trans id="controls.select.column.layout">Column layout</Trans>
               }
@@ -892,7 +914,6 @@ const ChartFieldColorComponent = ({
               nbClass={nbClass}
             />
             <FieldSetLegend
-              sx={{ mb: 1 }}
               legendTitle={t({
                 id: "controls.scale.type",
                 message: "Scale type",

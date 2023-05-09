@@ -126,6 +126,7 @@ export const ChartScatterplot = memo(
             componentIri={fields.animation.componentIri}
             dimensions={dimensions}
             showPlayButton={fields.animation.showPlayButton}
+            animationDuration={fields.animation.duration}
           />
         )}
       </ScatterplotChart>

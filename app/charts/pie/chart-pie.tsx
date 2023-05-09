@@ -120,6 +120,7 @@ export const ChartPie = memo(
             componentIri={fields.animation.componentIri}
             dimensions={dimensions}
             showPlayButton={fields.animation.showPlayButton}
+            animationDuration={fields.animation.duration}
           />
         )}
       </PieChart>

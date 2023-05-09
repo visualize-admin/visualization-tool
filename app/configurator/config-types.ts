@@ -160,7 +160,7 @@ export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
 const AnimationField = t.intersection([
   GenericField,
-  t.type({ showPlayButton: t.boolean }),
+  t.type({ showPlayButton: t.boolean, duration: t.number }),
 ]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
 

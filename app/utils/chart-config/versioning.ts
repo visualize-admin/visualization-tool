@@ -501,7 +501,11 @@ const migrations: Migration[] = [
             ["column", "pie", "scatterplot"].includes(draft.chartType) &&
             timeSlider?.componentIri
           ) {
-            draft.fields.animation = { ...timeSlider, showPlayButton: true };
+            draft.fields.animation = {
+              ...timeSlider,
+              showPlayButton: true,
+              duration: 30,
+            };
           }
         });
       }

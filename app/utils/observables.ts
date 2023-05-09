@@ -32,7 +32,8 @@ export class Timeline extends Observable {
 
   // Animation state.
   public playing = false;
-  private duration = 10000;
+  /** Duration of the animation in miliseconds. */
+  private duration: number;
   private requestAnimationFrameId: number | undefined;
   /** Timestamp set when animation beings. */
   private t: number | undefined;
@@ -50,9 +51,14 @@ export class Timeline extends Observable {
   private formatMsValue: (d: number) => string;
   private formattedMsExtent: [min: string, max: string];
 
-  constructor(msValues: number[], formatMsValue: (d: number) => string) {
+  constructor(
+    msDuration: number,
+    msValues: number[],
+    formatMsValue: (d: number) => string
+  ) {
     super();
 
+    this.duration = msDuration;
     this.msValues = msValues.sort(ascending);
     const [min, max] = [
       this.msValues[0],
