@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
 import { FieldProps } from "@/configurator";
@@ -9,6 +9,8 @@ import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
+import SvgIcEdit from "@/icons/components/IcEdit";
+import useEvent from "@/utils/use-event";
 
 export const ControlTab = ({
   component,
@@ -16,27 +18,17 @@ export const ControlTab = ({
   onClick,
   checked,
   labelId,
-  rightIcon,
 }: {
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
-  rightIcon?: React.ReactNode;
 } & FieldProps) => {
+  const handleClick = useEvent(() => onClick(value));
+
   return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: 1.5,
-        my: "2px",
-      }}
-    >
-      <ControlTabButton
-        checked={checked}
-        value={value}
-        onClick={() => onClick(value)}
-      >
+    <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
+      <ControlTabButton checked={checked} value={value} onClick={handleClick}>
         <ControlTabButtonInner
           iconName={getIconName(value)}
           upperLabel={getFieldLabel(labelId)}
@@ -45,11 +37,24 @@ export const ControlTab = ({
           }
           checked={checked}
           optional={!component}
-          rightIcon={rightIcon}
+          rightIcon={<FieldEditIcon />}
         />
       </ControlTabButton>
     </Box>
   );
+};
+
+const useFieldIconStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    color: theme.palette.primary.main,
+    width: 18,
+    height: 18,
+  },
+}));
+
+const FieldEditIcon = () => {
+  const classes = useFieldIconStyles();
+  return <SvgIcEdit className={classes.root} />;
 };
 
 export const OnOffControlTab = ({
@@ -198,7 +203,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     "&:active": {
       backgroundColor: theme.palette.action.hover,
     },
-    "&:disabled": {
+    "&.Mui-disabled": {
       cursor: "initial",
       backgroundColor: theme.palette.muted.main,
     },
@@ -234,9 +239,7 @@ export const ControlTabButton = ({
       id={`tab-${value}`}
       onClick={() => onClick(value)}
       className={classes.controlTabButton}
-      sx={{
-        backgroundColor: checked ? "action.hover" : "grey.100",
-      }}
+      sx={{ backgroundColor: checked ? "action.hover" : "grey.100" }}
     >
       {children}
     </Button>

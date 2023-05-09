@@ -35,6 +35,7 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
+import useDisclosure from "@/configurator/components/use-disclosure";
 import {
   isMultiFilterFieldChecked,
   Option,
@@ -58,24 +59,10 @@ import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
-
-import useDisclosure from "./use-disclosure";
-
-const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    color: theme.palette.primary.main,
-  },
-}));
-
-const FieldEditIcon = () => {
-  const classes = useFieldEditIconStyles();
-  return <SvgIcEdit width={18} height={18} className={classes.root} />;
-};
 
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
@@ -110,7 +97,6 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
-      rightIcon={<FieldEditIcon />}
     />
   );
 };
@@ -522,7 +508,6 @@ export const AnnotatorTabField = ({
       value={`${fieldProps.value}`}
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
-      rightIcon={<FieldEditIcon />}
     />
   );
 };
