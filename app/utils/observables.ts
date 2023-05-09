@@ -1,5 +1,7 @@
 import { ascending, bisect, scaleLinear } from "d3";
 
+import { AnimationType } from "@/configurator/config-types";
+
 abstract class Observable {
   private observers: Function[];
 
@@ -27,13 +29,15 @@ abstract class Observable {
 
 /** Observable timeline which encloses animation state and logic. */
 export class Timeline extends Observable {
-  /** Relative timeline progress (0-1). */
-  public progress = 0;
+  /** */
+  private type: AnimationType;
 
   // Animation state.
   public playing = false;
+  /** Animation progress (0-1). */
+  private animationProgress = 0;
   /** Duration of the animation in miliseconds. */
-  private duration: number;
+  private animationDuration: number;
   private requestAnimationFrameId: number | undefined;
   /** Timestamp set when animation beings. */
   private t: number | undefined;
@@ -43,6 +47,9 @@ export class Timeline extends Observable {
   private msValues: number[];
   /** Based on current progress. */
   private msValue: number;
+  /** Min and max values of msValues. */
+  private minMsValue: number;
+  private maxMsValue: number;
   /** msValueScale(min value) = 0, msValueScale(max value) = 1 */
   private msValueScale = scaleLinear();
   /** msValues converted to relative values (0-1). */
@@ -51,20 +58,29 @@ export class Timeline extends Observable {
   private formatMsValue: (d: number) => string;
   private formattedMsExtent: [min: string, max: string];
 
-  constructor(
-    msDuration: number,
-    msValues: number[],
-    formatMsValue: (d: number) => string
-  ) {
+  constructor({
+    type,
+    msDuration,
+    msValues,
+    formatMsValue,
+  }: {
+    type: AnimationType;
+    msDuration: number;
+    msValues: number[];
+    formatMsValue: (d: number) => string;
+  }) {
     super();
 
-    this.duration = msDuration;
+    this.type = type;
+    this.animationDuration = msDuration;
     this.msValues = msValues.sort(ascending);
     const [min, max] = [
       this.msValues[0],
       this.msValues[this.msValues.length - 1],
     ];
     this.msValue = min;
+    this.minMsValue = min;
+    this.maxMsValue = max;
     this.msValueScale = this.msValueScale.range([min, max]);
     this.msRelativeValues = this.msValues.map(this.msValueScale.invert);
     this.formatMsValue = formatMsValue;
@@ -77,8 +93,8 @@ export class Timeline extends Observable {
 
   public start = () => {
     if (!this.playing) {
-      if (this.progress === 1) {
-        this.setProgress(0);
+      if (this.animationProgress === 1) {
+        this.setProgress(0, true);
       }
 
       this.playing = true;
@@ -90,16 +106,16 @@ export class Timeline extends Observable {
 
   private animate = (t: number) => {
     if (this.t === undefined) {
-      this.t = t - this.progress * this.duration;
+      this.t = t - this.animationProgress * this.animationDuration;
     }
 
-    if (t - this.t > this.duration) {
+    if (t - this.t > this.animationDuration) {
       this.stop(false);
       this.setProgress(1);
     } else {
-      const progress = (t - this.t) / this.duration;
+      const progress = (t - this.t) / this.animationDuration;
+      this.setProgress(progress, true);
 
-      this.setProgress(progress);
       this.requestAnimationFrameId = requestAnimationFrame(
         this.animate.bind(this)
       );
@@ -116,21 +132,52 @@ export class Timeline extends Observable {
         this.requestAnimationFrameId = undefined;
       }
 
-      if (notify) this.notify();
+      if (notify) {
+        this.notify();
+      }
     }
   };
 
-  public setProgress = (progress: number) => {
-    this.progress = progress;
-    this.setValue(progress);
+  /** Sets the animation progress and timeline value.
+   *
+   * For stepped type during the animation, the progress is calculated based on the
+   * artificial division (equal time segments to jump between values) and does not
+   * correspond to the actual progress of the slider.
+   */
+  public setProgress = (progress: number, triggeredByAnimation = false) => {
+    let value: number;
+
+    switch (this.type) {
+      case "continuous":
+        this.animationProgress = progress;
+        value = progress;
+
+        break;
+      case "stepped":
+        let i: number;
+
+        if (triggeredByAnimation) {
+          i = Math.floor(progress * this.msValues.length);
+        } else {
+          const msValue = Math.round(this.msValueScale(progress));
+          i = bisect(this.msValues, msValue) - 1;
+        }
+
+        const msRelativeValue = this.msRelativeValues[i];
+        this.animationProgress = i / (this.msValues.length - 1);
+        value = msRelativeValue;
+
+        break;
+    }
+
+    this.setValue(value);
     this.notify();
   };
 
   private setValue = (progress: number) => {
     const ms = Math.round(this.msValueScale(progress));
-    const i = bisect(this.msValues, ms);
-
-    this.msValue = this.msValues[i - 1];
+    const i = bisect(this.msValues, ms) - 1;
+    this.msValue = this.msValues[i];
   };
 
   get domain() {
@@ -147,5 +194,17 @@ export class Timeline extends Observable {
 
   get formattedExtent() {
     return this.formattedMsExtent;
+  }
+
+  /** Timeline progress (0-1) (mapped to track background color of Slider). */
+  get progress() {
+    switch (this.type) {
+      case "continuous":
+        return this.animationProgress;
+      case "stepped":
+        return (
+          (this.msValue - this.minMsValue) / (this.maxMsValue - this.minMsValue)
+        );
+    }
   }
 }

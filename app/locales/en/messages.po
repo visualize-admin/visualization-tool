@@ -469,6 +469,18 @@ msgstr "Animation Settings"
 msgid "controls.section.animation.show-play-button"
 msgstr "Show Play button"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type"
+msgstr "Animation Type"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.continuous"
+msgstr "Continuous"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.stepped"
+msgstr "Stepped"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"

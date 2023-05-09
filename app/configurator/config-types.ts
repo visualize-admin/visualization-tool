@@ -158,9 +158,16 @@ const GenericSegmentField = t.intersection([
 ]);
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
+const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
+export type AnimationType = t.TypeOf<typeof AnimationType>;
+
 const AnimationField = t.intersection([
   GenericField,
-  t.type({ showPlayButton: t.boolean, duration: t.number }),
+  t.type({
+    showPlayButton: t.boolean,
+    duration: t.number,
+    type: AnimationType,
+  }),
 ]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
 

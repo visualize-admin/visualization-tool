@@ -7,6 +7,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { AnimationType } from "@/configurator/config-types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { TemporalDimension } from "@/graphql/resolver-types";
@@ -35,12 +36,14 @@ export const TimeSlider = ({
   dimensions,
   showPlayButton,
   animationDuration,
+  animationType,
 }: {
   componentIri?: string;
   dimensions: DimensionMetadataFragment[];
   showPlayButton: boolean;
   /** Animation duration in seconds. */
   animationDuration: number;
+  animationType: AnimationType;
 }) => {
   const component = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri) as
@@ -82,8 +85,13 @@ export const TimeSlider = ({
   ]);
 
   const timeline = React.useMemo(() => {
-    return new Timeline(animationDuration * 1000, timelineData, formatDate);
-  }, [animationDuration, timelineData, formatDate]);
+    return new Timeline({
+      type: animationType,
+      msDuration: animationDuration * 1000,
+      msValues: timelineData,
+      formatMsValue: formatDate,
+    });
+  }, [animationType, animationDuration, timelineData, formatDate]);
 
   return (
     <TimelineContext.Provider value={timeline}>

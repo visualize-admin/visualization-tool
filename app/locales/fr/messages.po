@@ -469,6 +469,18 @@ msgstr "Paramètres d'animation"
 msgid "controls.section.animation.show-play-button"
 msgstr "Bouton Afficher la lecture"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type"
+msgstr "Type d'animation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.continuous"
+msgstr "En continu"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.stepped"
+msgstr "En escalier"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"

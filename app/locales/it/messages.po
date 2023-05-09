@@ -469,6 +469,18 @@ msgstr "Impostazioni dell'animazione"
 msgid "controls.section.animation.show-play-button"
 msgstr "Mostra il pulsante di riproduzione"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type"
+msgstr "Tipo di animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.continuous"
+msgstr "Continuo"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.stepped"
+msgstr "A gradini"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"

@@ -475,29 +475,60 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
           path="showPlayButton"
         />
         {field.showPlayButton && (
-          <Box component="fieldset" mt={4}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.section.animation.duration">
-                  Animation Duration
-                </Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }}>
-              <ChartOptionRadioField
-                label="30s"
-                field="animation"
-                path="duration"
-                value={30}
+          <>
+            <Box component="fieldset" mt={4}>
+              <FieldSetLegend
+                legendTitle={
+                  <Trans id="controls.section.animation.duration">
+                    Animation Duration
+                  </Trans>
+                }
               />
-              <ChartOptionRadioField
-                label="60s"
-                field="animation"
-                path="duration"
-                value={60}
+              <Flex sx={{ justifyContent: "flex-start" }}>
+                <ChartOptionRadioField
+                  label="30s"
+                  field="animation"
+                  path="duration"
+                  value={30}
+                />
+                <ChartOptionRadioField
+                  label="60s"
+                  field="animation"
+                  path="duration"
+                  value={60}
+                />
+              </Flex>
+            </Box>
+            <Box component="fieldset" mt={4}>
+              <FieldSetLegend
+                legendTitle={
+                  <Trans id="controls.section.animation.type">
+                    Animation Type
+                  </Trans>
+                }
               />
-            </Flex>
-          </Box>
+              <Flex sx={{ justifyContent: "flex-start" }}>
+                <ChartOptionRadioField
+                  label={t({
+                    id: "controls.section.animation.type.continuous",
+                    message: "Continuous",
+                  })}
+                  field="animation"
+                  path="type"
+                  value="continuous"
+                />
+                <ChartOptionRadioField
+                  label={t({
+                    id: "controls.section.animation.type.stepped",
+                    message: "Stepped",
+                  })}
+                  field="animation"
+                  path="type"
+                  value="stepped"
+                />
+              </Flex>
+            </Box>
+          </>
         )}
       </ControlSectionContent>
     </ControlSection>

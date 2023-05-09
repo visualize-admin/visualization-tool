@@ -132,6 +132,7 @@ export const ChartColumns = memo(
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </StackedColumnsChart>
@@ -169,6 +170,7 @@ export const ChartColumns = memo(
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </GroupedColumnChart>
@@ -198,6 +200,7 @@ export const ChartColumns = memo(
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </ColumnChart>
