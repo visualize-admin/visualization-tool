@@ -17,6 +17,7 @@ import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   ColorFieldType,
@@ -425,7 +426,9 @@ const EncodingOptionsPanel = ({
       {fieldDimension &&
         field === "animation" &&
         isAnimationInConfig(state.chartConfig) &&
-        state.chartConfig.fields.animation && <ChartFieldAnimation />}
+        state.chartConfig.fields.animation && (
+          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        )}
     </div>
   );
 };
@@ -454,7 +457,7 @@ const ChartFieldAbbreviations = ({
   );
 };
 
-const ChartFieldAnimation = () => {
+const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
     <ControlSection>
       <SectionTitle iconName="settings">
@@ -471,29 +474,31 @@ const ChartFieldAnimation = () => {
           field="animation"
           path="showPlayButton"
         />
-        <Box component="fieldset" mt={4}>
-          <FieldSetLegend
-            legendTitle={
-              <Trans id="controls.section.animation.duration">
-                Animation Duration
-              </Trans>
-            }
-          />
-          <Flex sx={{ justifyContent: "flex-start" }}>
-            <ChartOptionRadioField
-              label="30s"
-              field="animation"
-              path="duration"
-              value={30}
+        {field.showPlayButton && (
+          <Box component="fieldset" mt={4}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.section.animation.duration">
+                  Animation Duration
+                </Trans>
+              }
             />
-            <ChartOptionRadioField
-              label="60s"
-              field="animation"
-              path="duration"
-              value={60}
-            />
-          </Flex>
-        </Box>
+            <Flex sx={{ justifyContent: "flex-start" }}>
+              <ChartOptionRadioField
+                label="30s"
+                field="animation"
+                path="duration"
+                value={30}
+              />
+              <ChartOptionRadioField
+                label="60s"
+                field="animation"
+                path="duration"
+                value={60}
+              />
+            </Flex>
+          </Box>
+        )}
       </ControlSectionContent>
     </ControlSection>
   );
