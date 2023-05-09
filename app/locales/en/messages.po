@@ -380,11 +380,6 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
-#~ msgid "controls.interactive.filters.animation"
-#~ msgstr "Animation"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "There is no time dimension!"
 
