@@ -715,6 +715,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
   };
 };
 
@@ -759,6 +760,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<ScatterPlotConfig, AnimationField | undefined>;
   };
 };
 
@@ -773,6 +775,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       | ScatterPlotSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<PieConfig, AnimationField | undefined>;
   };
 };
 
