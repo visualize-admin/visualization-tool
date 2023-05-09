@@ -1,5 +1,8 @@
+import { select } from "d3";
+import React from "react";
+
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
-import { Column } from "@/charts/column/rendering-utils";
+import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { VerticalWhisker } from "@/charts/whiskers";
 
@@ -44,6 +47,12 @@ export const ErrorWhiskers = () => {
   );
 };
 
+type GroupedRenderDatum = {
+  key: string;
+  x: number;
+  data: RenderDatum[];
+};
+
 export const ColumnsGrouped = () => {
   const {
     bounds,
@@ -55,28 +64,58 @@ export const ColumnsGrouped = () => {
     colors,
     grouped,
   } = useChartState() as GroupedColumnsState;
+  const ref = React.useRef<SVGGElement>(null);
   const { margins } = bounds;
 
-  return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
-      {grouped.map((segment) => (
-        <g key={segment[0]} transform={`translate(${xScale(segment[0])}, 0)`}>
-          {segment[1].map((d, i) => {
-            const y = getY(d) ?? NaN;
+  const bandwidth = xScaleIn.bandwidth();
+  const y0 = yScale(0);
+  const renderData: GroupedRenderDatum[] = React.useMemo(() => {
+    return grouped.map((segment) => {
+      return {
+        key: segment[0],
+        x: xScale(segment[0]) as number,
+        data: segment[1].map((d) => {
+          const y = getY(d) ?? NaN;
 
-            return (
-              <Column
-                key={i}
-                x={xScaleIn(getSegment(d)) as number}
-                y={yScale(Math.max(y, 0))}
-                width={xScaleIn.bandwidth()}
-                height={Math.abs(yScale(y) - yScale(0))}
-                color={colors(getSegment(d))}
-              />
-            );
-          })}
-        </g>
-      ))}
-    </g>
+          return {
+            x: xScaleIn(getSegment(d)) as number,
+            y: yScale(Math.max(y, 0)),
+            width: bandwidth,
+            height: Math.abs(yScale(y) - y0),
+            color: colors(getSegment(d)),
+          };
+        }),
+      };
+    });
+  }, [
+    colors,
+    getSegment,
+    bandwidth,
+    getY,
+    grouped,
+    xScaleIn,
+    xScale,
+    yScale,
+    y0,
+  ]);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      select(ref.current)
+        .selectAll<SVGGElement, GroupedRenderDatum>("g")
+        .data(renderData, (d) => d.key)
+        .join("g")
+        .attr("transform", (d) => `translate(${d.x}, 0)`)
+        .selectAll<SVGRectElement, RenderDatum>("rect")
+        .data(
+          (d) => d.data,
+          (d) => d.x
+        )
+        .call(renderColumn, y0);
+    }
+  }, [renderData, y0]);
+
+  return (
+    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
   );
 };
