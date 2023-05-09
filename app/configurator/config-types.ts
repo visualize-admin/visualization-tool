@@ -158,7 +158,10 @@ const GenericSegmentField = t.intersection([
 ]);
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
-const AnimationField = GenericField;
+const AnimationField = t.intersection([
+  GenericField,
+  t.type({ showPlayButton: t.boolean }),
+]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
 
 const SortingField = t.partial({

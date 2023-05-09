@@ -33,9 +33,11 @@ const useTimeline = () => {
 export const TimeSlider = ({
   componentIri,
   dimensions,
+  showPlayButton,
 }: {
   componentIri?: string;
   dimensions: DimensionMetadataFragment[];
+  showPlayButton: boolean;
 }) => {
   const component = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri) as
@@ -82,12 +84,12 @@ export const TimeSlider = ({
 
   return (
     <TimelineContext.Provider value={timeline}>
-      <Root />
+      <Root showPlayButton={showPlayButton} />
     </TimelineContext.Provider>
   );
 };
 
-const Root = () => {
+const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
   const timeline = useTimeline();
   const chartState = useChartState();
 
@@ -101,8 +103,14 @@ const Root = () => {
         mr: `${chartState.bounds.margins.right}px`,
       }}
     >
-      <PlayButton />
-      <Box sx={{ position: "relative", width: "100%" }}>
+      {showPlayButton && <PlayButton />}
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          ml: `${showPlayButton ? 0 : 32}px`,
+        }}
+      >
         <Slider />
         <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
           {timeline.formattedExtent[0]}

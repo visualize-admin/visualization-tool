@@ -462,6 +462,14 @@ msgstr "Effacer la recherche"
 msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.settings"
+msgstr "Paramètres d'animation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.show-play-button"
+msgstr "Bouton Afficher la lecture"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"

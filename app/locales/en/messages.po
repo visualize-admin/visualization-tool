@@ -462,6 +462,14 @@ msgstr "Clear search field"
 msgid "controls.section.additional-information"
 msgstr "Additional information"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.settings"
+msgstr "Animation Settings"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.show-play-button"
+msgstr "Show Play button"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
 msgstr "Chart Options"

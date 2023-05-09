@@ -25,6 +25,7 @@ import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
   imputationTypes,
+  isAnimationInConfig,
   isAreaConfig,
   isConfiguring,
   isTableConfig,
@@ -420,6 +421,11 @@ const EncodingOptionsPanel = ({
         dimensions={dimensions}
         measures={measures}
       />
+
+      {fieldDimension &&
+        field === "animation" &&
+        isAnimationInConfig(state.chartConfig) &&
+        state.chartConfig.fields.animation && <ChartFieldAnimation />}
     </div>
   );
 };
@@ -445,6 +451,28 @@ const ChartFieldAbbreviations = ({
       path={path ? `${path}.useAbbreviations` : "useAbbreviations"}
       disabled={disabled}
     />
+  );
+};
+
+const ChartFieldAnimation = () => {
+  return (
+    <ControlSection>
+      <SectionTitle iconName="settings">
+        <Trans id="controls.section.animation.settings">
+          Animation Settings
+        </Trans>
+      </SectionTitle>
+      <ControlSectionContent component="fieldset" gap="none">
+        <ChartOptionSwitchField
+          label={t({
+            id: "controls.section.animation.show-play-button",
+            message: "Show Play button",
+          })}
+          field="animation"
+          path="showPlayButton"
+        />
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 

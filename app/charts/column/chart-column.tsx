@@ -130,6 +130,7 @@ export const ChartColumns = memo(
               <TimeSlider
                 componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
               />
             )}
           </StackedColumnsChart>
@@ -165,6 +166,7 @@ export const ChartColumns = memo(
               <TimeSlider
                 componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
               />
             )}
           </GroupedColumnChart>
@@ -192,6 +194,7 @@ export const ChartColumns = memo(
               <TimeSlider
                 componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
               />
             )}
           </ColumnChart>

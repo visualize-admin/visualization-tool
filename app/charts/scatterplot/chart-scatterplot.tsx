@@ -125,6 +125,7 @@ export const ChartScatterplot = memo(
           <TimeSlider
             componentIri={fields.animation.componentIri}
             dimensions={dimensions}
+            showPlayButton={fields.animation.showPlayButton}
           />
         )}
       </ScatterplotChart>

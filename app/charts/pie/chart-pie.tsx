@@ -119,6 +119,7 @@ export const ChartPie = memo(
           <TimeSlider
             componentIri={fields.animation.componentIri}
             dimensions={dimensions}
+            showPlayButton={fields.animation.showPlayButton}
           />
         )}
       </PieChart>

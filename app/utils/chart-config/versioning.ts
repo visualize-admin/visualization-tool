@@ -501,7 +501,7 @@ const migrations: Migration[] = [
             ["column", "pie", "scatterplot"].includes(draft.chartType) &&
             timeSlider?.componentIri
           ) {
-            draft.fields.animation = timeSlider;
+            draft.fields.animation = { ...timeSlider, showPlayButton: true };
           }
         });
       }
@@ -519,7 +519,9 @@ const migrations: Migration[] = [
           delete draft.fields.animation;
 
           if (["column", "pie", "scatterplot"].includes(draft.chartType)) {
-            draft.interactiveFiltersConfig.timeSlider = animation;
+            draft.interactiveFiltersConfig.timeSlider = {
+              componentIri: animation.componentIri,
+            };
           } else {
             draft.interactiveFiltersConfig.timeSlider = { componentIri: "" };
           }

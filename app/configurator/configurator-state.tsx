@@ -820,6 +820,7 @@ export const handleChartFieldChanged = (
     if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
       draft.chartConfig.fields.animation = {
         componentIri,
+        showPlayButton: true,
       };
     } else if (field === "segment") {
       // FIXME: This should be more chart specific
@@ -872,6 +873,8 @@ export const handleChartFieldChanged = (
     if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
       draft.chartConfig.fields.animation = {
         componentIri,
+        showPlayButton:
+          draft.chartConfig.fields.animation?.showPlayButton ?? true,
       };
     } else if (
       field === "segment" &&
