@@ -172,17 +172,17 @@ const ActiveFieldSwitch = ({
   metaData: DataCubeMetadataWithHierarchies;
   imputationNeeded: boolean;
 }) => {
-  const { activeField } = state;
+  const activeField = state.activeField as EncodingFieldType | undefined;
+
+  if (!activeField) {
+    return null;
+  }
 
   const encodings =
     chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;
-
-  if (!activeField) {
-    return null;
-  }
 
   const activeFieldComponentIri = getFieldComponentIri(
     state.chartConfig.fields,
@@ -220,7 +220,7 @@ const EncodingOptionsPanel = ({
 }: {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
-  field: string;
+  field: EncodingFieldType;
   chartType: ChartType;
   component: DimensionMetadataFragment | undefined;
   dimensions: DimensionMetadataFragment[];
