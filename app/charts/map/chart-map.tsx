@@ -42,11 +42,13 @@ export const ChartMapVisualization = ({
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
@@ -65,7 +67,9 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(chartConfig),
+      componentIris: published
+        ? getChartConfigComponents(chartConfig)
+        : undefined,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({

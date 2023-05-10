@@ -28,11 +28,13 @@ export const ChartPieVisualization = ({
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: PieConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
   const [metadataQuery] = useDataCubeMetadataQuery({
@@ -49,7 +51,9 @@ export const ChartPieVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(chartConfig),
+      componentIris: published
+        ? getChartConfigComponents(chartConfig)
+        : undefined,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({

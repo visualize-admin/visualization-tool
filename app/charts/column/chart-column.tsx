@@ -41,11 +41,13 @@ export const ChartColumnsVisualization = ({
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ColumnConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
   const [metadataQuery] = useDataCubeMetadataQuery({
@@ -62,7 +64,9 @@ export const ChartColumnsVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(chartConfig),
+      componentIris: published
+        ? getChartConfigComponents(chartConfig)
+        : undefined,
     },
   });
 

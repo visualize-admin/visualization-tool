@@ -6,10 +6,7 @@ import * as React from "react";
 import { useMemo } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import {
-  getChartConfigComponents,
-  useQueryFilters,
-} from "@/charts/shared/chart-helpers";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -94,7 +91,6 @@ export const ChartPreviewInner = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(state.chartConfig),
     },
   });
   const {
@@ -225,6 +221,7 @@ export const ChartPreviewInner = ({
                     dataSet={dataSetIri}
                     dataSource={dataSource}
                     chartConfig={state.chartConfig}
+                    published={false}
                   />
                 )}
               </Box>
@@ -251,10 +248,12 @@ const ChartWithInteractiveFilters = React.forwardRef(
       dataSet,
       dataSource,
       chartConfig,
+      published,
     }: {
       dataSet: string;
       dataSource: DataSource;
       chartConfig: ChartConfig;
+      published: boolean;
     },
     ref
   ) => {
@@ -290,6 +289,7 @@ const ChartWithInteractiveFilters = React.forwardRef(
           dataSet={dataSet}
           dataSource={dataSource}
           chartConfig={chartConfig}
+          published={published}
         />
       </Flex>
     );
@@ -300,21 +300,20 @@ const Chart = ({
   dataSet,
   dataSource,
   chartConfig,
+  published,
 }: {
   dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  published: boolean;
 }) => {
-  // Combine filters from config + interactive filters
-  const queryFilters = useQueryFilters({
-    chartConfig,
-  });
-
+  const queryFilters = useQueryFilters({ chartConfig });
   const props = {
     dataSet,
     dataSource,
-    chartConfig: chartConfig,
-    queryFilters: queryFilters,
+    chartConfig,
+    queryFilters,
+    published,
   };
 
   return <GenericChart {...props} />;

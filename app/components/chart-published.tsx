@@ -358,6 +358,7 @@ const ChartWithInteractiveFilters = React.forwardRef(
           dataSet={dataSet}
           dataSource={dataSource}
           chartConfig={chartConfig}
+          published
         />
       </Flex>
     );

@@ -18,10 +18,12 @@ export const ChartTableVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: TableConfig;
+  published: boolean;
 }) => {
   const locale = useLocale();
   const [metadataQuery] = useDataCubeMetadataQuery({
@@ -38,7 +40,9 @@ export const ChartTableVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(chartConfig),
+      componentIris: published
+        ? getChartConfigComponents(chartConfig)
+        : undefined,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
