@@ -21,12 +21,7 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
-import {
-  ChartConfig,
-  DataSource,
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator";
+import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import {
   useComponentsQuery,
@@ -74,7 +69,7 @@ export const ChartPreviewInner = ({
   dataSetIri: string;
   dataSource: DataSource;
 }) => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const classes = useStyles();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
