@@ -82,13 +82,14 @@ export const useQueryFilters = ({
 
 type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
 
-export const getChartConfigComponents = ({
-  fields,
-  filters,
-  interactiveFiltersConfig: IFConfig,
-}: ChartConfig) => {
+export const getChartConfigFilterComponentIris = ({ filters }: ChartConfig) => {
+  return Object.keys(filters);
+};
+
+export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
+  const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
   const fieldIris = Object.values(fields).map((d) => d.componentIri);
-  const filterIris = Object.keys(filters);
+  const filterIris = getChartConfigFilterComponentIris(chartConfig);
   const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
   const IFIris: string[] = [];
 

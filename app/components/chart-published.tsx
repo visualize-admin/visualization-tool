@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
@@ -154,7 +154,7 @@ export const ChartPublishedInner = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigComponents(chartConfig),
+      componentIris: getChartConfigComponentIris(chartConfig),
     },
   });
 

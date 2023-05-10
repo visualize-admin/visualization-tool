@@ -17,7 +17,7 @@ import {
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
-import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -65,7 +65,7 @@ export const ChartColumnsVisualization = ({
       sourceUrl: dataSource.url,
       locale,
       componentIris: published
-        ? getChartConfigComponents(chartConfig)
+        ? getChartConfigComponentIris(chartConfig)
         : undefined,
     },
   });

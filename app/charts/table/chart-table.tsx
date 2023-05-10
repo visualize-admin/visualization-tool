@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
@@ -41,7 +41,7 @@ export const ChartTableVisualization = ({
       sourceUrl: dataSource.url,
       locale,
       componentIris: published
-        ? getChartConfigComponents(chartConfig)
+        ? getChartConfigComponentIris(chartConfig)
         : undefined,
     },
   });

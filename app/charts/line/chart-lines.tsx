@@ -6,7 +6,7 @@ import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
@@ -56,7 +56,7 @@ export const ChartLinesVisualization = ({
       sourceUrl: dataSource.url,
       locale,
       componentIris: published
-        ? getChartConfigComponents(chartConfig)
+        ? getChartConfigComponentIris(chartConfig)
         : undefined,
     },
   });

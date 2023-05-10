@@ -9,7 +9,7 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
 import {
   BaseLayer,
@@ -68,7 +68,7 @@ export const ChartMapVisualization = ({
       sourceUrl: dataSource.url,
       locale,
       componentIris: published
-        ? getChartConfigComponents(chartConfig)
+        ? getChartConfigComponentIris(chartConfig)
         : undefined,
     },
   });
