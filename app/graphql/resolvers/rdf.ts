@@ -200,26 +200,30 @@ export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
-  async ({ cube, locale }, _, { setup }, info) => {
+  async ({ cube, locale }, { componentIris }, { setup }, info) => {
     const { sparqlClient, cache } = await setup(info);
     const dimensions = await getCubeDimensions({
       cube,
       locale,
       sparqlClient,
+      componentIris,
       cache,
     });
+
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   };
 
 export const dataCubeMeasures: NonNullable<DataCubeResolvers["measures"]> =
-  async ({ cube, locale }, _, { setup }, info) => {
+  async ({ cube, locale }, { componentIris }, { setup }, info) => {
     const { sparqlClient, cache } = await setup(info);
     const dimensions = await getCubeDimensions({
       cube,
       locale,
       sparqlClient,
+      componentIris,
       cache,
     });
+
     return dimensions.filter((d) => d.data.isMeasureDimension);
   };
 
@@ -231,7 +235,7 @@ export const dataCubeDimensionByIri: NonNullable<
     cube,
     locale,
     sparqlClient,
-    dimensionIris: [iri],
+    componentIris: [iri],
     cache,
   });
   const dimension = dimensions.find((d) => iri === d.data.iri);

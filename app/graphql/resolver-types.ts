@@ -65,6 +65,7 @@ export type DataCubeObservationsArgs = {
 export type DataCubeDimensionsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -78,6 +79,7 @@ export type DataCubeDimensionByIriArgs = {
 export type DataCubeMeasuresArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 export type DataCubeOrganization = {
@@ -396,6 +398,7 @@ export type QueryDataCubeByIriArgs = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 

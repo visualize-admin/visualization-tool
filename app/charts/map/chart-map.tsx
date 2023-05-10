@@ -3,10 +3,13 @@ import keyBy from "lodash/keyBy";
 import { useMemo } from "react";
 import { mesh as topojsonMesh } from "topojson-client";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { prepareTopojson } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
+import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
 import {
   BaseLayer,
@@ -33,10 +36,6 @@ import {
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
-
-import { prepareTopojson } from "./helpers";
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -66,6 +65,7 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: getChartConfigComponents(chartConfig),
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({

@@ -1,5 +1,6 @@
 import { memo } from "react";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import {
   ColumnsGrouped,
   ErrorWhiskers as ErrorWhiskersGrouped,
@@ -16,6 +17,7 @@ import {
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
+import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -33,8 +35,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
@@ -62,8 +62,10 @@ export const ChartColumnsVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: getChartConfigComponents(chartConfig),
     },
   });
+
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,

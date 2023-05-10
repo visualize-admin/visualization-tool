@@ -46,13 +46,21 @@ type DataCube {
     dimensions: [String!]
     filters: Filters
   ): ObservationsQuery!
-  dimensions(sourceType: String!, sourceUrl: String!): [Dimension!]!
+  dimensions(
+    sourceType: String!
+    sourceUrl: String!
+    componentIris: [String!]
+  ): [Dimension!]!
   dimensionByIri(
     iri: String!
     sourceType: String!
     sourceUrl: String!
   ): Dimension
-  measures(sourceType: String!, sourceUrl: String!): [Measure!]!
+  measures(
+    sourceType: String!
+    sourceUrl: String!
+    componentIris: [String!]
+  ): [Measure!]!
   themes: [DataCubeTheme!]!
 }
 
@@ -301,6 +309,7 @@ type Query {
     iri: String!
     latest: Boolean = true
     filters: Filters
+    componentIris: [String!]
   ): DataCube
   possibleFilters(
     iri: String!

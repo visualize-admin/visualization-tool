@@ -1,6 +1,7 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
@@ -37,6 +38,7 @@ export const ChartTableVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: getChartConfigComponents(chartConfig),
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({

@@ -129,20 +129,20 @@ export const getCubeDimensions = async ({
   cube,
   locale,
   sparqlClient,
-  dimensionIris,
+  componentIris,
   cache,
 }: {
   cube: Cube;
   locale: string;
   sparqlClient: ParsingClient;
-  dimensionIris?: string[];
+  componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions
       .filter(isObservationDimension)
       .filter((x) =>
-        dimensionIris ? dimensionIris.includes(x.path.value) : true
+        componentIris ? componentIris.includes(x.path.value) : true
       );
     const dimensionUnits = dimensions.flatMap(getDimensionUnits);
 

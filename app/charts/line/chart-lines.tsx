@@ -1,10 +1,12 @@
 import { memo } from "react";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
+import { getChartConfigComponents } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
@@ -24,8 +26,6 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -53,6 +53,7 @@ export const ChartLinesVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: getChartConfigComponents(chartConfig),
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({

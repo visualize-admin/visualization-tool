@@ -12,6 +12,7 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
+import { InteractiveFiltersTimeSlider } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
@@ -19,6 +20,9 @@ import {
   Filters,
   ImputationType,
   InteractiveFiltersConfig,
+  InteractiveFiltersDataConfig,
+  InteractiveFiltersLegend,
+  InteractiveFiltersTimeRange,
   isAreaConfig,
   QueryFilters,
 } from "@/configurator/config-types";
@@ -76,7 +80,44 @@ export const useQueryFilters = ({
   ]);
 };
 
-type ValuePredicate = (v: any) => boolean;
+type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
+
+export const getChartConfigComponents = ({
+  fields,
+  filters,
+  interactiveFiltersConfig: IFConfig,
+}: ChartConfig) => {
+  const fieldIris = Object.values(fields).map((d) => d.componentIri);
+  const filterIris = Object.keys(filters);
+  const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
+  const IFIris: string[] = [];
+
+  if (IFConfig) {
+    IFKeys.forEach((k) => {
+      const v = IFConfig[k];
+
+      switch (k) {
+        case "timeSlider":
+          IFIris.push((v as InteractiveFiltersTimeSlider).componentIri);
+          break;
+        case "legend":
+          IFIris.push((v as InteractiveFiltersLegend).componentIri);
+          break;
+        case "timeRange":
+          IFIris.push((v as InteractiveFiltersTimeRange).componentIri);
+          break;
+        case "dataFilters":
+          IFIris.push(...(v as InteractiveFiltersDataConfig).componentIris);
+          break;
+        default:
+          const _exhaustiveCheck: never = k;
+          return _exhaustiveCheck;
+      }
+    });
+  }
+
+  return uniq([...fieldIris, ...filterIris, ...IFIris]);
+};
 
 export const usePlottableData = ({
   data,
@@ -101,6 +142,8 @@ export const usePlottableData = ({
 
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
+
+type ValuePredicate = (v: any) => boolean;
 
 /** Prepares the data to be used in charts, taking interactive filters into account. */
 export const useDataAfterInteractiveFilters = ({

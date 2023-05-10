@@ -6,7 +6,10 @@ import * as React from "react";
 import { useMemo } from "react";
 
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  getChartConfigComponents,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -21,7 +24,12 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
-import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
+import {
+  ChartConfig,
+  DataSource,
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import {
   useComponentsQuery,
@@ -69,7 +77,7 @@ export const ChartPreviewInner = ({
   dataSetIri: string;
   dataSource: DataSource;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
   const locale = useLocale();
   const classes = useStyles();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
@@ -86,6 +94,7 @@ export const ChartPreviewInner = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: getChartConfigComponents(state.chartConfig),
     },
   });
   const {
