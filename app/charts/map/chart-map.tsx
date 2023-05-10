@@ -53,6 +53,9 @@ export const ChartMapVisualization = ({
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -67,9 +70,7 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: published
-        ? getChartConfigComponentIris(chartConfig)
-        : undefined,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -78,7 +79,7 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null, // FIXME: Try to load less dimensions
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });

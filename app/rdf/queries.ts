@@ -466,7 +466,7 @@ export const getCubeObservations = async ({
   filters,
   limit,
   raw,
-  dimensions,
+  componentIris,
   cache,
 }: {
   cube: Cube;
@@ -478,7 +478,7 @@ export const getCubeObservations = async ({
   limit?: number;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
-  dimensions: Maybe<string[]> | undefined;
+  componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<{
   query: string;
@@ -495,7 +495,7 @@ export const getCubeObservations = async ({
   });
 
   const cubeDimensions = allResolvedDimensions.filter((d) =>
-    dimensions ? dimensions.includes(d.data.iri) : true
+    componentIris ? componentIris.includes(d.data.iri) : true
   );
 
   const serverFilters: typeof filters = {};
@@ -521,10 +521,9 @@ export const getCubeObservations = async ({
     ? buildFilters({ cube, view: cubeView, filters: dbFilters, locale })
     : [];
 
-  // Only choose dimensions that we really want
   const observationDimensions = buildDimensions({
     cubeView,
-    dimensions,
+    dimensions: componentIris,
     cubeDimensions,
     cube,
     locale,

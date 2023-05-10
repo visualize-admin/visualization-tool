@@ -57,7 +57,7 @@ export type DataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
-  dimensions?: Maybe<Array<Scalars['String']>>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 

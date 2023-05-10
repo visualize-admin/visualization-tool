@@ -43,7 +43,7 @@ type DataCube {
     sourceType: String!
     sourceUrl: String!
     limit: Int
-    dimensions: [String!]
+    componentIris: [String!]
     filters: Filters
   ): ObservationsQuery!
   dimensions(

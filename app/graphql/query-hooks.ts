@@ -55,7 +55,7 @@ export type DataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
-  dimensions?: Maybe<Array<Scalars['String']>>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -917,7 +917,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
+  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
   limit?: Maybe<Scalars['Int']>;
@@ -1370,7 +1370,7 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
+    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $componentIris: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1381,7 +1381,7 @@ export const DataCubeObservationsDocument = gql`
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      dimensions: $dimensions
+      componentIris: $componentIris
       filters: $filters
       limit: $limit
     ) {

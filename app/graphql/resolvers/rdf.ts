@@ -120,7 +120,6 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
         filters: queryFilters,
         limit: 1,
         raw: true,
-        dimensions: null,
         cache,
       });
 
@@ -254,7 +253,7 @@ export const dataCubeObservations: NonNullable<
   DataCubeResolvers["observations"]
 > = async (
   { cube, locale },
-  { limit, filters, dimensions },
+  { limit, filters, componentIris },
   { setup },
   info
 ) => {
@@ -265,7 +264,7 @@ export const dataCubeObservations: NonNullable<
     sparqlClient,
     filters: filters ?? undefined,
     limit: limit ?? undefined,
-    dimensions,
+    componentIris,
     cache,
   });
 

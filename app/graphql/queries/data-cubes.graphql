@@ -369,7 +369,7 @@ query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $dimensions: [String!]
+  $componentIris: [String!]
   $filters: Filters
   $latest: Boolean
   $limit: Int
@@ -384,7 +384,7 @@ query DataCubeObservations(
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      dimensions: $dimensions
+      componentIris: $componentIris
       filters: $filters
       limit: $limit
     ) {

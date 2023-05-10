@@ -40,6 +40,9 @@ export const ChartAreasVisualization = ({
   published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -53,9 +56,7 @@ export const ChartAreasVisualization = ({
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      componentIris: published
-        ? getChartConfigComponentIris(chartConfig)
-        : undefined,
+      componentIris: componentIrisToFilterBy,
       locale,
     },
   });
@@ -65,7 +66,7 @@ export const ChartAreasVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });
