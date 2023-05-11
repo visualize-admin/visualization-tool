@@ -364,6 +364,10 @@ export const MapComponent = () => {
           onIdle={() => {
             setLoaded(true);
           }}
+          onRemove={() => {
+            setLoaded(false);
+            setMap(null);
+          }}
           onLoad={(e) => {
             setMap(e.target);
             currentBBox.current = e.target.getBounds().toArray() as BBox;

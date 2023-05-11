@@ -10,7 +10,7 @@ const getMap = () => {
   return map;
 };
 
-const setMap = (d: Map) => {
+const setMap = (d: Map | null) => {
   map = d;
 };
 
