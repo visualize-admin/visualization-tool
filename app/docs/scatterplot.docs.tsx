@@ -1,5 +1,4 @@
 import { markdown, ReactSpecimen } from "catalog";
-import * as React from "react";
 
 import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
@@ -29,9 +28,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     componentIri: "",
     presets: { type: "range", from: "", to: "" },
-  },
-  timeSlider: {
-    componentIri: "",
   },
   dataFilters: {
     active: false,

@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.3.0";
+export const CHART_CONFIG_VERSION = "1.4.0";
 
 type Migration = {
   description: string;
@@ -470,6 +470,66 @@ const migrations: Migration[] = [
             time: draft.interactiveFiltersConfig.time,
             dataFilters: draft.interactiveFiltersConfig.dataFilters,
           };
+        });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL
+    fields {
+      + animation {
+        componentIri
+      }
+    }`,
+    from: "1.3.0",
+    to: "1.4.0",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.4.0" };
+
+      const { interactiveFiltersConfig } = newConfig;
+
+      if (interactiveFiltersConfig) {
+        const { legend, timeRange, timeSlider, dataFilters } =
+          interactiveFiltersConfig;
+
+        newConfig = produce(newConfig, (draft: any) => {
+          draft.interactiveFiltersConfig = { legend, timeRange, dataFilters };
+
+          if (
+            ["column", "pie", "scatterplot"].includes(draft.chartType) &&
+            timeSlider?.componentIri
+          ) {
+            draft.fields.animation = {
+              ...timeSlider,
+              showPlayButton: true,
+              duration: 30,
+              type: "continuous",
+            };
+          }
+        });
+      }
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.3.0" };
+
+      const { fields } = config;
+      const { animation } = fields;
+
+      if (animation) {
+        newConfig = produce(newConfig, (draft: any) => {
+          delete draft.fields.animation;
+
+          if (["column", "pie", "scatterplot"].includes(draft.chartType)) {
+            draft.interactiveFiltersConfig.timeSlider = {
+              componentIri: animation.componentIri,
+            };
+          } else {
+            draft.interactiveFiltersConfig.timeSlider = { componentIri: "" };
+          }
         });
       }
 

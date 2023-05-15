@@ -14,10 +14,10 @@ import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filt
 import Flex from "@/components/flex";
 import { ColumnConfig } from "@/configurator";
 import {
+  dimensions,
   fields,
   margins,
   measures,
-  dimensions,
   observations,
 } from "@/docs/fixtures";
 
@@ -39,7 +39,7 @@ ${(
         dimensions={dimensions}
         chartConfig={
           {
-            fields: fields,
+            fields,
             interactiveFiltersConfig: {
               legend: { active: false, componentIri: "" },
               timeRange: {
@@ -194,9 +194,6 @@ ${(
                 componentIri: "",
                 presets: { type: "range", from: "", to: "" },
               },
-              timeSlider: {
-                componentIri: "",
-              },
               dataFilters: { active: false, componentIris: [] },
             },
           } as unknown as ColumnConfig
@@ -239,9 +236,6 @@ ${(
                 active: false,
                 componentIri: "",
                 presets: { type: "range", from: "", to: "" },
-              },
-              timeSlider: {
-                componentIri: "",
               },
               dataFilters: { active: false, componentIris: [] },
             },

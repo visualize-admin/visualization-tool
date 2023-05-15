@@ -7,11 +7,8 @@ import {
   FilterValueSingle,
   isSegmentInConfig,
 } from "@/configurator/config-types";
-import { useConfiguratorState } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
-
-import { getFieldComponentIri } from "..";
 
 /**
  * Makes sure interactive filters are in sync with chart config.
@@ -22,7 +19,6 @@ import { getFieldComponentIri } from "..";
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   const [IFstate, dispatch] = useInteractiveFilters();
-  const [_, dispatchConfigurator] = useConfiguratorState();
   const { interactiveFiltersConfig } = chartConfig;
 
   // Time range filter
@@ -45,32 +41,6 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, presetFromStr, presetToStr]);
-
-  // Time slider filter
-  const timeSliderFilter = interactiveFiltersConfig?.timeSlider;
-  const xComponentIri = getFieldComponentIri(chartConfig.fields, "x");
-  useEffect(() => {
-    if (
-      timeSliderFilter?.componentIri === "" &&
-      IFstate.timeSlider.value !== undefined
-    ) {
-      dispatch({ type: "RESET_TIME_SLIDER_FILTER" });
-    }
-
-    if (
-      xComponentIri !== undefined &&
-      xComponentIri === timeSliderFilter?.componentIri
-    ) {
-      dispatchConfigurator({ type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET" });
-    }
-  }, [
-    IFstate.timeSlider.value,
-    timeSliderFilter?.componentIri,
-    dispatch,
-    dispatchConfigurator,
-    interactiveFiltersConfig,
-    xComponentIri,
-  ]);
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;

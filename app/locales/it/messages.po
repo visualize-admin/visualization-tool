@@ -179,6 +179,10 @@ msgstr "Impostazioni predefinite"
 msgid "controls.abbreviations"
 msgstr "Usa abbreviazioni"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.animation"
+msgstr "Animazione"
+
 #: app/configurator/components/chart-annotator.tsx
 msgid "controls.annotator.add-description-warning"
 msgstr "Aggiungi una descrizione"
@@ -234,7 +238,7 @@ msgstr "Colore"
 
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.color.add"
-msgstr "Aggiungi ..."
+msgstr "Aggiungi…"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.color.opacity"
@@ -376,11 +380,6 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zeri"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
-msgid "controls.interactive.filters.timeSlider"
-msgstr "Cursore del tempo"
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Nessuna dimensione temporale disponibile!"
 
@@ -435,7 +434,6 @@ msgstr "Torna all'anteprima"
 
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
 msgid "controls.none"
 msgstr "Nessuno"
 
@@ -458,6 +456,30 @@ msgstr "Cancella la ricerca"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.additional-information"
 msgstr "Informazioni aggiuntive"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.duration"
+msgstr "Durata dell'animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.settings"
+msgstr "Impostazioni dell'animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.show-play-button"
+msgstr "Mostra il pulsante di riproduzione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type"
+msgstr "Tipo di animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.continuous"
+msgstr "Continuo"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.stepped"
+msgstr "A gradini"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.chart.options"
@@ -580,7 +602,7 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Stile del testo"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 

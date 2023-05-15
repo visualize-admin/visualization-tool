@@ -107,6 +107,8 @@ const useScatterplotState = ({
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
+    // No animation yet for scatterplot
+    animationField: undefined,
     getSegment,
   });
   const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);

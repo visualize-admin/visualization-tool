@@ -122,10 +122,13 @@ export const ChartPie = memo(
           }
         />
 
-        {interactiveFiltersConfig?.timeSlider.componentIri && (
+        {fields.animation && (
           <TimeSlider
-            componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+            componentIri={fields.animation.componentIri}
             dimensions={dimensions}
+            showPlayButton={fields.animation.showPlayButton}
+            animationDuration={fields.animation.duration}
+            animationType={fields.animation.type}
           />
         )}
       </PieChart>

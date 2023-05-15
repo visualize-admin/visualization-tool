@@ -297,7 +297,7 @@ export const useChartOptionRadioField = ({
 }: {
   field: string | null;
   path: string;
-  value: string;
+  value: string | number;
 }): FieldProps => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();

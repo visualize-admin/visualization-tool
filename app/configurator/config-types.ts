@@ -103,14 +103,6 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
   typeof InteractiveFiltersTimeRange
 >;
 
-const InteractiveFiltersTimeSlider = t.type({
-  // FIXME: add range
-  componentIri: t.string,
-});
-export type InteractiveFiltersTimeSlider = t.TypeOf<
-  typeof InteractiveFiltersTimeSlider
->;
-
 const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
   componentIris: t.array(t.string),
@@ -123,7 +115,6 @@ const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
     timeRange: InteractiveFiltersTimeRange,
-    timeSlider: InteractiveFiltersTimeSlider,
     dataFilters: InteractiveFiltersDataConfig,
   }),
   t.undefined,
@@ -167,6 +158,19 @@ const GenericSegmentField = t.intersection([
 ]);
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
+const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
+export type AnimationType = t.TypeOf<typeof AnimationType>;
+
+const AnimationField = t.intersection([
+  GenericField,
+  t.type({
+    showPlayButton: t.boolean,
+    duration: t.number,
+    type: AnimationType,
+  }),
+]);
+export type AnimationField = t.TypeOf<typeof AnimationField>;
+
 const SortingField = t.partial({
   sorting: t.type({
     sortingType: SortingType,
@@ -191,6 +195,7 @@ const ColumnFields = t.intersection([
   }),
   t.partial({
     segment: ColumnSegmentField,
+    animation: AnimationField,
   }),
 ]);
 const ColumnConfig = t.type(
@@ -278,6 +283,7 @@ const ScatterPlotFields = t.intersection([
   }),
   t.partial({
     segment: ScatterPlotSegmentField,
+    animation: AnimationField,
   }),
 ]);
 const ScatterPlotConfig = t.type(
@@ -296,11 +302,14 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
-const PieFields = t.type({
-  y: GenericField,
-  // FIXME: "segment" should be "x" for consistency
-  segment: PieSegmentField,
-});
+const PieFields = t.intersection([
+  t.type({
+    y: GenericField,
+    // FIXME: "segment" should be "x" for consistency
+    segment: PieSegmentField,
+  }),
+  t.partial({ animation: AnimationField }),
+]);
 const PieConfig = t.type(
   {
     version: t.string,
@@ -625,6 +634,16 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isAnimationInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ColumnConfig | ScatterPlotConfig | PieConfig => {
+  return (
+    chartConfig.chartType === "column" ||
+    chartConfig.chartType === "scatterplot" ||
+    chartConfig.chartType === "pie"
+  );
+};
+
 export const isColorFieldInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is MapConfig => {
@@ -695,6 +714,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
   };
 };
 
@@ -739,6 +759,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<ScatterPlotConfig, AnimationField | undefined>;
   };
 };
 
@@ -753,6 +774,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       | ScatterPlotSegmentField
       | TableFields
     >;
+    animation: FieldAdjuster<PieConfig, AnimationField | undefined>;
   };
 };
 

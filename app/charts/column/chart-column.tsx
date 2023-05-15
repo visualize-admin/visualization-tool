@@ -132,10 +132,13 @@ export const ChartColumns = memo(
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-            {interactiveFiltersConfig?.timeSlider.componentIri && (
+            {fields.animation && (
               <TimeSlider
-                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </StackedColumnsChart>
@@ -167,10 +170,13 @@ export const ChartColumns = memo(
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
             />
-            {interactiveFiltersConfig?.timeSlider.componentIri && (
+            {fields.animation && (
               <TimeSlider
-                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </GroupedColumnChart>
@@ -194,10 +200,13 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>
-            {interactiveFiltersConfig?.timeSlider.componentIri && (
+            {fields.animation && (
               <TimeSlider
-                componentIri={interactiveFiltersConfig.timeSlider.componentIri}
+                componentIri={fields.animation.componentIri}
                 dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
               />
             )}
           </ColumnChart>

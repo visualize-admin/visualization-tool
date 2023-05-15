@@ -7,6 +7,7 @@ import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { AnimationType } from "@/configurator/config-types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { TemporalDimension } from "@/graphql/resolver-types";
@@ -33,9 +34,16 @@ const useTimeline = () => {
 export const TimeSlider = ({
   componentIri,
   dimensions,
+  showPlayButton,
+  animationDuration,
+  animationType,
 }: {
   componentIri?: string;
   dimensions: DimensionMetadataFragment[];
+  showPlayButton: boolean;
+  /** Animation duration in seconds. */
+  animationDuration: number;
+  animationType: AnimationType;
 }) => {
   const component = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri) as
@@ -77,17 +85,22 @@ export const TimeSlider = ({
   ]);
 
   const timeline = React.useMemo(() => {
-    return new Timeline(timelineData, formatDate);
-  }, [timelineData, formatDate]);
+    return new Timeline({
+      type: animationType,
+      msDuration: animationDuration * 1000,
+      msValues: timelineData,
+      formatMsValue: formatDate,
+    });
+  }, [animationType, animationDuration, timelineData, formatDate]);
 
   return (
     <TimelineContext.Provider value={timeline}>
-      <Root />
+      <Root showPlayButton={showPlayButton} />
     </TimelineContext.Provider>
   );
 };
 
-const Root = () => {
+const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
   const timeline = useTimeline();
   const chartState = useChartState();
 
@@ -101,8 +114,14 @@ const Root = () => {
         mr: `${chartState.bounds.margins.right}px`,
       }}
     >
-      <PlayButton />
-      <Box sx={{ position: "relative", width: "100%" }}>
+      {showPlayButton && <PlayButton />}
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          ml: `${showPlayButton ? 0 : 32}px`,
+        }}
+      >
         <Slider />
         <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
           {timeline.formattedExtent[0]}

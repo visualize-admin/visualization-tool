@@ -39,17 +39,18 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingDataSet,
   DataSource,
+  decodeConfiguratorState,
+  Filters,
   FilterValue,
   FilterValueMultiValues,
-  Filters,
   GenericField,
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
+  isAnimationInConfig,
   MapConfig,
   MapFields,
   NumericalColorField,
-  decodeConfiguratorState,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
@@ -199,9 +200,6 @@ export type ConfiguratorStateAction =
   | {
       type: "INTERACTIVE_FILTER_CHANGED";
       value: InteractiveFiltersConfig;
-    }
-  | {
-      type: "INTERACTIVE_FILTER_TIME_SLIDER_RESET";
     }
   | {
       type: "CHART_CONFIG_REPLACED";
@@ -812,15 +810,21 @@ export const handleChartFieldChanged = (
   const component = [...dimensions, ...measures].find(
     (dim) => dim.iri === componentIri
   );
-  const selectedValues = actionSelectedValues
-    ? actionSelectedValues
-    : component?.values || [];
+  const selectedValues = actionSelectedValues ?? component?.values ?? [];
+
   // The field was not defined before
   if (!f) {
     // FIXME?
-    // optionalFields = ['segment', 'areaLayer', 'symbolLayer'],
+    // optionalFields = ['animation', 'segment', 'areaLayer', 'symbolLayer'],
     // should be reflected in chart encodings
-    if (field === "segment") {
+    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
+      draft.chartConfig.fields.animation = {
+        componentIri,
+        showPlayButton: true,
+        duration: 30,
+        type: "continuous",
+      };
+    } else if (field === "segment") {
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
       if (isSegmentInConfig(draft.chartConfig)) {
@@ -868,7 +872,15 @@ export const handleChartFieldChanged = (
     }
   } else {
     // The field is being updated
-    if (
+    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
+      draft.chartConfig.fields.animation = {
+        componentIri,
+        showPlayButton:
+          draft.chartConfig.fields.animation?.showPlayButton ?? true,
+        duration: draft.chartConfig.fields.animation?.duration ?? 30,
+        type: draft.chartConfig.fields.animation?.type ?? "continuous",
+      };
+    } else if (
       field === "segment" &&
       "segment" in draft.chartConfig.fields &&
       draft.chartConfig.fields.segment &&
@@ -1124,18 +1136,6 @@ export const handleInteractiveFilterChanged = (
   return draft;
 };
 
-export const handleInteractiveFilterTimeSliderReset = (
-  draft: ConfiguratorState
-) => {
-  if (draft.state === "CONFIGURING_CHART") {
-    if (draft.chartConfig.interactiveFiltersConfig) {
-      draft.chartConfig.interactiveFiltersConfig.timeSlider.componentIri = "";
-    }
-  }
-
-  return draft;
-};
-
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
@@ -1273,9 +1273,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "INTERACTIVE_FILTER_CHANGED":
       return handleInteractiveFilterChanged(draft, action);
-
-    case "INTERACTIVE_FILTER_TIME_SLIDER_RESET":
-      return handleInteractiveFilterTimeSliderReset(draft);
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {

@@ -17,6 +17,7 @@ import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   ColorFieldType,
@@ -25,6 +26,7 @@ import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
   imputationTypes,
+  isAnimationInConfig,
   isAreaConfig,
   isConfiguring,
   isTableConfig,
@@ -172,17 +174,17 @@ const ActiveFieldSwitch = ({
   metaData: DataCubeMetadataWithHierarchies;
   imputationNeeded: boolean;
 }) => {
-  const { activeField } = state;
+  const activeField = state.activeField as EncodingFieldType | undefined;
+
+  if (!activeField) {
+    return null;
+  }
 
   const encodings =
     chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;
-
-  if (!activeField) {
-    return null;
-  }
 
   const activeFieldComponentIri = getFieldComponentIri(
     state.chartConfig.fields,
@@ -220,7 +222,7 @@ const EncodingOptionsPanel = ({
 }: {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
-  field: string;
+  field: EncodingFieldType;
   chartType: ChartType;
   component: DimensionMetadataFragment | undefined;
   dimensions: DimensionMetadataFragment[];
@@ -229,14 +231,13 @@ const EncodingOptionsPanel = ({
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const getFieldLabelHint = {
+  const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    // Empty strings for optional encodings.
-    baseLayer: "",
-    areaLayer: "",
-    symbolLayer: "",
-    segment: "",
+    animation: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
   };
 
   useEffect(() => {
@@ -318,7 +319,7 @@ const EncodingOptionsPanel = ({
           <ControlSectionContent gap="none">
             <ChartFieldField
               field={encoding.field}
-              label={getFieldLabelHint[encoding.field]}
+              label={fieldLabelHint[encoding.field]}
               optional={encoding.optional}
               options={options}
             />
@@ -390,6 +391,7 @@ const EncodingOptionsPanel = ({
             }
           />
         )}
+
       {optionsByField["showStandardError"] && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
@@ -407,9 +409,11 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       )}
+
       {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
+
       <ChartFieldMultiFilter
         state={state}
         component={component}
@@ -418,6 +422,13 @@ const EncodingOptionsPanel = ({
         dimensions={dimensions}
         measures={measures}
       />
+
+      {fieldDimension &&
+        field === "animation" &&
+        isAnimationInConfig(state.chartConfig) &&
+        state.chartConfig.fields.animation && (
+          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        )}
     </div>
   );
 };
@@ -443,6 +454,81 @@ const ChartFieldAbbreviations = ({
       path={path ? `${path}.useAbbreviations` : "useAbbreviations"}
       disabled={disabled}
     />
+  );
+};
+
+const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
+  return (
+    <ControlSection>
+      <SectionTitle iconName="settings">
+        <Trans id="controls.section.animation.settings">
+          Animation Settings
+        </Trans>
+      </SectionTitle>
+      <ControlSectionContent component="fieldset" gap="none">
+        <ChartOptionSwitchField
+          label={t({
+            id: "controls.section.animation.show-play-button",
+            message: "Show Play button",
+          })}
+          field="animation"
+          path="showPlayButton"
+        />
+        {field.showPlayButton && (
+          <>
+            <Box component="fieldset" mt={4}>
+              <FieldSetLegend
+                legendTitle={
+                  <Trans id="controls.section.animation.duration">
+                    Animation Duration
+                  </Trans>
+                }
+              />
+              <Flex sx={{ justifyContent: "flex-start" }}>
+                {[10, 30, 60].map((d) => (
+                  <ChartOptionRadioField
+                    key={d}
+                    label={`${d}s`}
+                    field="animation"
+                    path="duration"
+                    value={d}
+                  />
+                ))}
+              </Flex>
+            </Box>
+            <Box component="fieldset" mt={4}>
+              <FieldSetLegend
+                legendTitle={
+                  <Trans id="controls.section.animation.type">
+                    Animation Type
+                  </Trans>
+                }
+              />
+              <Flex sx={{ justifyContent: "flex-start" }}>
+                <ChartOptionRadioField
+                  label={t({
+                    id: "controls.section.animation.type.continuous",
+                    message: "Continuous",
+                  })}
+                  field="animation"
+                  path="type"
+                  value="continuous"
+                />
+                <ChartOptionRadioField
+                  label={t({
+                    id: "controls.section.animation.type.stepped",
+                    message: "Stepped",
+                  })}
+                  field="animation"
+                  path="type"
+                  value="stepped"
+                />
+              </Flex>
+            </Box>
+          </>
+        )}
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 
@@ -527,7 +613,6 @@ const ChartFieldOptions = ({
         chartType === "column" && (
           <Box component="fieldset" mt={4}>
             <FieldSetLegend
-              sx={{ mb: 1 }}
               legendTitle={
                 <Trans id="controls.select.column.layout">Column layout</Trans>
               }
@@ -862,7 +947,6 @@ const ChartFieldColorComponent = ({
               nbClass={nbClass}
             />
             <FieldSetLegend
-              sx={{ mb: 1 }}
               legendTitle={t({
                 id: "controls.scale.type",
                 message: "Scale type",

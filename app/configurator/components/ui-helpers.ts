@@ -188,8 +188,8 @@ export const getIconName = (name: string): IconName => {
       return "tableColumnTimeHidden";
     case "time":
       return "time";
-    case "play":
-      return "play";
+    case "animation":
+      return "animation";
 
     default:
       return "table";

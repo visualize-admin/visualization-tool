@@ -12,13 +12,10 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
-import {
-  CategoricalColorField,
-  InteractiveFiltersTimeSlider,
-  NumericalColorField,
-} from "@/configurator";
+import { CategoricalColorField, NumericalColorField } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   Filters,
@@ -47,17 +44,13 @@ export const prepareQueryFilters = (
   dataFilters: InteractiveFiltersState["dataFilters"]
 ): Filters => {
   let queryFilters = filters;
-  const { timeSlider } = interactiveFiltersConfig || {};
 
   if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
     queryFilters = { ...queryFilters, ...dataFilters };
   }
 
-  queryFilters = omitBy(queryFilters, (v, k) => {
-    return (
-      (v.type === "single" && v.value === FIELD_VALUE_NONE) ||
-      k === timeSlider?.componentIri
-    );
+  queryFilters = omitBy(queryFilters, (v) => {
+    return v.type === "single" && v.value === FIELD_VALUE_NONE;
   });
 
   return queryFilters;
@@ -131,9 +124,6 @@ export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
       const v = IFConfig[k];
 
       switch (k) {
-        case "timeSlider":
-          IFIris.push((v as InteractiveFiltersTimeSlider).componentIri);
-          break;
         case "legend":
           IFIris.push((v as InteractiveFiltersLegend).componentIri);
           break;
@@ -187,11 +177,13 @@ type ValuePredicate = (v: any) => boolean;
 export const useDataAfterInteractiveFilters = ({
   sortedData,
   interactiveFiltersConfig,
+  animationField,
   getX,
   getSegment,
 }: {
   sortedData: Observation[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
+  animationField: AnimationField | undefined;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
 }): {
@@ -211,9 +203,7 @@ export const useDataAfterInteractiveFilters = ({
   const toTime = IFState.timeRange.to?.getTime();
 
   // time slider
-  const getTime = useTemporalVariable(
-    interactiveFiltersConfig?.timeSlider.componentIri || ""
-  );
+  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
   const timeSliderValue = IFState.timeSlider.value;
 
   // legend
@@ -228,7 +218,7 @@ export const useDataAfterInteractiveFilters = ({
           }
         : null;
     const timeSliderFilter =
-      interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+      animationField?.componentIri && timeSliderValue
         ? (d: Observation) => {
             return getTime(d).getTime() === timeSliderValue.getTime();
           }
@@ -254,8 +244,8 @@ export const useDataAfterInteractiveFilters = ({
     fromTime,
     toTime,
     interactiveFiltersConfig?.timeRange.active,
-    interactiveFiltersConfig?.timeSlider.componentIri,
     interactiveFiltersConfig?.legend.active,
+    animationField,
     timeSliderValue,
     getSegment,
     getTime,
@@ -267,7 +257,7 @@ export const useDataAfterInteractiveFilters = ({
   }, [allFilters, sortedData]);
 
   const timeSliderFilterPresent = !!(
-    interactiveFiltersConfig?.timeSlider.componentIri && timeSliderValue
+    animationField?.componentIri && timeSliderValue
   );
 
   const scalesData = timeSliderFilterPresent ? sortedData : preparedData;

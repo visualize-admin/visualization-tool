@@ -1,4 +1,5 @@
 import { default as Add } from "@/icons/components/IcAdd";
+import { default as Animation } from "@/icons/components/IcAnimation";
 import { default as AnnotationArea } from "@/icons/components/IcAnnotationArea";
 import { default as App } from "@/icons/components/IcApp";
 import { default as ArrowBottom } from "@/icons/components/IcArrowBottom";
@@ -136,6 +137,7 @@ import { default as ZoomIn } from "@/icons/components/IcZoomIn";
 
 export const Icons = {
   add: Add,
+  animation: Animation,
   annotationArea: AnnotationArea,
   app: App,
   arrowBottom: ArrowBottom,

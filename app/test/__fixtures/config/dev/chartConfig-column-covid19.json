@@ -25,9 +25,6 @@
         "to": ""
       }
     },
-    "timeSlider": {
-      "componentIri": ""
-    },
     "dataFilters": {
       "active": false,
       "componentIris": []

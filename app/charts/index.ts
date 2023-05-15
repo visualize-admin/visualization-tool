@@ -100,7 +100,6 @@ export const findPreferredDimension = (
 };
 
 const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
-  // FIXME: we shouldn't keep empty props
   legend: {
     active: false,
     componentIri: "",
@@ -113,9 +112,6 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
       from: "",
       to: "",
     },
-  },
-  timeSlider: {
-    componentIri: "",
   },
   dataFilters: {
     active: false,
@@ -474,6 +470,7 @@ const getAdjustedChartConfig = ({
           );
         case "filters":
         case "fields.segment":
+        case "fields.animation":
         case "interactiveFiltersConfig.legend":
           return true;
         default:
@@ -655,6 +652,15 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         return produce(newChartConfig, (draft) => {
           if (newSegment) {
             draft.fields.segment = newSegment;
+          }
+        });
+      },
+      animation: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Temporal dimension could be used as X axis, in this case we need to
+          // remove the animation.
+          if (newChartConfig.fields.x.componentIri !== oldValue?.componentIri) {
+            draft.fields.animation = oldValue;
           }
         });
       },
@@ -865,6 +871,18 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         });
       },
+      animation: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Temporal dimension could be used as X or Y axis, in this case we need to
+          // remove the animation.
+          if (
+            newChartConfig.fields.x.componentIri !== oldValue?.componentIri &&
+            newChartConfig.fields.y.componentIri !== oldValue?.componentIri
+          ) {
+            draft.fields.animation = oldValue;
+          }
+        });
+      },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
@@ -922,6 +940,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           if (newSegment) {
             draft.fields.segment = newSegment;
           }
+        });
+      },
+      animation: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          draft.fields.animation = oldValue;
         });
       },
     },

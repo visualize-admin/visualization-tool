@@ -35,20 +35,19 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
+import useDisclosure from "@/configurator/components/use-disclosure";
 import {
+  isMultiFilterFieldChecked,
   Option,
   useActiveFieldField,
   useChartFieldField,
+  useChartOptionBooleanField,
   useChartOptionRadioField,
+  useChartOptionSelectField,
   useChartOptionSliderField,
   useMetaField,
-  useSingleFilterField,
-} from "@/configurator/config-form";
-import {
-  isMultiFilterFieldChecked,
-  useChartOptionBooleanField,
-  useChartOptionSelectField,
   useMultiFilterContext,
+  useSingleFilterField,
   useSingleFilterSelect,
 } from "@/configurator/config-form";
 import {
@@ -60,33 +59,15 @@ import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
-import SvgIcEdit from "@/icons/components/IcEdit";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-import useDisclosure from "./use-disclosure";
-
-const useFieldEditIconStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    color: theme.palette.primary.main,
-  },
-}));
-
-const FieldEditIcon = () => {
-  const classes = useFieldEditIconStyles();
-  return <SvgIcEdit width={18} height={18} className={classes.root} />;
-};
-
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
-    alignItems: "center",
     gap: "0.25rem",
-  },
-  optional: {
-    paddingBottom: "4px",
   },
   loadingIndicator: {
     color: theme.palette.grey[700],
@@ -116,7 +97,6 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
-      rightIcon={<FieldEditIcon />}
     />
   );
 };
@@ -528,7 +508,6 @@ export const AnnotatorTabField = ({
       value={`${fieldProps.value}`}
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
-      rightIcon={<FieldEditIcon />}
     />
   );
 };
@@ -706,13 +685,11 @@ const FieldLabel = ({
     id: "controls.select.optional",
     message: `optional`,
   });
+
   return (
     <div className={classes.root}>
       {label}
-
-      {isOptional ? (
-        <span className={classes.optional}>({optionalLabel})</span>
-      ) : null}
+      {isOptional ? <span>({optionalLabel})</span> : null}
       {isFetching ? (
         <CircularProgress size={12} className={classes.loadingIndicator} />
       ) : null}
@@ -721,13 +698,13 @@ const FieldLabel = ({
 };
 
 export const ChartFieldField = ({
-  label,
+  label = "",
   field,
   options,
   optional,
   disabled,
 }: {
-  label: string;
+  label?: string;
   field: string;
   options: Option[];
   optional?: boolean;
@@ -776,7 +753,7 @@ export const ChartOptionRadioField = ({
   label: string;
   field: string | null;
   path: string;
-  value: string;
+  value: string | number;
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {

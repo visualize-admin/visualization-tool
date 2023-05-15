@@ -1,5 +1,8 @@
+import { select } from "d3";
+import React from "react";
+
 import { ColumnsState } from "@/charts/column/columns-state";
-import { Column } from "@/charts/column/rendering-utils";
+import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { VerticalWhisker } from "@/charts/whiskers";
 import { useTheme } from "@/themes";
@@ -42,30 +45,50 @@ export const ErrorWhiskers = () => {
 };
 
 export const Columns = () => {
+  const ref = React.useRef<SVGGElement>(null);
   const { preparedData, bounds, getX, xScale, getY, yScale } =
     useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
 
+  const bandwidth = xScale.bandwidth();
+  const y0 = yScale(0);
+  const renderData: RenderDatum[] = React.useMemo(() => {
+    const getColor = (d: number) => {
+      return d <= 0 ? theme.palette.secondary.main : theme.palette.primary.main;
+    };
+
+    return preparedData.map((d) => {
+      const xScaled = xScale(getX(d)) as number;
+      const y = getY(d) ?? NaN;
+      const yScaled = yScale(y);
+      const height = Math.abs(yScaled - y0);
+      const color = getColor(y);
+
+      return { x: xScaled, y: yScaled, width: bandwidth, height, color };
+    });
+  }, [
+    preparedData,
+    bandwidth,
+    getX,
+    getY,
+    xScale,
+    yScale,
+    y0,
+    theme.palette.primary.main,
+    theme.palette.secondary.main,
+  ]);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      select(ref.current)
+        .selectAll<SVGRectElement, RenderDatum>("rect")
+        .data(renderData, (d) => d.x)
+        .call(renderColumn, y0);
+    }
+  }, [renderData, yScale, y0]);
+
   return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
-      {preparedData.map((d, i) => {
-        const y = getY(d) ?? NaN;
-        const x = xScale(getX(d)) as number;
-        return (
-          <Column
-            key={i}
-            data-index={i}
-            width={xScale.bandwidth()}
-            x={x}
-            y={yScale(Math.max(y, 0))}
-            height={Math.abs(yScale(y) - yScale(0))}
-            color={
-              y <= 0 ? theme.palette.secondary.main : theme.palette.primary.main
-            }
-          />
-        );
-      })}
-    </g>
+    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
   );
 };

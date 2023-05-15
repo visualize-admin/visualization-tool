@@ -162,6 +162,7 @@ const useColumnsState = (
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
     sortedData: plottableSortedData,
     interactiveFiltersConfig,
+    animationField: fields.animation,
     getX: getXAsDate,
   });
 

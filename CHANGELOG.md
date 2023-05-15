@@ -9,7 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+### Features
+
+- Added Animation field for Column, Pie and Scatter charts 🎬
+- Added animations to columns in Column chart (position, size, color)
 
 ## [3.19.16] - 2023-05-12
 
