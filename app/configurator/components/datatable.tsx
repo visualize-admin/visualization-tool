@@ -14,7 +14,10 @@ import {
 import { ascending, descending } from "d3";
 import { useMemo, useRef, useState } from "react";
 
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  getChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator/config-types";
@@ -242,6 +245,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = getChartConfigComponentIris(chartConfig);
   const filters = useQueryFilters({ chartConfig });
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
     variables: {
@@ -257,6 +261,7 @@ export const DataSetTable = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
@@ -265,7 +270,7 @@ export const DataSetTable = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters,
     },
   });

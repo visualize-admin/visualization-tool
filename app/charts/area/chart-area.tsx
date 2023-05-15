@@ -2,9 +2,11 @@ import { memo } from "react";
 
 import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
@@ -24,20 +26,23 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
-
 export const ChartAreasVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: AreaConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -51,6 +56,7 @@ export const ChartAreasVisualization = ({
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
+      componentIris: componentIrisToFilterBy,
       locale,
     },
   });
@@ -60,7 +66,7 @@ export const ChartAreasVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });

@@ -3,10 +3,13 @@ import keyBy from "lodash/keyBy";
 import { useMemo } from "react";
 import { mesh as topojsonMesh } from "topojson-client";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { prepareTopojson } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
 import {
   BaseLayer,
@@ -34,24 +37,25 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
-
-import { prepareTopojson } from "./helpers";
-
 export const ChartMapVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -66,6 +70,7 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -74,7 +79,7 @@ export const ChartMapVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null, // FIXME: Try to load less dimensions
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });

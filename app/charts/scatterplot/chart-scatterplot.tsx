@@ -1,5 +1,6 @@
 import { memo } from "react";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
@@ -10,6 +11,7 @@ import {
   AxisWidthLinear,
   AxisWidthLinearDomain,
 } from "@/charts/shared/axis-width-linear";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -29,20 +31,23 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
-
 export const ChartScatterplotVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ScatterPlotConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -57,6 +62,7 @@ export const ChartScatterplotVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -65,7 +71,7 @@ export const ChartScatterplotVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });

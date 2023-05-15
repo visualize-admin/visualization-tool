@@ -537,13 +537,13 @@ export type MapFields = t.TypeOf<typeof MapFields>;
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
 export type ChartFields =
+  | AreaFields
   | ColumnFields
   | LineFields
-  | AreaFields
-  | ScatterPlotFields
+  | MapFields
   | PieFields
-  | TableFields
-  | MapFields;
+  | ScatterPlotFields
+  | TableFields;
 
 export type ChartSegmentField =
   | AreaSegmentField
@@ -556,12 +556,11 @@ const ChartConfig = t.union([
   AreaConfig,
   ColumnConfig,
   LineConfig,
-  ScatterPlotConfig,
-  PieConfig,
-  TableConfig,
   MapConfig,
+  PieConfig,
+  ScatterPlotConfig,
+  TableConfig,
 ]);
-// t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export const decodeChartConfig = (

@@ -4,10 +4,11 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-import { SENTRY_DSN } from "./domain/env";
+import { SENTRY_DSN, BUILD_VERSION } from "./domain/env";
 
 Sentry.init({
   dsn: SENTRY_DSN,
+  release: "visualization-tool@" + BUILD_VERSION,
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1.0,
 

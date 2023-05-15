@@ -55,7 +55,7 @@ export type DataCubeObservationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   limit?: Maybe<Scalars['Int']>;
-  dimensions?: Maybe<Array<Scalars['String']>>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -63,6 +63,7 @@ export type DataCubeObservationsArgs = {
 export type DataCubeDimensionsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -76,6 +77,7 @@ export type DataCubeDimensionByIriArgs = {
 export type DataCubeMeasuresArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 export type DataCubeOrganization = {
@@ -394,6 +396,7 @@ export type QueryDataCubeByIriArgs = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -762,6 +765,7 @@ export type ComponentsQueryVariables = Exact<{
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
@@ -801,6 +805,7 @@ export type ComponentsWithHierarchiesQueryVariables = Exact<{
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
@@ -912,7 +917,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-  dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
+  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
   limit?: Maybe<Scalars['Int']>;
@@ -1200,7 +1205,7 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
 export const ComponentsDocument = gql`
-    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!]) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1208,10 +1213,18 @@ export const ComponentsDocument = gql`
     locale: $locale
     latest: $latest
   ) {
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadata
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadata
     }
   }
@@ -1222,7 +1235,7 @@ export function useComponentsQuery(options: Omit<Urql.UseQueryArgs<ComponentsQue
   return Urql.useQuery<ComponentsQuery>({ query: ComponentsDocument, ...options });
 };
 export const ComponentsWithHierarchiesDocument = gql`
-    query ComponentsWithHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+    query ComponentsWithHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!]) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1230,10 +1243,18 @@ export const ComponentsWithHierarchiesDocument = gql`
     locale: $locale
     latest: $latest
   ) {
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadataWithHierarchies
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadataWithHierarchies
     }
   }
@@ -1349,7 +1370,7 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
+    query DataCubeObservations($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $componentIris: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1360,7 +1381,7 @@ export const DataCubeObservationsDocument = gql`
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      dimensions: $dimensions
+      componentIris: $componentIris
       filters: $filters
       limit: $limit
     ) {

@@ -50,21 +50,19 @@ const GenericChart = ({
   dataSet,
   dataSource,
   chartConfig,
+  published,
 }: {
   dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
+  published: boolean;
 }) => {
-  // Combine filters from config + interactive filters
-  const queryFilters = useQueryFilters({
-    chartConfig,
-  });
-
+  const queryFilters = useQueryFilters({ chartConfig });
   const props = {
     dataSetIri: dataSet,
     dataSource,
-    chartConfig,
     queryFilters,
+    published,
   };
 
   switch (chartConfig.chartType) {

@@ -5,12 +5,20 @@ import {
   getWideData,
   prepareQueryFilters,
   getMaybeTemporalDimensionValues,
+  getChartConfigComponentIris,
 } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
-import { ChartType, Filters, InteractiveFiltersConfig } from "@/configurator";
+import {
+  ChartType,
+  Filters,
+  InteractiveFiltersConfig,
+  LineConfig,
+  MapConfig,
+} from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import map1Fixture from "@/test/__fixtures/config/int/map-waldflasche.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
 const makeCubeNsGetters = (cubeIri: string) => ({
@@ -177,5 +185,35 @@ describe("getMaybeTemporalDimensionValues", () => {
     const result = getMaybeTemporalDimensionValues(dimension, data);
 
     expect(result).toEqual(dimension.values);
+  });
+});
+
+describe("getChartConfigComponentIris", () => {
+  const lineConfig = line1Fixture.data.chartConfig as unknown as LineConfig;
+  const mapConfig = map1Fixture.data.chartConfig as unknown as MapConfig;
+
+  it("should return correct componentIris for line chart", () => {
+    const componentsIris = getChartConfigComponentIris(lineConfig);
+    expect(componentsIris).toEqual([
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+      "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+    ]);
+  });
+
+  it("should return correct componentIris for map chart", () => {
+    const componentsIris = getChartConfigComponentIris(mapConfig);
+    console.log(componentsIris);
+    expect(componentsIris).toEqual([
+      "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
+      "https://environment.ld.admin.ch/foen/nfi/forestArea",
+      "https://environment.ld.admin.ch/foen/nfi/inventory",
+      "https://environment.ld.admin.ch/foen/nfi/struk",
+      "https://environment.ld.admin.ch/foen/nfi/grid",
+      "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
+    ]);
   });
 });

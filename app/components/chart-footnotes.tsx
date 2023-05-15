@@ -3,6 +3,10 @@ import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
+import {
+  getChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig, DataSource } from "@/configurator";
@@ -15,8 +19,6 @@ import { Icon, getChartIcon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeOpenDataLink } from "@/utils/opendata";
-
-import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
   (theme) => ({
@@ -92,13 +94,14 @@ export const ChartFootnotes = ({
 
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
+  const componentIrisToFilterBy = getChartConfigComponentIris(chartConfig);
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters,
     },
   });
@@ -189,6 +192,7 @@ export const ChartFootnotes = ({
               dataSetIri={dataSetIri}
               dataSource={dataSource}
               title={dataCubeByIri.title}
+              componentIris={componentIrisToFilterBy}
               filters={filters}
             />
           ) : null}

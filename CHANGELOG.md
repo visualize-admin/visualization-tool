@@ -14,6 +14,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Added Animation field for Column, Pie and Scatter charts 🎬
 - Added animations to columns in Column chart (position, size, color)
 
+## [3.19.16] - 2023-05-12
+
+- Features
+  - Updated the design of minimal embed mode
+- Fixes
+  - Temporal dimensions usage with X axes (Column chart)
+
 ## 3.19
 
 A particular focus was given on data fetching performance. Interactions

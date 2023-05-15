@@ -3,6 +3,7 @@ import { memo } from "react";
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -27,13 +28,18 @@ export const ChartPieVisualization = ({
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: PieConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -48,6 +54,7 @@ export const ChartPieVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -56,7 +63,7 @@ export const ChartPieVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });
