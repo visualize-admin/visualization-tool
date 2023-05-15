@@ -150,7 +150,11 @@ export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
     });
   }
 
-  return uniq([...fieldIris, ...additionalFieldIris, ...filterIris, ...IFIris]);
+  return uniq(
+    [...fieldIris, ...additionalFieldIris, ...filterIris, ...IFIris].filter(
+      Boolean
+    )
+  );
 };
 
 export const usePlottableData = ({
