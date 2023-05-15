@@ -12,6 +12,11 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
+import {
+  CategoricalColorField,
+  InteractiveFiltersTimeSlider,
+  NumericalColorField,
+} from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
@@ -19,8 +24,12 @@ import {
   Filters,
   ImputationType,
   InteractiveFiltersConfig,
+  InteractiveFiltersDataConfig,
+  InteractiveFiltersLegend,
+  InteractiveFiltersTimeRange,
   isAreaConfig,
   QueryFilters,
+  MapConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -76,7 +85,77 @@ export const useQueryFilters = ({
   ]);
 };
 
-type ValuePredicate = (v: any) => boolean;
+type IFKey = keyof NonNullable<InteractiveFiltersConfig>;
+
+export const getChartConfigFilterComponentIris = ({ filters }: ChartConfig) => {
+  return Object.keys(filters);
+};
+
+const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
+  const { areaLayer, symbolLayer } = fields;
+  const additionalFields = [];
+
+  if (areaLayer) {
+    additionalFields.push(areaLayer.color.componentIri);
+  }
+
+  if (symbolLayer) {
+    if (symbolLayer.measureIri !== FIELD_VALUE_NONE) {
+      additionalFields.push(symbolLayer.measureIri);
+    }
+
+    if (["categorical", "numerical"].includes(symbolLayer.color.type)) {
+      additionalFields.push(
+        (symbolLayer.color as CategoricalColorField | NumericalColorField)
+          .componentIri
+      );
+    }
+  }
+
+  return additionalFields;
+};
+
+export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
+  const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
+  const fieldIris = Object.values(fields).map((d) => d.componentIri);
+  const additionalFieldIris =
+    chartConfig.chartType === "map"
+      ? getMapChartConfigAdditionalFields(chartConfig)
+      : [];
+  const filterIris = getChartConfigFilterComponentIris(chartConfig);
+  const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];
+  const IFIris: string[] = [];
+
+  if (IFConfig) {
+    IFKeys.forEach((k) => {
+      const v = IFConfig[k];
+
+      switch (k) {
+        case "timeSlider":
+          IFIris.push((v as InteractiveFiltersTimeSlider).componentIri);
+          break;
+        case "legend":
+          IFIris.push((v as InteractiveFiltersLegend).componentIri);
+          break;
+        case "timeRange":
+          IFIris.push((v as InteractiveFiltersTimeRange).componentIri);
+          break;
+        case "dataFilters":
+          IFIris.push(...(v as InteractiveFiltersDataConfig).componentIris);
+          break;
+        default:
+          const _exhaustiveCheck: never = k;
+          return _exhaustiveCheck;
+      }
+    });
+  }
+
+  return uniq(
+    [...fieldIris, ...additionalFieldIris, ...filterIris, ...IFIris].filter(
+      Boolean
+    )
+  );
+};
 
 export const usePlottableData = ({
   data,
@@ -101,6 +180,8 @@ export const usePlottableData = ({
 
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
+
+type ValuePredicate = (v: any) => boolean;
 
 /** Prepares the data to be used in charts, taking interactive filters into account. */
 export const useDataAfterInteractiveFilters = ({

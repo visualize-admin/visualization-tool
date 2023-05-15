@@ -1,6 +1,7 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
@@ -17,12 +18,17 @@ export const ChartTableVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: TableConfig;
+  published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -37,6 +43,7 @@ export const ChartTableVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -45,7 +52,7 @@ export const ChartTableVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: chartConfig.filters,
     },
   });

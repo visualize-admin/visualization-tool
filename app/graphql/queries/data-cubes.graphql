@@ -190,6 +190,7 @@ query Components(
   $locale: String!
   $latest: Boolean
   $filters: Filters
+  $componentIris: [String!]
 ) {
   dataCubeByIri(
     iri: $iri
@@ -198,10 +199,18 @@ query Components(
     locale: $locale
     latest: $latest
   ) {
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadata
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadata
     }
   }
@@ -214,6 +223,7 @@ query ComponentsWithHierarchies(
   $locale: String!
   $latest: Boolean
   $filters: Filters
+  $componentIris: [String!]
 ) {
   dataCubeByIri(
     iri: $iri
@@ -222,10 +232,18 @@ query ComponentsWithHierarchies(
     locale: $locale
     latest: $latest
   ) {
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadataWithHierarchies
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      componentIris: $componentIris
+    ) {
       ...dimensionMetadataWithHierarchies
     }
   }
@@ -351,7 +369,7 @@ query DataCubeObservations(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
-  $dimensions: [String!]
+  $componentIris: [String!]
   $filters: Filters
   $latest: Boolean
   $limit: Int
@@ -366,7 +384,7 @@ query DataCubeObservations(
     observations(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
-      dimensions: $dimensions
+      componentIris: $componentIris
       filters: $filters
       limit: $limit
     ) {

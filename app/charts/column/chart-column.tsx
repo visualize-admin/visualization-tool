@@ -1,5 +1,6 @@
 import { memo } from "react";
 
+import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import {
   ColumnsGrouped,
   ErrorWhiskers as ErrorWhiskersGrouped,
@@ -16,6 +17,7 @@ import {
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
+import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -34,20 +36,23 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartLoadingWrapper } from "../chart-loading-wrapper";
-
 export const ChartColumnsVisualization = ({
   dataSetIri,
   dataSource,
   chartConfig,
   queryFilters,
+  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ColumnConfig;
   queryFilters: QueryFilters;
+  published: boolean;
 }) => {
   const locale = useLocale();
+  const componentIrisToFilterBy = published
+    ? getChartConfigComponentIris(chartConfig)
+    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: {
       iri: dataSetIri,
@@ -62,6 +67,7 @@ export const ChartColumnsVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
+      componentIris: componentIrisToFilterBy,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
@@ -70,7 +76,7 @@ export const ChartColumnsVisualization = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      dimensions: null,
+      componentIris: componentIrisToFilterBy,
       filters: queryFilters,
     },
   });

@@ -369,7 +369,7 @@ export const MapComponent = () => {
             setMap(null);
           }}
           onLoad={(e) => {
-            setMap(e.target);
+            setMap(e.target as mapboxgl.Map);
             currentBBox.current = e.target.getBounds().toArray() as BBox;
 
             /**
