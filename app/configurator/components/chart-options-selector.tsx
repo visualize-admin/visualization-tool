@@ -485,18 +485,15 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 }
               />
               <Flex sx={{ justifyContent: "flex-start" }}>
-                <ChartOptionRadioField
-                  label="30s"
-                  field="animation"
-                  path="duration"
-                  value={30}
-                />
-                <ChartOptionRadioField
-                  label="60s"
-                  field="animation"
-                  path="duration"
-                  value={60}
-                />
+                {[10, 30, 60].map((d) => (
+                  <ChartOptionRadioField
+                    key={d}
+                    label={`${d}s`}
+                    field="animation"
+                    path="duration"
+                    value={d}
+                  />
+                ))}
               </Flex>
             </Box>
             <Box component="fieldset" mt={4}>
