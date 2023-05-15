@@ -12,11 +12,7 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
-import {
-  CategoricalColorField,
-  InteractiveFiltersTimeSlider,
-  NumericalColorField,
-} from "@/configurator";
+import { CategoricalColorField, NumericalColorField } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   AnimationField,
@@ -128,9 +124,6 @@ export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
       const v = IFConfig[k];
 
       switch (k) {
-        case "timeSlider":
-          IFIris.push((v as InteractiveFiltersTimeSlider).componentIri);
-          break;
         case "legend":
           IFIris.push((v as InteractiveFiltersLegend).componentIri);
           break;
