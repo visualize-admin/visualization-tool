@@ -8,7 +8,7 @@ const getMap = () => {
   return map;
 };
 
-const setMap = (d: mapboxgl.Map) => {
+const setMap = (d: mapboxgl.Map | null) => {
   map = d;
 };
 
