@@ -34,6 +34,7 @@ import {
   isCubePublished,
   parseCube,
   parseCubeDimension,
+  parseRelatedDimensions,
 } from "./parse";
 import {
   loadDimensionValues,
@@ -158,9 +159,19 @@ export const getCubeDimensions = async ({
   try {
     const dimensions = cube.dimensions
       .filter(isObservationDimension)
-      .filter((x) =>
-        componentIris ? componentIris.includes(x.path.value) : true
-      );
+      .filter((d) => {
+        if (componentIris) {
+          return (
+            componentIris.includes(d.path.value) ||
+            parseRelatedDimensions(d).some((r) =>
+              componentIris?.includes(r.iri)
+            )
+          );
+        }
+
+        return true;
+      });
+
     const dimensionUnits = dimensions.flatMap(getDimensionUnits);
 
     const dimensionUnitIndex = index(
@@ -511,9 +522,18 @@ export const getCubeObservations = async ({
     cache,
   });
 
-  const cubeDimensions = allResolvedDimensions.filter((d) =>
-    componentIris ? componentIris.includes(d.data.iri) : true
-  );
+  const cubeDimensions = allResolvedDimensions.filter((d) => {
+    if (componentIris) {
+      return (
+        componentIris.includes(d.data.iri) ||
+        d.data.related.find((r) => componentIris?.includes(r.iri))
+      );
+    }
+
+    return true;
+  });
+
+  componentIris = cubeDimensions.map((d) => d.data.iri);
 
   const serverFilters: typeof filters = {};
   let dbFilters: typeof filters = {};
