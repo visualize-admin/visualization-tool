@@ -9,10 +9,27 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-### Features
+Nothing yet.
 
-- Added Animation field for Column, Pie and Scatter charts 🎬
-- Added animations to columns in Column chart (position, size, color)
+## [3.19.18] - 2023-05-16
+
+- Fixes
+  - Columns now animate correctly when window is resized
+- Misc
+  - Hidden Animation field behind feature flag
+
+## [3.19.17] - 2023-05-16
+
+- Features
+  - Added Animation field for Column, Pie and Scatter charts 🎬
+  - Added animations to columns in Column chart (position, size, color)
+- Fixes
+  - Copying the map visualization is some rare scenarios
+- Performance
+  - We only fetch necessary dimensions now in published mode, which should result in faster loading times
+  - The sorting of dimensions on the server-side has been removed, which should improve observations loading time
+- Misc
+  - Updated Spinner text (which appears when data takes a long time to load)
 
 ## [3.19.16] - 2023-05-12
 
