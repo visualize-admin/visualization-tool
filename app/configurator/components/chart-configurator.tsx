@@ -60,6 +60,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
+import { flag } from "@/flags";
 import {
   HierarchyValue,
   PossibleFiltersDocument,
@@ -777,7 +778,9 @@ const ChartFields = ({
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
 
-        return isMapConfig(chartConfig) && field === "baseLayer" ? (
+        return field === "animation" &&
+          !flag("timeslider") ? null : isMapConfig(chartConfig) &&
+          field === "baseLayer" ? (
           <OnOffControlTabField
             key={field}
             value={field}
