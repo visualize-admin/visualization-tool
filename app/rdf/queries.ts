@@ -5,7 +5,7 @@ import {
   CubeDimension,
   Filter,
   LookupSource,
-  View,
+  View as RDFView,
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
@@ -43,6 +43,23 @@ import { loadResourceLabels } from "./query-labels";
 import { loadResourceLiterals } from "./query-literals";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnits } from "./query-unit-labels";
+
+// FIXME: Remove once sorting is removed (https://github.com/zazuko/rdf-cube-view-query/pull/96)
+const View = RDFView;
+View.prototype.setDefaultColumns = function () {
+  const orderingColumns = this.dimensions.map((dimension) => ({
+    // @ts-ignore
+    iri: dimension.cubeDimensions[0].path.value,
+    term: dimension.ptr.term,
+  }));
+
+  const projectionPtr = this.ptr.out(ns.view.projection);
+  projectionPtr.addList(
+    ns.view.columns,
+    // @ts-ignore
+    orderingColumns.map((dimension) => dimension.term)
+  );
+};
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -598,7 +615,7 @@ const buildFilters = ({
   locale,
 }: {
   cube: Cube;
-  view: View;
+  view: RDFView;
   filters: Filters;
   locale: string;
 }): Filter[] => {
@@ -698,7 +715,7 @@ async function fetchViewObservations({
   disableDistinct,
 }: {
   limit: number | undefined;
-  observationsView: View;
+  observationsView: RDFView;
   disableDistinct: boolean;
 }) {
   /**
@@ -783,7 +800,7 @@ function buildDimensions({
   observationFilters,
   raw,
 }: {
-  cubeView: View;
+  cubeView: RDFView;
   dimensions: Maybe<string[]>;
   cubeDimensions: ResolvedDimension[];
   cube: Cube;

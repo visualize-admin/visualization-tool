@@ -97,6 +97,7 @@ declare module "rdf-cube-view-query" {
     }): Promise<Record<string, Literal | NamedNode>[]>;
     addDimension(dimension: Dimension): View;
     createDimension(options: $FixMe): Dimension;
+    setDefaultColumns(): void;
   }
   export class Source extends Node {
     constructor(
