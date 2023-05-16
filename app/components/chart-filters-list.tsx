@@ -1,8 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import { Fragment } from "react";
 
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { getChartConfigFilterComponentIris } from "@/charts/shared/chart-helpers";
+import {
+  getChartConfigComponentIris,
+  useQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/configurator";
 import { isTemporalDimension } from "@/domain/data";
@@ -28,7 +30,7 @@ export const ChartFiltersList = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigFilterComponentIris(chartConfig),
+      componentIris: getChartConfigComponentIris(chartConfig),
     },
   });
 
