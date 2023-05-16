@@ -922,7 +922,7 @@ msgstr "Caricamento dei dati..."
 
 #: app/components/hint.tsx
 msgid "hint.loading.data.large.datasets"
-msgstr "Per i dataset di grandi dimensioni possono essere necessari più di 30 secondi."
+msgstr "Con i set di dati di grandi dimensioni, l'operazione può richiedere più tempo; le prestazioni sono ancora in fase di ottimizzazione."
 
 #: app/configurator/components/chart-type-selector.tsx
 msgid "hint.no.visualization.with.dataset"
