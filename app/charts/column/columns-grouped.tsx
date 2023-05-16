@@ -71,18 +71,22 @@ export const ColumnsGrouped = () => {
   const y0 = yScale(0);
   const renderData: GroupedRenderDatum[] = React.useMemo(() => {
     return grouped.map((segment) => {
+      const key = segment[0];
+
       return {
-        key: segment[0],
-        x: xScale(segment[0]) as number,
+        key,
+        x: xScale(key) as number,
         data: segment[1].map((d) => {
+          const x = getSegment(d);
           const y = getY(d) ?? NaN;
 
           return {
-            x: xScaleIn(getSegment(d)) as number,
+            key: `${key}-${x}`,
+            x: xScaleIn(x) as number,
             y: yScale(Math.max(y, 0)),
             width: bandwidth,
             height: Math.abs(yScale(y) - y0),
-            color: colors(getSegment(d)),
+            color: colors(x),
           };
         }),
       };
@@ -109,7 +113,7 @@ export const ColumnsGrouped = () => {
         .selectAll<SVGRectElement, RenderDatum>("rect")
         .data(
           (d) => d.data,
-          (d) => d.x
+          (d) => d.key
         )
         .call(renderColumn, y0);
     }

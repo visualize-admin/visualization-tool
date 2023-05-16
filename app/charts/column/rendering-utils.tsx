@@ -1,6 +1,7 @@
 import { Selection } from "d3";
 
 export type RenderDatum = {
+  key: string;
   x: number;
   y: number;
   width: number;

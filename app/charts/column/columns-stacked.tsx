@@ -26,8 +26,11 @@ export const ColumnsStacked = () => {
       return {
         key,
         data: d.map((segment: $FixMe) => {
+          const x = getX(segment.data);
+
           return {
-            x: xScale(getX(segment.data)) as number,
+            key: `${key}-${x}`,
+            x: xScale(x) as number,
             y: yScale(segment[1]),
             width: bandwidth,
             height: y0 - yScale(segment[1] - segment[0]),
@@ -48,7 +51,7 @@ export const ColumnsStacked = () => {
         .selectAll<SVGRectElement, RenderDatum>("rect")
         .data(
           (d) => d.data,
-          (d) => `${d.x}-${d.y}`
+          (d) => d.key
         )
         .call(renderColumn, y0);
     }
