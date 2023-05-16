@@ -59,13 +59,21 @@ export const Columns = () => {
     };
 
     return preparedData.map((d) => {
-      const xScaled = xScale(getX(d)) as number;
+      const x = getX(d);
+      const xScaled = xScale(x) as number;
       const y = getY(d) ?? NaN;
       const yScaled = yScale(y);
       const height = Math.abs(yScaled - y0);
       const color = getColor(y);
 
-      return { x: xScaled, y: yScaled, width: bandwidth, height, color };
+      return {
+        key: x,
+        x: xScaled,
+        y: yScaled,
+        width: bandwidth,
+        height,
+        color,
+      };
     });
   }, [
     preparedData,
@@ -83,7 +91,7 @@ export const Columns = () => {
     if (ref.current) {
       select(ref.current)
         .selectAll<SVGRectElement, RenderDatum>("rect")
-        .data(renderData, (d) => d.x)
+        .data(renderData, (d) => d.key)
         .call(renderColumn, y0);
     }
   }, [renderData, yScale, y0]);
