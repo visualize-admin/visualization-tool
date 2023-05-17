@@ -1,5 +1,6 @@
-import { Source } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
+
+import { Source } from "@/rdf-cube-view-query";
 
 export const pragmas = `#pragma describe.strategy cbd
 #pragma join.hash off

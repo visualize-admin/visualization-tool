@@ -1,5 +1,6 @@
-import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
+
+import { Cube, CubeDimension } from "@/rdf-cube-view-query";
 
 import { Observation } from "../domain/data";
 

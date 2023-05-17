@@ -2,13 +2,13 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
-import { Cube, CubeDimension } from "rdf-cube-view-query";
 import LiteralExt from "rdf-ext/lib/Literal";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { parseObservationValue } from "@/domain/data";
+import { Cube, CubeDimension } from "@/rdf-cube-view-query";
 import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";

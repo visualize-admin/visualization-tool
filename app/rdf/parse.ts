@@ -10,10 +10,10 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
+import { Cube, CubeDimension } from "@/rdf-cube-view-query";
 
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -74,7 +74,7 @@ export const parseCube = ({
       themes: cube
         .out(ns.dcat.theme)
         ?.values.filter(truthy)
-        .map((t) => ({ iri: t })),
+        .map((t: string) => ({ iri: t })),
       creator: creatorIri
         ? {
             iri: creatorIri,

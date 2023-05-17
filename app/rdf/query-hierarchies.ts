@@ -5,7 +5,6 @@ import {
 import { AnyPointer } from "clownface";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
-import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -15,6 +14,7 @@ import { parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
+import { Cube } from "@/rdf-cube-view-query";
 
 import * as ns from "./namespace";
 import { getCubeDimensionValuesWithMetadata } from "./queries";

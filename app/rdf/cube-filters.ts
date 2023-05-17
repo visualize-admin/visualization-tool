@@ -1,9 +1,9 @@
-import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { NamedNode } from "rdf-js";
 
 import { truthy } from "@/domain/types";
 import { DataCubeSearchFilter } from "@/graphql/resolver-types";
+import { Cube } from "@/rdf-cube-view-query";
 import * as ns from "@/rdf/namespace";
 
 import isAttrEqual from "../utils/is-attr-equal";

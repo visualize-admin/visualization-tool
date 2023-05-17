@@ -1,18 +1,18 @@
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
-import {
-  Cube,
-  CubeDimension,
-  Filter,
-  LookupSource,
-  View as RDFView,
-} from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
+import {
+  Cube,
+  CubeDimension,
+  Filter,
+  LookupSource,
+  View as RDFView,
+} from "@/rdf-cube-view-query";
 import { pragmas } from "@/rdf/create-source";
 
 import { Filters } from "../configurator";
