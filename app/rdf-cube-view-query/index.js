@@ -1,4 +1,5 @@
 const Cube = require("./lib/Cube");
+const CubeDimension = require("./lib/CubeDimension");
 const CubeSource = require("./lib/CubeSource");
 const Dimension = require("./lib/Dimension");
 const Filter = require("./lib/Filter");
@@ -10,6 +11,7 @@ const View = require("./lib/View");
 module.exports = {
   Cube,
   CubeSource,
+  CubeDimension,
   Dimension,
   Filter,
   LookupSource,
