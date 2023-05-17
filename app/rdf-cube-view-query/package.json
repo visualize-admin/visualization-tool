@@ -1,0 +1,41 @@
+{
+  "name": "rdf-cube-view-query",
+  "version": "1.11.2",
+  "description": "RDF Cube View Schema query library",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && mocha",
+    "release": "changeset publish"
+  },
+  "author": "Thomas Bergwinkl <bergi@axolotlfarm.org> (https://www.bergnet.org/people/bergi/card#me)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zazuko/rdf-cube-view-query.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zazuko/rdf-cube-view-query/issues"
+  },
+  "homepage": "https://github.com/zazuko/rdf-cube-view-query",
+  "dependencies": {
+    "@changesets/cli": "^2.26.0",
+    "@rdfjs/namespace": "^1.1.0",
+    "@rdfjs/term-map": "^1.0.0",
+    "@rdfjs/term-set": "^1.0.1",
+    "clownface": "^1.0.0",
+    "commander": "^5.1.0",
+    "rdf-ext": "^1.3.0",
+    "rdf-sparql-builder": "^0.1.10",
+    "sparql-http-client": "^2.2.2"
+  },
+  "devDependencies": {
+    "@rdfjs/express-handler": "^1.2.2",
+    "@tpluscode/rdf-string": "^0.2.27",
+    "express-as-promise": "^1.2.0",
+    "lodash": "^4.17.21",
+    "mocha": "^10.2.0",
+    "n3": "^1.16.3",
+    "rdf-utils-fs": "^2.1.0",
+    "standard": "^14.3.4"
+  }
+}

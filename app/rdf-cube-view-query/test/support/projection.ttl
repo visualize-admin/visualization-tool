@@ -1,0 +1,42 @@
+@base <http://example.org/> .
+
+@prefix view: <https://cube.link/view/> .
+@prefix schema: <http://schema.org/> .
+
+<view> a view:View ;
+  view:projection
+    [
+      view:columns ( <dimension/roomLabel> )
+    ] ;
+  view:dimension
+    <dimension/room>,
+    <dimension/roomLabel> ;
+  view:filter
+    <filter/roomLabelLanguage> .
+
+<source/cube/sensor> a view:CubeSource ;
+  view:cube <sensor/cube> .
+
+<dimension/room> a view:Dimension ;
+  view:from
+    [
+      view:source <source/cube/sensor> ;
+      view:path schema:location
+    ] ;
+  view:as schema:location .
+
+<source/room> a view:LookupSource .
+
+<dimension/roomLabel> a view:Dimension ;
+  view:from
+    [
+      view:source <source/room> ;
+      view:join <dimension/room> ;
+      view:path schema:name
+    ] ;
+  view:as schema:name .
+
+<filter/roomLabelLanguage> a view:Filter ;
+  view:dimension <dimension/roomLabel> ;
+  view:operation view:Lang ;
+  view:argument ( "de" "en" "*" ) .

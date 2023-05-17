@@ -1,0 +1,10 @@
+SELECT DISTINCT ?dimension0 ?dimension1 WHERE {
+  <http://example.org/sensor/cube> <https://cube.link/observationSet> ?observationSet0 .
+  ?observationSet0 <https://cube.link/observation> ?source0 .
+  ?source0 <http://schema.org/dateCreated> ?dimension0 .
+  ?source0 <http://schema.org/location> ?dimension1 .
+  FILTER (
+    (MONTH(?dimension2) >= "10")
+  )
+}
+GROUP BY ?dimension0 ?dimension1

@@ -1,0 +1,4 @@
+SELECT ?cube WHERE {
+  ?cube <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://cube.link/Cube> .
+  ?v0 <http://example.org/property> ?cube .
+}

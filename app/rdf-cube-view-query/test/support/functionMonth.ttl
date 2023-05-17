@@ -1,0 +1,34 @@
+@base <http://example.org/> .
+
+@prefix view: <https://cube.link/view/> .
+@prefix schema: <http://schema.org/>.
+
+<view> a view:View;
+  view:dimension
+    <dimension/date>,
+    <dimension/room>;
+  view:filter
+    <filter/date>.
+
+<source/cube/sensor> a view:CubeSource;
+  view:cube <sensor/cube>.
+
+<dimension/date> a view:Dimension;
+  view:from [
+    view:source <source/cube/sensor>;
+    view:path schema:dateCreated
+  ];
+  view:as schema:dateCreated.
+
+<dimension/room> a view:Dimension;
+  view:from [
+    view:source <source/cube/sensor>;
+    view:path schema:location
+  ];
+  view:as schema:location.
+
+<filter/date> a view:Filter;
+  view:dimension <dimension/roomLabel>;
+  view:operation view:Gte;
+  view:function view:Month;
+  view:argument "10".

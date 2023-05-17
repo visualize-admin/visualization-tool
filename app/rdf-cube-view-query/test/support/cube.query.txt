@@ -1,0 +1,7 @@
+DESCRIBE ?subject WHERE {
+  {
+    BIND(<http://example.org/cube> AS ?subject)
+  } UNION {
+    ?subject <http://schema.org/hasPart> <http://example.org/cube> .
+  }
+}

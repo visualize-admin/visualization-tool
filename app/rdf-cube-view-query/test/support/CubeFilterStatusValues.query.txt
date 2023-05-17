@@ -1,0 +1,8 @@
+SELECT ?cube WHERE {
+  ?cube <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://cube.link/Cube> .
+  ?cube <http://schema.org/creativeWorkStatus> ?v0 .
+
+  FILTER (
+    (?v0 IN (<http://example.org/status1>, <http://example.org/status2>))
+  )
+}

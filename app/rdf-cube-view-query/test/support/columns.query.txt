@@ -1,0 +1,8 @@
+SELECT DISTINCT ?dimension1 ?dimension2 WHERE {
+  <http://example.org/sensor/cube> <https://cube.link/observationSet> ?observationSet0 .
+  ?observationSet0 <https://cube.link/observation> ?source0 .
+  ?source0 <http://schema.org/dateCreated> ?dimension0 .
+  ?source0 <http://schema.org/name> ?dimension1 .
+  ?source0 <http://schema.org/location> ?dimension2 .
+}
+GROUP BY ?dimension1 ?dimension2
