@@ -1,10 +1,15 @@
+import { AnyPointer, ClownfaceInit } from "clownface";
+// eslint-disable-next-line import/order
+import DatasetExt from "rdf-ext/lib/Dataset";
+
 declare module "rdf-cube-view-query" {
-  import { AnyPointer, ClownfaceInit } from "clownface";
   import DefaultGraphExt from "rdf-ext/lib/DefaultGraph";
-  import { Literal, NamedNode, Term } from "rdf-js";
+  import { Literal, NamedNode, Quad, Term } from "rdf-js";
   import { ParsingClient } from "sparql-http-client/ParsingClient";
   type NodeInit = {
     parent?: Node;
+    source?: Source;
+    term?: Term;
   } & ClownfaceInit;
 
   export class Node {
@@ -13,7 +18,7 @@ declare module "rdf-cube-view-query" {
     term: AnyPointer["term"];
     out: AnyPointer["out"];
     in: AnyPointer["in"];
-    dataset: AnyPointer["dataset"];
+    dataset: DatasetExt;
     clear(): void;
   }
 
@@ -29,6 +34,9 @@ declare module "rdf-cube-view-query" {
     dimensions: CubeDimension[];
     source: CubeSource;
     async fetchShape(): Promise<void>;
+    shapeQuery(): SelectQuery;
+    async init(): void;
+    quads: Quad[];
   }
 
   export class CubeDimension {
@@ -119,6 +127,7 @@ declare module "rdf-cube-view-query" {
     async cubesQuery(options?: { filters: $FixMe }): string;
     client: ParsingClient;
     queryOperation?: "get" | "postUrlencoded" | "postDirect";
+    graph: Term | undefined;
   }
   export class LookupSource extends Source {
     static fromSource(source: Source): LookupSource;
