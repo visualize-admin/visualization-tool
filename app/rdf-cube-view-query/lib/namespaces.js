@@ -7,6 +7,8 @@ const ns = {
   sh: namespace("http://www.w3.org/ns/shacl#"),
   view: namespace("https://cube.link/view/"),
   xsd: namespace("http://www.w3.org/2001/XMLSchema#"),
+  adminVocabulary: namespace("https://ld.admin.ch/vocabulary/"),
+  qudt: namespace("http://qudt.org/schema/qudt/"),
 };
 
 module.exports = ns;

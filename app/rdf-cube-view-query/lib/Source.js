@@ -1,12 +1,13 @@
 const ParsingClient = require("sparql-http-client/ParsingClient");
+
 const Cube = require("./Cube");
 const Node = require("./Node");
+const createPrefixedSparqlClient = require("./PrefixedSparqlClient.js");
+const View = require("./View");
 const ns = require("./namespaces");
-const { toTerm } = require("./utils");
 const cubesQuery = require("./query/cubes.js");
 const viewListQuery = require("./query/views.js");
-const View = require("./View");
-const createPrefixedSparqlClient = require("./PrefixedSparqlClient.js");
+const { toTerm } = require("./utils");
 
 const DEFAULT_QUERY_PREFIX = "#pragma describe.strategy cbd";
 

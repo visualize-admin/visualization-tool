@@ -70,7 +70,7 @@ class Dimension extends Node {
       )
       .flat()
       .filter((cubeDimension) =>
-        this.ptr.node(cubeDimension).out(ns.sh.path).term.equals(path)
+        this.ptr.node(cubeDimension).out(ns.sh.path).term?.equals?.(path)
       )
       .map(
         (cubeDimension) =>

@@ -1,5 +1,6 @@
 const clownface = require("clownface");
 const rdf = require("rdf-ext");
+
 const ns = require("./namespaces");
 
 class CubeDimension {
@@ -8,6 +9,7 @@ class CubeDimension {
   }
 
   get path() {
+    // console.log("path", this.ptr.out(ns.sh.path).term);
     return this.ptr.out(ns.sh.path).term;
   }
 
@@ -48,7 +50,7 @@ class CubeDimension {
   }
 
   get in() {
-    return [...this.ptr.out(ns.sh.in).list()].map((item) => item.term);
+    return [...(this.ptr.out(ns.sh.in).list() ?? [])].map((item) => item.term);
   }
 
   out(...args) {

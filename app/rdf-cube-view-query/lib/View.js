@@ -1,17 +1,18 @@
+const TermSet = require("@rdfjs/term-set");
+const rdf = require("rdf-ext");
+
 const Dimension = require("./Dimension");
+const Filter = require("./Filter.js");
 const Node = require("./Node");
 const ns = require("./namespaces");
+const ViewQuery = require("./query/ViewQuery");
+const viewDefQuery = require("./query/view.js");
 const {
   findDataset,
   findParent,
   objectSetterGetter,
   toTerm,
 } = require("./utils");
-const ViewQuery = require("./query/ViewQuery");
-const viewDefQuery = require("./query/view.js");
-const Filter = require("./Filter.js");
-const rdf = require("rdf-ext");
-const TermSet = require("@rdfjs/term-set");
 
 class View extends Node {
   constructor({
@@ -58,7 +59,8 @@ class View extends Node {
       return this.dimensions.find((dimension) => {
         return dimension.cubeDimensions.some(
           (current) =>
-            current.path.equals(cubeDimension.path) || current.path.equals(term)
+            current.path?.equals(cubeDimension.path) ||
+            current.path?.equals(term)
         );
       });
     }
@@ -115,12 +117,12 @@ class View extends Node {
 
   clearFilter(filter) {
     this.filters.forEach((x) => {
-      if (x.term.equals(filter.term)) {
+      if (x.term.equals?.(filter.term)) {
         x.clear();
       }
     });
     this.ptr.deleteOut(ns.view.filter, filter.term);
-    this.filters = this.filters.filter((x) => !x.term.equals(filter.term));
+    this.filters = this.filters.filter((x) => !x.term.equals?.(filter.term));
   }
 
   offset(offset) {
