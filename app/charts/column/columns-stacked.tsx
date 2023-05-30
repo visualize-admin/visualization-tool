@@ -33,13 +33,13 @@ export const ColumnsStacked = () => {
             x: xScale(x) as number,
             y: yScale(segment[1]),
             width: bandwidth,
-            height: y0 - yScale(segment[1] - segment[0]),
+            height: yScale(segment[0]) - yScale(segment[1]),
             color,
           };
         }),
       };
     });
-  }, [bandwidth, colors, getX, series, xScale, y0, yScale]);
+  }, [bandwidth, colors, getX, series, xScale, yScale]);
 
   React.useEffect(() => {
     if (ref.current) {
@@ -47,7 +47,6 @@ export const ColumnsStacked = () => {
         .selectAll<SVGGElement, StackedRenderDatum>("g")
         .data(renderData, (d) => d.key)
         .join("g")
-        .attr("data-n", (d) => d.key)
         .selectAll<SVGRectElement, RenderDatum>("rect")
         .data(
           (d) => d.data,

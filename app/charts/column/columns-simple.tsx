@@ -63,13 +63,14 @@ export const Columns = () => {
       const xScaled = xScale(x) as number;
       const y = getY(d) ?? NaN;
       const yScaled = yScale(y);
+      const yRender = yScale(Math.max(y, 0));
       const height = Math.abs(yScaled - y0);
       const color = getColor(y);
 
       return {
         key: x,
         x: xScaled,
-        y: yScaled,
+        y: yRender,
         width: bandwidth,
         height,
         color,
