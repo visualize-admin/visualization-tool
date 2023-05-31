@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Bars with negative values are now correctly attached to 0 again.
 
 ## [3.19.18] - 2023-05-16
 
