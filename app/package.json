@@ -96,7 +96,7 @@
     "postgres-migrations": "^5.2.0",
     "prisma": "^4.5.0",
     "qs": "^6.10.1",
-    "rdf-cube-view-query": "^1.11.1",
+    "rdf-cube-view-query": "^1.12.0",
     "rdf-ext": "^1.3.2",
     "react-beautiful-dnd": "^13.0.0",
     "react-error-boundary": "^3.1.3",
