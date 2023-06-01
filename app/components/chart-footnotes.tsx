@@ -192,7 +192,6 @@ export const ChartFootnotes = ({
               dataSetIri={dataSetIri}
               dataSource={dataSource}
               title={dataCubeByIri.title}
-              componentIris={componentIrisToFilterBy}
               filters={filters}
             />
           ) : null}

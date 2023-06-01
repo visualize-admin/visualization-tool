@@ -132,13 +132,11 @@ export const DataDownloadMenu = memo(
     dataSetIri,
     dataSource,
     filters,
-    componentIris,
     title,
   }: {
     dataSetIri: string;
     dataSource: DataSource;
     filters?: QueryFilters;
-    componentIris?: string[];
     title: string;
   }) => {
     return (
@@ -147,7 +145,6 @@ export const DataDownloadMenu = memo(
           dataSetIri={dataSetIri}
           dataSource={dataSource}
           fileName={title}
-          componentIris={componentIris}
           filters={filters}
         />
       </DataDownloadStateProvider>
@@ -159,13 +156,11 @@ const DataDownloadInnerMenu = ({
   dataSetIri,
   dataSource,
   fileName,
-  componentIris,
   filters,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
-  componentIris?: string[];
   filters?: QueryFilters;
 }) => {
   const [state] = useDataDownloadState();
@@ -212,7 +207,6 @@ const DataDownloadInnerMenu = ({
               <Trans id="button.download.data.visible">Chart dataset</Trans>
             }
             fileName={fileName}
-            componentIris={componentIris}
             filters={filters}
           />
         )}
@@ -221,7 +215,6 @@ const DataDownloadInnerMenu = ({
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={fileName}
-          componentIris={componentIris}
         />
         {state.error && (
           <RawMenuItem>
@@ -240,14 +233,12 @@ const DataDownloadMenuSection = ({
   dataSource,
   subheader,
   fileName,
-  componentIris,
   filters,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   subheader: ReactNode;
   fileName: string;
-  componentIris?: string[];
   filters?: QueryFilters;
 }) => {
   return (
@@ -264,7 +255,6 @@ const DataDownloadMenuSection = ({
               dataSource={dataSource}
               fileName={fileName}
               fileFormat={fileFormat}
-              componentIris={componentIris}
               filters={filters}
             />
           ))}
@@ -279,14 +269,12 @@ const DownloadMenuItem = ({
   dataSource,
   fileName,
   fileFormat,
-  componentIris,
   filters,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   fileName: string;
   fileFormat: FileFormat;
-  componentIris?: string[];
   filters?: QueryFilters;
 }) => {
   const locale = useLocale();
@@ -345,7 +333,7 @@ const DownloadMenuItem = ({
                   sourceType: dataSource.type,
                   sourceUrl: dataSource.url,
                   locale,
-                  componentIris,
+                  componentIris: undefined,
                 }
               )
               .toPromise();
@@ -359,7 +347,7 @@ const DownloadMenuItem = ({
                 sourceType: dataSource.type,
                 sourceUrl: dataSource.url,
                 locale,
-                componentIris,
+                componentIris: undefined,
                 filters,
               })
               .toPromise();
