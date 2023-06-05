@@ -82,7 +82,7 @@ declare module "rdf-cube-view-query" {
         filters?: Filter[];
       }
     );
-    static fromCube(cube: Cube): View;
+    static fromCube(cube: Cube, sortColumns?: boolean): View;
     out: AnyPointer;
     dimensions: Dimension[];
     dimension(options: { cubeDimension: NamedNode | string }): Dimension | null;
