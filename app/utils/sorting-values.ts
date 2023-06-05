@@ -41,6 +41,10 @@ export const makeDimensionValueSorters = (
     dimensionFilter: undefined,
   }
 ): ((label: string) => string | undefined | number)[] => {
+  if (dimension?.__typename === "NumericalMeasure") {
+    return [(d) => +d];
+  }
+
   const {
     sorting,
     sumsBySegment,
