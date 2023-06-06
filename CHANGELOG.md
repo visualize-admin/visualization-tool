@@ -9,8 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.19.19] - 2023-06-06
+
 - Fixes
   - Bars with negative values are now correctly attached to 0 again.
+  - Sorting now works correctly in line chart color legend and tables.
+  - Color legend is again properly interactive.
 
 ## [3.19.18] - 2023-05-16
 
