@@ -32,9 +32,9 @@ import {
 } from "@/charts/column/constants";
 import {
   getLabelWithUnit,
+  getMaybeTemporalDimensionValues,
   getWideData,
   useDataAfterInteractiveFilters,
-  getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
   usePlottableData,
   useTemporalVariable,
@@ -244,9 +244,12 @@ const useColumnsStackedState = (
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
-  const segments = useMemo(() => {
-    const uniqueSegments = Array.from(
-      new Set(plottableSortedData.map((d) => getSegment(d)))
+  const { segments, plottableSegments } = useMemo(() => {
+    const allUniqueSegments = Array.from(
+      new Set(plottableSortedData.map(getSegment))
+    );
+    const allPlottableSegments = Array.from(
+      new Set(preparedData.map(getSegment))
     );
 
     const sorting = fields?.segment?.sorting;
@@ -257,9 +260,21 @@ const useColumnsStackedState = (
       dimensionFilter: segmentFilter,
     });
 
-    return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
+    const allSegments = orderBy(
+      allUniqueSegments,
+      sorters,
+      getSortingOrders(sorters, sorting)
+    );
+
+    return {
+      segments: allSegments,
+      plottableSegments: allSegments.filter((d) =>
+        allPlottableSegments.includes(d)
+      ),
+    };
   }, [
     plottableSortedData,
+    preparedData,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -393,7 +408,7 @@ const useColumnsStackedState = (
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDiverging)
-      .keys(segments);
+      .keys(plottableSegments);
 
     const series = stacked(
       chartWideData as {
@@ -401,7 +416,7 @@ const useColumnsStackedState = (
       }[]
     );
     return series;
-  }, [chartWideData, fields.segment?.sorting, segments]);
+  }, [chartWideData, fields.segment?.sorting, plottableSegments]);
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding(
