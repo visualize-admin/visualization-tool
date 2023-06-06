@@ -44,7 +44,10 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 export interface LinesState extends CommonChartState {
   chartType: "line";
@@ -221,7 +224,7 @@ const useLinesState = (
     return orderBy(
       uniqueSegments,
       sorters,
-      sorting?.sortingOrder === "desc" ? "desc" : "asc"
+      getSortingOrders(sorters, fields.segment?.sorting)
     );
   }, [
     segmentDimension,

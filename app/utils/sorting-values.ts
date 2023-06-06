@@ -41,6 +41,10 @@ export const makeDimensionValueSorters = (
     dimensionFilter: undefined,
   }
 ): ((label: string) => string | undefined | number)[] => {
+  if (dimension?.__typename === "NumericalMeasure") {
+    return [(d) => +d];
+  }
+
   const {
     sorting,
     sumsBySegment,
@@ -75,17 +79,10 @@ export const makeDimensionValueSorters = (
     allHierarchyValues,
     (dv) => dv.value
   );
-  const valuesByValue = uniqueMapBy(
-    values.filter((x) => x.identifier || x.position),
-    (dv) => dv.value
-  );
-  // Index values that have an identifier or a position
+  const valuesByValue = uniqueMapBy(values, (dv) => dv.value);
   // Warning: if two values have the same label and have an identifier / position
   // there could be problems as we could select the "wrong" value for the order
-  const valuesByLabel = uniqueMapBy(
-    values.filter((x) => x.identifier || x.position),
-    (dv) => dv.label
-  );
+  const valuesByLabel = uniqueMapBy(values, (dv) => dv.label);
 
   const getByValueOrLabel = (valueOrLabel: string) => {
     return valuesByValue.get(valueOrLabel) ?? valuesByLabel.get(valueOrLabel);
