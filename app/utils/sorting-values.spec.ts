@@ -1,8 +1,14 @@
 import orderBy from "lodash/orderBy";
 
 import { SortingField } from "@/configurator";
-import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
+import {
+  DimensionMetadataFragment,
+  DimensionMetadataWithHierarchiesFragment,
+} from "@/graphql/query-hooks";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 const dimension = {
   hierarchy: [
@@ -65,6 +71,10 @@ const dimension = {
   ],
 } as unknown as DimensionMetadataWithHierarchiesFragment;
 
+const measure = {
+  __typename: "NumericalMeasure",
+} as unknown as DimensionMetadataFragment;
+
 describe("makeDimensionValueSorters", () => {
   const sorting: NonNullable<SortingField["sorting"]> = {
     sortingType: "byAuto",
@@ -74,11 +84,19 @@ describe("makeDimensionValueSorters", () => {
   it("should correctly sort hierarchical dimensions byAuto", () => {
     const values = dimension.values.map((d) => d.value);
     const sorters = makeDimensionValueSorters(dimension, { sorting });
-    expect(orderBy(values, sorters, ["asc"])).toEqual([
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
       "CH",
       "CH-PROD-EAST",
       "CH-PROD-WEST",
       "CH-BE",
     ]);
+  });
+
+  it("should correctly sort numerical measures byAuto", () => {
+    const values = [1, 10, 5, 100, 2];
+    const sorters = makeDimensionValueSorters(measure, { sorting });
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([1, 2, 5, 10, 100]);
   });
 });
