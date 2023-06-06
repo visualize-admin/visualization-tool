@@ -202,7 +202,7 @@ const useColumnsStackedState = (
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
 
   const preparedDataGroupedByX = useMemo(

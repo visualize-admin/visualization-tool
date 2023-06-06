@@ -100,7 +100,7 @@ const usePieState = (
     sortedData: plottableData,
     interactiveFiltersConfig,
     animationField: fields.animation,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
 
   // Map ordered segments to colors

@@ -109,7 +109,7 @@ const useScatterplotState = ({
     interactiveFiltersConfig,
     // No animation yet for scatterplot
     animationField: undefined,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
   const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);
 

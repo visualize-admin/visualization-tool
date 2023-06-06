@@ -177,7 +177,7 @@ const useAreasState = (
     // No animation yet for areas
     animationField: undefined,
     getX,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
 
   const chartWideData = useMemo(() => {
