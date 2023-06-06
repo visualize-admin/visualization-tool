@@ -11,6 +11,39 @@ import {
 } from "@/utils/sorting-values";
 
 const dimension = {
+  values: [
+    {
+      value: "A",
+      label: "A",
+      position: 5,
+      identifier: "A",
+    },
+    {
+      value: "B",
+      label: "B",
+      position: 5,
+      identifier: "B",
+    },
+    {
+      value: "C",
+      label: "C",
+      position: 1,
+      identifier: "C",
+    },
+    {
+      value: "D",
+      label: "D",
+      position: 1,
+      identifier: "C",
+    },
+  ],
+} as unknown as DimensionMetadataFragment;
+
+const measure = {
+  __typename: "NumericalMeasure",
+} as unknown as DimensionMetadataFragment;
+
+const hierarchicalDimension = {
   hierarchy: [
     {
       label: "Switzerland",
@@ -71,25 +104,21 @@ const dimension = {
   ],
 } as unknown as DimensionMetadataWithHierarchiesFragment;
 
-const measure = {
-  __typename: "NumericalMeasure",
-} as unknown as DimensionMetadataFragment;
-
 describe("makeDimensionValueSorters", () => {
   const sorting: NonNullable<SortingField["sorting"]> = {
     sortingType: "byAuto",
     sortingOrder: "asc",
   };
 
-  it("should correctly sort hierarchical dimensions byAuto", () => {
+  it("should correctly sort dimensions byAuto", () => {
     const values = dimension.values.map((d) => d.value);
     const sorters = makeDimensionValueSorters(dimension, { sorting });
     const sortingOrders = getSortingOrders(sorters, sorting);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([
-      "CH",
-      "CH-PROD-EAST",
-      "CH-PROD-WEST",
-      "CH-BE",
+      "C",
+      "D",
+      "A",
+      "B",
     ]);
   });
 
@@ -98,5 +127,19 @@ describe("makeDimensionValueSorters", () => {
     const sorters = makeDimensionValueSorters(measure, { sorting });
     const sortingOrders = getSortingOrders(sorters, sorting);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([1, 2, 5, 10, 100]);
+  });
+
+  it("should correctly sort hierarchical dimensions byAuto", () => {
+    const values = hierarchicalDimension.values.map((d) => d.value);
+    const sorters = makeDimensionValueSorters(hierarchicalDimension, {
+      sorting,
+    });
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "CH",
+      "CH-PROD-EAST",
+      "CH-PROD-WEST",
+      "CH-BE",
+    ]);
   });
 });
