@@ -25,8 +25,8 @@ import {
   InteractiveFiltersLegend,
   InteractiveFiltersTimeRange,
   isAreaConfig,
-  QueryFilters,
   MapConfig,
+  QueryFilters,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension, Observation } from "@/domain/data";

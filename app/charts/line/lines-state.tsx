@@ -157,7 +157,7 @@ const useLinesState = (
     // No animation yet for lines
     animationField: undefined,
     getX,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
 
   const preparedDataGroupedBySegment = useMemo(

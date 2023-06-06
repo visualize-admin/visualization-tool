@@ -28,8 +28,8 @@ import {
 } from "@/charts/column/constants";
 import {
   getLabelWithUnit,
-  useDataAfterInteractiveFilters,
   getMaybeTemporalDimensionValues,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
   useTemporalVariable,
@@ -189,7 +189,7 @@ const useGroupedColumnsState = (
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
-    getSegment,
+    getSegment: getSegmentAbbreviationOrLabel,
   });
 
   // segments
