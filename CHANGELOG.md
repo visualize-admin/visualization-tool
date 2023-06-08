@@ -9,7 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+Fixes
+
+- Sorting now works correctly for temporal dimensions
 
 # [3.19.20] - 2023-06-08
 

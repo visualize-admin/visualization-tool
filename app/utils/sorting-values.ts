@@ -1,5 +1,9 @@
 import { FilterValue, SortingField } from "@/configurator";
-import { DimensionValue } from "@/domain/data";
+import {
+  DimensionValue,
+  isNumericalMeasure,
+  isTemporalDimension,
+} from "@/domain/data";
 import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks";
 
 import { bfs } from "./bfs";
@@ -41,8 +45,13 @@ export const makeDimensionValueSorters = (
     dimensionFilter: undefined,
   }
 ): ((label: string) => string | undefined | number)[] => {
-  if (dimension?.__typename === "NumericalMeasure") {
-    return [(d) => +d];
+  if (isNumericalMeasure(dimension) || isTemporalDimension(dimension)) {
+    return [
+      (d) => {
+        const maybeNumber = +d;
+        return isNaN(maybeNumber) ? d : maybeNumber;
+      },
+    ];
   }
 
   const {
