@@ -104,6 +104,24 @@ const hierarchicalDimension = {
   ],
 } as unknown as DimensionMetadataWithHierarchiesFragment;
 
+const temporalDimensionYear = {
+  __typename: "TemporalDimension",
+  values: [
+    { value: "2020", label: "2020" },
+    { value: "1996", label: "1996" },
+    { value: "2019", label: "2019" },
+  ],
+} as unknown as DimensionMetadataFragment;
+
+const temporalDimensionFullDate = {
+  __typename: "TemporalDimension",
+  values: [
+    { value: "2020-01-01", label: "2020-01-01" },
+    { value: "1996-05-05", label: "1996-05-05" },
+    { value: "2019-12-12", label: "2019-12-12" },
+  ],
+} as unknown as DimensionMetadataFragment;
+
 describe("makeDimensionValueSorters", () => {
   const sorting: NonNullable<SortingField["sorting"]> = {
     sortingType: "byAuto",
@@ -140,6 +158,32 @@ describe("makeDimensionValueSorters", () => {
       "CH-PROD-EAST",
       "CH-PROD-WEST",
       "CH-BE",
+    ]);
+  });
+
+  it("should correctly sort temporal dimensions (year) byAuto", () => {
+    const values = temporalDimensionYear.values.map((d) => d.value);
+    const sorters = makeDimensionValueSorters(temporalDimensionYear, {
+      sorting,
+    });
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "1996",
+      "2019",
+      "2020",
+    ]);
+  });
+
+  it("should correctly sort temporal dimensions (full date) byAuto", () => {
+    const values = temporalDimensionFullDate.values.map((d) => d.value);
+    const sorters = makeDimensionValueSorters(temporalDimensionFullDate, {
+      sorting,
+    });
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "1996-05-05",
+      "2019-12-12",
+      "2020-01-01",
     ]);
   });
 });
