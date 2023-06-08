@@ -11,6 +11,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+# [3.19.20] - 2023-06-08
+
+- Fixes
+  - Sorting now works correctly for temporal dimensions
+
 # [3.19.19] - 2023-06-06
 
 - Fixes
