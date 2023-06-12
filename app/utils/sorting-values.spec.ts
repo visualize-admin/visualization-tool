@@ -39,6 +39,13 @@ const dimension = {
   ],
 } as unknown as DimensionMetadataFragment;
 
+const measureBySegment = {
+  A: 10,
+  B: 20,
+  C: 15,
+  D: 5,
+};
+
 const measure = {
   __typename: "NumericalMeasure",
 } as unknown as DimensionMetadataFragment;
@@ -123,15 +130,21 @@ const temporalDimensionFullDate = {
 } as unknown as DimensionMetadataFragment;
 
 describe("makeDimensionValueSorters", () => {
-  const sorting: NonNullable<SortingField["sorting"]> = {
+  const sortingByAuto: NonNullable<SortingField["sorting"]> = {
     sortingType: "byAuto",
+    sortingOrder: "asc",
+  };
+  const sortingByMeasure: NonNullable<SortingField["sorting"]> = {
+    sortingType: "byMeasure",
     sortingOrder: "asc",
   };
 
   it("should correctly sort dimensions byAuto", () => {
     const values = dimension.values.map((d) => d.value);
-    const sorters = makeDimensionValueSorters(dimension, { sorting });
-    const sortingOrders = getSortingOrders(sorters, sorting);
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting: sortingByAuto,
+    });
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([
       "C",
       "D",
@@ -140,19 +153,36 @@ describe("makeDimensionValueSorters", () => {
     ]);
   });
 
+  it("should correctly sort dimensions byMeasure", () => {
+    const values = dimension.values.map((d) => d.value);
+    const sorters = makeDimensionValueSorters(dimension, {
+      sorting: sortingByMeasure,
+      measureBySegment,
+    });
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "D",
+      "A",
+      "C",
+      "B",
+    ]);
+  });
+
   it("should correctly sort numerical measures byAuto", () => {
     const values = [1, 10, 5, 100, 2];
-    const sorters = makeDimensionValueSorters(measure, { sorting });
-    const sortingOrders = getSortingOrders(sorters, sorting);
+    const sorters = makeDimensionValueSorters(measure, {
+      sorting: sortingByAuto,
+    });
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([1, 2, 5, 10, 100]);
   });
 
   it("should correctly sort hierarchical dimensions byAuto", () => {
     const values = hierarchicalDimension.values.map((d) => d.value);
     const sorters = makeDimensionValueSorters(hierarchicalDimension, {
-      sorting,
+      sorting: sortingByAuto,
     });
-    const sortingOrders = getSortingOrders(sorters, sorting);
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([
       "CH",
       "CH-PROD-EAST",
@@ -164,9 +194,9 @@ describe("makeDimensionValueSorters", () => {
   it("should correctly sort temporal dimensions (year) byAuto", () => {
     const values = temporalDimensionYear.values.map((d) => d.value);
     const sorters = makeDimensionValueSorters(temporalDimensionYear, {
-      sorting,
+      sorting: sortingByAuto,
     });
-    const sortingOrders = getSortingOrders(sorters, sorting);
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([
       "1996",
       "2019",
@@ -177,9 +207,9 @@ describe("makeDimensionValueSorters", () => {
   it("should correctly sort temporal dimensions (full date) byAuto", () => {
     const values = temporalDimensionFullDate.values.map((d) => d.value);
     const sorters = makeDimensionValueSorters(temporalDimensionFullDate, {
-      sorting,
+      sorting: sortingByAuto,
     });
-    const sortingOrders = getSortingOrders(sorters, sorting);
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([
       "1996-05-05",
       "2019-12-12",
