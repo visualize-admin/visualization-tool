@@ -284,6 +284,18 @@ const useColumnsStackedState = (
   ]);
 
   // Scales
+  const xFilter = chartConfig.filters[xDimension.iri];
+  const sumsByX = useMemo(
+    () =>
+      Object.fromEntries([
+        ...rollup(
+          plottableSortedData,
+          (v) => sum(v, (x) => getY(x)),
+          (x) => getX(x)
+        ),
+      ]),
+    [plottableSortedData, getX, getY]
+  );
   // Map ordered segments labels to colors
   const {
     colors,
@@ -291,7 +303,7 @@ const useColumnsStackedState = (
     xScaleInteraction,
     xEntireScale,
     yStackDomain,
-    bandDomainLabels,
+    xDomainLabels,
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
@@ -328,15 +340,26 @@ const useColumnsStackedState = (
       colors.unknown(() => undefined);
     }
 
-    // x
-    const bandDomain = [...new Set(scalesData.map(getX))];
-    const bandDomainLabels = bandDomain.map(getXLabel);
+    const xValues = [...new Set(scalesData.map(getX))];
+    const xSorting = fields.x?.sorting;
+    const xSorters = makeDimensionValueSorters(xDimension, {
+      sorting: xSorting,
+      useAbbreviations: fields.x?.useAbbreviations,
+      measureBySegment: sumsByX,
+      dimensionFilter: xFilter,
+    });
+    const xDomain = orderBy(
+      xValues,
+      xSorters,
+      getSortingOrders(xSorters, xSorting)
+    );
+    const xDomainLabels = xDomain.map(getXLabel);
     const xScale = scaleBand()
-      .domain(bandDomain)
+      .domain(xDomain)
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
     const xScaleInteraction = scaleBand()
-      .domain(bandDomain)
+      .domain(xDomain)
       .paddingInner(0)
       .paddingOuter(0);
 
@@ -367,11 +390,16 @@ const useColumnsStackedState = (
       xScale,
       xEntireScale,
       xScaleInteraction,
-      bandDomainLabels,
+      xDomainLabels,
     };
   }, [
     scalesWideData,
     fields.segment,
+    fields.x.sorting,
+    fields.x.useAbbreviations,
+    xDimension,
+    xFilter,
+    sumsByX,
     getX,
     getXLabel,
     getXAsDate,
@@ -425,7 +453,7 @@ const useColumnsStackedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomainLabels
+    xDomainLabels
   );
 
   const margins = {
