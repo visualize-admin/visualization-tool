@@ -233,8 +233,18 @@ const useGroupedColumnsState = (
   ]);
 
   /* Scales */
+  const xFilter = chartConfig.filters[fields.x.componentIri];
+  const sumsByX = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        plottableSortedData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getX(x)
+      ),
+    ]);
+  }, [plottableSortedData, getX, getY]);
   const {
-    bandDomainLabels,
+    xDomainLabels,
     colors,
     yScale,
     xEntireScale,
@@ -269,14 +279,26 @@ const useGroupedColumnsState = (
       colors.unknown(() => undefined);
     }
 
-    const bandDomain = [...new Set(scalesData.map(getX))];
-    const bandDomainLabels = bandDomain.map(getXLabel);
+    const xValues = [...new Set(scalesData.map(getX))];
+    const xSorting = fields.x?.sorting;
+    const xSorters = makeDimensionValueSorters(xDimension, {
+      sorting: xSorting,
+      useAbbreviations: fields.x?.useAbbreviations,
+      measureBySegment: sumsByX,
+      dimensionFilter: xFilter,
+    });
+    const xDomain = orderBy(
+      xValues,
+      xSorters,
+      getSortingOrders(xSorters, xSorting)
+    );
+    const xDomainLabels = xDomain.map(getXLabel);
     const xScale = scaleBand()
-      .domain(bandDomain)
+      .domain(xDomain)
       .paddingInner(PADDING_INNER)
       .paddingOuter(PADDING_OUTER);
     const xScaleInteraction = scaleBand()
-      .domain(bandDomain)
+      .domain(xDomain)
       .paddingInner(0)
       .paddingOuter(0);
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
@@ -310,11 +332,16 @@ const useGroupedColumnsState = (
       xScale,
       xScaleIn,
       xScaleInteraction,
-      bandDomainLabels,
+      xDomainLabels,
     };
   }, [
     dimensions,
     fields.segment,
+    xFilter,
+    fields.x.sorting,
+    fields.x.useAbbreviations,
+    sumsByX,
+    xDimension,
     segments,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -362,7 +389,7 @@ const useGroupedColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomainLabels
+    xDomainLabels
   );
 
   const margins = {
