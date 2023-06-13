@@ -680,9 +680,18 @@ export type FieldAdjuster<
   measures: DataCubeMetadata["measures"];
 }) => NewChartConfigType;
 
-export type InteractiveFiltersAdjusters = {
+type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
+  [K in keyof T]: U[K];
+};
+
+export type InteractiveFiltersAdjusters = AssureKeys<
+  InteractiveFiltersConfig,
+  _InteractiveFiltersAdjusters
+>;
+
+type _InteractiveFiltersAdjusters = {
   legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
-  time: {
+  timeRange: {
     active: FieldAdjuster<ChartConfig, boolean>;
     componentIri: FieldAdjuster<ChartConfig, string>;
     presets: {

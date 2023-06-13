@@ -526,7 +526,7 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
 
     return newChartConfig;
   },
-  time: {
+  timeRange: {
     active: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (draft.interactiveFiltersConfig) {
