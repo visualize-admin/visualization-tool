@@ -691,10 +691,7 @@ export type InteractiveFiltersAdjusters = {
       to: FieldAdjuster<ChartConfig, string>;
     };
   };
-  dataFilters: {
-    active: FieldAdjuster<ChartConfig, boolean>;
-    componentIris: FieldAdjuster<ChartConfig, string[]>;
-  };
+  dataFilters: FieldAdjuster<ChartConfig, InteractiveFiltersDataConfig>;
 };
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {

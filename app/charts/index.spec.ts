@@ -1,10 +1,15 @@
-import { TableFields } from "@/configurator";
+import { ColumnConfig, TableFields } from "@/configurator";
 import { ComponentsQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
 
-import { getInitialConfig, getPossibleChartType } from "./index";
+import {
+  getChartConfigAdjustedToChartType,
+  getInitialConfig,
+  getPossibleChartType,
+} from "./index";
 
 describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
@@ -17,6 +22,7 @@ describe("initial config", () => {
         ComponentsQuery["dataCubeByIri"]
       >["measures"],
     });
+
     expect(
       Object.values(config.fields as TableFields).map((x) => [
         x["componentIri"],
@@ -66,5 +72,60 @@ describe("possible chart types", () => {
     }).sort();
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
+  });
+});
+
+describe("chart type switch", () => {
+  it("should correctly remove non-allowed interactive data filters", () => {
+    const chartConfig: ColumnConfig = {
+      version: "1.4.0",
+      chartType: "column",
+      filters: {},
+      fields: {
+        x: {
+          componentIri:
+            "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+        },
+        y: {
+          componentIri: "https://environment.ld.admin.ch/foen/ubd0104/value",
+        },
+      },
+      interactiveFiltersConfig: {
+        legend: {
+          active: false,
+          componentIri: "",
+        },
+        timeRange: {
+          active: false,
+          componentIri: "",
+          presets: {
+            type: "range",
+            from: "",
+            to: "",
+          },
+        },
+        dataFilters: {
+          active: true,
+          componentIris: [
+            "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
+          ],
+        },
+      },
+    };
+    const newConfig = getChartConfigAdjustedToChartType({
+      chartConfig,
+      newChartType: "line",
+      dimensions: bathingWaterData.data.dataCubeByIri
+        .dimensions as DataCubeMetadata["dimensions"],
+      measures: bathingWaterData.data.dataCubeByIri
+        .measures as DataCubeMetadata["measures"],
+    });
+
+    expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(
+      false
+    );
+    expect(
+      newConfig.interactiveFiltersConfig?.dataFilters.componentIris
+    ).toEqual([]);
   });
 });
