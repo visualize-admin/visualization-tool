@@ -471,6 +471,7 @@ const getAdjustedChartConfig = ({
         case "filters":
         case "fields.segment":
         case "fields.animation":
+        case "interactiveFiltersConfig.dataFilters":
         case "interactiveFiltersConfig.legend":
           return true;
         default:
@@ -525,7 +526,7 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
 
     return newChartConfig;
   },
-  time: {
+  timeRange: {
     active: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         if (draft.interactiveFiltersConfig) {
@@ -564,21 +565,29 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
       },
     },
   },
-  dataFilters: {
-    active: ({ oldValue, newChartConfig }) => {
-      return produce(newChartConfig, (draft) => {
-        if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.dataFilters.active = oldValue;
+  dataFilters: ({ oldValue, newChartConfig }) => {
+    return produce(newChartConfig, (draft) => {
+      if (draft.interactiveFiltersConfig) {
+        const oldComponentIris = oldValue.componentIris ?? [];
+
+        if (oldComponentIris.length > 0) {
+          const fieldComponentIris = Object.values(draft.fields).map(
+            (d) => d.componentIri
+          );
+          // Remove componentIris that are not in the new chart config, as they
+          // can't be used as interactive data filters then.
+          const validComponentIris = oldComponentIris.filter(
+            (d) => !fieldComponentIris.includes(d)
+          );
+          draft.interactiveFiltersConfig.dataFilters.active =
+            validComponentIris.length > 0;
+          draft.interactiveFiltersConfig.dataFilters.componentIris =
+            validComponentIris;
+        } else {
+          draft.interactiveFiltersConfig.dataFilters = oldValue;
         }
-      });
-    },
-    componentIris: ({ oldValue, newChartConfig }) => {
-      return produce(newChartConfig, (draft) => {
-        if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.dataFilters.componentIris = oldValue;
-        }
-      });
-    },
+      }
+    });
   },
 };
 

@@ -112,7 +112,7 @@ export const BrushTime = () => {
     if (from && to) {
       return getClosestObservationFromRangeDates([from, to]);
     } else {
-      return [brushWidthScale.domain()[0], brushWidthScale.domain()[1]];
+      return brushWidthScale.domain();
     }
   }, [from, getClosestObservationFromRangeDates, to, brushWidthScale]);
 
@@ -123,7 +123,6 @@ export const BrushTime = () => {
       const [xStart, xEnd] = selection.map((s) => brushWidthScale.invert(s));
       const newDates = getClosestObservationFromRangeDates([xStart, xEnd]);
 
-      // Update interactive filters state
       dispatch({
         type: "SET_TIME_RANGE_FILTER",
         value: newDates,
@@ -145,14 +144,14 @@ export const BrushTime = () => {
       if (!event.sourceEvent) {
         updateBrushEndedStatus(false);
       } else {
-        if (!event.selection) {
+        if (!event.selection && ref.current) {
           // End event fires twice on touchend (MouseEvent and TouchEvent),
           // we want to compute mx basing on MouseEvent.
           if (event.sourceEvent instanceof MouseEvent) {
             const g = select(ref.current);
             const [mx] = pointer(event, this);
             const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;
-            g.call(brush.move as any, [x, x]);
+            g.call(brush.move, [x, x]);
           }
         }
 

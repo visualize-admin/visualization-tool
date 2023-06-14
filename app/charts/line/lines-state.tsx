@@ -185,14 +185,14 @@ const useLinesState = (
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(scalesData, (d) => getX(d)) as [Date, Date],
-    [scalesData, getX]
+    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
+    [plottableSortedData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
-
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
+
   // y
   const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
   const maxValue = max(scalesData, getY) ?? 0;
