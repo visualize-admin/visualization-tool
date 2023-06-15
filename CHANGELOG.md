@@ -9,9 +9,16 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.20.0] - 2023-06-15
+
 Fixes
 
-- Sorting now works correctly for temporal dimensions
+- Sorting now works correctly for horizontal axis in column charts
+- Interactive data filters are not carried over to a new chart type when they are used as chart field
+- Interactive time range filter now works correctly in line charts
+- Interactive time range filter is now again correctly migrated to a new chart type
 
 # [3.19.20] - 2023-06-08
 
