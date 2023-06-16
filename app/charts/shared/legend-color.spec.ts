@@ -20,4 +20,16 @@ describe("getLegendGroups", () => {
     expect(groups.length).toEqual(1);
     expect(groups[0][1]).toEqual(["1", "2", "3"]);
   });
+
+  it("should only include values that are present in the data", () => {
+    const groups = getLegendGroups({
+      title: "",
+      values: ["1", "2"],
+      hierarchy,
+      sort: true,
+    });
+
+    expect(groups.length).toEqual(1);
+    expect(groups[0][1]).toEqual(["1", "2"]);
+  });
 });

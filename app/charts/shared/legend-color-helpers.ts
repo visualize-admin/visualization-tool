@@ -30,7 +30,10 @@ export const getLegendGroups = ({
 
       const parents = _parents.length === 0 ? emptyParents : _parents;
       groupsMap.set(parents, groupsMap.get(parents) || []);
-      groupsMap.get(parents)?.push(node.value);
+
+      if (values.includes(node.value)) {
+        groupsMap.get(parents)?.push(node.value);
+      }
     });
   }
 
