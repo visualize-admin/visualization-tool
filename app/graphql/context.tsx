@@ -115,6 +115,10 @@ const shouldUseServerSideCache = (req: IncomingMessage) => {
   return req.headers["x-visualize-cache-control"] !== "no-cache";
 };
 
+const isDebugMode = (req: IncomingMessage) => {
+  return req.headers["x-visualize-debug"] === "true";
+};
+
 const createContextContent = async ({
   sourceUrl,
   locale,
@@ -157,9 +161,11 @@ const createContextContent = async ({
 };
 
 export const createContext = ({ req }: { req: IncomingMessage }) => {
+  const debug = isDebugMode(req);
   let setupping: ReturnType<typeof createContextContent>;
 
   const ctx = {
+    debug,
     // Stores meta information on queries that have been made during the request
     queries: [] as RequestQueryMeta[],
     timings: undefined as Timings | undefined,
