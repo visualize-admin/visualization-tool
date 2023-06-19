@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 import { HintRed } from "@/components/hint";
 
@@ -75,6 +75,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
     {children}
   </Typography>
 );
+
 export const Teaser = ({ children }: { children: ReactNode }) => (
   <Box sx={{ mb: [6, 5] }}>
     <Typography

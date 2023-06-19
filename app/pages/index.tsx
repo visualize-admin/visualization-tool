@@ -1,5 +1,6 @@
 import { GetStaticProps } from "next";
 
+import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { staticPages } from "@/static-pages";
 
 /**
@@ -18,7 +19,11 @@ interface ContentPageProps {
 export default function ContentPage({ staticPage }: ContentPageProps) {
   const Component = staticPages[staticPage]?.component;
 
-  return Component ? <Component /> : "NOT FOUND";
+  return (
+    <ContentMDXProvider>
+      {Component ? <Component /> : "NOT FOUND"}
+    </ContentMDXProvider>
+  );
 }
 
 export const getStaticProps: GetStaticProps<ContentPageProps> = async ({
