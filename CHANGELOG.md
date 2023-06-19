@@ -11,14 +11,18 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+# [3.20.1] - 2023-06-19
+
+- Fixes
+  - Color legend for hierarchical dimensions now shows only values that actually appear in the chart
+
 # [3.20.0] - 2023-06-15
 
-Fixes
-
-- Sorting now works correctly for horizontal axis in column charts
-- Interactive data filters are not carried over to a new chart type when they are used as chart field
-- Interactive time range filter now works correctly in line charts
-- Interactive time range filter is now again correctly migrated to a new chart type
+- Fixes
+  - Sorting now works correctly for horizontal axis in column charts
+  - Interactive data filters are not carried over to a new chart type when they are used as chart field
+  - Interactive time range filter now works correctly in line charts
+  - Interactive time range filter is now again correctly migrated to a new chart type
 
 # [3.19.20] - 2023-06-08
 
