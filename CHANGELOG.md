@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Performance
+  - The debug data is now only sent along with the payload when the debug mode is enabled
 
 # [3.20.1] - 2023-06-19
 
