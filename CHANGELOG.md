@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.20.2] - 2023-06-20
+
 - Performance
   - The debug data is now only sent along with the payload when the debug mode is enabled
   - ContentMDXProvider is now only imported within the pages that actually need it instead of being included in the root of the app
