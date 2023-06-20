@@ -145,6 +145,33 @@ Those charts configurations are kept in the repository.
 At the moment, the screenshots are made from charts using data from int.lindas.admin.ch as for some functionalities, we do not
 yet have production data.
 
+## Load tests
+
+The project uses [k6](https://k6.io) for load testing.
+
+### Setup
+
+In order to run the tests, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
+
+The tests are written in TypeScript and need to be compiled to JavaScript before running. In order to make the conversion, run
+
+```sh
+yarn k6:codegen
+```
+
+The scripts will be generated in k6 directory of the app.
+
+### Running the tests
+
+To run a given load test, simply run
+
+```sh
+k6 run k6/script-name.js
+```
+
+replacing the `script-name` with an actual name of the test you want to run. Optionally, you can tweak the configuration of each test
+by directly modifying the `options` object inside a given script and running `yarn k6:codegen` to make the JavaScript files up-to-date.
+
 ## Authentication
 
 Authentication by eIAM through a Keycloak instance.
