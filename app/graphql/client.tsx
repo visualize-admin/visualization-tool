@@ -9,10 +9,16 @@ export const client = createClient({
   url: GRAPHQL_ENDPOINT,
   exchanges: [...devtoolsExchanges, ...defaultExchanges],
   fetchOptions: {
-    headers: {
-      "x-visualize-cache-control": flag("server-side-cache.disable")
-        ? "no-cache"
-        : "",
-    },
+    headers: getHeaders(),
   },
 });
+
+function getHeaders() {
+  const debug = flag("debug");
+  const disableCache = flag("server-side-cache.disable");
+
+  return {
+    "x-visualize-debug": debug ? "true" : "",
+    "x-visualize-cache-control": disableCache ? "no-cache" : "",
+  };
+}

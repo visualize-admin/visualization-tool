@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server-micro";
-import "global-agent/bootstrap";
 import configureCors from "cors";
+import "global-agent/bootstrap";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
@@ -24,10 +24,14 @@ const server = new ApolloServer({
   },
   formatResponse: (response, reqCtx) => {
     const context = reqCtx.context as VisualizeGraphQLContext;
-    response.extensions = {
-      queries: context.queries,
-      timings: context.timings,
-    };
+
+    if (context.debug) {
+      response.extensions = {
+        queries: context.queries,
+        timings: context.timings,
+      };
+    }
+
     return response;
   },
   context: createContext,
