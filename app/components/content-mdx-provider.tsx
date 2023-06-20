@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { ReactNode } from "react";
 
 import { ContentLayout, StaticContentLayout } from "@/components/layout";
-import { Intro, Tutorial, Examples, Contribute } from "@/homepage";
+import { Contribute, Examples, Intro, Tutorial } from "@/homepage";
 
 const castContentId = (contentId: unknown) => {
   if (typeof contentId === "string") {
@@ -30,7 +30,6 @@ const Wrapper = ({
 
 const defaultMDXComponents = {
   wrapper: Wrapper,
-  // p: (props: $FixMe) => <p {...props} style={{ color: "red" }} />,
   Box,
   Intro,
   Tutorial,

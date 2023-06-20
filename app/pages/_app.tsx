@@ -1,25 +1,24 @@
 import { I18nProvider } from "@lingui/react";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
-import "core-js/features/array/flat-map";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import "core-js/features/array/flat-map";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { ContentMDXProvider } from "@/components/content-mdx-provider";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
 import DebugPanel from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
-import "@/utils/nprogress.css";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/federal";
 import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
+import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
 
 export default function App({
@@ -88,11 +87,9 @@ export default function App({
                 <CssBaseline />
                 <Flashes />
                 {shouldShowDebug ? <DebugPanel /> : null}
-                <ContentMDXProvider>
-                  <AsyncLocalizationProvider locale={locale}>
-                    <Component {...pageProps} />
-                  </AsyncLocalizationProvider>
-                </ContentMDXProvider>
+                <AsyncLocalizationProvider locale={locale}>
+                  <Component {...pageProps} />
+                </AsyncLocalizationProvider>
               </ThemeProvider>
             </GraphqlProvider>
           </I18nProvider>
