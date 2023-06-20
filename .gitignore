@@ -19,4 +19,4 @@ __diff_output__
 e2e-screenshots
 playwright-report
 
-k6/*.js
+k6/**/*.js
