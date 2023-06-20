@@ -8,11 +8,11 @@ export {
   EditorConfiguratorStateProvider,
   useConfiguratorState,
 } from "../configurator";
-export { DatasetBrowser } from "../browser";
-export { LocaleProvider, useLocale } from "../locales/use-locale";
 export {
-  i18n,
   defaultLocale,
+  i18n,
   locales,
   parseLocaleString,
 } from "../locales/locales";
+export { LocaleProvider, useLocale } from "../locales/use-locale";
+export { DatasetBrowser } from "../pages/browse";
