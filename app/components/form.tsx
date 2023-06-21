@@ -38,7 +38,7 @@ import React, {
   useMemo,
 } from "react";
 
-import { useBrowseContext } from "@/browser/dataset-browse";
+import { useBrowseContext } from "@/browser/context";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,

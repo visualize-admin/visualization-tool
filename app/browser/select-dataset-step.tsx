@@ -9,13 +9,10 @@ import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
-  BrowseStateProvider,
-  buildURLFromBrowseState,
   DatasetResults,
   SearchDatasetControls,
   SearchDatasetInput,
   SearchFilters,
-  useBrowseContext,
 } from "@/browser/dataset-browse";
 import { DataSetPreview } from "@/browser/dataset-preview";
 import Flex from "@/components/flex";
@@ -40,6 +37,11 @@ import { useConfiguratorState, useLocale } from "@/src";
 
 import { useRedirectToVersionedCube } from "../configurator/components/use-redirect-to-versioned-cube";
 
+import {
+  BrowseStateProvider,
+  buildURLFromBrowseState,
+  useBrowseContext,
+} from "./context";
 import { DataCubeAbout } from "./filters";
 
 const softJSONParse = (v: string) => {
