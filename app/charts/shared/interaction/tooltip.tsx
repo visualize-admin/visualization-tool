@@ -18,6 +18,7 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const { visible, d } = state.interaction;
   return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
 };
+export type { TooltipPlacement };
 
 export type TooltipType = "single" | "multiple";
 export interface TooltipValue {

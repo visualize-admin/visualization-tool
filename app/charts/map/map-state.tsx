@@ -54,6 +54,7 @@ import {
   GeoData,
   isGeoShapesDimension,
   Observation,
+  ObservationValue
 } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
