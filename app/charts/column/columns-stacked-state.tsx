@@ -44,7 +44,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -58,6 +58,8 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export interface StackedColumnsState extends CommonChartState {
   chartType: "column";
