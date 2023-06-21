@@ -31,7 +31,7 @@
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn e2e",
     "e2e": "playwright test",
     "cube": "NODE_ENV=development ts-node app/scripts/cube.ts",
-    "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json"
+    "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json | bun scripts/circular-deps-analysis.ts -"
   },
   "dependencies": {
     "@argos-ci/cli": "^0.2.3",
@@ -49,11 +49,13 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^2.3.3",
     "@rollup/pluginutils": "^4.0.0",
+    "@types/argparse": "^2.0.10",
     "@types/eslint": "^8.4.6",
     "@types/fs-extra": "^9.0.4",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.8",
     "@typescript-eslint/utils": "^5.35.1",
+    "argparse": "^2.0.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-macros": "^3.0.0",
     "eslint": "^7.29.0",
