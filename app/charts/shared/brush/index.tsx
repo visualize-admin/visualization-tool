@@ -9,18 +9,15 @@ import {
 } from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { AreasState } from "@/charts/area/areas-state";
-import { ColumnsState } from "@/charts/column/columns-state";
-import { LinesState } from "@/charts/line/lines-state";
+import type { AreasState } from "@/charts/area/areas-state";
+import type { ColumnsState } from "@/charts/column/columns-state";
+import type { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-
-// Space used in chart states as bottom margin
-export const BRUSH_BOTTOM_SPACE = 100;
 
 // Brush constants
 export const HANDLE_HEIGHT = 14;

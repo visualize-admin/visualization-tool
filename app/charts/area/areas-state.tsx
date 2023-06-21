@@ -21,7 +21,7 @@ import orderBy from "lodash/orderBy";
 import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
-import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
+import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
