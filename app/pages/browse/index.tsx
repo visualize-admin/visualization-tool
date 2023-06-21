@@ -1,5 +1,5 @@
+import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { AppLayout } from "@/components/layout";
-import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { EditorConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DataCubeResultOrder } from "@/graphql/query-hooks";
 

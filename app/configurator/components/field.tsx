@@ -35,7 +35,7 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
-import useDisclosure from "@/configurator/components/use-disclosure";
+import useDisclosure from "@/components/use-disclosure";
 import {
   isMultiFilterFieldChecked,
   Option,

@@ -26,7 +26,7 @@ import shallow from "zustand/shallow";
 import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { MotionBox } from "@/configurator/components/presence";
+import { MotionBox } from "@/components/presence";
 import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";

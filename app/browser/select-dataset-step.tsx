@@ -8,25 +8,18 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
-import Flex from "@/components/flex";
-import { Footer } from "@/components/footer";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
-  DataCubeAbout,
   DatasetResults,
   SearchDatasetControls,
   SearchDatasetInput,
   SearchFilters,
   useBrowseContext,
-} from "@/configurator/components/dataset-browse";
-import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
-import { DataSetPreview } from "@/configurator/components/dataset-preview";
-import {
-  PanelLayout,
-  PanelLeftWrapper,
-  PanelMiddleWrapper,
-} from "@/configurator/components/layout";
+} from "@/browser/dataset-browse";
+import { DataSetPreview } from "@/browser/dataset-preview";
+import Flex from "@/components/flex";
+import { Footer } from "@/components/footer";
 import {
   bannerPresenceProps,
   BANNER_HEIGHT,
@@ -34,12 +27,20 @@ import {
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
-} from "@/configurator/components/presence";
+} from "@/components/presence";
+import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
+import {
+  PanelLayout,
+  PanelLeftWrapper,
+  PanelMiddleWrapper,
+} from "@/configurator/components/layout";
 import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
-import { useRedirectToVersionedCube } from "./use-redirect-to-versioned-cube";
+import { useRedirectToVersionedCube } from "../configurator/components/use-redirect-to-versioned-cube";
+
+import { DataCubeAbout } from "./filters";
 
 const softJSONParse = (v: string) => {
   try {

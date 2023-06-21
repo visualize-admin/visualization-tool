@@ -4,8 +4,8 @@ import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
 import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
 
+import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
-import useDisclosure from "@/configurator/components/use-disclosure";
 
 const useStyles = makeStyles(() => ({
   swatch: {

@@ -25,6 +25,7 @@ import { stringify } from "qs";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { UseQueryState } from "urql";
 
+import useDatasetCount from "@/browser/use-dataset-count";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
@@ -33,9 +34,8 @@ import {
   MotionBox,
   MotionCard,
   smoothPresenceProps,
-} from "@/configurator/components/presence";
+} from "@/components/presence";
 import Tag from "@/configurator/components/tag";
-import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
@@ -43,8 +43,6 @@ import {
   DataCubeResultOrder,
   DataCubesQuery,
   DataCubeTheme,
-  OrganizationsQuery,
-  ThemesQuery,
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
@@ -59,50 +57,9 @@ import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 import useEvent from "@/utils/use-event";
 
-import useDisclosure from "./use-disclosure";
+import useDisclosure from "../components/use-disclosure";
 
-export type DataCubeAbout = {
-  __typename: "DataCubeAbout";
-  iri: string;
-};
-
-export type BrowseFilter = DataCubeTheme | DataCubeOrganization | DataCubeAbout;
-
-/** Builds the state search filters from query params */
-export const getFiltersFromParams = (
-  params: BrowseParams,
-  context: {
-    themes?: ThemesQuery["themes"];
-    organizations?: OrganizationsQuery["organizations"];
-  }
-) => {
-  const filters: BrowseFilter[] = [];
-  const { type, subtype, iri, subiri, topic } = params;
-  for (const [t, i] of [
-    [type, iri],
-    [subtype, subiri],
-  ]) {
-    if (t && i && (t === "theme" || t === "organization")) {
-      const container = context[
-        t === "theme" ? "themes" : "organizations"
-      ] as BrowseFilter[];
-      const obj = container?.find((f) => i === f.iri);
-      if (obj) {
-        filters.push(obj);
-      } else {
-        break;
-      }
-    }
-  }
-  if (topic) {
-    filters.push({
-      __typename: "DataCubeAbout",
-      iri: topic,
-    });
-  }
-
-  return filters;
-};
+import { getFiltersFromParams, BrowseFilter } from "./filters";
 
 export const getBrowseParamsFromQuery = (query: Router["query"]) => {
   const values = mapValues(

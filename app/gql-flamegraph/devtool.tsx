@@ -32,7 +32,7 @@ import { useMemo } from "react";
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
-import useDisclosure from "@/configurator/components/use-disclosure";
+import useDisclosure from "@/components/use-disclosure";
 import { useFlag, flag, useFlags } from "@/flags";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";

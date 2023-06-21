@@ -52,7 +52,7 @@ import {
   OnOffControlTabField,
 } from "@/configurator/components/field";
 import MoveDragButtons from "@/configurator/components/move-drag-buttons";
-import useDisclosure from "@/configurator/components/use-disclosure";
+import useDisclosure from "@/components/use-disclosure";
 import {
   getFiltersByMappingStatus,
   isConfiguring,

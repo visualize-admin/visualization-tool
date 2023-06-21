@@ -38,6 +38,7 @@ import React, {
   useMemo,
 } from "react";
 
+import { useBrowseContext } from "@/browser/dataset-browse";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -45,7 +46,6 @@ import {
   OptionGroup,
   useChartOptionSliderField,
 } from "@/configurator";
-import { useBrowseContext } from "@/configurator/components/dataset-browse";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";

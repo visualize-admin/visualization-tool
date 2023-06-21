@@ -14,7 +14,7 @@ import {
   MinimalisticSelect,
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
-import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
+import { BrowseStateProvider } from "@/browser/dataset-browse";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
   const [checked, toggle] = useState(initialChecked || false);
