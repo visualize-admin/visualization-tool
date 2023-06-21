@@ -61,4 +61,6 @@ jobs:
           }'
       - name: Upload screenshots to argos-ci.com
         if: always()
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
         run: npx @argos-ci/cli upload e2e-screenshots
