@@ -9,6 +9,7 @@ import {
 } from "react-beautiful-dnd";
 
 import { Loading } from "@/components/hint";
+import { TableFields } from "@/config-types";
 import { ConfiguratorStateConfiguringChart } from "@/configurator";
 import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
 import {
@@ -18,7 +19,6 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
-import { TableFields } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
 import {

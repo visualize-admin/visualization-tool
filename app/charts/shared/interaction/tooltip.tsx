@@ -1,7 +1,10 @@
 import { ReactNode } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
-import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
+import {
+  TooltipBox,
+  TooltipPlacement,
+} from "@/charts/shared/interaction/tooltip-box";
 import {
   TooltipMultiple,
   TooltipSingle,
@@ -10,18 +13,12 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
-export const TRIANGLE_SIZE = 8;
-export const TOOLTIP_OFFSET = 4;
-
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
   return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
 };
-
-export type Xplacement = "left" | "center" | "right";
-export type Yplacement = "top" | "middle" | "bottom";
-export type TooltipPlacement = { x: Xplacement; y: Yplacement };
+export type { TooltipPlacement };
 
 export type TooltipType = "single" | "multiple";
 export interface TooltipValue {

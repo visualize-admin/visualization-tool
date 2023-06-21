@@ -20,7 +20,7 @@ import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -30,6 +30,8 @@ import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export interface ScatterplotState extends CommonChartState {
   chartType: "scatterplot";

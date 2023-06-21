@@ -1,6 +1,6 @@
 import { interpolate } from "d3";
 
-import { ChartConfig, isAreaConfig } from "@/configurator/config-types";
+import { ChartConfig, isAreaConfig } from "@/config-types";
 
 export const interpolateZerosValue = () => {
   return 0;

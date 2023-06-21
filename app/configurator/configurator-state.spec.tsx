@@ -11,7 +11,7 @@ import {
   DataSource,
   MapConfig,
   TableConfig,
-} from "@/configurator/config-types";
+} from "@/config-types";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,

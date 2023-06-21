@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { DataSource } from "@/configurator/config-types";
+import { DataSource } from "@/config-types";
 import { getURLParam } from "@/utils/router/helpers";
 import { useRouteState } from "@/utils/router/use-route-state";
 import useEvent from "@/utils/use-event";

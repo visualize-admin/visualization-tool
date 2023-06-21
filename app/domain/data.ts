@@ -1,6 +1,6 @@
 import { Literal, NamedNode, Term } from "rdf-js";
 
-import { ComponentType } from "@/configurator/config-types";
+import { ComponentType } from "@/config-types";
 
 import {
   DimensionMetadataFragment,

@@ -13,11 +13,7 @@ import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
-import {
-  DataSource,
-  LineConfig,
-  QueryFilters,
-} from "@/configurator/config-types";
+import { DataSource, LineConfig, QueryFilters } from "@/config-types";
 import { Observation } from "@/domain/data";
 import {
   DimensionMetadataFragment,

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useDimensionFormatters } from "@/formatters";
 
-import { ChartProps } from "./use-chart-state";
+import { ChartProps } from "./ChartProps";
 
 const useChartFormatters = (
   chartProps: Pick<ChartProps, "measures" | "dimensions">

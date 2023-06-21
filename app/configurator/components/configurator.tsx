@@ -4,6 +4,7 @@ import Button, { ButtonProps } from "@mui/material/Button";
 import { useRouter } from "next/router";
 import React from "react";
 
+import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { ChartPanelConfigurator } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header";
@@ -21,7 +22,6 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import useEvent from "@/utils/use-event";

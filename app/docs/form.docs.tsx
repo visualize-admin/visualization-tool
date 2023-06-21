@@ -4,6 +4,7 @@ import { TextField } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import React, { useState } from "react";
 
+import { BrowseStateProvider } from "@/browser/context";
 import {
   Radio,
   Checkbox,
@@ -14,7 +15,6 @@ import {
   MinimalisticSelect,
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
-import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
   const [checked, toggle] = useState(initialChecked || false);

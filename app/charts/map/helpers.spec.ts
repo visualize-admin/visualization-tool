@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
 
-import { BBox } from "@/configurator/config-types";
+import { BBox } from "@/config-types";
 
 import {
   BASE_VIEW_STATE,

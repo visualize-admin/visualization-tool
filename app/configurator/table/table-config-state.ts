@@ -1,8 +1,12 @@
 import produce from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
 
+import {
+  SortingOrder,
+  TableConfig,
+  TableSortingOption,
+} from "../../config-types";
 import { getOrderedTableColumns } from "../components/ui-helpers";
-import { SortingOrder, TableConfig, TableSortingOption } from "../config-types";
 
 export const moveFields = produce(
   (

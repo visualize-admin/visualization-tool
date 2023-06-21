@@ -31,6 +31,7 @@ import { useClient } from "urql";
 
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import useDisclosure from "@/components/use-disclosure";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -52,7 +53,6 @@ import {
   OnOffControlTabField,
 } from "@/configurator/components/field";
 import MoveDragButtons from "@/configurator/components/move-drag-buttons";
-import useDisclosure from "@/configurator/components/use-disclosure";
 import {
   getFiltersByMappingStatus,
   isConfiguring,

@@ -2,8 +2,8 @@
 import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 
+import { DatasetResult } from "@/browser/dataset-browse";
 import { EditorConfiguratorStateProvider } from "@/configurator";
-import { DatasetResult } from "@/configurator/components/dataset-browse";
 import { states } from "@/docs/fixtures";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 

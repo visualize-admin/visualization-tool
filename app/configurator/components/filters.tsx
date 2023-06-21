@@ -52,11 +52,7 @@ import {
   SingleFilterField,
 } from "@/configurator/components/field";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
-import {
-  getTimeInterval,
-  useTimeFormatLocale,
-  useTimeFormatUnit,
-} from "@/formatters";
+import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
   DimensionMetadataFragment,
   Maybe,
@@ -71,6 +67,7 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
+import { getTimeInterval } from "@/intervals";
 import { useLocale } from "@/locales/use-locale";
 import {
   getOptionsFromTree,
@@ -81,8 +78,8 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
+import { ConfiguratorState, GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
-import { ConfiguratorState, GenericSegmentField } from "../config-types";
 import { useInteractiveFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";

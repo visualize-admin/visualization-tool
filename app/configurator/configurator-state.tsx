@@ -29,7 +29,6 @@ import {
   getPossibleChartType,
 } from "@/charts";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
-import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
@@ -43,7 +42,6 @@ import {
   Filters,
   FilterValue,
   FilterValueMultiValues,
-  GenericField,
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
@@ -57,7 +55,9 @@ import {
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
-} from "@/configurator/config-types";
+  GenericField,
+} from "@/config-types";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {

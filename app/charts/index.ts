@@ -26,7 +26,7 @@ import {
   SortingType,
   TableColumn,
   TableFields,
-} from "@/configurator/config-types";
+} from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { getDefaultCategoricalPaletteName } from "@/palettes";

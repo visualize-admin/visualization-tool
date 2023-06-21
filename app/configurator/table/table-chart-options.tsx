@@ -4,6 +4,12 @@ import get from "lodash/get";
 import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 
 import { Checkbox } from "@/components/form";
+import {
+  ColumnStyle,
+  ConfiguratorStateConfiguringChart,
+  isTableConfig,
+  TableConfig,
+} from "@/config-types";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
@@ -26,12 +32,6 @@ import {
   mapValueIrisToColor,
 } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
-import {
-  ColumnStyle,
-  ConfiguratorStateConfiguringChart,
-  isTableConfig,
-  TableConfig,
-} from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableSortingOptions } from "@/configurator/table/table-chart-sorting-options";
 import {

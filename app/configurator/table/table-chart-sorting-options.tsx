@@ -20,16 +20,16 @@ import Flex from "@/components/flex";
 import { Radio, Select } from "@/components/form";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
+  ConfiguratorStateConfiguringChart,
+  TableConfig,
+  TableSortingOption,
+} from "@/config-types";
+import {
   ControlSection,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
-import {
-  ConfiguratorStateConfiguringChart,
-  TableConfig,
-  TableSortingOption,
-} from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import {
   addSortingOption,

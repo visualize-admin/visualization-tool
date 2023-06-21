@@ -16,6 +16,7 @@ import { getMap } from "@/charts/map/ref";
 import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
+import { GenericField } from "@/config-types";
 import {
   AnimationField,
   ChartConfig,
@@ -59,7 +60,6 @@ import {
   canUseAbbreviations,
   getIconName,
 } from "@/configurator/components/ui-helpers";
-import { GenericField } from "@/configurator/config-types";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,

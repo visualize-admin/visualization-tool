@@ -31,14 +31,9 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import {
-  getErrorMeasure,
-  useErrorMeasure,
-  useErrorVariable,
-} from "@/configurator/components/ui-helpers";
 import {
   BaseLayer,
   BBox,
@@ -48,17 +43,24 @@ import {
   MapConfig,
   MapSymbolLayer,
   NumericalColorField,
-} from "@/configurator/config-types";
+} from "@/config-types";
+import {
+  getErrorMeasure,
+  useErrorMeasure,
+  useErrorVariable,
+} from "@/configurator/components/ui-helpers";
 import {
   findRelatedErrorDimension,
   GeoData,
   isGeoShapesDimension,
   Observation,
-  ObservationValue,
+  ObservationValue
 } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
+
+import { ChartProps } from "../shared/ChartProps";
 
 import { getBBox } from "./helpers";
 

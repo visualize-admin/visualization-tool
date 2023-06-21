@@ -24,6 +24,7 @@ import {
   Switch,
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
+import useDisclosure from "@/components/use-disclosure";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -35,7 +36,6 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
-import useDisclosure from "@/configurator/components/use-disclosure";
 import {
   isMultiFilterFieldChecked,
   Option,

@@ -15,7 +15,7 @@ import orderBy from "lodash/orderBy";
 import { ReactNode, useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
-import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
+import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
@@ -29,7 +29,7 @@ import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -48,6 +48,8 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export interface LinesState extends CommonChartState {
   chartType: "line";

@@ -34,10 +34,7 @@ import {
 } from "d3";
 
 import { hasDimensionColors } from "./charts/shared/colors";
-import {
-  DivergingPaletteType,
-  SequentialPaletteType,
-} from "./configurator/config-types";
+import { DivergingPaletteType, SequentialPaletteType } from "./config-types";
 import { DimensionMetadataFragment } from "./graphql/query-hooks";
 
 // Colors

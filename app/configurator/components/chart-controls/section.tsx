@@ -24,7 +24,7 @@ import { Icon, IconName } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
 import SvgIcMinus from "@/icons/components/IcMinus";
 
-import useDisclosure from "../use-disclosure";
+import useDisclosure from "../../../components/use-disclosure";
 
 const useControlSectionStyles = makeStyles<Theme, { isHighlighted?: boolean }>(
   (theme) => ({

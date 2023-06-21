@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
+import { TableColumn } from "@/config-types";
 import { DraggableTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
@@ -12,7 +13,6 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
-import { TableColumn } from "@/configurator/config-types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { Icon } from "@/icons";

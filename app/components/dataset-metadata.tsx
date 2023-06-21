@@ -11,8 +11,8 @@ import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
-import Tag from "@/configurator/components/tag";
-import { DataSource } from "@/configurator/config-types";
+import Tag from "@/components/tag";
+import { DataSource } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {

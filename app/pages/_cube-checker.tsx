@@ -11,7 +11,7 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { ContentLayout } from "@/components/layout";
-import { DataSource } from "@/configurator/config-types";
+import { DataSource } from "@/config-types";
 import {
   DEFAULT_DATA_SOURCE,
   parseDataSource,

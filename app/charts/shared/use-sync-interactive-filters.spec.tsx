@@ -7,10 +7,7 @@ import {
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
-import {
-  ChartConfig,
-  InteractiveFiltersConfig,
-} from "@/configurator/config-types";
+import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {

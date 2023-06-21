@@ -19,7 +19,7 @@ import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
-} from "../config-types";
+} from "../../config-types";
 
 const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
   root: {

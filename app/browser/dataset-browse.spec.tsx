@@ -1,6 +1,7 @@
-import { getFiltersFromParams } from "@/configurator/components/dataset-browse";
 import { DataCubeOrganization, DataCubeTheme } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
+
+import { getFiltersFromParams } from "./filters";
 
 const ctx = {
   themes: [
