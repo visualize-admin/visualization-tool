@@ -30,7 +30,8 @@
     "release:npm": "yarn build:npm && yarn publish app",
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn e2e",
     "e2e": "playwright test",
-    "cube": "NODE_ENV=development ts-node app/scripts/cube.ts"
+    "cube": "NODE_ENV=development ts-node app/scripts/cube.ts",
+    "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json"
   },
   "dependencies": {
     "@argos-ci/cli": "^0.2.3",
@@ -61,6 +62,7 @@
     "eslint-plugin-visualize-admin": "link:./eslint/visualize-admin",
     "fs-extra": "^10.0.0",
     "import-move-codemod": "^0.0.3",
+    "madge": "^6.1.0",
     "prettier": "^2.1.2",
     "rollup": "^2.52.2",
     "rollup-plugin-analyzer": "^4.0.0",
