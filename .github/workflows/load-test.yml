@@ -1,9 +1,12 @@
 name: k6 Load Test (Int)
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch, deployment_status]
 
 jobs:
   k6:
+    if: |
+      (github.event.deployment_status.state == 'success' && github.ref_name == 'main') ||
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
