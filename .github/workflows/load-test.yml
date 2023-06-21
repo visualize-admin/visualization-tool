@@ -10,13 +10,13 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Testing GraphQL - Components
-        continue-on-error: true
+        if: always()
         uses: grafana/k6-action@v0.2.0
         with:
           filename: k6/graphql/components.js
 
       - name: Testing GraphQL - Observations
-        continue-on-error: true
+        if: always()
         uses: grafana/k6-action@v0.2.0
         with:
           filename: k6/graphql/observations.js
