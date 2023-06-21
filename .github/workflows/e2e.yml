@@ -66,6 +66,7 @@ jobs:
         run: echo "ARGOS_BRANCH=$(git name-rev --name-only $GITHUB_SHA | sed 's-remotes/origin/--')" >> $GITHUB_ENV
         if: always() && github.ref != 'refs/heads/main'
       - name: Upload screenshots to Argos
+        if: always()
         env:
           ARGOS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
