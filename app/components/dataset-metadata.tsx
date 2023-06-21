@@ -12,7 +12,7 @@ import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
 import Tag from "@/components/tag";
-import { DataSource } from "@/configurator/config-types";
+import { DataSource } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {

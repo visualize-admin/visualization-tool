@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from "react";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
-import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   FilterValueSingle,
   isSegmentInConfig,
-} from "@/configurator/config-types";
+} from "@/config-types";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
 

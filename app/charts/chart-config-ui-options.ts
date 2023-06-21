@@ -3,7 +3,7 @@ import {
   ComponentType,
   SortingOrder,
   SortingType,
-} from "@/configurator/config-types";
+} from "@/config-types";
 
 /**
  * This module controls chart controls displayed in the UI.

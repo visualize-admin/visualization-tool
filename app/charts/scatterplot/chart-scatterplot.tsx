@@ -16,11 +16,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import {
-  DataSource,
-  QueryFilters,
-  ScatterPlotConfig,
-} from "@/configurator/config-types";
+import { DataSource, QueryFilters, ScatterPlotConfig } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {

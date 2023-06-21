@@ -1,4 +1,4 @@
-import { DataSource } from "@/configurator/config-types";
+import { DataSource } from "@/config-types";
 
 import { getSparqlEditorUrl } from "./sparql-utils";
 

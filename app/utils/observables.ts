@@ -1,6 +1,6 @@
 import { ascending, bisect, scaleLinear } from "d3";
 
-import { AnimationType } from "@/configurator/config-types";
+import { AnimationType } from "@/config-types";
 
 abstract class Observable {
   private observers: Function[];

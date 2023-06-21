@@ -21,11 +21,7 @@ import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import {
-  ColumnConfig,
-  DataSource,
-  QueryFilters,
-} from "@/configurator/config-types";
+import { ColumnConfig, DataSource, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { Observation } from "@/domain/data";
 import {

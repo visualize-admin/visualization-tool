@@ -33,7 +33,7 @@ import {
   Meta,
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
-import { DataSetTable } from "@/configurator/components/datatable";
+import { DataSetTable } from "@/browse/datatable";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {

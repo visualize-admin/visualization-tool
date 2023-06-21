@@ -1,7 +1,7 @@
 import max from "lodash/max";
 import min from "lodash/min";
 
-import { QueryFilters } from "@/configurator/config-types";
+import { QueryFilters } from "@/config-types";
 import { DimensionValue, Observation } from "@/domain/data";
 import { SQL_ENDPOINT } from "@/domain/env";
 import {

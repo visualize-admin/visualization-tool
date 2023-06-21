@@ -24,7 +24,7 @@ import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
 import { BackButton, DataSource } from "@/configurator";
-import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
+import { DataSetMetadata } from "@/components/dataset-metadata";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/components/presence";
 import { DimensionValue, isStandardErrorDimension } from "@/domain/data";

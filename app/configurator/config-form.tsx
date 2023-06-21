@@ -13,7 +13,7 @@ import React, {
 import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
-import { ChartConfig, ChartType } from "@/configurator/config-types";
+import { ChartConfig, ChartType } from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,

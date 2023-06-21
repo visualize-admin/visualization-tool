@@ -26,9 +26,9 @@ import {
 } from "react";
 import { OperationResult, useClient } from "urql";
 
+import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
-import { getSortedColumns } from "@/configurator/components/datatable";
-import { DataSource, QueryFilters } from "@/configurator/config-types";
+import { DataSource, QueryFilters } from "@/config-types";
 import { Observation } from "@/domain/data";
 import {
   ComponentsDocument,

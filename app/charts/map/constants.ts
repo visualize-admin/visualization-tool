@@ -1,4 +1,4 @@
-import { FixedColorField } from "@/configurator/config-types";
+import { FixedColorField } from "@/config-types";
 
 export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
   type: "fixed",

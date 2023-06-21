@@ -1,4 +1,4 @@
-import { decodeChartConfig, MapConfig } from "@/configurator/config-types";
+import { decodeChartConfig, MapConfig } from "@/config-types";
 
 import { migrateChartConfig } from "./versioning";
 

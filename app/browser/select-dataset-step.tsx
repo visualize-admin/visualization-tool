@@ -15,6 +15,7 @@ import {
   SearchFilters,
 } from "@/browser/dataset-browse";
 import { DataSetPreview } from "@/browser/dataset-preview";
+import { DataSetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
@@ -25,7 +26,6 @@ import {
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
-import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import {
   PanelLayout,
   PanelLeftWrapper,
@@ -35,7 +35,7 @@ import { useDataCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
-import { useRedirectToVersionedCube } from "../configurator/components/use-redirect-to-versioned-cube";
+import { useRedirectToVersionedCube } from "../components/use-redirect-to-versioned-cube";
 
 import {
   BrowseStateProvider,

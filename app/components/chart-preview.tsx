@@ -22,7 +22,7 @@ import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
-import { DataSetTable } from "@/configurator/components/datatable";
+import { DataSetTable } from "@/browse/datatable";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,

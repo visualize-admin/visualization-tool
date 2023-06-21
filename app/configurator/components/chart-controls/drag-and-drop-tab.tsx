@@ -12,7 +12,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
-import { TableColumn } from "@/configurator/config-types";
+import { TableColumn } from "@/config-types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { Icon } from "@/icons";

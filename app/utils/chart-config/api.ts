@@ -1,6 +1,6 @@
 import { InferAPIResponse } from "nextkit";
 
-import { ConfiguratorStatePublishing } from "../../configurator/config-types";
+import { ConfiguratorStatePublishing } from "../../config-types";
 import { apiFetch } from "../api";
 
 import type apiConfigs from "../../pages/api/config";

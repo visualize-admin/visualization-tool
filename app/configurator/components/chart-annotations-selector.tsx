@@ -14,7 +14,7 @@ import { InteractiveFilterType } from "@/configurator/interactive-filters/intera
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
-import { ConfiguratorStateConfiguringChart } from "../config-types";
+import { ConfiguratorStateConfiguringChart } from "../../config-types";
 
 const TitleAndDescriptionOptions = ({
   state,

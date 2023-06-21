@@ -3,7 +3,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 
-import { ConfiguratorStateConfiguringChart } from "../config-types";
+import { ConfiguratorStateConfiguringChart } from "../../config-types";
 
 export const getDataFilterDimensions = (
   chartConfig: ConfiguratorStateConfiguringChart["chartConfig"],

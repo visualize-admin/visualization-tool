@@ -20,7 +20,7 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { ChartConfig, DataSource } from "@/configurator/config-types";
+import { ChartConfig, DataSource } from "@/config-types";
 import { Observation, isNumericalMeasure } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {

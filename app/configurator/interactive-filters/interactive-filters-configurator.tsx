@@ -4,6 +4,7 @@ import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
@@ -11,7 +12,6 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import {
   isConfiguring,
   useConfiguratorState,

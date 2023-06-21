@@ -12,8 +12,6 @@ import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
-import { CategoricalColorField, NumericalColorField } from "@/configurator";
-import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   AnimationField,
   ChartConfig,
@@ -27,7 +25,9 @@ import {
   isAreaConfig,
   MapConfig,
   QueryFilters,
-} from "@/configurator/config-types";
+} from "@/config-types";
+import { CategoricalColorField, NumericalColorField } from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";

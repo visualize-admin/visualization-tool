@@ -18,7 +18,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
-import { TableFields } from "@/configurator/config-types";
+import { TableFields } from "@/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
 import {

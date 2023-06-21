@@ -11,12 +11,7 @@ import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
-import {
-  BaseLayer,
-  DataSource,
-  MapConfig,
-  QueryFilters,
-} from "@/configurator/config-types";
+import { BaseLayer, DataSource, MapConfig, QueryFilters } from "@/config-types";
 import {
   AreaLayer,
   GeoData,

@@ -35,11 +35,6 @@ import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import {
-  getErrorMeasure,
-  useErrorMeasure,
-  useErrorVariable,
-} from "@/configurator/components/ui-helpers";
-import {
   BaseLayer,
   BBox,
   CategoricalColorField,
@@ -48,13 +43,17 @@ import {
   MapConfig,
   MapSymbolLayer,
   NumericalColorField,
-} from "@/configurator/config-types";
+} from "@/config-types";
+import {
+  getErrorMeasure,
+  useErrorMeasure,
+  useErrorVariable,
+} from "@/configurator/components/ui-helpers";
 import {
   findRelatedErrorDimension,
   GeoData,
   isGeoShapesDimension,
   Observation,
-  ObservationValue
 } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";

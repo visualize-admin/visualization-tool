@@ -6,13 +6,13 @@ import { useEffect, useRef } from "react";
 import { getFieldComponentIri } from "@/charts";
 import { Checkbox } from "@/components/form";
 import { Loading } from "@/components/hint";
+import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { ConfiguratorStateConfiguringChart } from "@/configurator/config-types";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import { useInteractiveTimeRangeFiltersToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";

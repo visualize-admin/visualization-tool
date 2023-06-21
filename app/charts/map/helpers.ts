@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { ViewState, useControl } from "react-map-gl";
 import { feature as topojsonFeature } from "topojson-client";
 
-import { BBox, Filters } from "@/configurator/config-types";
+import { BBox, Filters } from "@/config-types";
 import useEvent from "@/utils/use-event";
 
 import {

@@ -78,8 +78,8 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
+import { ConfiguratorState, GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
-import { ConfiguratorState, GenericSegmentField } from "../config-types";
 import { useInteractiveFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";

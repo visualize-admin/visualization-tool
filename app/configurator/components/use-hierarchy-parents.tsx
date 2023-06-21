@@ -1,7 +1,7 @@
 import { groups } from "d3-array";
 import { useMemo } from "react";
 
-import { DataSource } from "@/configurator/config-types";
+import { DataSource } from "@/config-types";
 import {
   DimensionHierarchyQuery,
   useDimensionHierarchyQuery,
