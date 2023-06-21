@@ -1,0 +1,22 @@
+name: k6 Load Test (Int)
+
+on: [push, workflow_dispatch]
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Testing GraphQL - Components
+        continue-on-error: true
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/components.js
+
+      - name: Testing GraphQL - Observations
+        continue-on-error: true
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/observations.js
