@@ -59,8 +59,14 @@ jobs:
             "state": "failure",
             "description": "E2E tests failed"
           }'
-      - name: Upload screenshots to argos-ci.com
-        if: always()
+      - name: Set argos upload branch on master branch
+        run: echo "ARGOS_BRANCH=main" >> $GITHUB_ENV
+        if: always() && github.ref == 'refs/heads/main'
+      - name: Set argos upload branch on PR branches
+        run: echo "ARGOS_BRANCH=$(git name-rev --name-only $GITHUB_SHA | sed 's-remotes/origin/--')" >> $GITHUB_ENV
+        if: always() && github.ref != 'refs/heads/main'
+      - name: Upload screenshots to Argos
         env:
+          ARGOS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: npx @argos-ci/cli upload e2e-screenshots
+        run: yarn run argos upload e2e-screenshots
