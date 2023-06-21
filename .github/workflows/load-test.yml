@@ -1,4 +1,4 @@
-name: k6 Load Test (Int)
+name: k6 Load Test (Test)
 
 on: [workflow_dispatch, deployment_status]
 

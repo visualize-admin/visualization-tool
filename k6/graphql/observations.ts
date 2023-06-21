@@ -2,7 +2,7 @@ import { sleep } from "k6";
 import http from "k6/http";
 import { Options } from "k6/options";
 
-const url = "https://int.visualize.admin.ch/api/graphql";
+const url = "https://test.visualize.admin.ch/api/graphql";
 const headers = {
   "Content-Type": "application/json",
   "x-visualize-cache-control": "no-cache",
