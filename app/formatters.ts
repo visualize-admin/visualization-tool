@@ -1,13 +1,10 @@
 import {
-  CountableTimeInterval,
   NumberValue,
   timeDay,
   timeHour,
   timeMinute,
   timeMonth,
   timeParse,
-  timeSecond,
-  timeWeek,
   timeYear,
   format,
 } from "d3";
@@ -253,16 +250,6 @@ export const useTimeFormatLocale = () => {
   return formatter;
 };
 
-const timeIntervals = new Map<TimeUnit, CountableTimeInterval>([
-  [TimeUnit.Year, timeYear],
-  [TimeUnit.Month, timeMonth],
-  [TimeUnit.Week, timeWeek],
-  [TimeUnit.Day, timeDay],
-  [TimeUnit.Hour, timeHour],
-  [TimeUnit.Minute, timeMinute],
-  [TimeUnit.Second, timeSecond],
-]);
-
 const timeFormats = new Map<TimeUnit, string>([
   [TimeUnit.Year, "%Y"],
   [TimeUnit.Month, "%b %Y"],
@@ -272,10 +259,6 @@ const timeFormats = new Map<TimeUnit, string>([
   [TimeUnit.Minute, "%d.%m.%Y %H:%M"],
   [TimeUnit.Second, "%d.%m.%Y %H:%M:%S"],
 ]);
-
-export const getTimeInterval = (timeUnit: TimeUnit): CountableTimeInterval => {
-  return timeIntervals.get(timeUnit) ?? timeDay;
-};
 
 export const useTimeFormatUnit = () => {
   const locale = useLocale();

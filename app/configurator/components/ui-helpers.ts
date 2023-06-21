@@ -7,13 +7,15 @@ import {
 } from "d3";
 import { useMemo } from "react";
 
-import { ChartProps } from "../../charts/shared/use-chart-state";
+import { getTimeInterval } from "@/intervals";
+
 import { DimensionValue, Observation } from "../../domain/data";
-import { getTimeInterval } from "../../formatters";
 import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { getPalette } from "../../palettes";
 import { TableColumn, TableFields } from "../config-types";
+
+import type { ChartProps } from "../../charts/shared/use-chart-state";
 
 // FIXME: We should cover more time format
 const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
