@@ -55,6 +55,7 @@ import {
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
+  GenericField,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -82,6 +83,8 @@ import {
   DataCubeMetadataQueryVariables,
   DimensionMetadataFragment,
   DimensionMetadataWithHierarchiesFragment,
+  NumericalMeasure,
+  OrdinalMeasure,
 } from "@/graphql/query-hooks";
 import {
   DataCubeMetadata,
