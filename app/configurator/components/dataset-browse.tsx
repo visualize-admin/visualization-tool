@@ -8,10 +8,10 @@ import {
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
+  Stack,
   Theme,
   Typography,
 } from "@mui/material";
-import { Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Reorder } from "framer-motion";
 import mapValues from "lodash/mapValues";
@@ -25,15 +25,14 @@ import { stringify } from "qs";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { UseQueryState } from "urql";
 
-import { BrowseParams } from "@/browser/dataset-browser";
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
-import { LoadingDataError, Loading } from "@/components/hint";
+import { Loading, LoadingDataError } from "@/components/hint";
 import {
-  smoothPresenceProps,
+  accordionPresenceProps,
   MotionBox,
   MotionCard,
-  accordionPresenceProps,
+  smoothPresenceProps,
 } from "@/configurator/components/presence";
 import Tag from "@/configurator/components/tag";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
@@ -55,6 +54,7 @@ import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import { useLocale } from "@/locales/use-locale";
+import { BrowseParams } from "@/pages/browse";
 import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 import useEvent from "@/utils/use-event";
