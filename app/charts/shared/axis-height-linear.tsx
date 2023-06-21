@@ -2,22 +2,18 @@ import { axisLeft } from "d3";
 import { select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
-import { AreasState } from "@/charts/area/areas-state";
-import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
-import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
-import { ColumnsState } from "@/charts/column/columns-state";
-import { LinesState } from "@/charts/line/lines-state";
-import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import type { AreasState } from "@/charts/area/areas-state";
+import type { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import type { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import type { ColumnsState } from "@/charts/column/columns-state";
+import type { LinesState } from "@/charts/line/lines-state";
+import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 
-export const TICK_MIN_HEIGHT = 50;
-
-export const getTickNumber = (height: number) => {
-  return Math.min(height / TICK_MIN_HEIGHT, 4);
-};
+import { getTickNumber } from "./ticks";
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
