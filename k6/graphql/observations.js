@@ -25,11 +25,12 @@ var variables = {
     }
 };
 export var options = {
-    stages: [
-        { duration: "10s", target: 30 },
-        { duration: "10s", target: 50 },
-        { duration: "10s", target: 20 },
-    ]
+    duration: "40s",
+    vus: 75,
+    thresholds: {
+        http_req_failed: ["rate<0.01"],
+        http_req_duration: ["p(95)<1000"]
+    }
 };
 export default function () {
     http.post(url, JSON.stringify({ query: query, variables: variables }), { headers: headers });

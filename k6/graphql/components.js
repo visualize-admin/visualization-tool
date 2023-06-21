@@ -18,11 +18,11 @@ var variables = {
     ]
 };
 export var options = {
-    duration: "30s",
-    vus: 50,
+    duration: "40s",
+    vus: 75,
     thresholds: {
         http_req_failed: ["rate<0.01"],
-        http_req_duration: ["p(95)<500"]
+        http_req_duration: ["p(95)<1000"]
     }
 };
 export default function () {
