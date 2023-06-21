@@ -1,3 +1,4 @@
+import { MatcherOptions } from "@testing-library/dom";
 import { sleep } from "./common";
 import { TestContext as Ctx } from "./types";
 
@@ -80,7 +81,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
     chart: {
       axisWidthBand: async () => screen.findByTestId("axis-width-band"),
       colorLegend: (
-        options?,
+        options?: MatcherOptions,
         waitForOptions?: Parameters<typeof screen.findByTestId>[2]
       ) => screen.findByTestId("colorLegend", options, waitForOptions),
       colorLegendItems: async () =>
