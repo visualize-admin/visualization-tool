@@ -9,14 +9,14 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 
-import {
-  TRIANGLE_SIZE,
-  TOOLTIP_OFFSET,
-  TooltipPlacement,
-  Xplacement,
-  Yplacement,
-} from "@/charts/shared/interaction/tooltip";
 import { Margins } from "@/charts/shared/use-width";
+
+export const TRIANGLE_SIZE = 8;
+export const TOOLTIP_OFFSET = 4;
+
+export type Xplacement = "left" | "center" | "right";
+export type Yplacement = "top" | "middle" | "bottom";
+export type TooltipPlacement = { x: Xplacement; y: Yplacement };
 
 export interface TooltipBoxProps {
   x: number | undefined;
