@@ -23,10 +23,10 @@ import React, { useMemo } from "react";
 import { createStore, useStore } from "zustand";
 import shallow from "zustand/shallow";
 
-import { BackButton, DataSource } from "@/configurator";
 import { DataSetMetadata } from "@/components/dataset-metadata";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { MotionBox } from "@/components/presence";
+import { BackButton, DataSource } from "@/configurator";
+import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";

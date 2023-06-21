@@ -5,6 +5,7 @@ import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
+import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -33,7 +34,6 @@ import {
   Meta,
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
-import { DataSetTable } from "@/browse/datatable";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
