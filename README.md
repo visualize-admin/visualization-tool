@@ -191,6 +191,8 @@ specify environment against which to run the test, filename and path to save the
 
 After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder).
 
+> ⚠️ You might want to remove request to Google afterwards manually, to remove false-positives of blocked requests.
+
 ## Authentication
 
 Authentication by eIAM through a Keycloak instance.
