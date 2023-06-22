@@ -1,6 +1,20 @@
-name: k6 Load Test (PROD)
+name: Manual Load Test
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to test"
+        required: true
+        default: int
+        type: choice
+        options:
+          - test
+          - int
+          - prod
+
+env:
+  ENV: ${{ inputs.environment }}
 
 jobs:
   k6:
@@ -13,7 +27,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/prod/components.js
+          filename: k6/graphql/components.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -21,7 +35,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/prod/observations.js
+          filename: k6/graphql/observations.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -29,6 +43,6 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/har/prod/edition.js
+          filename: k6/har/edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}

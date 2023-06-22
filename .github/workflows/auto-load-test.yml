@@ -1,9 +1,13 @@
-name: k6 Load Test (INT)
+name: Auto Load Test
 
-on: [workflow_dispatch]
+on: deployment_status
+
+env:
+  ENV: test
 
 jobs:
   k6:
+    if: github.event.deployment_status.state == 'success' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -13,7 +17,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/int/components.js
+          filename: k6/graphql/test/components.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -21,7 +25,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/int/observations.js
+          filename: k6/graphql/test/observations.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -29,6 +33,6 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/har/int/edition.js
+          filename: k6/har/test/edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}

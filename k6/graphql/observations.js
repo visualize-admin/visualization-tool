@@ -1,4 +1,11 @@
-export const query = `query DataCubeObservations(
+import { sleep } from "k6";
+import http from "k6/http";
+
+import { PROJECT_ID } from "../utils.js";
+
+import { headers } from "./utils.js";
+
+const query = `query DataCubeObservations(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
@@ -30,7 +37,7 @@ export const query = `query DataCubeObservations(
   }
 }`;
 
-export const variables = {
+const variables = {
   iri: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
@@ -48,3 +55,26 @@ export const variables = {
     },
   },
 };
+
+const env = process.env.ENV;
+
+/** @type {import("k6/options").Options} */
+export const options = {
+  duration: "60s",
+  vus: 50,
+  thresholds: {
+    http_req_failed: ["rate<0.01"],
+    http_req_duration: ["p(95)<1250"],
+  },
+  ext: {
+    loadimpact: {
+      projectId: PROJECT_ID,
+      name: `GraphQL - Observations (${env.toUpperCase()})`,
+    },
+  },
+};
+
+export default function Observations() {
+  http.post(getURL(env), JSON.stringify({ query, variables }), { headers });
+  sleep(1);
+}

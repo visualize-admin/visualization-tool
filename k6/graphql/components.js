@@ -1,4 +1,11 @@
-export const query = `query Components(
+import { sleep } from "k6";
+import http from "k6/http";
+
+import { PROJECT_ID } from "../utils.js";
+
+import { getURL, headers } from "./utils.js";
+
+const query = `query Components(
   $iri: String!
   $sourceType: String!
   $sourceUrl: String!
@@ -70,7 +77,7 @@ fragment dimensionMetadata on Dimension {
   }
 }`;
 
-export const variables = {
+const variables = {
   iri: "https://environment.ld.admin.ch/foen/ubd003701/2",
   sourceType: "sparql",
   sourceUrl: "https://lindas.admin.ch/query",
@@ -81,3 +88,26 @@ export const variables = {
     "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",
   ],
 };
+
+const env = process.env.ENV;
+
+/** @type {import("k6/options").Options} */
+export const options = {
+  duration: "60s",
+  vus: 50,
+  thresholds: {
+    http_req_failed: ["rate<0.01"],
+    http_req_duration: ["p(95)<500"],
+  },
+  ext: {
+    loadimpact: {
+      projectId: PROJECT_ID,
+      name: `GraphQL - Components (${env.toUpperCase()})`,
+    },
+  },
+};
+
+export default function Components() {
+  http.post(getURL(env), JSON.stringify({ query, variables }), { headers });
+  sleep(1);
+}
