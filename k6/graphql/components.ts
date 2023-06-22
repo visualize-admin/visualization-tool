@@ -99,7 +99,7 @@ export const options: Options = {
   },
 };
 
-export default function () {
+export default function Components() {
   http.post(url, JSON.stringify({ query, variables }), { headers });
   sleep(1);
 }

@@ -1,6 +1,6 @@
 import { sleep } from "k6";
 import http from "k6/http";
-var url = "https://int.visualize.admin.ch/api/graphql";
+var url = "https://test.visualize.admin.ch/api/graphql";
 var headers = {
     "Content-Type": "application/json",
     "x-visualize-cache-control": "no-cache"
@@ -32,7 +32,7 @@ export var options = {
         http_req_duration: ["p(95)<1000"]
     }
 };
-export default function () {
+export default function Observations() {
     http.post(url, JSON.stringify({ query: query, variables: variables }), { headers: headers });
     sleep(1);
 }
