@@ -171,6 +171,8 @@ k6 run k6/script-name.js
 replacing the `script-name` with an actual name of the test you want to run. Optionally, you can tweak the configuration of each test
 by directly modifying the `options` object inside a given script and running `yarn k6:codegen` to make the JavaScript files up-to-date.
 
+For the GraphQL tests, you'll also need to pass `--env ENV=(test|int|prod)` flag to point to the proper environment.
+
 ### Recording the tests using Playwright
 
 While some tests are written manually, other tests come from HAR recordings that span a broad set of actions.
