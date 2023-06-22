@@ -152,7 +152,7 @@ The project uses [k6](https://k6.io) for load testing.
 ### Automation
 
 There is a [dedicated GitHub Action](https://github.com/visualize-admin/visualization-tool/actions/workflows/manual-load-test.yml) that runs the API load tests against selected environment.
-You can investigate the results by going to Actions section in GitHub and checking the summary results. They are also visible in the cloud (k6.io).
+You can investigate the results by going to Actions section in GitHub and checking the summary results. They are also visible in the cloud (k6.io), if you enable the cloud option.
 
 ### Local setup
 
