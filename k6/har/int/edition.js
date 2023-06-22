@@ -6,11 +6,10 @@
 import { group, sleep } from "k6";
 import http from "k6/http";
 
-import { getHeaders } from "../../graphql/utils.js";
 import { DISTRIBUTION, PROJECT_ID } from "../../utils.js";
 
 const enableCache = __ENV.ENABLE_GQL_SERVER_SIDE_CACHE === "true";
-const gqlRequestHeaders = getHeaders(enableCache);
+const cache = enableCache ? "cache" : "no-cache";
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -23,7 +22,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: `HAR - Edition (INT, GQL ${enableCache ? "cache" : "no-cache"})`,
+      name: `HAR - Edition (INT, GQL ${cache})`,
       distribution: DISTRIBUTION,
     },
   },
@@ -769,7 +768,7 @@ export default function main() {
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=b19d15c97f7d4e369daef63483f094cf",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-9ba22894b5f4316f-1",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -789,7 +788,7 @@ export default function main() {
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=b19d15c97f7d4e369daef63483f094cf",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-934391ced19af5e6-1",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -819,7 +818,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-aea0a10f57b1d315-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -849,7 +848,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-b0761955850d9079-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -879,7 +878,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-be9eb10d4fe151bb-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -909,7 +908,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-aad707d049272296-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -939,7 +938,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-98bc7a99d95eb058-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -969,7 +968,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-9e4fc33afd25b4af-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -999,7 +998,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-a1eb26268f551bb2-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1029,7 +1028,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-9cd615f82e56e5c1-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1059,7 +1058,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-a539040a97d98c27-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1217,7 +1216,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-8bc796f88aae1523-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1247,7 +1246,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-b982260db7a6b755-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1278,7 +1277,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-820073fb03acaf9b-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
@@ -1308,7 +1307,7 @@ export default function main() {
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-811e67fada423463-1",
             "x-visualize-debug": "",
-            ...gqlRequestHeaders,
+            "x-visualize-cache-control": cache,
           },
         }
       );
