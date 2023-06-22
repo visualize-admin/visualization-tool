@@ -45,7 +45,6 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/har/edition.js
+          filename: k6/har/${{ env.ENV }}/edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENV=${{ env.ENV }}
