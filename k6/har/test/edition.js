@@ -6,7 +6,11 @@
 import { group, sleep } from "k6";
 import http from "k6/http";
 
+import { getHeaders } from "../../graphql/utils.js";
 import { DISTRIBUTION, PROJECT_ID } from "../../utils.js";
+
+const enableCache = __ENV.ENABLE_GQL_SERVER_SIDE_CACHE === "true";
+const gqlRequestHeaders = getHeaders(enableCache);
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -19,7 +23,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: "HAR - Edition (TEST)",
+      name: `HAR - Edition (TEST, GQL ${enableCache ? "cache" : "no-cache"})`,
       distribution: DISTRIBUTION,
     },
   },
@@ -741,8 +745,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "no-cache",
-            "content-type": "application/json",
+            ...gqlRequestHeaders,
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
             "x-visualize-debug": "",
@@ -762,8 +765,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "no-cache",
-            "content-type": "application/json",
+            ...gqlRequestHeaders,
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
             "x-visualize-debug": "",
@@ -797,10 +799,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b5f72008b4a8aad1-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -828,10 +829,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-aae79653df2e8529-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -859,10 +859,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-86d99666f021910f-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -890,10 +889,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b5eb3ebe7d7556f6-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -921,10 +919,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9915fb793e5daf56-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -952,10 +949,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-a83b6fedc21e046f-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -983,10 +979,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-a34dd8d39ceff224-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -1014,10 +1009,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9052c3510cf6e4b0-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -1045,10 +1039,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b74faaf334ac7298-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -1200,10 +1193,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9410e2ad78b3146b-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -1231,10 +1223,9 @@ export default function main() {
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
             baggage:
               "sentry-environment=production,sentry-release=visualization-tool%40v3.20.2,sentry-transaction=%2Fcreate%2F%5BchartId%5D,sentry-public_key=1783a12ef4c64b678167ea8761265825,sentry-trace_id=22b2019ce9e04abfbb945534ccdfa650",
-            "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-bfe3f850e56a3df7-1",
-            "x-visualize-cache-control": "no-cache",
+            ...gqlRequestHeaders,
             "x-visualize-debug": "",
           },
         }
@@ -1249,8 +1240,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "no-cache",
-            "content-type": "application/json",
+            ...gqlRequestHeaders,
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
             "x-visualize-debug": "",
@@ -1270,8 +1260,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "no-cache",
-            "content-type": "application/json",
+            ...gqlRequestHeaders,
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
             "x-visualize-debug": "",

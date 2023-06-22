@@ -12,9 +12,15 @@ on:
           - test
           - int
           - prod
+      gql-server-side-cache:
+        description: "Enable GraphQL server-side cache"
+        required: true
+        default: true
+        type: boolean
 
 env:
   ENV: ${{ inputs.environment }}
+  ENABLE_GQL_SERVER_SIDE_CACHE: ${{ inputs.gql-server-side-cache }}
 
 jobs:
   k6:
@@ -30,7 +36,7 @@ jobs:
           filename: k6/graphql/components.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENV=${{ env.ENV }}
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing GraphQL - Observations
         if: always()
@@ -39,7 +45,7 @@ jobs:
           filename: k6/graphql/observations.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENV=${{ env.ENV }}
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing HAR - Edition
         if: always()
@@ -47,4 +53,4 @@ jobs:
         with:
           filename: k6/har/${{ env.ENV }}/edition.js
           cloud: true
-          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
