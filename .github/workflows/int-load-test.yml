@@ -1,0 +1,34 @@
+name: k6 Load Test (INT)
+
+on: [workflow_dispatch]
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Testing GraphQL - Components
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/int/components.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+
+      - name: Testing GraphQL - Observations
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/int/observations.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+
+      - name: Testing HAR - Edition
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/har/int/edition.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}

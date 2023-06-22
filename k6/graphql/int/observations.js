@@ -2,7 +2,7 @@ import { sleep } from "k6";
 import http from "k6/http";
 
 import { PROJECT_ID } from "../../utils.js";
-import { query, variables } from "../components.js";
+import { query, variables } from "../observations.js";
 import { headers } from "../utils.js";
 
 import { url } from "./utils.js";
@@ -13,17 +13,17 @@ export const options = {
   vus: 50,
   thresholds: {
     http_req_failed: ["rate<0.01"],
-    http_req_duration: ["p(95)<500"],
+    http_req_duration: ["p(95)<1250"],
   },
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: "GraphQL - Components (TEST)",
+      name: "GraphQL - Observations (INT)",
     },
   },
 };
 
-export default function Components() {
+export default function Observations() {
   http.post(url, JSON.stringify({ query, variables }), { headers });
   sleep(1);
 }

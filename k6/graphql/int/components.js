@@ -18,7 +18,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: "GraphQL - Components (TEST)",
+      name: "GraphQL - Components (INT)",
     },
   },
 };

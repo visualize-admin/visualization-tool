@@ -23,7 +23,6 @@
     "locales:compile": "lingui compile --verbose",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
     "graphql:codegen:dev": "graphql-codegen --config codegen.yml --watch",
-    "k6:codegen": "rm -rf k6/*.js && rm -rf k6/graphql/**.js && tsc k6/index.ts --outDir k6 --module es2022 --skipLibCheck --moduleResolution node",
     "icons": "rm -f app/icons/components/*.tsx && svgr -d app/icons/components app/icons/svg",
     "test": "cd ./app && pwd && yarn jest --max-workers 1 --setupFiles ./jest.setup.ts",
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",

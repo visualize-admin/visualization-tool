@@ -3,8 +3,9 @@ import http from "k6/http";
 
 import { PROJECT_ID } from "../../utils.js";
 import { query, variables } from "../observations.js";
+import { headers } from "../utils.js";
 
-import { headers, url } from "./utils.js";
+import { url } from "./utils.js";
 
 /** @type {import("k6/options").Options} */
 export const options = {
