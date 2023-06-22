@@ -149,11 +149,18 @@ yet have production data.
 
 The project uses [k6](https://k6.io) for load testing.
 
-### Setup
+### Automation
 
-In order to run the tests, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
+There is a dedicated GitHub action that runs the API load tests against https://test.visualize.admin.ch on push to the `main` branch.
+You can investigate the results by going to Actions section in GitHub and checking the summary results.
 
-The tests are written in TypeScript and need to be compiled to JavaScript before running. In order to make the conversion, run
+It's also possible to run the load tests manually by clicking a `Run workflow` button inside [k6 Load Test (Test)](https://github.com/visualize-admin/visualization-tool/actions/workflows/load-test.yml).
+
+### Local setup
+
+In order to run the tests locally, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
+
+Some tests are written in TypeScript and need to be compiled to JavaScript before running. In order to make the conversion, run
 
 ```sh
 yarn k6:codegen
@@ -171,6 +178,18 @@ k6 run k6/script-name.js
 
 replacing the `script-name` with an actual name of the test you want to run. Optionally, you can tweak the configuration of each test
 by directly modifying the `options` object inside a given script and running `yarn k6:codegen` to make the JavaScript files up-to-date.
+
+### Recording the tests using Playwright
+
+While some tests are written manually (TypeScript files compiled into JavaScript), other tests come from HAR recordings that span a broad
+set of actions. In order to record a HAR file and convert it into k6 script, use the `testAndSaveHar` inside `e2e/har-utils.ts` file.
+
+Simply import that function inside a given e2e test and replace the regular `test` call with `testAndSaveHar`. Note that you need to
+specify environment against which to run the test, filename and path to save the file.
+
+> ⚠️ The `testAndSaveHar` function exposes a `baseUrl` property, which needs to be injected into the `page.goto` calls.
+
+After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder).
 
 ## Authentication
 
