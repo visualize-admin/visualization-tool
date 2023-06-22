@@ -160,14 +160,6 @@ It's also possible to run the load tests manually by clicking a `Run workflow` b
 
 In order to run the tests locally, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
 
-Some tests are written in TypeScript and need to be compiled to JavaScript before running. In order to make the conversion, run
-
-```sh
-yarn k6:codegen
-```
-
-The scripts will be generated in k6 directory of the app.
-
 ### Running the tests locally
 
 You might want to run the script locally, for example to be able to bypass the cloud limitations of k6 (e.g. max number of VUs bigger than 50). To run a given load test, simply run
@@ -181,8 +173,8 @@ by directly modifying the `options` object inside a given script and running `ya
 
 ### Recording the tests using Playwright
 
-While some tests are written manually (TypeScript files compiled into JavaScript), other tests come from HAR recordings that span a broad
-set of actions. In order to record a HAR file and convert it into k6 script, use the `testAndSaveHar` inside `e2e/har-utils.ts` file.
+While some tests are written manually, other tests come from HAR recordings that span a broad set of actions.
+In order to record a HAR file and convert it into k6 script, use the `testAndSaveHar` inside `e2e/har-utils.ts` file.
 
 Simply import that function inside a given e2e test and replace the regular `test` call with `testAndSaveHar`. Note that you need to
 specify environment against which to run the test, filename and path to save the file.

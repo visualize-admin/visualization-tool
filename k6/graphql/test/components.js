@@ -1,12 +1,10 @@
 import { sleep } from "k6";
 import http from "k6/http";
-import { Options } from "k6/options";
 
-const url = "https://test.visualize.admin.ch/api/graphql";
-const headers = {
-  "Content-Type": "application/json",
-  "x-visualize-cache-control": "no-cache",
-};
+import { PROJECT_ID } from "../../utils.js";
+
+import { headers, url } from "./utils.js";
+
 const query = `query Components(
   $iri: String!
   $sourceType: String!
@@ -90,7 +88,8 @@ const variables = {
   ],
 };
 
-export const options: Options = {
+/** @type {import("k6/options").Options} */
+export const options = {
   duration: "60s",
   vus: 50,
   thresholds: {
@@ -99,7 +98,7 @@ export const options: Options = {
   },
   ext: {
     loadimpact: {
-      projectId: 3643757,
+      projectId: PROJECT_ID,
       name: "GraphQL - Components (TEST)",
     },
   },

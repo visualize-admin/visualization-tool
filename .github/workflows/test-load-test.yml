@@ -16,7 +16,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/test-components.js
+          filename: k6/graphql/test/components.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -24,7 +24,7 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/graphql/test-observations.js
+          filename: k6/graphql/test/observations.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
@@ -32,6 +32,6 @@ jobs:
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/har/test-edition.js
+          filename: k6/har/test/edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}

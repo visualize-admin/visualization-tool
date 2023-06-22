@@ -6,6 +6,9 @@
 import { group, sleep } from "k6";
 import http from "k6/http";
 
+import { PROJECT_ID } from "../../utils.js";
+
+/** @type {import("k6/options").Options} */
 export const options = {
   duration: "60s",
   vus: 10,
@@ -15,15 +18,13 @@ export const options = {
   },
   ext: {
     loadimpact: {
-      projectId: 3643757,
-      name: "HAR - Edition (INT)",
+      projectId: PROJECT_ID,
+      name: "HAR - Edition (TEST)",
     },
   },
 };
 
 export default function main() {
-  let response;
-
   group(
     "page@2b9336a07f9caa3de9cd2aad5e7a8fa8 - - visualize.admin.ch",
     function () {
