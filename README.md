@@ -152,9 +152,9 @@ The project uses [k6](https://k6.io) for load testing.
 ### Automation
 
 There is a dedicated GitHub action that runs the API load tests against https://test.visualize.admin.ch on push to the `main` branch.
-You can investigate the results by going to Actions section in GitHub and checking the summary results.
+You can investigate the results by going to Actions section in GitHub and checking the summary results. Results are also visible in the cloud (k6.io).
 
-It's also possible to run the load tests manually by clicking a `Run workflow` button inside [k6 Load Test (Test)](https://github.com/visualize-admin/visualization-tool/actions/workflows/load-test.yml).
+It's also possible to run the load tests manually by clicking a `Run workflow` button inside any of the load test workflows (TEST, INT, PROD).
 
 ### Local setup
 
@@ -183,7 +183,7 @@ specify environment against which to run the test, filename and path to save the
 
 After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder). Afterwards, edit the `options` variable at the top of the file to set the parameters for the test.
 
-> ⚠️ You might want to remove request to Google afterwards manually, to remove false-positives of blocked requests.
+> ⚠️ You might want to remove requests to Google afterwards manually, to remove false-positives of blocked requests.
 
 ## Authentication
 
