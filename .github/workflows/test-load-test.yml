@@ -1,12 +1,12 @@
-name: k6 Load Test (Test)
+name: k6 Load Test (TEST)
 
-on: [push, deployment_status]
+on: [workflow_dispatch, deployment_status]
 
 jobs:
   k6:
     if: |
       (github.event.deployment_status.state == 'success' && github.ref_name == 'main') ||
-      github.event_name == 'push'
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,10 +28,10 @@ jobs:
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
 
-      - name: Testing HAR - Edition (INT)
+      - name: Testing HAR - Edition
         if: always()
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: k6/har/int-edition.js
+          filename: k6/har/test-edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
