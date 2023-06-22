@@ -97,6 +97,12 @@ export const options: Options = {
     http_req_failed: ["rate<0.01"],
     http_req_duration: ["p(95)<1000"],
   },
+  ext: {
+    loadimpact: {
+      projectId: 3643757,
+      name: "GraphQL - Components (TEST)",
+    },
+  },
 };
 
 export default function Components() {

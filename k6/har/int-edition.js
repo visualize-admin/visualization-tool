@@ -13,6 +13,12 @@ export const options = {
     http_req_failed: ["rate<0.01"],
     http_req_duration: ["p(95)<5000"],
   },
+  ext: {
+    loadimpact: {
+      projectId: 3643757,
+      name: "HAR - Edition (INT)",
+    },
+  },
 };
 
 export default function main() {
