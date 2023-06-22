@@ -738,7 +738,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
@@ -759,7 +759,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
@@ -797,7 +797,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b5f72008b4a8aad1-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -828,7 +828,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-aae79653df2e8529-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -859,7 +859,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-86d99666f021910f-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -890,7 +890,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b5eb3ebe7d7556f6-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -921,7 +921,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9915fb793e5daf56-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -952,7 +952,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-a83b6fedc21e046f-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -983,7 +983,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-a34dd8d39ceff224-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1014,7 +1014,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9052c3510cf6e4b0-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1045,7 +1045,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-b74faaf334ac7298-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1164,6 +1164,7 @@ export default function main() {
       response = http.get(
         "https://test.visualize.admin.ch/_next/static/chunks/pages/create/%5BchartId%5D-d9bb99808438529f72a3.js"
       );
+      sleep(1.2);
 
       response = http.get(
         "https://test.visualize.admin.ch/_next/static/chunks/3798-d57960b5b76a544f56a6.js"
@@ -1172,6 +1173,7 @@ export default function main() {
       response = http.get(
         "https://test.visualize.admin.ch/_next/static/chunks/pages/index-167ceffaaf57e7909240.js"
       );
+      sleep(0.8);
 
       response = http.post(
         "https://test.visualize.admin.ch/api/graphql",
@@ -1198,7 +1200,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-9410e2ad78b3146b-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1229,11 +1231,12 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "22b2019ce9e04abfbb945534ccdfa650-bfe3f850e56a3df7-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
       );
+      sleep(1.7);
 
       response = http.post(
         "https://test.visualize.admin.ch/api/graphql",
@@ -1243,7 +1246,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
@@ -1264,7 +1267,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://test.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Int",
@@ -1278,7 +1281,4 @@ export default function main() {
       );
     }
   );
-
-  // Automatically added sleep
-  sleep(1);
 }

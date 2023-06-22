@@ -752,7 +752,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Prod",
@@ -773,7 +773,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Prod",
@@ -811,7 +811,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-bef2aed6e3a6f16f-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -842,7 +842,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-bdb634ebd31ae537-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -873,7 +873,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-b05b514d7896473c-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -904,7 +904,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-a8d61446ad8dc80b-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -935,7 +935,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-b8468002cdb931e2-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -966,7 +966,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-bc9e9f47fbe06d03-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -997,7 +997,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-ab34545140bce6c2-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1028,7 +1028,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-bbde5774bce43b54-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1059,7 +1059,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-9831f48bca7ff545-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1182,6 +1182,7 @@ export default function main() {
       response = http.get(
         "https://visualize.admin.ch/_next/static/chunks/pages/create/%5BchartId%5D-2ee6c7cdecb5e61bae69.js"
       );
+      sleep(1.3);
 
       response = http.get(
         "https://visualize.admin.ch/_next/static/chunks/3798-6a78e363282a56792e52.js"
@@ -1190,6 +1191,7 @@ export default function main() {
       response = http.get(
         "https://visualize.admin.ch/_next/static/chunks/pages/index-f8db2f01d0ad906ef2f1.js"
       );
+      sleep(0.8);
 
       response = http.post(
         "https://visualize.admin.ch/api/graphql",
@@ -1216,7 +1218,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-8e97dca1665001db-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1247,11 +1249,12 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-88edde095392afa5-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
       );
+      sleep(1.3);
 
       response = http.post(
         "https://visualize.admin.ch/api/graphql",
@@ -1278,7 +1281,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-bbe7736ad9c9c06f-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1309,14 +1312,11 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "e7293e6b03c64d6d9bc1a800758c5ac5-9cad8099e2ddc0ac-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
       );
     }
   );
-
-  // Automatically added sleep
-  sleep(1);
 }

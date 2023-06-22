@@ -181,7 +181,7 @@ specify environment against which to run the test, filename and path to save the
 
 > ⚠️ The `testAndSaveHar` function exposes a `baseUrl` property, which needs to be injected into the `page.goto` calls.
 
-After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder). Afterwards, edit the `options` variable at the top of the file to set the parameters for the test.
+After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder). Remember to add `--add-sleep` flag to include pauses between requests. Afterwards, edit the `options` variable at the top of the file to set the parameters for the test.
 
 > ⚠️ You might want to remove requests to Google afterwards manually, to remove false-positives of blocked requests.
 

@@ -755,7 +755,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://int.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Prod",
@@ -776,7 +776,7 @@ export default function main() {
             "Accept-Language": "en-US",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.29 Safari/537.36",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "content-type": "application/json",
             Referer:
               "https://int.visualize.admin.ch/en/create/WtHYbmsehQKo?dataSource=Prod",
@@ -814,7 +814,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-aea0a10f57b1d315-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -845,7 +845,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-b0761955850d9079-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -876,7 +876,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-be9eb10d4fe151bb-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -907,7 +907,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-aad707d049272296-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -938,7 +938,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-98bc7a99d95eb058-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -969,7 +969,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-9e4fc33afd25b4af-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1000,7 +1000,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-a1eb26268f551bb2-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1031,7 +1031,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-9cd615f82e56e5c1-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1062,7 +1062,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-a539040a97d98c27-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1185,6 +1185,7 @@ export default function main() {
       response = http.get(
         "https://int.visualize.admin.ch/_next/static/chunks/pages/create/%5BchartId%5D-2ee6c7cdecb5e61bae69.js"
       );
+      sleep(1.2);
 
       response = http.get(
         "https://int.visualize.admin.ch/_next/static/chunks/3798-6a78e363282a56792e52.js"
@@ -1193,6 +1194,7 @@ export default function main() {
       response = http.get(
         "https://int.visualize.admin.ch/_next/static/chunks/pages/index-f8db2f01d0ad906ef2f1.js"
       );
+      sleep(0.9);
 
       response = http.post(
         "https://int.visualize.admin.ch/api/graphql",
@@ -1219,7 +1221,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-8bc796f88aae1523-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1250,11 +1252,12 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-b982260db7a6b755-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
       );
+      sleep(1.3);
 
       response = http.post(
         "https://int.visualize.admin.ch/api/graphql",
@@ -1281,7 +1284,7 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-820073fb03acaf9b-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
@@ -1312,14 +1315,11 @@ export default function main() {
             "content-type": "application/json",
             "sentry-trace":
               "b19d15c97f7d4e369daef63483f094cf-811e67fada423463-1",
-            "x-visualize-cache-control": "",
+            "x-visualize-cache-control": "no-cache",
             "x-visualize-debug": "",
           },
         }
       );
     }
   );
-
-  // Automatically added sleep
-  sleep(1);
 }
