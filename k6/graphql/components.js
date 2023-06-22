@@ -3,7 +3,7 @@ import http from "k6/http";
 
 import { DISTRIBUTION, PROJECT_ID } from "../utils.js";
 
-import { getUrl, headers } from "./utils.js";
+import { getHeaders, getUrl } from "./utils.js";
 
 const query = `query Components(
   $iri: String!
@@ -90,6 +90,7 @@ const variables = {
 };
 
 const env = __ENV.ENV;
+const enableCache = __ENV.ENABLE_GQL_SERVER_SIDE_CACHE === "true";
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -102,13 +103,17 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: `GraphQL - Components (${env.toUpperCase()})`,
+      name: `GraphQL - Components (${env.toUpperCase()}, GQL ${
+        enableCache ? "cache" : "no-cache"
+      })`,
       distribution: DISTRIBUTION,
     },
   },
 };
 
 export default function Components() {
-  http.post(getUrl(env), JSON.stringify({ query, variables }), { headers });
+  http.post(getUrl(env), JSON.stringify({ query, variables }), {
+    headers: getHeaders(enableCache),
+  });
   sleep(1);
 }

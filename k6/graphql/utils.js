@@ -1,6 +1,8 @@
-export const headers = {
-  "Content-Type": "application/json",
-  "x-visualize-cache-control": "no-cache",
+export const getHeaders = (enableCache) => {
+  return {
+    "Content-Type": "application/json",
+    "x-visualize-cache-control": enableCache ? "" : "no-cache",
+  };
 };
 
 export const getUrl = (env) => {
