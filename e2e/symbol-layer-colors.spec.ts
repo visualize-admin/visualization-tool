@@ -1,6 +1,8 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect } from "./common";
+import { setup } from "./common";
 import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
+
+const { test, expect } = setup();
 
 test("Selecting SymbolLayer colors> should be possible to select geo dimension and see a legend", async ({
   page,

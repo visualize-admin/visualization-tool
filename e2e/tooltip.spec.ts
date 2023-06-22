@@ -1,4 +1,6 @@
-import { test, expect } from "./common";
+import { setup } from "./common";
+
+const { test, expect } = setup();
 
 test("tooltip content", async ({ actions, selectors, within, page }) => {
   test.slow();

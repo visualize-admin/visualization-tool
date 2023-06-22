@@ -1,4 +1,6 @@
-import { describe, test, expect } from "./common";
+import { setup } from "./common";
+
+const { test, describe, expect } = setup();
 
 describe("Filters", () => {
   test("Filters initial state should have hierarchy dimensions first and topmost value selected", async ({

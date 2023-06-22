@@ -1,4 +1,6 @@
-import { test } from "./common";
+import { setup } from "./common";
+
+const { test } = setup();
 
 test("it should display values in interactive filters as hierarchie", async ({
   page,

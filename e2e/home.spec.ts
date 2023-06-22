@@ -1,6 +1,8 @@
 import { URL } from "url";
 
-import { describe, test, expect } from "./common";
+import { setup } from "./common";
+
+const { test, describe, expect } = setup();
 
 describe("The Home Page", () => {
   test("default language (de) should render on /", async ({ page, screen }) => {

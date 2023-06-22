@@ -1,4 +1,6 @@
-import { test } from "./common";
+import { setup } from "./common";
+
+const { test } = setup();
 
 test("Unversioned dataset > should be possible to open a link to an unversioned dataset", async ({
   page,

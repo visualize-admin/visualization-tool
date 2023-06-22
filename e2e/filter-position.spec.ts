@@ -1,11 +1,8 @@
-import { test, expect } from "./common";
+import { setup } from "./common";
 
-test("Filters should be sorted by position", async ({
-  screen,
-  selectors,
-  actions,
-  within,
-}) => {
+const { test, expect } = setup();
+
+test("Filters should be sorted by position", async ({ selectors, actions }) => {
   await actions.chart.createFrom(
     "https://environment.ld.admin.ch/foen/ubd003001/14",
     "Int"

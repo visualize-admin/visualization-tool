@@ -1,6 +1,8 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect } from "./common";
+import { setup } from "./common";
 import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
+
+const { test, expect } = setup();
 
 /**
  * - Creates a chart from the photovoltaik dataset
