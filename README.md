@@ -151,10 +151,8 @@ The project uses [k6](https://k6.io) for load testing.
 
 ### Automation
 
-There is a dedicated GitHub action that runs the API load tests against https://test.visualize.admin.ch on push to the `main` branch.
-You can investigate the results by going to Actions section in GitHub and checking the summary results. Results are also visible in the cloud (k6.io).
-
-It's also possible to run the load tests manually by clicking a `Run workflow` button inside any of the load test workflows (TEST, INT, PROD).
+There is a [dedicated GitHub Action](https://github.com/visualize-admin/visualization-tool/actions/workflows/manual-load-test.yml) that runs the API load tests against selected environment.
+You can investigate the results by going to Actions section in GitHub and checking the summary results. They are also visible in the cloud (k6.io).
 
 ### Local setup
 

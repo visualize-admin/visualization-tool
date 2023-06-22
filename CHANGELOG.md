@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Tests
+  - Introduced load tests using k6
 
 # [3.20.2] - 2023-06-20
 
