@@ -168,9 +168,9 @@ yarn k6:codegen
 
 The scripts will be generated in k6 directory of the app.
 
-### Running the tests
+### Running the tests locally
 
-To run a given load test, simply run
+You might want to run the script locally, for example to be able to bypass the cloud limitations of k6 (e.g. max number of VUs bigger than 50). To run a given load test, simply run
 
 ```sh
 k6 run k6/script-name.js

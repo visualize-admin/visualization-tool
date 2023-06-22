@@ -58,8 +58,8 @@ const variables = {
 };
 
 export const options: Options = {
-  duration: "40s",
-  vus: 75,
+  duration: "60s",
+  vus: 50,
   thresholds: {
     http_req_failed: ["rate<0.01"],
     http_req_duration: ["p(95)<1000"],
