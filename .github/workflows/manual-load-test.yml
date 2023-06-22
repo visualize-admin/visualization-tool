@@ -58,4 +58,5 @@ jobs:
         with:
           filename: k6/har/${{ env.ENV }}/edition.js
           cloud: ${{ inputs.cloud }}
-          token: ${{ secrets.K6_CLOUD_API_TOKEN }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
