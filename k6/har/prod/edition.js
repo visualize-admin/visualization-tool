@@ -26,6 +26,8 @@ export const options = {
 };
 
 export default function main() {
+  let response;
+
   group(
     "page@0c4482c551a403bb64cefc4643505383 - - visualize.admin.ch",
     function () {
