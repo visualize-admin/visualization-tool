@@ -3,7 +3,7 @@ import http from "k6/http";
 
 import { PROJECT_ID } from "../utils.js";
 
-import { headers } from "./utils.js";
+import { getUrl, headers } from "./utils.js";
 
 const query = `query DataCubeObservations(
   $iri: String!
@@ -56,7 +56,7 @@ const variables = {
   },
 };
 
-const env = process.env.ENV;
+const env = __ENV.ENV;
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -75,6 +75,6 @@ export const options = {
 };
 
 export default function Observations() {
-  http.post(getURL(env), JSON.stringify({ query, variables }), { headers });
+  http.post(getUrl(env), JSON.stringify({ query, variables }), { headers });
   sleep(1);
 }

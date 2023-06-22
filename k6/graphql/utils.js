@@ -4,5 +4,7 @@ export const headers = {
 };
 
 export const getUrl = (env) => {
-  return `https://${env === "prod" ? "" : `${env}.`}visualize.admin.ch`;
+  return `https://${
+    env === "prod" ? "" : `${env}.`
+  }visualize.admin.ch/api/graphql`;
 };

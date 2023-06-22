@@ -20,6 +20,7 @@ jobs:
           filename: k6/graphql/test/components.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
 
       - name: Testing GraphQL - Observations
         if: always()
@@ -28,6 +29,7 @@ jobs:
           filename: k6/graphql/test/observations.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
 
       - name: Testing HAR - Edition
         if: always()
@@ -36,3 +38,4 @@ jobs:
           filename: k6/har/test/edition.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}

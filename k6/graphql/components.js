@@ -3,7 +3,7 @@ import http from "k6/http";
 
 import { PROJECT_ID } from "../utils.js";
 
-import { getURL, headers } from "./utils.js";
+import { getUrl, headers } from "./utils.js";
 
 const query = `query Components(
   $iri: String!
@@ -89,7 +89,7 @@ const variables = {
   ],
 };
 
-const env = process.env.ENV;
+const env = __ENV.ENV;
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -108,6 +108,6 @@ export const options = {
 };
 
 export default function Components() {
-  http.post(getURL(env), JSON.stringify({ query, variables }), { headers });
+  http.post(getUrl(env), JSON.stringify({ query, variables }), { headers });
   sleep(1);
 }
