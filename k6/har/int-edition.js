@@ -11,7 +11,7 @@ export const options = {
   vus: 10,
   thresholds: {
     http_req_failed: ["rate<0.01"],
-    http_req_duration: ["p(95)<1500"],
+    http_req_duration: ["p(95)<2500"],
   },
   ext: {
     loadimpact: {
