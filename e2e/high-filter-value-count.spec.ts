@@ -1,4 +1,6 @@
-import { test } from "./common";
+import { setup } from "./common";
+
+const { test } = setup();
 
 /**
  * @todo Works locally but not on CI

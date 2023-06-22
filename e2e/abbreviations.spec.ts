@@ -1,4 +1,6 @@
-import { expect, sleep, test } from "./common";
+import { setup, sleep } from "./common";
+
+const { test, expect } = setup();
 
 test("it should be possible to enable abbreviations for colors & x field (column)", async ({
   actions,
@@ -56,7 +58,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { setTimeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()

@@ -1,6 +1,8 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test, expect, describe, sleep } from "./common";
+import { setup, sleep } from "./common";
 import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
+
+const { test, describe, expect } = setup();
 
 describe("viewing a dataset with only ordinal measures", () => {
   const key = "ePUgYyo622qS";

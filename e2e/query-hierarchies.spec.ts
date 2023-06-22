@@ -1,7 +1,9 @@
 import gql from "graphql-tag";
 import { createClient } from "urql";
 
-import { describe, test, expect } from "./common";
+import { setup } from "./common";
+
+const { test, describe, expect } = setup();
 
 /**
  * Had to copy graphql definitions from graphql/query-hooks

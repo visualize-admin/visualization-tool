@@ -1,0 +1,51 @@
+name: Manual Load Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to test"
+        required: true
+        default: int
+        type: choice
+        options:
+          - test
+          - int
+          - prod
+
+env:
+  ENV: ${{ inputs.environment }}
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Testing GraphQL - Components
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/components.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
+
+      - name: Testing GraphQL - Observations
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/observations.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
+
+      - name: Testing HAR - Edition
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/har/edition.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}

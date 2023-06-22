@@ -1,0 +1,41 @@
+name: Auto Load Test
+
+on: deployment_status
+
+env:
+  ENV: test
+
+jobs:
+  k6:
+    if: github.event.deployment_status.state == 'success' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Testing GraphQL - Components
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/test/components.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
+
+      - name: Testing GraphQL - Observations
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/graphql/test/observations.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}
+
+      - name: Testing HAR - Edition
+        if: always()
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/har/test/edition.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          flags: --env ENV=${{ env.ENV }}

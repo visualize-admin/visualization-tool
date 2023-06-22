@@ -1,6 +1,8 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { test } from "./common";
+import { setup } from "./common";
 import offentlicheAusgabenChartConfigFixture from "./fixtures/offentliche-ausgaben-chart-config.json";
+
+const { test } = setup();
 
 test("should be possible to edit filters of a hierarchy", async ({
   page,

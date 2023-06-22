@@ -1,4 +1,6 @@
-import { expect, test } from "./common";
+import { setup } from "./common";
+
+const { test, expect } = setup();
 
 const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
 

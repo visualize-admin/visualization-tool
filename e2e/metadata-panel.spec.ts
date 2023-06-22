@@ -1,4 +1,6 @@
-import { expect, test } from "./common";
+import { setup } from "./common";
+
+const { test, expect } = setup();
 
 test("it should be possible to open a metadata panel by clicking on elements in the editor", async ({
   actions,

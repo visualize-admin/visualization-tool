@@ -1,7 +1,9 @@
 import { within } from "@playwright-testing-library/test";
 import { Locator } from "@playwright/test";
 
-import { test, expect } from "./common";
+import { setup } from "./common";
+
+const { test, expect } = setup();
 
 const getSelectValue = async (locator: Locator) => {
   return locator.evaluate((ev) => (ev as HTMLSelectElement).value);

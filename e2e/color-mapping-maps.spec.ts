@@ -1,6 +1,8 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { expect, test } from "./common";
+import { setup } from "./common";
 import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
+
+const { test, expect } = setup();
 
 test("should be possible to de-select options from color component in maps", async ({
   page,

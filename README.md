@@ -145,6 +145,48 @@ Those charts configurations are kept in the repository.
 At the moment, the screenshots are made from charts using data from int.lindas.admin.ch as for some functionalities, we do not
 yet have production data.
 
+## Load tests
+
+The project uses [k6](https://k6.io) for load testing.
+
+### Automation
+
+There is a dedicated GitHub action that runs the API load tests against https://test.visualize.admin.ch on push to the `main` branch.
+You can investigate the results by going to Actions section in GitHub and checking the summary results. Results are also visible in the cloud (k6.io).
+
+It's also possible to run the load tests manually by clicking a `Run workflow` button inside any of the load test workflows (TEST, INT, PROD).
+
+### Local setup
+
+In order to run the tests locally, follow the [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on your machine.
+
+### Running the tests locally
+
+You might want to run the script locally, for example to be able to bypass the cloud limitations of k6 (e.g. max number of VUs bigger than 50). To run a given load test, simply run
+
+```sh
+k6 run k6/script-name.js
+```
+
+replacing the `script-name` with an actual name of the test you want to run. Optionally, you can tweak the configuration of each test
+by directly modifying the `options` object inside a given script and running `yarn k6:codegen` to make the JavaScript files up-to-date.
+
+For the GraphQL tests, you'll also need to pass `--env ENV=(test|int|prod)` flag to point to the proper environment.
+
+### Recording the tests using Playwright
+
+While some tests are written manually, other tests come from HAR recordings that span a broad set of actions.
+In order to record a HAR file and convert it into k6 script, use the `testAndSaveHar` inside `e2e/har-utils.ts` file.
+
+Simply import that function inside a given e2e test and replace the regular `test` call with `testAndSaveHar`. Note that you need to
+specify environment against which to run the test, filename and path to save the file.
+
+> ⚠️ The `testAndSaveHar` function exposes a `baseUrl` property, which needs to be injected into the `page.goto` calls.
+
+After the HAR file has been recorded, use [har-to-k6](https://k6.io/docs/test-authoring/create-tests-from-recordings/using-the-har-converter/#:~:text=The%20har%2Dto%2Dk6%20converter,to%20export%20recorded%20HTTP%20requests.) library to convert the file into k6 script (and put it into the `k6/har` folder). Remember to add `--add-sleep` flag to include pauses between requests. Afterwards, edit the `options` variable at the top of the file to set the parameters for the test.
+
+> ⚠️ You might want to remove requests to Google afterwards manually, to remove false-positives of blocked requests.
+
 ## Authentication
 
 Authentication by eIAM through a Keycloak instance.
