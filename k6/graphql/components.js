@@ -1,7 +1,7 @@
 import { sleep } from "k6";
 import http from "k6/http";
 
-import { PROJECT_ID } from "../utils.js";
+import { DISTRIBUTION, PROJECT_ID } from "../utils.js";
 
 import { getUrl, headers } from "./utils.js";
 
@@ -103,6 +103,7 @@ export const options = {
     loadimpact: {
       projectId: PROJECT_ID,
       name: `GraphQL - Components (${env.toUpperCase()})`,
+      distribution: DISTRIBUTION,
     },
   },
 };

@@ -6,7 +6,7 @@
 import { group, sleep } from "k6";
 import http from "k6/http";
 
-import { PROJECT_ID } from "../../utils.js";
+import { DISTRIBUTION, PROJECT_ID } from "../../utils.js";
 
 /** @type {import("k6/options").Options} */
 export const options = {
@@ -20,6 +20,7 @@ export const options = {
     loadimpact: {
       projectId: PROJECT_ID,
       name: "HAR - Edition (INT)",
+      distribution: DISTRIBUTION,
     },
   },
 };
