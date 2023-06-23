@@ -23,6 +23,7 @@ jobs:
         run: yarn e2e
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
       - name: Upload E2E artifacts to job
         uses: actions/upload-artifact@v2
         if: failure()
@@ -59,15 +60,3 @@ jobs:
             "state": "failure",
             "description": "E2E tests failed"
           }'
-      - name: Set argos upload branch on master branch
-        run: echo "ARGOS_BRANCH=main" >> $GITHUB_ENV
-        if: always() && github.ref == 'refs/heads/main'
-      - name: Set argos upload branch on PR branches
-        run: echo "ARGOS_BRANCH=$(git name-rev --name-only $GITHUB_SHA | sed 's-remotes/origin/--')" >> $GITHUB_ENV
-        if: always() && github.ref != 'refs/heads/main'
-      - name: Upload screenshots to Argos
-        if: always()
-        env:
-          ARGOS_COMMIT: ${{ github.sha }}
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-        run: yarn run argos upload e2e-screenshots
