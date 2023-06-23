@@ -27,11 +27,15 @@ const configs: TestConfig[] = [
     name: "Line - State accounts (segmented)",
     slug: "line-state-accounts",
   },
-  { chartId: "Z6Re21LHbOoP", name: "Pie - Red list", slug: "pie-red-list" },
+  {
+    chartId: "Z6Re21LHbOoP",
+    name: "Pie - Red list",
+    slug: "pie-red-list",
+  },
   {
     chartId: "jky5IEw6poT3",
-    name: "Map - Waldfläsche (areas)",
-    slug: "map-waldflasche",
+    name: "Map - NFI: Topics by tree status",
+    slug: "map-nfi",
   },
   {
     chartId: "nI6X4V_EcK2c",

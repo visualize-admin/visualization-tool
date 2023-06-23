@@ -1,6 +1,6 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup } from "./common";
-import mapWaldflascheChartConfigFixture from "./fixtures/map-waldflasche-chart-config.json";
+import mapNFIChartConfigFixture from "./fixtures/map-nfi-chart-config.json";
 
 const { test, expect } = setup();
 
@@ -11,7 +11,7 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   within,
 }) => {
   const key = "jky5IEw6poT3";
-  const config = mapWaldflascheChartConfigFixture;
+  const config = mapNFIChartConfigFixture;
   await loadChartInLocalStorage(page, key, config);
   await page.goto(`/en/create/${key}`);
 
