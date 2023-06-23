@@ -59,7 +59,7 @@ describe("viewing a dataset with only ordinal measures", () => {
       .click();
 
     // Select options open in portal
-    await actions.mui.selectOption("area");
+    await actions.mui.selectOption("Warning region");
 
     // Allow select options to disappear to prevent re-selecting none
     await sleep(3000);
@@ -74,6 +74,12 @@ describe("viewing a dataset with only ordinal measures", () => {
     const options = await selectors.mui.options();
     const dimensionLabels = await options.allInnerTexts();
 
-    expect(dimensionLabels).toEqual(["None", "area", "ord1", "ord2", "ord3"]);
+    expect(dimensionLabels).toEqual([
+      "None",
+      "Active since",
+      "Canton",
+      "Danger ratings",
+      "Warning region",
+    ]);
   });
 });
