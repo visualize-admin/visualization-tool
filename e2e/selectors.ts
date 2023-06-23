@@ -57,7 +57,11 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
           timeout: 20 * 1000,
         }),
       drawerLoaded: () =>
-        screen.findByText("Chart Type", undefined, { timeout: 10_000 }),
+        screen.findByText(
+          "Chart Type",
+          { selector: "h5" },
+          { timeout: 10_000 }
+        ),
       chartFilters: () => screen.findByTestId("chart-filters-list"),
       filterDrawer: () => screen.findByTestId("edition-filters-drawer"),
       filterCheckbox: (value: string) =>
