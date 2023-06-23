@@ -1,4 +1,5 @@
 import { setup } from "./common";
+import mapNFIconfig from "./fixtures/map-nfi-chart-config.json";
 
 const { test, describe, expect } = setup();
 
@@ -8,7 +9,7 @@ describe("Filters", () => {
     selectors,
   }) => {
     await page.goto(
-      `/en/create/new?cube=https://environment.ld.admin.ch/foen/nfi/49-19-44/cube/1&dataSource=Int`
+      `/en/create/new?cube=${mapNFIconfig.dataSet}&dataSource=Prod`
     );
     await selectors.chart.loaded();
 
@@ -20,12 +21,11 @@ describe("Filters", () => {
 
     const texts = await labels.allTextContents();
     // Hierarchical dimensions should come first.
-    expect(texts[0]).toEqual("1. Production region");
-    expect(texts[1]).toEqual("2. Stand structure");
+    expect(texts[0]).toEqual("1. Region");
+    expect(texts[1]).toEqual("2. tree status");
 
-    const productionRegionFilter = selectors.edition.dataFilterInput(
-      "1. Production region"
-    );
+    const productionRegionFilter =
+      selectors.edition.dataFilterInput("1. Region");
 
     const productionRegionFilterValue = await productionRegionFilter
       .locator("input[name^=select-single-filter]")
@@ -34,18 +34,15 @@ describe("Filters", () => {
       "https://ld.admin.ch/country/CHE"
     );
 
-    const standStructureFilter =
-      selectors.edition.dataFilterInput("2. Stand structure");
-    const standStructureFilterValue = await standStructureFilter
+    const treeStatusFilter =
+      selectors.edition.dataFilterInput("2. tree status");
+    const treeStatusFilterValue = await treeStatusFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
 
-    // Following expect is broken
-    // https://github.com/visualize-admin/visualization-tool/issues/875
-    // TODO reactivate when issue is fixed
-    // expect(standStructureFilterValue).toEqual(
-    //   "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Struk/Total"
-    // );
+    expect(treeStatusFilterValue).toEqual(
+      "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Total"
+    );
   });
 
   test("Temporal filter should display all values", async ({
@@ -77,6 +74,6 @@ describe("Filters", () => {
 
     const options = await selectors.mui.options().allInnerTexts();
 
-    expect(options.length).toEqual(8);
+    expect(options.length).toEqual(9);
   });
 });
