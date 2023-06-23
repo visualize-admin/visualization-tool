@@ -1,4 +1,4 @@
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 
 const { test, expect } = setup();
 
@@ -28,6 +28,8 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   await xLabel.hover({
     force: true,
   });
+
+  await sleep(3_000);
 
   const tooltip = page.locator('[data-testid="chart-tooltip"]');
   await tooltip.waitFor({

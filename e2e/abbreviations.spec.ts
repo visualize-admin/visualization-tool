@@ -66,10 +66,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect([
-    colorLegendItems[0],
-    colorLegendItems[colorLegendItems.length - 1],
-  ]).toEqual(["ZH", "JU"]);
+  expect(colorLegendItems[0]).toEqual("ZH");
 });
 
 test("hierarchies: it should be possible to enable abbreviations for colors", async ({

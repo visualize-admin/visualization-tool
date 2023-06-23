@@ -1,5 +1,5 @@
 import { loadChartInLocalStorage } from "./charts-utils";
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 import hierarchyTest13 from "./fixtures/hierarchy-test-13-municipality-population.json";
 
 const { test, expect } = setup();
@@ -94,8 +94,9 @@ test("Segment sorting with hierarchy", async ({
   );
   await actions.editor.selectActiveField("Color");
 
+  await sleep(3_000);
+
   const colorSection = selectors.edition.controlSection("Color");
-  await colorSection.waitFor({ timeout: 5_000 });
   await within(colorSection).getByText("None").click();
 
   await actions.mui.selectOption("Region");
