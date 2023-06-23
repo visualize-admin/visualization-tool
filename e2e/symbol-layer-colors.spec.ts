@@ -16,33 +16,17 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   await page.goto(`/en/create/${key}`);
 
   await selectors.chart.loaded();
-  await actions.editor.selectActiveField("Symbols");
-
-  await within(selectors.edition.controlSection("Symbols"))
-    .getByText("None")
-    .click();
-
-  // Select production region as origin for symbols
-  await actions.mui.selectOption("Production region");
-
-  await selectors.chart.loaded();
 
   await within(selectors.edition.controlSection("Color"))
     .getByText("None")
     .click();
 
-  // Selects production region for color mapping
-  await actions.mui.selectOption("Production region");
+  await actions.mui.selectOption("Region");
 
   const legendItems = await selectors.chart.colorLegendItems();
-  expect(await legendItems.count()).toBe(6);
+  expect(await legendItems.count()).toBe(51);
   const legendTexts = await legendItems.allTextContents();
-  expect(legendTexts).toEqual([
-    "Switzerland",
-    "Jura",
-    "Plateau",
-    "Pre-Alps",
-    "Alps",
-    "Southern Alps",
-  ]);
+  expect(legendTexts[0]).toEqual("Jura + Plateau");
+  expect(legendTexts[1]).toEqual("Western Jura");
+  expect(legendTexts[legendTexts.length - 1]).toEqual("Jura");
 });
