@@ -1,6 +1,6 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup } from "./common";
-import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
+import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
 
 const { test, expect } = setup();
 
@@ -11,7 +11,7 @@ test("should be possible to de-select options from color component in maps", asy
   selectors,
 }) => {
   const key = "color-mapping-maps.spec";
-  const config = testOrd507;
+  const config = forestFireDanger;
   await loadChartInLocalStorage(page, key, config);
   page.goto(`/en/create/${key}`);
 
@@ -34,7 +34,7 @@ test("should be possible to de-select options from color component in maps", asy
   );
   await filtersButton.click();
   const filters = selectors.edition.filterDrawer().within();
-  await (await filters.findByText("description en 1")).click();
+  await (await filters.findByText("moderate danger")).click();
   await (await filters.findByText("Apply filters")).click();
 
   await selectors.chart.loaded();

@@ -1,12 +1,12 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
-import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
+import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
 
 const { test, describe, expect } = setup();
 
 describe("viewing a dataset with only ordinal measures", () => {
   const key = "ePUgYyo622qS";
-  const config = testOrd507;
+  const config = forestFireDanger;
 
   test("should retrieve dimension values properly", async ({
     selectors,

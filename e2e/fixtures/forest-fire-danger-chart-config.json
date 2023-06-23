@@ -1,9 +1,9 @@
 {
   "state": "CONFIGURING_CHART",
-  "dataSet": "https://environment.ld.admin.ch/foen/test_ordinal_507/7",
+  "dataSet": "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
   "dataSource": {
     "type": "sparql",
-    "url": "https://int.lindas.admin.ch/query"
+    "url": "https://lindas.admin.ch/query"
   },
   "meta": {
     "title": {
@@ -20,7 +20,7 @@
     }
   },
   "chartConfig": {
-    "version": "1.2.1",
+    "version": "1.4.0",
     "chartType": "table",
     "filters": {},
     "settings": {
@@ -29,8 +29,8 @@
     },
     "sorting": [],
     "fields": {
-      "http://schema.org/identifier": {
-        "componentIri": "http://schema.org/identifier",
+      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region": {
+        "componentIri": "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/region",
         "componentType": "GeoShapesDimension",
         "index": 0,
         "isGroup": false,
@@ -42,9 +42,9 @@
           "columnColor": "#fff"
         }
       },
-      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord1": {
-        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord1",
-        "componentType": "OrdinalMeasure",
+      "http://schema.org/validFrom": {
+        "componentIri": "http://schema.org/validFrom",
+        "componentType": "NominalDimension",
         "index": 1,
         "isGroup": false,
         "isHidden": false,
@@ -55,9 +55,9 @@
           "columnColor": "#fff"
         }
       },
-      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord2": {
-        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord2",
-        "componentType": "OrdinalMeasure",
+      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/canton": {
+        "componentIri": "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/canton",
+        "componentType": "NominalDimension",
         "index": 2,
         "isGroup": false,
         "isHidden": false,
@@ -68,8 +68,8 @@
           "columnColor": "#fff"
         }
       },
-      "https://environment.ld.admin.ch/foen/test_ordinal_507/ord3": {
-        "componentIri": "https://environment.ld.admin.ch/foen/test_ordinal_507/ord3",
+      "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level": {
+        "componentIri": "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/level",
         "componentType": "OrdinalMeasure",
         "index": 3,
         "isGroup": false,
