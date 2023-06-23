@@ -5,8 +5,8 @@ const { test, expect } = setup();
 test("tooltip content", async ({ actions, selectors, within, page }) => {
   test.slow();
   await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/6",
-    "Int"
+    "https://environment.ld.admin.ch/foen/ubd000502/4",
+    "Prod"
   );
 
   const filterLocator = await within(
@@ -32,8 +32,8 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
   const tooltip = page.locator('[data-testid="chart-tooltip"]');
   await tooltip.waitFor({
     state: "attached",
-    timeout: 1000,
+    timeout: 1_000,
   });
   const textContent = await tooltip.textContent();
-  expect(textContent).toEqual("19960.017 Mt");
+  expect(textContent).toEqual("19960.019 Mt");
 });
