@@ -12,6 +12,7 @@ describe("Filters", () => {
       `/en/create/new?cube=${mapNFIconfig.dataSet}&dataSource=Prod`
     );
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     const filters = selectors.edition.controlSection("Filters");
 
@@ -57,6 +58,7 @@ describe("Filters", () => {
       "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
     );
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     await actions.editor.changeChartType("Map");
 

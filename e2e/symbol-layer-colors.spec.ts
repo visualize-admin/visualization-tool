@@ -14,6 +14,7 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
   const config = mapNFIChartConfigFixture;
   await loadChartInLocalStorage(page, key, config);
   await page.goto(`/en/create/${key}`);
+  await selectors.edition.drawerLoaded();
 
   await selectors.chart.loaded();
 

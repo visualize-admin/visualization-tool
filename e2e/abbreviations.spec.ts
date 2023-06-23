@@ -13,6 +13,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
     "Prod"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Horizontal Axis");
 
   let checkbox = await selectors.edition.useAbbreviationsCheckbox();
@@ -78,6 +79,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
     "Prod"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Color");
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
@@ -88,7 +90,6 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 
   await checkbox.click();
 
-  // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
   await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
@@ -108,6 +109,7 @@ test("localized abbreviations", async ({ actions, selectors }) => {
     "Int"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.changeChartType("Map");
   await actions.editor.selectActiveField("Warning region");
 
@@ -115,7 +117,6 @@ test("localized abbreviations", async ({ actions, selectors }) => {
 
   await checkbox.click();
 
-  // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
   await selectors.chart.colorLegend(undefined, { timeout: 3_000 });

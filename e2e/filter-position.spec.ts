@@ -8,7 +8,8 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
     "Int"
   );
 
-  await selectors.chart.loaded();
+  await selectors.edition.drawerLoaded();
+
   await actions.editor.selectActiveField("Color");
 
   const selectorLocator = await selectors.panels

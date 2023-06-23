@@ -14,6 +14,7 @@ test("should be possible to de-select options from color component in maps", asy
   const config = forestFireDanger;
   await loadChartInLocalStorage(page, key, config);
   page.goto(`/en/create/${key}`);
+  await selectors.edition.drawerLoaded();
 
   await selectors.chart.loaded();
 

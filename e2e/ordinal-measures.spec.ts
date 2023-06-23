@@ -26,6 +26,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     page.goto(`/en/create/${key}`);
 
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     const enabledButtons = await (
       await selectors.edition.chartTypeSelector()
@@ -45,6 +46,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     page.goto(`/en/create/${key}`);
 
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     await actions.editor.changeChartType("Map");
 

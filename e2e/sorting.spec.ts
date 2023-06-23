@@ -30,11 +30,9 @@ test("Segment sorting", async ({
   );
 
   for (const chartType of ["Columns", "Lines", "Areas", "Pie"] as const) {
+    await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType(chartType);
     await actions.editor.selectActiveField("Color");
-
-    // Wait for color section to be ready
-    await selectors.edition.controlSection("Color").waitFor();
 
     // Switch color on the first chart
     if (chartType === "Columns") {
@@ -92,6 +90,8 @@ test("Segment sorting with hierarchy", async ({
     "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
     "Prod"
   );
+
+  await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Color");
 
   await sleep(3_000);
@@ -157,6 +157,8 @@ test("Map legend categorical values sorting", async ({
     "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
     "Int"
   );
+  await selectors.edition.drawerLoaded();
+
   await actions.editor.changeChartType("Map");
   await selectors.chart.loaded();
 
@@ -188,6 +190,8 @@ test("Map legend preview table sorting", async ({ actions, selectors }) => {
     "https://environment.ld.admin.ch/foen/gefahren-waldbrand-warnung/1",
     "Int"
   );
+  await selectors.edition.drawerLoaded();
+
   await actions.editor.changeChartType("Map");
   await selectors.chart.loaded();
 

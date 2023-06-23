@@ -16,9 +16,7 @@ testFn(
       "Int",
       { timeout: 60 * 1000 }
     );
-    await page
-      .locator("h5", { hasText: "Chart Type" })
-      .waitFor({ timeout: 30_000 });
+    await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType("Map");
     await selectors.chart.loaded({ timeout: 240_000 });
     await page.screenshot({

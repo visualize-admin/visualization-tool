@@ -9,6 +9,8 @@ test("tooltip content", async ({ actions, selectors, within, page }) => {
     "Prod"
   );
 
+  await selectors.edition.drawerLoaded();
+
   const filterLocator = await within(
     selectors.edition.controlSection("Filters")
   );

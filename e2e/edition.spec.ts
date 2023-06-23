@@ -23,7 +23,7 @@ test("should be possible to edit filters of a hierarchy", async ({
     )
   ).click();
 
-  const filters = await selectors.edition.filterDrawer().within();
+  const filters = selectors.edition.filterDrawer().within();
 
   await (await filters.findByText("Economic affairs")).click();
   await (await filters.findByText("Social protection")).click();
