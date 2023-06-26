@@ -9,8 +9,8 @@ import { DimensionMetadataWithHierarchiesFragment } from "@/graphql/query-hooks"
 import { bfs } from "./bfs";
 import { uniqueMapBy } from "./uniqueMapBy";
 
-const maybeInt = (value?: string | number): number | string => {
-  if (!value) {
+export const maybeInt = (value?: string | number): number | string => {
+  if (value === undefined) {
     return Infinity;
   }
 

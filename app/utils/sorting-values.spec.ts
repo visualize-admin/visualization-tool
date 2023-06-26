@@ -8,6 +8,7 @@ import {
 import {
   getSortingOrders,
   makeDimensionValueSorters,
+  maybeInt,
 } from "@/utils/sorting-values";
 
 const dimension = {
@@ -128,6 +129,20 @@ const temporalDimensionFullDate = {
     { value: "2019-12-12", label: "2019-12-12" },
   ],
 } as unknown as DimensionMetadataFragment;
+
+describe("maybeInt", () => {
+  it("should return 0 if the input is 0", () => {
+    expect(maybeInt(0)).toEqual(0);
+  });
+
+  it("should return Infinity if the input is undefined", () => {
+    expect(maybeInt(undefined)).toEqual(Infinity);
+  });
+
+  it("should return number if the input is number-parseable string", () => {
+    expect(maybeInt("1")).toEqual(1);
+  });
+});
 
 describe("makeDimensionValueSorters", () => {
   const sortingByAuto: NonNullable<SortingField["sorting"]> = {
