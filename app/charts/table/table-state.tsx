@@ -1,15 +1,15 @@
 import {
+  ScaleDiverging,
+  ScaleLinear,
+  ScaleOrdinal,
+  ScaleSequential,
+  ascending,
   extent,
   max,
   min,
-  ScaleDiverging,
-  ScaleLinear,
-  ScaleSequential,
-  ScaleOrdinal,
-  scaleOrdinal,
   scaleDiverging,
   scaleLinear,
-  ascending,
+  scaleOrdinal,
 } from "d3";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
@@ -35,7 +35,7 @@ import {
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
 import { Observation } from "@/domain/data";
-import { useFormatNumber, useDimensionFormatters } from "@/formatters";
+import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";

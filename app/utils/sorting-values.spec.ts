@@ -51,6 +51,11 @@ const measure = {
   __typename: "NumericalMeasure",
 } as unknown as DimensionMetadataFragment;
 
+const ordinalNumericalDimension = {
+  __typename: "OrdinalDimension",
+  isNumerical: true,
+} as unknown as DimensionMetadataFragment;
+
 const hierarchicalDimension = {
   hierarchy: [
     {
@@ -190,6 +195,21 @@ describe("makeDimensionValueSorters", () => {
     });
     const sortingOrders = getSortingOrders(sorters, sortingByAuto);
     expect(orderBy(values, sorters, sortingOrders)).toEqual([1, 2, 5, 10, 100]);
+  });
+
+  it("should correctly sort ordinal numerical dimensions byAuto", () => {
+    const values = ["1", "10", "5", "100", "2"];
+    const sorters = makeDimensionValueSorters(ordinalNumericalDimension, {
+      sorting: sortingByAuto,
+    });
+    const sortingOrders = getSortingOrders(sorters, sortingByAuto);
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "1",
+      "2",
+      "5",
+      "10",
+      "100",
+    ]);
   });
 
   it("should correctly sort hierarchical dimensions byAuto", () => {
