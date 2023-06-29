@@ -212,25 +212,6 @@ const useColumnsStackedState = (
     [preparedData, getX]
   );
 
-  const chartWideData = getWideData({
-    dataGroupedByX: preparedDataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
-
-  const scalesDataGroupedByX = useMemo(
-    () => group(scalesData, getX),
-    [scalesData, getX]
-  );
-
-  const scalesWideData = getWideData({
-    dataGroupedByX: scalesDataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
-
   const sumsBySegment = useMemo(
     () =>
       Object.fromEntries([
@@ -284,6 +265,27 @@ const useColumnsStackedState = (
     segmentFilter,
     getSegment,
   ]);
+
+  const chartWideData = getWideData({
+    dataGroupedByX: preparedDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+    allSegments: plottableSegments,
+    imputationType: "zeros",
+  });
+
+  const scalesDataGroupedByX = useMemo(
+    () => group(scalesData, getX),
+    [scalesData, getX]
+  );
+
+  const scalesWideData = getWideData({
+    dataGroupedByX: scalesDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+  });
 
   // Scales
   const xFilter = chartConfig.filters[xDimension.iri];
