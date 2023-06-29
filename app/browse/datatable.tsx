@@ -79,15 +79,16 @@ export const PreviewTable = ({
     if (sortBy !== undefined) {
       const compare = sortDirection === "asc" ? ascending : descending;
       const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
-      const convert = isNumericalMeasure(sortBy)
-        ? (d: string) => +d
-        : (d: string) => {
-            const value = valuesIndex.get(d);
-            if (value?.position) {
-              return value.position;
-            }
-            return d;
-          };
+      const convert =
+        isNumericalMeasure(sortBy) || sortBy.isNumerical
+          ? (d: string) => +d
+          : (d: string) => {
+              const value = valuesIndex.get(d);
+              if (value?.position) {
+                return value.position;
+              }
+              return d;
+            };
 
       return [...observations].sort((a, b) =>
         compare(

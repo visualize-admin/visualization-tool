@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Fixes
+  - Dimension values are now correctly sorted is dimension is numerical dimension
 - Tests
   - Introduced load tests using k6
 

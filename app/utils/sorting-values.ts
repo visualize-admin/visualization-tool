@@ -45,7 +45,11 @@ export const makeDimensionValueSorters = (
     dimensionFilter: undefined,
   }
 ): ((label: string) => string | undefined | number)[] => {
-  if (isNumericalMeasure(dimension) || isTemporalDimension(dimension)) {
+  if (
+    isNumericalMeasure(dimension) ||
+    isTemporalDimension(dimension) ||
+    dimension?.isNumerical
+  ) {
     return [
       (d) => {
         const maybeNumber = +d;
