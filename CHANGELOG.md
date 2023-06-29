@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
+  - Stacked bar chart now doesn't render gaps in case of a missing value
 - Tests
   - Introduced load tests using k6
 
