@@ -1,7 +1,7 @@
 import percySnapshot from "@percy/playwright";
 
 import { loadChartInLocalStorage } from "./charts-utils";
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 import offentlicheAusgabenChartConfigFixture from "./fixtures/offentliche-ausgaben-chart-config.json";
 
 const { test } = setup();
@@ -38,6 +38,7 @@ test("should be possible to edit filters of a hierarchy", async ({
     panel.scrollTo(0, 200);
   });
 
+  await sleep(2_000);
   await percySnapshot(page, `chart-edition-${key}`, {
     scope: "[data-testid='panel-middle']",
   });

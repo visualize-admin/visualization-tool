@@ -1,6 +1,6 @@
 import percySnapshot from "@percy/playwright";
 
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 
 const { test } = setup();
 
@@ -21,6 +21,8 @@ testFn(
     await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType("Map");
     await selectors.chart.loaded({ timeout: 240_000 });
+
+    await sleep(2_000);
     await percySnapshot(page, "chart-map-high-filter-value-count");
   }
 );
