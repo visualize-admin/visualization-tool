@@ -136,14 +136,10 @@ services:
 
 ## E2E tests
 
-Cypress is run on every PR. Screenshots are made and compared with screenshots that are saved in the repository.
-If a difference is detected, the tests will fail.
+Playwright is run on every successful deployment of a branch. Screenshots are made with Percy and sent directly to their cloud service for diffing.
 
-A special [test page](http://localhost:3000/en/__test) shows all the charts that are screenshotted by Cypress.
+A special [test page](http://localhost:3000/en/__test) shows all the charts that are screenshotted.
 Those charts configurations are kept in the repository.
-
-At the moment, the screenshots are made from charts using data from int.lindas.admin.ch as for some functionalities, we do not
-yet have production data.
 
 ## Load tests
 

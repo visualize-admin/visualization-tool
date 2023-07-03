@@ -1,6 +1,8 @@
+import percySnapshot from "@percy/playwright";
+
 import intConfigs from "../app/test/__fixtures/config/int/configs";
 
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 
 const { test } = setup();
 
@@ -33,10 +35,8 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       await page.goto(`/en/__test/${env}/${slug}?dataSource=Int`);
       await selectors.chart.loaded();
 
-      await page.screenshot({
-        path: `e2e-screenshots/chart-snapshot-${viewportName}-${slug}.png`,
-        fullPage: true,
-      });
+      await sleep(2_000);
+      await percySnapshot(page, `chart-snapshot-${viewportName}-${slug}`);
     });
   }
 }

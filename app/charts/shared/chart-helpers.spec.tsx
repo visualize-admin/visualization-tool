@@ -2,10 +2,10 @@ import { InternMap } from "d3";
 import merge from "lodash/merge";
 
 import {
+  getChartConfigComponentIris,
+  getMaybeTemporalDimensionValues,
   getWideData,
   prepareQueryFilters,
-  getMaybeTemporalDimensionValues,
-  getChartConfigComponentIris,
 } from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
 import {
@@ -18,7 +18,7 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import map1Fixture from "@/test/__fixtures/config/int/map-waldflasche.json";
+import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
 const makeCubeNsGetters = (cubeIri: string) => ({
@@ -206,12 +206,13 @@ describe("getChartConfigComponentIris", () => {
 
   it("should return correct componentIris for map chart", () => {
     const componentsIris = getChartConfigComponentIris(mapConfig);
-    console.log(componentsIris);
     expect(componentsIris).toEqual([
       "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
-      "https://environment.ld.admin.ch/foen/nfi/forestArea",
+      "https://environment.ld.admin.ch/foen/nfi/Topic/3r",
+      "https://environment.ld.admin.ch/foen/nfi/Topic/3",
+      "https://environment.ld.admin.ch/foen/nfi/classificationUnit",
       "https://environment.ld.admin.ch/foen/nfi/inventory",
-      "https://environment.ld.admin.ch/foen/nfi/struk",
+      "https://environment.ld.admin.ch/foen/nfi/evaluationType",
       "https://environment.ld.admin.ch/foen/nfi/grid",
       "https://environment.ld.admin.ch/foen/nfi/unitOfEvaluation",
     ]);

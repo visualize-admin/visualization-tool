@@ -28,13 +28,12 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
-    "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn e2e",
-    "e2e": "playwright test",
+    "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn playwright test",
+    "e2e": "percy exec -- playwright test",
     "cube": "NODE_ENV=development ts-node app/scripts/cube.ts",
     "dev:circular-deps": "madge --warning --extensions js,jsx,ts,tsx -b ./app -c ./app/pages/ --ts-config ./app/tsconfig.json | bun scripts/circular-deps-analysis.ts -"
   },
   "dependencies": {
-    "@argos-ci/cli": "^0.2.3",
     "@babel/runtime": "^7.11.2",
     "@cozy/cli-tree": "^0.3.0",
     "core-js": "^3.15.1",

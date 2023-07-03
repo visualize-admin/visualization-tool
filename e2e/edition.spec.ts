@@ -1,5 +1,7 @@
+import percySnapshot from "@percy/playwright";
+
 import { loadChartInLocalStorage } from "./charts-utils";
-import { setup } from "./common";
+import { setup, sleep } from "./common";
 import offentlicheAusgabenChartConfigFixture from "./fixtures/offentliche-ausgaben-chart-config.json";
 
 const { test } = setup();
@@ -23,7 +25,7 @@ test("should be possible to edit filters of a hierarchy", async ({
     )
   ).click();
 
-  const filters = await selectors.edition.filterDrawer().within();
+  const filters = selectors.edition.filterDrawer().within();
 
   await (await filters.findByText("Economic affairs")).click();
   await (await filters.findByText("Social protection")).click();
@@ -35,7 +37,9 @@ test("should be possible to edit filters of a hierarchy", async ({
   await middlePanel.evaluate((panel) => {
     panel.scrollTo(0, 200);
   });
-  await middlePanel.screenshot({
-    path: `e2e-screenshots/chart-edition-${key}.png`,
+
+  await sleep(2_000);
+  await percySnapshot(page, `chart-edition-${key}`, {
+    scope: "[data-testid='panel-middle']",
   });
 });

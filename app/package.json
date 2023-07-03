@@ -138,6 +138,8 @@
     "@lingui/cli": "^3.2.3",
     "@lingui/macro": "^3.2.3",
     "@mdx-js/loader": "^1.6.22",
+    "@percy/cli": "^1.26.1",
+    "@percy/playwright": "^1.0.4",
     "@playwright-testing-library/test": "^4.5.0",
     "@playwright/test": "^1.32.1",
     "@svgr/cli": "^5.5.0",

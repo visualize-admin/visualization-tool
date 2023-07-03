@@ -56,6 +56,12 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         screen.findByTestId("configurator-filters", undefined, {
           timeout: 20 * 1000,
         }),
+      drawerLoaded: () =>
+        screen.findByText(
+          "Chart Type",
+          { selector: "h5" },
+          { timeout: 10_000 }
+        ),
       chartFilters: () => screen.findByTestId("chart-filters-list"),
       filterDrawer: () => screen.findByTestId("edition-filters-drawer"),
       filterCheckbox: (value: string) =>
@@ -81,10 +87,20 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
     },
     chart: {
       axisWidthBand: async () => screen.findByTestId("axis-width-band"),
-      colorLegend: (
+      colorLegend: async (
         options?: MatcherOptions,
         waitForOptions?: waitForOptions
-      ) => screen.findByTestId("colorLegend", options, waitForOptions),
+      ) => {
+        // There can be multiple color legends for hierarchical dimensions.
+        // Generally, we want the first one.
+        const colorLegend = await screen.findAllByTestId(
+          "colorLegend",
+          options,
+          waitForOptions
+        );
+
+        return colorLegend.first();
+      },
       colorLegendItems: async () =>
         (await selectors.chart.colorLegend()).locator("div"),
       legendTicks: async () => {},

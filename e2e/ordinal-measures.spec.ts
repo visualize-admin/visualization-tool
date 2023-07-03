@@ -1,12 +1,12 @@
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
-import testOrd507 from "./fixtures/test-ord-507-chart-config.json";
+import forestFireDanger from "./fixtures/forest-fire-danger-chart-config.json";
 
 const { test, describe, expect } = setup();
 
 describe("viewing a dataset with only ordinal measures", () => {
   const key = "ePUgYyo622qS";
-  const config = testOrd507;
+  const config = forestFireDanger;
 
   test("should retrieve dimension values properly", async ({
     selectors,
@@ -26,6 +26,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     page.goto(`/en/create/${key}`);
 
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     const enabledButtons = await (
       await selectors.edition.chartTypeSelector()
@@ -45,6 +46,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     page.goto(`/en/create/${key}`);
 
     await selectors.chart.loaded();
+    await selectors.edition.drawerLoaded();
 
     await actions.editor.changeChartType("Map");
 
@@ -59,7 +61,7 @@ describe("viewing a dataset with only ordinal measures", () => {
       .click();
 
     // Select options open in portal
-    await actions.mui.selectOption("area");
+    await actions.mui.selectOption("Warning region");
 
     // Allow select options to disappear to prevent re-selecting none
     await sleep(3000);
@@ -74,6 +76,12 @@ describe("viewing a dataset with only ordinal measures", () => {
     const options = await selectors.mui.options();
     const dimensionLabels = await options.allInnerTexts();
 
-    expect(dimensionLabels).toEqual(["None", "area", "ord1", "ord2", "ord3"]);
+    expect(dimensionLabels).toEqual([
+      "None",
+      "Active since",
+      "Canton",
+      "Danger ratings",
+      "Warning region",
+    ]);
   });
 });

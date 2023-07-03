@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import "isomorphic-unfetch";
 import { createClient } from "urql";
 
 import { setup } from "./common";
@@ -75,12 +76,7 @@ export const DimensionHierarchyDocument = gql`
 `;
 
 const cubeIris = {
-  "C-96-r": "https://environment.ld.admin.ch/foen/nfi/C-96-r/cube/1",
-  "C-96-r-multilingual":
-    "https://environment.ld.admin.ch/foen/nfi/C-96-r-multilingual/cube/1",
-  "C-96": "https://environment.ld.admin.ch/foen/nfi/C-96/cube/1",
-  "C-96-multilingual":
-    "https://environment.ld.admin.ch/foen/nfi/C-96-multilingual/cube/1",
+  "C-1029": "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
 };
 
 const runTest = async ({
@@ -112,7 +108,11 @@ const runTest = async ({
     hierarchy: [{ label, children }],
   } = dimension;
   expect(label).toBe(expected.root);
-  expect(children.map((x) => x.label)).toEqual(expected.children);
+  expect(
+    children
+      .map((x: { label: string }) => x.label)
+      .sort((a: string, b: string) => a.localeCompare(b))
+  ).toEqual(expected.children);
 };
 
 /**
@@ -121,62 +121,18 @@ const runTest = async ({
 const testFn = process.env.CI ? test.skip : test;
 
 describe("multi root hierarchy retrieval", () => {
-  testFn("should work for C-96", async () => {
+  testFn("should work for C-1029", async () => {
     await runTest({
-      cubeIri: cubeIris["C-96"],
-      locale: "en",
-      expected: {
-        root: "Switzerland",
-        children: [
-          "Production region - Economic Region",
-          "Canton",
-          "Protection Forest region - Economic Region",
-        ],
-      },
-    });
-  });
-
-  /**
-   * Tests below are skipped since cubes seem to have changed
-   * @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/c96-cubes/near/321453
-   */
-  test.skip("should work for C-96-r", async () => {
-    await runTest({
-      cubeIri: cubeIris["C-96-r"],
-      locale: "de",
-      expected: {
-        root: "Schweiz",
-        children: [
-          "Kanton",
-          "Produktionsregion - Wirtschaftsregion",
-          "Schutzwaldregion - Wirtschaftsregion",
-        ],
-      },
-    });
-  });
-
-  test.skip("should work for C-96-r-multilingual", async ({}) => {
-    await runTest({
-      cubeIri: cubeIris["C-96-r-multilingual"],
+      cubeIri: cubeIris["C-1029"],
       locale: "en",
       expected: {
         root: "Switzerland",
         children: [
           "Canton",
-          "Production region - Economic region",
-          "Protection Forest region - Economic region",
+          "Economic region",
+          "Production Region",
+          "Protection forest region",
         ],
-      },
-    });
-  });
-
-  test.skip("should work for C-96-multilingual", async () => {
-    await runTest({
-      cubeIri: cubeIris["C-96-multilingual"],
-      locale: "en",
-      expected: {
-        root: "Switzerland",
-        children: ["Canton", "Production region", "Protection Forest region"],
       },
     });
   });

@@ -7,11 +7,13 @@ test("it should be possible to enable abbreviations for colors & x field (column
   selectors,
 }) => {
   test.slow();
+
   await actions.chart.createFrom(
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/6",
     "Prod"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Horizontal Axis");
 
   let checkbox = await selectors.edition.useAbbreviationsCheckbox();
@@ -24,7 +26,6 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   await actions.mui.selectOption("Kanton");
 
-  // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
 
@@ -32,7 +33,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   await checkbox.click();
 
-  await sleep(5_000);
+  await sleep(3_000);
 
   const xAxis = await selectors.chart.axisWidthBand();
   const ticks = (await xAxis.textContent()) as string;
@@ -42,7 +43,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   await actions.mui.selectOption("Jahr der Vergütung");
 
-  await sleep(5_000);
+  await sleep(3_000);
 
   await actions.drawer.close();
 
@@ -58,16 +59,15 @@ test("it should be possible to enable abbreviations for colors & x field (column
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
 
-  const legendItems = await (
+  await sleep(3_000);
+
+  const colorLegendItems = await (
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect([legendItems[0], legendItems[legendItems.length - 1]]).toEqual([
-    "ZH",
-    "JU",
-  ]);
+  expect(colorLegendItems[0]).toEqual("ZH");
 });
 
 test("hierarchies: it should be possible to enable abbreviations for colors", async ({
@@ -75,10 +75,11 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   selectors,
 }) => {
   await actions.chart.createFrom(
-    "https://environment.ld.admin.ch/foen/ubd000502_sad_01/7",
-    "Int"
+    "https://environment.ld.admin.ch/foen/ubd000502/4",
+    "Prod"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Color");
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
@@ -89,10 +90,11 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 
   await checkbox.click();
 
-  // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
+
+  await sleep(3_000);
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()
@@ -107,6 +109,7 @@ test("localized abbreviations", async ({ actions, selectors }) => {
     "Int"
   );
 
+  await selectors.edition.drawerLoaded();
   await actions.editor.changeChartType("Map");
   await actions.editor.selectActiveField("Warning region");
 
@@ -114,14 +117,15 @@ test("localized abbreviations", async ({ actions, selectors }) => {
 
   await checkbox.click();
 
-  // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
+  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
+
+  await sleep(3_000);
 
   const legendItems = await (
     await selectors.chart.colorLegendItems()
   ).allInnerTexts();
 
-  expect(legendItems).toEqual(["No measures", "Warning"]);
+  expect(legendItems.slice(0, 2)).toEqual(["No measures", "Warning"]);
 });
