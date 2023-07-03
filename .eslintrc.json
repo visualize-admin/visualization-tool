@@ -1,28 +1,42 @@
 {
   "extends": "next",
-  "plugins": ["unused-imports", "import", "visualize-admin"],
+  "plugins": ["import", "visualize-admin"],
   "rules": {
-    "no-restricted-imports": ["error", {
-      "name": "lodash",
-      "message": "Please use direct imports instead, ex: lodash/mapValues, lodash/groupBy."
-    }],
-    "react/display-name": "off", 
+    "no-restricted-imports": [
+      "error",
+      {
+        "name": "lodash",
+        "message": "Please use direct imports instead, ex: lodash/mapValues, lodash/groupBy."
+      }
+    ],
+    "react/display-name": "off",
     "visualize-admin/no-large-sx": "error",
     "visualize-admin/make-styles": "error",
-    "unused-imports/no-unused-imports-ts": "error",
     "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
-    "import/order": [2, {
-      "alphabetize": { "order": "asc" },
-      "newlines-between": "always",
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
-      "pathGroups": [
-        {
-          "pattern": "@/**",
-          "group": "internal"
-        }
-      ],
-      "pathGroupsExcludedImportTypes": ["builtin"]
-    }]
+    "import/order": [
+      2,
+      {
+        "alphabetize": { "order": "asc" },
+        "newlines-between": "always",
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "internal"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"]
+      }
+    ]
   },
   "overrides": [
     {
