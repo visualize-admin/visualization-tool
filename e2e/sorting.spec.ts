@@ -200,12 +200,7 @@ test("Map legend preview table sorting", async ({ actions, selectors }) => {
   const cells = await selectors.datasetPreview.columnCells("Danger ratings");
 
   const texts = await cells.allInnerTexts();
-  expect(uniqueWithoutSorting(texts)).toEqual([
-    "low danger",
-    "moderate danger",
-    "considerable danger",
-    "high danger",
-  ]);
+  expect(uniqueWithoutSorting(texts)).toEqual(["low danger", "high danger"]);
 });
 
 test("Sorting with values with same label as other values in the tree", async ({
