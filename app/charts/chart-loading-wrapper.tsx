@@ -3,6 +3,7 @@ import React from "react";
 import { UseQueryResponse } from "urql";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
+import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -68,16 +69,29 @@ export const ChartLoadingWrapper = <
     error: observationsError,
   } = observationsQuery;
 
+  const chartStateMetadata = React.useMemo(() => {
+    return getChartStateMetadata(chartConfig);
+  }, [chartConfig]);
+
+  const observations = React.useMemo(() => {
+    const observations = observationsData?.dataCubeByIri?.observations.data;
+
+    if (observations && chartStateMetadata) {
+      return chartStateMetadata.sortData(observations);
+    }
+
+    return observations;
+  }, [chartStateMetadata, observationsData?.dataCubeByIri?.observations.data]);
+
   if (
     metadataData?.dataCubeByIri &&
     componentsData?.dataCubeByIri &&
-    observationsData?.dataCubeByIri
+    observations
   ) {
     const { title } = metadataData.dataCubeByIri;
     const { dimensions, measures } = componentsData.dataCubeByIri;
-    const { observations } = observationsData.dataCubeByIri;
 
-    return observations.data.length > 0 ? (
+    return observations.length > 0 ? (
       <Box
         data-chart-loaded={
           !(fetchingMetadata && fetchingComponents && fetchingObservations)
@@ -86,12 +100,12 @@ export const ChartLoadingWrapper = <
       >
         <A11yTable
           title={title}
-          observations={observations.data}
+          observations={observations}
           dimensions={dimensions}
           measures={measures}
         />
         {React.createElement(Component, {
-          data: observations.data,
+          data: observations,
           dimensions,
           measures,
           chartConfig,

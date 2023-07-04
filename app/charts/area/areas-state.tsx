@@ -32,7 +32,10 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
@@ -41,6 +44,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -137,15 +141,6 @@ const useAreasState = (
 
   const xKey = fields.x.componentIri;
 
-  // All Data (used for brushing)
-  const sortedData = useMemo(
-    () =>
-      [...data]
-        // Always sort by x first (TemporalDimension)
-        .sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
-  );
-
   const dataGroupedByX = useMemo(
     () => group(data, getGroups),
     [data, getGroups]
@@ -162,14 +157,14 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
+  const plottableData = usePlottableData({
+    data,
     plotters: [getX, getY],
   });
 
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableSortedData,
+    observations: plottableData,
     interactiveFiltersConfig,
     // No animation yet for areas
     animationField: undefined,
@@ -216,14 +211,14 @@ const useAreasState = (
   const segments = useMemo(() => {
     const totalValueBySegment = Object.fromEntries([
       ...rollup(
-        plottableSortedData,
+        plottableData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
       ),
     ]);
 
     const uniqueSegments = Array.from(
-      new Set(plottableSortedData.map((d) => getSegment(d)))
+      new Set(plottableData.map((d) => getSegment(d)))
     );
 
     const sorters = makeDimensionValueSorters(segmentDimension, {
@@ -239,7 +234,7 @@ const useAreasState = (
       getSortingOrders(sorters, segmentSorting)
     );
   }, [
-    plottableSortedData,
+    plottableData,
     segmentDimension,
     segmentSorting,
     segmentFilter,
@@ -277,10 +272,7 @@ const useAreasState = (
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
-    const xEntireDomain = extent(plottableSortedData, (d) => getX(d)) as [
-      Date,
-      Date
-    ];
+    const xEntireDomain = extent(plottableData, (d) => getX(d)) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomain);
     const yScale = scaleLinear().domain(yDomain).nice();
     const colors = scaleOrdinal<string, string>();
@@ -314,7 +306,7 @@ const useAreasState = (
     dimensions,
     fields.segment,
     getX,
-    plottableSortedData,
+    plottableData,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -402,7 +394,7 @@ const useAreasState = (
     chartType: "area",
     bounds,
     data,
-    allData: plottableSortedData,
+    allData: plottableData,
     preparedData,
     getX,
     xScale,
@@ -419,6 +411,24 @@ const useAreasState = (
     series,
     getAnnotationInfo,
     getSegmentLabel,
+  };
+};
+
+export const getAreasStateMetadata = (
+  chartConfig: AreaConfig
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const x = fields.x.componentIri;
+  const getSortValue = (d: Observation) => {
+    return parseDate(`${d[x]}`);
+  };
+
+  return {
+    sortData: (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getSortValue(a), getSortValue(b));
+      });
+    },
   };
 };
 
