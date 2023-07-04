@@ -7,7 +7,7 @@ import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import {
   InteractiveFiltersProvider,

@@ -108,7 +108,7 @@ const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
   return additionalFields;
 };
 
-export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
+export const extractComponentIris = (chartConfig: ChartConfig) => {
   const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
   const fieldIris = Object.values(fields).map((d) => d.componentIri);
   const additionalFieldIris =

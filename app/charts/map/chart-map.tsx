@@ -9,7 +9,10 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import {
+  extractComponentIris,
+  useDataAfterInteractiveFilters,
+} from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
 import { BaseLayer, DataSource, MapConfig, QueryFilters } from "@/config-types";
 import {

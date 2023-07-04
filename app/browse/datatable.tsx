@@ -15,7 +15,7 @@ import { ascending, descending } from "d3";
 import { useMemo, useRef, useState } from "react";
 
 import {
-  getChartConfigComponentIris,
+  extractComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
@@ -246,32 +246,27 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIrisToFilterBy = getChartConfigComponentIris(chartConfig);
+  const componentIris = extractComponentIris(chartConfig);
   const filters = useQueryFilters({ chartConfig });
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [{ data: componentsData }] = useComponentsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
     },
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters,
     },
   });

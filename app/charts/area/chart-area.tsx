@@ -6,7 +6,7 @@ import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
@@ -36,33 +36,28 @@ export const ChartAreasVisualization = ({
   published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIrisToFilterBy = published
-    ? getChartConfigComponentIris(chartConfig)
+  const componentIris = published
+    ? extractComponentIris(chartConfig)
     : undefined;
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [componentsQuery] = useComponentsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      componentIris: componentIrisToFilterBy,
-      locale,
+      ...commonQueryVariables,
+      componentIris,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters: queryFilters,
     },
   });

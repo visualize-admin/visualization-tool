@@ -17,7 +17,7 @@ import {
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -46,33 +46,28 @@ export const ChartColumnsVisualization = ({
   published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIrisToFilterBy = published
-    ? getChartConfigComponentIris(chartConfig)
+  const componentIris = published
+    ? extractComponentIris(chartConfig)
     : undefined;
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [componentsWithHierarchiesQuery] = useComponentsWithHierarchiesQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters: queryFilters,
     },
   });
