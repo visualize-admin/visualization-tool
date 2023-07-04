@@ -18,7 +18,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
@@ -40,7 +40,7 @@ import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { AreaConfig, AreaFields } from "@/configurator";
+import { AreaConfig } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -81,15 +81,10 @@ export interface AreasState extends CommonChartState {
 }
 
 const useAreasState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    aspectRatio: number;
-  }
+  props: ChartProps<AreaConfig> & { aspectRatio: number }
 ): AreasState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
-  const { fields, interactiveFiltersConfig } = chartConfig as AreaConfig;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
@@ -357,7 +352,7 @@ const useAreasState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -428,48 +423,46 @@ const useAreasState = (
 };
 
 const AreaChartProvider = ({
-  data,
-  measures,
-  dimensions,
   chartConfig,
+  data,
+  dimensions,
+  measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<AreaConfig> & { aspectRatio: number }
+>) => {
   const state = useAreasState({
+    chartConfig,
     data,
     dimensions,
     measures,
-    chartConfig,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const AreaChart = ({
+  chartConfig,
   data,
   measures,
   dimensions,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  fields: AreaFields;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<AreaConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>
         <AreaChartProvider
+          chartConfig={chartConfig}
           data={data}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

@@ -22,7 +22,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -48,7 +48,7 @@ import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnConfig, SortingOrder, SortingType } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -88,17 +88,10 @@ export interface StackedColumnsState extends CommonChartState {
 }
 
 const useColumnsStackedState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    fields: ColumnFields;
-    aspectRatio: number;
-  }
+  props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): StackedColumnsState => {
-  const { data, fields, measures, dimensions, chartConfig, aspectRatio } =
-    chartProps;
-  const { interactiveFiltersConfig } = chartConfig;
+  const { data, measures, dimensions, chartConfig, aspectRatio } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -481,7 +474,7 @@ const useColumnsStackedState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   // Tooltips
   const getAnnotationInfo = useCallback(
@@ -608,53 +601,46 @@ const useColumnsStackedState = (
 };
 
 const StackedColumnsChartProvider = ({
-  data,
-  fields,
-  measures,
-  dimensions,
   chartConfig,
+  data,
+  dimensions,
+  measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  fields: ColumnFields;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   const state = useColumnsStackedState({
-    data,
-    fields,
-    dimensions,
     chartConfig,
+    data,
+    dimensions,
     measures,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const StackedColumnsChart = ({
-  data,
-  fields,
-  measures,
-  dimensions,
   chartConfig,
+  data,
+  dimensions,
+  measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  fields: ColumnFields;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>
         <StackedColumnsChartProvider
+          chartConfig={chartConfig}
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

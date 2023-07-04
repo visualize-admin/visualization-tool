@@ -13,7 +13,7 @@ import {
 } from "d3";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { Cell, Column, Row } from "react-table";
 
 import {
@@ -101,14 +101,8 @@ export interface TableChartState extends CommonChartState {
   sortingIris: { id: string; desc: boolean }[];
 }
 
-const useTableState = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  chartConfig: TableConfig;
-}): TableChartState => {
+const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
+  const { chartConfig, data, dimensions, measures } = props;
   const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
@@ -409,21 +403,23 @@ const useTableState = ({
 //  ------------------------------------------------------------------------------------ //
 
 const TableChartProvider = ({
+  chartConfig,
   data,
   dimensions,
   measures,
   children,
-  chartConfig,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: TableConfig;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<TableConfig> & {
+    chartConfig: TableConfig;
+  }
+>) => {
   const state = useTableState({
+    chartConfig,
     data,
     dimensions,
     measures,
-    chartConfig,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
@@ -435,17 +431,14 @@ export const TableChart = ({
   measures,
   chartConfig,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: TableConfig;
-}) => {
+}: React.PropsWithChildren<ChartProps<TableConfig>>) => {
   return (
     <Observer>
       <TableChartProvider
+        chartConfig={chartConfig}
         data={data}
         dimensions={dimensions}
         measures={measures}
-        chartConfig={chartConfig}
       >
         {children}
       </TableChartProvider>

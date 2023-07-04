@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   useDataAfterInteractiveFilters,
@@ -47,13 +47,10 @@ export interface PieState extends CommonChartState {
 }
 
 const usePieState = (
-  chartProps: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-    chartConfig: PieConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
-  const { interactiveFiltersConfig, fields } = chartConfig;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -211,7 +208,7 @@ const usePieState = (
     .value((d) => getY(d) ?? NaN)
     .sort(pieSorter);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
   const valueFormatter = (value: number | null) =>
     formatNumberWithUnit(
       value,
@@ -275,35 +272,32 @@ const PieChartProvider = ({
   chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: PieConfig;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<PieConfig> & { aspectRatio: number }
+>) => {
   const state = usePieState({
+    chartConfig,
     data,
     dimensions,
     measures,
-    chartConfig,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const PieChart = ({
-  data,
-  measures,
-  dimensions,
-  aspectRatio,
   chartConfig,
+  data,
+  dimensions,
+  measures,
+  aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  chartConfig: PieConfig;
-  children: ReactNode;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<PieConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>

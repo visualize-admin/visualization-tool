@@ -12,7 +12,7 @@ import {
   scaleTime,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
@@ -77,15 +77,9 @@ export interface LinesState extends CommonChartState {
 }
 
 const useLinesState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    chartConfig: LineConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -289,7 +283,7 @@ const useLinesState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -364,49 +358,46 @@ const useLinesState = (
 };
 
 const LineChartProvider = ({
+  chartConfig,
   data,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: LineConfig;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<LineConfig> & { aspectRatio: number }
+>) => {
   const state = useLinesState({
+    chartConfig,
     data,
     dimensions,
     measures,
-    chartConfig,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const LineChart = ({
+  chartConfig,
   data,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  chartConfig: LineConfig;
-  children: ReactNode;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<LineConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>
         <LineChartProvider
+          chartConfig={chartConfig}
           data={data}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

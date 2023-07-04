@@ -1,16 +1,16 @@
 import {
-  color as makeColor,
-  extent,
   ScaleLinear,
   ScalePower,
   ScaleQuantile,
-  scaleQuantile,
   ScaleQuantize,
+  ScaleSequential,
+  ScaleThreshold,
+  extent,
+  color as makeColor,
+  scaleQuantile,
   scaleQuantize,
   scaleSequential,
-  ScaleSequential,
   scaleSqrt,
-  ScaleThreshold,
   scaleThreshold,
 } from "d3";
 import {
@@ -21,7 +21,7 @@ import {
 } from "geojson";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
 import { MapTooltipProvider } from "@/charts/map/map-tooltip";
@@ -35,8 +35,8 @@ import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import {
-  BaseLayer,
   BBox,
+  BaseLayer,
   CategoricalColorField,
   ColorScaleInterpolationType,
   FixedColorField,
@@ -50,11 +50,11 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
-  findRelatedErrorDimension,
   GeoData,
-  isGeoShapesDimension,
   Observation,
-  ObservationValue
+  ObservationValue,
+  findRelatedErrorDimension,
+  isGeoShapesDimension,
 } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -207,7 +207,7 @@ const getCategoricalColors = (
   };
 
   return {
-    type: "categorical" as "categorical",
+    type: "categorical" as const,
     palette: color.palette,
     component,
     domain,
@@ -269,7 +269,7 @@ const getNumericalColors = (
   );
 
   return {
-    type: "continuous" as "continuous",
+    type: "continuous" as const,
     palette: color.palette,
     component,
     scale: colorScale,
@@ -448,15 +448,11 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
 };
 
 const useMapState = (
-  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-    features: GeoData;
-    chartConfig: MapConfig;
-    baseLayer: BaseLayer;
-  }
+  props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
 ): MapState => {
   const width = useWidth();
   const { data, features, chartConfig, measures, dimensions, baseLayer } =
-    chartProps;
+    props;
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
@@ -574,7 +570,7 @@ const useMapState = (
     features,
     showBaseLayer: baseLayer.show,
     locked: baseLayer.locked || false,
-    lockedBBox: chartProps.baseLayer.bbox,
+    lockedBBox: props.baseLayer.bbox,
     featuresBBox,
     identicalLayerComponentIris,
     areaLayer: preparedAreaLayerState,
@@ -590,20 +586,18 @@ const MapChartProvider = ({
   dimensions,
   baseLayer,
   children,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  features: GeoData;
-  children: ReactNode;
-  chartConfig: MapConfig;
-  baseLayer: BaseLayer;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+>) => {
   const state = useMapState({
-    data,
-    features,
     chartConfig,
-    measures,
+    data,
     dimensions,
+    measures,
+    features,
     baseLayer,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
@@ -617,12 +611,9 @@ export const MapChart = ({
   dimensions,
   baseLayer,
   children,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  features: GeoData;
-  chartConfig: MapConfig;
-  baseLayer: BaseLayer;
-  children: ReactNode;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+>) => {
   return (
     <Observer>
       <InteractionProvider>

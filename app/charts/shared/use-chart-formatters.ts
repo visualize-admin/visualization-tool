@@ -2,17 +2,18 @@ import { useMemo } from "react";
 
 import { useDimensionFormatters } from "@/formatters";
 
-import { ChartProps } from "./ChartProps";
+import { BaseChartProps } from "./ChartProps";
 
 const useChartFormatters = (
-  chartProps: Pick<ChartProps, "measures" | "dimensions">
+  chartProps: Pick<BaseChartProps, "dimensions" | "measures">
 ) => {
-  const { measures, dimensions } = chartProps;
-  const allDimensions = useMemo(
-    () => [...measures, ...dimensions],
-    [measures, dimensions]
+  const { dimensions, measures } = chartProps;
+  const components = useMemo(
+    () => [...dimensions, ...measures],
+    [dimensions, measures]
   );
-  const formatters = useDimensionFormatters(allDimensions);
+  const formatters = useDimensionFormatters(components);
+
   return formatters;
 };
 

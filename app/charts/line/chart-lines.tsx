@@ -14,14 +14,14 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { DataSource, LineConfig, QueryFilters } from "@/config-types";
-import { Observation } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
   useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -74,25 +74,16 @@ export const ChartLinesVisualization = ({
   );
 };
 
-export const ChartLines = memo(function ChartLines({
-  observations,
-  dimensions,
-  measures,
+export const ChartLines = memo((props: ChartProps<LineConfig>) => {
+  const { chartConfig, data, dimensions, measures } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
 
-  chartConfig,
-}: {
-  observations: Observation[];
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
-  chartConfig: LineConfig;
-}) {
-  const { interactiveFiltersConfig, fields } = chartConfig;
   return (
     <LineChart
-      data={observations}
+      chartConfig={chartConfig}
+      data={data}
       dimensions={dimensions}
       measures={measures}
-      chartConfig={chartConfig}
       aspectRatio={0.4}
     >
       <ChartContainer>

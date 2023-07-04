@@ -10,14 +10,14 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
 import { DataSource, PieConfig, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { Observation } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
   useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export const ChartPieVisualization = ({
   dataSetIri,
@@ -70,59 +70,47 @@ export const ChartPieVisualization = ({
   );
 };
 
-export const ChartPie = memo(
-  ({
-    observations,
-    dimensions,
-    measures,
-    chartConfig,
-  }: {
-    observations: Observation[];
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
-    chartConfig: PieConfig;
-  }) => {
-    const { fields } = chartConfig;
-    const somePositive = observations.some(
-      (d) => (d[fields?.y?.componentIri] as number) > 0
-    );
+export const ChartPie = memo((props: ChartProps<PieConfig>) => {
+  const { chartConfig, data, dimensions, measures } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const somePositive = data.some(
+    (d) => (d[fields?.y?.componentIri] as number) > 0
+  );
 
-    if (!somePositive) {
-      return <OnlyNegativeDataHint />;
-    }
-
-    const { interactiveFiltersConfig } = chartConfig;
-    return (
-      <PieChart
-        data={observations}
-        dimensions={dimensions}
-        measures={measures}
-        chartConfig={chartConfig}
-        aspectRatio={0.5}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <Pie />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        <LegendColor
-          symbol="square"
-          interactive={
-            fields.segment && interactiveFiltersConfig?.legend.active === true
-          }
-        />
-
-        {fields.animation && (
-          <TimeSlider
-            componentIri={fields.animation.componentIri}
-            dimensions={dimensions}
-            showPlayButton={fields.animation.showPlayButton}
-            animationDuration={fields.animation.duration}
-            animationType={fields.animation.type}
-          />
-        )}
-      </PieChart>
-    );
+  if (!somePositive) {
+    return <OnlyNegativeDataHint />;
   }
-);
+
+  return (
+    <PieChart
+      chartConfig={chartConfig}
+      data={data}
+      dimensions={dimensions}
+      measures={measures}
+      aspectRatio={0.5}
+    >
+      <ChartContainer>
+        <ChartSvg>
+          <Pie />
+        </ChartSvg>
+        <Tooltip type="single" />
+      </ChartContainer>
+      <LegendColor
+        symbol="square"
+        interactive={
+          fields.segment && interactiveFiltersConfig?.legend.active === true
+        }
+      />
+
+      {fields.animation && (
+        <TimeSlider
+          componentIri={fields.animation.componentIri}
+          dimensions={dimensions}
+          showPlayButton={fields.animation.showPlayButton}
+          animationDuration={fields.animation.duration}
+          animationType={fields.animation.type}
+        />
+      )}
+    </PieChart>
+  );
+});

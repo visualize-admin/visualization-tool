@@ -11,21 +11,13 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
 import {
   ComponentsQuery,
   DataCubeMetadataQuery,
   DataCubeObservationsQuery,
-  DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 
-type ChartCommonProps<TChartConfig extends ChartConfig> = {
-  fields: TChartConfig["fields"];
-  observations: Observation[];
-  measures: DimensionMetadataFragment[];
-  dimensions: DimensionMetadataFragment[];
-  chartConfig: TChartConfig;
-};
+import { ChartProps } from "./shared/ChartProps";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -57,7 +49,7 @@ export const ChartLoadingWrapper = <
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,
-    keyof ChartCommonProps<TChartConfig>
+    keyof ChartProps<TChartConfig>
   >;
 }) => {
   const {
@@ -99,12 +91,12 @@ export const ChartLoadingWrapper = <
           measures={measures}
         />
         {React.createElement(Component, {
-          observations: observations.data,
+          data: observations.data,
           dimensions,
           measures,
           chartConfig,
           ...ComponentProps,
-        } as ChartCommonProps<TChartConfig> & TOtherProps)}
+        } as ChartProps<TChartConfig> & TOtherProps)}
         {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
           <LoadingOverlay />
         )}

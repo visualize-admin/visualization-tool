@@ -15,7 +15,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -91,13 +91,10 @@ export interface ColumnsState extends CommonChartState {
 }
 
 const useColumnsState = (
-  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-    chartConfig: ColumnConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsState => {
-  const { data, measures, dimensions, aspectRatio, chartConfig } = chartProps;
-  const { interactiveFiltersConfig, fields } = chartConfig;
+  const { data, measures, dimensions, aspectRatio, chartConfig } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -134,7 +131,7 @@ const useColumnsState = (
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const errorMeasure = useErrorMeasure(props, fields.y.componentIri);
   const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
@@ -240,7 +237,7 @@ const useColumnsState = (
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   if (!yMeasure) {
     throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
@@ -375,18 +372,17 @@ const ColumnChartProvider = ({
   aspectRatio,
   children,
   chartConfig,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  children: ReactNode;
-  aspectRatio: number;
-  chartConfig: ColumnConfig;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   const state = useColumnsState({
-    data,
-    measures,
-    dimensions,
-    aspectRatio,
     chartConfig,
+    data,
+    dimensions,
+    measures,
+    aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
@@ -399,20 +395,18 @@ export const ColumnChart = ({
   chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  chartConfig: ColumnConfig;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>
         <ColumnChartProvider
+          chartConfig={chartConfig}
+          dimensions={dimensions}
           data={data}
           measures={measures}
-          dimensions={dimensions}
           aspectRatio={aspectRatio}
-          chartConfig={chartConfig}
         >
           {children}
         </ColumnChartProvider>

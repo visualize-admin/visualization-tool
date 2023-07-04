@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
 import {
@@ -52,17 +52,11 @@ export interface ScatterplotState extends CommonChartState {
   getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
 }
 
-const useScatterplotState = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-  aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  chartConfig: ScatterPlotConfig;
-}): ScatterplotState => {
+const useScatterplotState = (
+  props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+): ScatterplotState => {
   const width = useWidth();
+  const { chartConfig, data, dimensions, measures, aspectRatio } = props;
   const { fields } = chartConfig;
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -271,35 +265,32 @@ const ScatterplotChartProvider = ({
   chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  aspectRatio: number;
-  chartConfig: ScatterPlotConfig;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+>) => {
   const state = useScatterplotState({
+    chartConfig,
     data,
     dimensions,
     measures,
-    chartConfig,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const ScatterplotChart = ({
+  chartConfig,
   data,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  chartConfig: ScatterPlotConfig;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>

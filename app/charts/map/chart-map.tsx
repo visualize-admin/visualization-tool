@@ -9,10 +9,7 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import {
-  extractComponentIris,
-  useDataAfterInteractiveFilters,
-} from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
 import { BaseLayer, DataSource, MapConfig, QueryFilters } from "@/config-types";
 import {
@@ -20,13 +17,11 @@ import {
   GeoData,
   GeoPoint,
   GeoShapes,
-  Observation,
   SymbolLayer,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
   useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
@@ -34,6 +29,8 @@ import {
   useGeoShapesByDimensionIriQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -51,33 +48,28 @@ export const ChartMapVisualization = ({
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
-  const componentIrisToFilterBy = published
-    ? getChartConfigComponentIris(chartConfig)
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
+  const componentIris = published
+    ? extractComponentIris(chartConfig)
     : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [componentsQuery] = useComponentsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters: queryFilters,
     },
   });
@@ -253,29 +245,23 @@ export const ChartMapVisualization = ({
   );
 };
 
-export const ChartMap = ({
-  observations,
-  features,
-  chartConfig,
-  measures,
-  dimensions,
-  baseLayer,
-}: {
-  features: GeoData;
-  observations: Observation[];
-  measures: DimensionMetadataFragment[];
-  dimensions: DimensionMetadataFragment[];
-  chartConfig: MapConfig;
-  baseLayer: BaseLayer;
-}) => {
+export const ChartMap = (
+  props: ChartProps<MapConfig> & {
+    features: GeoData;
+    baseLayer: BaseLayer;
+  }
+) => {
+  const { chartConfig, data, dimensions, measures, features, baseLayer } =
+    props;
+
   return (
     <MapChart
-      data={observations}
-      features={features}
-      measures={measures}
-      dimensions={dimensions}
-      baseLayer={baseLayer}
       chartConfig={chartConfig}
+      data={data}
+      dimensions={dimensions}
+      measures={measures}
+      features={features}
+      baseLayer={baseLayer}
     >
       <ChartContainer>
         <MapComponent />

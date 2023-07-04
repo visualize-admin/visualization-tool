@@ -2,9 +2,12 @@ import { ChartConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
-export interface ChartProps {
+export type BaseChartProps = {
   data: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  chartConfig: ChartConfig;
-}
+};
+
+export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {
+  chartConfig: TChartConfig;
+};

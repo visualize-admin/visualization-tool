@@ -17,7 +17,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -43,7 +43,7 @@ import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingField } from "@/configurator";
+import { ColumnConfig, SortingField } from "@/configurator";
 import {
   useErrorMeasure,
   useErrorRange,
@@ -87,17 +87,10 @@ export interface GroupedColumnsState extends CommonChartState {
 }
 
 const useGroupedColumnsState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    fields: ColumnFields;
-    aspectRatio: number;
-  }
+  props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): GroupedColumnsState => {
-  const { data, fields, dimensions, measures, chartConfig, aspectRatio } =
-    chartProps;
-  const { interactiveFiltersConfig } = chartConfig;
+  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -127,7 +120,7 @@ const useGroupedColumnsState = (
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const errorMeasure = useErrorMeasure(props, fields.y.componentIri);
   const getYErrorRange = useErrorRange(errorMeasure, getY);
 
   const segmentDimension = dimensions.find(
@@ -417,7 +410,7 @@ const useGroupedColumnsState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -514,53 +507,48 @@ const useGroupedColumnsState = (
 };
 
 const GroupedColumnChartProvider = ({
+  chartConfig,
   data,
-  fields,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  fields: ColumnFields;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & {
+    aspectRatio: number;
+  }
+>) => {
   const state = useGroupedColumnsState({
+    chartConfig,
     data,
-    fields,
     dimensions,
     measures,
-    chartConfig,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
 export const GroupedColumnChart = ({
+  chartConfig,
   data,
-  fields,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  fields: ColumnFields;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   return (
     <Observer>
       <InteractionProvider>
         <GroupedColumnChartProvider
+          chartConfig={chartConfig}
           data={data}
-          fields={fields}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}
