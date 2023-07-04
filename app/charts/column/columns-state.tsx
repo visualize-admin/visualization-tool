@@ -25,8 +25,8 @@ import {
 } from "@/charts/column/constants";
 import {
   getLabelWithUnit,
-  useDataAfterInteractiveFilters,
   getMaybeTemporalDimensionValues,
+  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
   useSegment,
@@ -162,7 +162,7 @@ const useColumnsState = (
 
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
+    observations: plottableSortedData,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,

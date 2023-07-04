@@ -107,7 +107,7 @@ const useScatterplotState = ({
   // Data for chart
   const { interactiveFiltersConfig } = chartConfig;
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
+    observations: plottableSortedData,
     interactiveFiltersConfig,
     // No animation yet for scatterplot
     animationField: undefined,

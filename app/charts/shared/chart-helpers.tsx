@@ -175,13 +175,13 @@ type ValuePredicate = (v: any) => boolean;
 
 /** Prepares the data to be used in charts, taking interactive filters into account. */
 export const useDataAfterInteractiveFilters = ({
-  sortedData,
+  observations,
   interactiveFiltersConfig,
   animationField,
   getX,
   getSegment,
 }: {
-  sortedData: Observation[];
+  observations: Observation[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
   animationField: AnimationField | undefined;
   getX?: (d: Observation) => Date;
@@ -253,16 +253,19 @@ export const useDataAfterInteractiveFilters = ({
   ]);
 
   const preparedData = useMemo(() => {
-    return sortedData.filter(allFilters);
-  }, [allFilters, sortedData]);
+    return observations.filter(allFilters);
+  }, [allFilters, observations]);
 
   const timeSliderFilterPresent = !!(
     animationField?.componentIri && timeSliderValue
   );
 
-  const scalesData = timeSliderFilterPresent ? sortedData : preparedData;
+  const scalesData = timeSliderFilterPresent ? observations : preparedData;
 
-  return { preparedData, scalesData };
+  return {
+    preparedData,
+    scalesData,
+  };
 };
 
 export const makeUseParsedVariable =

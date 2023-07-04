@@ -99,7 +99,7 @@ const usePieState = (
 
   // Data for chart
   const { preparedData } = useDataAfterInteractiveFilters({
-    sortedData: plottableData,
+    observations: plottableData,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getSegment: getSegmentAbbreviationOrLabel,

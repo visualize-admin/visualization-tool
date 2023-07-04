@@ -157,7 +157,7 @@ const useLinesState = (
 
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
+    observations: plottableSortedData,
     interactiveFiltersConfig,
     // No animation yet for lines
     animationField: undefined,

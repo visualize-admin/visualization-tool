@@ -187,7 +187,7 @@ const useGroupedColumnsState = (
 
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
+    observations: plottableSortedData,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
