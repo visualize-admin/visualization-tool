@@ -10,6 +10,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Fixes
+  - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
+
+# [3.20.3] - 2023-07-04
+
+- Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
   - Stacked bar chart now doesn't render gaps in case of a missing value
 - Tests

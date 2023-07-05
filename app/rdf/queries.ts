@@ -563,12 +563,11 @@ export const getCubeObservations = async ({
   });
 
   const serverFilter =
-    Object.keys(serverFilters).length > 0
-      ? makeServerFilter(serverFilters)
-      : null;
+    Object.keys(dbFilters).length > 0 ? makeServerFilter(dbFilters) : null;
   const filteredObservationsRaw: typeof observationsRaw = [];
   const observations: Observation[] = [];
   const observationParser = parseObservation(cubeDimensions, raw);
+
   for (let or of observationsRaw) {
     if (!serverFilter || serverFilter(or)) {
       const obs = observationParser(or);
