@@ -74,7 +74,8 @@ export const ChartAreasVisualization = ({
 };
 
 export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
-  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
+  const { chartConfig, chartData, allData, scalesData, dimensions, measures } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
@@ -82,6 +83,7 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       chartConfig={chartConfig}
       chartData={chartData}
       scalesData={scalesData}
+      allData={allData}
       dimensions={dimensions}
       measures={measures}
       aspectRatio={0.4}

@@ -367,20 +367,8 @@ export const useChartData = (
   }, [allFilters, observations]);
 
   const scalesData = useMemo(() => {
-    const timeSliderActive = !!(
-      animationField?.componentIri && timeSliderValue
-    );
-
-    return timeSliderActive
-      ? observations.filter(overEvery(timeFilters))
-      : chartData;
-  }, [
-    animationField?.componentIri,
-    chartData,
-    observations,
-    timeFilters,
-    timeSliderValue,
-  ]);
+    return observations.filter(overEvery(timeFilters));
+  }, [observations, timeFilters]);
 
   return {
     chartData,

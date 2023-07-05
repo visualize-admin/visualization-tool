@@ -84,7 +84,8 @@ export const ChartColumnsVisualization = ({
 };
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, allData, dimensions, measures } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
@@ -94,6 +95,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={0.4}
@@ -128,6 +130,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={0.4}
@@ -165,6 +168,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           measures={measures}
           dimensions={dimensions}
           aspectRatio={0.4}

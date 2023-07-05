@@ -6,7 +6,7 @@ import { Observation } from "@/domain/data";
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
 
-  const { preparedData, bounds, getX, xScaleInteraction } =
+  const { chartData, bounds, getX, xScaleInteraction } =
     useChartState() as ColumnsState;
   const { margins, chartHeight } = bounds;
 
@@ -23,7 +23,7 @@ export const InteractionColumns = () => {
   };
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {preparedData.map((d, i) => (
+      {chartData.map((d, i) => (
         <rect
           key={i}
           x={xScaleInteraction(getX(d)) as number}

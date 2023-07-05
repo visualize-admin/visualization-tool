@@ -255,6 +255,7 @@ export const ChartMap = (
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     features,
@@ -266,6 +267,7 @@ export const ChartMap = (
       chartConfig={chartConfig}
       chartData={chartData}
       scalesData={scalesData}
+      allData={allData}
       dimensions={dimensions}
       measures={measures}
       features={features}

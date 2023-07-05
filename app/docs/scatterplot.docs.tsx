@@ -60,7 +60,9 @@ ${(
     >
       <InteractiveFiltersProvider>
         <ScatterplotChart
-          data={scatterplotObservations}
+          chartData={scatterplotObservations}
+          scalesData={scatterplotObservations}
+          allData={scatterplotObservations}
           dimensions={scatterplotDimensions}
           measures={scatterplotMeasures}
           chartConfig={

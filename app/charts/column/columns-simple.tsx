@@ -9,14 +9,8 @@ import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const state = useChartState() as ColumnsState;
-  const {
-    getX,
-    getYErrorRange,
-    preparedData,
-    yScale,
-    xScale,
-    showStandardError,
-  } = state;
+  const { getX, getYErrorRange, chartData, yScale, xScale, showStandardError } =
+    state;
   const { margins } = state.bounds;
 
   if (!getYErrorRange || !showStandardError) {
@@ -25,7 +19,7 @@ export const ErrorWhiskers = () => {
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {preparedData.map((d, i) => {
+      {chartData.map((d, i) => {
         const x0 = xScale(getX(d)) as number;
         const bandwidth = xScale.bandwidth();
         const barwidth = Math.min(bandwidth, 15);
@@ -46,7 +40,7 @@ export const ErrorWhiskers = () => {
 
 export const Columns = () => {
   const ref = React.useRef<SVGGElement>(null);
-  const { preparedData, bounds, getX, xScale, getY, yScale } =
+  const { chartData, bounds, getX, xScale, getY, yScale } =
     useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
@@ -58,7 +52,7 @@ export const Columns = () => {
       return d <= 0 ? theme.palette.secondary.main : theme.palette.primary.main;
     };
 
-    return preparedData.map((d) => {
+    return chartData.map((d) => {
       const x = getX(d);
       const xScaled = xScale(x) as number;
       const y = getY(d) ?? NaN;
@@ -77,7 +71,7 @@ export const Columns = () => {
       };
     });
   }, [
-    preparedData,
+    chartData,
     bandwidth,
     getX,
     getY,

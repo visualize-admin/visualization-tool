@@ -79,7 +79,8 @@ export const ChartScatterplotVisualization = ({
 };
 
 export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
-  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, allData, dimensions, measures } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
@@ -87,6 +88,7 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
       chartConfig={chartConfig}
       chartData={chartData}
       scalesData={scalesData}
+      allData={allData}
       dimensions={dimensions}
       measures={measures}
       aspectRatio={1}

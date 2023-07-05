@@ -119,6 +119,7 @@ export const ChartLoadingWrapper = <
         {React.createElement(Component, {
           chartData,
           scalesData,
+          allData: plottableData,
           dimensions,
           measures,
           chartConfig,

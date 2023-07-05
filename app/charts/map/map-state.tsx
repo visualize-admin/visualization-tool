@@ -454,15 +454,22 @@ const useMapState = (
   props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
 ): MapState => {
   const width = useWidth();
-  const { data, features, chartConfig, measures, dimensions, baseLayer } =
-    props;
+  const {
+    chartData,
+    allData,
+    features,
+    chartConfig,
+    measures,
+    dimensions,
+    baseLayer,
+  } = props;
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
     componentIri: areaLayer?.componentIri,
     measureIri: areaLayer?.color.componentIri,
-    data,
+    data: chartData,
     features,
     dimensions,
     measures,
@@ -491,7 +498,7 @@ const useMapState = (
   const symbolLayerState = useLayerState({
     componentIri: symbolLayer?.componentIri,
     measureIri: symbolLayer?.measureIri,
-    data,
+    data: chartData,
     features,
     dimensions,
     measures,
@@ -569,6 +576,7 @@ const useMapState = (
 
   return {
     chartType: "map",
+    allData,
     bounds,
     features,
     showBaseLayer: baseLayer.show,
@@ -594,6 +602,7 @@ const MapChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   features,
@@ -606,6 +615,7 @@ const MapChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     features,
@@ -621,6 +631,7 @@ export const MapChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   features,
@@ -636,6 +647,7 @@ export const MapChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           features={features}
           dimensions={dimensions}
           measures={measures}

@@ -6,6 +6,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
+import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
@@ -15,7 +16,6 @@ import {
 } from "@/charts/shared/abbreviations";
 import {
   getLabelWithUnit,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
 } from "@/charts/shared/chart-helpers";
 import {
@@ -31,19 +31,22 @@ import {
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ScatterPlotConfig } from "@/configurator";
+import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 
 import { ChartProps } from "../shared/ChartProps";
 
 export interface ScatterplotState extends CommonChartState {
   chartType: "scatterplot";
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => number | null;
   xScale: ScaleLinear<number, number>;
   getY: (d: Observation) => number | null;
@@ -63,7 +66,15 @@ const useScatterplotState = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
 ): ScatterplotState => {
   const width = useWidth();
-  const { chartConfig, data, dimensions, measures, aspectRatio } = props;
+  const {
+    chartConfig,
+    chartData,
+    scalesData,
+    allData,
+    dimensions,
+    measures,
+    aspectRatio,
+  } = props;
   const { fields } = chartConfig;
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -85,7 +96,7 @@ const useScatterplotState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -96,15 +107,6 @@ const useScatterplotState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  // Data for chart
-  const { interactiveFiltersConfig } = chartConfig;
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    // No animation yet for scatterplot
-    animationField: undefined,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
   const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);
 
   if (!xMeasure) {
@@ -132,15 +134,39 @@ const useScatterplotState = (
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segments = useMemo(() => {
-    return [...new Set(data.map(getSegment))];
-  }, [getSegment, data]);
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension.iri]
+    : undefined;
+  const allSegments = useMemo(() => {
+    const allUniqueSegments = [...new Set(scalesData.map(getSegment))];
+    const sorting = {
+      sortingType: "byAuto",
+      sortingOrder: "asc",
+    } as SortingField["sorting"];
+    const sorters = makeDimensionValueSorters(segmentDimension, {
+      sorting,
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
+    });
+
+    return orderBy(
+      allUniqueSegments,
+      sorters,
+      getSortingOrders(sorters, sorting)
+    );
+  }, [
+    fields.segment?.useAbbreviations,
+    getSegment,
+    scalesData,
+    segmentDimension,
+    segmentFilter,
+  ]);
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+    const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
       const dvIri =
         segmentsByAbbreviationOrLabel.get(segment)?.value ||
         segmentsByValue.get(segment)?.value ||
@@ -155,7 +181,7 @@ const useScatterplotState = (
     colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
-    colors.domain(segments);
+    colors.domain(allSegments);
     colors.range(getPalette(fields.segment?.palette));
   }
   // Dimensions
@@ -238,8 +264,8 @@ const useScatterplotState = (
   return {
     chartType: "scatterplot",
     bounds,
-    allData: data,
-    preparedData,
+    chartData,
+    allData,
     getX,
     xScale,
     getY,
@@ -306,6 +332,7 @@ const ScatterplotChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -317,6 +344,7 @@ const ScatterplotChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -331,6 +359,7 @@ export const ScatterplotChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -345,6 +374,7 @@ export const ScatterplotChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

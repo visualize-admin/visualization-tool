@@ -38,7 +38,6 @@ import {
   getLabelWithUnit,
   getMaybeTemporalDimensionValues,
   getWideData,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
@@ -71,8 +70,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface StackedColumnsState extends CommonChartState {
   chartType: "column";
-  preparedData: Observation[];
-  allData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => string;
   getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
@@ -98,7 +96,15 @@ export interface StackedColumnsState extends CommonChartState {
 const useColumnsStackedState = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): StackedColumnsState => {
-  const { data, measures, dimensions, chartConfig, aspectRatio } = props;
+  const {
+    chartData,
+    scalesData,
+    allData,
+    measures,
+    dimensions,
+    chartConfig,
+    aspectRatio,
+  } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -113,8 +119,8 @@ const useColumnsStackedState = (
 
   const xIsTime = isTemporalDimension(xDimension);
   const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, data);
-  }, [xDimension, data]);
+    return getMaybeTemporalDimensionValues(xDimension, scalesData);
+  }, [xDimension, scalesData]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
@@ -124,7 +130,7 @@ const useColumnsStackedState = (
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    data,
+    scalesData,
     getXAbbreviationOrLabel,
     fields.x.componentIri
   );
@@ -147,7 +153,7 @@ const useColumnsStackedState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -158,7 +164,10 @@ const useColumnsStackedState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
+  const allDataGroupedByX = useMemo(
+    () => group(chartData, getX),
+    [chartData, getX]
+  );
   const allDataWide = useMemo(
     () =>
       getWideData({
@@ -170,41 +179,29 @@ const useColumnsStackedState = (
     [allDataGroupedByX, xKey, getY, getSegment]
   );
 
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getX: getXAsDate,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const preparedDataGroupedByX = useMemo(
-    () => group(preparedData, getX),
-    [preparedData, getX]
+    () => group(chartData, getX),
+    [chartData, getX]
   );
 
   const sumsBySegment = useMemo(
     () =>
       Object.fromEntries([
         ...rollup(
-          data,
+          scalesData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
       ]),
-    [getSegment, getY, data]
+    [getSegment, getY, scalesData]
   );
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
-  const { segments, plottableSegments } = useMemo(() => {
-    const allUniqueSegments = Array.from(new Set(data.map(getSegment)));
-    const allPlottableSegments = Array.from(
-      new Set(preparedData.map(getSegment))
-    );
-
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
+    const uniqueSegments = Array.from(new Set(chartData.map(getSegment)));
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
@@ -212,7 +209,6 @@ const useColumnsStackedState = (
       useAbbreviations: fields.segment?.useAbbreviations,
       dimensionFilter: segmentFilter,
     });
-
     const allSegments = orderBy(
       allUniqueSegments,
       sorters,
@@ -220,14 +216,12 @@ const useColumnsStackedState = (
     );
 
     return {
-      segments: allSegments,
-      plottableSegments: allSegments.filter((d) =>
-        allPlottableSegments.includes(d)
-      ),
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
     };
   }, [
-    data,
-    preparedData,
+    scalesData,
+    chartData,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -241,7 +235,7 @@ const useColumnsStackedState = (
     xKey,
     getY,
     getSegment,
-    allSegments: plottableSegments,
+    allSegments: segments,
     imputationType: "zeros",
   });
 
@@ -263,12 +257,12 @@ const useColumnsStackedState = (
     () =>
       Object.fromEntries([
         ...rollup(
-          data,
+          scalesData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getX(x)
         ),
       ]),
-    [data, getX, getY]
+    [scalesData, getX, getY]
   );
   // Map ordered segments labels to colors
   const {
@@ -286,7 +280,7 @@ const useColumnsStackedState = (
       segmentsByAbbreviationOrLabel &&
       fields.segment.colorMapping
     ) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
         // See https://github.com/visualize-admin/visualization-tool/issues/97
         const dvIri =
@@ -309,7 +303,7 @@ const useColumnsStackedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
       colors.unknown(() => undefined);
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
       colors.unknown(() => undefined);
     }
@@ -338,7 +332,7 @@ const useColumnsStackedState = (
       .paddingOuter(0);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(data, (d) => getXAsDate(d)) as [
+    const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
       Date,
       Date
     ];
@@ -346,13 +340,13 @@ const useColumnsStackedState = (
 
     // y
     const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
-      segments
+      allSegments
         .map((s) => d[s])
         .filter((d) => d < 0)
         .reduce((a, b) => a + b, 0)
     );
     const maxTotal = max<$FixMe, number>(scalesWideData, (d) =>
-      segments
+      allSegments
         .map((s) => d[s])
         .filter((d) => d >= 0)
         .reduce((a, b) => a + b, 0)
@@ -378,11 +372,10 @@ const useColumnsStackedState = (
     getX,
     getXLabel,
     getXAsDate,
-    data,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
-    segments,
+    allSegments,
   ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -411,7 +404,7 @@ const useColumnsStackedState = (
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDiverging)
-      .keys(plottableSegments);
+      .keys(segments);
 
     const series = stacked(
       chartWideData as {
@@ -419,7 +412,7 @@ const useColumnsStackedState = (
       }[]
     );
     return series;
-  }, [chartWideData, fields.segment?.sorting, plottableSegments]);
+  }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding(
@@ -553,8 +546,8 @@ const useColumnsStackedState = (
   return {
     chartType: "column",
     bounds,
-    preparedData,
-    allData: data,
+    chartData,
+    allData,
     getX,
     getXLabel,
     getXAsDate,
@@ -673,6 +666,7 @@ const StackedColumnsChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -684,6 +678,7 @@ const StackedColumnsChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -698,6 +693,7 @@ export const StackedColumnsChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -712,6 +708,7 @@ export const StackedColumnsChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

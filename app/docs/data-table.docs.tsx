@@ -1,5 +1,4 @@
 import { markdown, ReactSpecimen } from "catalog";
-import * as React from "react";
 
 import { ChartContainer } from "@/charts/shared/containers";
 import { Table } from "@/charts/table/table";
@@ -19,7 +18,9 @@ export const Docs = () => markdown`
 ${(
   <ReactSpecimen span={6}>
     <TableChart
-      data={tableObservations}
+      chartData={tableObservations}
+      scalesData={tableObservations}
+      allData={tableObservations}
       dimensions={tableDimensions as DimensionMetadataFragment[]}
       measures={tableMeasures as DimensionMetadataFragment[]}
       chartConfig={tableConfig}

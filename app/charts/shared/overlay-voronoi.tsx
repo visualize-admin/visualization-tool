@@ -1,6 +1,5 @@
-import { Delaunay } from "d3";
-import { pointer } from "d3";
-import { memo, useRef, MouseEvent as ReactMouseEvent } from "react";
+import { Delaunay, pointer } from "d3";
+import { MouseEvent as ReactMouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -15,22 +14,14 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 }) {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
-  const {
-    preparedData,
-    getX,
-    xScale,
-    getY,
-    yScale,
-    getSegment,
-    colors,
-    bounds,
-  } = useChartState() as LinesState | AreasState | ScatterplotState;
+  const { chartData, getX, xScale, getY, yScale, getSegment, colors, bounds } =
+    useChartState() as LinesState | AreasState | ScatterplotState;
 
   const { chartWidth, chartHeight, margins } = bounds;
 
   // FIXME: delaunay/voronoi calculation could be memoized
   const delaunay = Delaunay.from(
-    preparedData,
+    chartData,
     (d) => xScale(getX(d) ?? NaN),
     (d) => yScale(getY(d) ?? NaN)
   );
@@ -40,7 +31,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     const [x, y] = pointer(e, ref.current!);
 
     const location = delaunay.find(x, y);
-    const d = preparedData[location];
+    const d = chartData[location];
 
     if (typeof location !== "undefined") {
       dispatch({
@@ -63,7 +54,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
       {debug &&
-        preparedData.map((d, i) => (
+        chartData.map((d, i) => (
           <path
             key={i}
             d={voronoi.renderCell(i)}

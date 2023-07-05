@@ -14,6 +14,7 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export interface CommonChartState {
   chartType: ChartType;
+  allData: Observation[];
   bounds: Bounds;
 }
 

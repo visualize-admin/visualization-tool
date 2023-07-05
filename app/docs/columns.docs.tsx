@@ -21,7 +21,9 @@ ${(
   <ReactSpecimen span={6}>
     <InteractiveFiltersProvider>
       <ColumnChart
-        data={columnObservations}
+        chartData={columnObservations}
+        scalesData={columnObservations}
+        allData={columnObservations}
         dimensions={columnDimensions}
         chartConfig={
           {

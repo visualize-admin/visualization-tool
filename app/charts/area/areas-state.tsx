@@ -30,7 +30,6 @@ import {
   getLabelWithUnit,
   getWideData,
   stackOffsetDivergingPositiveZeros,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   useStringVariable,
   useTemporalVariable,
@@ -69,9 +68,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface AreasState extends CommonChartState {
   chartType: "area";
-  data: Observation[];
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
@@ -92,7 +89,15 @@ export interface AreasState extends CommonChartState {
 const useAreasState = (
   props: ChartProps<AreaConfig> & { aspectRatio: number }
 ): AreasState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
+  const {
+    chartData,
+    scalesData,
+    allData,
+    dimensions,
+    measures,
+    chartConfig,
+    aspectRatio,
+  } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -127,7 +132,7 @@ const useAreasState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -140,15 +145,15 @@ const useAreasState = (
 
   const hasSegment = fields.segment;
   const allSegments = useMemo(
-    () => [...new Set(data.map((d) => getSegment(d)))],
-    [data, getSegment]
+    () => Array.from(new Set(scalesData.map(getSegment))),
+    [scalesData, getSegment]
   );
 
   const xKey = fields.x.componentIri;
 
   const dataGroupedByX = useMemo(
-    () => group(data, getGroups),
-    [data, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const allDataWide = useMemo(
@@ -162,18 +167,9 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    // No animation yet for areas
-    animationField: undefined,
-    getX,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const chartWideData = useMemo(() => {
-    const preparedDataGroupedByX = group(preparedData, getGroups);
+    const preparedDataGroupedByX = group(chartData, getGroups);
+
     return getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
@@ -183,7 +179,7 @@ const useAreasState = (
       imputationType: fields.y.imputationType,
     });
   }, [
-    preparedData,
+    chartData,
     getGroups,
     xKey,
     getY,
@@ -211,13 +207,15 @@ const useAreasState = (
   const segments = useMemo(() => {
     const totalValueBySegment = Object.fromEntries([
       ...rollup(
-        data,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
       ),
     ]);
 
-    const uniqueSegments = Array.from(new Set(data.map((d) => getSegment(d))));
+    const uniqueSegments = Array.from(
+      new Set(chartData.map((d) => getSegment(d)))
+    );
 
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting: segmentSorting,
@@ -232,7 +230,7 @@ const useAreasState = (
       getSortingOrders(sorters, segmentSorting)
     );
   }, [
-    data,
+    chartData,
     segmentDimension,
     segmentSorting,
     segmentFilter,
@@ -270,7 +268,7 @@ const useAreasState = (
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
-    const xEntireDomain = extent(data, (d) => getX(d)) as [Date, Date];
+    const xEntireDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomain);
     const yScale = scaleLinear().domain(yDomain).nice();
     const colors = scaleOrdinal<string, string>();
@@ -279,7 +277,7 @@ const useAreasState = (
     ) as $FixMe;
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ||
           segmentsByValue.get(segment)?.value ||
@@ -295,7 +293,7 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
       colors.unknown(() => undefined);
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
       colors.unknown(() => undefined);
     }
@@ -304,11 +302,11 @@ const useAreasState = (
     dimensions,
     fields.segment,
     getX,
-    data,
+    chartData,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
-    segments,
+    allSegments,
     series,
   ]);
 
@@ -348,7 +346,7 @@ const useAreasState = (
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
-    const tooltipValues = preparedData.filter(
+    const tooltipValues = chartData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
@@ -391,9 +389,8 @@ const useAreasState = (
   return {
     chartType: "area",
     bounds,
-    data,
-    allData: data,
-    preparedData,
+    chartData,
+    allData,
     getX,
     xScale,
     xEntireScale,
@@ -464,6 +461,7 @@ const AreaChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -475,6 +473,7 @@ const AreaChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -489,6 +488,7 @@ export const AreaChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   measures,
   dimensions,
   aspectRatio,
@@ -503,6 +503,7 @@ export const AreaChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

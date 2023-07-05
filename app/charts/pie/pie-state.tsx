@@ -14,10 +14,7 @@ import {
   getMaybeAbbreviations,
   useMaybeAbbreviations,
 } from "@/charts/shared/abbreviations";
-import {
-  useDataAfterInteractiveFilters,
-  useOptionalNumericVariable,
-} from "@/charts/shared/chart-helpers";
+import { useOptionalNumericVariable } from "@/charts/shared/chart-helpers";
 import {
   ChartStateMetadata,
   CommonChartState,
@@ -45,8 +42,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface PieState extends CommonChartState {
   chartType: "pie";
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   getPieData: Pie<$IntentionalAny, Observation>;
   getY: (d: Observation) => number | null;
   getX: (d: Observation) => string;
@@ -58,8 +54,16 @@ export interface PieState extends CommonChartState {
 const usePieState = (
   props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const {
+    chartData,
+    scalesData,
+    allData,
+    dimensions,
+    measures,
+    chartConfig,
+    aspectRatio,
+  } = props;
+  const { fields } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -86,7 +90,7 @@ const usePieState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -97,14 +101,6 @@ const usePieState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  // Data for chart
-  const { preparedData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   // Map ordered segments to colors
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension.iri]
@@ -112,9 +108,9 @@ const usePieState = (
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
-      data.map((d) => [getSegment(d), getY(d)])
+      scalesData.map((d) => [getSegment(d), getY(d)])
     );
-    const uniqueSegments = Object.entries(measureBySegment)
+    const allUniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
       .map((x) => x[0]);
 
@@ -126,14 +122,14 @@ const usePieState = (
       dimensionFilter: segmentFilter,
     });
 
-    const segments = orderBy(
-      uniqueSegments,
+    const allSegments = orderBy(
+      allUniqueSegments,
       sorters,
       getSortingOrders(sorters, sorting)
     );
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ||
           segmentsByValue.get(segment)?.value ||
@@ -148,18 +144,19 @@ const usePieState = (
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
     }
     // Do not let the scale be implicitly extended by children calling it
     // on unknown values
     colors.unknown(() => undefined);
+
     return colors;
   }, [
     fields.segment,
     getSegment,
     getY,
-    data,
+    scalesData,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -257,8 +254,8 @@ const usePieState = (
   return {
     chartType: "pie",
     bounds,
-    allData: data,
-    preparedData,
+    chartData,
+    allData,
     getPieData,
     getY,
     getX: getSegment,
@@ -312,6 +309,7 @@ const PieChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -323,6 +321,7 @@ const PieChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -337,6 +336,7 @@ export const PieChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -351,6 +351,7 @@ export const PieChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

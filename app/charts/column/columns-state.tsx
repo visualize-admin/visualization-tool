@@ -30,7 +30,6 @@ import {
 import {
   getLabelWithUnit,
   getMaybeTemporalDimensionValues,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   useSegment,
   useTemporalVariable,
@@ -75,8 +74,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface ColumnsState extends CommonChartState {
   chartType: "column";
-  preparedData: Observation[];
-  allData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => string;
   getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
@@ -101,7 +99,15 @@ export interface ColumnsState extends CommonChartState {
 const useColumnsState = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsState => {
-  const { data, measures, dimensions, aspectRatio, chartConfig } = props;
+  const {
+    chartData,
+    scalesData,
+    allData,
+    measures,
+    dimensions,
+    aspectRatio,
+    chartConfig,
+  } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -121,8 +127,8 @@ const useColumnsState = (
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
   const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, data);
-  }, [xDimension, data]);
+    return getMaybeTemporalDimensionValues(xDimension, chartData);
+  }, [xDimension, chartData]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
@@ -132,7 +138,7 @@ const useColumnsState = (
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    data,
+    chartData,
     getXAbbreviationOrLabel,
     fields.x.componentIri
   );
@@ -144,14 +150,6 @@ const useColumnsState = (
   const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
-
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getX: getXAsDate,
-  });
 
   // Scales
   const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
@@ -181,7 +179,7 @@ const useColumnsState = (
         .paddingOuter(0);
 
       // x as time, needs to be memoized!
-      const xEntireDomainAsTime = extent(data, (d) => getXAsDate(d)) as [
+      const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
         Date,
         Date
       ];
@@ -217,7 +215,6 @@ const useColumnsState = (
       getXAsDate,
       getY,
       getYErrorRange,
-      data,
       scalesData,
       fields.x.sorting,
       fields.x.useAbbreviations,
@@ -330,8 +327,8 @@ const useColumnsState = (
   return {
     chartType: "column",
     bounds,
-    preparedData,
-    allData: data,
+    chartData,
+    allData,
     getX,
     getXLabel,
     getXAsDate,
@@ -422,6 +419,7 @@ const ColumnChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -433,6 +431,7 @@ const ColumnChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -447,6 +446,7 @@ export const ColumnChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -461,6 +461,7 @@ export const ColumnChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

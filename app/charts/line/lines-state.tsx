@@ -23,7 +23,6 @@ import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   useStringVariable,
   useTemporalVariable,
@@ -62,9 +61,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface LinesState extends CommonChartState {
   chartType: "line";
-  data: Observation[];
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   segments: string[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
@@ -88,7 +85,15 @@ export interface LinesState extends CommonChartState {
 const useLinesState = (
   props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesState => {
-  const { chartConfig, data, dimensions, measures, aspectRatio } = props;
+  const {
+    chartConfig,
+    chartData,
+    scalesData,
+    allData,
+    dimensions,
+    measures,
+    aspectRatio,
+  } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -125,7 +130,7 @@ const useLinesState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -137,8 +142,8 @@ const useLinesState = (
   }, [segmentDimension?.values]);
 
   const dataGroupedByX = useMemo(
-    () => group(data, getGroups),
-    [data, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const allDataWide = getWideData({
@@ -148,24 +153,14 @@ const useLinesState = (
     getSegment,
   });
 
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: data,
-    interactiveFiltersConfig,
-    // No animation yet for lines
-    animationField: undefined,
-    getX,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const preparedDataGroupedBySegment = useMemo(
-    () => group(preparedData, getSegment),
-    [preparedData, getSegment]
+    () => group(chartData, getSegment),
+    [chartData, getSegment]
   );
 
   const preparedDataGroupedByX = useMemo(
-    () => group(preparedData, getGroups),
-    [preparedData, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const chartWideData = getWideData({
@@ -176,12 +171,12 @@ const useLinesState = (
   });
 
   // x
-  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
+  const xDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(data, (d) => getX(d)) as [Date, Date],
-    [data, getX]
+    () => extent(scalesData, (d) => getX(d)) as [Date, Date],
+    [scalesData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
   const xAxisLabel =
@@ -193,7 +188,7 @@ const useLinesState = (
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
 
-  const entireMaxValue = max(data, getY) as number;
+  const entireMaxValue = max(scalesData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -208,25 +203,32 @@ const useLinesState = (
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
-  const segments = useMemo(() => {
-    const uniqueSegments = [...new Set(data.map(getSegment))];
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = [...new Set(scalesData.map(getSegment))];
+    const uniqueSegments = [...new Set(chartData.map(getSegment))];
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       useAbbreviations: fields.segment?.useAbbreviations,
       dimensionFilter: segmentFilter,
     });
-    return orderBy(
-      uniqueSegments,
+    const allSegments = orderBy(
+      allUniqueSegments,
       sorters,
       getSortingOrders(sorters, fields.segment?.sorting)
     );
+
+    return {
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
+    };
   }, [
     segmentDimension,
     getSegment,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
-    data,
+    scalesData,
+    chartData,
     segmentFilter,
   ]);
 
@@ -234,7 +236,7 @@ const useLinesState = (
   const colors = scaleOrdinal<string, string>();
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+    const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
       const dvIri =
         segmentsByAbbreviationOrLabel.get(segment)?.value ||
         segmentsByValue.get(segment)?.value ||
@@ -249,7 +251,7 @@ const useLinesState = (
     colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
-    colors.domain(segments);
+    colors.domain(allSegments);
     colors.range(getPalette(fields.segment?.palette));
   }
 
@@ -289,7 +291,7 @@ const useLinesState = (
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum) ?? 0);
 
-    const tooltipValues = preparedData.filter(
+    const tooltipValues = chartData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
@@ -333,9 +335,8 @@ const useLinesState = (
   return {
     chartType: "line",
     bounds,
-    data,
-    allData: data,
-    preparedData,
+    chartData,
+    allData,
     getX,
     xScale,
     xEntireScale,
@@ -407,6 +408,7 @@ const LineChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -418,6 +420,7 @@ const LineChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
     aspectRatio,
@@ -432,6 +435,7 @@ export const LineChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   aspectRatio,
@@ -446,6 +450,7 @@ export const LineChart = ({
           chartConfig={chartConfig}
           chartData={chartData}
           scalesData={scalesData}
+          allData={allData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

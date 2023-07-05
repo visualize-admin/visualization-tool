@@ -105,7 +105,7 @@ export interface TableChartState extends CommonChartState {
 }
 
 const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
-  const { chartConfig, data, dimensions, measures } = props;
+  const { chartConfig, chartData, allData, dimensions, measures } = props;
   const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
@@ -124,7 +124,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = Math.min(TABLE_HEIGHT, data.length * rowHeight);
+  const chartHeight = Math.min(TABLE_HEIGHT, chartData.length * rowHeight);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -149,10 +149,10 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
   const memoizedData = useMemo(
     function replaceKeys() {
       // Only read keys once
-      const keys = Object.keys(data[0]);
+      const keys = Object.keys(chartData[0]);
       const slugifiedKeys = keys.map(getSlugifiedIri);
 
-      return data.map((d, index) => {
+      return chartData.map((d, index) => {
         let o = { id: index } as $IntentionalAny;
         // This is run often, so let's optimize it
         for (let i = 0; i < keys.length; i++) {
@@ -166,7 +166,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
         return o;
       });
     },
-    [data, types]
+    [chartData, types]
   );
 
   // Columns used by react-table
@@ -190,7 +190,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.
-      const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
+      const columnItems = [...new Set(chartData.map((d) => d[c.componentIri]))];
       const columnItemSizes = [
         ...columnItems.map((item) => {
           const itemAsString =
@@ -233,7 +233,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
         },
       };
     });
-  }, [orderedTableColumns, data, dimensions, measures, formatNumber]);
+  }, [orderedTableColumns, chartData, dimensions, measures, formatNumber]);
 
   // Groupings used by react-table
   const groupingIris = useMemo(
@@ -337,11 +337,11 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
           } as CategoryColumnMeta;
         } else if (columnStyleType === "heatmap") {
           const absMinValue =
-            min(data, (d) =>
+            min(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 0
             ) || 0;
           const absMaxValue =
-            max(data, (d) =>
+            max(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 1
             ) || 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
@@ -357,7 +357,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
           // longest value in the column, with a minimum of 150px.
           const columnItems = [
             ...new Set(
-              data.map((d) =>
+              chartData.map((d) =>
                 d !== null && d[iri] !== null ? mkNumber(d[iri]) : NaN
               )
             ),
@@ -380,7 +380,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
       (v) => v.slugifiedIri
     );
   }, [
-    data,
+    chartData,
     dimensions,
     fields,
     formatters,
@@ -390,6 +390,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
 
   return {
     chartType: "table",
+    allData,
     bounds,
     rowHeight,
     showSearch: settings.showSearch,
@@ -415,6 +416,7 @@ const TableChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   children,
@@ -427,6 +429,7 @@ const TableChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    allData,
     dimensions,
     measures,
   });
@@ -440,6 +443,7 @@ export const TableChart = ({
   chartConfig,
   chartData,
   scalesData,
+  allData,
   dimensions,
   measures,
   children,
@@ -450,6 +454,7 @@ export const TableChart = ({
         chartConfig={chartConfig}
         chartData={chartData}
         scalesData={scalesData}
+        allData={allData}
         dimensions={dimensions}
         measures={measures}
       >
