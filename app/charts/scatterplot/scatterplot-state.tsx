@@ -1,5 +1,4 @@
 import {
-  ascending,
   max,
   min,
   ScaleLinear,
@@ -10,19 +9,22 @@ import {
 import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
+import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import { useObservationLabels } from "@/charts/shared/observation-labels";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -89,19 +91,15 @@ const useScatterplotState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const sortedData = data.sort((a, b) =>
-    ascending(getSegment(a), getSegment(b))
-  );
-
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
+  const plottableData = usePlottableData({
+    data,
     plotters: [getX, getY],
   });
 
   // Data for chart
   const { interactiveFiltersConfig } = chartConfig;
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableSortedData,
+    observations: plottableData,
     interactiveFiltersConfig,
     // No animation yet for scatterplot
     animationField: undefined,
@@ -135,8 +133,8 @@ const useScatterplotState = (
 
   const hasSegment = fields.segment ? true : false;
   const segments = useMemo(() => {
-    return [...new Set(plottableSortedData.map(getSegment))];
-  }, [getSegment, plottableSortedData]); // get *visible* segments
+    return [...new Set(plottableData.map(getSegment))];
+  }, [getSegment, plottableData]); // get *visible* segments
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -240,7 +238,7 @@ const useScatterplotState = (
   return {
     chartType: "scatterplot",
     bounds,
-    allData: plottableSortedData,
+    allData: plottableData,
     preparedData,
     getX,
     xScale,
@@ -255,6 +253,14 @@ const useScatterplotState = (
     yAxisDimension: yMeasure,
     getAnnotationInfo,
     getSegmentLabel,
+  };
+};
+
+export const getScatterplotStateMetadata = (): ChartStateMetadata => {
+  return {
+    sortData: (data) => {
+      return data;
+    },
   };
 };
 

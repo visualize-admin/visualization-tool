@@ -69,29 +69,28 @@ export const ChartLoadingWrapper = <
     error: observationsError,
   } = observationsQuery;
 
+  const observations = observationsData?.dataCubeByIri?.observations.data;
+  const dimensions = componentsData?.dataCubeByIri?.dimensions;
+  const measures = componentsData?.dataCubeByIri?.measures;
+
   const chartStateMetadata = React.useMemo(() => {
-    return getChartStateMetadata(chartConfig);
-  }, [chartConfig]);
+    if (observations && dimensions) {
+      return getChartStateMetadata({ chartConfig, observations, dimensions });
+    }
+  }, [chartConfig, observations, dimensions]);
 
-  const observations = React.useMemo(() => {
-    const observations = observationsData?.dataCubeByIri?.observations.data;
-
+  const data = React.useMemo(() => {
     if (observations && chartStateMetadata) {
       return chartStateMetadata.sortData(observations);
     }
 
     return observations;
-  }, [chartStateMetadata, observationsData?.dataCubeByIri?.observations.data]);
+  }, [chartStateMetadata, observations]);
 
-  if (
-    metadataData?.dataCubeByIri &&
-    componentsData?.dataCubeByIri &&
-    observations
-  ) {
+  if (metadataData?.dataCubeByIri && dimensions && measures && data) {
     const { title } = metadataData.dataCubeByIri;
-    const { dimensions, measures } = componentsData.dataCubeByIri;
 
-    return observations.length > 0 ? (
+    return data.length > 0 ? (
       <Box
         data-chart-loaded={
           !(fetchingMetadata && fetchingComponents && fetchingObservations)
@@ -100,12 +99,12 @@ export const ChartLoadingWrapper = <
       >
         <A11yTable
           title={title}
-          observations={observations}
+          observations={data}
           dimensions={dimensions}
           measures={measures}
         />
         {React.createElement(Component, {
-          data: observations,
+          data,
           dimensions,
           measures,
           chartConfig,

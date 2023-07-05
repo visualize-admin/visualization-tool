@@ -29,7 +29,10 @@ import {
   useOptionalNumericVariable,
   useStringVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -575,6 +578,14 @@ const useMapState = (
     identicalLayerComponentIris,
     areaLayer: preparedAreaLayerState,
     symbolLayer: preparedSymbolLayerState,
+  };
+};
+
+export const getMapStateMetadata = (): ChartStateMetadata => {
+  return {
+    sortData: (data) => {
+      return data;
+    },
   };
 };
 

@@ -10,18 +10,21 @@ import {
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
+import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
   usePlottableData,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import { useObservationLabels } from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -262,6 +265,14 @@ const usePieState = (
     colors,
     getAnnotationInfo,
     getSegmentLabel,
+  };
+};
+
+export const getPieStateMetadata = (): ChartStateMetadata => {
+  return {
+    sortData: (data) => {
+      return data;
+    },
   };
 };
 

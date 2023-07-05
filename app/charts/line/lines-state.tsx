@@ -15,6 +15,7 @@ import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
+import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
@@ -25,15 +26,18 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import { useObservationLabels } from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -127,13 +131,8 @@ const useLinesState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
-  );
-
   const plottableSortedData = usePlottableData({
-    data: sortedData,
+    data,
     plotters: [getX, getY],
   });
 
@@ -297,7 +296,7 @@ const useLinesState = (
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      sortOrder: "asc",
+      sortingOrder: "asc",
     });
 
     const xPlacement = "center";
@@ -354,6 +353,24 @@ const useLinesState = (
     allDataWide,
     xKey,
     getAnnotationInfo,
+  };
+};
+
+export const getLinesStateMetadata = (
+  chartConfig: LineConfig
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const x = fields.x.componentIri;
+  const getSortValue = (d: Observation) => {
+    return parseDate(`${d[x]}`);
+  };
+
+  return {
+    sortData: (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getSortValue(a), getSortValue(b));
+      });
+    },
   };
 };
 

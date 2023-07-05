@@ -1,8 +1,16 @@
+import { getAreasStateMetadata } from "@/charts/area/areas-state";
+import { getColumnsGroupedStateMetadata } from "@/charts/column/columns-grouped-state";
+import { getColumnsStackedStateMetadata } from "@/charts/column/columns-stacked-state";
+import { getColumnsStateMetadata } from "@/charts/column/columns-state";
+import { getLinesStateMetadata } from "@/charts/line/lines-state";
+import { getMapStateMetadata } from "@/charts/map/map-state";
+import { getPieStateMetadata } from "@/charts/pie/pie-state";
+import { getScatterplotStateMetadata } from "@/charts/scatterplot/scatterplot-state";
 import { Bounds } from "@/charts/shared/use-width";
+import { getTableStateMetadata } from "@/charts/table/table-state";
 import { ChartConfig, ChartType } from "@/configurator";
 import { Observation } from "@/domain/data";
-
-import { getAreasStateMetadata } from "../area/areas-state";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export interface CommonChartState {
   chartType: ChartType;
@@ -13,11 +21,46 @@ export type ChartStateMetadata = {
   sortData: (data: Observation[]) => Observation[];
 };
 
+type ChartStateMetadataProps = {
+  chartConfig: ChartConfig;
+  observations: Observation[];
+  dimensions: DimensionMetadataFragment[];
+};
+
 export const getChartStateMetadata = (
-  chartConfig: ChartConfig
-): ChartStateMetadata | undefined => {
+  props: ChartStateMetadataProps
+): ChartStateMetadata => {
+  const { chartConfig, observations, dimensions } = props;
+
   switch (chartConfig.chartType) {
     case "area":
       return getAreasStateMetadata(chartConfig);
+    case "column":
+      switch (chartConfig.fields.segment?.type) {
+        case undefined:
+          return getColumnsStateMetadata(chartConfig, observations, dimensions);
+        case "grouped":
+          return getColumnsGroupedStateMetadata(
+            chartConfig,
+            observations,
+            dimensions
+          );
+        case "stacked":
+          return getColumnsStackedStateMetadata(
+            chartConfig,
+            observations,
+            dimensions
+          );
+      }
+    case "line":
+      return getLinesStateMetadata(chartConfig);
+    case "map":
+      return getMapStateMetadata();
+    case "pie":
+      return getPieStateMetadata();
+    case "scatterplot":
+      return getScatterplotStateMetadata();
+    case "table":
+      return getTableStateMetadata();
   }
 };
