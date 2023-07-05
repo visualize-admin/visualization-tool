@@ -184,6 +184,7 @@ export function getFieldLabel(field: string): string {
     case "area.animation":
     case "scatterplot.animation":
     case "pie.animation":
+    case "map.animation":
     case "animation":
       return i18n._(fieldLabels["controls.animation"]);
     case "bar.segment":

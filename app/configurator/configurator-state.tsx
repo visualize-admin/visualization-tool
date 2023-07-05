@@ -38,24 +38,23 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  decodeConfiguratorState,
-  Filters,
   FilterValue,
   FilterValueMultiValues,
+  Filters,
+  GenericField,
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
-  isAnimationInConfig,
   MapConfig,
-  MapFields,
   NumericalColorField,
+  decodeConfiguratorState,
+  isAnimationInConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
-  GenericField,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -752,7 +751,7 @@ export const getChartOptionField = (
   );
 };
 
-const initializeMapField = ({
+const initializeMapLayerField = ({
   chartConfig,
   field,
   componentIri,
@@ -861,10 +860,13 @@ export const handleChartFieldChanged = (
         draft.chartConfig.interactiveFiltersConfig.dataFilters.active =
           newComponentIris.length > 0;
       }
-    } else if (isMapConfig(draft.chartConfig)) {
-      initializeMapField({
+    } else if (
+      isMapConfig(draft.chartConfig) &&
+      (field === "areaLayer" || field === "symbolLayer")
+    ) {
+      initializeMapLayerField({
         chartConfig: draft.chartConfig,
-        field: field as keyof MapFields,
+        field,
         componentIri,
         dimensions,
         measures,
@@ -922,10 +924,13 @@ export const handleChartFieldChanged = (
           false,
           Object
         );
-      } else if (isMapConfig(draft.chartConfig)) {
-        initializeMapField({
+      } else if (
+        isMapConfig(draft.chartConfig) &&
+        (field === "areaLayer" || field === "symbolLayer")
+      ) {
+        initializeMapLayerField({
           chartConfig: draft.chartConfig,
-          field: field as keyof MapFields,
+          field,
           componentIri,
           dimensions,
           measures,

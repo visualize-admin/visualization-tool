@@ -248,7 +248,8 @@ export const ChartMapVisualization = ({
 export const ChartMap = (
   props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
 ) => {
-  const { chartConfig } = props;
+  const { chartConfig, dimensions } = props;
+  const { fields } = chartConfig;
 
   return (
     <MapChart {...props}>
@@ -257,6 +258,15 @@ export const ChartMap = (
         <MapTooltip />
       </ChartContainer>
       <MapLegend chartConfig={chartConfig} />
+      {fields.animation && (
+        <TimeSlider
+          componentIri={fields.animation.componentIri}
+          dimensions={dimensions}
+          showPlayButton={fields.animation.showPlayButton}
+          animationDuration={fields.animation.duration}
+          animationType={fields.animation.type}
+        />
+      )}
     </MapChart>
   );
 };

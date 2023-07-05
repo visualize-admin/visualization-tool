@@ -517,10 +517,11 @@ const BaseLayer = t.type({
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
-const MapFields = t.intersection([
-  t.partial({ areaLayer: MapAreaLayer }),
-  t.partial({ symbolLayer: MapSymbolLayer }),
-]);
+const MapFields = t.partial({
+  areaLayer: MapAreaLayer,
+  symbolLayer: MapSymbolLayer,
+  animation: AnimationField,
+});
 
 const MapConfig = t.type(
   {
@@ -636,9 +637,10 @@ export const isSegmentInConfig = (
 
 export const isAnimationInConfig = (
   chartConfig: ChartConfig
-): chartConfig is ColumnConfig | ScatterPlotConfig | PieConfig => {
+): chartConfig is ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig => {
   return (
     chartConfig.chartType === "column" ||
+    chartConfig.chartType === "map" ||
     chartConfig.chartType === "scatterplot" ||
     chartConfig.chartType === "pie"
   );
