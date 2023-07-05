@@ -246,33 +246,12 @@ export const ChartMapVisualization = ({
 };
 
 export const ChartMap = (
-  props: ChartProps<MapConfig> & {
-    features: GeoData;
-    baseLayer: BaseLayer;
-  }
+  props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
 ) => {
-  const {
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    features,
-    baseLayer,
-  } = props;
+  const { chartConfig } = props;
 
   return (
-    <MapChart
-      chartConfig={chartConfig}
-      chartData={chartData}
-      scalesData={scalesData}
-      allData={allData}
-      dimensions={dimensions}
-      measures={measures}
-      features={features}
-      baseLayer={baseLayer}
-    >
+    <MapChart {...props}>
       <ChartContainer>
         <MapComponent />
         <MapTooltip />

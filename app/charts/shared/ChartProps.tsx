@@ -7,6 +7,8 @@ export type BaseChartProps = {
   chartData: Observation[];
   /** Data used to compute the scales. */
   scalesData: Observation[];
+  /** Data used for color scales. */
+  segmentData: Observation[];
   /** Non-filtered data used e.g. in timeline. */
   allData: Observation[];
   dimensions: DimensionMetadataFragment[];

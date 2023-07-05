@@ -23,6 +23,7 @@ ${(
       <ColumnChart
         chartData={columnObservations}
         scalesData={columnObservations}
+        segmentData={columnObservations}
         allData={columnObservations}
         dimensions={columnDimensions}
         chartConfig={

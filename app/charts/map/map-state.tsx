@@ -466,6 +466,7 @@ const useMapState = (
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
+  // FIXME: use scales data for colors.
   const areaLayerState = useLayerState({
     componentIri: areaLayer?.componentIri,
     measureIri: areaLayer?.color.componentIri,
@@ -598,61 +599,30 @@ export const getMapStateMetadata = (): ChartStateMetadata => {
   };
 };
 
-const MapChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  features,
-  baseLayer,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
->) => {
-  const state = useMapState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    features,
-    baseLayer,
-  });
+const MapChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useMapState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const MapChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  features,
-  baseLayer,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
->) => {
+export const MapChart = (
+  props: React.PropsWithChildren<
+    ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+  >
+) => {
+  const { children, ...rest } = props;
+
   return (
     <Observer>
       <InteractionProvider>
-        <MapChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          features={features}
-          dimensions={dimensions}
-          measures={measures}
-          baseLayer={baseLayer}
-        >
+        <MapChartProvider {...rest}>
           <MapTooltipProvider>{children}</MapTooltipProvider>
         </MapChartProvider>
       </InteractionProvider>

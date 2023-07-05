@@ -294,6 +294,8 @@ export const useChartData = (
    * when the time slider is moved, while the chart should only show the data
    * corresponding to the selected time.*/
   scalesData: Observation[];
+  /** Data to be used to compute the full color scales. */
+  segmentData: Observation[];
 } => {
   const { interactiveFiltersConfig } = chartConfig;
   const [IFState] = useInteractiveFilters();
@@ -314,7 +316,7 @@ export const useChartData = (
   const legend = interactiveFiltersConfig?.legend;
   const legendItems = Object.keys(IFState.categories);
 
-  const { allFilters, timeFilters } = useMemo(() => {
+  const { allFilters, legendFilters, timeFilters } = useMemo(() => {
     const timeRangeFilter =
       getXDate && fromTime && toTime && timeRange?.active
         ? (d: Observation) => {
@@ -345,8 +347,11 @@ export const useChartData = (
           ] as (ValuePredicate | null)[]
         ).filter(truthy)
       ),
-      timeFilters: ([timeRangeFilter] as (ValuePredicate | null)[]).filter(
-        truthy
+      legendFilters: overEvery(
+        ([legendFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+      timeFilters: overEvery(
+        ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
       ),
     };
   }, [
@@ -367,12 +372,17 @@ export const useChartData = (
   }, [allFilters, observations]);
 
   const scalesData = useMemo(() => {
-    return observations.filter(overEvery(timeFilters));
+    return observations.filter(overEvery(legendFilters, timeFilters));
+  }, [observations, legendFilters, timeFilters]);
+
+  const segmentData = useMemo(() => {
+    return observations.filter(timeFilters);
   }, [observations, timeFilters]);
 
   return {
     chartData,
     scalesData,
+    segmentData,
   };
 };
 

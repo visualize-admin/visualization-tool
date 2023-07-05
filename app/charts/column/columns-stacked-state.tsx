@@ -99,6 +99,7 @@ const useColumnsStackedState = (
   const {
     chartData,
     scalesData,
+    segmentData,
     allData,
     measures,
     dimensions,
@@ -200,8 +201,8 @@ const useColumnsStackedState = (
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
-    const allUniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
-    const uniqueSegments = Array.from(new Set(chartData.map(getSegment)));
+    const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
+    const uniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
@@ -221,7 +222,7 @@ const useColumnsStackedState = (
     };
   }, [
     scalesData,
-    chartData,
+    segmentData,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -666,6 +667,7 @@ const StackedColumnsChartProvider = ({
   chartConfig,
   chartData,
   scalesData,
+  segmentData,
   allData,
   dimensions,
   measures,
@@ -678,6 +680,7 @@ const StackedColumnsChartProvider = ({
     chartConfig,
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -689,32 +692,15 @@ const StackedColumnsChartProvider = ({
   );
 };
 
-export const StackedColumnsChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ColumnConfig> & { aspectRatio: number }
->) => {
+export const StackedColumnsChart = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <StackedColumnsChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </StackedColumnsChartProvider>
+        <StackedColumnsChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

@@ -92,6 +92,7 @@ const useAreasState = (
   const {
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -144,10 +145,59 @@ const useAreasState = (
   }, [segmentDimension?.values]);
 
   const hasSegment = fields.segment;
-  const allSegments = useMemo(
-    () => Array.from(new Set(scalesData.map(getSegment))),
-    [scalesData, getSegment]
-  );
+
+  /** Ordered segments */
+  const segmentSorting = fields.segment?.sorting;
+  const segmentSortingType = segmentSorting?.sortingType;
+  const segmentSortingOrder = segmentSorting?.sortingOrder;
+
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
+
+  const sumsBySegment = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        segmentData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
+  }, [segmentData, getY, getSegment]);
+
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = Array.from(
+      new Set(segmentData.map((d) => getSegment(d)))
+    );
+    const uniqueSegments = Array.from(
+      new Set(scalesData.map((d) => getSegment(d)))
+    );
+    const sorters = makeDimensionValueSorters(segmentDimension, {
+      sorting: segmentSorting,
+      sumsBySegment,
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
+    });
+    const allSegments = orderBy(
+      allUniqueSegments,
+      sorters,
+      getSortingOrders(sorters, segmentSorting)
+    );
+
+    return {
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
+    };
+  }, [
+    segmentData,
+    scalesData,
+    sumsBySegment,
+    segmentDimension,
+    segmentSorting,
+    segmentFilter,
+    getSegment,
+    fields.segment?.useAbbreviations,
+  ]);
 
   const xKey = fields.x.componentIri;
 
@@ -196,49 +246,6 @@ const useAreasState = (
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  /** Ordered segments */
-  const segmentSorting = fields.segment?.sorting;
-  const segmentSortingType = segmentSorting?.sortingType;
-  const segmentSortingOrder = segmentSorting?.sortingOrder;
-
-  const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
-    : undefined;
-  const segments = useMemo(() => {
-    const totalValueBySegment = Object.fromEntries([
-      ...rollup(
-        chartData,
-        (v) => sum(v, (x) => getY(x)),
-        (x) => getSegment(x)
-      ),
-    ]);
-
-    const uniqueSegments = Array.from(
-      new Set(chartData.map((d) => getSegment(d)))
-    );
-
-    const sorters = makeDimensionValueSorters(segmentDimension, {
-      sorting: segmentSorting,
-      sumsBySegment: totalValueBySegment,
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionFilter: segmentFilter,
-    });
-
-    return orderBy(
-      uniqueSegments,
-      sorters,
-      getSortingOrders(sorters, segmentSorting)
-    );
-  }, [
-    chartData,
-    segmentDimension,
-    segmentSorting,
-    segmentFilter,
-    getY,
-    getSegment,
-    fields.segment?.useAbbreviations,
-  ]);
-
   /** Transform data  */
   const series = useMemo(() => {
     const stackOrder =
@@ -247,11 +254,11 @@ const useAreasState = (
         : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
         ? stackOrderDescending
         : stackOrderReverse;
-
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDivergingPositiveZeros)
       .keys(segments);
+
     return stacked(chartWideData as { [key: string]: number }[]);
   }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
@@ -457,59 +464,28 @@ export const getAreasStateMetadata = (
   };
 };
 
-const AreaChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<AreaConfig> & { aspectRatio: number }
->) => {
-  const state = useAreasState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const AreaChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<AreaConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useAreasState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const AreaChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  measures,
-  dimensions,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<AreaConfig> & { aspectRatio: number }
->) => {
+export const AreaChart = (
+  props: React.PropsWithChildren<
+    ChartProps<AreaConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <AreaChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </AreaChartProvider>
+        <AreaChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

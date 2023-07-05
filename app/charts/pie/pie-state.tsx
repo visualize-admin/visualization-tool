@@ -57,6 +57,7 @@ const usePieState = (
   const {
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -108,7 +109,7 @@ const usePieState = (
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
-      scalesData.map((d) => [getSegment(d), getY(d)])
+      segmentData.map((d) => [getSegment(d), getY(d)])
     );
     const allUniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
@@ -156,7 +157,7 @@ const usePieState = (
     fields.segment,
     getSegment,
     getY,
-    scalesData,
+    segmentData,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -305,59 +306,28 @@ export const getPieStateMetadata = (
   };
 };
 
-const PieChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<PieConfig> & { aspectRatio: number }
->) => {
-  const state = usePieState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const PieChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<PieConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = usePieState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const PieChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<PieConfig> & { aspectRatio: number }
->) => {
+export const PieChart = (
+  props: React.PropsWithChildren<
+    ChartProps<PieConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <PieChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </PieChartProvider>
+        <PieChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

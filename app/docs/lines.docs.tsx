@@ -59,6 +59,7 @@ ${(
         <LineChart
           chartData={observations}
           scalesData={observations}
+          segmentData={observations}
           allData={observations}
           dimensions={dimensions}
           measures={measures}

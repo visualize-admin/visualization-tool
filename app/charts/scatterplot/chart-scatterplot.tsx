@@ -79,20 +79,11 @@ export const ChartScatterplotVisualization = ({
 };
 
 export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
-  const { chartConfig, chartData, scalesData, allData, dimensions, measures } =
-    props;
+  const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
-    <ScatterplotChart
-      chartConfig={chartConfig}
-      chartData={chartData}
-      scalesData={scalesData}
-      allData={allData}
-      dimensions={dimensions}
-      measures={measures}
-      aspectRatio={1}
-    >
+    <ScatterplotChart aspectRatio={1} {...props}>
       <ChartContainer>
         <ChartSvg>
           <AxisWidthLinear />

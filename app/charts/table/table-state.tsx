@@ -412,54 +412,27 @@ export const getTableStateMetadata = (): ChartStateMetadata => {
   };
 };
 
-const TableChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<TableConfig> & {
-    chartConfig: TableConfig;
-  }
->) => {
-  const state = useTableState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-  });
+const TableChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<TableConfig> & {
+      chartConfig: TableConfig;
+    }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useTableState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const TableChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  children,
-}: React.PropsWithChildren<ChartProps<TableConfig>>) => {
+export const TableChart = (
+  props: React.PropsWithChildren<ChartProps<TableConfig>>
+) => {
   return (
     <Observer>
-      <TableChartProvider
-        chartConfig={chartConfig}
-        chartData={chartData}
-        scalesData={scalesData}
-        allData={allData}
-        dimensions={dimensions}
-        measures={measures}
-      >
-        {children}
-      </TableChartProvider>
+      <TableChartProvider {...props} />
     </Observer>
   );
 };

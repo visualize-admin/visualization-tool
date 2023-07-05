@@ -84,22 +84,13 @@ export const ChartColumnsVisualization = ({
 };
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, chartData, scalesData, allData, dimensions, measures } =
-    props;
+  const { chartConfig, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
     <>
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
-        <StackedColumnsChart
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={0.4}
-        >
+        <StackedColumnsChart aspectRatio={0.4} {...props}>
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear /> <AxisWidthBand />
@@ -126,15 +117,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           )}
         </StackedColumnsChart>
       ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
-        <GroupedColumnChart
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={0.4}
-        >
+        <GroupedColumnChart aspectRatio={0.4} {...props}>
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
@@ -164,15 +147,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           )}
         </GroupedColumnChart>
       ) : (
-        <ColumnChart
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          measures={measures}
-          dimensions={dimensions}
-          aspectRatio={0.4}
-        >
+        <ColumnChart aspectRatio={0.4} {...props}>
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />

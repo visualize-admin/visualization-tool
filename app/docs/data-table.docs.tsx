@@ -20,6 +20,7 @@ ${(
     <TableChart
       chartData={tableObservations}
       scalesData={tableObservations}
+      segmentData={tableObservations}
       allData={tableObservations}
       dimensions={tableDimensions as DimensionMetadataFragment[]}
       measures={tableMeasures as DimensionMetadataFragment[]}

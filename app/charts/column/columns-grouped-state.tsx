@@ -98,6 +98,7 @@ const useGroupedColumnsState = (
   const {
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -171,22 +172,22 @@ const useGroupedColumnsState = (
   const sumsBySegment = useMemo(() => {
     return Object.fromEntries([
       ...rollup(
-        scalesData,
+        segmentData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
       ),
     ]);
-  }, [scalesData, getY, getSegment]);
+  }, [segmentData, getY, getSegment]);
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension.iri]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
     const allUniqueSegments = Array.from(
-      new Set(scalesData.map((d) => getSegment(d)))
+      new Set(segmentData.map((d) => getSegment(d)))
     );
     const uniqueSegments = Array.from(
-      new Set(chartData.map((d) => getSegment(d)))
+      new Set(scalesData.map((d) => getSegment(d)))
     );
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
@@ -206,8 +207,8 @@ const useGroupedColumnsState = (
       segments: allSegments.filter((d) => uniqueSegments.includes(d)),
     };
   }, [
-    chartData,
     scalesData,
+    segmentData,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -578,61 +579,28 @@ export const getColumnsGroupedStateMetadata = (
   };
 };
 
-const GroupedColumnChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ColumnConfig> & {
-    aspectRatio: number;
-  }
->) => {
-  const state = useGroupedColumnsState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const GroupedColumnChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useGroupedColumnsState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const GroupedColumnChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ColumnConfig> & { aspectRatio: number }
->) => {
+export const GroupedColumnChart = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <GroupedColumnChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </GroupedColumnChartProvider>
+        <GroupedColumnChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

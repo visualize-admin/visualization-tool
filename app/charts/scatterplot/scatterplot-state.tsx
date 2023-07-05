@@ -70,6 +70,7 @@ const useScatterplotState = (
     chartConfig,
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -138,7 +139,7 @@ const useScatterplotState = (
     ? chartConfig.filters[segmentDimension.iri]
     : undefined;
   const allSegments = useMemo(() => {
-    const allUniqueSegments = [...new Set(scalesData.map(getSegment))];
+    const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
     const sorting = {
       sortingType: "byAuto",
       sortingOrder: "asc",
@@ -157,7 +158,7 @@ const useScatterplotState = (
   }, [
     fields.segment?.useAbbreviations,
     getSegment,
-    scalesData,
+    segmentData,
     segmentDimension,
     segmentFilter,
   ]);
@@ -328,59 +329,28 @@ export const getScatterplotStateMetadata = (
   };
 };
 
-const ScatterplotChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ScatterPlotConfig> & { aspectRatio: number }
->) => {
-  const state = useScatterplotState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const ScatterplotChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useScatterplotState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const ScatterplotChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ScatterPlotConfig> & { aspectRatio: number }
->) => {
+export const ScatterplotChart = (
+  props: React.PropsWithChildren<
+    ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <ScatterplotChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </ScatterplotChartProvider>
+        <ScatterplotChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

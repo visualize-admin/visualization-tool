@@ -36,6 +36,7 @@ ${(
       <ColumnChart
         chartData={observations}
         scalesData={observations}
+        segmentData={observations}
         allData={observations}
         measures={measures}
         dimensions={dimensions}
@@ -185,6 +186,7 @@ ${(
       <ColumnChart
         chartData={observations}
         scalesData={observations}
+        segmentData={observations}
         allData={observations}
         measures={measures}
         dimensions={dimensions}
@@ -230,6 +232,7 @@ ${(
       <ColumnChart
         chartData={observations}
         scalesData={observations}
+        segmentData={observations}
         allData={observations}
         measures={measures}
         dimensions={dimensions}

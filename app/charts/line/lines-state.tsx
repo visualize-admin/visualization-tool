@@ -89,6 +89,7 @@ const useLinesState = (
     chartConfig,
     chartData,
     scalesData,
+    segmentData,
     allData,
     dimensions,
     measures,
@@ -204,8 +205,8 @@ const useLinesState = (
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
   const { allSegments, segments } = useMemo(() => {
-    const allUniqueSegments = [...new Set(scalesData.map(getSegment))];
-    const uniqueSegments = [...new Set(chartData.map(getSegment))];
+    const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
+    const uniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
@@ -227,8 +228,8 @@ const useLinesState = (
     getSegment,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
+    segmentData,
     scalesData,
-    chartData,
     segmentFilter,
   ]);
 
@@ -404,59 +405,28 @@ export const getLinesStateMetadata = (
   };
 };
 
-const LineChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<LineConfig> & { aspectRatio: number }
->) => {
-  const state = useLinesState({
-    chartConfig,
-    chartData,
-    scalesData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const LineChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<LineConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useLinesState(rest);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const LineChart = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<LineConfig> & { aspectRatio: number }
->) => {
+export const LineChart = (
+  props: React.PropsWithChildren<
+    ChartProps<LineConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <LineChartProvider
-          chartConfig={chartConfig}
-          chartData={chartData}
-          scalesData={scalesData}
-          allData={allData}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </LineChartProvider>
+        <LineChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

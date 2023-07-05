@@ -94,7 +94,7 @@ export const ChartLoadingWrapper = <
     getY: chartStateMetadata?.assureDefined.getY,
   });
 
-  const { chartData, scalesData } = useChartData(plottableData, {
+  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
     chartConfig,
     getXDate: chartStateMetadata?.getXDate,
     getSegment: chartStateMetadata?.getSegment,
@@ -119,6 +119,7 @@ export const ChartLoadingWrapper = <
         {React.createElement(Component, {
           chartData,
           scalesData,
+          segmentData,
           allData: plottableData,
           dimensions,
           measures,
