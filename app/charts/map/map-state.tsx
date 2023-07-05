@@ -455,7 +455,7 @@ const useMapState = (
 ): MapState => {
   const width = useWidth();
   const {
-    chartData,
+    scalesData,
     allData,
     features,
     chartConfig,
@@ -466,11 +466,10 @@ const useMapState = (
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
-  // FIXME: use scales data for colors.
   const areaLayerState = useLayerState({
     componentIri: areaLayer?.componentIri,
     measureIri: areaLayer?.color.componentIri,
-    data: chartData,
+    data: scalesData,
     features,
     dimensions,
     measures,
@@ -499,7 +498,7 @@ const useMapState = (
   const symbolLayerState = useLayerState({
     componentIri: symbolLayer?.componentIri,
     measureIri: symbolLayer?.measureIri,
-    data: chartData,
+    data: scalesData,
     features,
     dimensions,
     measures,

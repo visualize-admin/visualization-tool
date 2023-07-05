@@ -14,25 +14,23 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
+import { Observation } from "@/domain/data";
 import {
   ComponentsQuery,
   DataCubeMetadataQuery,
   DataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 
-type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
-
 export const ChartLoadingWrapper = <
   TChartConfig extends ChartConfig,
-  TOtherProps,
-  TChartComponent extends React.ElementType
+  TOtherProps
 >({
   metadataQuery,
   componentsQuery,
   observationsQuery,
   chartConfig,
   Component,
-  ComponentProps,
+  prepareCustomProps,
 }: {
   metadataQuery: Pick<
     UseQueryResponse<DataCubeMetadataQuery>[0],
@@ -47,11 +45,16 @@ export const ChartLoadingWrapper = <
     "data" | "fetching" | "error"
   >;
   chartConfig: TChartConfig;
-  Component: TChartComponent;
-  ComponentProps?: Omit<
-    ElementProps<TChartComponent>,
-    keyof ChartProps<TChartConfig>
-  >;
+  Component: React.ElementType;
+  prepareCustomProps?: ({
+    chartData,
+    scalesData,
+    segmentData,
+  }: {
+    chartData: Observation[];
+    scalesData: Observation[];
+    segmentData: Observation[];
+  }) => TOtherProps;
 }) => {
   const {
     data: metadataData,
@@ -100,6 +103,12 @@ export const ChartLoadingWrapper = <
     getSegment: chartStateMetadata?.getSegment,
   });
 
+  const customProps = React.useMemo(() => {
+    if (prepareCustomProps) {
+      return prepareCustomProps({ chartData, scalesData, segmentData });
+    }
+  }, [chartData, prepareCustomProps, scalesData, segmentData]);
+
   if (metadata && dimensions && measures && data) {
     const { title } = metadata;
 
@@ -124,7 +133,7 @@ export const ChartLoadingWrapper = <
           dimensions,
           measures,
           chartConfig,
-          ...ComponentProps,
+          ...customProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
         {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
           <LoadingOverlay />
