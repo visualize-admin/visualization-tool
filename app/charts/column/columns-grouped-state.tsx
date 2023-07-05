@@ -349,25 +349,24 @@ const useGroupedColumnsState = (
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // Group
-  const grouped = useMemo(() => {
+  const grouped: [string, Observation[]][] = useMemo(() => {
+    const xKeys = xScale.domain();
     const groupedMap = group(chartData, getX);
-    const grouped = [...groupedMap];
+    const grouped: [string, Observation[]][] =
+      groupedMap.size > 0 ? [...groupedMap] : xKeys.map((d) => [d, []]);
 
-    // sort by segments
-    grouped.forEach((group) => {
+    return grouped.map(([key, data]) => {
       return [
-        group[0],
+        key,
         sortByIndex({
-          data: group[1],
+          data,
           order: segments,
           getCategory: getSegment,
           sortingOrder: segmentSortingOrder,
         }),
       ];
     });
-
-    return grouped;
-  }, [getSegment, getX, chartData, segmentSortingOrder, segments]);
+  }, [getSegment, getX, chartData, segmentSortingOrder, segments, xScale]);
 
   const { left, bottom } = useChartPadding(
     yScale,
