@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import React from "react";
 import { UseQueryResponse } from "urql";
 
+import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
@@ -17,8 +18,6 @@ import {
   DataCubeMetadataQuery,
   DataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
-
-import { ChartProps } from "./shared/ChartProps";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -69,6 +68,7 @@ export const ChartLoadingWrapper = <
     error: observationsError,
   } = observationsQuery;
 
+  const metadata = metadataData?.dataCubeByIri;
   const observations = observationsData?.dataCubeByIri?.observations.data;
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
@@ -87,8 +87,17 @@ export const ChartLoadingWrapper = <
     return observations;
   }, [chartStateMetadata, observations]);
 
-  if (metadataData?.dataCubeByIri && dimensions && measures && data) {
-    const { title } = metadataData.dataCubeByIri;
+  // const { chartData, scalesData } = useChartData(data ?? [], {
+  //   interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
+  //   animationField: isAnimationInConfig(chartConfig)
+  //     ? chartConfig.fields.animation
+  //     : undefined,
+  //   getXDate: chartStateMetadata?.getXDate,
+  //   getSegment: chartStateMetadata?.getSegment,
+  // });
+
+  if (metadata && dimensions && measures && data) {
+    const { title } = metadata;
 
     return data.length > 0 ? (
       <Box

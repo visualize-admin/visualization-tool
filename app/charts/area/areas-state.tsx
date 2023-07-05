@@ -21,7 +21,10 @@ import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
-import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
+import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
@@ -38,7 +41,10 @@ import {
   CommonChartState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useObservationLabels } from "@/charts/shared/observation-labels";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -415,18 +421,39 @@ const useAreasState = (
 };
 
 export const getAreasStateMetadata = (
-  chartConfig: AreaConfig
+  chartConfig: AreaConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
 ): ChartStateMetadata => {
   const { fields } = chartConfig;
   const x = fields.x.componentIri;
-  const getX = (d: Observation) => {
+  const getXDate = (d: Observation) => {
     return parseDate(`${d[x]}`);
   };
 
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
   return {
+    getXDate,
+    getSegment,
     sortData: (data) => {
       return [...data].sort((a, b) => {
-        return ascending(getX(a), getX(b));
+        return ascending(getXDate(a), getXDate(b));
       });
     },
   };

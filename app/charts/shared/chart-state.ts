@@ -18,6 +18,8 @@ export interface CommonChartState {
 }
 
 export type ChartStateMetadata = {
+  getXDate?: (d: Observation) => Date;
+  getSegment?: (d: Observation) => string;
   sortData: (data: Observation[]) => Observation[];
 };
 
@@ -34,7 +36,7 @@ export const getChartStateMetadata = (
 
   switch (chartConfig.chartType) {
     case "area":
-      return getAreasStateMetadata(chartConfig);
+      return getAreasStateMetadata(chartConfig, observations, dimensions);
     case "column":
       switch (chartConfig.fields.segment?.type) {
         case undefined:
@@ -53,13 +55,13 @@ export const getChartStateMetadata = (
           );
       }
     case "line":
-      return getLinesStateMetadata(chartConfig);
+      return getLinesStateMetadata(chartConfig, observations, dimensions);
     case "map":
       return getMapStateMetadata();
     case "pie":
-      return getPieStateMetadata();
+      return getPieStateMetadata(chartConfig, observations, dimensions);
     case "scatterplot":
-      return getScatterplotStateMetadata();
+      return getScatterplotStateMetadata(chartConfig, observations, dimensions);
     case "table":
       return getTableStateMetadata();
   }

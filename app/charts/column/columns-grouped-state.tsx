@@ -532,7 +532,25 @@ export const getColumnsGroupedStateMetadata = (
 
   const { sortingOrder, sortingType } = fields.x.sorting ?? {};
 
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
   return {
+    getSegment,
     sortData: (data) => {
       const order = [
         ...rollup(

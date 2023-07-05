@@ -10,7 +10,10 @@ import {
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
-import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
+import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
 import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
@@ -21,7 +24,10 @@ import {
   CommonChartState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useObservationLabels } from "@/charts/shared/observation-labels";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -29,6 +35,7 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -268,8 +275,31 @@ const usePieState = (
   };
 };
 
-export const getPieStateMetadata = (): ChartStateMetadata => {
+export const getPieStateMetadata = (
+  chartConfig: PieConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
   return {
+    getSegment,
     sortData: (data) => {
       return data;
     },

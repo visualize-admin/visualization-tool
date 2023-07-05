@@ -592,9 +592,7 @@ export const getColumnsStackedStateMetadata = (
   dimensions: DimensionMetadataFragment[]
 ): ChartStateMetadata => {
   const { fields } = chartConfig;
-
   const xKey = fields.x.componentIri;
-
   const xDimension = dimensions.find((d) => d.iri === xKey);
 
   if (!xDimension) {
@@ -656,6 +654,7 @@ export const getColumnsStackedStateMetadata = (
   const { sortingOrder, sortingType } = fields.x.sorting ?? {};
 
   return {
+    getSegment,
     sortData: (data) => {
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
         return [...data].sort((a, b) => descending(getX(a), getX(b)));
