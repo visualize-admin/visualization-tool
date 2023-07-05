@@ -65,8 +65,7 @@ export const TimeSlider = ({
   >;
 
   const timelineData: number[] = React.useMemo(() => {
-    // FIXME: enable interactive filters for maps!
-    if (component && chartState.chartType !== "map") {
+    if (component) {
       const uniqueValues = [
         ...new Set(
           chartState.allData.map((d) => d[component.iri]).filter(Boolean)
@@ -77,12 +76,7 @@ export const TimeSlider = ({
     }
 
     return [];
-  }, [
-    chartState.chartType,
-    // @ts-ignore - allData is not yet there for the maps
-    chartState.allData,
-    component,
-  ]);
+  }, [chartState.allData, component]);
 
   const timeline = React.useMemo(() => {
     return new Timeline({
