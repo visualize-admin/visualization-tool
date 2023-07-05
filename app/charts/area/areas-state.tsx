@@ -32,7 +32,6 @@ import {
   stackOffsetDivergingPositiveZeros,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
@@ -163,14 +162,9 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  const plottableData = usePlottableData({
-    data,
-    plotters: [getX, getY],
-  });
-
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     // No animation yet for areas
     animationField: undefined,
@@ -217,15 +211,13 @@ const useAreasState = (
   const segments = useMemo(() => {
     const totalValueBySegment = Object.fromEntries([
       ...rollup(
-        plottableData,
+        data,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
       ),
     ]);
 
-    const uniqueSegments = Array.from(
-      new Set(plottableData.map((d) => getSegment(d)))
-    );
+    const uniqueSegments = Array.from(new Set(data.map((d) => getSegment(d))));
 
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting: segmentSorting,
@@ -240,7 +232,7 @@ const useAreasState = (
       getSortingOrders(sorters, segmentSorting)
     );
   }, [
-    plottableData,
+    data,
     segmentDimension,
     segmentSorting,
     segmentFilter,
@@ -278,7 +270,7 @@ const useAreasState = (
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
-    const xEntireDomain = extent(plottableData, (d) => getX(d)) as [Date, Date];
+    const xEntireDomain = extent(data, (d) => getX(d)) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomain);
     const yScale = scaleLinear().domain(yDomain).nice();
     const colors = scaleOrdinal<string, string>();
@@ -312,7 +304,7 @@ const useAreasState = (
     dimensions,
     fields.segment,
     getX,
-    plottableData,
+    data,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -400,7 +392,7 @@ const useAreasState = (
     chartType: "area",
     bounds,
     data,
-    allData: plottableData,
+    allData: data,
     preparedData,
     getX,
     xScale,
@@ -431,6 +423,11 @@ export const getAreasStateMetadata = (
     return parseDate(`${d[x]}`);
   };
 
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
   );
@@ -449,6 +446,10 @@ export const getAreasStateMetadata = (
   );
 
   return {
+    assureDefined: {
+      getX: getXDate,
+      getY,
+    },
     getXDate,
     getSegment,
     sortData: (data) => {

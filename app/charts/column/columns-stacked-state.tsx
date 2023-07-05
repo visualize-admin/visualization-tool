@@ -40,7 +40,6 @@ import {
   getWideData,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import {
@@ -171,14 +170,9 @@ const useColumnsStackedState = (
     [allDataGroupedByX, xKey, getY, getSegment]
   );
 
-  const plottableData = usePlottableData({
-    data,
-    plotters: [getXAsDate, getY],
-  });
-
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
@@ -194,21 +188,19 @@ const useColumnsStackedState = (
     () =>
       Object.fromEntries([
         ...rollup(
-          plottableData,
+          data,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
       ]),
-    [getSegment, getY, plottableData]
+    [getSegment, getY, data]
   );
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
   const { segments, plottableSegments } = useMemo(() => {
-    const allUniqueSegments = Array.from(
-      new Set(plottableData.map(getSegment))
-    );
+    const allUniqueSegments = Array.from(new Set(data.map(getSegment)));
     const allPlottableSegments = Array.from(
       new Set(preparedData.map(getSegment))
     );
@@ -234,7 +226,7 @@ const useColumnsStackedState = (
       ),
     };
   }, [
-    plottableData,
+    data,
     preparedData,
     segmentDimension,
     fields.segment?.sorting,
@@ -271,12 +263,12 @@ const useColumnsStackedState = (
     () =>
       Object.fromEntries([
         ...rollup(
-          plottableData,
+          data,
           (v) => sum(v, (x) => getY(x)),
           (x) => getX(x)
         ),
       ]),
-    [plottableData, getX, getY]
+    [data, getX, getY]
   );
   // Map ordered segments labels to colors
   const {
@@ -346,7 +338,7 @@ const useColumnsStackedState = (
       .paddingOuter(0);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(plottableData, (d) => getXAsDate(d)) as [
+    const xEntireDomainAsTime = extent(data, (d) => getXAsDate(d)) as [
       Date,
       Date
     ];
@@ -386,7 +378,7 @@ const useColumnsStackedState = (
     getX,
     getXLabel,
     getXAsDate,
-    plottableData,
+    data,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -562,7 +554,7 @@ const useColumnsStackedState = (
     chartType: "column",
     bounds,
     preparedData,
-    allData: plottableData,
+    allData: data,
     getX,
     getXLabel,
     getXAsDate,
@@ -654,6 +646,9 @@ export const getColumnsStackedStateMetadata = (
   const { sortingOrder, sortingType } = fields.x.sorting ?? {};
 
   return {
+    assureDefined: {
+      getY,
+    },
     getSegment,
     sortData: (data) => {
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {

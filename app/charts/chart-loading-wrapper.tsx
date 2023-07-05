@@ -4,6 +4,7 @@ import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
+import { usePlottableData } from "@/charts/shared/chart-helpers";
 import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
 import {
@@ -12,7 +13,7 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, isAnimationInConfig } from "@/configurator";
 import {
   ComponentsQuery,
   DataCubeMetadataQuery,
@@ -87,14 +88,11 @@ export const ChartLoadingWrapper = <
     return observations;
   }, [chartStateMetadata, observations]);
 
-  // const { chartData, scalesData } = useChartData(data ?? [], {
-  //   interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
-  //   animationField: isAnimationInConfig(chartConfig)
-  //     ? chartConfig.fields.animation
-  //     : undefined,
-  //   getXDate: chartStateMetadata?.getXDate,
-  //   getSegment: chartStateMetadata?.getSegment,
-  // });
+  const plottableData = usePlottableData({
+    data: data ?? [],
+    getX: chartStateMetadata?.assureDefined.getX,
+    getY: chartStateMetadata?.assureDefined.getY,
+  });
 
   if (metadata && dimensions && measures && data) {
     const { title } = metadata;
@@ -113,7 +111,7 @@ export const ChartLoadingWrapper = <
           measures={measures}
         />
         {React.createElement(Component, {
-          data,
+          data: plottableData,
           dimensions,
           measures,
           chartConfig,

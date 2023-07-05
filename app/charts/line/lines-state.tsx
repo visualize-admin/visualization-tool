@@ -25,7 +25,6 @@ import {
   getWideData,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
@@ -137,14 +136,9 @@ const useLinesState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const plottableSortedData = usePlottableData({
-    data,
-    plotters: [getX, getY],
-  });
-
   const dataGroupedByX = useMemo(
-    () => group(plottableSortedData, getGroups),
-    [plottableSortedData, getGroups]
+    () => group(data, getGroups),
+    [data, getGroups]
   );
 
   const allDataWide = getWideData({
@@ -156,7 +150,7 @@ const useLinesState = (
 
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableSortedData,
+    observations: data,
     interactiveFiltersConfig,
     // No animation yet for lines
     animationField: undefined,
@@ -186,8 +180,8 @@ const useLinesState = (
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
-    [plottableSortedData, getX]
+    () => extent(data, (d) => getX(d)) as [Date, Date],
+    [data, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
   const xAxisLabel =
@@ -199,7 +193,7 @@ const useLinesState = (
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
 
-  const entireMaxValue = max(plottableSortedData, getY) as number;
+  const entireMaxValue = max(data, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -215,7 +209,7 @@ const useLinesState = (
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
   const segments = useMemo(() => {
-    const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
+    const uniqueSegments = [...new Set(data.map(getSegment))];
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
@@ -232,7 +226,7 @@ const useLinesState = (
     getSegment,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
-    plottableSortedData,
+    data,
     segmentFilter,
   ]);
 
@@ -340,7 +334,7 @@ const useLinesState = (
     chartType: "line",
     bounds,
     data,
-    allData: plottableSortedData,
+    allData: data,
     preparedData,
     getX,
     xScale,
@@ -373,6 +367,11 @@ export const getLinesStateMetadata = (
     return parseDate(`${d[x]}`);
   };
 
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
   );
@@ -391,6 +390,9 @@ export const getLinesStateMetadata = (
   );
 
   return {
+    assureDefined: {
+      getY,
+    },
     getXDate,
     getSegment,
     sortData: (data) => {

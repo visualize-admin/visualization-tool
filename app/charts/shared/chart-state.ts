@@ -18,6 +18,10 @@ export interface CommonChartState {
 }
 
 export type ChartStateMetadata = {
+  assureDefined: {
+    getX?: (d: Observation) => unknown | null;
+    getY?: (d: Observation) => unknown | null;
+  };
   getXDate?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
   sortData: (data: Observation[]) => Observation[];

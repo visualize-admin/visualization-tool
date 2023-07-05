@@ -35,7 +35,6 @@ import {
   getMaybeTemporalDimensionValues,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import {
@@ -160,14 +159,9 @@ const useGroupedColumnsState = (
 
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const plottableData = usePlottableData({
-    data,
-    plotters: [getXAsDate, getY],
-  });
-
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
@@ -180,20 +174,18 @@ const useGroupedColumnsState = (
   const sumsBySegment = useMemo(() => {
     return Object.fromEntries([
       ...rollup(
-        plottableData,
+        data,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
       ),
     ]);
-  }, [plottableData, getY, getSegment]);
+  }, [data, getY, getSegment]);
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension.iri]
     : undefined;
   const segments = useMemo(() => {
-    const uniqueSegments = Array.from(
-      new Set(plottableData.map((d) => getSegment(d)))
-    );
+    const uniqueSegments = Array.from(new Set(data.map((d) => getSegment(d))));
 
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
@@ -205,7 +197,7 @@ const useGroupedColumnsState = (
 
     return orderBy(uniqueSegments, sorters, getSortingOrders(sorters, sorting));
   }, [
-    plottableData,
+    data,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -219,12 +211,13 @@ const useGroupedColumnsState = (
   const sumsByX = useMemo(() => {
     return Object.fromEntries([
       ...rollup(
-        plottableData,
+        data,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
       ),
     ]);
-  }, [plottableData, getX, getY]);
+  }, [data, getX, getY]);
+
   const {
     xDomainLabels,
     colors,
@@ -286,7 +279,7 @@ const useGroupedColumnsState = (
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(plottableData, (d) => getXAsDate(d)) as [
+    const xEntireDomainAsTime = extent(data, (d) => getXAsDate(d)) as [
       Date,
       Date
     ];
@@ -329,7 +322,7 @@ const useGroupedColumnsState = (
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     scalesData,
-    plottableData,
+    data,
     getX,
     getXLabel,
     getXAsDate,
@@ -470,7 +463,7 @@ const useGroupedColumnsState = (
     chartType: "column",
     bounds,
     preparedData,
-    allData: plottableData,
+    allData: data,
     getX,
     getXLabel,
     getXAsDate,
@@ -550,6 +543,9 @@ export const getColumnsGroupedStateMetadata = (
   );
 
   return {
+    assureDefined: {
+      getY,
+    },
     getSegment,
     sortData: (data) => {
       const order = [

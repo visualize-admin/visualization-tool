@@ -17,7 +17,6 @@ import {
 import {
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartStateMetadata,
@@ -98,15 +97,9 @@ const usePieState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  // Data actually sorted in pie(),
-  const plottableData = usePlottableData({
-    data: data,
-    plotters: [getY],
-  });
-
   // Data for chart
   const { preparedData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getSegment: getSegmentAbbreviationOrLabel,
@@ -119,7 +112,7 @@ const usePieState = (
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
-      plottableData.map((d) => [getSegment(d), getY(d)])
+      data.map((d) => [getSegment(d), getY(d)])
     );
     const uniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
@@ -166,7 +159,7 @@ const usePieState = (
     fields.segment,
     getSegment,
     getY,
-    plottableData,
+    data,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -264,7 +257,7 @@ const usePieState = (
   return {
     chartType: "pie",
     bounds,
-    allData: plottableData,
+    allData: data,
     preparedData,
     getPieData,
     getY,
@@ -281,6 +274,12 @@ export const getPieStateMetadata = (
   dimensions: DimensionMetadataFragment[]
 ): ChartStateMetadata => {
   const { fields } = chartConfig;
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
   );
@@ -299,6 +298,9 @@ export const getPieStateMetadata = (
   );
 
   return {
+    assureDefined: {
+      getY,
+    },
     getSegment,
     sortData: (data) => {
       return data;

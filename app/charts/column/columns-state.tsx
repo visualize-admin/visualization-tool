@@ -32,7 +32,6 @@ import {
   getMaybeTemporalDimensionValues,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useSegment,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
@@ -146,14 +145,9 @@ const useColumnsState = (
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const plottableData = usePlottableData({
-    data,
-    plotters: [getXAsDate, getY],
-  });
-
   // Data for chart
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     animationField: fields.animation,
     getX: getXAsDate,
@@ -187,9 +181,10 @@ const useColumnsState = (
         .paddingOuter(0);
 
       // x as time, needs to be memoized!
-      const xEntireDomainAsTime = extent(plottableData, (d) =>
-        getXAsDate(d)
-      ) as [Date, Date];
+      const xEntireDomainAsTime = extent(data, (d) => getXAsDate(d)) as [
+        Date,
+        Date
+      ];
 
       const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
@@ -222,7 +217,7 @@ const useColumnsState = (
       getXAsDate,
       getY,
       getYErrorRange,
-      plottableData,
+      data,
       scalesData,
       fields.x.sorting,
       fields.x.useAbbreviations,
@@ -336,7 +331,7 @@ const useColumnsState = (
     chartType: "column",
     bounds,
     preparedData,
-    allData: plottableData,
+    allData: data,
     getX,
     getXLabel,
     getXAsDate,
@@ -400,6 +395,9 @@ export const getColumnsStateMetadata = (
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
   return {
+    assureDefined: {
+      getY,
+    },
     sortData: (data) => {
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
         return [...data].sort((a, b) => descending(getX(a), getX(b)));

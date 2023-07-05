@@ -17,7 +17,6 @@ import {
   getLabelWithUnit,
   useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartStateMetadata,
@@ -97,15 +96,10 @@ const useScatterplotState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const plottableData = usePlottableData({
-    data,
-    plotters: [getX, getY],
-  });
-
   // Data for chart
   const { interactiveFiltersConfig } = chartConfig;
   const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    observations: plottableData,
+    observations: data,
     interactiveFiltersConfig,
     // No animation yet for scatterplot
     animationField: undefined,
@@ -139,8 +133,8 @@ const useScatterplotState = (
 
   const hasSegment = fields.segment ? true : false;
   const segments = useMemo(() => {
-    return [...new Set(plottableData.map(getSegment))];
-  }, [getSegment, plottableData]); // get *visible* segments
+    return [...new Set(data.map(getSegment))];
+  }, [getSegment, data]);
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -244,7 +238,7 @@ const useScatterplotState = (
   return {
     chartType: "scatterplot",
     bounds,
-    allData: plottableData,
+    allData: data,
     preparedData,
     getX,
     xScale,
@@ -268,6 +262,17 @@ export const getScatterplotStateMetadata = (
   dimensions: DimensionMetadataFragment[]
 ): ChartStateMetadata => {
   const { fields } = chartConfig;
+
+  const x = fields.x.componentIri;
+  const getX = (d: Observation) => {
+    return d[x] !== null ? Number(d[x]) : null;
+  };
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
   );
@@ -286,6 +291,10 @@ export const getScatterplotStateMetadata = (
   );
 
   return {
+    assureDefined: {
+      getX,
+      getY,
+    },
     getSegment,
     sortData: (data) => {
       return data;

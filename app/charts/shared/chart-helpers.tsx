@@ -149,14 +149,16 @@ export const extractComponentIris = (chartConfig: ChartConfig) => {
 
 export const usePlottableData = ({
   data,
-  plotters,
+  getX,
+  getY,
 }: {
   data: Observation[];
-  plotters: ((d: Observation) => unknown | null)[];
+  getX?: (d: Observation) => unknown | null;
+  getY?: (d: Observation) => unknown | null;
 }) => {
   const isPlottable = useCallback(
     (d: Observation) => {
-      for (let p of plotters) {
+      for (let p of [getX, getY].filter(truthy)) {
         const v = p(d);
         if (v === undefined || v === null) {
           return false;
@@ -164,8 +166,7 @@ export const usePlottableData = ({
       }
       return true;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    plotters
+    [getX, getY]
   );
 
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
