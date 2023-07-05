@@ -462,7 +462,8 @@ export const getAreasStateMetadata = (
 
 const AreaChartProvider = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -472,7 +473,8 @@ const AreaChartProvider = ({
 >) => {
   const state = useAreasState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -485,7 +487,8 @@ const AreaChartProvider = ({
 
 export const AreaChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   measures,
   dimensions,
   aspectRatio,
@@ -498,7 +501,8 @@ export const AreaChart = ({
       <InteractionProvider>
         <AreaChartProvider
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

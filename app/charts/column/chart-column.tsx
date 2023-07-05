@@ -84,7 +84,7 @@ export const ChartColumnsVisualization = ({
 };
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, data, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
@@ -92,7 +92,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
       {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
         <StackedColumnsChart
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={0.4}
@@ -125,7 +126,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
       ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
         <GroupedColumnChart
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={0.4}
@@ -161,7 +163,8 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
       ) : (
         <ColumnChart
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           measures={measures}
           dimensions={dimensions}
           aspectRatio={0.4}

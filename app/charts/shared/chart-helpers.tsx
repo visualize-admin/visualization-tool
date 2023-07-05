@@ -26,7 +26,11 @@ import {
   MapConfig,
   QueryFilters,
 } from "@/config-types";
-import { CategoricalColorField, NumericalColorField } from "@/configurator";
+import {
+  CategoricalColorField,
+  isAnimationInConfig,
+  NumericalColorField,
+} from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -273,13 +277,11 @@ export const useDataAfterInteractiveFilters = ({
 export const useChartData = (
   observations: Observation[],
   {
-    interactiveFiltersConfig,
-    animationField,
+    chartConfig,
     getXDate,
     getSegment,
   }: {
-    interactiveFiltersConfig: InteractiveFiltersConfig;
-    animationField?: AnimationField;
+    chartConfig: ChartConfig;
     getXDate?: (d: Observation) => Date;
     getSegment?: (d: Observation) => string;
   }
@@ -293,6 +295,7 @@ export const useChartData = (
    * corresponding to the selected time.*/
   scalesData: Observation[];
 } => {
+  const { interactiveFiltersConfig } = chartConfig;
   const [IFState] = useInteractiveFilters();
 
   // time range
@@ -301,11 +304,14 @@ export const useChartData = (
   const toTime = IFState.timeRange.to?.getTime();
 
   // time slider
-  const legend = interactiveFiltersConfig?.legend;
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
   const getTime = useTemporalVariable(animationField?.componentIri ?? "");
   const timeSliderValue = IFState.timeSlider.value;
 
   // legend
+  const legend = interactiveFiltersConfig?.legend;
   const legendItems = Object.keys(IFState.categories);
 
   const { allFilters, timeFilters } = useMemo(() => {

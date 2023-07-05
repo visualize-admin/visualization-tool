@@ -303,10 +303,11 @@ export const getScatterplotStateMetadata = (
 };
 
 const ScatterplotChartProvider = ({
-  data,
+  chartConfig,
+  chartData,
+  scalesData,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
 }: React.PropsWithChildren<
@@ -314,7 +315,8 @@ const ScatterplotChartProvider = ({
 >) => {
   const state = useScatterplotState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -327,7 +329,8 @@ const ScatterplotChartProvider = ({
 
 export const ScatterplotChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -339,10 +342,11 @@ export const ScatterplotChart = ({
     <Observer>
       <InteractionProvider>
         <ScatterplotChartProvider
-          data={data}
+          chartConfig={chartConfig}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

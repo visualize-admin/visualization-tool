@@ -88,7 +88,7 @@ export interface LinesState extends CommonChartState {
 const useLinesState = (
   props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = props;
+  const { chartConfig, data, dimensions, measures, aspectRatio } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -405,7 +405,8 @@ export const getLinesStateMetadata = (
 
 const LineChartProvider = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -415,7 +416,8 @@ const LineChartProvider = ({
 >) => {
   const state = useLinesState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -428,7 +430,8 @@ const LineChartProvider = ({
 
 export const LineChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -441,7 +444,8 @@ export const LineChart = ({
       <InteractionProvider>
         <LineChartProvider
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

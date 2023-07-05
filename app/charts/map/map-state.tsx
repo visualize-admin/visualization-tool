@@ -583,6 +583,7 @@ const useMapState = (
 
 export const getMapStateMetadata = (): ChartStateMetadata => {
   return {
+    assureDefined: {},
     sortData: (data) => {
       return data;
     },
@@ -590,11 +591,12 @@ export const getMapStateMetadata = (): ChartStateMetadata => {
 };
 
 const MapChartProvider = ({
-  data,
-  features,
   chartConfig,
-  measures,
+  chartData,
+  scalesData,
   dimensions,
+  measures,
+  features,
   baseLayer,
   children,
 }: React.PropsWithChildren<
@@ -602,7 +604,8 @@ const MapChartProvider = ({
 >) => {
   const state = useMapState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     features,
@@ -615,11 +618,12 @@ const MapChartProvider = ({
 };
 
 export const MapChart = ({
-  data,
-  features,
-  measures,
   chartConfig,
+  chartData,
+  scalesData,
   dimensions,
+  measures,
+  features,
   baseLayer,
   children,
 }: React.PropsWithChildren<
@@ -629,11 +633,12 @@ export const MapChart = ({
     <Observer>
       <InteractionProvider>
         <MapChartProvider
-          data={data}
-          features={features}
           chartConfig={chartConfig}
-          measures={measures}
+          chartData={chartData}
+          scalesData={scalesData}
+          features={features}
           dimensions={dimensions}
+          measures={measures}
           baseLayer={baseLayer}
         >
           <MapTooltipProvider>{children}</MapTooltipProvider>

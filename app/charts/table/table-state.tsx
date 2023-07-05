@@ -404,6 +404,7 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
 
 export const getTableStateMetadata = (): ChartStateMetadata => {
   return {
+    assureDefined: {},
     sortData: (data) => {
       return data;
     },
@@ -412,7 +413,8 @@ export const getTableStateMetadata = (): ChartStateMetadata => {
 
 const TableChartProvider = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   children,
@@ -423,7 +425,8 @@ const TableChartProvider = ({
 >) => {
   const state = useTableState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
   });
@@ -434,17 +437,19 @@ const TableChartProvider = ({
 };
 
 export const TableChart = ({
-  data,
+  chartConfig,
+  chartData,
+  scalesData,
   dimensions,
   measures,
-  chartConfig,
   children,
 }: React.PropsWithChildren<ChartProps<TableConfig>>) => {
   return (
     <Observer>
       <TableChartProvider
         chartConfig={chartConfig}
-        data={data}
+        chartData={chartData}
+        scalesData={scalesData}
         dimensions={dimensions}
         measures={measures}
       >

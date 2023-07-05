@@ -75,13 +75,14 @@ export const ChartLinesVisualization = ({
 };
 
 export const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const { chartConfig, data, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
     <LineChart
       chartConfig={chartConfig}
-      data={data}
+      chartData={chartData}
+      scalesData={scalesData}
       dimensions={dimensions}
       measures={measures}
       aspectRatio={0.4}

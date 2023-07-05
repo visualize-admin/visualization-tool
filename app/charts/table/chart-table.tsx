@@ -64,12 +64,13 @@ export const ChartTableVisualization = ({
 };
 
 const ChartTable = memo(function ChartTable(props: ChartProps<TableConfig>) {
-  const { chartConfig, data, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
 
   return (
     <TableChart
       chartConfig={chartConfig}
-      data={data}
+      chartData={chartData}
+      scalesData={scalesData}
       dimensions={dimensions}
       measures={measures}
     >

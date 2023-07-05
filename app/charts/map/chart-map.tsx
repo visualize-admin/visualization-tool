@@ -251,13 +251,21 @@ export const ChartMap = (
     baseLayer: BaseLayer;
   }
 ) => {
-  const { chartConfig, data, dimensions, measures, features, baseLayer } =
-    props;
+  const {
+    chartConfig,
+    chartData,
+    scalesData,
+    dimensions,
+    measures,
+    features,
+    baseLayer,
+  } = props;
 
   return (
     <MapChart
       chartConfig={chartConfig}
-      data={data}
+      chartData={chartData}
+      scalesData={scalesData}
       dimensions={dimensions}
       measures={measures}
       features={features}

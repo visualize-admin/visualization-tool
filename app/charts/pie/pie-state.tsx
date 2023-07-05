@@ -309,10 +309,11 @@ export const getPieStateMetadata = (
 };
 
 const PieChartProvider = ({
-  data,
+  chartConfig,
+  chartData,
+  scalesData,
   dimensions,
   measures,
-  chartConfig,
   aspectRatio,
   children,
 }: React.PropsWithChildren<
@@ -320,7 +321,8 @@ const PieChartProvider = ({
 >) => {
   const state = usePieState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -333,7 +335,8 @@ const PieChartProvider = ({
 
 export const PieChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -345,10 +348,11 @@ export const PieChart = ({
     <Observer>
       <InteractionProvider>
         <PieChartProvider
-          data={data}
+          chartConfig={chartConfig}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
-          chartConfig={chartConfig}
           aspectRatio={aspectRatio}
         >
           {children}

@@ -419,18 +419,20 @@ export const getColumnsStateMetadata = (
 };
 
 const ColumnChartProvider = ({
-  data,
-  measures,
+  chartConfig,
+  chartData,
+  scalesData,
   dimensions,
+  measures,
   aspectRatio,
   children,
-  chartConfig,
 }: React.PropsWithChildren<
   ChartProps<ColumnConfig> & { aspectRatio: number }
 >) => {
   const state = useColumnsState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -442,10 +444,11 @@ const ColumnChartProvider = ({
 };
 
 export const ColumnChart = ({
-  data,
-  measures,
-  dimensions,
   chartConfig,
+  chartData,
+  scalesData,
+  dimensions,
+  measures,
   aspectRatio,
   children,
 }: React.PropsWithChildren<
@@ -456,8 +459,9 @@ export const ColumnChart = ({
       <InteractionProvider>
         <ColumnChartProvider
           chartConfig={chartConfig}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
-          data={data}
           measures={measures}
           aspectRatio={aspectRatio}
         >

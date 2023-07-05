@@ -671,7 +671,8 @@ export const getColumnsStackedStateMetadata = (
 
 const StackedColumnsChartProvider = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -681,7 +682,8 @@ const StackedColumnsChartProvider = ({
 >) => {
   const state = useColumnsStackedState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -694,7 +696,8 @@ const StackedColumnsChartProvider = ({
 
 export const StackedColumnsChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -707,7 +710,8 @@ export const StackedColumnsChart = ({
       <InteractionProvider>
         <StackedColumnsChartProvider
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

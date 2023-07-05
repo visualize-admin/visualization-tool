@@ -71,9 +71,9 @@ export const ChartPieVisualization = ({
 };
 
 export const ChartPie = memo((props: ChartProps<PieConfig>) => {
-  const { chartConfig, data, dimensions, measures } = props;
+  const { chartConfig, chartData, scalesData, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const somePositive = data.some(
+  const somePositive = chartData.some(
     (d) => (d[fields?.y?.componentIri] as number) > 0
   );
 
@@ -84,7 +84,8 @@ export const ChartPie = memo((props: ChartProps<PieConfig>) => {
   return (
     <PieChart
       chartConfig={chartConfig}
-      data={data}
+      chartData={chartData}
+      scalesData={scalesData}
       dimensions={dimensions}
       measures={measures}
       aspectRatio={0.5}

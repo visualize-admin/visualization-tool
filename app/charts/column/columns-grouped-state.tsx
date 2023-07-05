@@ -571,7 +571,8 @@ export const getColumnsGroupedStateMetadata = (
 
 const GroupedColumnChartProvider = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -583,7 +584,8 @@ const GroupedColumnChartProvider = ({
 >) => {
   const state = useGroupedColumnsState({
     chartConfig,
-    data,
+    chartData,
+    scalesData,
     dimensions,
     measures,
     aspectRatio,
@@ -596,7 +598,8 @@ const GroupedColumnChartProvider = ({
 
 export const GroupedColumnChart = ({
   chartConfig,
-  data,
+  chartData,
+  scalesData,
   dimensions,
   measures,
   aspectRatio,
@@ -609,7 +612,8 @@ export const GroupedColumnChart = ({
       <InteractionProvider>
         <GroupedColumnChartProvider
           chartConfig={chartConfig}
-          data={data}
+          chartData={chartData}
+          scalesData={scalesData}
           dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}

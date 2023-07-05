@@ -4,7 +4,7 @@ import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
-import { usePlottableData } from "@/charts/shared/chart-helpers";
+import { useChartData, usePlottableData } from "@/charts/shared/chart-helpers";
 import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
 import {
@@ -13,7 +13,7 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { ChartConfig, isAnimationInConfig } from "@/configurator";
+import { ChartConfig } from "@/configurator";
 import {
   ComponentsQuery,
   DataCubeMetadataQuery,
@@ -94,6 +94,12 @@ export const ChartLoadingWrapper = <
     getY: chartStateMetadata?.assureDefined.getY,
   });
 
+  const { chartData, scalesData } = useChartData(plottableData, {
+    chartConfig,
+    getXDate: chartStateMetadata?.getXDate,
+    getSegment: chartStateMetadata?.getSegment,
+  });
+
   if (metadata && dimensions && measures && data) {
     const { title } = metadata;
 
@@ -111,7 +117,8 @@ export const ChartLoadingWrapper = <
           measures={measures}
         />
         {React.createElement(Component, {
-          data: plottableData,
+          chartData,
+          scalesData,
           dimensions,
           measures,
           chartConfig,

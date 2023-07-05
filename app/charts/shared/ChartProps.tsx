@@ -3,7 +3,8 @@ import { Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export type BaseChartProps = {
-  data: Observation[];
+  chartData: Observation[];
+  scalesData: Observation[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
 };
