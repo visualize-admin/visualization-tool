@@ -67,7 +67,7 @@ export const Table = () => {
   const {
     bounds,
     rowHeight,
-    data,
+    chartData,
     showSearch,
     tableColumns,
     tableColumnsMeta,
@@ -98,16 +98,18 @@ export const Table = () => {
       },
     });
 
-    index.add(data);
+    index.add(chartData);
 
     return index;
-  }, [tableColumnsMeta, data]);
+  }, [tableColumnsMeta, chartData]);
 
   const filteredData = useMemo(() => {
     const searchResult =
-      searchTerm !== "" ? searchIndex.search({ query: `${searchTerm}` }) : data;
+      searchTerm !== ""
+        ? searchIndex.search({ query: `${searchTerm}` })
+        : chartData;
     return searchResult as Observation[];
-  }, [data, searchTerm, searchIndex]);
+  }, [chartData, searchTerm, searchIndex]);
 
   // Table Instance
   const {
