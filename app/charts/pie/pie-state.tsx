@@ -11,19 +11,12 @@ import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
 import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
-import { useOptionalNumericVariable } from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+  PieStateVariables,
+  usePieStateData,
+  usePieStateVariables,
+} from "@/charts/pie/pie-state-props";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
@@ -31,7 +24,6 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -40,61 +32,34 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface PieState extends CommonChartState {
-  chartType: "pie";
-  chartData: Observation[];
-  getPieData: Pie<$IntentionalAny, Observation>;
-  getY: (d: Observation) => number | null;
-  getX: (d: Observation) => string;
-  colors: ScaleOrdinal<string, string>;
-  getSegmentLabel: (s: string) => string;
-  getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
-}
+export type PieState = CommonChartState &
+  PieStateVariables & {
+    chartType: "pie";
+    getPieData: Pie<$IntentionalAny, Observation>;
+    colors: ScaleOrdinal<string, string>;
+    getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
+  };
 
 const usePieState = (
-  props: ChartProps<PieConfig> & { aspectRatio: number }
+  chartProps: ChartProps<PieConfig> & { aspectRatio: number },
+  variables: PieStateVariables,
+  data: ChartStateData
 ): PieState => {
+  const { chartConfig, aspectRatio } = chartProps;
   const {
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    dimensions,
-    measures,
-    chartConfig,
-    aspectRatio,
-  } = props;
+    yMeasure,
+    getY,
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+  } = variables;
+  const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
+
   const width = useWidth();
   const formatNumber = useFormatNumber();
-
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-  } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations,
-    dimensionIri: segmentDimension?.iri,
-    dimensionValues: segmentDimension?.values,
-  });
-
-  const { getValue: getSegment, getLabel: getSegmentLabel } =
-    useObservationLabels(
-      scalesData,
-      getSegmentAbbreviationOrLabel,
-      fields.segment?.componentIri
-    );
+  const formatters = useChartFormatters(chartProps);
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -209,7 +174,6 @@ const usePieState = (
     .value((d) => getY(d) ?? NaN)
     .sort(pieSorter);
 
-  const formatters = useChartFormatters(props);
   const valueFormatter = (value: number | null) =>
     formatNumberWithUnit(
       value,
@@ -258,51 +222,9 @@ const usePieState = (
     chartData,
     allData,
     getPieData,
-    getY,
-    getX: getSegment,
     colors,
     getAnnotationInfo,
-    getSegmentLabel,
-  };
-};
-
-export const getPieStateMetadata = (
-  chartConfig: PieConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionIri: segmentDimension?.iri,
-      dimensionValues: segmentDimension?.values,
-    });
-
-  const { getValue: getSegment } = getObservationLabels(
-    observations,
-    getSegmentAbbreviationOrLabel,
-    fields.segment?.componentIri
-  );
-
-  return {
-    assureDefined: {
-      getY,
-    },
-    getSegment,
-    sortData: (data) => {
-      return data;
-    },
+    ...variables,
   };
 };
 
@@ -311,8 +233,10 @@ const PieChartProvider = (
     ChartProps<PieConfig> & { aspectRatio: number }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = usePieState(rest);
+  const { children, ...chartProps } = props;
+  const variables = usePieStateVariables(chartProps);
+  const data = usePieStateData(chartProps, variables);
+  const state = usePieState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

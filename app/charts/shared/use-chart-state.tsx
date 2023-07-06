@@ -12,15 +12,15 @@ import { TableChartState } from "@/charts/table/table-state";
 import { Has } from "@/domain/types";
 
 export type ChartState =
+  | AreasState
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
   | LinesState
-  | AreasState
-  | ScatterplotState
-  | PieState
-  | TableChartState
   | MapState
+  | PieState
+  | ScatterplotState
+  | TableChartState
   | undefined;
 
 export type ColorsChartState = Has<ChartState, "colors">;

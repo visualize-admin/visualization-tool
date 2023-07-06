@@ -71,14 +71,11 @@ export const ChartPieVisualization = ({
 };
 
 export const ChartPie = memo((props: ChartProps<PieConfig>) => {
-  const { chartConfig, chartData, dimensions } = props;
+  const { chartConfig, observations, dimensions } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  // Allow displaying empty chart, which might be the case when animating
-  // by time and there is no data for a given step.
-  const somePositive =
-    chartData.length > 0
-      ? chartData.some((d) => (d[fields?.y?.componentIri] as number) > 0)
-      : true;
+  const somePositive = observations.some(
+    (d) => (d[fields?.y?.componentIri] as number) > 0
+  );
 
   if (!somePositive) {
     return <OnlyNegativeDataHint />;
