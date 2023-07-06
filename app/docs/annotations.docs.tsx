@@ -34,10 +34,7 @@ ${(
   <ReactSpecimen>
     <InteractiveFiltersProvider>
       <ColumnChart
-        chartData={observations}
-        scalesData={observations}
-        segmentData={observations}
-        allData={observations}
+        observations={observations}
         measures={measures}
         dimensions={dimensions}
         chartConfig={
@@ -184,10 +181,7 @@ ${(
   <ReactSpecimen span={2}>
     <InteractiveFiltersProvider>
       <ColumnChart
-        chartData={observations}
-        scalesData={observations}
-        segmentData={observations}
-        allData={observations}
+        observations={observations}
         measures={measures}
         dimensions={dimensions}
         chartConfig={
@@ -230,10 +224,7 @@ ${(
   <ReactSpecimen span={2}>
     <InteractiveFiltersProvider>
       <ColumnChart
-        chartData={observations}
-        scalesData={observations}
-        segmentData={observations}
-        allData={observations}
+        observations={observations}
         measures={measures}
         dimensions={dimensions}
         chartConfig={

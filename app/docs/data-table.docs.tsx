@@ -18,10 +18,7 @@ export const Docs = () => markdown`
 ${(
   <ReactSpecimen span={6}>
     <TableChart
-      chartData={tableObservations}
-      scalesData={tableObservations}
-      segmentData={tableObservations}
-      allData={tableObservations}
+      observations={tableObservations}
       dimensions={tableDimensions as DimensionMetadataFragment[]}
       measures={tableMeasures as DimensionMetadataFragment[]}
       chartConfig={tableConfig}
