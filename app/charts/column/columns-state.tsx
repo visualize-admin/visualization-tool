@@ -2,6 +2,7 @@ import {
   extent,
   max,
   min,
+  rollup,
   scaleBand,
   ScaleBand,
   ScaleLinear,
@@ -10,6 +11,7 @@ import {
   scaleOrdinal,
   scaleTime,
   ScaleTime,
+  sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
@@ -84,12 +86,23 @@ const useColumnsState = (
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
 
+  const sumsByX = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        chartData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getX(x)
+      ),
+    ]);
+  }, [chartData, getX, getY]);
+
   // Scales
   const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
     useMemo(() => {
       // x
       const sorters = makeDimensionValueSorters(xDimension, {
         sorting: fields.x.sorting,
+        measureBySegment: sumsByX,
         useAbbreviations: fields.x.useAbbreviations,
         dimensionFilter: xDimension?.iri
           ? chartConfig.filters[xDimension.iri]
@@ -153,6 +166,7 @@ const useColumnsState = (
       fields.x.useAbbreviations,
       xDimension,
       chartConfig.filters,
+      sumsByX,
     ]);
 
   const { left, bottom } = useChartPadding(
