@@ -24,9 +24,9 @@ export const usePieStateVariables = (
   const { fields } = chartConfig;
   const { y, segment } = fields;
 
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+  const yMeasure = measures.find((d) => d.iri === y.componentIri);
   if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+    throw Error(`No dimension <${y.componentIri}> in cube!`);
   }
 
   if (!isNumericalMeasure(yMeasure)) {

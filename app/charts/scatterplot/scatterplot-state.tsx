@@ -9,32 +9,21 @@ import {
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
+import {
+  ScatterplotStateVariables,
+  useScatterplotStateData,
+  useScatterplotStateVariables,
+} from "@/charts/scatterplot//scatterplot-state-props";
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
-import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
-import {
-  getLabelWithUnit,
-  useOptionalNumericVariable,
-} from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
@@ -44,63 +33,37 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface ScatterplotState extends CommonChartState {
-  chartType: "scatterplot";
-  chartData: Observation[];
-  getX: (d: Observation) => number | null;
-  xScale: ScaleLinear<number, number>;
-  getY: (d: Observation) => number | null;
-  yScale: ScaleLinear<number, number>;
-  hasSegment: boolean;
-  getSegment: (d: Observation) => string;
-  colors: ScaleOrdinal<string, string>;
-  xAxisLabel: string;
-  xAxisDimension: DimensionMetadataFragment;
-  yAxisLabel: string;
-  yAxisDimension: DimensionMetadataFragment;
-  getSegmentLabel: (s: string) => string;
-  getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
-}
+export type ScatterplotState = CommonChartState &
+  ScatterplotStateVariables & {
+    chartType: "scatterplot";
+    xScale: ScaleLinear<number, number>;
+    yScale: ScaleLinear<number, number>;
+    hasSegment: boolean;
+    colors: ScaleOrdinal<string, string>;
+    getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
+  };
 
 const useScatterplotState = (
-  props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+  chartProps: ChartProps<ScatterPlotConfig> & { aspectRatio: number },
+  variables: ScatterplotStateVariables,
+  data: ChartStateData
 ): ScatterplotState => {
-  const width = useWidth();
+  const { chartConfig, aspectRatio } = chartProps;
   const {
-    chartConfig,
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  } = props;
+    getX,
+    xAxisLabel,
+    getY,
+    yAxisLabel,
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+  } = variables;
+  const { chartData, scalesData, segmentData, allData } = data;
   const { fields } = chartConfig;
+
+  const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
-
-  const getX = useOptionalNumericVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-  } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations,
-    dimensionIri: segmentDimension?.iri,
-    dimensionValues: segmentDimension?.values,
-  });
-
-  const { getValue: getSegment, getLabel: getSegmentLabel } =
-    useObservationLabels(
-      scalesData,
-      getSegmentAbbreviationOrLabel,
-      fields.segment?.componentIri
-    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -108,26 +71,10 @@ const useScatterplotState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);
-
-  if (!xMeasure) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
-  }
-
-  const xAxisLabel = getLabelWithUnit(xMeasure);
-
   const xMinValue = Math.min(min(scalesData, (d) => getX(d)) ?? 0, 0);
   const xMaxValue = max(scalesData, (d) => getX(d)) ?? 0;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
-
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   const yMinValue = Math.min(min(scalesData, (d) => getY(d)) ?? 0, 0);
   const yMaxValue = max(scalesData, getY) ?? 0;
@@ -237,20 +184,8 @@ const useScatterplotState = (
       tooltipContent: (
         <TooltipScatterplot
           firstLine={fields.segment && getSegmentAbbreviationOrLabel(datum)}
-          secondLine={
-            xMeasure.unit
-              ? `${xMeasure.label}: ${formatNumber(getX(datum))} ${
-                  xMeasure.unit
-                }`
-              : `${xAxisLabel}: ${formatNumber(getX(datum))}`
-          }
-          thirdLine={
-            yMeasure.unit
-              ? `${yMeasure.label}: ${formatNumber(getY(datum))} ${
-                  yMeasure.unit
-                }`
-              : `${yAxisLabel}: ${formatNumber(getY(datum))}`
-          }
+          secondLine={`${xAxisLabel}: ${formatNumber(getX(datum))}`}
+          thirdLine={`${yAxisLabel}: ${formatNumber(getY(datum))}`}
         />
       ),
       datum: {
@@ -267,65 +202,12 @@ const useScatterplotState = (
     bounds,
     chartData,
     allData,
-    getX,
     xScale,
-    getY,
     yScale,
     hasSegment,
-    getSegment,
     colors,
-    xAxisLabel,
-    xAxisDimension: xMeasure,
-    yAxisLabel,
-    yAxisDimension: yMeasure,
     getAnnotationInfo,
-    getSegmentLabel,
-  };
-};
-
-export const getScatterplotStateMetadata = (
-  chartConfig: ScatterPlotConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-
-  const x = fields.x.componentIri;
-  const getX = (d: Observation) => {
-    return d[x] !== null ? Number(d[x]) : null;
-  };
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionIri: segmentDimension?.iri,
-      dimensionValues: segmentDimension?.values,
-    });
-
-  const { getValue: getSegment } = getObservationLabels(
-    observations,
-    getSegmentAbbreviationOrLabel,
-    fields.segment?.componentIri
-  );
-
-  return {
-    assureDefined: {
-      getX,
-      getY,
-    },
-    getSegment,
-    sortData: (data) => {
-      return data;
-    },
+    ...variables,
   };
 };
 
@@ -334,8 +216,10 @@ const ScatterplotChartProvider = (
     ChartProps<ScatterPlotConfig> & { aspectRatio: number }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = useScatterplotState(rest);
+  const { children, ...chartProps } = props;
+  const variables = useScatterplotStateVariables(chartProps);
+  const data = useScatterplotStateData(chartProps, variables);
+  const state = useScatterplotState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

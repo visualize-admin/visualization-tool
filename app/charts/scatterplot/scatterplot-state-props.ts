@@ -1,50 +1,43 @@
-import { ascending } from "d3";
-import React from "react";
-
-import { ChartProps } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
   usePlottableData,
-  useStringVariable,
-  useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartStateData,
+  NumericalXVariables,
   NumericalYVariables,
   SegmentVariables,
-  TemporalXVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
-import { AreaConfig } from "@/config-types";
-import {
-  Observation,
-  isNumericalMeasure,
-  isTemporalDimension,
-} from "@/domain/data";
+import { ScatterPlotConfig } from "@/configurator";
+import { isNumericalMeasure } from "@/domain/data";
 
-export type AreasStateVariables = TemporalXVariables &
+import { ChartProps } from "../shared/ChartProps";
+
+export type ScatterplotStateVariables = NumericalXVariables &
   NumericalYVariables &
-  SegmentVariables & {
-    getGroups: (d: Observation) => string;
-  };
+  SegmentVariables;
 
-export const useAreasStateVariables = (
-  props: ChartProps<AreaConfig> & { aspectRatio: number }
-): AreasStateVariables => {
+export const useScatterplotStateVariables = (
+  props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
+): ScatterplotStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!xDimension) {
+  const xMeasure = measures.find((d) => d.iri === x.componentIri);
+  if (!xMeasure) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
-  if (!isTemporalDimension(xDimension)) {
-    throw Error(`Dimension <${x.componentIri}> is not temporal!`);
+  if (!isNumericalMeasure(xMeasure)) {
+    throw Error(`Measure <${x.componentIri}> is not numerical!`);
   }
+
+  const getX = useOptionalNumericVariable(x.componentIri);
+  const xAxisLabel = getLabelWithUnit(xMeasure);
 
   const yMeasure = measures.find((d) => d.iri === y.componentIri);
   if (!yMeasure) {
@@ -55,11 +48,8 @@ export const useAreasStateVariables = (
     throw Error(`Measure <${y.componentIri}> is not numerical!`);
   }
 
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const getX = useTemporalVariable(x.componentIri);
   const getY = useOptionalNumericVariable(y.componentIri);
-  const getGroups = useStringVariable(x.componentIri);
+  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   const segmentDimension = dimensions.find(
     (d) => d.iri === segment?.componentIri
@@ -75,12 +65,12 @@ export const useAreasStateVariables = (
   });
 
   return {
-    xDimension,
+    xMeasure,
     getX,
+    xAxisLabel,
     yMeasure,
     getY,
     yAxisLabel,
-    getGroups,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -89,43 +79,26 @@ export const useAreasStateVariables = (
   };
 };
 
-export const useAreasStateData = (
-  chartProps: ChartProps<AreaConfig> & { aspectRatio: number },
-  variables: AreasStateVariables
+export const useScatterplotStateData = (
+  chartProps: ChartProps<ScatterPlotConfig> & { aspectRatio: number },
+  variables: ScatterplotStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
   const { getX, getY, getSegment } = variables;
+  // No need to sort the data for pie.
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
   });
-  const sortedPlottableData = React.useMemo(() => {
-    return sortData(plottableData, {
-      getX,
-    });
-  }, [plottableData, getX]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate: getX,
-      getSegment,
-    }
-  );
+  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
+    chartConfig,
+    getSegment,
+  });
 
   return {
     chartData,
     scalesData,
     segmentData,
-    allData: sortedPlottableData,
+    allData: plottableData,
   };
-};
-
-const sortData = (
-  data: Observation[],
-  { getX }: Pick<AreasStateVariables, "getX">
-): Observation[] => {
-  return [...data].sort((a, b) => {
-    return ascending(getX(a), getX(b));
-  });
 };

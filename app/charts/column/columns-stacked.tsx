@@ -34,7 +34,6 @@ export const ColumnsStacked = () => {
   }, [bandwidth, colors, getX, series, xScale, yScale]);
 
   React.useEffect(() => {
-    console.log("rendering columns", renderData);
     if (ref.current) {
       select(ref.current)
         .selectAll<SVGRectElement, RenderDatum>("rect")

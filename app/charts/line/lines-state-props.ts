@@ -34,7 +34,7 @@ export type LinesStateVariables = TemporalXVariables &
 // TODO: usetemporalXchartstate, same as Area chart.
 export const useLinesStateVariables = (
   props: ChartProps<LineConfig> & { aspectRatio: number }
-) => {
+): LinesStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
@@ -48,9 +48,9 @@ export const useLinesStateVariables = (
     throw Error(`Dimension <${x.componentIri}> is not temporal!`);
   }
 
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+  const yMeasure = measures.find((d) => d.iri === y.componentIri);
   if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+    throw Error(`No dimension <${y.componentIri}> in cube!`);
   }
 
   if (!isNumericalMeasure(yMeasure)) {
