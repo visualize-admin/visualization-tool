@@ -27,7 +27,6 @@ import {
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
-  getLabelWithUnit,
   getWideData,
   stackOffsetDivergingPositiveZeros,
 } from "@/charts/shared/chart-helpers";
@@ -44,7 +43,6 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
@@ -55,40 +53,36 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type AreasState = CommonChartState & {
-  chartType: "area";
-  xScale: ScaleTime<number, number>;
-  xEntireScale: ScaleTime<number, number>;
-  yScale: ScaleLinear<number, number>;
-  segments: string[];
-  colors: ScaleOrdinal<string, string>;
-  yAxisLabel: string;
-  yAxisDimension: DimensionMetadataFragment;
-  chartWideData: ArrayLike<Observation>;
-  allDataWide: ArrayLike<Observation>;
-  series: $FixMe[];
-  getAnnotationInfo: (d: Observation) => TooltipInfo;
-} & Pick<
-    AreasStateVariables,
-    "getX" | "getY" | "getSegment" | "getSegmentLabel"
-  >;
+export type AreasState = CommonChartState &
+  AreasStateVariables & {
+    chartType: "area";
+    xScale: ScaleTime<number, number>;
+    xEntireScale: ScaleTime<number, number>;
+    yScale: ScaleLinear<number, number>;
+    segments: string[];
+    colors: ScaleOrdinal<string, string>;
+    chartWideData: ArrayLike<Observation>;
+    allDataWide: ArrayLike<Observation>;
+    series: $FixMe[];
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
+  };
 
 const useAreasState = (
   chartProps: ChartProps<AreaConfig> & { aspectRatio: number },
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const { dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const { dimensions, chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
     getX,
+    yMeasure,
     getY,
     getGroups,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
-    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, segmentData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -195,14 +189,6 @@ const useAreasState = (
     getSegment,
     fields.y.imputationType,
   ]);
-
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   /** Transform data  */
   const series = useMemo(() => {
@@ -356,21 +342,16 @@ const useAreasState = (
     bounds,
     chartData,
     allData,
-    getX,
     xScale,
     xEntireScale,
-    getY,
     yScale,
-    getSegment,
-    yAxisLabel,
-    yAxisDimension: yMeasure,
     segments,
     colors,
     chartWideData,
     allDataWide,
     series,
     getAnnotationInfo,
-    getSegmentLabel,
+    ...variables,
   };
 };
 

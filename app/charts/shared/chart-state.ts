@@ -7,12 +7,34 @@ import { Bounds } from "@/charts/shared/use-width";
 import { ChartConfig, ChartType, isAnimationInConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { NumericalMeasure, TemporalDimension } from "@/graphql/resolver-types";
 
 export type CommonChartState = {
   chartType: ChartType;
   chartData: Observation[];
   allData: Observation[];
   bounds: Bounds;
+};
+
+type NumericalDimensionValueGetter = (d: Observation) => number | null;
+
+type TemporalDimensionValueGetter = (d: Observation) => Date;
+
+export type TemporalXVariables = {
+  xDimension: TemporalDimension;
+  getX: TemporalDimensionValueGetter;
+};
+
+export type NumericalXVariables = {
+  xMeasure: NumericalMeasure;
+  getX: NumericalDimensionValueGetter;
+  xAxisLabel: string;
+};
+
+export type NumericalYVariables = {
+  yMeasure: NumericalMeasure;
+  getY: NumericalDimensionValueGetter;
+  yAxisLabel: string;
 };
 
 export type ChartStateData = {
