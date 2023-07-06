@@ -66,8 +66,8 @@ export type SymbolLayer = {
 };
 
 export type GeoData = {
-  areaLayer?: AreaLayer;
-  symbolLayer?: SymbolLayer;
+  areaLayer: AreaLayer | undefined;
+  symbolLayer: SymbolLayer | undefined;
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";

@@ -9,13 +9,14 @@ import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
   NumericalMeasure,
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/resolver-types";
 
-// usetemporalXchartstate...
-
+// TODO: usetemporalXchartstate...
 export type CommonChartState = {
   chartType: ChartType;
   chartData: Observation[];
@@ -75,6 +76,17 @@ export type SegmentVariables = {
   getSegment: StringDimensionValueGetter;
   getSegmentAbbreviationOrLabel: StringDimensionValueGetter;
   getSegmentLabel: (d: string) => string;
+};
+
+export type AreaLayerVariables = {
+  areaLayerDimension: GeoShapesDimension | undefined;
+};
+
+export type SymbolLayerVariables = {
+  symbolLayerDimension:
+    | GeoShapesDimension
+    | GeoCoordinatesDimension
+    | undefined;
 };
 
 export type ChartStateData = {

@@ -24,22 +24,24 @@ import mapValues from "lodash/mapValues";
 import { useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
+import { getBBox } from "@/charts/map/helpers";
+import {
+  MapStateData,
+  useMapStateData,
+  useMapStateVariables,
+} from "@/charts/map/map-state-props";
 import { MapTooltipProvider } from "@/charts/map/map-tooltip";
 import {
   useOptionalNumericVariable,
   useStringVariable,
 } from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import {
   BBox,
-  BaseLayer,
   CategoricalColorField,
   ColorScaleInterpolationType,
   FixedColorField,
@@ -54,18 +56,20 @@ import {
 } from "@/configurator/components/ui-helpers";
 import {
   GeoData,
+  GeoShapes,
   Observation,
   ObservationValue,
   findRelatedErrorDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  DimensionMetadataFragment,
+  GeoCoordinates,
+} from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
-
-import { getBBox } from "./helpers";
 
 type AreaLayerColors =
   | {
@@ -451,24 +455,21 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
 };
 
 const useMapState = (
-  props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+  chartProps: ChartProps<MapConfig> & {
+    shapes: GeoShapes | undefined;
+    coordinates: GeoCoordinates[] | undefined | null;
+  },
+  data: MapStateData
 ): MapState => {
   const width = useWidth();
-  const {
-    scalesData,
-    allData,
-    features,
-    chartConfig,
-    measures,
-    dimensions,
-    baseLayer,
-  } = props;
-  const { fields } = chartConfig;
+  const { chartConfig, measures, dimensions } = chartProps;
+  const { chartData, scalesData, allData, features } = data;
+  const { fields, baseLayer } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
-    componentIri: areaLayer?.componentIri,
-    measureIri: areaLayer?.color.componentIri,
+    componentIri: fields.areaLayer?.componentIri,
+    measureIri: fields.areaLayer?.color.componentIri,
     data: scalesData,
     features,
     dimensions,
@@ -576,12 +577,13 @@ const useMapState = (
 
   return {
     chartType: "map",
+    chartData,
     allData,
     bounds,
     features,
     showBaseLayer: baseLayer.show,
     locked: baseLayer.locked || false,
-    lockedBBox: props.baseLayer.bbox,
+    lockedBBox: baseLayer.bbox,
     featuresBBox,
     identicalLayerComponentIris,
     areaLayer: preparedAreaLayerState,
@@ -589,22 +591,18 @@ const useMapState = (
   };
 };
 
-export const getMapStateMetadata = (): ChartStateMetadata => {
-  return {
-    assureDefined: {},
-    sortData: (data) => {
-      return data;
-    },
-  };
-};
-
 const MapChartProvider = (
   props: React.PropsWithChildren<
-    ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+    ChartProps<MapConfig> & {
+      shapes: GeoShapes | undefined;
+      coordinates: GeoCoordinates[] | undefined | null;
+    }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = useMapState(rest);
+  const { children, ...chartProps } = props;
+  const variables = useMapStateVariables(chartProps);
+  const data = useMapStateData(chartProps, variables);
+  const state = useMapState(chartProps, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -613,7 +611,10 @@ const MapChartProvider = (
 
 export const MapChart = (
   props: React.PropsWithChildren<
-    ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+    ChartProps<MapConfig> & {
+      shapes: GeoShapes | undefined;
+      coordinates: GeoCoordinates[] | undefined | null;
+    }
   >
 ) => {
   const { children, ...rest } = props;
