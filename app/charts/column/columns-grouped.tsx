@@ -15,12 +15,14 @@ export const ErrorWhiskers = () => {
     yScale,
     getSegment,
     grouped,
-    showStandardError,
+    showYStandardError,
   } = useChartState() as GroupedColumnsState;
-  const { margins } = bounds;
-  if (!getYErrorRange || !showStandardError) {
+
+  if (!getYErrorRange || !showYStandardError) {
     return null;
   }
+
+  const { margins } = bounds;
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -31,6 +33,7 @@ export const ErrorWhiskers = () => {
             const bandwidth = xScaleIn.bandwidth();
             const barwidth = Math.min(bandwidth, 15);
             const [y1, y2] = getYErrorRange(d);
+
             return (
               <VerticalWhisker
                 key={i}
