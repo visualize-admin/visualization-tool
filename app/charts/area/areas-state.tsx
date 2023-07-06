@@ -1,5 +1,4 @@
 import {
-  ascending,
   extent,
   group,
   max,
@@ -20,36 +19,26 @@ import {
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
-import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
+  AreasStateVariables,
+  useAreasStateData,
+  useAreasStateVariables,
+} from "@/charts/area/areas-state-props";
+import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
   stackOffsetDivergingPositiveZeros,
-  useOptionalNumericVariable,
-  useStringVariable,
-  useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
-import { parseDate } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -66,16 +55,11 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface AreasState extends CommonChartState {
+export type AreasState = CommonChartState & {
   chartType: "area";
-  chartData: Observation[];
-  getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
-  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
-  getSegment: (d: Observation) => string;
-  getSegmentLabel: (s: string) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
@@ -84,67 +68,41 @@ export interface AreasState extends CommonChartState {
   allDataWide: ArrayLike<Observation>;
   series: $FixMe[];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
-}
+} & Pick<
+    AreasStateVariables,
+    "getX" | "getY" | "getSegment" | "getSegmentLabel"
+  >;
 
 const useAreasState = (
-  props: ChartProps<AreaConfig> & { aspectRatio: number }
+  chartProps: ChartProps<AreaConfig> & { aspectRatio: number },
+  variables: AreasStateVariables,
+  data: ChartStateData
 ): AreasState => {
+  const { dimensions, measures, chartConfig, aspectRatio } = chartProps;
   const {
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    dimensions,
-    measures,
-    chartConfig,
-    aspectRatio,
-  } = props;
+    xDimension,
+    getX,
+    getY,
+    getGroups,
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
+  } = variables;
+  const { chartData, scalesData, segmentData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
-
-  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
-
-  if (!xDimension) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
-  }
-  if (!isTemporalDimension(xDimension)) {
-    throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
-  }
-
-  const getX = useTemporalVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getGroups = useStringVariable(fields.x.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-  } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations,
-    dimensionIri: segmentDimension?.iri,
-    dimensionValues: segmentDimension?.values,
-  });
-
-  const { getValue: getSegment, getLabel: getSegmentLabel } =
-    useObservationLabels(
-      scalesData,
-      getSegmentAbbreviationOrLabel,
-      fields.segment?.componentIri
-    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
-
-  const hasSegment = fields.segment;
 
   /** Ordered segments */
   const segmentSorting = fields.segment?.sorting;
@@ -286,13 +244,13 @@ const useAreasState = (
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
-          segmentsByAbbreviationOrLabel.get(segment)?.value ||
-          segmentsByValue.get(segment)?.value ||
+          segmentsByAbbreviationOrLabel.get(segment)?.value ??
+          segmentsByValue.get(segment)?.value ??
           "";
 
         return {
           label: segment,
-          color: fields.segment?.colorMapping![dvIri] || "#006699",
+          color: fields.segment?.colorMapping![dvIri] ?? "#006699",
         };
       });
 
@@ -347,7 +305,7 @@ const useAreasState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(props);
+  const formatters = useChartFormatters(chartProps);
 
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -379,11 +337,11 @@ const useAreasState = (
       placement: { x: xPlacement, y: yPlacement },
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
-        label: hasSegment && getSegmentAbbreviationOrLabel(datum),
+        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: hasSegment
+      values: fields.segment
         ? sortedTooltipValues.map((td) => ({
             label: getSegmentAbbreviationOrLabel(td),
             value: yValueFormatter(getY(td)),
@@ -416,61 +374,15 @@ const useAreasState = (
   };
 };
 
-export const getAreasStateMetadata = (
-  chartConfig: AreaConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-  const x = fields.x.componentIri;
-  const getXDate = (d: Observation) => {
-    return parseDate(`${d[x]}`);
-  };
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionIri: segmentDimension?.iri,
-      dimensionValues: segmentDimension?.values,
-    });
-
-  const { getValue: getSegment } = getObservationLabels(
-    observations,
-    getSegmentAbbreviationOrLabel,
-    fields.segment?.componentIri
-  );
-
-  return {
-    assureDefined: {
-      getX: getXDate,
-      getY,
-    },
-    getXDate,
-    getSegment,
-    sortData: (data) => {
-      return [...data].sort((a, b) => {
-        return ascending(getXDate(a), getXDate(b));
-      });
-    },
-  };
-};
-
 const AreaChartProvider = (
   props: React.PropsWithChildren<
     ChartProps<AreaConfig> & { aspectRatio: number }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = useAreasState(rest);
+  const { children, ...chartProps } = props;
+  const variables = useAreasStateVariables(chartProps);
+  const data = useAreasStateData(chartProps, variables);
+  const state = useAreasState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

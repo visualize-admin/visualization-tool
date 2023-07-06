@@ -1,73 +1,146 @@
-import { getAreasStateMetadata } from "@/charts/area/areas-state";
-import { getColumnsGroupedStateMetadata } from "@/charts/column/columns-grouped-state";
-import { getColumnsStackedStateMetadata } from "@/charts/column/columns-stacked-state";
-import { getColumnsStateMetadata } from "@/charts/column/columns-state";
-import { getLinesStateMetadata } from "@/charts/line/lines-state";
-import { getMapStateMetadata } from "@/charts/map/map-state";
-import { getPieStateMetadata } from "@/charts/pie/pie-state";
-import { getScatterplotStateMetadata } from "@/charts/scatterplot/scatterplot-state";
-import { Bounds } from "@/charts/shared/use-width";
-import { getTableStateMetadata } from "@/charts/table/table-state";
-import { ChartConfig, ChartType } from "@/configurator";
-import { Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import overEvery from "lodash/overEvery";
+import React from "react";
 
-export interface CommonChartState {
+import { useTemporalVariable } from "@/charts/shared/chart-helpers";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { Bounds } from "@/charts/shared/use-width";
+import { ChartConfig, ChartType, isAnimationInConfig } from "@/configurator";
+import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
+
+export type CommonChartState = {
   chartType: ChartType;
+  chartData: Observation[];
   allData: Observation[];
   bounds: Bounds;
-}
-
-export type ChartStateMetadata = {
-  assureDefined: {
-    getX?: (d: Observation) => unknown | null;
-    getY?: (d: Observation) => unknown | null;
-  };
-  getXDate?: (d: Observation) => Date;
-  getSegment?: (d: Observation) => string;
-  sortData: (data: Observation[]) => Observation[];
 };
 
-type ChartStateMetadataProps = {
-  chartConfig: ChartConfig;
-  observations: Observation[];
-  dimensions: DimensionMetadataFragment[];
+export type ChartStateData = {
+  /** Data to be used in the chart. */
+  chartData: Observation[];
+  /** Data to be used to compute the scales.
+   * They are different when a time slider is present, since the scales
+   * should be computed using all the data, to prevent them from changing
+   * when the time slider is moved, while the chart should only show the data
+   * corresponding to the selected time.*/
+  scalesData: Observation[];
+  /** Data to be used to compute the full color scales. */
+  segmentData: Observation[];
+  /** All data, used to e.g. draw the timeline of Time Slider. */
+  allData: Observation[];
 };
 
-export const getChartStateMetadata = (
-  props: ChartStateMetadataProps
-): ChartStateMetadata => {
-  const { chartConfig, observations, dimensions } = props;
+type ValuePredicate = (v: any) => boolean;
 
-  switch (chartConfig.chartType) {
-    case "area":
-      return getAreasStateMetadata(chartConfig, observations, dimensions);
-    case "column":
-      switch (chartConfig.fields.segment?.type) {
-        case undefined:
-          return getColumnsStateMetadata(chartConfig, observations, dimensions);
-        case "grouped":
-          return getColumnsGroupedStateMetadata(
-            chartConfig,
-            observations,
-            dimensions
-          );
-        case "stacked":
-          return getColumnsStackedStateMetadata(
-            chartConfig,
-            observations,
-            dimensions
-          );
-      }
-    case "line":
-      return getLinesStateMetadata(chartConfig, observations, dimensions);
-    case "map":
-      return getMapStateMetadata();
-    case "pie":
-      return getPieStateMetadata(chartConfig, observations, dimensions);
-    case "scatterplot":
-      return getScatterplotStateMetadata(chartConfig, observations, dimensions);
-    case "table":
-      return getTableStateMetadata();
+/** Prepares the data to be used in charts, taking interactive filters into account. */
+export const useChartData = (
+  observations: Observation[],
+  {
+    chartConfig,
+    getXDate,
+    getSegment,
+  }: {
+    chartConfig: ChartConfig;
+    getXDate?: (d: Observation) => Date;
+    getSegment?: (d: Observation) => string;
   }
+): {
+  /** Data to be used in the chart. */
+  chartData: Observation[];
+  /** Data to be used to compute the scales.
+   * They are different when a time slider is present, since the scales
+   * should be computed using all the data, to prevent them from changing
+   * when the time slider is moved, while the chart should only show the data
+   * corresponding to the selected time.*/
+  scalesData: Observation[];
+  /** Data to be used to compute the full color scales. */
+  segmentData: Observation[];
+} => {
+  const { interactiveFiltersConfig } = chartConfig;
+  const [IFState] = useInteractiveFilters();
+
+  // time range
+  const timeRange = interactiveFiltersConfig?.timeRange;
+  const fromTime = IFState.timeRange.from?.getTime();
+  const toTime = IFState.timeRange.to?.getTime();
+
+  // time slider
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
+  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
+  const timeSliderValue = IFState.timeSlider.value;
+
+  // legend
+  const legend = interactiveFiltersConfig?.legend;
+  const legendItems = Object.keys(IFState.categories);
+
+  const { allFilters, legendFilters, timeFilters } = React.useMemo(() => {
+    const timeRangeFilter =
+      getXDate && fromTime && toTime && timeRange?.active
+        ? (d: Observation) => {
+            const time = getXDate(d).getTime();
+            return time >= fromTime && time <= toTime;
+          }
+        : null;
+    const timeSliderFilter =
+      animationField?.componentIri && timeSliderValue
+        ? (d: Observation) => {
+            return getTime(d).getTime() === timeSliderValue.getTime();
+          }
+        : null;
+    const legendFilter =
+      legend?.active && getSegment
+        ? (d: Observation) => {
+            return !legendItems.includes(getSegment(d));
+          }
+        : null;
+
+    return {
+      allFilters: overEvery(
+        (
+          [
+            timeRangeFilter,
+            timeSliderFilter,
+            legendFilter,
+          ] as (ValuePredicate | null)[]
+        ).filter(truthy)
+      ),
+      legendFilters: overEvery(
+        ([legendFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+      timeFilters: overEvery(
+        ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+    };
+  }, [
+    getXDate,
+    fromTime,
+    toTime,
+    timeRange?.active,
+    animationField?.componentIri,
+    timeSliderValue,
+    legend?.active,
+    getSegment,
+    getTime,
+    legendItems,
+  ]);
+
+  const chartData = React.useMemo(() => {
+    return observations.filter(allFilters);
+  }, [allFilters, observations]);
+
+  const scalesData = React.useMemo(() => {
+    return observations.filter(overEvery(legendFilters, timeFilters));
+  }, [observations, legendFilters, timeFilters]);
+
+  const segmentData = React.useMemo(() => {
+    return observations.filter(timeFilters);
+  }, [observations, timeFilters]);
+
+  return {
+    chartData,
+    scalesData,
+    segmentData,
+  };
 };
