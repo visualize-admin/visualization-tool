@@ -5,7 +5,7 @@ import { useTemporalVariable } from "@/charts/shared/chart-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds } from "@/charts/shared/use-width";
 import { ChartConfig, ChartType, isAnimationInConfig } from "@/configurator";
-import { Observation, ObservationValue } from "@/domain/data";
+import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
@@ -67,6 +67,14 @@ export type NumericalYErrorVariables = {
   yErrorMeasure: DimensionMetadataFragment | undefined;
   getYError: ((d: Observation) => ObservationValue) | null;
   getYErrorRange: null | ((d: Observation) => [number, number]);
+};
+
+export type SegmentVariables = {
+  segmentDimension: DimensionMetadataFragment | undefined;
+  segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
+  getSegment: StringDimensionValueGetter;
+  getSegmentAbbreviationOrLabel: StringDimensionValueGetter;
+  getSegmentLabel: (d: string) => string;
 };
 
 export type ChartStateData = {

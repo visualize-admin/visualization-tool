@@ -13,26 +13,21 @@ import {
 import {
   ChartStateData,
   NumericalYVariables,
+  SegmentVariables,
   TemporalXVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
 import { AreaConfig } from "@/config-types";
 import {
-  DimensionValue,
   Observation,
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export type AreasStateVariables = TemporalXVariables &
-  NumericalYVariables & {
+  NumericalYVariables &
+  SegmentVariables & {
     getGroups: (d: Observation) => string;
-    segmentDimension: DimensionMetadataFragment | undefined;
-    segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
-    getSegment: (d: Observation) => string;
-    getSegmentAbbreviationOrLabel: (d: Observation) => string;
-    getSegmentLabel: (d: string) => string;
   };
 
 export const useAreasStateVariables = (

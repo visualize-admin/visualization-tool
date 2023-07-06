@@ -72,7 +72,7 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const { dimensions, chartConfig, aspectRatio } = chartProps;
+  const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
     getX,
@@ -224,9 +224,6 @@ const useAreasState = (
     const xEntireScale = scaleTime().domain(xEntireDomain);
     const yScale = scaleLinear().domain(yDomain).nice();
     const colors = scaleOrdinal<string, string>();
-    const segmentDimension = dimensions.find(
-      (d) => d.iri === fields.segment?.componentIri
-    ) as $FixMe;
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
@@ -251,7 +248,6 @@ const useAreasState = (
     }
     return { colors, xScale, yScale, xEntireScale };
   }, [
-    dimensions,
     fields.segment,
     getX,
     chartData,
@@ -260,6 +256,7 @@ const useAreasState = (
     segmentsByValue,
     allSegments,
     series,
+    segmentDimension,
   ]);
 
   /** Dimensions */
