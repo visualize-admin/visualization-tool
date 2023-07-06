@@ -228,31 +228,31 @@ export const isGeoDimension = (
 };
 
 export const isGeoCoordinatesDimension = (
-  dimension?: { __typename?: string } | null
+  dimension?: DimensionMetadataFragment | null
 ): dimension is GeoCoordinatesDimension => {
   return dimension?.__typename === "GeoCoordinatesDimension";
 };
 
 export const isGeoShapesDimension = (
-  dimension?: { __typename?: string } | null
+  dimension?: DimensionMetadataFragment | null
 ): dimension is GeoShapesDimension => {
   return dimension?.__typename === "GeoShapesDimension";
 };
 
 export const isNumericalMeasure = (
-  dimension?: { __typename?: string } | null
+  dimension?: DimensionMetadataFragment | null
 ): dimension is NumericalMeasure => {
   return dimension?.__typename === "NumericalMeasure";
 };
 
 export const isOrdinalMeasure = (
-  dimension?: { __typename?: string } | null
+  dimension?: DimensionMetadataFragment | null
 ): dimension is OrdinalMeasure => {
   return dimension?.__typename === "OrdinalMeasure";
 };
 
 export const isTemporalDimension = (
-  dimension?: { __typename?: string } | null
+  dimension?: DimensionMetadataFragment | null
 ): dimension is TemporalDimension => {
   return dimension?.__typename === "TemporalDimension";
 };
