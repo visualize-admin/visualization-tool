@@ -90,17 +90,20 @@ export type SymbolLayerVariables = {
 };
 
 export type ChartStateData = {
-  /** Data to be used in the chart. */
+  /** Data with all interactive filters applied, used to draw the shapes. */
   chartData: Observation[];
-  /** Data to be used to compute the scales.
-   * They are different when a time slider is present, since the scales
-   * should be computed using all the data, to prevent them from changing
-   * when the time slider is moved, while the chart should only show the data
-   * corresponding to the selected time.*/
+  /** Data with color legend and time range filters applied, used to compute the scales.
+   * As time slider filter is not applied to it, it holds the information about all
+   * potential scale values and makes it possible to fix the scales when animating
+   * the charts. */
   scalesData: Observation[];
-  /** Data to be used to compute the full color scales. */
+  /** Data with time range filter applied. Needed to hold the information about all
+   * color values that can be used in a chart, to save unchecked color legend items
+   * from being removed. */
   segmentData: Observation[];
-  /** All data, used to e.g. draw the timeline of Time Slider. */
+  /** Full dataset, needed to show the timeline when using time slider.
+   * We can't use `scalesData` here, due to the fact the the `useChartData` hook gets
+   * re-rendered and prevents the timeline from working it such case. */
   allData: Observation[];
 };
 
