@@ -5,9 +5,16 @@ import { useTemporalVariable } from "@/charts/shared/chart-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds } from "@/charts/shared/use-width";
 import { ChartConfig, ChartType, isAnimationInConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { Observation, ObservationValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { NumericalMeasure, TemporalDimension } from "@/graphql/resolver-types";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  NumericalMeasure,
+  TemporalDimension,
+  TimeUnit,
+} from "@/graphql/resolver-types";
+
+// usetemporalXchartstate...
 
 export type CommonChartState = {
   chartType: ChartType;
@@ -18,7 +25,18 @@ export type CommonChartState = {
 
 type NumericalDimensionValueGetter = (d: Observation) => number | null;
 
+type StringDimensionValueGetter = (d: Observation) => string;
+
 type TemporalDimensionValueGetter = (d: Observation) => Date;
+
+export type BandXVariables = {
+  xDimension: DimensionMetadataFragment;
+  getX: StringDimensionValueGetter;
+  getXLabel: (d: string) => string;
+  getXAbbreviationOrLabel: (d: Observation) => string;
+  xTimeUnit: TimeUnit | undefined;
+  getXAsDate: TemporalDimensionValueGetter;
+};
 
 export type TemporalXVariables = {
   xDimension: TemporalDimension;
@@ -35,6 +53,20 @@ export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
   getY: NumericalDimensionValueGetter;
   yAxisLabel: string;
+};
+
+export type NumericalXErrorVariables = {
+  showXStandardError: boolean;
+  xErrorMeasure: DimensionMetadataFragment | undefined;
+  getXError: ((d: Observation) => ObservationValue) | null;
+  getXErrorRange: null | ((d: Observation) => [number, number]);
+};
+
+export type NumericalYErrorVariables = {
+  showYStandardError: boolean;
+  yErrorMeasure: DimensionMetadataFragment | undefined;
+  getYError: ((d: Observation) => ObservationValue) | null;
+  getYErrorRange: null | ((d: Observation) => [number, number]);
 };
 
 export type ChartStateData = {
@@ -59,11 +91,11 @@ export const useChartData = (
   observations: Observation[],
   {
     chartConfig,
-    getXDate,
+    getXAsDate,
     getSegment,
   }: {
     chartConfig: ChartConfig;
-    getXDate?: (d: Observation) => Date;
+    getXAsDate?: (d: Observation) => Date;
     getSegment?: (d: Observation) => string;
   }
 ): {
@@ -99,9 +131,9 @@ export const useChartData = (
 
   const { allFilters, legendFilters, timeFilters } = React.useMemo(() => {
     const timeRangeFilter =
-      getXDate && fromTime && toTime && timeRange?.active
+      getXAsDate && fromTime && toTime && timeRange?.active
         ? (d: Observation) => {
-            const time = getXDate(d).getTime();
+            const time = getXAsDate(d).getTime();
             return time >= fromTime && time <= toTime;
           }
         : null;
@@ -136,7 +168,7 @@ export const useChartData = (
       ),
     };
   }, [
-    getXDate,
+    getXAsDate,
     fromTime,
     toTime,
     timeRange?.active,

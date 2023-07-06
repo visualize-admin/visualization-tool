@@ -89,6 +89,7 @@ const useAreasState = (
 
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
+  const formatters = useChartFormatters(chartProps);
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
 
@@ -290,8 +291,6 @@ const useAreasState = (
   xScale.range([0, chartWidth]);
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
-
-  const formatters = useChartFormatters(chartProps);
 
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {

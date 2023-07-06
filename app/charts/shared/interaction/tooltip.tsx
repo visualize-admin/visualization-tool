@@ -44,6 +44,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { margins } = bounds;
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
     getAnnotationInfo(d);
+
   return (
     <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
       {tooltipContent ? (

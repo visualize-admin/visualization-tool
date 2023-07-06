@@ -406,7 +406,7 @@ export const useImputationNeeded = ({
   data,
 }: {
   chartConfig: ChartConfig;
-  data?: Array<Observation>;
+  data?: Observation[];
 }): boolean => {
   return useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {

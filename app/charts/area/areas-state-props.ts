@@ -113,7 +113,7 @@ export const useAreasStateData = (
     sortedPlottableData,
     {
       chartConfig,
-      getXDate: getX,
+      getXAsDate: getX,
       getSegment,
     }
   );
@@ -128,7 +128,7 @@ export const useAreasStateData = (
 
 const sortData = (
   data: Observation[],
-  { getX }: { getX: (d: Observation) => Date }
+  { getX }: Pick<AreasStateVariables, "getX">
 ): Observation[] => {
   return [...data].sort((a, b) => {
     return ascending(getX(a), getX(b));

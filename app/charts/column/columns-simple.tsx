@@ -9,11 +9,17 @@ import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const state = useChartState() as ColumnsState;
-  const { getX, getYErrorRange, chartData, yScale, xScale, showStandardError } =
-    state;
+  const {
+    getX,
+    getYErrorRange,
+    chartData,
+    yScale,
+    xScale,
+    showYStandardError,
+  } = state;
   const { margins } = state.bounds;
 
-  if (!getYErrorRange || !showStandardError) {
+  if (!getYErrorRange || !showYStandardError) {
     return null;
   }
 
@@ -24,6 +30,7 @@ export const ErrorWhiskers = () => {
         const bandwidth = xScale.bandwidth();
         const barwidth = Math.min(bandwidth, 15);
         const [y1, y2] = getYErrorRange(d);
+
         return (
           <VerticalWhisker
             key={i}

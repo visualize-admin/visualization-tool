@@ -1,6 +1,4 @@
 import {
-  ascending,
-  descending,
   extent,
   max,
   min,
@@ -13,58 +11,34 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
+import {
+  ColumnsStateVariables,
+  useColumnsStateData,
+  useColumnsStateVariables,
+} from "@/charts/column/columns-state-props";
 import {
   BOTTOM_MARGIN_OFFSET,
   LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/column/constants";
-import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
-import {
-  getLabelWithUnit,
-  getMaybeTemporalDimensionValues,
-  useOptionalNumericVariable,
-  useSegment,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
-import {
-  useErrorMeasure,
-  useErrorRange,
-  useErrorVariable,
-} from "@/configurator/components/ui-helpers";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
-import {
-  DimensionMetadataFragment,
-  TemporalDimension,
-  TimeUnit,
-} from "@/graphql/query-hooks";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -72,84 +46,43 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface ColumnsState extends CommonChartState {
-  chartType: "column";
-  chartData: Observation[];
-  getX: (d: Observation) => string;
-  getXLabel: (d: string) => string;
-  getXAsDate: (d: Observation) => Date;
-  xIsTime: boolean;
-  timeUnit: TimeUnit | undefined;
-  xScale: ScaleBand<string>;
-  xEntireScale: ScaleTime<number, number>;
-  xScaleInteraction: ScaleBand<string>;
-  getY: (d: Observation) => number | null;
-  getYErrorRange: null | ((d: Observation) => [number, number]);
-  yScale: ScaleLinear<number, number>;
-  getSegment: (d: Observation) => string;
-  getSegmentLabel: (segment: string) => string;
-  segments: string[];
-  colors: ScaleOrdinal<string, string>;
-  yAxisLabel: string;
-  yAxisDimension: DimensionMetadataFragment;
-  getAnnotationInfo: (d: Observation) => TooltipInfo;
-  showStandardError: boolean;
-}
+export type ColumnsState = CommonChartState &
+  ColumnsStateVariables & {
+    chartType: "column";
+    xScale: ScaleBand<string>;
+    xEntireScale: ScaleTime<number, number>;
+    xScaleInteraction: ScaleBand<string>;
+    yScale: ScaleLinear<number, number>;
+    colors: ScaleOrdinal<string, string>;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
+  };
 
 const useColumnsState = (
-  props: ChartProps<ColumnConfig> & { aspectRatio: number }
+  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  variables: ColumnsStateVariables,
+  data: ChartStateData
 ): ColumnsState => {
+  const { aspectRatio, chartConfig } = chartProps;
   const {
-    chartData,
-    scalesData,
-    allData,
-    measures,
-    dimensions,
-    aspectRatio,
-    chartConfig,
-  } = props;
+    xDimension,
+    getX,
+    getXAsDate,
+    getXAbbreviationOrLabel,
+    getXLabel,
+    xTimeUnit,
+    yMeasure,
+    getY,
+    yErrorMeasure,
+    getYError,
+    getYErrorRange,
+  } = variables;
+  const { chartData, scalesData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
+  const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
-
-  const dimensionsByIri = useMemo(
-    () => Object.fromEntries(dimensions.map((d) => [d.iri, d])),
-    [dimensions]
-  );
-  const xDimension = dimensionsByIri[fields.x.componentIri];
-  if (!xDimension) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
-  }
-
-  const xIsTime = isTemporalDimension(xDimension);
-  const timeUnit = xIsTime
-    ? (xDimension as TemporalDimension).timeUnit
-    : undefined;
-  const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, chartData);
-  }, [xDimension, chartData]);
-
-  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
-    useMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations,
-      dimensionIri: xDimension.iri,
-      dimensionValues: xDimensionValues,
-    });
-
-  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    chartData,
-    getXAbbreviationOrLabel,
-    fields.x.componentIri
-  );
-
-  const getXAsDate = useTemporalVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useErrorMeasure(props, fields.y.componentIri);
-  const getYErrorRange = useErrorRange(errorMeasure, getY);
-  const getYError = useErrorVariable(errorMeasure);
-  const getSegment = useSegment(fields.segment?.componentIri);
-  const showStandardError = get(fields, ["y", "showStandardError"], true);
 
   // Scales
   const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
@@ -222,15 +155,6 @@ const useColumnsState = (
       chartConfig.filters,
     ]);
 
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-  const formatters = useChartFormatters(props);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
   const { left, bottom } = useChartPadding(
     yScale,
     width,
@@ -261,13 +185,9 @@ const useColumnsState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  // segments
-  const { segments, colors, getSegmentLabel } = useMemo(() => {
-    const segments: string[] = [];
-    const colors = scaleOrdinal(segments).domain(segments);
-    const getSegmentLabel = (segment: string) => segment;
-
-    return { segments, colors, getSegmentLabel };
+  // Colors
+  const colors = useMemo(() => {
+    return scaleOrdinal([]).domain([]);
   }, []);
 
   // Tooltip
@@ -311,14 +231,14 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: xIsTime && timeUnit ? timeFormatUnit(xLabel, timeUnit) : xLabel,
+      xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,
         value: `${yValueFormatter(getY(d))}`,
         error: getYError
-          ? `${getYError(d)}${errorMeasure?.unit ?? ""}`
+          ? `${getYError(d)}${yErrorMeasure?.unit ?? ""}`
           : undefined,
-        color: colors(getSegment(d)) as string,
+        color: "",
       },
       values: undefined,
     };
@@ -329,89 +249,13 @@ const useColumnsState = (
     bounds,
     chartData,
     allData,
-    getX,
-    getXLabel,
-    getXAsDate,
     xScale,
     xEntireScale,
-    xIsTime,
-    timeUnit,
     xScaleInteraction,
-    getY,
-    getYErrorRange,
     yScale,
-    getSegment,
-    getSegmentLabel,
-    yAxisLabel,
-    yAxisDimension: yMeasure,
-    segments,
     colors,
     getAnnotationInfo,
-    showStandardError,
-  };
-};
-
-export const getColumnsStateMetadata = (
-  chartConfig: ColumnConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-
-  const x = fields.x.componentIri;
-  const xDimension = dimensions.find((d) => d.iri === x);
-
-  if (!xDimension) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
-  }
-
-  const xDimensionValues = getMaybeTemporalDimensionValues(
-    xDimension,
-    observations
-  );
-
-  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations,
-      dimensionIri: xDimension.iri,
-      dimensionValues: xDimensionValues,
-    });
-
-  const { getValue: getX } = getObservationLabels(
-    observations,
-    getXAbbreviationOrLabel,
-    fields.x.componentIri
-  );
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const sortingType = fields.x.sorting?.sortingType;
-  const sortingOrder = fields.x.sorting?.sortingOrder;
-
-  return {
-    assureDefined: {
-      getY,
-    },
-    sortData: (data) => {
-      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => descending(getX(a), getX(b)));
-      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-        return [...data].sort((a, b) =>
-          descending(getY(a) ?? -1, getY(b) ?? -1)
-        );
-      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-        return [...data].sort((a, b) =>
-          ascending(getY(a) ?? -1, getY(b) ?? -1)
-        );
-      } else {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-      }
-    },
+    ...variables,
   };
 };
 
@@ -420,8 +264,10 @@ const ColumnChartProvider = (
     ChartProps<ColumnConfig> & { aspectRatio: number }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = useColumnsState(rest);
+  const { children, ...chartProps } = props;
+  const variables = useColumnsStateVariables(chartProps);
+  const data = useColumnsStateData(chartProps, variables);
+  const state = useColumnsState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
