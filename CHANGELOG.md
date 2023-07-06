@@ -12,6 +12,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
   - Stacked bar chart now doesn't render gaps in case of a missing value
+  - Imputation options for area charts are now available when all segments are defined, but there are undefined values in Y dimension
 - Tests
   - Introduced load tests using k6
 

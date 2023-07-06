@@ -408,24 +408,30 @@ export const useImputationNeeded = ({
   chartConfig: ChartConfig;
   data?: Array<Observation>;
 }): boolean => {
-  const imputationNeeded = useMemo(() => {
+  return useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {
-      return checkForMissingValuesInSegments(
-        group(data, (d) => d[chartConfig.fields.x.componentIri] as string),
-        [
-          ...new Set(
-            data.map((d) =>
-              getSegment(chartConfig.fields.segment?.componentIri)(d)
-            )
-          ),
-        ]
+      const groupedData = group(
+        data.filter((d) => {
+          const y = d[chartConfig.fields.y.componentIri];
+          return y !== null && y !== undefined;
+        }),
+        (d) => d[chartConfig.fields.x.componentIri] as string
       );
-    } else {
-      return false;
-    }
-  }, [chartConfig, data]);
 
-  return imputationNeeded;
+      return checkForMissingValuesInSegments(
+        groupedData,
+        Array.from(
+          new Set(
+            data.map((d) => {
+              return getSegment(chartConfig.fields.segment?.componentIri)(d);
+            })
+          )
+        )
+      );
+    }
+
+    return false;
+  }, [chartConfig, data]);
 };
 
 /** Use to potentially extract temporal values from data. This is needed for
