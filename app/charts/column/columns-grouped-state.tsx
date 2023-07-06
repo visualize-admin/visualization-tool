@@ -354,7 +354,15 @@ const useGroupedColumnsState = (
     const xKeys = xScale.domain();
     const groupedMap = group(chartData, getX);
     const grouped: [string, Observation[]][] =
-      groupedMap.size > 0 ? [...groupedMap] : xKeys.map((d) => [d, []]);
+      groupedMap.size < xKeys.length
+        ? xKeys.map((d) => {
+            if (groupedMap.has(d)) {
+              return [d, groupedMap.get(d) as Observation[]];
+            } else {
+              return [d, []];
+            }
+          })
+        : [...groupedMap];
 
     return grouped.map(([key, data]) => {
       return [
