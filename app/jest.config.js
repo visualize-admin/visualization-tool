@@ -12,6 +12,10 @@ const config = {
     "^@/(.*)$": "<rootDir>/$1",
     "\\.(css)$": "<rootDir>/test/style-mock.js",
   },
+  transform: {
+    "node_modules/@rdf*": "ts-jest",
+  },
+  transformIgnorePatterns: ["node_modules/!@rdf*"],
 };
 
 module.exports = config;

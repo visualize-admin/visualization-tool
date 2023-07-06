@@ -15,7 +15,7 @@ import {
 } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -24,24 +24,31 @@ import {
   PADDING_OUTER,
 } from "@/charts/column/constants";
 import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
+import {
   getLabelWithUnit,
-  useDataAfterInteractiveFilters,
   getMaybeTemporalDimensionValues,
   useOptionalNumericVariable,
-  usePlottableData,
   useSegment,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import { useChartPadding } from "@/charts/shared/padding";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnConfig, SortingOrder, SortingType } from "@/configurator";
+import { ColumnConfig } from "@/configurator";
 import {
   useErrorMeasure,
   useErrorRange,
@@ -67,8 +74,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface ColumnsState extends CommonChartState {
   chartType: "column";
-  preparedData: Observation[];
-  allData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => string;
   getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
@@ -91,13 +97,18 @@ export interface ColumnsState extends CommonChartState {
 }
 
 const useColumnsState = (
-  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-    chartConfig: ColumnConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsState => {
-  const { data, measures, dimensions, aspectRatio, chartConfig } = chartProps;
-  const { interactiveFiltersConfig, fields } = chartConfig;
+  const {
+    chartData,
+    scalesData,
+    allData,
+    measures,
+    dimensions,
+    aspectRatio,
+    chartConfig,
+  } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
@@ -116,8 +127,8 @@ const useColumnsState = (
     ? (xDimension as TemporalDimension).timeUnit
     : undefined;
   const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, data);
-  }, [xDimension, data]);
+    return getMaybeTemporalDimensionValues(xDimension, chartData);
+  }, [xDimension, chartData]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
@@ -127,46 +138,18 @@ const useColumnsState = (
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    data,
+    chartData,
     getXAbbreviationOrLabel,
     fields.x.componentIri
   );
 
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const errorMeasure = useErrorMeasure(props, fields.y.componentIri);
   const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
   const showStandardError = get(fields, ["y", "showStandardError"], true);
-
-  const sortingType = fields.x.sorting?.sortingType;
-  const sortingOrder = fields.x.sorting?.sortingOrder;
-
-  // All data
-  const sortedData = useMemo(() => {
-    return sortData({
-      data,
-      sortingType,
-      sortingOrder,
-      getX,
-      getY,
-    });
-  }, [data, getX, getY, sortingType, sortingOrder]);
-
-  // Data
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
-    plotters: [getXAsDate, getY],
-  });
-
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getX: getXAsDate,
-  });
 
   // Scales
   const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
@@ -196,9 +179,10 @@ const useColumnsState = (
         .paddingOuter(0);
 
       // x as time, needs to be memoized!
-      const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
-        getXAsDate(d)
-      ) as [Date, Date];
+      const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
+        Date,
+        Date
+      ];
 
       const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
@@ -231,7 +215,6 @@ const useColumnsState = (
       getXAsDate,
       getY,
       getYErrorRange,
-      plottableSortedData,
       scalesData,
       fields.x.sorting,
       fields.x.useAbbreviations,
@@ -240,7 +223,7 @@ const useColumnsState = (
     ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   if (!yMeasure) {
     throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
@@ -344,8 +327,8 @@ const useColumnsState = (
   return {
     chartType: "column",
     bounds,
-    preparedData,
-    allData: plottableSortedData,
+    chartData,
+    allData,
     getX,
     getXLabel,
     getXAsDate,
@@ -368,82 +351,93 @@ const useColumnsState = (
   };
 };
 
-const ColumnChartProvider = ({
-  data,
-  measures,
-  dimensions,
-  aspectRatio,
-  children,
-  chartConfig,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  children: ReactNode;
-  aspectRatio: number;
-  chartConfig: ColumnConfig;
-}) => {
-  const state = useColumnsState({
-    data,
-    measures,
-    dimensions,
-    aspectRatio,
-    chartConfig,
-  });
+export const getColumnsStateMetadata = (
+  chartConfig: ColumnConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+
+  const x = fields.x.componentIri;
+  const xDimension = dimensions.find((d) => d.iri === x);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+
+  const xDimensionValues = getMaybeTemporalDimensionValues(
+    xDimension,
+    observations
+  );
+
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimensionValues,
+    });
+
+  const { getValue: getX } = getObservationLabels(
+    observations,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
+  );
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
+  const sortingType = fields.x.sorting?.sortingType;
+  const sortingOrder = fields.x.sorting?.sortingOrder;
+
+  return {
+    assureDefined: {
+      getY,
+    },
+    sortData: (data) => {
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => descending(getX(a), getX(b)));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
+        return [...data].sort((a, b) =>
+          descending(getY(a) ?? -1, getY(b) ?? -1)
+        );
+      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
+        return [...data].sort((a, b) =>
+          ascending(getY(a) ?? -1, getY(b) ?? -1)
+        );
+      } else {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      }
+    },
+  };
+};
+
+const ColumnChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useColumnsState(rest);
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const ColumnChart = ({
-  data,
-  measures,
-  dimensions,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  chartConfig: ColumnConfig;
-}) => {
+export const ColumnChart = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <ColumnChartProvider
-          data={data}
-          measures={measures}
-          dimensions={dimensions}
-          aspectRatio={aspectRatio}
-          chartConfig={chartConfig}
-        >
-          {children}
-        </ColumnChartProvider>
+        <ColumnChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );
-};
-
-const sortData = ({
-  data,
-  getX,
-  getY,
-  sortingType,
-  sortingOrder,
-}: {
-  data: Observation[];
-  getX: (d: Observation) => string;
-  getY: (d: Observation) => number | null;
-  sortingType?: SortingType;
-  sortingOrder?: SortingOrder;
-}) => {
-  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a) ?? -1, getY(b) ?? -1));
-  } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a) ?? -1, getY(b) ?? -1));
-  } else {
-    // default to ascending alphabetical
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
 };

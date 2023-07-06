@@ -22,7 +22,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -31,24 +31,31 @@ import {
   PADDING_OUTER,
 } from "@/charts/column/constants";
 import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
+import {
   getLabelWithUnit,
   getMaybeTemporalDimensionValues,
   getWideData,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import { useChartPadding } from "@/charts/shared/padding";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
+import { ColumnConfig } from "@/configurator";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -63,8 +70,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface StackedColumnsState extends CommonChartState {
   chartType: "column";
-  preparedData: Observation[];
-  allData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => string;
   getXLabel: (d: string) => string;
   getXAsDate: (d: Observation) => Date;
@@ -88,17 +94,19 @@ export interface StackedColumnsState extends CommonChartState {
 }
 
 const useColumnsStackedState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    fields: ColumnFields;
-    aspectRatio: number;
-  }
+  props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): StackedColumnsState => {
-  const { data, fields, measures, dimensions, chartConfig, aspectRatio } =
-    chartProps;
-  const { interactiveFiltersConfig } = chartConfig;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    allData,
+    measures,
+    dimensions,
+    chartConfig,
+    aspectRatio,
+  } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -112,8 +120,8 @@ const useColumnsStackedState = (
 
   const xIsTime = isTemporalDimension(xDimension);
   const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, data);
-  }, [xDimension, data]);
+    return getMaybeTemporalDimensionValues(xDimension, scalesData);
+  }, [xDimension, scalesData]);
 
   const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
     useMaybeAbbreviations({
@@ -123,7 +131,7 @@ const useColumnsStackedState = (
     });
 
   const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    data,
+    scalesData,
     getXAbbreviationOrLabel,
     fields.x.componentIri
   );
@@ -146,7 +154,7 @@ const useColumnsStackedState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -157,11 +165,10 @@ const useColumnsStackedState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  // All Data
-  const xSortingType = fields.x.sorting?.sortingType;
-  const xSortingOrder = fields.x.sorting?.sortingOrder;
-
-  const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
+  const allDataGroupedByX = useMemo(
+    () => group(chartData, getX),
+    [chartData, getX]
+  );
   const allDataWide = useMemo(
     () =>
       getWideData({
@@ -173,68 +180,29 @@ const useColumnsStackedState = (
     [allDataGroupedByX, xKey, getY, getSegment]
   );
 
-  const xOrder = useMemo(
-    () =>
-      allDataWide
-        .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-        .map((d) => getX(d)),
-    [allDataWide, getX]
-  );
-
-  const sortedData = useMemo(
-    () =>
-      sortData({
-        data,
-        getX,
-        sortingType: xSortingType,
-        sortingOrder: xSortingOrder,
-        xOrder,
-      }),
-    [data, getX, xSortingType, xSortingOrder, xOrder]
-  );
-
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
-    plotters: [getXAsDate, getY],
-  });
-
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getX: getXAsDate,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const preparedDataGroupedByX = useMemo(
-    () => group(preparedData, getX),
-    [preparedData, getX]
+    () => group(chartData, getX),
+    [chartData, getX]
   );
 
   const sumsBySegment = useMemo(
     () =>
       Object.fromEntries([
         ...rollup(
-          plottableSortedData,
+          scalesData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getSegment(x)
         ),
       ]),
-    [getSegment, getY, plottableSortedData]
+    [getSegment, getY, scalesData]
   );
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
-  const { segments, plottableSegments } = useMemo(() => {
-    const allUniqueSegments = Array.from(
-      new Set(plottableSortedData.map(getSegment))
-    );
-    const allPlottableSegments = Array.from(
-      new Set(preparedData.map(getSegment))
-    );
-
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
+    const uniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
@@ -242,7 +210,6 @@ const useColumnsStackedState = (
       useAbbreviations: fields.segment?.useAbbreviations,
       dimensionFilter: segmentFilter,
     });
-
     const allSegments = orderBy(
       allUniqueSegments,
       sorters,
@@ -250,14 +217,12 @@ const useColumnsStackedState = (
     );
 
     return {
-      segments: allSegments,
-      plottableSegments: allSegments.filter((d) =>
-        allPlottableSegments.includes(d)
-      ),
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
     };
   }, [
-    plottableSortedData,
-    preparedData,
+    scalesData,
+    segmentData,
     segmentDimension,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
@@ -271,7 +236,7 @@ const useColumnsStackedState = (
     xKey,
     getY,
     getSegment,
-    allSegments: plottableSegments,
+    allSegments: segments,
     imputationType: "zeros",
   });
 
@@ -293,12 +258,12 @@ const useColumnsStackedState = (
     () =>
       Object.fromEntries([
         ...rollup(
-          plottableSortedData,
+          scalesData,
           (v) => sum(v, (x) => getY(x)),
           (x) => getX(x)
         ),
       ]),
-    [plottableSortedData, getX, getY]
+    [scalesData, getX, getY]
   );
   // Map ordered segments labels to colors
   const {
@@ -316,7 +281,7 @@ const useColumnsStackedState = (
       segmentsByAbbreviationOrLabel &&
       fields.segment.colorMapping
     ) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
         // See https://github.com/visualize-admin/visualization-tool/issues/97
         const dvIri =
@@ -339,7 +304,7 @@ const useColumnsStackedState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
       colors.unknown(() => undefined);
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
       colors.unknown(() => undefined);
     }
@@ -368,20 +333,21 @@ const useColumnsStackedState = (
       .paddingOuter(0);
 
     // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(plottableSortedData, (d) =>
-      getXAsDate(d)
-    ) as [Date, Date];
+    const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
+      Date,
+      Date
+    ];
     const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
     // y
     const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
-      segments
+      allSegments
         .map((s) => d[s])
         .filter((d) => d < 0)
         .reduce((a, b) => a + b, 0)
     );
     const maxTotal = max<$FixMe, number>(scalesWideData, (d) =>
-      segments
+      allSegments
         .map((s) => d[s])
         .filter((d) => d >= 0)
         .reduce((a, b) => a + b, 0)
@@ -407,11 +373,10 @@ const useColumnsStackedState = (
     getX,
     getXLabel,
     getXAsDate,
-    plottableSortedData,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
-    segments,
+    allSegments,
   ]);
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -440,7 +405,7 @@ const useColumnsStackedState = (
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDiverging)
-      .keys(plottableSegments);
+      .keys(segments);
 
     const series = stacked(
       chartWideData as {
@@ -448,7 +413,7 @@ const useColumnsStackedState = (
       }[]
     );
     return series;
-  }, [chartWideData, fields.segment?.sorting, plottableSegments]);
+  }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding(
@@ -481,7 +446,7 @@ const useColumnsStackedState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   // Tooltips
   const getAnnotationInfo = useCallback(
@@ -497,7 +462,7 @@ const useColumnsStackedState = (
         data: tooltipValues,
         order: segments,
         getCategory: getSegment,
-        sortOrder: "asc",
+        sortingOrder: "asc",
       });
 
       const cumulativeSum = (
@@ -582,8 +547,8 @@ const useColumnsStackedState = (
   return {
     chartType: "column",
     bounds,
-    preparedData,
-    allData: plottableSortedData,
+    chartData,
+    allData,
     getX,
     getXLabel,
     getXAsDate,
@@ -607,91 +572,136 @@ const useColumnsStackedState = (
   };
 };
 
+export const getColumnsStackedStateMetadata = (
+  chartConfig: ColumnConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const xKey = fields.x.componentIri;
+  const xDimension = dimensions.find((d) => d.iri === xKey);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${xKey}> in cube!`);
+  }
+
+  const xDimensionValues = getMaybeTemporalDimensionValues(
+    xDimension,
+    observations
+  );
+
+  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.x.useAbbreviations,
+      dimensionIri: xDimension.iri,
+      dimensionValues: xDimensionValues,
+    });
+
+  const { getValue: getX } = getObservationLabels(
+    observations,
+    getXAbbreviationOrLabel,
+    fields.x.componentIri
+  );
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
+  const allDataGroupedByX = group(observations, getX);
+  const allDataWide = getWideData({
+    dataGroupedByX: allDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+  });
+
+  const xOrder = allDataWide
+    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
+    .map((d) => getX(d));
+
+  const { sortingOrder, sortingType } = fields.x.sorting ?? {};
+
+  return {
+    assureDefined: {
+      getY,
+    },
+    getSegment,
+    sortData: (data) => {
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => descending(getX(a), getX(b)));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      } else if (sortingType === "byMeasure") {
+        return sortByIndex({
+          data,
+          order: xOrder,
+          getCategory: getX,
+          sortingOrder,
+        });
+      } else {
+        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+      }
+    },
+  };
+};
+
 const StackedColumnsChartProvider = ({
-  data,
-  fields,
-  measures,
-  dimensions,
   chartConfig,
+  chartData,
+  scalesData,
+  segmentData,
+  allData,
+  dimensions,
+  measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  fields: ColumnFields;
-  aspectRatio: number;
-}) => {
+}: React.PropsWithChildren<
+  ChartProps<ColumnConfig> & { aspectRatio: number }
+>) => {
   const state = useColumnsStackedState({
-    data,
-    fields,
-    dimensions,
     chartConfig,
+    chartData,
+    scalesData,
+    segmentData,
+    allData,
+    dimensions,
     measures,
     aspectRatio,
   });
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const StackedColumnsChart = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  aspectRatio: number;
-  children: ReactNode;
-  fields: ColumnFields;
-}) => {
+export const StackedColumnsChart = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <StackedColumnsChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          chartConfig={chartConfig}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </StackedColumnsChartProvider>
+        <StackedColumnsChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );
-};
-
-const sortData = ({
-  data,
-  getX,
-  sortingType,
-  sortingOrder,
-  xOrder,
-}: {
-  data: Observation[];
-  getX: (d: Observation) => string;
-  sortingType: SortingType | undefined;
-  sortingOrder: SortingOrder | undefined;
-  xOrder: string[];
-}) => {
-  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingType === "byMeasure") {
-    const sd = sortByIndex({
-      data,
-      order: xOrder,
-      getCategory: getX,
-      sortOrder: sortingOrder,
-    });
-
-    return sd;
-  } else {
-    // default to scending alphabetical
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
 };

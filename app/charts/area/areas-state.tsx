@@ -18,29 +18,37 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
+import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
   stackOffsetDivergingPositiveZeros,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { AreaConfig, AreaFields } from "@/configurator";
+import { AreaConfig } from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -60,9 +68,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface AreasState extends CommonChartState {
   chartType: "area";
-  data: Observation[];
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
@@ -81,15 +87,19 @@ export interface AreasState extends CommonChartState {
 }
 
 const useAreasState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    aspectRatio: number;
-  }
+  props: ChartProps<AreaConfig> & { aspectRatio: number }
 ): AreasState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
-  const { fields, interactiveFiltersConfig } = chartConfig as AreaConfig;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    allData,
+    dimensions,
+    measures,
+    chartConfig,
+    aspectRatio,
+  } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
@@ -123,7 +133,7 @@ const useAreasState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -135,25 +145,65 @@ const useAreasState = (
   }, [segmentDimension?.values]);
 
   const hasSegment = fields.segment;
-  const allSegments = useMemo(
-    () => [...new Set(data.map((d) => getSegment(d)))],
-    [data, getSegment]
-  );
+
+  /** Ordered segments */
+  const segmentSorting = fields.segment?.sorting;
+  const segmentSortingType = segmentSorting?.sortingType;
+  const segmentSortingOrder = segmentSorting?.sortingOrder;
+
+  const segmentFilter = segmentDimension?.iri
+    ? chartConfig.filters[segmentDimension?.iri]
+    : undefined;
+
+  const sumsBySegment = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        segmentData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
+  }, [segmentData, getY, getSegment]);
+
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = Array.from(
+      new Set(segmentData.map((d) => getSegment(d)))
+    );
+    const uniqueSegments = Array.from(
+      new Set(scalesData.map((d) => getSegment(d)))
+    );
+    const sorters = makeDimensionValueSorters(segmentDimension, {
+      sorting: segmentSorting,
+      sumsBySegment,
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionFilter: segmentFilter,
+    });
+    const allSegments = orderBy(
+      allUniqueSegments,
+      sorters,
+      getSortingOrders(sorters, segmentSorting)
+    );
+
+    return {
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
+    };
+  }, [
+    segmentData,
+    scalesData,
+    sumsBySegment,
+    segmentDimension,
+    segmentSorting,
+    segmentFilter,
+    getSegment,
+    fields.segment?.useAbbreviations,
+  ]);
 
   const xKey = fields.x.componentIri;
 
-  // All Data (used for brushing)
-  const sortedData = useMemo(
-    () =>
-      [...data]
-        // Always sort by x first (TemporalDimension)
-        .sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
-  );
-
   const dataGroupedByX = useMemo(
-    () => group(data, getGroups),
-    [data, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const allDataWide = useMemo(
@@ -167,23 +217,9 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
-    plotters: [getX, getY],
-  });
-
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
-    interactiveFiltersConfig,
-    // No animation yet for areas
-    animationField: undefined,
-    getX,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const chartWideData = useMemo(() => {
-    const preparedDataGroupedByX = group(preparedData, getGroups);
+    const preparedDataGroupedByX = group(chartData, getGroups);
+
     return getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
@@ -193,7 +229,7 @@ const useAreasState = (
       imputationType: fields.y.imputationType,
     });
   }, [
-    preparedData,
+    chartData,
     getGroups,
     xKey,
     getY,
@@ -210,49 +246,6 @@ const useAreasState = (
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  /** Ordered segments */
-  const segmentSorting = fields.segment?.sorting;
-  const segmentSortingType = segmentSorting?.sortingType;
-  const segmentSortingOrder = segmentSorting?.sortingOrder;
-
-  const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension?.iri]
-    : undefined;
-  const segments = useMemo(() => {
-    const totalValueBySegment = Object.fromEntries([
-      ...rollup(
-        plottableSortedData,
-        (v) => sum(v, (x) => getY(x)),
-        (x) => getSegment(x)
-      ),
-    ]);
-
-    const uniqueSegments = Array.from(
-      new Set(plottableSortedData.map((d) => getSegment(d)))
-    );
-
-    const sorters = makeDimensionValueSorters(segmentDimension, {
-      sorting: segmentSorting,
-      sumsBySegment: totalValueBySegment,
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionFilter: segmentFilter,
-    });
-
-    return orderBy(
-      uniqueSegments,
-      sorters,
-      getSortingOrders(sorters, segmentSorting)
-    );
-  }, [
-    plottableSortedData,
-    segmentDimension,
-    segmentSorting,
-    segmentFilter,
-    getY,
-    getSegment,
-    fields.segment?.useAbbreviations,
-  ]);
-
   /** Transform data  */
   const series = useMemo(() => {
     const stackOrder =
@@ -261,11 +254,11 @@ const useAreasState = (
         : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
         ? stackOrderDescending
         : stackOrderReverse;
-
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDivergingPositiveZeros)
       .keys(segments);
+
     return stacked(chartWideData as { [key: string]: number }[]);
   }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
@@ -282,10 +275,7 @@ const useAreasState = (
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
-    const xEntireDomain = extent(plottableSortedData, (d) => getX(d)) as [
-      Date,
-      Date
-    ];
+    const xEntireDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomain);
     const yScale = scaleLinear().domain(yDomain).nice();
     const colors = scaleOrdinal<string, string>();
@@ -294,7 +284,7 @@ const useAreasState = (
     ) as $FixMe;
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ||
           segmentsByValue.get(segment)?.value ||
@@ -310,7 +300,7 @@ const useAreasState = (
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
       colors.unknown(() => undefined);
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
       colors.unknown(() => undefined);
     }
@@ -319,11 +309,11 @@ const useAreasState = (
     dimensions,
     fields.segment,
     getX,
-    plottableSortedData,
+    chartData,
     scalesData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
-    segments,
+    allSegments,
     series,
   ]);
 
@@ -357,20 +347,20 @@ const useAreasState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
-    const tooltipValues = preparedData.filter(
+    const tooltipValues = chartData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      sortOrder: "asc",
+      sortingOrder: "asc",
     });
 
     const yAnchor = 0;
@@ -406,9 +396,8 @@ const useAreasState = (
   return {
     chartType: "area",
     bounds,
-    data,
-    allData: plottableSortedData,
-    preparedData,
+    chartData,
+    allData,
     getX,
     xScale,
     xEntireScale,
@@ -427,53 +416,76 @@ const useAreasState = (
   };
 };
 
-const AreaChartProvider = ({
-  data,
-  measures,
-  dimensions,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  aspectRatio: number;
-}) => {
-  const state = useAreasState({
-    data,
-    dimensions,
-    measures,
-    chartConfig,
-    aspectRatio,
-  });
+export const getAreasStateMetadata = (
+  chartConfig: AreaConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const x = fields.x.componentIri;
+  const getXDate = (d: Observation) => {
+    return parseDate(`${d[x]}`);
+  };
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
+  return {
+    assureDefined: {
+      getX: getXDate,
+      getY,
+    },
+    getXDate,
+    getSegment,
+    sortData: (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getXDate(a), getXDate(b));
+      });
+    },
+  };
+};
+
+const AreaChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<AreaConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useAreasState(rest);
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const AreaChart = ({
-  data,
-  measures,
-  dimensions,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures" | "chartConfig"> & {
-  children: ReactNode;
-  fields: AreaFields;
-  aspectRatio: number;
-}) => {
+export const AreaChart = (
+  props: React.PropsWithChildren<
+    ChartProps<AreaConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <AreaChartProvider
-          data={data}
-          dimensions={dimensions}
-          measures={measures}
-          chartConfig={chartConfig}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </AreaChartProvider>
+        <AreaChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

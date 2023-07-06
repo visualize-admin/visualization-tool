@@ -10,6 +10,16 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Fixes
+  - Scales now adapt to color legend filter when using time slider
+  - Columns now properly animate out, instead of disappearing
+- Tests
+  - Unit tests that import `rdf-js` library now run without errors
+- Refactors:
+  - Consolidated data calculation and sorting for all charts in one place to prepare for app-wide time slider implementation
+
+# [3.20.3] - 2023-07-04
+
+- Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
   - Stacked bar chart now doesn't render gaps in case of a missing value
 - Tests

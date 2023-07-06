@@ -6,7 +6,7 @@ import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
@@ -14,14 +14,14 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { DataSource, LineConfig, QueryFilters } from "@/config-types";
-import { Observation } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
   useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+
+import { ChartProps } from "../shared/ChartProps";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -37,33 +37,28 @@ export const ChartLinesVisualization = ({
   published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIrisToFilterBy = published
-    ? getChartConfigComponentIris(chartConfig)
+  const componentIris = published
+    ? extractComponentIris(chartConfig)
     : undefined;
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [componentsQuery] = useComponentsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters: queryFilters,
     },
   });
@@ -79,27 +74,12 @@ export const ChartLinesVisualization = ({
   );
 };
 
-export const ChartLines = memo(function ChartLines({
-  observations,
-  dimensions,
-  measures,
+export const ChartLines = memo((props: ChartProps<LineConfig>) => {
+  const { chartConfig } = props;
+  const { fields, interactiveFiltersConfig } = chartConfig;
 
-  chartConfig,
-}: {
-  observations: Observation[];
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
-  chartConfig: LineConfig;
-}) {
-  const { interactiveFiltersConfig, fields } = chartConfig;
   return (
-    <LineChart
-      data={observations}
-      dimensions={dimensions}
-      measures={measures}
-      chartConfig={chartConfig}
-      aspectRatio={0.4}
-    >
+    <LineChart aspectRatio={0.4} {...props}>
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />

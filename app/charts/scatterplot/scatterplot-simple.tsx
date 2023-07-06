@@ -6,7 +6,7 @@ import { useTheme } from "@/themes";
 
 export const Scatterplot = () => {
   const {
-    preparedData,
+    chartData,
     bounds,
     getX,
     xScale,
@@ -22,7 +22,7 @@ export const Scatterplot = () => {
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {preparedData.map((d, i) => {
+      {chartData.map((d, i) => {
         return (
           <Dot
             key={i}
