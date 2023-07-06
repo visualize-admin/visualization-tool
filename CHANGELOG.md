@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - It's now possible to animate the Map Chart 🎬 🗺️
 - Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
   - Stacked bar chart now doesn't render gaps in case of a missing value
