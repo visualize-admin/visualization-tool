@@ -1,5 +1,4 @@
-import { axisBottom } from "d3";
-import { select, Selection } from "d3";
+import { axisBottom, select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
@@ -7,11 +6,12 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xAxisDimension } =
+  const { xScale, bounds, xAxisLabel, xMeasure } =
     useChartState() as ScatterplotState;
   const { chartHeight, margins } = bounds;
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
@@ -58,7 +58,7 @@ export const AxisWidthLinear = () => {
         })`}
         style={{ textAlign: "right" }}
       >
-        <OpenMetadataPanelWrapper dim={xAxisDimension}>
+        <OpenMetadataPanelWrapper dim={xMeasure as DimensionMetadataFragment}>
           <span style={{ fontSize: labelFontSize }}>{xAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

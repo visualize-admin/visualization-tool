@@ -7,8 +7,6 @@ import {
   ScaleBand,
   ScaleLinear,
   scaleLinear,
-  ScaleOrdinal,
-  scaleOrdinal,
   scaleTime,
   ScaleTime,
   sum,
@@ -55,7 +53,6 @@ export type ColumnsState = CommonChartState &
     xEntireScale: ScaleTime<number, number>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
-    colors: ScaleOrdinal<string, string>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
@@ -199,11 +196,6 @@ const useColumnsState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  // Colors
-  const colors = useMemo(() => {
-    return scaleOrdinal([]).domain([]);
-  }, []);
-
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const xRef = xScale(getX(d)) as number;
@@ -267,7 +259,6 @@ const useColumnsState = (
     xEntireScale,
     xScaleInteraction,
     yScale,
-    colors,
     getAnnotationInfo,
     ...variables,
   };

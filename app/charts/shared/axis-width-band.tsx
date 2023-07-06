@@ -8,7 +8,7 @@ import { useTimeFormatUnit } from "@/formatters";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, yScale, bounds, xIsTime, timeUnit, getXLabel } =
+  const { xScale, yScale, bounds, xTimeUnit, getXLabel } =
     useChartState() as ColumnsState;
 
   const formatDate = useTimeFormatUnit();
@@ -19,15 +19,16 @@ export const AxisWidthBand = () => {
     useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const rotation = true; // xScale.domain().length > 6;
+    // FIXME: make dynamic
+    const rotation = true;
     const hasNegativeValues = yScale.domain()[0] < 0;
 
     const axis = axisBottom(xScale)
       .tickSizeOuter(0)
       .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
 
-    if (xIsTime && timeUnit) {
-      axis.tickFormat((d) => formatDate(d, timeUnit));
+    if (xTimeUnit) {
+      axis.tickFormat((d) => formatDate(d, xTimeUnit));
     } else {
       axis.tickFormat((d) => getXLabel(d));
     }
