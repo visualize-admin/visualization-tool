@@ -110,6 +110,7 @@ export const ChartMapVisualization = ({
       // Check if original, unfiltered number of shapes is bigger than 0.
       (shapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
     (symbolDimensionIri !== "" && coordinates?.length) ||
+    (shapes?.topology?.objects?.shapes as any)?.geometries?.length ||
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
