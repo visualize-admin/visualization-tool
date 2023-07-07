@@ -7,22 +7,26 @@ import {
 import {
   ChartStateData,
   NumericalYVariables,
+  RenderingVariables,
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { PieConfig } from "@/configurator";
 import { isNumericalMeasure } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type PieStateVariables = NumericalYVariables & SegmentVariables;
+export type PieStateVariables = NumericalYVariables &
+  SegmentVariables &
+  RenderingVariables;
 
 export const usePieStateVariables = (
   props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { y, segment } = fields;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y, segment, animation } = fields;
 
   const yMeasure = measures.find((d) => d.iri === y.componentIri);
   if (!yMeasure) {
@@ -50,6 +54,13 @@ export const usePieStateVariables = (
     field: segment,
   });
 
+  const dimensionKeys = dimensions.map((d) => d.iri);
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensionKeys,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     yMeasure,
     getY,
@@ -59,6 +70,7 @@ export const usePieStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 
