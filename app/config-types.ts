@@ -806,6 +806,7 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
         componentIri: FieldAdjuster<MapConfig, string>;
       };
     };
+    animation: FieldAdjuster<MapConfig, AnimationField | undefined>;
   };
 };
 
