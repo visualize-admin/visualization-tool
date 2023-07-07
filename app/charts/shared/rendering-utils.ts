@@ -1,7 +1,12 @@
 import React from "react";
 
-import { AnimationField, InteractiveFiltersConfig } from "@/configurator";
+import {
+  AnimationField,
+  Filters,
+  InteractiveFiltersConfig,
+} from "@/configurator";
 import { Observation } from "@/domain/data";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const TRANSITION_DURATION = 400;
 
@@ -9,12 +14,17 @@ export const TRANSITION_DURATION = 400;
  * It's important to animate them correctly when using d3.
  */
 export const useRenderingKeyVariable = (
-  dimensionKeys: string[],
+  dimensions: DimensionMetadataFragment[],
+  filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined
 ) => {
   const filterableDimensionKeys = React.useMemo(() => {
-    const keysToRemove: string[] = [];
+    // Remove single filters from the rendering key, as we want to be able
+    // to animate them.
+    const keysToRemove = Object.entries(filters)
+      .filter((d) => d[1].type === "single")
+      .map((d) => d[0]);
 
     if (interactiveFiltersConfig) {
       const { dataFilters, legend, timeRange } = interactiveFiltersConfig;
@@ -36,12 +46,21 @@ export const useRenderingKeyVariable = (
       keysToRemove.push(animationField.componentIri);
     }
 
-    return dimensionKeys.filter((d) => !keysToRemove.includes(d));
-  }, [dimensionKeys, interactiveFiltersConfig, animationField]);
+    return dimensions
+      .map((d) => d.iri)
+      .filter((d) => !keysToRemove.includes(d));
+  }, [dimensions, filters, interactiveFiltersConfig, animationField]);
 
+  /** Optinally provide an option to pass a segment to the key.
+   * This is useful for stacked charts, where we can't easily
+   * access the segment value from the data.
+   */
   const getRenderingKey = React.useCallback(
-    (d: Observation) => {
-      return filterableDimensionKeys.map((key) => d[key]).join("");
+    (d: Observation, segment: string = "") => {
+      return filterableDimensionKeys
+        .map((key) => d[key])
+        .concat(segment)
+        .join("");
     },
     [filterableDimensionKeys]
   );

@@ -27,7 +27,7 @@ export const useScatterplotStateVariables = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
 ): ScatterplotStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
   const xMeasure = measures.find((d) => d.iri === x.componentIri);
@@ -67,9 +67,9 @@ export const useScatterplotStateVariables = (
     field: segment,
   });
 
-  const dimensionKeys = dimensions.map((d) => d.iri);
   const getRenderingKey = useRenderingKeyVariable(
-    dimensionKeys,
+    dimensions,
+    filters,
     interactiveFiltersConfig,
     animation
   );

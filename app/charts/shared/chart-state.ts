@@ -31,7 +31,11 @@ type StringValueGetter = (d: Observation) => string;
 type TemporalValueGetter = (d: Observation) => Date;
 
 export type RenderingVariables = {
-  getRenderingKey: StringValueGetter;
+  /** Optinally provide an option to pass a segment to the key.
+   * This is useful for stacked charts, where we can't easily
+   * access the segment value from the data.
+   */
+  getRenderingKey: (d: Observation, segment?: string) => string;
 };
 
 export type BandXVariables = {

@@ -25,7 +25,7 @@ export const usePieStateVariables = (
   props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { y, segment, animation } = fields;
 
   const yMeasure = measures.find((d) => d.iri === y.componentIri);
@@ -54,9 +54,9 @@ export const usePieStateVariables = (
     field: segment,
   });
 
-  const dimensionKeys = dimensions.map((d) => d.iri);
   const getRenderingKey = useRenderingKeyVariable(
-    dimensionKeys,
+    dimensions,
+    filters,
     interactiveFiltersConfig,
     animation
   );

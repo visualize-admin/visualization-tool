@@ -42,7 +42,7 @@ export const useColumnsStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, animation } = fields;
 
   const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
@@ -86,9 +86,9 @@ export const useColumnsStateVariables = (
   const getYError = useErrorVariable(yErrorMeasure);
   const showYStandardError = get(fields, ["y", "showStandardError"], true);
 
-  const dimensionKeys = dimensions.map((d) => d.iri);
   const getRenderingKey = useRenderingKeyVariable(
-    dimensionKeys,
+    dimensions,
+    filters,
     interactiveFiltersConfig,
     animation
   );

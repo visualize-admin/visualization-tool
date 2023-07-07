@@ -20,7 +20,7 @@ export const ColumnsStacked = () => {
         const observation = segment.data;
 
         return {
-          key: getRenderingKey(observation),
+          key: getRenderingKey(observation, d.key),
           x: xScale(getX(observation)) as number,
           y: yScale(segment[1]),
           width: bandwidth,

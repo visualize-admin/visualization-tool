@@ -74,7 +74,7 @@ export const ColumnsGrouped = () => {
         const y = getY(d) ?? NaN;
 
         return {
-          key: `${key}-${x}`,
+          key,
           x: (xScale(segment) as number) + (xScaleIn(x) as number),
           y: yScale(Math.max(y, 0)),
           width: bandwidth,

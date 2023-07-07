@@ -38,7 +38,7 @@ export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStackedStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
   const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
@@ -91,9 +91,9 @@ export const useColumnsStackedStateVariables = (
     field: segment,
   });
 
-  const dimensionKeys = dimensions.map((d) => d.iri);
   const getRenderingKey = useRenderingKeyVariable(
-    dimensionKeys,
+    dimensions,
+    filters,
     interactiveFiltersConfig,
     animation
   );
