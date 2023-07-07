@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import {
-  getChartConfigComponentIris,
+  extractComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
@@ -43,9 +43,8 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
           content: '" "',
           display: "block",
           height: "3px",
-          width: "3px ",
+          width: "3px",
           borderRadius: "3px",
-          position: "relative",
           left: "calc(-1 * var(--column-gap) / 2)",
           backgroundColor: theme.palette.grey[600],
         },
@@ -83,25 +82,23 @@ export const ChartFootnotes = ({
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
 
+  const commonQueryVariables = {
+    iri: dataSetIri,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [{ data }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
 
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
-  const componentIrisToFilterBy = getChartConfigComponentIris(chartConfig);
+  const componentIris = extractComponentIris(chartConfig);
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: componentIrisToFilterBy,
+      ...commonQueryVariables,
+      componentIris,
       filters,
     },
   });

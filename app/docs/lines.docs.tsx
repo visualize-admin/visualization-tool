@@ -57,7 +57,10 @@ ${(
     >
       <InteractiveFiltersProvider>
         <LineChart
-          data={observations}
+          chartData={observations}
+          scalesData={observations}
+          segmentData={observations}
+          allData={observations}
           dimensions={dimensions}
           measures={measures}
           chartConfig={{ interactiveFiltersConfig } as unknown as LineConfig}

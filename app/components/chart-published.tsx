@@ -7,7 +7,7 @@ import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { getChartConfigComponentIris } from "@/charts/shared/chart-helpers";
+import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
@@ -139,22 +139,20 @@ export const ChartPublishedInner = ({
   });
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
+  const commonQueryVariables = {
+    iri: dataSet,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
 
   const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonQueryVariables,
   });
   const [{ data: components }] = useComponentsQuery({
     variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      componentIris: getChartConfigComponentIris(chartConfig),
+      ...commonQueryVariables,
+      componentIris: extractComponentIris(chartConfig),
     },
   });
 

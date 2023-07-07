@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
 
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
+import { useObservationLabels } from "@/charts/shared/observation-labels";
 import { Observation } from "@/domain/data";
 
 const data: Observation[] = [

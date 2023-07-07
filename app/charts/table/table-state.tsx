@@ -13,14 +13,17 @@ import {
 } from "d3";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { Cell, Column, Row } from "react-table";
 
 import {
   getLabelWithUnit,
   getSlugifiedIri,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
@@ -101,14 +104,8 @@ export interface TableChartState extends CommonChartState {
   sortingIris: { id: string; desc: boolean }[];
 }
 
-const useTableState = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  chartConfig: TableConfig;
-}): TableChartState => {
+const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
+  const { chartConfig, chartData, allData, dimensions, measures } = props;
   const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
@@ -127,7 +124,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = Math.min(TABLE_HEIGHT, data.length * rowHeight);
+  const chartHeight = Math.min(TABLE_HEIGHT, chartData.length * rowHeight);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -152,10 +149,10 @@ const useTableState = ({
   const memoizedData = useMemo(
     function replaceKeys() {
       // Only read keys once
-      const keys = Object.keys(data[0]);
+      const keys = Object.keys(chartData[0]);
       const slugifiedKeys = keys.map(getSlugifiedIri);
 
-      return data.map((d, index) => {
+      return chartData.map((d, index) => {
         let o = { id: index } as $IntentionalAny;
         // This is run often, so let's optimize it
         for (let i = 0; i < keys.length; i++) {
@@ -169,7 +166,7 @@ const useTableState = ({
         return o;
       });
     },
-    [data, types]
+    [chartData, types]
   );
 
   // Columns used by react-table
@@ -193,7 +190,7 @@ const useTableState = ({
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.
-      const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
+      const columnItems = [...new Set(chartData.map((d) => d[c.componentIri]))];
       const columnItemSizes = [
         ...columnItems.map((item) => {
           const itemAsString =
@@ -236,7 +233,7 @@ const useTableState = ({
         },
       };
     });
-  }, [orderedTableColumns, data, dimensions, measures, formatNumber]);
+  }, [orderedTableColumns, chartData, dimensions, measures, formatNumber]);
 
   // Groupings used by react-table
   const groupingIris = useMemo(
@@ -340,11 +337,11 @@ const useTableState = ({
           } as CategoryColumnMeta;
         } else if (columnStyleType === "heatmap") {
           const absMinValue =
-            min(data, (d) =>
+            min(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 0
             ) || 0;
           const absMaxValue =
-            max(data, (d) =>
+            max(chartData, (d) =>
               d[iri] !== null ? Math.abs(d[iri] as number) : 1
             ) || 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
@@ -360,7 +357,7 @@ const useTableState = ({
           // longest value in the column, with a minimum of 150px.
           const columnItems = [
             ...new Set(
-              data.map((d) =>
+              chartData.map((d) =>
                 d !== null && d[iri] !== null ? mkNumber(d[iri]) : NaN
               )
             ),
@@ -383,7 +380,7 @@ const useTableState = ({
       (v) => v.slugifiedIri
     );
   }, [
-    data,
+    chartData,
     dimensions,
     fields,
     formatters,
@@ -393,6 +390,7 @@ const useTableState = ({
 
   return {
     chartType: "table",
+    allData,
     bounds,
     rowHeight,
     showSearch: settings.showSearch,
@@ -405,50 +403,36 @@ const useTableState = ({
   };
 };
 
-//  ------------------------------------------------------------------------------------ //
-//  ------------------------------------------------------------------------------------ //
+export const getTableStateMetadata = (): ChartStateMetadata => {
+  return {
+    assureDefined: {},
+    sortData: (data) => {
+      return data;
+    },
+  };
+};
 
-const TableChartProvider = ({
-  data,
-  dimensions,
-  measures,
-  children,
-  chartConfig,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: TableConfig;
-}) => {
-  const state = useTableState({
-    data,
-    dimensions,
-    measures,
-    chartConfig,
-  });
+const TableChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<TableConfig> & {
+      chartConfig: TableConfig;
+    }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useTableState(rest);
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const TableChart = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: TableConfig;
-}) => {
+export const TableChart = (
+  props: React.PropsWithChildren<ChartProps<TableConfig>>
+) => {
   return (
     <Observer>
-      <TableChartProvider
-        data={data}
-        dimensions={dimensions}
-        measures={measures}
-        chartConfig={chartConfig}
-      >
-        {children}
-      </TableChartProvider>
+      <TableChartProvider {...props} />
     </Observer>
   );
 };

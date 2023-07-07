@@ -12,28 +12,36 @@ import {
   scaleTime,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
+import {
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getLabelWithUnit,
   getWideData,
-  useDataAfterInteractiveFilters,
   useOptionalNumericVariable,
-  usePlottableData,
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
@@ -53,9 +61,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface LinesState extends CommonChartState {
   chartType: "line";
-  data: Observation[];
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   segments: string[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
@@ -77,15 +83,18 @@ export interface LinesState extends CommonChartState {
 }
 
 const useLinesState = (
-  chartProps: Pick<
-    ChartProps,
-    "data" | "dimensions" | "measures" | "chartConfig"
-  > & {
-    chartConfig: LineConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
+  const {
+    chartConfig,
+    chartData,
+    scalesData,
+    segmentData,
+    allData,
+    dimensions,
+    measures,
+    aspectRatio,
+  } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -122,7 +131,7 @@ const useLinesState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -133,19 +142,9 @@ const useLinesState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
-  );
-
-  const plottableSortedData = usePlottableData({
-    data: sortedData,
-    plotters: [getX, getY],
-  });
-
   const dataGroupedByX = useMemo(
-    () => group(plottableSortedData, getGroups),
-    [plottableSortedData, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const allDataWide = getWideData({
@@ -155,24 +154,14 @@ const useLinesState = (
     getSegment,
   });
 
-  // Data for chart
-  const { preparedData, scalesData } = useDataAfterInteractiveFilters({
-    sortedData: plottableSortedData,
-    interactiveFiltersConfig,
-    // No animation yet for lines
-    animationField: undefined,
-    getX,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   const preparedDataGroupedBySegment = useMemo(
-    () => group(preparedData, getSegment),
-    [preparedData, getSegment]
+    () => group(chartData, getSegment),
+    [chartData, getSegment]
   );
 
   const preparedDataGroupedByX = useMemo(
-    () => group(preparedData, getGroups),
-    [preparedData, getGroups]
+    () => group(chartData, getGroups),
+    [chartData, getGroups]
   );
 
   const chartWideData = getWideData({
@@ -183,12 +172,12 @@ const useLinesState = (
   });
 
   // x
-  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
+  const xDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
   const xEntireDomain = useMemo(
-    () => extent(plottableSortedData, (d) => getX(d)) as [Date, Date],
-    [plottableSortedData, getX]
+    () => extent(scalesData, (d) => getX(d)) as [Date, Date],
+    [scalesData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
   const xAxisLabel =
@@ -200,7 +189,7 @@ const useLinesState = (
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
 
-  const entireMaxValue = max(plottableSortedData, getY) as number;
+  const entireMaxValue = max(scalesData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
@@ -215,25 +204,32 @@ const useLinesState = (
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
     : undefined;
-  const segments = useMemo(() => {
-    const uniqueSegments = [...new Set(plottableSortedData.map(getSegment))];
+  const { allSegments, segments } = useMemo(() => {
+    const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
+    const uniqueSegments = Array.from(new Set(scalesData.map(getSegment)));
     const sorting = fields?.segment?.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
       sorting,
       useAbbreviations: fields.segment?.useAbbreviations,
       dimensionFilter: segmentFilter,
     });
-    return orderBy(
-      uniqueSegments,
+    const allSegments = orderBy(
+      allUniqueSegments,
       sorters,
       getSortingOrders(sorters, fields.segment?.sorting)
     );
+
+    return {
+      allSegments,
+      segments: allSegments.filter((d) => uniqueSegments.includes(d)),
+    };
   }, [
     segmentDimension,
     getSegment,
     fields.segment?.sorting,
     fields.segment?.useAbbreviations,
-    plottableSortedData,
+    segmentData,
+    scalesData,
     segmentFilter,
   ]);
 
@@ -241,7 +237,7 @@ const useLinesState = (
   const colors = scaleOrdinal<string, string>();
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+    const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
       const dvIri =
         segmentsByAbbreviationOrLabel.get(segment)?.value ||
         segmentsByValue.get(segment)?.value ||
@@ -256,7 +252,7 @@ const useLinesState = (
     colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
     colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
   } else {
-    colors.domain(segments);
+    colors.domain(allSegments);
     colors.range(getPalette(fields.segment?.palette));
   }
 
@@ -289,21 +285,21 @@ const useLinesState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum) ?? 0);
 
-    const tooltipValues = preparedData.filter(
+    const tooltipValues = chartData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      sortOrder: "asc",
+      sortingOrder: "asc",
     });
 
     const xPlacement = "center";
@@ -340,9 +336,8 @@ const useLinesState = (
   return {
     chartType: "line",
     bounds,
-    data,
-    allData: plottableSortedData,
-    preparedData,
+    chartData,
+    allData,
     getX,
     xScale,
     xEntireScale,
@@ -363,54 +358,75 @@ const useLinesState = (
   };
 };
 
-const LineChartProvider = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: LineConfig;
-  aspectRatio: number;
-}) => {
-  const state = useLinesState({
-    data,
-    dimensions,
-    measures,
-    chartConfig,
-    aspectRatio,
-  });
+export const getLinesStateMetadata = (
+  chartConfig: LineConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+  const x = fields.x.componentIri;
+  const getXDate = (d: Observation) => {
+    return parseDate(`${d[x]}`);
+  };
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
+  return {
+    assureDefined: {
+      getY,
+    },
+    getXDate,
+    getSegment,
+    sortData: (data) => {
+      return [...data].sort((a, b) => {
+        return ascending(getXDate(a), getXDate(b));
+      });
+    },
+  };
+};
+
+const LineChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<LineConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = useLinesState(rest);
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const LineChart = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  chartConfig: LineConfig;
-  children: ReactNode;
-}) => {
+export const LineChart = (
+  props: React.PropsWithChildren<
+    ChartProps<LineConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <LineChartProvider
-          data={data}
-          dimensions={dimensions}
-          measures={measures}
-          chartConfig={chartConfig}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </LineChartProvider>
+        <LineChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

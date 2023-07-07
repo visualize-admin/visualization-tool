@@ -65,10 +65,12 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const useItemStyles = makeStyles<
-  Theme,
-  { symbol: LegendSymbol; color: string }
->((theme) => ({
+type ItemStyleProps = {
+  symbol: LegendSymbol;
+  color: string;
+};
+
+const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
   legendItem: {
     position: "relative",
     justifyContent: "flex-start",
@@ -82,13 +84,15 @@ const useItemStyles = makeStyles<
       position: "relative",
       display: "block",
       width: ".5rem",
-      marginTop: ({ symbol }) => (symbol === "line" ? "0.75rem" : "0.5rem"),
+      marginTop: ({ symbol }: ItemStyleProps) =>
+        symbol === "line" ? "0.75rem" : "0.5rem",
       marginRight: "0.5rem",
       flexShrink: 0,
-      backgroundColor: ({ color }) => color,
-      height: ({ symbol }) =>
+      backgroundColor: ({ color }: ItemStyleProps) => color,
+      height: ({ symbol }: ItemStyleProps) =>
         symbol === "square" || symbol === "circle" ? `.5rem` : 2,
-      borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
+      borderRadius: ({ symbol }: ItemStyleProps) =>
+        symbol === "circle" ? "50%" : 0,
     },
   },
 
@@ -199,7 +203,8 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
 }) {
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
-  const groups = useLegendGroups({ values: colors.domain() });
+  const values = colors.domain();
+  const groups = useLegendGroups({ values });
 
   return (
     <LegendColorContent
@@ -208,6 +213,7 @@ export const LegendColor = memo(function LegendColor({
       getLabel={getSegmentLabel}
       symbol={symbol}
       interactive={interactive}
+      numberOfOptions={values.length}
     />
   );
 });
@@ -261,6 +267,7 @@ export const MapLegendColor = memo(function LegendColor({
       }}
       getLabel={getLabel}
       symbol="circle"
+      numberOfOptions={sortedValues.length}
     />
   );
 });
@@ -271,12 +278,14 @@ const LegendColorContent = ({
   getLabel,
   symbol,
   interactive,
+  numberOfOptions,
 }: {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   symbol: LegendSymbol;
   interactive?: boolean;
+  numberOfOptions: number;
 }) => {
   const classes = useStyles();
   const [state, dispatch] = useInteractiveFilters();
@@ -294,7 +303,7 @@ const LegendColorContent = ({
         type: "REMOVE_INTERACTIVE_FILTER",
         value: item,
       });
-    } else {
+    } else if (activeInteractiveFilters.size < numberOfOptions - 1) {
       dispatch({
         type: "ADD_INTERACTIVE_FILTER",
         value: item,

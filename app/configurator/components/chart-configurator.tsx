@@ -91,7 +91,6 @@ const DataFilterSelectGeneric = ({
   onRemove,
 }: {
   dimension: DataCubeMetadata["dimensions"][number];
-  isOptional?: boolean;
   index: number;
   disabled?: boolean;
   onRemove: () => void;
@@ -448,12 +447,7 @@ const useFilterReorder = ({
   };
 };
 
-const useStyles = makeStyles<
-  Theme,
-  {
-    fetching: boolean;
-  }
->((theme) => ({
+const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   loadingIndicator: {
     color: theme.palette.grey[700],
     display: "inline-block",
@@ -477,7 +471,9 @@ const useStyles = makeStyles<
       color: theme.palette.secondary.active,
     },
     "& .buttons:hover": {
-      opacity: ({ fetching }) => (fetching ? undefined : 1),
+      // Type inheritance is broken when one level of nesting is added
+      opacity: ({ fetching }: { fetching: boolean }) =>
+        fetching ? undefined : 1,
     },
     "& > *": {
       overflow: "hidden",

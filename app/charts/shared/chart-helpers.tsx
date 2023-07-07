@@ -26,7 +26,11 @@ import {
   MapConfig,
   QueryFilters,
 } from "@/config-types";
-import { CategoricalColorField, NumericalColorField } from "@/configurator";
+import {
+  CategoricalColorField,
+  isAnimationInConfig,
+  NumericalColorField,
+} from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension, Observation } from "@/domain/data";
@@ -108,7 +112,7 @@ const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
   return additionalFields;
 };
 
-export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
+export const extractComponentIris = (chartConfig: ChartConfig) => {
   const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
   const fieldIris = Object.values(fields).map((d) => d.componentIri);
   const additionalFieldIris =
@@ -149,14 +153,16 @@ export const getChartConfigComponentIris = (chartConfig: ChartConfig) => {
 
 export const usePlottableData = ({
   data,
-  plotters,
+  getX,
+  getY,
 }: {
   data: Observation[];
-  plotters: ((d: Observation) => unknown | null)[];
+  getX?: (d: Observation) => unknown | null;
+  getY?: (d: Observation) => unknown | null;
 }) => {
   const isPlottable = useCallback(
     (d: Observation) => {
-      for (let p of plotters) {
+      for (let p of [getX, getY].filter(truthy)) {
         const v = p(d);
         if (v === undefined || v === null) {
           return false;
@@ -164,8 +170,7 @@ export const usePlottableData = ({
       }
       return true;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    plotters
+    [getX, getY]
   );
 
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
@@ -175,13 +180,13 @@ type ValuePredicate = (v: any) => boolean;
 
 /** Prepares the data to be used in charts, taking interactive filters into account. */
 export const useDataAfterInteractiveFilters = ({
-  sortedData,
+  observations,
   interactiveFiltersConfig,
   animationField,
   getX,
   getSegment,
 }: {
-  sortedData: Observation[];
+  observations: Observation[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
   animationField: AnimationField | undefined;
   getX?: (d: Observation) => Date;
@@ -253,16 +258,132 @@ export const useDataAfterInteractiveFilters = ({
   ]);
 
   const preparedData = useMemo(() => {
-    return sortedData.filter(allFilters);
-  }, [allFilters, sortedData]);
+    return observations.filter(allFilters);
+  }, [allFilters, observations]);
 
   const timeSliderFilterPresent = !!(
     animationField?.componentIri && timeSliderValue
   );
 
-  const scalesData = timeSliderFilterPresent ? sortedData : preparedData;
+  const scalesData = timeSliderFilterPresent ? observations : preparedData;
 
-  return { preparedData, scalesData };
+  return {
+    preparedData,
+    scalesData,
+  };
+};
+
+/** Prepares the data to be used in charts, taking interactive filters into account. */
+export const useChartData = (
+  observations: Observation[],
+  {
+    chartConfig,
+    getXDate,
+    getSegment,
+  }: {
+    chartConfig: ChartConfig;
+    getXDate?: (d: Observation) => Date;
+    getSegment?: (d: Observation) => string;
+  }
+): {
+  /** Data to be used in the chart. */
+  chartData: Observation[];
+  /** Data to be used to compute the scales.
+   * They are different when a time slider is present, since the scales
+   * should be computed using all the data, to prevent them from changing
+   * when the time slider is moved, while the chart should only show the data
+   * corresponding to the selected time.*/
+  scalesData: Observation[];
+  /** Data to be used to compute the full color scales. */
+  segmentData: Observation[];
+} => {
+  const { interactiveFiltersConfig } = chartConfig;
+  const [IFState] = useInteractiveFilters();
+
+  // time range
+  const timeRange = interactiveFiltersConfig?.timeRange;
+  const fromTime = IFState.timeRange.from?.getTime();
+  const toTime = IFState.timeRange.to?.getTime();
+
+  // time slider
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
+  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
+  const timeSliderValue = IFState.timeSlider.value;
+
+  // legend
+  const legend = interactiveFiltersConfig?.legend;
+  const legendItems = Object.keys(IFState.categories);
+
+  const { allFilters, legendFilters, timeFilters } = useMemo(() => {
+    const timeRangeFilter =
+      getXDate && fromTime && toTime && timeRange?.active
+        ? (d: Observation) => {
+            const time = getXDate(d).getTime();
+            return time >= fromTime && time <= toTime;
+          }
+        : null;
+    const timeSliderFilter =
+      animationField?.componentIri && timeSliderValue
+        ? (d: Observation) => {
+            return getTime(d).getTime() === timeSliderValue.getTime();
+          }
+        : null;
+    const legendFilter =
+      legend?.active && getSegment
+        ? (d: Observation) => {
+            return !legendItems.includes(getSegment(d));
+          }
+        : null;
+
+    return {
+      allFilters: overEvery(
+        (
+          [
+            timeRangeFilter,
+            timeSliderFilter,
+            legendFilter,
+          ] as (ValuePredicate | null)[]
+        ).filter(truthy)
+      ),
+      legendFilters: overEvery(
+        ([legendFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+      timeFilters: overEvery(
+        ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+    };
+  }, [
+    getXDate,
+    fromTime,
+    toTime,
+    timeRange?.active,
+    animationField?.componentIri,
+    timeSliderValue,
+    legend?.active,
+    getSegment,
+    getTime,
+    legendItems,
+  ]);
+
+  const chartData = useMemo(() => {
+    return observations.filter(allFilters);
+  }, [allFilters, observations]);
+
+  const scalesData = useMemo(() => {
+    return observations.filter(overEvery(legendFilters, timeFilters));
+  }, [observations, legendFilters, timeFilters]);
+
+  const segmentData = useMemo(() => {
+    return observations.filter(timeFilters);
+  }, [observations, timeFilters]);
+
+  return {
+    chartData,
+    scalesData,
+    segmentData,
+  };
 };
 
 export const makeUseParsedVariable =

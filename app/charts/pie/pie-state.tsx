@@ -8,24 +8,30 @@ import {
   scaleOrdinal,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
-  useDataAfterInteractiveFilters,
-  useOptionalNumericVariable,
-  usePlottableData,
-} from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+  getMaybeAbbreviations,
+  useMaybeAbbreviations,
+} from "@/charts/shared/abbreviations";
+import { useOptionalNumericVariable } from "@/charts/shared/chart-helpers";
+import {
+  ChartStateMetadata,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useMaybeAbbreviations } from "@/charts/shared/use-abbreviations";
+import {
+  getObservationLabels,
+  useObservationLabels,
+} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useObservationLabels } from "@/charts/shared/use-observation-labels";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -36,8 +42,7 @@ import { ChartProps } from "../shared/ChartProps";
 
 export interface PieState extends CommonChartState {
   chartType: "pie";
-  allData: Observation[];
-  preparedData: Observation[];
+  chartData: Observation[];
   getPieData: Pie<$IntentionalAny, Observation>;
   getY: (d: Observation) => number | null;
   getX: (d: Observation) => string;
@@ -47,13 +52,19 @@ export interface PieState extends CommonChartState {
 }
 
 const usePieState = (
-  chartProps: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-    chartConfig: PieConfig;
-    aspectRatio: number;
-  }
+  props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieState => {
-  const { data, dimensions, measures, chartConfig, aspectRatio } = chartProps;
-  const { interactiveFiltersConfig, fields } = chartConfig;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    allData,
+    dimensions,
+    measures,
+    chartConfig,
+    aspectRatio,
+  } = props;
+  const { fields } = chartConfig;
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -80,7 +91,7 @@ const usePieState = (
 
   const { getValue: getSegment, getLabel: getSegmentLabel } =
     useObservationLabels(
-      data,
+      scalesData,
       getSegmentAbbreviationOrLabel,
       fields.segment?.componentIri
     );
@@ -91,20 +102,6 @@ const usePieState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  // Data actually sorted in pie(),
-  const plottableData = usePlottableData({
-    data: data,
-    plotters: [getY],
-  });
-
-  // Data for chart
-  const { preparedData } = useDataAfterInteractiveFilters({
-    sortedData: plottableData,
-    interactiveFiltersConfig,
-    animationField: fields.animation,
-    getSegment: getSegmentAbbreviationOrLabel,
-  });
-
   // Map ordered segments to colors
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension.iri]
@@ -112,9 +109,9 @@ const usePieState = (
   const colors = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
-      plottableData.map((d) => [getSegment(d), getY(d)])
+      segmentData.map((d) => [getSegment(d), getY(d)])
     );
-    const uniqueSegments = Object.entries(measureBySegment)
+    const allUniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
       .map((x) => x[0]);
 
@@ -126,14 +123,14 @@ const usePieState = (
       dimensionFilter: segmentFilter,
     });
 
-    const segments = orderBy(
-      uniqueSegments,
+    const allSegments = orderBy(
+      allUniqueSegments,
       sorters,
       getSortingOrders(sorters, sorting)
     );
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ||
           segmentsByValue.get(segment)?.value ||
@@ -148,18 +145,19 @@ const usePieState = (
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
     } else {
-      colors.domain(segments);
+      colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
     }
     // Do not let the scale be implicitly extended by children calling it
     // on unknown values
     colors.unknown(() => undefined);
+
     return colors;
   }, [
     fields.segment,
     getSegment,
     getY,
-    plottableData,
+    segmentData,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -211,7 +209,7 @@ const usePieState = (
     .value((d) => getY(d) ?? NaN)
     .sort(pieSorter);
 
-  const formatters = useChartFormatters(chartProps);
+  const formatters = useChartFormatters(props);
   const valueFormatter = (value: number | null) =>
     formatNumberWithUnit(
       value,
@@ -257,8 +255,8 @@ const usePieState = (
   return {
     chartType: "pie",
     bounds,
-    allData: plottableData,
-    preparedData,
+    chartData,
+    allData,
     getPieData,
     getY,
     getX: getSegment,
@@ -268,54 +266,68 @@ const usePieState = (
   };
 };
 
-const PieChartProvider = ({
-  data,
-  dimensions,
-  measures,
-  chartConfig,
-  aspectRatio,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  children: ReactNode;
-  chartConfig: PieConfig;
-  aspectRatio: number;
-}) => {
-  const state = usePieState({
-    data,
-    dimensions,
-    measures,
-    chartConfig,
-    aspectRatio,
-  });
+export const getPieStateMetadata = (
+  chartConfig: PieConfig,
+  observations: Observation[],
+  dimensions: DimensionMetadataFragment[]
+): ChartStateMetadata => {
+  const { fields } = chartConfig;
+
+  const y = fields.y.componentIri;
+  const getY = (d: Observation) => {
+    return d[y] !== null ? Number(d[y]) : null;
+  };
+
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  );
+
+  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
+    getMaybeAbbreviations({
+      useAbbreviations: fields.segment?.useAbbreviations,
+      dimensionIri: segmentDimension?.iri,
+      dimensionValues: segmentDimension?.values,
+    });
+
+  const { getValue: getSegment } = getObservationLabels(
+    observations,
+    getSegmentAbbreviationOrLabel,
+    fields.segment?.componentIri
+  );
+
+  return {
+    assureDefined: {
+      getY,
+    },
+    getSegment,
+    sortData: (data) => {
+      return data;
+    },
+  };
+};
+
+const PieChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<PieConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...rest } = props;
+  const state = usePieState(rest);
+
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
   );
 };
 
-export const PieChart = ({
-  data,
-  measures,
-  dimensions,
-  aspectRatio,
-  chartConfig,
-  children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  aspectRatio: number;
-  chartConfig: PieConfig;
-  children: ReactNode;
-}) => {
+export const PieChart = (
+  props: React.PropsWithChildren<
+    ChartProps<PieConfig> & { aspectRatio: number }
+  >
+) => {
   return (
     <Observer>
       <InteractionProvider>
-        <PieChartProvider
-          data={data}
-          dimensions={dimensions}
-          measures={measures}
-          chartConfig={chartConfig}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </PieChartProvider>
+        <PieChartProvider {...props} />
       </InteractionProvider>
     </Observer>
   );

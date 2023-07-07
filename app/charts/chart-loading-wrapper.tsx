@@ -2,7 +2,10 @@ import { Box } from "@mui/material";
 import React from "react";
 import { UseQueryResponse } from "urql";
 
+import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
+import { useChartData, usePlottableData } from "@/charts/shared/chart-helpers";
+import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -11,21 +14,11 @@ import {
   NoDataHint,
 } from "@/components/hint";
 import { ChartConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
 import {
   ComponentsQuery,
   DataCubeMetadataQuery,
   DataCubeObservationsQuery,
-  DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
-
-type ChartCommonProps<TChartConfig extends ChartConfig> = {
-  fields: TChartConfig["fields"];
-  observations: Observation[];
-  measures: DimensionMetadataFragment[];
-  dimensions: DimensionMetadataFragment[];
-  chartConfig: TChartConfig;
-};
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -57,7 +50,7 @@ export const ChartLoadingWrapper = <
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,
-    keyof ChartCommonProps<TChartConfig>
+    keyof ChartProps<TChartConfig>
   >;
 }) => {
   const {
@@ -76,16 +69,41 @@ export const ChartLoadingWrapper = <
     error: observationsError,
   } = observationsQuery;
 
-  if (
-    metadataData?.dataCubeByIri &&
-    componentsData?.dataCubeByIri &&
-    observationsData?.dataCubeByIri
-  ) {
-    const { title } = metadataData.dataCubeByIri;
-    const { dimensions, measures } = componentsData.dataCubeByIri;
-    const { observations } = observationsData.dataCubeByIri;
+  const metadata = metadataData?.dataCubeByIri;
+  const observations = observationsData?.dataCubeByIri?.observations.data;
+  const dimensions = componentsData?.dataCubeByIri?.dimensions;
+  const measures = componentsData?.dataCubeByIri?.measures;
 
-    return observations.data.length > 0 ? (
+  const chartStateMetadata = React.useMemo(() => {
+    if (observations && dimensions) {
+      return getChartStateMetadata({ chartConfig, observations, dimensions });
+    }
+  }, [chartConfig, observations, dimensions]);
+
+  const data = React.useMemo(() => {
+    if (observations && chartStateMetadata) {
+      return chartStateMetadata.sortData(observations);
+    }
+
+    return observations;
+  }, [chartStateMetadata, observations]);
+
+  const plottableData = usePlottableData({
+    data: data ?? [],
+    getX: chartStateMetadata?.assureDefined.getX,
+    getY: chartStateMetadata?.assureDefined.getY,
+  });
+
+  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
+    chartConfig,
+    getXDate: chartStateMetadata?.getXDate,
+    getSegment: chartStateMetadata?.getSegment,
+  });
+
+  if (metadata && dimensions && measures && data) {
+    const { title } = metadata;
+
+    return data.length > 0 ? (
       <Box
         data-chart-loaded={
           !(fetchingMetadata && fetchingComponents && fetchingObservations)
@@ -94,17 +112,20 @@ export const ChartLoadingWrapper = <
       >
         <A11yTable
           title={title}
-          observations={observations.data}
+          observations={data}
           dimensions={dimensions}
           measures={measures}
         />
         {React.createElement(Component, {
-          observations: observations.data,
+          chartData,
+          scalesData,
+          segmentData,
+          allData: plottableData,
           dimensions,
           measures,
           chartConfig,
           ...ComponentProps,
-        } as ChartCommonProps<TChartConfig> & TOtherProps)}
+        } as ChartProps<TChartConfig> & TOtherProps)}
         {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
           <LoadingOverlay />
         )}

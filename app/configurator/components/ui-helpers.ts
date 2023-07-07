@@ -7,7 +7,7 @@ import {
 } from "d3";
 import { useMemo } from "react";
 
-import type { ChartProps } from "@/charts/shared/ChartProps";
+import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { getTimeInterval } from "@/intervals";
 
 import { TableColumn, TableFields } from "../../config-types";
@@ -80,10 +80,10 @@ export const getTimeIntervalFormattedSelectOptions = ({
 };
 
 export const getErrorMeasure = (
-  { measures, dimensions }: Pick<ChartProps, "measures" | "dimensions">,
+  { dimensions, measures }: Pick<BaseChartProps, "dimensions" | "measures">,
   valueIri: string
 ) => {
-  return [...measures, ...dimensions].find((m) => {
+  return [...dimensions, ...measures].find((m) => {
     return m.related?.some(
       (r) => r.type === "StandardError" && r.iri === valueIri
     );
@@ -91,12 +91,13 @@ export const getErrorMeasure = (
 };
 
 export const useErrorMeasure = (
-  chartState: Pick<ChartProps, "measures" | "dimensions">,
+  chartState: Pick<BaseChartProps, "dimensions" | "measures">,
   valueIri: string
 ) => {
-  const { measures, dimensions } = chartState;
+  const { dimensions, measures } = chartState;
+
   return useMemo(() => {
-    return getErrorMeasure({ measures, dimensions }, valueIri);
+    return getErrorMeasure({ dimensions, measures }, valueIri);
   }, [dimensions, measures, valueIri]);
 };
 

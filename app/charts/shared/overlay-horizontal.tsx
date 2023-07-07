@@ -1,6 +1,5 @@
-import { bisector } from "d3";
-import { pointer } from "d3";
-import { memo, useRef, MouseEvent } from "react";
+import { bisector, pointer } from "d3";
+import { MouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -12,7 +11,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
   const [state, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
-  const { data, bounds, getX, xScale, chartWideData } = useChartState() as
+  const { chartData, bounds, getX, xScale, chartWideData } = useChartState() as
     | AreasState
     | LinesState;
 
@@ -38,7 +37,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
 
     if (closestDatum) {
       const closestDatumTime = getX(closestDatum).getTime();
-      const datumToUpdate = data.find(
+      const datumToUpdate = chartData.find(
         (d) => closestDatumTime === getX(d).getTime()
       ) as Observation;
 
