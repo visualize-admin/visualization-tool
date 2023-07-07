@@ -30,6 +30,10 @@ type StringDimensionValueGetter = (d: Observation) => string;
 
 type TemporalDimensionValueGetter = (d: Observation) => Date;
 
+export type RenderingVariables = {
+  getRenderingKey: (d: Observation) => string;
+};
+
 export type BandXVariables = {
   xDimension: DimensionMetadataFragment;
   getX: StringDimensionValueGetter;

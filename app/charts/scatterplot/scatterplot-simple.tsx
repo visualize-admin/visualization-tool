@@ -11,6 +11,7 @@ export const Scatterplot = () => {
   const {
     chartData,
     bounds,
+    getRenderingKey,
     getX,
     xScale,
     getY,
@@ -24,9 +25,9 @@ export const Scatterplot = () => {
   const ref = React.useRef<SVGGElement>(null);
 
   const renderData: RenderDatum[] = React.useMemo(() => {
-    return chartData.map((d, i) => {
+    return chartData.map((d) => {
       return {
-        key: i.toString(),
+        key: getRenderingKey(d),
         cx: xScale(getX(d) ?? NaN),
         cy: yScale(getY(d) ?? NaN),
         color: hasSegment ? colors(getSegment(d)) : theme.palette.primary.main,
@@ -36,6 +37,7 @@ export const Scatterplot = () => {
     chartData,
     colors,
     getSegment,
+    getRenderingKey,
     getX,
     getY,
     hasSegment,
