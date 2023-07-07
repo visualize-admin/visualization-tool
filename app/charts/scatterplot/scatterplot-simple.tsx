@@ -1,8 +1,11 @@
-import { memo } from "react";
+import { select } from "d3";
+import React from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useTheme } from "@/themes";
+
+import { RenderDatum, renderCircles } from "./rendering-utils";
 
 export const Scatterplot = () => {
   const {
@@ -16,30 +19,38 @@ export const Scatterplot = () => {
     getSegment,
     colors,
   } = useChartState() as ScatterplotState;
-
   const theme = useTheme();
   const { margins } = bounds;
+  const ref = React.useRef<SVGGElement>(null);
+
+  const renderData: RenderDatum[] = React.useMemo(() => {
+    return chartData.map((d, i) => {
+      return {
+        key: i.toString(),
+        cx: xScale(getX(d) ?? NaN),
+        cy: yScale(getY(d) ?? NaN),
+        color: hasSegment ? colors(getSegment(d)) : theme.palette.primary.main,
+      };
+    });
+  }, [
+    chartData,
+    colors,
+    getSegment,
+    getX,
+    getY,
+    hasSegment,
+    theme.palette.primary.main,
+    xScale,
+    yScale,
+  ]);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      select<SVGGElement, null>(ref.current).call(renderCircles, renderData);
+    }
+  }, [renderData]);
 
   return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
-      {chartData.map((d, i) => {
-        return (
-          <Dot
-            key={i}
-            cx={xScale(getX(d) ?? NaN)}
-            cy={yScale(getY(d) ?? NaN)}
-            color={
-              hasSegment ? colors(getSegment(d)) : theme.palette.primary.main
-            }
-          />
-        );
-      })}
-    </g>
+    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
   );
 };
-
-const Dot = memo(
-  ({ cx, cy, color }: { cx: number; cy: number; color: string }) => {
-    return <circle cx={cx} cy={cy} r={4} fill={color} stroke="none" />;
-  }
-);

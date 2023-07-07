@@ -46,11 +46,11 @@ export const ErrorWhiskers = () => {
 };
 
 export const Columns = () => {
-  const ref = React.useRef<SVGGElement>(null);
   const { chartData, bounds, getX, xScale, getY, yScale } =
     useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
+  const ref = React.useRef<SVGGElement>(null);
 
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
