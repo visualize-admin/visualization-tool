@@ -12,6 +12,17 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
 - Fixes
+  - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
+  - Scales now adapt to color legend filter when using time slider
+  - Columns now properly animate out, instead of disappearing
+- Tests
+  - Unit tests that import `rdf-js` library now run without errors
+- Refactors:
+  - Consolidated data calculation and sorting for all charts in one place to prepare for app-wide time slider implementation
+
+# [3.20.3] - 2023-07-04
+
+- Fixes
   - Dimension values are now correctly sorted is dimension is numerical dimension
   - Stacked bar chart now doesn't render gaps in case of a missing value
   - Imputation options for area charts are now available when all segments are defined, but there are undefined values in Y dimension
