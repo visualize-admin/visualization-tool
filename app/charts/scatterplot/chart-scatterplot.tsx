@@ -96,12 +96,12 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
         <Tooltip type="single" />
       </ChartContainer>
 
-      <LegendColor
-        symbol="circle"
-        interactive={
-          fields.segment && interactiveFiltersConfig?.legend.active === true
-        }
-      />
+      {fields.segment && (
+        <LegendColor
+          symbol="circle"
+          interactive={interactiveFiltersConfig?.legend.active === true}
+        />
+      )}
 
       {fields.animation && (
         <TimeSlider
