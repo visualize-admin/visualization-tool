@@ -80,6 +80,7 @@ export type SegmentVariables = {
 
 export type AreaLayerVariables = {
   areaLayerDimension: GeoShapesDimension | undefined;
+  getArea: StringDimensionValueGetter;
 };
 
 export type SymbolLayerVariables = {
@@ -87,6 +88,7 @@ export type SymbolLayerVariables = {
     | GeoShapesDimension
     | GeoCoordinatesDimension
     | undefined;
+  getSymbol: StringDimensionValueGetter;
 };
 
 export type ChartStateData = {
