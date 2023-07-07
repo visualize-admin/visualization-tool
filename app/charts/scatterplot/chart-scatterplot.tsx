@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
   AxisHeightLinear,

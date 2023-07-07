@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 
-import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
   AxisHeightLinear,

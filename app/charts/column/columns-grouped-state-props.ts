@@ -16,9 +16,11 @@ import {
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
+  RenderingVariables,
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
 import {
   useErrorMeasure,
@@ -37,14 +39,15 @@ import { ChartProps } from "../shared/ChartProps";
 export type ColumnsGroupedStateVariables = BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
-  SegmentVariables;
+  SegmentVariables &
+  RenderingVariables;
 
 export const useColumnsGroupedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsGroupedStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y, segment } = fields;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x, y, segment, animation } = fields;
 
   const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
   if (!_xDimension) {
@@ -100,6 +103,13 @@ export const useColumnsGroupedStateVariables = (
     field: segment,
   });
 
+  const dimensionKeys = dimensions.map((d) => d.iri);
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensionKeys,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xDimension,
     getX,
@@ -119,6 +129,7 @@ export const useColumnsGroupedStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 

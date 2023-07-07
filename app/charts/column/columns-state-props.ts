@@ -15,8 +15,10 @@ import {
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
+  RenderingVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
 import {
   useErrorMeasure,
@@ -33,14 +35,15 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStateVariables = BandXVariables &
   NumericalYVariables &
-  NumericalYErrorVariables;
+  NumericalYErrorVariables &
+  RenderingVariables;
 
 export const useColumnsStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y } = fields;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x, y, animation } = fields;
 
   const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
   if (!_xDimension) {
@@ -83,6 +86,13 @@ export const useColumnsStateVariables = (
   const getYError = useErrorVariable(yErrorMeasure);
   const showYStandardError = get(fields, ["y", "showStandardError"], true);
 
+  const dimensionKeys = dimensions.map((d) => d.iri);
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensionKeys,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xDimension,
     getX,
@@ -97,6 +107,7 @@ export const useColumnsStateVariables = (
     getYError,
     getYErrorRange,
     yAxisLabel,
+    getRenderingKey,
   };
 };
 

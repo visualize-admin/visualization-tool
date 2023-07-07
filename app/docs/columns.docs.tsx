@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 
-import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
+import { Columns, ErrorWhiskers } from "@/charts/column/columns";
 import { ColumnChart } from "@/charts/column/columns-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import {

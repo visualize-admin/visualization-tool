@@ -8,7 +8,7 @@ export type RenderDatum = {
 };
 
 export const renderCircles = (
-  g: Selection<SVGGElement, null, null, unknown>,
+  g: Selection<SVGGElement, unknown, null, unknown>,
   renderData: RenderDatum[]
 ) => {
   g.selectAll<SVGCircleElement, RenderDatum>("circle")

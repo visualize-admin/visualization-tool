@@ -11,7 +11,6 @@ export const Scatterplot = () => {
   const {
     chartData,
     bounds,
-    getRenderingKey,
     getX,
     xScale,
     getY,
@@ -19,6 +18,7 @@ export const Scatterplot = () => {
     hasSegment,
     getSegment,
     colors,
+    getRenderingKey,
   } = useChartState() as ScatterplotState;
   const theme = useTheme();
   const { margins } = bounds;
@@ -37,18 +37,18 @@ export const Scatterplot = () => {
     chartData,
     colors,
     getSegment,
-    getRenderingKey,
     getX,
     getY,
     hasSegment,
     theme.palette.primary.main,
     xScale,
     yScale,
+    getRenderingKey,
   ]);
 
   React.useEffect(() => {
     if (ref.current) {
-      select<SVGGElement, null>(ref.current).call(renderCircles, renderData);
+      select(ref.current).call(renderCircles, renderData);
     }
   }, [renderData]);
 

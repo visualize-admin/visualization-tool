@@ -46,7 +46,7 @@ export const ErrorWhiskers = () => {
 };
 
 export const Columns = () => {
-  const { chartData, bounds, getX, xScale, getY, yScale } =
+  const { chartData, bounds, getX, xScale, getY, yScale, getRenderingKey } =
     useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
@@ -60,8 +60,8 @@ export const Columns = () => {
     };
 
     return chartData.map((d) => {
-      const x = getX(d);
-      const xScaled = xScale(x) as number;
+      const key = getRenderingKey(d);
+      const xScaled = xScale(getX(d)) as number;
       const y = getY(d) ?? NaN;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
@@ -69,7 +69,7 @@ export const Columns = () => {
       const color = getColor(y);
 
       return {
-        key: x,
+        key,
         x: xScaled,
         y: yRender,
         width: bandwidth,
@@ -87,6 +87,7 @@ export const Columns = () => {
     y0,
     theme.palette.primary.main,
     theme.palette.secondary.main,
+    getRenderingKey,
   ]);
 
   React.useEffect(() => {

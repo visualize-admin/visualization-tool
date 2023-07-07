@@ -14,9 +14,11 @@ import {
   BandXVariables,
   ChartStateData,
   NumericalYVariables,
+  RenderingVariables,
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
 import {
   Observation,
@@ -29,14 +31,15 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStackedStateVariables = BandXVariables &
   NumericalYVariables &
-  SegmentVariables;
+  SegmentVariables &
+  RenderingVariables;
 
 export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStackedStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y, segment } = fields;
+  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x, y, segment, animation } = fields;
 
   const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
   if (!_xDimension) {
@@ -88,6 +91,13 @@ export const useColumnsStackedStateVariables = (
     field: segment,
   });
 
+  const dimensionKeys = dimensions.map((d) => d.iri);
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensionKeys,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xDimension,
     getX,
@@ -103,6 +113,7 @@ export const useColumnsStackedStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 

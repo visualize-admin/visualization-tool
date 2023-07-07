@@ -7,23 +7,21 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);
-  const { bounds, getX, xScale, yScale, colors, series } =
+  const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
     useChartState() as StackedColumnsState;
   const { margins } = bounds;
-
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
   const renderData: RenderDatum[] = React.useMemo(() => {
     return series.flatMap((d) => {
-      const key = d.key;
-      const color = colors(key);
+      const color = colors(d.key);
 
       return d.map((segment: $FixMe) => {
-        const x = getX(segment.data);
+        const observation = segment.data;
 
         return {
-          key: `${key}-${x}`,
-          x: xScale(x) as number,
+          key: getRenderingKey(observation),
+          x: xScale(getX(observation)) as number,
           y: yScale(segment[1]),
           width: bandwidth,
           height: yScale(segment[0]) - yScale(segment[1]),
@@ -31,7 +29,7 @@ export const ColumnsStacked = () => {
         };
       });
     });
-  }, [bandwidth, colors, getX, series, xScale, yScale]);
+  }, [bandwidth, colors, getX, series, xScale, yScale, getRenderingKey]);
 
   React.useEffect(() => {
     if (ref.current) {

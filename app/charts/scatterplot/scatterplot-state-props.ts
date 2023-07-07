@@ -1,4 +1,3 @@
-import { useRenderingKeyVariable } from "@/charts/rendering-utils";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -13,15 +12,16 @@ import {
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ScatterPlotConfig } from "@/configurator";
 import { isNumericalMeasure } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ScatterplotStateVariables = RenderingVariables &
-  NumericalXVariables &
+export type ScatterplotStateVariables = NumericalXVariables &
   NumericalYVariables &
-  SegmentVariables;
+  SegmentVariables &
+  RenderingVariables;
 
 export const useScatterplotStateVariables = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
@@ -29,13 +29,6 @@ export const useScatterplotStateVariables = (
   const { chartConfig, observations, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
-
-  const dimensionKeys = dimensions.map((d) => d.iri);
-  const getRenderingKey = useRenderingKeyVariable(
-    dimensionKeys,
-    interactiveFiltersConfig,
-    animation
-  );
 
   const xMeasure = measures.find((d) => d.iri === x.componentIri);
   if (!xMeasure) {
@@ -74,8 +67,14 @@ export const useScatterplotStateVariables = (
     field: segment,
   });
 
+  const dimensionKeys = dimensions.map((d) => d.iri);
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensionKeys,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
-    getRenderingKey,
     xMeasure,
     getX,
     xAxisLabel,
@@ -87,6 +86,7 @@ export const useScatterplotStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 

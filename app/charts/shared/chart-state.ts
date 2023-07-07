@@ -24,39 +24,39 @@ export type CommonChartState = {
   bounds: Bounds;
 };
 
-type NumericalDimensionValueGetter = (d: Observation) => number | null;
+type NumericalValueGetter = (d: Observation) => number | null;
 
-type StringDimensionValueGetter = (d: Observation) => string;
+type StringValueGetter = (d: Observation) => string;
 
-type TemporalDimensionValueGetter = (d: Observation) => Date;
+type TemporalValueGetter = (d: Observation) => Date;
 
 export type RenderingVariables = {
-  getRenderingKey: (d: Observation) => string;
+  getRenderingKey: StringValueGetter;
 };
 
 export type BandXVariables = {
   xDimension: DimensionMetadataFragment;
-  getX: StringDimensionValueGetter;
+  getX: StringValueGetter;
   getXLabel: (d: string) => string;
   getXAbbreviationOrLabel: (d: Observation) => string;
   xTimeUnit: TimeUnit | undefined;
-  getXAsDate: TemporalDimensionValueGetter;
+  getXAsDate: TemporalValueGetter;
 };
 
 export type TemporalXVariables = {
   xDimension: TemporalDimension;
-  getX: TemporalDimensionValueGetter;
+  getX: TemporalValueGetter;
 };
 
 export type NumericalXVariables = {
   xMeasure: NumericalMeasure;
-  getX: NumericalDimensionValueGetter;
+  getX: NumericalValueGetter;
   xAxisLabel: string;
 };
 
 export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
-  getY: NumericalDimensionValueGetter;
+  getY: NumericalValueGetter;
   yAxisLabel: string;
 };
 
@@ -77,14 +77,14 @@ export type NumericalYErrorVariables = {
 export type SegmentVariables = {
   segmentDimension: DimensionMetadataFragment | undefined;
   segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
-  getSegment: StringDimensionValueGetter;
-  getSegmentAbbreviationOrLabel: StringDimensionValueGetter;
+  getSegment: StringValueGetter;
+  getSegmentAbbreviationOrLabel: StringValueGetter;
   getSegmentLabel: (d: string) => string;
 };
 
 export type AreaLayerVariables = {
   areaLayerDimension: GeoShapesDimension | undefined;
-  getArea: StringDimensionValueGetter;
+  getArea: StringValueGetter;
 };
 
 export type SymbolLayerVariables = {
@@ -92,7 +92,7 @@ export type SymbolLayerVariables = {
     | GeoShapesDimension
     | GeoCoordinatesDimension
     | undefined;
-  getSymbol: StringDimensionValueGetter;
+  getSymbol: StringValueGetter;
 };
 
 export type ChartStateData = {
