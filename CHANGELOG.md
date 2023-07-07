@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
+  - Scatterplot and Pie are now animating the data changes
 - Fixes
   - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
   - Scales now adapt to color legend filter when using time slider
