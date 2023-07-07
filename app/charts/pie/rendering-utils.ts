@@ -1,5 +1,6 @@
 import { PieArcDatum, Selection, Transition, interpolate } from "d3";
 
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
 export type RenderDatum = {
@@ -25,17 +26,27 @@ export const renderPie = (
           .attr("fill", (d) => d.color)
           .on("mouseenter", (_, d) => handleMouseEnter(d.arcDatum))
           .on("mouseleave", handleMouseLeave)
-          .call((enter) => enter.transition().call(animatePath, arcGenerator)),
+          .call((enter) =>
+            enter
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .call(animatePath, arcGenerator)
+          ),
       (update) =>
         update.call((update) =>
           update
             .transition()
+            .duration(TRANSITION_DURATION)
             .attr("fill", (d) => d.color)
             .call(animatePath, arcGenerator)
         ),
       (exit) =>
         exit.call((exit) =>
-          exit.transition().call(animatePath, arcGenerator).remove()
+          exit
+            .transition()
+            .duration(TRANSITION_DURATION)
+            .call(animatePath, arcGenerator)
+            .remove()
         )
     );
 };

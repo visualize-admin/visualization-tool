@@ -3,8 +3,8 @@ import React from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
+import { VerticalWhisker } from "@/charts/column/whiskers";
 import { useChartState } from "@/charts/shared/use-chart-state";
-import { VerticalWhisker } from "@/charts/whiskers";
 
 export const ErrorWhiskers = () => {
   const {

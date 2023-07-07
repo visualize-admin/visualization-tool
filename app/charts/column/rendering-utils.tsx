@@ -1,5 +1,7 @@
 import { Selection } from "d3";
 
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+
 export type RenderDatum = {
   key: string;
   x: number;
@@ -26,6 +28,7 @@ export const renderColumn = (
         .call((enter) =>
           enter
             .transition()
+            .duration(TRANSITION_DURATION)
             .attr("y", (d) => d.y)
             .attr("height", (d) => d.height)
         ),
@@ -33,6 +36,7 @@ export const renderColumn = (
       update.call((update) =>
         update
           .transition()
+          .duration(TRANSITION_DURATION)
           .attr("x", (d) => d.x)
           .attr("y", (d) => d.y)
           .attr("width", (d) => d.width)
@@ -41,7 +45,12 @@ export const renderColumn = (
       ),
     (exit) =>
       exit.call((exit) =>
-        exit.transition().attr("y", y0).attr("height", 0).remove()
+        exit
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .attr("y", y0)
+          .attr("height", 0)
+          .remove()
       )
   );
 };

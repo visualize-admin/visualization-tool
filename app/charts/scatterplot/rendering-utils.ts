@@ -1,5 +1,7 @@
 import { Selection } from "d3";
 
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+
 export type RenderDatum = {
   key: string;
   cx: number;
@@ -24,16 +26,25 @@ export const renderCircles = (
           .attr("stroke", "none")
           .attr("fill", (d) => d.color)
           .attr("opacity", 0)
-          .call((enter) => enter.transition().attr("opacity", 1)),
+          .call((enter) =>
+            enter.transition().duration(TRANSITION_DURATION).attr("opacity", 1)
+          ),
       (update) =>
         update.call((update) =>
           update
             .transition()
+            .duration(TRANSITION_DURATION)
             .attr("cx", (d) => d.cx)
             .attr("cy", (d) => d.cy)
             .attr("fill", (d) => d.color)
         ),
       (exit) =>
-        exit.call((exit) => exit.transition().attr("opacity", 0).remove())
+        exit.call((exit) =>
+          exit
+            .transition()
+            .duration(TRANSITION_DURATION)
+            .attr("opacity", 0)
+            .remove()
+        )
     );
 };

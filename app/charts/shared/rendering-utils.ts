@@ -3,6 +3,8 @@ import React from "react";
 import { AnimationField, InteractiveFiltersConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 
+export const TRANSITION_DURATION = 400;
+
 /** Use to create a unique key for rendering the shapes.
  * It's important to animate them correctly when using d3.
  */

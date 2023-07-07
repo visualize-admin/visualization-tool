@@ -3,8 +3,8 @@ import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
+import { VerticalWhisker } from "@/charts/column/whiskers";
 import { useChartState } from "@/charts/shared/use-chart-state";
-import { VerticalWhisker } from "@/charts/whiskers";
 import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
