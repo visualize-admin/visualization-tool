@@ -51,7 +51,7 @@ export const useRenderingKeyVariable = (
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);
 
-  /** Optinally provide an option to pass a segment to the key.
+  /** Optionally provide an option to pass a segment to the key.
    * This is useful for stacked charts, where we can't easily
    * access the segment value from the data.
    */
