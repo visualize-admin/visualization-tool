@@ -40,11 +40,7 @@ import React, {
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
-import {
-  canRenderDatePicker,
-  DatePickerField,
-  Select,
-} from "@/components/form";
+import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -58,6 +54,10 @@ import {
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
+import {
+  canRenderDatePickerField,
+  DatePickerField,
+} from "@/configurator/components/field-date-picker";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
@@ -1086,7 +1086,7 @@ export const TimeFilter = ({
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>
-              {canRenderDatePicker(timeUnit) ? (
+              {canRenderDatePickerField(timeUnit) ? (
                 <DatePickerField
                   name="time-range-start"
                   label={t({
@@ -1121,7 +1121,7 @@ export const TimeFilter = ({
                 />
               )}
 
-              {canRenderDatePicker(timeUnit) ? (
+              {canRenderDatePickerField(timeUnit) ? (
                 <DatePickerField
                   name="time-range-end"
                   label={t({

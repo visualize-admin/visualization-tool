@@ -15,7 +15,6 @@ import React, {
 import Flex from "@/components/flex";
 import {
   Checkbox,
-  DatePickerField,
   Input,
   Label,
   Radio,
@@ -32,6 +31,7 @@ import {
   ControlTab,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
+import { DatePickerField } from "@/configurator/components/field-date-picker";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
