@@ -77,18 +77,16 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-export const ControlTabField = ({
-  component,
-  value,
-  labelId,
-}: {
+type ControlTabFieldProps = {
   component?: DimensionMetadataFragment;
   value: string;
   labelId: string;
-}) => {
-  const field = useActiveFieldField({
-    value,
-  });
+  warnMessage?: ReactNode;
+};
+
+export const ControlTabField = (props: ControlTabFieldProps) => {
+  const { component, value, labelId, warnMessage } = props;
+  const field = useActiveFieldField({ value });
 
   return (
     <ControlTab
@@ -97,6 +95,7 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
+      warnMessage={warnMessage}
     />
   );
 };

@@ -1,9 +1,13 @@
+import { t } from "@lingui/macro";
+
 import {
   ChartType,
   ComponentType,
   SortingOrder,
   SortingType,
 } from "@/config-types";
+import { isTemporalDimension } from "@/domain/data";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -52,6 +56,9 @@ export interface EncodingSpec {
   filters: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
+  getWarnMessage?: (
+    dimensions: DimensionMetadataFragment[]
+  ) => React.ReactNode | undefined;
 }
 
 // dataFilters is enabled by default
@@ -100,6 +107,22 @@ export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
   { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
+
+const ANIMATION_FIELD_SPEC: EncodingSpec = {
+  field: "animation",
+  optional: true,
+  componentTypes: ["TemporalDimension"],
+  filters: true,
+  getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
+    const noTemporalDimensions = !dimensions.some(isTemporalDimension);
+    if (noTemporalDimensions) {
+      return t({
+        id: "",
+        message: "There is no dimension that can be animated.",
+      });
+    }
+  },
+};
 
 export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
@@ -172,12 +195,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      {
-        field: "animation",
-        optional: true,
-        componentTypes: ["TemporalDimension"],
-        filters: true,
-      },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend", "timeRange"],
   },
@@ -264,12 +282,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           },
         ],
       },
-      {
-        field: "animation",
-        optional: true,
-        componentTypes: ["TemporalDimension"],
-        filters: true,
-      },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: [],
   },
@@ -293,12 +306,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      {
-        field: "animation",
-        optional: true,
-        componentTypes: ["TemporalDimension"],
-        filters: true,
-      },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend"],
   },
@@ -327,12 +335,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      {
-        field: "animation",
-        optional: true,
-        componentTypes: ["TemporalDimension"],
-        filters: true,
-      },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend"],
   },

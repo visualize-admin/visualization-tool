@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Theme, Typography } from "@mui/material";
+import { Box, Button, Theme, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
@@ -10,20 +10,19 @@ import { getIconName } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import SvgIcEdit from "@/icons/components/IcEdit";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import useEvent from "@/utils/use-event";
 
-export const ControlTab = ({
-  component,
-  value,
-  onClick,
-  checked,
-  labelId,
-}: {
+type ControlTabProps = {
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
-} & FieldProps) => {
+  warnMessage?: React.ReactNode;
+} & FieldProps;
+
+export const ControlTab = (props: ControlTabProps) => {
+  const { component, value, onClick, checked, labelId, warnMessage } = props;
   const handleClick = useEvent(() => onClick(value));
 
   return (
@@ -37,14 +36,20 @@ export const ControlTab = ({
           }
           checked={checked}
           optional={!component}
-          rightIcon={<FieldEditIcon />}
+          rightIcon={
+            warnMessage ? (
+              <WarnIconTooltip title={warnMessage} />
+            ) : (
+              <FieldEditIcon />
+            )
+          }
         />
       </ControlTabButton>
     </Box>
   );
 };
 
-const useFieldIconStyles = makeStyles<Theme>((theme) => ({
+const useIconStyles = makeStyles<Theme>((theme) => ({
   root: {
     color: theme.palette.primary.main,
     width: 18,
@@ -52,8 +57,26 @@ const useFieldIconStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
+type WarnIconTooltipProps = {
+  title: NonNullable<React.ReactNode>;
+};
+
+const WarnIconTooltip = (props: WarnIconTooltipProps) => {
+  const { title } = props;
+  const iconStyles = useIconStyles();
+
+  return (
+    <Tooltip arrow title={title}>
+      <Typography>
+        <SvgIcExclamation className={iconStyles.root} />
+      </Typography>
+    </Tooltip>
+  );
+};
+
 const FieldEditIcon = () => {
-  const classes = useFieldIconStyles();
+  const classes = useIconStyles();
+
   return <SvgIcEdit className={classes.root} />;
 };
 
