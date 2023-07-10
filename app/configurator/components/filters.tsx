@@ -26,7 +26,7 @@ import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import {
+import React, {
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -37,6 +37,7 @@ import {
   useState,
 } from "react";
 
+import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
@@ -1028,6 +1029,18 @@ export const TimeFilter = ({
     return [];
   }, [temporalDimension, formatLocale, timeFormatUnit]);
 
+  const getClosestDatesFromDateRange = React.useCallback(
+    (from: Date, to: Date) => {
+      const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
+        sortedOptions,
+        (d) => d.date
+      );
+
+      return getClosestDatesFromDateRange(from, to);
+    },
+    [sortedOptions]
+  );
+
   if (temporalDimension && state.state === "CONFIGURING_CHART") {
     const { timeUnit, timeFormat } = temporalDimension;
     const timeInterval = getTimeInterval(timeUnit);
@@ -1089,9 +1102,17 @@ export const TimeFilter = ({
           timeRange={timeRange}
           timeInterval={timeInterval}
           timeUnit={timeUnit}
-          onChange={([from, to]) =>
-            setFilterRange([formatDateValue(from), formatDateValue(to)])
-          }
+          onChange={([from, to]) => {
+            const [closestFrom, closestTo] = getClosestDatesFromDateRange(
+              from,
+              to
+            );
+
+            setFilterRange([
+              formatDateValue(closestFrom),
+              formatDateValue(closestTo),
+            ]);
+          }}
         />
       </Box>
     );

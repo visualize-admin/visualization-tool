@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AreasState } from "@/charts/area/areas-state";
 import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
+import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -71,36 +72,13 @@ export const BrushTime = () => {
   );
 
   const getClosestObservationFromRangeDates = useCallback(
-    (rangeDates: [Date, Date]): [Date, Date] => {
-      const [xStart, xEnd] = rangeDates;
+    ([from, to]: [Date, Date]): [Date, Date] => {
+      const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
+        fullData,
+        getDate
+      );
 
-      const bisectDateLeft = bisector(
-        (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
-      ).left;
-
-      const startIndex = bisectDateLeft(fullData, xStart, 1);
-      const dStartLeft = fullData[startIndex - 1];
-      const dStartRight = fullData[startIndex] || dStartLeft;
-      const startClosestDatum =
-        xStart.getTime() - getDate(dStartLeft).getTime() >
-        getDate(dStartRight).getTime() - xStart.getTime()
-          ? dStartRight
-          : dStartLeft;
-
-      // End date
-      const bisectDateRight = bisector(
-        (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
-      ).right;
-      const endIndex = bisectDateRight(fullData, xEnd, 1);
-      const dEndLeft = fullData[endIndex - 1];
-      const dEndRight = fullData[endIndex] || dEndLeft;
-      const endClosestDatum =
-        xEnd.getTime() - getDate(dEndLeft).getTime() >
-        getDate(dEndRight).getTime() - xEnd.getTime()
-          ? dEndRight
-          : dEndLeft;
-
-      return [getDate(startClosestDatum), getDate(endClosestDatum)];
+      return getClosestDatesFromDateRange(from, to);
     },
     [fullData, getDate]
   );
