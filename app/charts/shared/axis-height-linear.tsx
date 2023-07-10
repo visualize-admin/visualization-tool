@@ -1,5 +1,4 @@
-import { axisLeft } from "d3";
-import { select, Selection } from "d3";
+import { axisLeft, select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
@@ -12,6 +11,7 @@ import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 import { getTickNumber } from "./ticks";
 
@@ -19,7 +19,8 @@ export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
-  const { yScale, yAxisLabel, yAxisDimension, bounds } = useChartState() as
+  // FIXME: add "NumericalY" chart type here.
+  const { yScale, yAxisLabel, yMeasure, bounds } = useChartState() as
     | AreasState
     | ColumnsState
     | GroupedColumnsState
@@ -59,7 +60,7 @@ export const AxisHeightLinear = () => {
     <>
       {/* TODO: at some point it would make sense to allow wrapping */}
       <foreignObject width="100%" height={labelFontSize * 2}>
-        <OpenMetadataPanelWrapper dim={yAxisDimension}>
+        <OpenMetadataPanelWrapper dim={yMeasure as DimensionMetadataFragment}>
           <span style={{ fontSize: labelFontSize }}>{yAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

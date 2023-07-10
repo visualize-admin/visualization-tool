@@ -109,7 +109,7 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
       position: "static",
 
       "& > .MuiPaper-root": {
-        top: ({ top }) => top,
+        top: ({ top }: { top: number }) => top,
         bottom: 0,
         width: DRAWER_WIDTH + 1,
         height: "auto",
@@ -231,10 +231,7 @@ const animationProps: Transition = {
 export const OpenMetadataPanelWrapper = ({
   dim,
   children,
-}: {
-  dim: DimensionMetadataFragment;
-  children: React.ReactNode;
-}) => {
+}: React.PropsWithChildren<{ dim: DimensionMetadataFragment }>) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {

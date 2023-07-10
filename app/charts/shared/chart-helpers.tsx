@@ -1,19 +1,19 @@
 import { group, InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
-import overEvery from "lodash/overEvery";
 import uniq from "lodash/uniq";
 import { useCallback, useMemo } from "react";
 
+import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
   imputeTemporalLinearSeries,
   interpolateZerosValue,
 } from "@/charts/shared/imputation";
+import { useObservationLabels } from "@/charts/shared/observation-labels";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
 import {
-  AnimationField,
   ChartConfig,
   ChartType,
   Filters,
@@ -28,7 +28,7 @@ import {
 } from "@/config-types";
 import {
   CategoricalColorField,
-  isAnimationInConfig,
+  GenericField,
   NumericalColorField,
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
@@ -151,15 +151,17 @@ export const extractComponentIris = (chartConfig: ChartConfig) => {
   );
 };
 
-export const usePlottableData = ({
-  data,
-  getX,
-  getY,
-}: {
-  data: Observation[];
-  getX?: (d: Observation) => unknown | null;
-  getY?: (d: Observation) => unknown | null;
-}) => {
+/** Use to remove missing values from chart data. */
+export const usePlottableData = (
+  data: Observation[],
+  {
+    getX,
+    getY,
+  }: {
+    getX?: (d: Observation) => unknown | null;
+    getY?: (d: Observation) => unknown | null;
+  }
+) => {
   const isPlottable = useCallback(
     (d: Observation) => {
       for (let p of [getX, getY].filter(truthy)) {
@@ -176,213 +178,34 @@ export const usePlottableData = ({
   return useMemo(() => data.filter(isPlottable), [data, isPlottable]);
 };
 
-type ValuePredicate = (v: any) => boolean;
+export const useDimensionWithAbbreviations = (
+  dimension: DimensionMetadataFragment | undefined,
+  {
+    observations,
+    field,
+  }: {
+    observations: Observation[];
+    field?: GenericField;
+  }
+) => {
+  const { getAbbreviationOrLabelByValue, abbreviationOrLabelLookup } =
+    useMaybeAbbreviations({
+      useAbbreviations: field?.useAbbreviations,
+      dimensionIri: dimension?.iri,
+      dimensionValues: dimension?.values,
+    });
 
-/** Prepares the data to be used in charts, taking interactive filters into account. */
-export const useDataAfterInteractiveFilters = ({
-  observations,
-  interactiveFiltersConfig,
-  animationField,
-  getX,
-  getSegment,
-}: {
-  observations: Observation[];
-  interactiveFiltersConfig: InteractiveFiltersConfig;
-  animationField: AnimationField | undefined;
-  getX?: (d: Observation) => Date;
-  getSegment?: (d: Observation) => string;
-}): {
-  /** Data to be used in the chart. */
-  preparedData: Observation[];
-  /** Data to be used to compute the scales.
-   * They are different when a time slider is present, since the scales
-   * should be computed using all the data, to prevent them from changing
-   * when the time slider is moved, while the chart should only show the data
-   * corresponding to the selected time.*/
-  scalesData: Observation[];
-} => {
-  const [IFState] = useInteractiveFilters();
-
-  // time range
-  const fromTime = IFState.timeRange.from?.getTime();
-  const toTime = IFState.timeRange.to?.getTime();
-
-  // time slider
-  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
-  const timeSliderValue = IFState.timeSlider.value;
-
-  // legend
-  const legendItems = Object.keys(IFState.categories);
-
-  const allFilters = useMemo(() => {
-    const timeRangeFilter =
-      getX && fromTime && toTime && interactiveFiltersConfig?.timeRange.active
-        ? (d: Observation) => {
-            const time = getX(d).getTime();
-            return time >= fromTime && time <= toTime;
-          }
-        : null;
-    const timeSliderFilter =
-      animationField?.componentIri && timeSliderValue
-        ? (d: Observation) => {
-            return getTime(d).getTime() === timeSliderValue.getTime();
-          }
-        : null;
-    const legendFilter =
-      interactiveFiltersConfig?.legend.active && getSegment
-        ? (d: Observation) => {
-            return !legendItems.includes(getSegment(d));
-          }
-        : null;
-
-    return overEvery(
-      (
-        [
-          timeRangeFilter,
-          timeSliderFilter,
-          legendFilter,
-        ] as (ValuePredicate | null)[]
-      ).filter(truthy)
-    );
-  }, [
-    getX,
-    fromTime,
-    toTime,
-    interactiveFiltersConfig?.timeRange.active,
-    interactiveFiltersConfig?.legend.active,
-    animationField,
-    timeSliderValue,
-    getSegment,
-    getTime,
-    legendItems,
-  ]);
-
-  const preparedData = useMemo(() => {
-    return observations.filter(allFilters);
-  }, [allFilters, observations]);
-
-  const timeSliderFilterPresent = !!(
-    animationField?.componentIri && timeSliderValue
+  const { getValue, getLabel } = useObservationLabels(
+    observations,
+    getAbbreviationOrLabelByValue,
+    dimension?.iri
   );
 
-  const scalesData = timeSliderFilterPresent ? observations : preparedData;
-
   return {
-    preparedData,
-    scalesData,
-  };
-};
-
-/** Prepares the data to be used in charts, taking interactive filters into account. */
-export const useChartData = (
-  observations: Observation[],
-  {
-    chartConfig,
-    getXDate,
-    getSegment,
-  }: {
-    chartConfig: ChartConfig;
-    getXDate?: (d: Observation) => Date;
-    getSegment?: (d: Observation) => string;
-  }
-): {
-  /** Data to be used in the chart. */
-  chartData: Observation[];
-  /** Data to be used to compute the scales.
-   * They are different when a time slider is present, since the scales
-   * should be computed using all the data, to prevent them from changing
-   * when the time slider is moved, while the chart should only show the data
-   * corresponding to the selected time.*/
-  scalesData: Observation[];
-  /** Data to be used to compute the full color scales. */
-  segmentData: Observation[];
-} => {
-  const { interactiveFiltersConfig } = chartConfig;
-  const [IFState] = useInteractiveFilters();
-
-  // time range
-  const timeRange = interactiveFiltersConfig?.timeRange;
-  const fromTime = IFState.timeRange.from?.getTime();
-  const toTime = IFState.timeRange.to?.getTime();
-
-  // time slider
-  const animationField = isAnimationInConfig(chartConfig)
-    ? chartConfig.fields.animation
-    : undefined;
-  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
-  const timeSliderValue = IFState.timeSlider.value;
-
-  // legend
-  const legend = interactiveFiltersConfig?.legend;
-  const legendItems = Object.keys(IFState.categories);
-
-  const { allFilters, legendFilters, timeFilters } = useMemo(() => {
-    const timeRangeFilter =
-      getXDate && fromTime && toTime && timeRange?.active
-        ? (d: Observation) => {
-            const time = getXDate(d).getTime();
-            return time >= fromTime && time <= toTime;
-          }
-        : null;
-    const timeSliderFilter =
-      animationField?.componentIri && timeSliderValue
-        ? (d: Observation) => {
-            return getTime(d).getTime() === timeSliderValue.getTime();
-          }
-        : null;
-    const legendFilter =
-      legend?.active && getSegment
-        ? (d: Observation) => {
-            return !legendItems.includes(getSegment(d));
-          }
-        : null;
-
-    return {
-      allFilters: overEvery(
-        (
-          [
-            timeRangeFilter,
-            timeSliderFilter,
-            legendFilter,
-          ] as (ValuePredicate | null)[]
-        ).filter(truthy)
-      ),
-      legendFilters: overEvery(
-        ([legendFilter] as (ValuePredicate | null)[]).filter(truthy)
-      ),
-      timeFilters: overEvery(
-        ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
-      ),
-    };
-  }, [
-    getXDate,
-    fromTime,
-    toTime,
-    timeRange?.active,
-    animationField?.componentIri,
-    timeSliderValue,
-    legend?.active,
-    getSegment,
-    getTime,
-    legendItems,
-  ]);
-
-  const chartData = useMemo(() => {
-    return observations.filter(allFilters);
-  }, [allFilters, observations]);
-
-  const scalesData = useMemo(() => {
-    return observations.filter(overEvery(legendFilters, timeFilters));
-  }, [observations, legendFilters, timeFilters]);
-
-  const segmentData = useMemo(() => {
-    return observations.filter(timeFilters);
-  }, [observations, timeFilters]);
-
-  return {
-    chartData,
-    scalesData,
-    segmentData,
+    getAbbreviationOrLabelByValue,
+    abbreviationOrLabelLookup,
+    getValue,
+    getLabel,
   };
 };
 
@@ -583,26 +406,32 @@ export const useImputationNeeded = ({
   data,
 }: {
   chartConfig: ChartConfig;
-  data?: Array<Observation>;
+  data?: Observation[];
 }): boolean => {
-  const imputationNeeded = useMemo(() => {
+  return useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {
-      return checkForMissingValuesInSegments(
-        group(data, (d) => d[chartConfig.fields.x.componentIri] as string),
-        [
-          ...new Set(
-            data.map((d) =>
-              getSegment(chartConfig.fields.segment?.componentIri)(d)
-            )
-          ),
-        ]
+      const groupedData = group(
+        data.filter((d) => {
+          const y = d[chartConfig.fields.y.componentIri];
+          return y !== null && y !== undefined;
+        }),
+        (d) => d[chartConfig.fields.x.componentIri] as string
       );
-    } else {
-      return false;
-    }
-  }, [chartConfig, data]);
 
-  return imputationNeeded;
+      return checkForMissingValuesInSegments(
+        groupedData,
+        Array.from(
+          new Set(
+            data.map((d) => {
+              return getSegment(chartConfig.fields.segment?.componentIri)(d);
+            })
+          )
+        )
+      );
+    }
+
+    return false;
+  }, [chartConfig, data]);
 };
 
 /** Use to potentially extract temporal values from data. This is needed for

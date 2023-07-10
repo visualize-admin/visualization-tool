@@ -1,6 +1,4 @@
 import {
-  ascending,
-  descending,
   extent,
   group,
   max,
@@ -25,40 +23,28 @@ import orderBy from "lodash/orderBy";
 import { useCallback, useMemo } from "react";
 
 import {
+  ColumnsStackedStateData,
+  ColumnsStackedStateVariables,
+  useColumnsStackedStateData,
+  useColumnsStackedStateVariables,
+} from "@/charts/column/columns-stacked-state-props";
+import {
   BOTTOM_MARGIN_OFFSET,
   LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/column/constants";
-import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
-import {
-  getLabelWithUnit,
-  getMaybeTemporalDimensionValues,
-  getWideData,
-  useOptionalNumericVariable,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { getWideData } from "@/charts/shared/chart-helpers";
+import { CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import {
@@ -68,117 +54,59 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface StackedColumnsState extends CommonChartState {
-  chartType: "column";
-  chartData: Observation[];
-  getX: (d: Observation) => string;
-  getXLabel: (d: string) => string;
-  getXAsDate: (d: Observation) => Date;
-  xIsTime: boolean;
-  xScale: ScaleBand<string>;
-  xScaleInteraction: ScaleBand<string>;
-  xEntireScale: ScaleTime<number, number>;
-  getY: (d: Observation) => number | null;
-  yScale: ScaleLinear<number, number>;
-  getSegment: (d: Observation) => string;
-  getSegmentLabel: (segment: string) => string;
-  segments: string[];
-  colors: ScaleOrdinal<string, string>;
-  yAxisLabel: string;
-  yAxisDimension: DimensionMetadataFragment;
-  chartWideData: ArrayLike<Observation>;
-  allDataWide: ArrayLike<Observation>;
-  grouped: [string, Observation[]][];
-  series: $FixMe[];
-  getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
-}
+export type StackedColumnsState = CommonChartState &
+  ColumnsStackedStateVariables & {
+    chartType: "column";
+    xScale: ScaleBand<string>;
+    xScaleInteraction: ScaleBand<string>;
+    xEntireScale: ScaleTime<number, number>;
+    yScale: ScaleLinear<number, number>;
+    segments: string[];
+    colors: ScaleOrdinal<string, string>;
+    chartWideData: ArrayLike<Observation>;
+    allDataWide: ArrayLike<Observation>;
+    grouped: [string, Observation[]][];
+    series: $FixMe[];
+    getAnnotationInfo: (
+      d: Observation,
+      orderedSegments: string[]
+    ) => TooltipInfo;
+  };
 
 const useColumnsStackedState = (
-  props: ChartProps<ColumnConfig> & { aspectRatio: number }
+  chartProps: ChartProps<ColumnConfig> & { aspectRatio: number },
+  variables: ColumnsStackedStateVariables,
+  data: ColumnsStackedStateData
 ): StackedColumnsState => {
+  const { aspectRatio, chartConfig } = chartProps;
   const {
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    measures,
-    dimensions,
-    chartConfig,
-    aspectRatio,
-  } = props;
+    xDimension,
+    getX,
+    getXAsDate,
+    getXAbbreviationOrLabel,
+    getXLabel,
+    yMeasure,
+    getY,
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+  } = variables;
+  const { chartData, scalesData, segmentData, allData, plottableDataWide } =
+    data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
+  const formatters = useChartFormatters(chartProps);
 
   const xKey = fields.x.componentIri;
-
-  const xDimension = dimensions.find((d) => d.iri === xKey);
-
-  if (!xDimension) {
-    throw Error(`No dimension <${xKey}> in cube!`);
-  }
-
-  const xIsTime = isTemporalDimension(xDimension);
-  const xDimensionValues = useMemo(() => {
-    return getMaybeTemporalDimensionValues(xDimension, scalesData);
-  }, [xDimension, scalesData]);
-
-  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
-    useMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations,
-      dimensionIri: xDimension.iri,
-      dimensionValues: xDimensionValues,
-    });
-
-  const { getValue: getX, getLabel: getXLabel } = useObservationLabels(
-    scalesData,
-    getXAbbreviationOrLabel,
-    fields.x.componentIri
-  );
-
-  const getXAsDate = useTemporalVariable(xKey);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-  } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations,
-    dimensionIri: segmentDimension?.iri,
-    dimensionValues: segmentDimension?.values,
-  });
-
-  const { getValue: getSegment, getLabel: getSegmentLabel } =
-    useObservationLabels(
-      scalesData,
-      getSegmentAbbreviationOrLabel,
-      fields.segment?.componentIri
-    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
-
-  const allDataGroupedByX = useMemo(
-    () => group(chartData, getX),
-    [chartData, getX]
-  );
-  const allDataWide = useMemo(
-    () =>
-      getWideData({
-        dataGroupedByX: allDataGroupedByX,
-        xKey,
-        getY,
-        getSegment,
-      }),
-    [allDataGroupedByX, xKey, getY, getSegment]
-  );
 
   const preparedDataGroupedByX = useMemo(
     () => group(chartData, getX),
@@ -379,14 +307,6 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
   // stack order
@@ -445,8 +365,6 @@ const useColumnsStackedState = (
   xScaleInteraction.range([0, chartWidth]);
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
-
-  const formatters = useChartFormatters(props);
 
   // Tooltips
   const getAnnotationInfo = useCallback(
@@ -549,143 +467,30 @@ const useColumnsStackedState = (
     bounds,
     chartData,
     allData,
-    getX,
-    getXLabel,
-    getXAsDate,
     xScale,
     xScaleInteraction,
     xEntireScale,
-    getY,
     yScale,
-    getSegment,
-    getSegmentLabel,
-    yAxisLabel,
-    yAxisDimension: yMeasure,
     segments,
     colors,
     chartWideData,
-    allDataWide,
+    allDataWide: plottableDataWide,
     grouped: [...preparedDataGroupedByX],
     series,
     getAnnotationInfo,
-    xIsTime,
+    ...variables,
   };
 };
 
-export const getColumnsStackedStateMetadata = (
-  chartConfig: ColumnConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-  const xKey = fields.x.componentIri;
-  const xDimension = dimensions.find((d) => d.iri === xKey);
-
-  if (!xDimension) {
-    throw Error(`No dimension <${xKey}> in cube!`);
-  }
-
-  const xDimensionValues = getMaybeTemporalDimensionValues(
-    xDimension,
-    observations
-  );
-
-  const { getAbbreviationOrLabelByValue: getXAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.x.useAbbreviations,
-      dimensionIri: xDimension.iri,
-      dimensionValues: xDimensionValues,
-    });
-
-  const { getValue: getX } = getObservationLabels(
-    observations,
-    getXAbbreviationOrLabel,
-    fields.x.componentIri
-  );
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionIri: segmentDimension?.iri,
-      dimensionValues: segmentDimension?.values,
-    });
-
-  const { getValue: getSegment } = getObservationLabels(
-    observations,
-    getSegmentAbbreviationOrLabel,
-    fields.segment?.componentIri
-  );
-
-  const allDataGroupedByX = group(observations, getX);
-  const allDataWide = getWideData({
-    dataGroupedByX: allDataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
-
-  const xOrder = allDataWide
-    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-    .map((d) => getX(d));
-
-  const { sortingOrder, sortingType } = fields.x.sorting ?? {};
-
-  return {
-    assureDefined: {
-      getY,
-    },
-    getSegment,
-    sortData: (data) => {
-      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => descending(getX(a), getX(b)));
-      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-      } else if (sortingType === "byMeasure") {
-        return sortByIndex({
-          data,
-          order: xOrder,
-          getCategory: getX,
-          sortingOrder,
-        });
-      } else {
-        return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-      }
-    },
-  };
-};
-
-const StackedColumnsChartProvider = ({
-  chartConfig,
-  chartData,
-  scalesData,
-  segmentData,
-  allData,
-  dimensions,
-  measures,
-  aspectRatio,
-  children,
-}: React.PropsWithChildren<
-  ChartProps<ColumnConfig> & { aspectRatio: number }
->) => {
-  const state = useColumnsStackedState({
-    chartConfig,
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  });
+const StackedColumnsChartProvider = (
+  props: React.PropsWithChildren<
+    ChartProps<ColumnConfig> & { aspectRatio: number }
+  >
+) => {
+  const { children, ...chartProps } = props;
+  const variables = useColumnsStackedStateVariables(chartProps);
+  const data = useColumnsStackedStateData(chartProps, variables);
+  const state = useColumnsStackedState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

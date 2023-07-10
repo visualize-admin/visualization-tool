@@ -1,7 +1,7 @@
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { geoArea } from "d3";
+import { easeCubic, geoArea } from "d3";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibregl from "maplibre-gl";
@@ -183,7 +183,7 @@ export const MapComponent = () => {
   );
 
   const geoJsonLayer = React.useMemo(() => {
-    if (!areaLayer) {
+    if (!areaLayer?.colors) {
       return;
     }
 
@@ -231,6 +231,13 @@ export const MapComponent = () => {
       stroked: false,
       // @ts-ignore
       getFillColor,
+      transitions: {
+        getFillColor: {
+          // FIXME: share with other transitions, especially in column chart
+          duration: 750,
+          easing: easeCubic,
+        },
+      },
       onHover: ({
         x,
         y,
@@ -241,7 +248,7 @@ export const MapComponent = () => {
         object?: GeoFeature;
       }) => onHover({ type: "area", x, y, object }),
     });
-  }, [areaLayer, features.areaLayer?.shapes, onHover, showBaseLayer]);
+  }, [areaLayer?.colors, features.areaLayer?.shapes, onHover, showBaseLayer]);
 
   const scatterplotLayer = React.useMemo(() => {
     if (!symbolLayer) {

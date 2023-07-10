@@ -1,27 +1,15 @@
-import { geoCentroid } from "d3";
-import keyBy from "lodash/keyBy";
-import { useMemo } from "react";
-import { mesh as topojsonMesh } from "topojson-client";
-
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { prepareTopojson } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer } from "@/charts/shared/containers";
-import { BaseLayer, DataSource, MapConfig, QueryFilters } from "@/config-types";
+import { DataSource, MapConfig, QueryFilters } from "@/config-types";
+import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
+import { GeoShapes } from "@/domain/data";
 import {
-  AreaLayer,
-  GeoData,
-  GeoPoint,
-  GeoShapes,
-  SymbolLayer,
-  isGeoCoordinatesDimension,
-  isGeoShapesDimension,
-} from "@/domain/data";
-import {
+  GeoCoordinates,
   useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
@@ -92,7 +80,7 @@ export const ChartMapVisualization = ({
       pause: !symbolDimensionIri || symbolDimensionIri === "",
     });
 
-  const geoCoordinatesDimension =
+  const coordinates =
     fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoCoordinatesDimension"
       ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
@@ -111,120 +99,24 @@ export const ChartMapVisualization = ({
       pause: !geoShapesIri || geoShapesIri === "",
     });
 
-  const geoShapesDimension =
+  const shapes =
     fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoShapesDimension"
       ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as GeoShapes)
       : undefined;
 
-  const areaLayer: AreaLayer | undefined = useMemo(() => {
-    const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
-
-    if (isGeoShapesDimension(dimension) && geoShapesDimension && observations) {
-      const { topology } = geoShapesDimension;
-      const topojson = prepareTopojson({
-        dimensionIri: areaDimensionIri,
-        topology,
-        filters: chartConfig.filters[areaDimensionIri],
-        observations,
-      });
-
-      return {
-        shapes: topojson,
-        mesh: topojsonMesh(topology, topology.objects.shapes),
-      };
-    }
-  }, [
-    areaDimensionIri,
-    dimensions,
-    chartConfig.filters,
-    observations,
-    geoShapesDimension,
-  ]);
-
-  const symbolLayer: SymbolLayer | undefined = useMemo(() => {
-    const dimension = dimensions?.find((d) => d.iri === symbolDimensionIri);
-
-    if (
-      isGeoCoordinatesDimension(dimension) &&
-      geoCoordinatesDimension &&
-      observations
-    ) {
-      const points: GeoPoint[] = [];
-      const coordsByLabel = keyBy(geoCoordinatesDimension, (d) => d.label);
-
-      observations.forEach((observation) => {
-        const label = observation[symbolDimensionIri] as string;
-        const coords = coordsByLabel[label];
-
-        if (coords) {
-          const { iri, label, latitude, longitude } = coords;
-          points.push({
-            coordinates: [longitude, latitude] as [number, number],
-            properties: {
-              iri,
-              label,
-              observation,
-            },
-          });
-        }
-      });
-
-      return { points };
-    } else {
-      if (
-        isGeoShapesDimension(dimension) &&
-        geoShapesDimension &&
-        observations
-      ) {
-        const { topology } = geoShapesDimension;
-        const topojson = prepareTopojson({
-          dimensionIri: symbolDimensionIri,
-          topology,
-          filters: chartConfig.filters[symbolDimensionIri],
-          observations,
-        });
-
-        const points = topojson.features.map((d) => ({
-          ...d,
-          coordinates: geoCentroid(d),
-        }));
-
-        return { points };
-      }
-    }
-  }, [
-    symbolDimensionIri,
-    chartConfig.filters,
-    dimensions,
-    geoShapesDimension,
-    observations,
-    geoCoordinatesDimension,
-  ]);
-
-  const areaLayerPrepared =
-    areaDimensionIri !== "" ? areaLayer !== undefined : true;
-  const symbolLayerPrepared =
-    symbolDimensionIri !== "" ? symbolLayer !== undefined : true;
-
   const ready =
-    (areaLayerPrepared &&
-      // check if original, unfiltered number of shapes is bigger than 0
-      (geoShapesDimension?.topology?.objects?.shapes as any)?.geometries
-        ?.length) ||
-    (symbolLayerPrepared && symbolLayer?.points.length) ||
+    (areaDimensionIri !== "" &&
+      // Check if original, unfiltered number of shapes is bigger than 0.
+      (shapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
+    (symbolDimensionIri !== "" && coordinates?.length) ||
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
   const observationsQueryResp = {
     ...observationsQuery,
     data:
-      measures &&
-      dimensions &&
-      observations &&
-      areaLayerPrepared &&
-      symbolLayerPrepared &&
-      ready
+      measures && dimensions && observations && ready
         ? observationsQuery["data"]
         : undefined,
     error: observationsQuery.error ?? geoCoordinatesError ?? geoShapesError,
@@ -236,19 +128,20 @@ export const ChartMapVisualization = ({
       componentsQuery={componentsQuery}
       observationsQuery={observationsQueryResp}
       Component={ChartMap}
-      ComponentProps={{
-        features: { areaLayer, symbolLayer },
-        baseLayer: chartConfig.baseLayer,
-      }}
+      ComponentProps={{ shapes, coordinates }}
       chartConfig={chartConfig}
     />
   );
 };
 
 export const ChartMap = (
-  props: ChartProps<MapConfig> & { features: GeoData; baseLayer: BaseLayer }
+  props: ChartProps<MapConfig> & {
+    shapes: GeoShapes | undefined;
+    coordinates: GeoCoordinates[] | undefined | null;
+  }
 ) => {
-  const { chartConfig } = props;
+  const { chartConfig, dimensions } = props;
+  const { fields } = chartConfig;
 
   return (
     <MapChart {...props}>
@@ -257,6 +150,15 @@ export const ChartMap = (
         <MapTooltip />
       </ChartContainer>
       <MapLegend chartConfig={chartConfig} />
+      {fields.animation && (
+        <TimeSlider
+          componentIri={fields.animation.componentIri}
+          dimensions={dimensions}
+          showPlayButton={fields.animation.showPlayButton}
+          animationDuration={fields.animation.duration}
+          animationType={fields.animation.type}
+        />
+      )}
     </MapChart>
   );
 };

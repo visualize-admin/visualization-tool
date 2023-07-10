@@ -1,5 +1,4 @@
 import {
-  ascending,
   extent,
   group,
   max,
@@ -16,39 +15,25 @@ import { useMemo } from "react";
 
 import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 import {
-  getMaybeAbbreviations,
-  useMaybeAbbreviations,
-} from "@/charts/shared/abbreviations";
+  LinesStateVariables,
+  useLinesStateData,
+  useLinesStateVariables,
+} from "@/charts/line/lines-state-props";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
-import {
-  getLabelWithUnit,
-  getWideData,
-  useOptionalNumericVariable,
-  useStringVariable,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { getWideData } from "@/charts/shared/chart-helpers";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import {
-  getObservationLabels,
-  useObservationLabels,
-} from "@/charts/shared/observation-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";
-import { parseDate } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import {
   formatNumberWithUnit,
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
@@ -59,82 +44,48 @@ import {
 
 import { ChartProps } from "../shared/ChartProps";
 
-export interface LinesState extends CommonChartState {
-  chartType: "line";
-  chartData: Observation[];
-  segments: string[];
-  getX: (d: Observation) => Date;
-  xScale: ScaleTime<number, number>;
-  xEntireScale: ScaleTime<number, number>;
-  // xUniqueValues: Date[];
-  getY: (d: Observation) => number | null;
-  yScale: ScaleLinear<number, number>;
-  getSegment: (d: Observation) => string;
-  getSegmentLabel: (s: string) => string;
-  colors: ScaleOrdinal<string, string>;
-  xAxisLabel: string;
-  yAxisLabel: string;
-  yAxisDimension: DimensionMetadataFragment;
-  grouped: Map<string, Observation[]>;
-  chartWideData: ArrayLike<Observation>;
-  allDataWide: ArrayLike<Observation>;
-  xKey: string;
-  getAnnotationInfo: (d: Observation) => TooltipInfo;
-}
+export type LinesState = CommonChartState &
+  LinesStateVariables & {
+    chartType: "line";
+    segments: string[];
+    xScale: ScaleTime<number, number>;
+    xEntireScale: ScaleTime<number, number>;
+    yScale: ScaleLinear<number, number>;
+    colors: ScaleOrdinal<string, string>;
+    grouped: Map<string, Observation[]>;
+    chartWideData: ArrayLike<Observation>;
+    allDataWide: ArrayLike<Observation>;
+    xKey: string;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
+  };
 
 const useLinesState = (
-  props: ChartProps<LineConfig> & { aspectRatio: number }
+  chartProps: ChartProps<LineConfig> & { aspectRatio: number },
+  variables: LinesStateVariables,
+  data: ChartStateData
 ): LinesState => {
+  const { chartConfig, aspectRatio } = chartProps;
   const {
-    chartConfig,
-    chartData,
-    scalesData,
-    segmentData,
-    allData,
-    dimensions,
-    measures,
-    aspectRatio,
-  } = props;
+    xDimension,
+    getX,
+    yMeasure,
+    getY,
+    getGroups,
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+  } = variables;
+  const { chartData, scalesData, segmentData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
+  const formatters = useChartFormatters(chartProps);
 
+  // TODO: extract to variables
   const xKey = fields.x.componentIri;
-
-  const xDimension = dimensions.find((d) => d.iri === xKey);
-
-  if (!xDimension) {
-    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
-  }
-
-  if (!isTemporalDimension(xDimension)) {
-    throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
-  }
-
-  const getX = useTemporalVariable(xKey);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getGroups = useStringVariable(xKey);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-  } = useMaybeAbbreviations({
-    useAbbreviations: fields.segment?.useAbbreviations,
-    dimensionIri: segmentDimension?.iri,
-    dimensionValues: segmentDimension?.values,
-  });
-
-  const { getValue: getSegment, getLabel: getSegmentLabel } =
-    useObservationLabels(
-      scalesData,
-      getSegmentAbbreviationOrLabel,
-      fields.segment?.componentIri
-    );
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -180,9 +131,6 @@ const useLinesState = (
     [scalesData, getX]
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
-  const xAxisLabel =
-    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
-    fields.x.componentIri;
 
   // y
   const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
@@ -191,14 +139,6 @@ const useLinesState = (
 
   const entireMaxValue = max(scalesData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
-
-  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
-
-  if (!yMeasure) {
-    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
   const segmentFilter = segmentDimension?.iri
@@ -285,8 +225,6 @@ const useLinesState = (
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  const formatters = useChartFormatters(props);
-
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
@@ -338,16 +276,9 @@ const useLinesState = (
     bounds,
     chartData,
     allData,
-    getX,
     xScale,
     xEntireScale,
-    getY,
     yScale,
-    getSegment,
-    getSegmentLabel,
-    xAxisLabel,
-    yAxisLabel,
-    yAxisDimension: yMeasure,
     segments,
     colors,
     grouped: preparedDataGroupedBySegment,
@@ -355,53 +286,7 @@ const useLinesState = (
     allDataWide,
     xKey,
     getAnnotationInfo,
-  };
-};
-
-export const getLinesStateMetadata = (
-  chartConfig: LineConfig,
-  observations: Observation[],
-  dimensions: DimensionMetadataFragment[]
-): ChartStateMetadata => {
-  const { fields } = chartConfig;
-  const x = fields.x.componentIri;
-  const getXDate = (d: Observation) => {
-    return parseDate(`${d[x]}`);
-  };
-
-  const y = fields.y.componentIri;
-  const getY = (d: Observation) => {
-    return d[y] !== null ? Number(d[y]) : null;
-  };
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  );
-
-  const { getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel } =
-    getMaybeAbbreviations({
-      useAbbreviations: fields.segment?.useAbbreviations,
-      dimensionIri: segmentDimension?.iri,
-      dimensionValues: segmentDimension?.values,
-    });
-
-  const { getValue: getSegment } = getObservationLabels(
-    observations,
-    getSegmentAbbreviationOrLabel,
-    fields.segment?.componentIri
-  );
-
-  return {
-    assureDefined: {
-      getY,
-    },
-    getXDate,
-    getSegment,
-    sortData: (data) => {
-      return [...data].sort((a, b) => {
-        return ascending(getXDate(a), getXDate(b));
-      });
-    },
+    ...variables,
   };
 };
 
@@ -410,8 +295,10 @@ const LineChartProvider = (
     ChartProps<LineConfig> & { aspectRatio: number }
   >
 ) => {
-  const { children, ...rest } = props;
-  const state = useLinesState(rest);
+  const { children, ...chartProps } = props;
+  const variables = useLinesStateVariables(chartProps);
+  const data = useLinesStateData(chartProps, variables);
+  const state = useLinesState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

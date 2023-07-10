@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
+import { PieState } from "@/charts/pie/pie-state";
 import {
   TooltipBox,
   TooltipPlacement,
@@ -16,6 +17,7 @@ import { Observation } from "@/domain/data";
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
+
   return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
 };
 export type { TooltipPlacement };
@@ -40,10 +42,13 @@ export interface TooltipInfo {
 }
 
 const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
-  const { bounds, getAnnotationInfo } = useChartState() as LinesState;
+  const { bounds, getAnnotationInfo } = useChartState() as
+    | LinesState
+    | PieState;
   const { margins } = bounds;
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
-    getAnnotationInfo(d);
+    getAnnotationInfo(d as any);
+
   return (
     <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
       {tooltipContent ? (

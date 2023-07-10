@@ -6,7 +6,7 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const Pie = () => {
-  const { chartData, getPieData, getX, colors, bounds } =
+  const { chartData, getPieData, getSegment, colors, bounds } =
     useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
 
@@ -15,7 +15,7 @@ export const Pie = () => {
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
   const innerRadius = 0;
-  const outerRadius = maxSide; // Math.min(maxSide, 100);
+  const outerRadius = maxSide;
 
   const xTranslate = width / 2;
   const yTranslate = height / 2;
@@ -28,7 +28,7 @@ export const Pie = () => {
           arcDatum={arcDatum}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
-          color={colors(getX(arcDatum.data))}
+          color={colors(getSegment(arcDatum.data))}
         />
       ))}
     </g>
@@ -69,6 +69,7 @@ const Arc = ({
       type: "INTERACTION_HIDE",
     });
   };
+
   return (
     <path
       d={arcGenerator({ startAngle, endAngle }) as string}

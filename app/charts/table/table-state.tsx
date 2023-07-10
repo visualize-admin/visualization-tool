@@ -20,13 +20,11 @@ import {
   getLabelWithUnit,
   getSlugifiedIri,
 } from "@/charts/shared/chart-helpers";
-import {
-  ChartStateMetadata,
-  CommonChartState,
-} from "@/charts/shared/chart-state";
+import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
 import { ChartContext } from "@/charts/shared/use-chart-state";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
+import { useTableStateData } from "@/charts/table/table-state-props";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -92,20 +90,23 @@ export type ColumnMeta =
   | TextColumnMeta
   | MKColumnMeta<{ type: "other" }>;
 
-export interface TableChartState extends CommonChartState {
+export type TableChartState = CommonChartState & {
   chartType: "table";
   rowHeight: number;
   showSearch: boolean;
-  data: Observation[];
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
   groupingIris: string[];
   hiddenIris: string[];
   sortingIris: { id: string; desc: boolean }[];
-}
+};
 
-const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
-  const { chartConfig, chartData, allData, dimensions, measures } = props;
+const useTableState = (
+  chartProps: ChartProps<TableConfig>,
+  data: ChartStateData
+): TableChartState => {
+  const { chartConfig, dimensions, measures } = chartProps;
+  const { chartData, allData } = data;
   const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
@@ -390,11 +391,11 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
 
   return {
     chartType: "table",
+    chartData: memoizedData,
     allData,
     bounds,
     rowHeight,
     showSearch: settings.showSearch,
-    data: memoizedData,
     tableColumns,
     tableColumnsMeta,
     groupingIris,
@@ -403,24 +404,12 @@ const useTableState = (props: ChartProps<TableConfig>): TableChartState => {
   };
 };
 
-export const getTableStateMetadata = (): ChartStateMetadata => {
-  return {
-    assureDefined: {},
-    sortData: (data) => {
-      return data;
-    },
-  };
-};
-
 const TableChartProvider = (
-  props: React.PropsWithChildren<
-    ChartProps<TableConfig> & {
-      chartConfig: TableConfig;
-    }
-  >
+  props: React.PropsWithChildren<ChartProps<TableConfig>>
 ) => {
-  const { children, ...rest } = props;
-  const state = useTableState(rest);
+  const { children, ...chartProps } = props;
+  const data = useTableStateData(chartProps);
+  const state = useTableState(chartProps, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

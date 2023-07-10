@@ -264,6 +264,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           },
         ],
       },
+      {
+        field: "animation",
+        optional: true,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
     ],
     interactiveFilters: [],
   },

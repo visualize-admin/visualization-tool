@@ -4,8 +4,6 @@ import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
-import { useChartData, usePlottableData } from "@/charts/shared/chart-helpers";
-import { getChartStateMetadata } from "@/charts/shared/chart-state";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -74,36 +72,10 @@ export const ChartLoadingWrapper = <
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
 
-  const chartStateMetadata = React.useMemo(() => {
-    if (observations && dimensions) {
-      return getChartStateMetadata({ chartConfig, observations, dimensions });
-    }
-  }, [chartConfig, observations, dimensions]);
-
-  const data = React.useMemo(() => {
-    if (observations && chartStateMetadata) {
-      return chartStateMetadata.sortData(observations);
-    }
-
-    return observations;
-  }, [chartStateMetadata, observations]);
-
-  const plottableData = usePlottableData({
-    data: data ?? [],
-    getX: chartStateMetadata?.assureDefined.getX,
-    getY: chartStateMetadata?.assureDefined.getY,
-  });
-
-  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
-    chartConfig,
-    getXDate: chartStateMetadata?.getXDate,
-    getSegment: chartStateMetadata?.getSegment,
-  });
-
-  if (metadata && dimensions && measures && data) {
+  if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
 
-    return data.length > 0 ? (
+    return observations.length > 0 ? (
       <Box
         data-chart-loaded={
           !(fetchingMetadata && fetchingComponents && fetchingObservations)
@@ -112,15 +84,12 @@ export const ChartLoadingWrapper = <
       >
         <A11yTable
           title={title}
-          observations={data}
+          observations={observations}
           dimensions={dimensions}
           measures={measures}
         />
         {React.createElement(Component, {
-          chartData,
-          scalesData,
-          segmentData,
-          allData: plottableData,
+          observations,
           dimensions,
           measures,
           chartConfig,
