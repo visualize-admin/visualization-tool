@@ -1,7 +1,7 @@
 import { t } from "@lingui/macro";
 import { CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
+import { TimeLocaleObject, extent, timeFormat, timeParse } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import React, {
@@ -15,7 +15,7 @@ import React, {
 import Flex from "@/components/flex";
 import {
   Checkbox,
-  DayPickerField,
+  DatePickerField,
   Input,
   Label,
   Radio,
@@ -37,8 +37,8 @@ import {
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
 import {
-  isMultiFilterFieldChecked,
   Option,
+  isMultiFilterFieldChecked,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionBooleanField,
@@ -309,14 +309,14 @@ export const DataFilterSelectDay = ({
   }, [allOptionsSet]);
 
   return (
-    <DayPickerField
+    <DatePickerField
       label={isOptional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
       controls={controls}
       onChange={fieldProps.onChange}
       name={dimension.iri}
       value={dateValue}
-      isDayDisabled={isDisabled}
+      isDateDisabled={isDisabled}
       minDate={minDate}
       maxDate={maxDate}
     />

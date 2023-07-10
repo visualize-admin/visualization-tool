@@ -40,7 +40,11 @@ import React, {
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
-import { Select } from "@/components/form";
+import {
+  canRenderDatePicker,
+  DatePickerField,
+  Select,
+} from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -1008,12 +1012,11 @@ export const TimeFilter = ({
     }
   });
 
-  const sortedOptions = useMemo(() => {
+  const { sortedOptions, sortedValues } = useMemo(() => {
     if (temporalDimension) {
       const { timeFormat, timeUnit } = temporalDimension;
       const parse = formatLocale.parse(timeFormat);
-
-      return temporalDimension.values
+      const sortedOptions = temporalDimension.values
         .map(({ value }) => {
           const date = parse(`${value}`) as Date;
 
@@ -1024,9 +1027,17 @@ export const TimeFilter = ({
           };
         })
         .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+      return {
+        sortedOptions,
+        sortedValues: sortedOptions.map((d) => d.value),
+      };
     }
 
-    return [];
+    return {
+      sortedOptions: [],
+      sortedValues: [],
+    };
   }, [temporalDimension, formatLocale, timeFormatUnit]);
 
   const getClosestDatesFromDateRange = React.useCallback(
@@ -1075,25 +1086,72 @@ export const TimeFilter = ({
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>
-              <Select
-                id="time-range-start"
-                label={t({
-                  id: "controls.filters.select.from",
-                  message: "From",
-                })}
-                options={fromOptions}
-                sortOptions={false}
-                value={rangeActiveFilter.from}
-                onChange={onChangeFrom}
-              />
-              <Select
-                id="time-range-end"
-                label={t({ id: "controls.filters.select.to", message: "To" })}
-                options={toOptions}
-                sortOptions={false}
-                value={rangeActiveFilter.to}
-                onChange={onChangeTo}
-              />
+              {canRenderDatePicker(timeUnit) ? (
+                <DatePickerField
+                  name="time-range-start"
+                  label={t({
+                    id: "controls.filters.select.from",
+                    message: "From",
+                  })}
+                  value={timeRange[0]}
+                  // @ts-ignore
+                  onChange={onChangeFrom}
+                  isDateDisabled={(date) => {
+                    return (
+                      date > timeRange[1] ||
+                      !sortedValues.includes(formatDateValue(date))
+                    );
+                  }}
+                  timeUnit={timeUnit}
+                  dateFormat={formatDateValue}
+                  minDate={from}
+                  maxDate={to}
+                />
+              ) : (
+                <Select
+                  id="time-range-start"
+                  label={t({
+                    id: "controls.filters.select.from",
+                    message: "From",
+                  })}
+                  options={fromOptions}
+                  sortOptions={false}
+                  value={rangeActiveFilter.from}
+                  onChange={onChangeFrom}
+                />
+              )}
+
+              {canRenderDatePicker(timeUnit) ? (
+                <DatePickerField
+                  name="time-range-end"
+                  label={t({
+                    id: "controls.filters.select.to",
+                    message: "To",
+                  })}
+                  value={timeRange[1]}
+                  // @ts-ignore
+                  onChange={onChangeTo}
+                  isDateDisabled={(date) => {
+                    return (
+                      date < timeRange[0] ||
+                      !sortedValues.includes(formatDateValue(date))
+                    );
+                  }}
+                  timeUnit={timeUnit}
+                  dateFormat={formatDateValue}
+                  minDate={from}
+                  maxDate={to}
+                />
+              ) : (
+                <Select
+                  id="time-range-end"
+                  label={t({ id: "controls.filters.select.to", message: "To" })}
+                  options={toOptions}
+                  sortOptions={false}
+                  value={rangeActiveFilter.to}
+                  onChange={onChangeTo}
+                />
+              )}
             </>
           )}
         </Box>

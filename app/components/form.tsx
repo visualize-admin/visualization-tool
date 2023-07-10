@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { DatePicker, DatePickerProps } from "@mui/lab";
+import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import {
   Box,
   BoxProps,
@@ -46,6 +47,7 @@ import {
   OptionGroup,
   useChartOptionSliderField,
 } from "@/configurator";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
@@ -475,23 +477,90 @@ export const Input = ({
 
 const formatDate = timeFormat("%Y-%m-%d");
 
-export const DayPickerField = ({
+type DatePickerTimeUnit =
+  | TimeUnit.Day
+  | TimeUnit.Week
+  | TimeUnit.Month
+  | TimeUnit.Year;
+
+export const canRenderDatePicker = (
+  timeUnit: TimeUnit
+): timeUnit is DatePickerTimeUnit => {
+  return [TimeUnit.Day, TimeUnit.Week, TimeUnit.Month, TimeUnit.Year].includes(
+    timeUnit
+  );
+};
+
+const getDateRenderProps = (
+  timeUnit: DatePickerTimeUnit,
+  isDateDisabled: (d: any) => boolean
+):
+  | { shouldDisableDate: DatePickerProps["shouldDisableDate"] }
+  | { shouldDisableYear: DatePickerProps["shouldDisableYear"] } => {
+  switch (timeUnit) {
+    case TimeUnit.Day:
+    case TimeUnit.Week:
+    case TimeUnit.Month:
+      return { shouldDisableDate: isDateDisabled };
+    case TimeUnit.Year:
+      return { shouldDisableYear: isDateDisabled };
+    default:
+      const _exhaustiveCheck: never = timeUnit;
+      return _exhaustiveCheck;
+  }
+};
+
+const getInputFormat = (timeUnit: DatePickerTimeUnit): string => {
+  switch (timeUnit) {
+    case TimeUnit.Day:
+    case TimeUnit.Week:
+      return "dd.MM.yyyy";
+    case TimeUnit.Month:
+      return "MM.yyyy";
+    case TimeUnit.Year:
+      return "yyyy";
+    default:
+      const _exhaustiveCheck: never = timeUnit;
+      return _exhaustiveCheck;
+  }
+};
+
+const getViews = (timeUnit: DatePickerTimeUnit): DatePickerView[] => {
+  switch (timeUnit) {
+    case TimeUnit.Day:
+    case TimeUnit.Week:
+      return ["year", "month", "day"];
+    case TimeUnit.Month:
+      return ["year", "month"];
+    case TimeUnit.Year:
+      return ["year"];
+    default:
+      const _exhaustiveCheck: never = timeUnit;
+      return _exhaustiveCheck;
+  }
+};
+
+export const DatePickerField = ({
   label,
   name,
   value,
-  isDayDisabled,
+  isDateDisabled,
   onChange,
   disabled,
   controls,
+  timeUnit = TimeUnit.Day,
+  dateFormat = formatDate,
   ...props
 }: {
   name: string;
   value: Date;
-  isDayDisabled: (day: Date) => boolean;
+  isDateDisabled: (date: Date) => boolean;
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   controls?: ReactNode;
   label?: string | ReactNode;
   disabled?: boolean;
+  timeUnit?: DatePickerTimeUnit;
+  dateFormat?: (d: Date) => string;
 } & Omit<
   DatePickerProps<Date>,
   | "onChange"
@@ -502,25 +571,28 @@ export const DayPickerField = ({
   | "renderInput"
 >) => {
   const handleChange = useCallback(
-    (day: Date | null) => {
-      if (!day) {
+    (date: Date | null) => {
+      if (!date) {
         return;
       }
-      const isDisabled = isDayDisabled(day);
+
+      const isDisabled = isDateDisabled(date);
       if (isDisabled) {
         return;
       }
 
       const ev = {
         target: {
-          value: formatDate(day),
+          value: dateFormat(date),
         },
       } as ChangeEvent<HTMLSelectElement>;
 
       onChange(ev);
     },
-    [isDayDisabled, onChange]
+    [isDateDisabled, onChange, dateFormat]
   );
+
+  const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
 
   return (
     <Box
@@ -530,21 +602,32 @@ export const DayPickerField = ({
       }}
     >
       {label && name && (
-        <Label htmlFor={name} smaller>
+        <Label htmlFor={name} smaller sx={{ my: 1 }}>
           {label}
           {controls}
         </Label>
       )}
       <DatePicker<Date>
         {...props}
-        inputFormat="dd.MM.yyyy"
-        views={["day"]}
+        {...dateLimitProps}
+        inputFormat={getInputFormat(timeUnit)}
+        views={getViews(timeUnit)}
         value={value}
-        shouldDisableDate={isDayDisabled}
         onChange={handleChange}
         onYearChange={handleChange}
         renderInput={(params) => (
-          <TextField hiddenLabel size="small" {...params} />
+          <TextField
+            hiddenLabel
+            size="small"
+            {...params}
+            sx={{
+              ...params.sx,
+
+              "& input": {
+                typography: "body2",
+              },
+            }}
+          />
         )}
         disabled={disabled}
       />
