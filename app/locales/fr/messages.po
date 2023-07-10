@@ -29,8 +29,8 @@ msgstr "Déplacer le filtre vers le bas"
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
+#: app/browser/dataset-browse.tsx
 #: app/components/select-tree.tsx
-#: app/configurator/components/dataset-browse.tsx
 msgid "No results"
 msgstr "Aucun résultat"
 
@@ -42,23 +42,23 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
-#: app/configurator/components/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Démarrer une visualisation"
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.all-datasets"
 msgstr "Tous les jeux de données"
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
@@ -340,6 +340,10 @@ msgid "controls.filters.interactive.tooltip"
 msgstr "Permettre aux utilisateurs de changer le filtre"
 
 #: app/configurator/components/filters.tsx
+msgid "controls.filters.select.from"
+msgstr "Du"
+
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
 msgstr "Renouveller les couleurs"
 
@@ -350,6 +354,10 @@ msgstr "Réinitialiser les couleurs"
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.selected-filters"
 msgstr "Filtres sélectionnés"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.select.to"
+msgstr "Au"
 
 #: app/configurator/interactive-filters/editor-time-interval-brush.tsx
 msgid "controls.filters.time.range"
@@ -758,11 +766,11 @@ msgstr "Source des données"
 msgid "data.source.notTrusted"
 msgstr "Ce graphique n'utilise pas une source de données fiable."
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "dataset-preview.back-to-results"
 msgstr "Revenir aux jeux de données"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset-preview.keywords"
 msgstr "Mots clés"
 
@@ -778,50 +786,50 @@ msgstr "Mise à jour"
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.furtherinformation"
 msgstr "Informations complémentaires"
 
 #: app/components/chart-footnotes.tsx
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
 msgstr "En savoir plus sur le jeu de données"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.newest"
 msgstr "Plus récent en premier"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.relevance"
 msgstr "Pertinence"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.title"
 msgstr "Titre"
 
+#: app/browser/dataset-preview.tsx
 #: app/components/chart-preview.tsx
 #: app/components/chart-published.tsx
-#: app/configurator/components/dataset-preview.tsx
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
@@ -829,27 +837,27 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {Aucun jeu de données} one {# jeu de données} other {# jeux de données}}"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.search.label"
 msgstr "Chercher"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.search.placeholder"
 msgstr "Nom, organisation, mots clés..."
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.sortby"
 msgstr "Trier par"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.tag.draft"
 msgstr "Brouillon"
 
-#: app/configurator/components/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
@@ -1041,7 +1049,7 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
 msgid "select.controls.filters.search"
 msgstr "Chercher"
