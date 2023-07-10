@@ -955,13 +955,13 @@ export const DimensionValuesMultiFilter = ({
   }
 };
 
-export const TimeFilter = ({
-  dataSetIri,
-  dimensionIri,
-}: {
+type TimeFilterProps = {
   dataSetIri: string;
   dimensionIri: string;
-}) => {
+};
+
+export const TimeFilter = (props: TimeFilterProps) => {
+  const { dataSetIri, dimensionIri } = props;
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
@@ -994,23 +994,30 @@ export const TimeFilter = ({
   const dimension = data?.dataCubeByIri?.dimensionByIri;
   const temporalDimension =
     dimension?.__typename === "TemporalDimension" ? dimension : null;
-  const activeFilter = getFilterValue(state, temporalDimension?.iri ?? "");
+
+  const activeFilter = temporalDimension?.iri
+    ? getFilterValue(state, temporalDimension.iri)
+    : null;
   const rangeActiveFilter =
     activeFilter?.type === "range" ? activeFilter : null;
 
-  const onChangeFrom = useEvent((e: SelectChangeEvent<unknown>) => {
-    if (rangeActiveFilter) {
-      const from = e.target.value as string;
-      setFilterRange([from, rangeActiveFilter.to]);
+  const onChangeFrom = useEvent(
+    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+      if (rangeActiveFilter) {
+        const from = e.target.value as string;
+        setFilterRange([from, rangeActiveFilter.to]);
+      }
     }
-  });
+  );
 
-  const onChangeTo = useEvent((e: SelectChangeEvent<unknown>) => {
-    if (rangeActiveFilter) {
-      const to = e.target.value as string;
-      setFilterRange([rangeActiveFilter.from, to]);
+  const onChangeTo = useEvent(
+    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+      if (rangeActiveFilter) {
+        const to = e.target.value as string;
+        setFilterRange([rangeActiveFilter.from, to]);
+      }
     }
-  });
+  );
 
   const { sortedOptions, sortedValues } = useMemo(() => {
     if (temporalDimension) {
@@ -1052,7 +1059,7 @@ export const TimeFilter = ({
     [sortedOptions]
   );
 
-  if (temporalDimension && state.state === "CONFIGURING_CHART") {
+  if (temporalDimension && isConfiguring(state)) {
     const { timeUnit, timeFormat } = temporalDimension;
     const timeInterval = getTimeInterval(timeUnit);
 
@@ -1094,7 +1101,6 @@ export const TimeFilter = ({
                     message: "From",
                   })}
                   value={timeRange[0]}
-                  // @ts-ignore
                   onChange={onChangeFrom}
                   isDateDisabled={(date) => {
                     return (
@@ -1129,7 +1135,6 @@ export const TimeFilter = ({
                     message: "To",
                   })}
                   value={timeRange[1]}
-                  // @ts-ignore
                   onChange={onChangeTo}
                   isDateDisabled={(date) => {
                     return (
@@ -1145,7 +1150,10 @@ export const TimeFilter = ({
               ) : (
                 <Select
                   id="time-range-end"
-                  label={t({ id: "controls.filters.select.to", message: "To" })}
+                  label={t({
+                    id: "controls.filters.select.to",
+                    message: "To",
+                  })}
                   options={toOptions}
                   sortOptions={false}
                   value={rangeActiveFilter.to}
