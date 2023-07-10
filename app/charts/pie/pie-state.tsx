@@ -71,7 +71,7 @@ const usePieState = (
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension.iri]
     : undefined;
-  const colors = useMemo(() => {
+  const { colors, allSegments, segments } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
       segmentData.map((d) => [getSegment(d), getY(d)])
@@ -79,6 +79,7 @@ const usePieState = (
     const allUniqueSegments = Object.entries(measureBySegment)
       .filter((x) => typeof x[1] === "number")
       .map((x) => x[0]);
+    const uniqueSegments = Array.from(new Set(chartData.map(getSegment)));
 
     const sorting = fields.segment.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
@@ -93,6 +94,7 @@ const usePieState = (
       sorters,
       getSortingOrders(sorters, sorting)
     );
+    const segments = allSegments.filter((d) => uniqueSegments.includes(d));
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
@@ -117,7 +119,11 @@ const usePieState = (
     // on unknown values
     colors.unknown(() => undefined);
 
-    return colors;
+    return {
+      colors,
+      allSegments,
+      segments,
+    };
   }, [
     fields.segment,
     getSegment,
@@ -127,6 +133,7 @@ const usePieState = (
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     segmentFilter,
+    chartData,
   ]);
 
   // Dimensions
@@ -171,7 +178,7 @@ const usePieState = (
     };
   }, [colors, getSegment]);
   const getPieData = pie<Observation>()
-    .value((d) => getY(d) ?? NaN)
+    .value((d) => getY(d) ?? 0)
     .sort(pieSorter);
 
   const valueFormatter = (value: number | null) =>
@@ -216,10 +223,28 @@ const usePieState = (
     };
   };
 
+  /** To correctly animate entering / exiting pie slices during the animation,
+   * there is a need to artificially keep all segments in the data, even if they
+   * are not present in the current data. This is done by adding a slice with
+   * value 0 for each missing segment.
+   */
+  const chartDataWithMissingSegments = useMemo(() => {
+    return chartData.concat(
+      allSegments
+        .filter((d) => !segments.includes(d))
+        .map((d) => {
+          return {
+            [segmentDimension!.iri]: d,
+            [yMeasure.iri]: 0,
+          } as Observation;
+        })
+    );
+  }, [chartData, allSegments, segmentDimension, segments, yMeasure.iri]);
+
   return {
     chartType: "pie",
     bounds,
-    chartData,
+    chartData: chartDataWithMissingSegments,
     allData,
     getPieData,
     colors,
