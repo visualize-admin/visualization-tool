@@ -4,35 +4,35 @@ import {
   Box,
   BoxProps,
   ButtonBase,
-  Checkbox as MUICheckbox,
   FormControlLabel,
   FormControlLabelProps,
-  Input as MUIInput,
   InputProps,
   ListSubheader,
+  Checkbox as MUICheckbox,
+  Input as MUIInput,
+  Radio as MUIRadio,
+  Select as MUISelect,
+  Slider as MUISlider,
+  Switch as MUISwitch,
   MenuItem,
   Paper,
   PaperProps,
-  Radio as MUIRadio,
-  Select as MUISelect,
   SelectProps,
   Skeleton,
-  Slider as MUISlider,
   SliderProps,
   Stack,
-  styled,
-  Switch as MUISwitch,
   TextField,
   Typography,
   TypographyProps,
+  styled,
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
 import flatten from "lodash/flatten";
 import React, {
   ChangeEvent,
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useContext,
   useMemo,
@@ -339,7 +339,7 @@ export const Select = ({
 
   return (
     <LoadingMenuPaperContext.Provider value={loading}>
-      <Box>
+      <Box sx={{ width: "100%" }}>
         {label && (
           <Label htmlFor={id} smaller sx={{ my: 1 }}>
             {label}
@@ -347,9 +347,7 @@ export const Select = ({
           </Label>
         )}
         <MUISelect
-          sx={{
-            width: "100%",
-          }}
+          sx={{ width: "100%" }}
           id={id}
           name={id}
           onChange={onChange}

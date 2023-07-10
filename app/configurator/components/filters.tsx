@@ -11,6 +11,7 @@ import {
   IconButton,
   Input,
   InputAdornment,
+  SelectChangeEvent,
   Switch,
   Theme,
   Tooltip,
@@ -38,6 +39,7 @@ import {
 
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
+import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -985,41 +987,90 @@ export const TimeFilter = ({
   });
 
   const dimension = data?.dataCubeByIri?.dimensionByIri;
+  const temporalDimension =
+    dimension?.__typename === "TemporalDimension" ? dimension : null;
+  const activeFilter = getFilterValue(state, temporalDimension?.iri ?? "");
+  const rangeActiveFilter =
+    activeFilter?.type === "range" ? activeFilter : null;
 
-  if (
-    dimension &&
-    dimension.__typename === "TemporalDimension" &&
-    state.state === "CONFIGURING_CHART"
-  ) {
-    const { timeUnit, timeFormat } = dimension;
+  const onChangeFrom = useEvent((e: SelectChangeEvent<unknown>) => {
+    if (rangeActiveFilter) {
+      const from = e.target.value as string;
+      setFilterRange([from, rangeActiveFilter.to]);
+    }
+  });
 
-    const activeFilter = getFilterValue(state, dimension.iri);
+  const onChangeTo = useEvent((e: SelectChangeEvent<unknown>) => {
+    if (rangeActiveFilter) {
+      const to = e.target.value as string;
+      setFilterRange([rangeActiveFilter.from, to]);
+    }
+  });
 
+  if (temporalDimension && state.state === "CONFIGURING_CHART") {
+    const { timeUnit, timeFormat, values } = temporalDimension;
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
     const formatDateValue = formatLocale.format(timeFormat);
 
-    const from = parse(dimension.values[0].value as string);
-    const to = parse(
-      dimension.values[dimension.values.length - 1].value as string
-    );
+    const from = parse(`${values[0].value}`);
+    const to = parse(`${values[values.length - 1].value}`);
 
     if (!from || !to) {
       return null;
     }
 
-    const timeRange =
-      activeFilter && activeFilter.type === "range"
-        ? [parse(activeFilter.from)!, parse(activeFilter.to)!]
-        : [from, to];
+    const allOptions = values.map(({ value }) => {
+      const date = parse(`${value}`) as Date;
+
+      return {
+        value,
+        label: timeFormatUnit(date, timeUnit),
+        date,
+      };
+    });
+
+    const timeRange = rangeActiveFilter
+      ? [
+          parse(rangeActiveFilter.from) as Date,
+          parse(rangeActiveFilter.to) as Date,
+        ]
+      : [from, to];
+
+    const fromOptions = allOptions.filter(({ date }) => {
+      return date <= timeRange[1];
+    });
+
+    const toOptions = allOptions.filter(({ date }) => {
+      return date >= timeRange[0];
+    });
 
     return (
       <Box>
-        <Typography variant="body2">
-          {timeFormatUnit(timeRange[0], timeUnit)} –{" "}
-          {timeFormatUnit(timeRange[1], timeUnit)}
-        </Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          {rangeActiveFilter && (
+            <>
+              <Select
+                id="time-range-start"
+                label={t({
+                  id: "controls.filters.select.from",
+                  message: "From",
+                })}
+                options={fromOptions}
+                value={rangeActiveFilter.from}
+                onChange={onChangeFrom}
+              />
+              <Select
+                id="time-range-end"
+                label={t({ id: "controls.filters.select.to", message: "To" })}
+                options={toOptions}
+                value={rangeActiveFilter.to}
+                onChange={onChangeTo}
+              />
+            </>
+          )}
+        </Box>
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
