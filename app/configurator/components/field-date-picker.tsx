@@ -7,7 +7,93 @@ import React from "react";
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
 
-const formatDate = timeFormat("%Y-%m-%d");
+type DatePickerFieldProps = {
+  name: string;
+  label?: React.ReactNode;
+  value: Date;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
+  isDateDisabled: (date: Date) => boolean;
+  controls?: React.ReactNode;
+  timeUnit?: DatePickerTimeUnit;
+  dateFormat?: (d: Date) => string;
+} & Omit<
+  DatePickerProps<Date>,
+  "value" | "onChange" | "shouldDisableDate" | "inputFormat" | "renderInput"
+>;
+
+export const DatePickerField = (props: DatePickerFieldProps) => {
+  const {
+    name,
+    label,
+    value,
+    onChange,
+    disabled,
+    isDateDisabled,
+    controls,
+    timeUnit = TimeUnit.Day,
+    dateFormat = timeFormat("%Y-%m-%d"),
+    ...rest
+  } = props;
+  const handleChange = React.useCallback(
+    (date: Date | null) => {
+      if (!date || isDateDisabled(date)) {
+        return;
+      }
+
+      const ev = {
+        target: {
+          value: dateFormat(date),
+        },
+      } as React.ChangeEvent<HTMLSelectElement>;
+
+      onChange(ev);
+    },
+    [isDateDisabled, onChange, dateFormat]
+  );
+
+  const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
+
+  return (
+    <Box
+      sx={{
+        color: disabled ? "grey.300" : "grey.700",
+        fontSize: "1rem",
+      }}
+    >
+      {label && name && (
+        <Label htmlFor={name} smaller sx={{ my: 1 }}>
+          {label}
+          {controls}
+        </Label>
+      )}
+      <DatePicker<Date>
+        {...rest}
+        {...dateLimitProps}
+        inputFormat={getInputFormat(timeUnit)}
+        views={getViews(timeUnit)}
+        value={value}
+        onChange={handleChange}
+        onYearChange={handleChange}
+        renderInput={(params) => (
+          <TextField
+            hiddenLabel
+            size="small"
+            {...params}
+            sx={{
+              ...params.sx,
+
+              "& input": {
+                typography: "body2",
+              },
+            }}
+          />
+        )}
+        disabled={disabled}
+      />
+    </Box>
+  );
+};
 
 type DatePickerTimeUnit =
   | TimeUnit.Day
@@ -70,99 +156,4 @@ const getViews = (timeUnit: DatePickerTimeUnit): DatePickerView[] => {
       const _exhaustiveCheck: never = timeUnit;
       return _exhaustiveCheck;
   }
-};
-
-export const DatePickerField = ({
-  label,
-  name,
-  value,
-  isDateDisabled,
-  onChange,
-  disabled,
-  controls,
-  timeUnit = TimeUnit.Day,
-  dateFormat = formatDate,
-  ...props
-}: {
-  name: string;
-  value: Date;
-  isDateDisabled: (date: Date) => boolean;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  controls?: React.ReactNode;
-  label?: string | React.ReactNode;
-  disabled?: boolean;
-  timeUnit?: DatePickerTimeUnit;
-  dateFormat?: (d: Date) => string;
-} & Omit<
-  DatePickerProps<Date>,
-  | "onChange"
-  | "value"
-  | "shouldDisableDate"
-  | "onChange"
-  | "inputFormat"
-  | "renderInput"
->) => {
-  const handleChange = React.useCallback(
-    (date: Date | null) => {
-      if (!date) {
-        return;
-      }
-
-      const isDisabled = isDateDisabled(date);
-      if (isDisabled) {
-        return;
-      }
-
-      const ev = {
-        target: {
-          value: dateFormat(date),
-        },
-      } as React.ChangeEvent<HTMLSelectElement>;
-
-      onChange(ev);
-    },
-    [isDateDisabled, onChange, dateFormat]
-  );
-
-  const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
-
-  return (
-    <Box
-      sx={{
-        color: disabled ? "grey.300" : "grey.700",
-        fontSize: "1rem",
-      }}
-    >
-      {label && name && (
-        <Label htmlFor={name} smaller sx={{ my: 1 }}>
-          {label}
-          {controls}
-        </Label>
-      )}
-      <DatePicker<Date>
-        {...props}
-        {...dateLimitProps}
-        inputFormat={getInputFormat(timeUnit)}
-        views={getViews(timeUnit)}
-        value={value}
-        onChange={handleChange}
-        onYearChange={handleChange}
-        renderInput={(params) => (
-          <TextField
-            hiddenLabel
-            size="small"
-            {...params}
-            sx={{
-              ...params.sx,
-
-              "& input": {
-                typography: "body2",
-              },
-            }}
-          />
-        )}
-        disabled={disabled}
-      />
-    </Box>
-  );
 };
