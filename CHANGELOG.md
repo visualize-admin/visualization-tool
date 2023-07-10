@@ -19,6 +19,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Scales now adapt to color legend filter when using time slider
   - Columns now properly animate out, instead of disappearing
   - Empty color legend is no longer shown
+  - Scatterplot X axis now correctly aligns its title on Safari
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:
