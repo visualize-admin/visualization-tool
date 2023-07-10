@@ -1007,29 +1007,40 @@ export const TimeFilter = ({
     }
   });
 
+  const sortedOptions = useMemo(() => {
+    if (temporalDimension) {
+      const { timeFormat, timeUnit } = temporalDimension;
+      const parse = formatLocale.parse(timeFormat);
+
+      return temporalDimension.values
+        .map(({ value }) => {
+          const date = parse(`${value}`) as Date;
+
+          return {
+            value,
+            label: timeFormatUnit(date, timeUnit),
+            date,
+          };
+        })
+        .sort((a, b) => a.date.getTime() - b.date.getTime());
+    }
+
+    return [];
+  }, [temporalDimension, formatLocale, timeFormatUnit]);
+
   if (temporalDimension && state.state === "CONFIGURING_CHART") {
-    const { timeUnit, timeFormat, values } = temporalDimension;
+    const { timeUnit, timeFormat } = temporalDimension;
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
     const formatDateValue = formatLocale.format(timeFormat);
 
-    const from = parse(`${values[0].value}`);
-    const to = parse(`${values[values.length - 1].value}`);
+    const from = sortedOptions[0].date;
+    const to = sortedOptions[sortedOptions.length - 1].date;
 
     if (!from || !to) {
       return null;
     }
-
-    const allOptions = values.map(({ value }) => {
-      const date = parse(`${value}`) as Date;
-
-      return {
-        value,
-        label: timeFormatUnit(date, timeUnit),
-        date,
-      };
-    });
 
     const timeRange = rangeActiveFilter
       ? [
@@ -1038,11 +1049,11 @@ export const TimeFilter = ({
         ]
       : [from, to];
 
-    const fromOptions = allOptions.filter(({ date }) => {
+    const fromOptions = sortedOptions.filter(({ date }) => {
       return date <= timeRange[1];
     });
 
-    const toOptions = allOptions.filter(({ date }) => {
+    const toOptions = sortedOptions.filter(({ date }) => {
       return date >= timeRange[0];
     });
 
@@ -1058,6 +1069,7 @@ export const TimeFilter = ({
                   message: "From",
                 })}
                 options={fromOptions}
+                sortOptions={false}
                 value={rangeActiveFilter.from}
                 onChange={onChangeFrom}
               />
@@ -1065,6 +1077,7 @@ export const TimeFilter = ({
                 id="time-range-end"
                 label={t({ id: "controls.filters.select.to", message: "To" })}
                 options={toOptions}
+                sortOptions={false}
                 value={rangeActiveFilter.to}
                 onChange={onChangeTo}
               />
