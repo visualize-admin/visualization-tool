@@ -68,9 +68,9 @@ const useLinesState = (
   const {
     xDimension,
     getX,
+    getXAsString,
     yMeasure,
     getY,
-    getGroups,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -94,8 +94,8 @@ const useLinesState = (
   }, [segmentDimension?.values]);
 
   const dataGroupedByX = useMemo(
-    () => group(chartData, getGroups),
-    [chartData, getGroups]
+    () => group(chartData, getXAsString),
+    [chartData, getXAsString]
   );
 
   const allDataWide = getWideData({
@@ -111,8 +111,8 @@ const useLinesState = (
   );
 
   const preparedDataGroupedByX = useMemo(
-    () => group(chartData, getGroups),
-    [chartData, getGroups]
+    () => group(chartData, getXAsString),
+    [chartData, getXAsString]
   );
 
   const chartWideData = getWideData({

@@ -1,10 +1,7 @@
 import { ascending } from "d3";
 import React from "react";
 
-import {
-  usePlottableData,
-  useStringVariable,
-} from "@/charts/shared/chart-helpers";
+import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   ChartStateData,
   NumericalYVariables,
@@ -22,11 +19,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type LinesStateVariables = TemporalXVariables &
   NumericalYVariables &
-  SegmentVariables & {
-    getGroups: (d: Observation) => string;
-  };
+  SegmentVariables;
 
-// TODO: usetemporalXchartstate, same as Area chart.
 export const useLinesStateVariables = (
   props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesStateVariables => {
@@ -45,13 +39,10 @@ export const useLinesStateVariables = (
     observations,
   });
 
-  const getGroups = useStringVariable(x.componentIri);
-
   return {
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,
-    getGroups,
   };
 };
 

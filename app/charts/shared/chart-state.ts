@@ -6,6 +6,7 @@ import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
+  useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
@@ -112,6 +113,7 @@ export const useBandXVariables = (
 export type TemporalXVariables = {
   xDimension: TemporalDimension;
   getX: TemporalValueGetter;
+  getXAsString: StringValueGetter;
 };
 
 export const useTemporalXVariables = (
@@ -128,10 +130,12 @@ export const useTemporalXVariables = (
   }
 
   const getX = useTemporalVariable(x.componentIri);
+  const getXAsString = useStringVariable(x.componentIri);
 
   return {
     xDimension,
     getX,
+    getXAsString,
   };
 };
 

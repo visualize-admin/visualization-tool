@@ -76,9 +76,9 @@ const useAreasState = (
   const {
     xDimension,
     getX,
+    getXAsString,
     yMeasure,
     getY,
-    getGroups,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -154,10 +154,9 @@ const useAreasState = (
 
   const xKey = fields.x.componentIri;
 
-  const dataGroupedByX = useMemo(
-    () => group(chartData, getGroups),
-    [chartData, getGroups]
-  );
+  const dataGroupedByX = useMemo(() => {
+    return group(chartData, getXAsString);
+  }, [chartData, getXAsString]);
 
   const allDataWide = useMemo(
     () =>
@@ -171,7 +170,7 @@ const useAreasState = (
   );
 
   const chartWideData = useMemo(() => {
-    const preparedDataGroupedByX = group(chartData, getGroups);
+    const preparedDataGroupedByX = group(chartData, getXAsString);
 
     return getWideData({
       dataGroupedByX: preparedDataGroupedByX,
@@ -183,7 +182,7 @@ const useAreasState = (
     });
   }, [
     chartData,
-    getGroups,
+    getXAsString,
     xKey,
     getY,
     allSegments,
