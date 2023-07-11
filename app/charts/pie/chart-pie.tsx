@@ -4,7 +4,11 @@ import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
@@ -89,22 +93,23 @@ export const ChartPie = memo((props: ChartProps<PieConfig>) => {
         </ChartSvg>
         <Tooltip type="single" />
       </ChartContainer>
-      <LegendColor
-        symbol="square"
-        interactive={
-          fields.segment && interactiveFiltersConfig?.legend.active === true
-        }
-      />
-
-      {fields.animation && (
-        <TimeSlider
-          componentIri={fields.animation.componentIri}
-          dimensions={dimensions}
-          showPlayButton={fields.animation.showPlayButton}
-          animationDuration={fields.animation.duration}
-          animationType={fields.animation.type}
+      <ChartControlsContainer>
+        {fields.animation && (
+          <TimeSlider
+            componentIri={fields.animation.componentIri}
+            dimensions={dimensions}
+            showPlayButton={fields.animation.showPlayButton}
+            animationDuration={fields.animation.duration}
+            animationType={fields.animation.type}
+          />
+        )}
+        <LegendColor
+          symbol="square"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active === true
+          }
         />
-      )}
+      </ChartControlsContainer>
     </PieChart>
   );
 });

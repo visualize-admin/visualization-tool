@@ -30,7 +30,7 @@ import { useDimensionFormatters, useFormatInteger } from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 
 const MAX_WIDTH = 204;
-const HEIGHT = 80;
+const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
 
@@ -90,8 +90,8 @@ export const MapLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
-    <Box sx={{ minHeight: 100 }}>
-      <Flex sx={{ flexWrap: "wrap", gap: 4, mt: 4 }}>
+    <Box>
+      <Flex sx={{ flexWrap: "wrap", gap: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>
             <Typography
@@ -315,7 +315,7 @@ const CircleLegend = ({
   ) as [Observation | undefined, Observation | undefined];
 
   return (
-    <svg width={width} height={HEIGHT}>
+    <svg width={width} height={60}>
       <g
         transform={`translate(${MARGIN.left + maxRadius}, ${
           MARGIN.top + maxRadius

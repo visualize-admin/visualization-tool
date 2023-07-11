@@ -7,7 +7,11 @@ import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
@@ -96,10 +100,12 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
       </ChartContainer>
 
       {fields.segment && (
-        <LegendColor
-          symbol="line"
-          interactive={interactiveFiltersConfig?.legend.active}
-        />
+        <ChartControlsContainer>
+          <LegendColor
+            symbol="line"
+            interactive={interactiveFiltersConfig?.legend.active}
+          />
+        </ChartControlsContainer>
       )}
     </LineChart>
   );

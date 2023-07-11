@@ -44,7 +44,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: "1rem 1.5rem",
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-    gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
   legendContainerNoGroups: {

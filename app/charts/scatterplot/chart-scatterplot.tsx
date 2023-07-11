@@ -12,7 +12,11 @@ import {
   AxisWidthLinearDomain,
 } from "@/charts/shared/axis-width-linear";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
@@ -95,22 +99,24 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
         </ChartSvg>
         <Tooltip type="single" />
       </ChartContainer>
-
-      {fields.segment && (
-        <LegendColor
-          symbol="circle"
-          interactive={interactiveFiltersConfig?.legend.active === true}
-        />
-      )}
-
-      {fields.animation && (
-        <TimeSlider
-          componentIri={fields.animation.componentIri}
-          dimensions={dimensions}
-          showPlayButton={fields.animation.showPlayButton}
-          animationDuration={fields.animation.duration}
-          animationType={fields.animation.type}
-        />
+      {(fields.animation || fields.segment) && (
+        <ChartControlsContainer>
+          {fields.animation && (
+            <TimeSlider
+              componentIri={fields.animation.componentIri}
+              dimensions={dimensions}
+              showPlayButton={fields.animation.showPlayButton}
+              animationDuration={fields.animation.duration}
+              animationType={fields.animation.type}
+            />
+          )}
+          {fields.segment && (
+            <LegendColor
+              symbol="circle"
+              interactive={interactiveFiltersConfig?.legend.active === true}
+            />
+          )}
+        </ChartControlsContainer>
       )}
     </ScatterplotChart>
   );

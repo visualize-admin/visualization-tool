@@ -4,7 +4,10 @@ import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+} from "@/charts/shared/containers";
 import { DataSource, MapConfig, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
@@ -150,16 +153,18 @@ export const ChartMap = (
         <MapComponent />
         <MapTooltip />
       </ChartContainer>
-      <MapLegend chartConfig={chartConfig} />
-      {fields.animation && (
-        <TimeSlider
-          componentIri={fields.animation.componentIri}
-          dimensions={dimensions}
-          showPlayButton={fields.animation.showPlayButton}
-          animationDuration={fields.animation.duration}
-          animationType={fields.animation.type}
-        />
-      )}
+      <ChartControlsContainer sx={{ mt: 6 }}>
+        {fields.animation && (
+          <TimeSlider
+            componentIri={fields.animation.componentIri}
+            dimensions={dimensions}
+            showPlayButton={fields.animation.showPlayButton}
+            animationDuration={fields.animation.duration}
+            animationType={fields.animation.type}
+          />
+        )}
+        <MapLegend chartConfig={chartConfig} />
+      </ChartControlsContainer>
     </MapChart>
   );
 };

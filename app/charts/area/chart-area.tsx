@@ -7,7 +7,11 @@ import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
@@ -89,12 +93,13 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
         <Tooltip type={fields.segment ? "multiple" : "single"} />
         <Ruler />
       </ChartContainer>
-
       {fields.segment && (
-        <LegendColor
-          symbol="square"
-          interactive={interactiveFiltersConfig?.legend.active === true}
-        />
+        <ChartControlsContainer>
+          <LegendColor
+            symbol="square"
+            interactive={interactiveFiltersConfig?.legend.active === true}
+          />
+        </ChartControlsContainer>
       )}
     </AreaChart>
   );
