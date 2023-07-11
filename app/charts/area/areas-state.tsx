@@ -17,7 +17,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import {
   AreasStateVariables,
@@ -28,6 +28,7 @@ import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getWideData,
+  normalizeData,
   stackOffsetDivergingPositiveZeros,
 } from "@/charts/shared/chart-helpers";
 import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
@@ -72,6 +73,7 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
+  const normalize = true;
   const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
@@ -169,24 +171,50 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  const chartWideData = useMemo(() => {
-    const preparedDataGroupedByX = group(chartData, getXAsString);
+  const sumsByX = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        scalesData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getXAsString(x)
+      ),
+    ]);
+  }, [getXAsString, getY, scalesData]);
 
-    return getWideData({
+  const preparedDataGroupedByX = useMemo(() => {
+    if (normalize) {
+      return group(
+        normalizeData(chartData, {
+          yKey: yMeasure.iri,
+          getY,
+          getTotalGroupValue: (d) => {
+            return sumsByX[getXAsString(d)];
+          },
+        }),
+        getXAsString
+      );
+    }
+
+    return group(chartData, getXAsString);
+  }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
+
+  const chartWideData = React.useMemo(() => {
+    const wideData = getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
       getY,
-      allSegments,
       getSegment,
+      allSegments: segments,
       imputationType: fields.y.imputationType,
     });
+
+    return wideData;
   }, [
-    chartData,
-    getXAsString,
-    xKey,
-    getY,
-    allSegments,
     getSegment,
+    getY,
+    preparedDataGroupedByX,
+    segments,
+    xKey,
     fields.y.imputationType,
   ]);
 

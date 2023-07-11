@@ -311,10 +311,13 @@ export const getWideData = ({
           xKey,
           getY,
           getSegment,
-          getOptionalObservationProps: (i) =>
-            allSegments.map((d) => ({
-              [d]: dataGroupedByXWithImputedValues[i][d],
-            })),
+          getOptionalObservationProps: (i) => {
+            return allSegments.map((d) => {
+              return {
+                [d]: dataGroupedByXWithImputedValues[i][d],
+              };
+            });
+          },
         });
       }
     case "zeros":
@@ -324,15 +327,23 @@ export const getWideData = ({
           xKey,
           getY,
           getSegment,
-          getOptionalObservationProps: () =>
-            allSegments.map((d) => ({
-              [d]: interpolateZerosValue(),
-            })),
+          getOptionalObservationProps: () => {
+            return allSegments.map((d) => {
+              return {
+                [d]: interpolateZerosValue(),
+              };
+            });
+          },
         });
       }
     case "none":
     default:
-      return getBaseWideData({ dataGroupedByX, xKey, getY, getSegment });
+      return getBaseWideData({
+        dataGroupedByX,
+        xKey,
+        getY,
+        getSegment,
+      });
   }
 };
 
@@ -367,14 +378,43 @@ const getBaseWideData = ({
       ...v
         // Sorting the values in case of multiple values for the same segment
         // (desired behavior for getting the domain when time slider is active).
-        .sort((a, b) => (getY(a) ?? 0) - (getY(b) ?? 0))
-        .map((d) => ({ [getSegment(d)]: getY(d) }))
+        .sort((a, b) => {
+          return (getY(a) ?? 0) - (getY(b) ?? 0);
+        })
+        .map((d) => {
+          return {
+            [getSegment(d)]: getY(d),
+          };
+        })
     );
 
     wideData.push(observation);
   }
 
   return wideData;
+};
+
+export const normalizeData = (
+  data: Observation[],
+  {
+    yKey,
+    getY,
+    getTotalGroupValue,
+  }: {
+    yKey: string;
+    getY: (d: Observation) => number | null;
+    getTotalGroupValue: (d: Observation) => number;
+  }
+): Observation[] => {
+  return data.map((d) => {
+    const totalGroupValue = getTotalGroupValue(d);
+    const y = getY(d);
+
+    return {
+      ...d,
+      [yKey]: y ? y / totalGroupValue : y,
+    };
+  });
 };
 
 const SlugRe = /\W+/g;
