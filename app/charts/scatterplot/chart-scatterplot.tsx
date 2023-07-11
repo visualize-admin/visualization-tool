@@ -83,7 +83,7 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
-    <ScatterplotChart aspectRatio={1} {...props}>
+    <ScatterplotChart aspectRatio={0.4} {...props}>
       <ChartContainer>
         <ChartSvg>
           <AxisWidthLinear />
