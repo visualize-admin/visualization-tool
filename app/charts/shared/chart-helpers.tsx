@@ -33,7 +33,7 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { isTemporalDimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -432,20 +432,4 @@ export const useImputationNeeded = ({
 
     return false;
   }, [chartConfig, data]);
-};
-
-/** Use to potentially extract temporal values from data. This is needed for
- * column charts, where the temporal dimension is used as X axis (and we
- * do not fetch all values for temporal dimensions, only the min and max).
- */
-export const getMaybeTemporalDimensionValues = (
-  dimension: DimensionMetadataFragment,
-  data: Observation[]
-) => {
-  if (isTemporalDimension(dimension)) {
-    const dates = data.map((d) => d[dimension.iri] as string);
-    return uniq(dates).map((d) => ({ label: d, value: d }));
-  } else {
-    return dimension.values;
-  }
 };

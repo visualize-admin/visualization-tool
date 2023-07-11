@@ -3,7 +3,6 @@ import merge from "lodash/merge";
 
 import {
   extractComponentIris,
-  getMaybeTemporalDimensionValues,
   getWideData,
   prepareQueryFilters,
 } from "@/charts/shared/chart-helpers";
@@ -17,7 +16,6 @@ import {
 } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
@@ -142,49 +140,6 @@ describe("getWideData", () => {
       "2021-01-02",
       "2028-12-12",
     ]);
-  });
-});
-
-describe("getMaybeTemporalDimensionValues", () => {
-  it("should return data values if dimension is temporal", () => {
-    const temporalDimension = {
-      __typename: "TemporalDimension",
-      iri: "year",
-      values: [
-        { label: "1996", value: "1996" },
-        { label: "2023", value: "2023" },
-      ],
-    } as DimensionMetadataFragment;
-    const data: Observation[] = [
-      { [temporalDimension.iri]: "1997" },
-      { [temporalDimension.iri]: "2002" },
-      { [temporalDimension.iri]: "2023" },
-    ];
-
-    const result = getMaybeTemporalDimensionValues(temporalDimension, data);
-
-    expect(result).toEqual([
-      { label: "1997", value: "1997" },
-      { label: "2002", value: "2002" },
-      { label: "2023", value: "2023" },
-    ]);
-  });
-
-  it("should return dimension values if dimension is not temporal", () => {
-    const dimension = {
-      __typename: "NominalDimension",
-      iri: "year",
-      values: [
-        { label: "A", value: "A" },
-        { label: "B", value: "B" },
-        { label: "C", value: "C" },
-      ],
-    } as DimensionMetadataFragment;
-    const data: Observation[] = [];
-
-    const result = getMaybeTemporalDimensionValues(dimension, data);
-
-    expect(result).toEqual(dimension.values);
   });
 });
 

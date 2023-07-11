@@ -572,11 +572,7 @@ const ChartFieldMultiFilter = ({
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
         {isTemporalDimension(component) ? (
-          <TimeFilter
-            key={component.iri}
-            dimensionIri={component.iri}
-            dataSetIri={state.dataSet}
-          />
+          <TimeFilter key={component.iri} dimension={component} />
         ) : (
           component && (
             <DimensionValuesMultiFilter

@@ -65,9 +65,8 @@ import {
   Maybe,
   useDimensionHierarchyQuery,
   useDimensionValuesQuery,
-  useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue, TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -956,13 +955,11 @@ export const DimensionValuesMultiFilter = ({
 };
 
 type TimeFilterProps = {
-  dataSetIri: string;
-  dimensionIri: string;
+  dimension: TemporalDimension;
 };
 
 export const TimeFilter = (props: TimeFilterProps) => {
-  const { dataSetIri, dimensionIri } = props;
-  const locale = useLocale();
+  const { dimension } = props;
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
@@ -972,26 +969,16 @@ export const TimeFilter = (props: TimeFilterProps) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_RANGE",
         value: {
-          dimensionIri,
+          dimensionIri: dimension.iri,
           from,
           to,
         },
       });
     },
-    [dispatch, dimensionIri]
+    [dispatch, dimension.iri]
   );
 
-  const [{ data }] = useTemporalDimensionValuesQuery({
-    variables: {
-      dimensionIri,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      dataCubeIri: dataSetIri,
-    },
-  });
-
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
+  // const dimension = data?.dataCubeByIri?.dimensionByIri;
   const temporalDimension =
     dimension?.__typename === "TemporalDimension" ? dimension : null;
 

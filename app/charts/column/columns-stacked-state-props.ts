@@ -3,7 +3,6 @@ import React from "react";
 
 import {
   getLabelWithUnit,
-  getMaybeTemporalDimensionValues,
   getWideData,
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
@@ -41,8 +40,8 @@ export const useColumnsStackedStateVariables = (
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
-  const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!_xDimension) {
+  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
@@ -56,11 +55,6 @@ export const useColumnsStackedStateVariables = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const xDimension = React.useMemo(() => {
-    const values = getMaybeTemporalDimensionValues(_xDimension, observations);
-    return { ..._xDimension, values };
-  }, [_xDimension, observations]);
 
   const xTimeUnit = isTemporalDimension(xDimension)
     ? xDimension.timeUnit
