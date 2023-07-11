@@ -37,6 +37,7 @@ export const renderCircles = (
             .attr("cx", (d) => d.cx)
             .attr("cy", (d) => d.cy)
             .attr("fill", (d) => d.color)
+            .attr("opacity", 1)
         ),
       (exit) =>
         exit.call((exit) =>
