@@ -2,12 +2,8 @@ import { ascending } from "d3";
 import React from "react";
 
 import {
-  getLabelWithUnit,
-  useDimensionWithAbbreviations,
-  useOptionalNumericVariable,
   usePlottableData,
   useStringVariable,
-  useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartStateData,
@@ -15,13 +11,12 @@ import {
   SegmentVariables,
   TemporalXVariables,
   useChartData,
+  useNumericalYVariables,
+  useSegmentVariables,
+  useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { LineConfig } from "@/configurator";
-import {
-  Observation,
-  isNumericalMeasure,
-  isTemporalDimension,
-} from "@/domain/data";
+import { Observation } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -39,55 +34,24 @@ export const useLinesStateVariables = (
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
-  }
-
-  if (!isTemporalDimension(xDimension)) {
-    throw Error(`Dimension <${x.componentIri}> is not temporal!`);
-  }
-
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
-  if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
-  }
-
-  if (!isNumericalMeasure(yMeasure)) {
-    throw Error(`Measure <${y.componentIri}> is not numerical!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const getX = useTemporalVariable(x.componentIri);
-  const getY = useOptionalNumericVariable(y.componentIri);
-  const getGroups = useStringVariable(x.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === segment?.componentIri
-  );
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-    getValue: getSegment,
-    getLabel: getSegmentLabel,
-  } = useDimensionWithAbbreviations(segmentDimension, {
+  const temporalXVariables = useTemporalXVariables(x, {
+    dimensions,
+  });
+  const numericalYVariables = useNumericalYVariables(y, {
+    measures,
+  });
+  const segmentVariables = useSegmentVariables(segment, {
+    dimensions,
     observations,
-    field: segment,
   });
 
+  const getGroups = useStringVariable(x.componentIri);
+
   return {
-    xDimension,
-    getX,
-    yMeasure,
-    getY,
-    yAxisLabel,
+    ...temporalXVariables,
+    ...numericalYVariables,
+    ...segmentVariables,
     getGroups,
-    segmentDimension,
-    segmentsByAbbreviationOrLabel,
-    getSegment,
-    getSegmentAbbreviationOrLabel,
-    getSegmentLabel,
   };
 };
 

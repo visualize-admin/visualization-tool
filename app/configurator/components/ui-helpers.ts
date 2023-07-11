@@ -91,14 +91,18 @@ export const getErrorMeasure = (
 };
 
 export const useErrorMeasure = (
-  chartState: Pick<BaseChartProps, "dimensions" | "measures">,
-  valueIri: string
+  componentIri: string,
+  {
+    dimensions,
+    measures,
+  }: {
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+  }
 ) => {
-  const { dimensions, measures } = chartState;
-
   return useMemo(() => {
-    return getErrorMeasure({ dimensions, measures }, valueIri);
-  }, [dimensions, measures, valueIri]);
+    return getErrorMeasure({ dimensions, measures }, componentIri);
+  }, [componentIri, dimensions, measures]);
 };
 
 export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {

@@ -548,7 +548,10 @@ const useLayerState = ({
   const measureDimension = measures.find((d) => d.iri === measureIri);
 
   const errorDimension = findRelatedErrorDimension(measureIri, dimensions);
-  const errorMeasure = useErrorMeasure({ dimensions, measures }, measureIri);
+  const errorMeasure = useErrorMeasure(measureIri, {
+    dimensions,
+    measures,
+  });
   const getError = useErrorVariable(errorMeasure);
   const getFormattedError = makeErrorFormatter(
     getError,

@@ -1,29 +1,21 @@
 import { ascending, descending, group } from "d3";
 import React from "react";
 
-import {
-  getLabelWithUnit,
-  getWideData,
-  useDimensionWithAbbreviations,
-  useOptionalNumericVariable,
-  usePlottableData,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
+import { getWideData, usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
   ChartStateData,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
+  useBandXVariables,
   useChartData,
+  useNumericalYVariables,
+  useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
-import {
-  Observation,
-  isNumericalMeasure,
-  isTemporalDimension,
-} from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -40,49 +32,16 @@ export const useColumnsStackedStateVariables = (
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
-  }
-
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
-  if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
-  }
-
-  if (!isNumericalMeasure(yMeasure)) {
-    throw Error(`Measure <${y.componentIri}> is not numerical!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const xTimeUnit = isTemporalDimension(xDimension)
-    ? xDimension.timeUnit
-    : undefined;
-
-  const {
-    getAbbreviationOrLabelByValue: getXAbbreviationOrLabel,
-    getValue: getX,
-    getLabel: getXLabel,
-  } = useDimensionWithAbbreviations(xDimension, {
+  const bandXVariables = useBandXVariables(x, {
+    dimensions,
     observations,
-    field: x,
   });
-
-  const getXAsDate = useTemporalVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === segment?.componentIri
-  );
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-    getValue: getSegment,
-    getLabel: getSegmentLabel,
-  } = useDimensionWithAbbreviations(segmentDimension, {
+  const numericalYVariables = useNumericalYVariables(y, {
+    measures,
+  });
+  const segmentVariables = useSegmentVariables(segment, {
+    dimensions,
     observations,
-    field: segment,
   });
 
   const getRenderingKey = useRenderingKeyVariable(
@@ -93,20 +52,9 @@ export const useColumnsStackedStateVariables = (
   );
 
   return {
-    xDimension,
-    getX,
-    getXAsDate,
-    getXAbbreviationOrLabel,
-    getXLabel,
-    xTimeUnit,
-    yMeasure,
-    getY,
-    yAxisLabel,
-    segmentDimension,
-    segmentsByAbbreviationOrLabel,
-    getSegment,
-    getSegmentAbbreviationOrLabel,
-    getSegmentLabel,
+    ...bandXVariables,
+    ...numericalYVariables,
+    ...segmentVariables,
     getRenderingKey,
   };
 };

@@ -1,11 +1,33 @@
+import get from "lodash/get";
 import overEvery from "lodash/overEvery";
 import React from "react";
 
-import { useTemporalVariable } from "@/charts/shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  useDimensionWithAbbreviations,
+  useOptionalNumericVariable,
+  useTemporalVariable,
+} from "@/charts/shared/chart-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds } from "@/charts/shared/use-width";
-import { ChartConfig, ChartType, isAnimationInConfig } from "@/configurator";
-import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
+import {
+  ChartConfig,
+  ChartType,
+  GenericField,
+  isAnimationInConfig,
+} from "@/configurator";
+import {
+  useErrorMeasure,
+  useErrorRange,
+  useErrorVariable,
+} from "@/configurator/components/ui-helpers";
+import {
+  DimensionValue,
+  Observation,
+  ObservationValue,
+  isNumericalMeasure,
+  isTemporalDimension,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
@@ -47,9 +69,70 @@ export type BandXVariables = {
   getXAsDate: TemporalValueGetter;
 };
 
+export const useBandXVariables = (
+  x: GenericField,
+  {
+    dimensions,
+    observations,
+  }: {
+    dimensions: DimensionMetadataFragment[];
+    observations: Observation[];
+  }
+): BandXVariables => {
+  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  if (!xDimension) {
+    throw Error(`No dimension <${x.componentIri}> in cube!`);
+  }
+
+  const xTimeUnit = isTemporalDimension(xDimension)
+    ? xDimension.timeUnit
+    : undefined;
+
+  const {
+    getAbbreviationOrLabelByValue: getXAbbreviationOrLabel,
+    getValue: getX,
+    getLabel: getXLabel,
+  } = useDimensionWithAbbreviations(xDimension, {
+    observations,
+    field: x,
+  });
+
+  const getXAsDate = useTemporalVariable(x.componentIri);
+
+  return {
+    xDimension,
+    getX,
+    getXLabel,
+    getXAbbreviationOrLabel,
+    xTimeUnit,
+    getXAsDate,
+  };
+};
+
 export type TemporalXVariables = {
   xDimension: TemporalDimension;
   getX: TemporalValueGetter;
+};
+
+export const useTemporalXVariables = (
+  x: GenericField,
+  { dimensions }: { dimensions: DimensionMetadataFragment[] }
+): TemporalXVariables => {
+  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  if (!xDimension) {
+    throw Error(`No dimension <${x.componentIri}> in cube!`);
+  }
+
+  if (!isTemporalDimension(xDimension)) {
+    throw Error(`Dimension <${x.componentIri}> is not temporal!`);
+  }
+
+  const getX = useTemporalVariable(x.componentIri);
+
+  return {
+    xDimension,
+    getX,
+  };
 };
 
 export type NumericalXVariables = {
@@ -58,17 +141,56 @@ export type NumericalXVariables = {
   xAxisLabel: string;
 };
 
+export const useNumericalXVariables = (
+  x: GenericField,
+  { measures }: { measures: DimensionMetadataFragment[] }
+): NumericalXVariables => {
+  const xMeasure = measures.find((d) => d.iri === x.componentIri);
+  if (!xMeasure) {
+    throw Error(`No dimension <${x.componentIri}> in cube!`);
+  }
+
+  if (!isNumericalMeasure(xMeasure)) {
+    throw Error(`Measure <${x.componentIri}> is not numerical!`);
+  }
+
+  const getX = useOptionalNumericVariable(x.componentIri);
+  const xAxisLabel = getLabelWithUnit(xMeasure);
+
+  return {
+    xMeasure,
+    getX,
+    xAxisLabel,
+  };
+};
+
 export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
   getY: NumericalValueGetter;
   yAxisLabel: string;
 };
 
-export type NumericalXErrorVariables = {
-  showXStandardError: boolean;
-  xErrorMeasure: DimensionMetadataFragment | undefined;
-  getXError: ((d: Observation) => ObservationValue) | null;
-  getXErrorRange: null | ((d: Observation) => [number, number]);
+export const useNumericalYVariables = (
+  y: GenericField,
+  { measures }: { measures: DimensionMetadataFragment[] }
+): NumericalYVariables => {
+  const yMeasure = measures.find((d) => d.iri === y.componentIri);
+  if (!yMeasure) {
+    throw Error(`No dimension <${y.componentIri}> in cube!`);
+  }
+
+  if (!isNumericalMeasure(yMeasure)) {
+    throw Error(`Measure <${y.componentIri}> is not numerical!`);
+  }
+
+  const getY = useOptionalNumericVariable(y.componentIri);
+  const yAxisLabel = getLabelWithUnit(yMeasure);
+
+  return {
+    yMeasure,
+    getY,
+    yAxisLabel,
+  };
 };
 
 export type NumericalYErrorVariables = {
@@ -78,12 +200,72 @@ export type NumericalYErrorVariables = {
   getYErrorRange: null | ((d: Observation) => [number, number]);
 };
 
+export const useNumericalYErrorVariables = (
+  y: GenericField,
+  {
+    numericalYVariables,
+    dimensions,
+    measures,
+  }: {
+    numericalYVariables: NumericalYVariables;
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+  }
+): NumericalYErrorVariables => {
+  const showYStandardError = get(y, ["showStandardError"], true);
+  const yErrorMeasure = useErrorMeasure(y.componentIri, {
+    dimensions,
+    measures,
+  });
+  const getYErrorRange = useErrorRange(yErrorMeasure, numericalYVariables.getY);
+  const getYError = useErrorVariable(yErrorMeasure);
+
+  return {
+    showYStandardError,
+    yErrorMeasure,
+    getYError,
+    getYErrorRange,
+  };
+};
+
 export type SegmentVariables = {
   segmentDimension: DimensionMetadataFragment | undefined;
   segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
   getSegment: StringValueGetter;
   getSegmentAbbreviationOrLabel: StringValueGetter;
   getSegmentLabel: (d: string) => string;
+};
+
+export const useSegmentVariables = (
+  segment: GenericField | undefined,
+  {
+    dimensions,
+    observations,
+  }: {
+    dimensions: DimensionMetadataFragment[];
+    observations: Observation[];
+  }
+): SegmentVariables => {
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === segment?.componentIri
+  );
+  const {
+    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
+    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
+    getValue: getSegment,
+    getLabel: getSegmentLabel,
+  } = useDimensionWithAbbreviations(segmentDimension, {
+    observations,
+    field: segment,
+  });
+
+  return {
+    segmentDimension,
+    segmentsByAbbreviationOrLabel,
+    getSegment,
+    getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
+  };
 };
 
 export type AreaLayerVariables = {
