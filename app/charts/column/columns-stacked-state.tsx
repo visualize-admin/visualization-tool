@@ -341,7 +341,8 @@ const useColumnsStackedState = (
   const yScale = scaleLinear().domain(yStackDomain);
 
   // If we're showing a normalized chart, the .nice() makes the chart y axis
-  // jump. As the domain is by its nature [0, 1], we can just skip the .nice().
+  // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
+  // to avoid rounding issues.
   if (!normalize) {
     yScale.nice();
   }

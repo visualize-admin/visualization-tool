@@ -249,7 +249,15 @@ const useAreasState = (
 
     const xEntireDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
     const xEntireScale = scaleTime().domain(xEntireDomain);
-    const yScale = scaleLinear().domain(yDomain).nice();
+    const yScale = scaleLinear().domain(yDomain);
+
+    // If we're showing a normalized chart, the .nice() makes the chart y axis
+    // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
+    // to avoid rounding issues.
+    if (!normalize) {
+      yScale.nice();
+    }
+
     const colors = scaleOrdinal<string, string>();
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
@@ -284,6 +292,7 @@ const useAreasState = (
     allSegments,
     series,
     segmentDimension,
+    normalize,
   ]);
 
   /** Dimensions */
