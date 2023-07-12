@@ -823,6 +823,19 @@ export const handleChartFieldChanged = (
         duration: 30,
         type: "continuous",
       };
+
+      // TODO: consolidate this in UI encodings?
+      if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
+        const newComponentIris =
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+            (d) => d !== componentIri
+          );
+        const active = newComponentIris.length > 0;
+        draft.chartConfig.interactiveFiltersConfig.dataFilters = {
+          active,
+          componentIris: newComponentIris,
+        };
+      }
     } else if (field === "segment") {
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
@@ -882,6 +895,19 @@ export const handleChartFieldChanged = (
         duration: draft.chartConfig.fields.animation?.duration ?? 30,
         type: draft.chartConfig.fields.animation?.type ?? "continuous",
       };
+
+      // TODO: consolidate this in UI encodings?
+      if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
+        const newComponentIris =
+          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+            (d) => d !== componentIri
+          );
+        const active = newComponentIris.length > 0;
+        draft.chartConfig.interactiveFiltersConfig.dataFilters = {
+          active,
+          componentIris: newComponentIris,
+        };
+      }
     } else if (
       field === "segment" &&
       "segment" in draft.chartConfig.fields &&
