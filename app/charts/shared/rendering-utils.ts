@@ -27,7 +27,7 @@ export const useRenderingKeyVariable = (
       .map((d) => d[0]);
 
     if (interactiveFiltersConfig) {
-      const { dataFilters, legend, timeRange } = interactiveFiltersConfig;
+      const { dataFilters, legend } = interactiveFiltersConfig;
 
       if (dataFilters.componentIris.length > 0) {
         keysToRemove.push(...dataFilters.componentIris);
@@ -35,10 +35,6 @@ export const useRenderingKeyVariable = (
 
       if (legend.componentIri) {
         keysToRemove.push(legend.componentIri);
-      }
-
-      if (timeRange.componentIri) {
-        keysToRemove.push(timeRange.componentIri);
       }
     }
 
