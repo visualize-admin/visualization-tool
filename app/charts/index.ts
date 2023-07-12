@@ -99,24 +99,30 @@ export const findPreferredDimension = (
   return dim;
 };
 
-const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
-  legend: {
-    active: false,
-    componentIri: "",
-  },
-  timeRange: {
-    active: false,
-    componentIri: "",
-    presets: {
-      type: "range",
-      from: "",
-      to: "",
+const getInitialInteractiveFiltersConfig = (options?: {
+  timeRangeComponentIri?: string;
+}): InteractiveFiltersConfig => {
+  const { timeRangeComponentIri = "" } = options ?? {};
+
+  return {
+    legend: {
+      active: false,
+      componentIri: "",
     },
-  },
-  dataFilters: {
-    active: false,
-    componentIris: [],
-  },
+    timeRange: {
+      active: false,
+      componentIri: timeRangeComponentIri,
+      presets: {
+        type: "range",
+        from: "",
+        to: "",
+      },
+    },
+    dataFilters: {
+      active: false,
+      componentIris: [],
+    },
+  };
 };
 
 type SortingOption = {
@@ -229,45 +235,117 @@ export const getInitialConfig = ({
   const numericalMeasures = measures.filter(isNumericalMeasure);
 
   switch (chartType) {
-    case "column":
+    case "area":
+      const areaXComponentIri = getTimeDimensions(dimensions)[0].iri;
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: areaXComponentIri,
+        }),
+        fields: {
+          x: { componentIri: areaXComponentIri },
+          y: { componentIri: numericalMeasures[0].iri, imputationType: "none" },
+        },
+      };
+    case "column":
+      const columnXComponentIri = findPreferredDimension(
+        sortBy(dimensions, (x) =>
+          isGeoCoordinatesDimension(x) || isGeoShapesDimension(x) ? 1 : -1
+        ),
+        "TemporalDimension"
+      ).iri;
+
+      return {
+        version: CHART_CONFIG_VERSION,
+        chartType,
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: columnXComponentIri,
+        }),
         fields: {
           x: {
-            componentIri: findPreferredDimension(
-              sortBy(dimensions, (x) =>
-                isGeoCoordinatesDimension(x) || isGeoShapesDimension(x) ? 1 : -1
-              ),
-              "TemporalDimension"
-            ).iri,
+            componentIri: columnXComponentIri,
             sorting: DEFAULT_SORTING,
           },
           y: { componentIri: numericalMeasures[0].iri },
         },
       };
     case "line":
+      const lineXComponentIri = getTimeDimensions(dimensions)[0].iri;
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: lineXComponentIri,
+        }),
         fields: {
-          x: { componentIri: getTimeDimensions(dimensions)[0].iri },
+          x: { componentIri: lineXComponentIri },
           y: { componentIri: numericalMeasures[0].iri },
         },
       };
-    case "area":
+    case "map":
+      const geoDimensions = getGeoDimensions(dimensions);
+      const geoShapesDimensions = geoDimensions.filter(isGeoShapesDimension);
+      const areaDimension = geoShapesDimensions[0];
+      const showAreaLayer = geoShapesDimensions.length > 0;
+      const showSymbolLayer = !showAreaLayer;
+
+      return {
+        version: CHART_CONFIG_VERSION,
+        chartType,
+        filters: makeInitialFiltersForArea(areaDimension),
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
+        baseLayer: {
+          show: true,
+          locked: false,
+          bbox: undefined,
+        },
+        fields: {
+          ...(showAreaLayer
+            ? {
+                areaLayer: getInitialAreaLayer({
+                  component: areaDimension,
+                  measure: measures[0],
+                }),
+              }
+            : {}),
+          ...(showSymbolLayer
+            ? {
+                symbolLayer: getInitialSymbolLayer({
+                  component: geoDimensions[0],
+                  measure: numericalMeasures[0],
+                }),
+              }
+            : {}),
+        },
+      };
+    case "pie":
+      const pieSegmentComponent =
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
+      const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
+
       return {
         version: CHART_CONFIG_VERSION,
         chartType,
         filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
-          x: { componentIri: getTimeDimensions(dimensions)[0].iri },
-          y: { componentIri: numericalMeasures[0].iri, imputationType: "none" },
+          y: { componentIri: numericalMeasures[0].iri },
+          segment: {
+            componentIri: pieSegmentComponent.iri,
+            palette: piePalette,
+            sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+            colorMapping: mapValueIrisToColor({
+              palette: piePalette,
+              dimensionValues: pieSegmentComponent.values,
+            }),
+          },
         },
       };
     case "scatterplot":
@@ -282,7 +360,7 @@ export const getInitialConfig = ({
         version: CHART_CONFIG_VERSION,
         chartType: "scatterplot",
         filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           x: { componentIri: numericalMeasures[0].iri },
           y: {
@@ -301,30 +379,6 @@ export const getInitialConfig = ({
                 }),
               }
             : {}),
-        },
-      };
-    case "pie":
-      const pieSegmentComponent =
-        getCategoricalDimensions(dimensions)[0] ||
-        getGeoDimensions(dimensions)[0];
-      const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
-
-      return {
-        version: CHART_CONFIG_VERSION,
-        chartType,
-        filters: {},
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
-        fields: {
-          y: { componentIri: numericalMeasures[0].iri },
-          segment: {
-            componentIri: pieSegmentComponent.iri,
-            palette: piePalette,
-            sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
-            colorMapping: mapValueIrisToColor({
-              palette: piePalette,
-              dimensionValues: pieSegmentComponent.values,
-            }),
-          },
         },
       };
     case "table":
@@ -360,42 +414,6 @@ export const getInitialConfig = ({
             },
           ])
         ) as TableFields,
-      };
-    case "map":
-      const geoDimensions = getGeoDimensions(dimensions);
-      const geoShapesDimensions = geoDimensions.filter(isGeoShapesDimension);
-      const areaDimension = geoShapesDimensions[0];
-      const showAreaLayer = geoShapesDimensions.length > 0;
-      const showSymbolLayer = !showAreaLayer;
-
-      return {
-        version: CHART_CONFIG_VERSION,
-        chartType,
-        filters: makeInitialFiltersForArea(areaDimension),
-        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
-        baseLayer: {
-          show: true,
-          locked: false,
-          bbox: undefined,
-        },
-        fields: {
-          ...(showAreaLayer
-            ? {
-                areaLayer: getInitialAreaLayer({
-                  component: areaDimension,
-                  measure: measures[0],
-                }),
-              }
-            : {}),
-          ...(showSymbolLayer
-            ? {
-                symbolLayer: getInitialSymbolLayer({
-                  component: geoDimensions[0],
-                  measure: numericalMeasures[0],
-                }),
-              }
-            : {}),
-        },
       };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked

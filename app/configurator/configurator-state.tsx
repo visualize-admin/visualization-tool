@@ -1437,6 +1437,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           from,
           to,
         };
+
+        if (draft.chartConfig.interactiveFiltersConfig) {
+          draft.chartConfig.interactiveFiltersConfig.timeRange = {
+            componentIri: dimensionIri,
+            active: draft.chartConfig.interactiveFiltersConfig.timeRange.active,
+            presets: {
+              type: "range",
+              from,
+              to,
+            },
+          };
+        }
       }
       return draft;
 
