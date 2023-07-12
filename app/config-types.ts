@@ -646,6 +646,16 @@ export const isAnimationInConfig = (
   );
 };
 
+export const getAnimationField = (
+  chartConfig: ChartConfig
+): AnimationField | undefined => {
+  if (isAnimationInConfig(chartConfig)) {
+    return chartConfig.fields.animation;
+  }
+
+  return undefined;
+};
+
 export const isColorFieldInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is MapConfig => {

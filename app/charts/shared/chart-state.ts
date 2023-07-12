@@ -19,7 +19,7 @@ import {
   ChartConfig,
   ChartType,
   GenericField,
-  isAnimationInConfig,
+  getAnimationField,
 } from "@/configurator";
 import {
   parseDate,
@@ -374,9 +374,7 @@ export const useChartData = (
   ]);
 
   // interactive time slider
-  const animationField = isAnimationInConfig(chartConfig)
-    ? chartConfig.fields.animation
-    : undefined;
+  const animationField = getAnimationField(chartConfig);
   const getTime = useTemporalVariable(animationField?.componentIri ?? "");
   const timeSliderValue = IFState.timeSlider.value;
   const interactiveTimeSliderFilters = React.useMemo(() => {
