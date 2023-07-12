@@ -13,8 +13,8 @@ import {
   ChartConfig,
   DataSource,
   InteractiveFiltersDataConfig,
-  OptionGroup,
   Option,
+  OptionGroup,
 } from "@/configurator";
 import { TimeInput } from "@/configurator/components/field";
 import {
@@ -166,6 +166,8 @@ const DataFilter = ({
 
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
+
+    console.log(dimension.values);
 
     const configFilter = chartConfig.filters[dimension.iri];
     const configFilterValue =
@@ -334,17 +336,16 @@ const DataFilterTemporalDimension = ({
   } = dimension;
 
   const formatLocale = useTimeFormatLocale();
-  const timeIntervalWithProps = React.useMemo(
-    () =>
-      getTimeIntervalWithProps(
-        options[0].value as string,
-        options[1].value as string,
-        timeUnit,
-        timeFormat,
-        formatLocale
-      ),
-    [options, timeUnit, timeFormat, formatLocale]
-  );
+  const timeIntervalWithProps = React.useMemo(() => {
+    return getTimeIntervalWithProps(
+      options[0].value as string,
+      options[options.length - 1].value as string,
+      timeUnit,
+      timeFormat,
+      formatLocale
+    );
+  }, [options, timeUnit, timeFormat, formatLocale]);
+
   const timeIntervalOptions = React.useMemo(() => {
     return getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
   }, [timeIntervalWithProps]);
