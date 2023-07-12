@@ -77,47 +77,52 @@ export const ChartScatterplotVisualization = ({
       componentsQuery={componentsQuery}
       observationsQuery={observationsQuery}
       Component={ChartScatterplot}
+      ComponentProps={{
+        published,
+      }}
       chartConfig={chartConfig}
     />
   );
 };
 
-export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
-  const { chartConfig, dimensions } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+export const ChartScatterplot = memo(
+  (props: ChartProps<ScatterPlotConfig> & { published: boolean }) => {
+    const { chartConfig, dimensions, published } = props;
+    const { fields, interactiveFiltersConfig } = chartConfig;
 
-  return (
-    <ScatterplotChart aspectRatio={0.4} {...props}>
-      <ChartContainer>
-        <ChartSvg>
-          <AxisWidthLinear />
-          <AxisHeightLinear />
-          <AxisWidthLinearDomain />
-          <AxisHeightLinearDomain />
-          <Scatterplot />
-          <InteractionVoronoi />
-        </ChartSvg>
-        <Tooltip type="single" />
-      </ChartContainer>
-      {(fields.animation || fields.segment) && (
-        <ChartControlsContainer>
-          {fields.animation && (
-            <TimeSlider
-              componentIri={fields.animation.componentIri}
-              dimensions={dimensions}
-              showPlayButton={fields.animation.showPlayButton}
-              animationDuration={fields.animation.duration}
-              animationType={fields.animation.type}
-            />
-          )}
-          {fields.segment && (
-            <LegendColor
-              symbol="circle"
-              interactive={interactiveFiltersConfig?.legend.active === true}
-            />
-          )}
-        </ChartControlsContainer>
-      )}
-    </ScatterplotChart>
-  );
-});
+    return (
+      <ScatterplotChart aspectRatio={published ? 1 : 0.4} {...props}>
+        <ChartContainer>
+          <ChartSvg>
+            <AxisWidthLinear />
+            <AxisHeightLinear />
+            <AxisWidthLinearDomain />
+            <AxisHeightLinearDomain />
+            <Scatterplot />
+            <InteractionVoronoi />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+        {(fields.animation || fields.segment) && (
+          <ChartControlsContainer>
+            {fields.animation && (
+              <TimeSlider
+                componentIri={fields.animation.componentIri}
+                dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
+              />
+            )}
+            {fields.segment && (
+              <LegendColor
+                symbol="circle"
+                interactive={interactiveFiltersConfig?.legend.active === true}
+              />
+            )}
+          </ChartControlsContainer>
+        )}
+      </ScatterplotChart>
+    );
+  }
+);
