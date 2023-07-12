@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
-import { bisector, brushX, scaleTime, select, Selection } from "d3";
-import React, { useCallback, useEffect, useRef } from "react";
+import { Selection, bisector, brushX, scaleTime, select } from "d3";
+import { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
@@ -39,7 +39,7 @@ export const EditorBrush = ({
   const formatDateAuto = useFormatFullDateAuto();
 
   // FIXME: make component responsive (currently triggers infinite loop)
-  const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
+  const brushWidth = 267;
 
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const { chartConfig } = state;
@@ -122,15 +122,6 @@ export const EditorBrush = ({
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
-
-      // g.select(".handle--w")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
-      // g.select(".handle--e")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
-
-      // Apply brush to selected group
 
       g.call(brush);
     };
