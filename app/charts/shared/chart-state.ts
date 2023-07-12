@@ -34,7 +34,6 @@ import {
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   GeoCoordinatesDimension,
@@ -43,8 +42,6 @@ import {
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/resolver-types";
-
-import { getFieldComponentIri } from "..";
 
 // TODO: usetemporalXchartstate...
 export type CommonChartState = {
@@ -327,13 +324,12 @@ export const useChartData = (
     getSegment?: (d: Observation) => string;
   }
 ): Omit<ChartStateData, "allData"> => {
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { interactiveFiltersConfig } = chartConfig;
   const [IFState] = useInteractiveFilters();
 
   // time range
-  // FIXME: for some reason we keep the time range componentIri empty.
-  // This should be fixed.
-  const timeRangeFilterComponentIri = getFieldComponentIri(fields, "x") ?? "";
+  const timeRangeFilterComponentIri =
+    interactiveFiltersConfig?.timeRange.componentIri ?? "";
   const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
   const getTimeRangeTime = useTemporalVariable(timeRangeFilterComponentIri);
   const timeRangeFromTime = interactiveTimeRange?.presets.from
@@ -342,29 +338,23 @@ export const useChartData = (
   const timeRangeToTime = interactiveTimeRange?.presets.to
     ? parseDate(interactiveTimeRange?.presets.to).getTime()
     : undefined;
+  const timeRangeFilters = React.useMemo(() => {
+    const timeRangeFilter: ValuePredicate | null =
+      timeRangeFromTime && timeRangeToTime
+        ? (d: Observation) => {
+            const time = getTimeRangeTime(d).getTime();
+            return time >= timeRangeFromTime && time <= timeRangeToTime;
+          }
+        : null;
+
+    return timeRangeFilter ? [timeRangeFilter] : [];
+  }, [timeRangeFromTime, timeRangeToTime, getTimeRangeTime]);
 
   // interactive time range
   const interactiveFromTime = IFState.timeRange.from?.getTime();
   const interactiveToTime = IFState.timeRange.to?.getTime();
-
-  // interactive time slider
-  const animationField = isAnimationInConfig(chartConfig)
-    ? chartConfig.fields.animation
-    : undefined;
-  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
-  const timeSliderValue = IFState.timeSlider.value;
-
-  // interactive legend
-  const legend = interactiveFiltersConfig?.legend;
-  const legendItems = Object.keys(IFState.categories);
-
-  const {
-    allInteractiveFilters,
-    interactiveLegendFilters,
-    interactiveTimeFilters,
-    timeFilters,
-  } = React.useMemo(() => {
-    const interactiveTimeRangeFilter =
+  const interactiveTimeRangeFilters = React.useMemo(() => {
+    const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
       interactiveFromTime &&
       interactiveToTime &&
@@ -374,81 +364,74 @@ export const useChartData = (
             return time >= interactiveFromTime && time <= interactiveToTime;
           }
         : null;
-    const interactiveTimeSliderFilter =
+
+    return interactiveTimeRangeFilter ? [interactiveTimeRangeFilter] : [];
+  }, [
+    getXAsDate,
+    interactiveFromTime,
+    interactiveToTime,
+    interactiveTimeRange,
+  ]);
+
+  // interactive time slider
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
+  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
+  const timeSliderValue = IFState.timeSlider.value;
+  const interactiveTimeSliderFilters = React.useMemo(() => {
+    const interactiveTimeSliderFilter: ValuePredicate | null =
       animationField?.componentIri && timeSliderValue
         ? (d: Observation) => {
             return getTime(d).getTime() === timeSliderValue.getTime();
           }
         : null;
-    const interactiveLegendFilter =
+
+    return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
+  }, [animationField?.componentIri, timeSliderValue, getTime]);
+
+  // interactive legend
+  const legend = interactiveFiltersConfig?.legend;
+  const legendItems = Object.keys(IFState.categories);
+  const interactiveLegendFilters = React.useMemo(() => {
+    const interactiveLegendFilter: ValuePredicate | null =
       legend?.active && getSegment
         ? (d: Observation) => {
             return !legendItems.includes(getSegment(d));
           }
         : null;
-    const timeRangeFilter =
-      timeRangeFromTime && timeRangeToTime
-        ? (d: Observation) => {
-            const time = getTimeRangeTime(d).getTime();
-            return time >= timeRangeFromTime && time <= timeRangeToTime;
-          }
-        : null;
 
-    return {
-      allInteractiveFilters: overEvery(
-        (
-          [
-            interactiveTimeRangeFilter,
-            interactiveTimeSliderFilter,
-            interactiveLegendFilter,
-          ] as (ValuePredicate | null)[]
-        ).filter(truthy)
-      ),
-      interactiveLegendFilters: overEvery(
-        ([interactiveLegendFilter] as (ValuePredicate | null)[]).filter(truthy)
-      ),
-      interactiveTimeFilters: overEvery(
-        ([interactiveTimeRangeFilter] as (ValuePredicate | null)[]).filter(
-          truthy
-        )
-      ),
-      timeFilters: overEvery(
-        ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
-      ),
-    };
-  }, [
-    getXAsDate,
-    interactiveFromTime,
-    interactiveToTime,
-    interactiveTimeRange?.active,
-    animationField?.componentIri,
-    timeSliderValue,
-    legend?.active,
-    getSegment,
-    getTime,
-    legendItems,
-    timeRangeFromTime,
-    timeRangeToTime,
-    getTimeRangeTime,
-  ]);
+    return interactiveLegendFilter ? [interactiveLegendFilter] : [];
+  }, [getSegment, legend?.active, legendItems]);
 
   const chartData = React.useMemo(() => {
-    return observations.filter(allInteractiveFilters);
-  }, [allInteractiveFilters, observations]);
+    return observations.filter(
+      overEvery([
+        ...interactiveLegendFilters,
+        ...interactiveTimeRangeFilters,
+        ...interactiveTimeSliderFilters,
+      ])
+    );
+  }, [
+    observations,
+    interactiveLegendFilters,
+    interactiveTimeRangeFilters,
+    interactiveTimeSliderFilters,
+  ]);
 
   const scalesData = React.useMemo(() => {
     return observations.filter(
-      overEvery(interactiveLegendFilters, interactiveTimeFilters)
+      overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
     );
-  }, [observations, interactiveLegendFilters, interactiveTimeFilters]);
+  }, [observations, interactiveLegendFilters, interactiveTimeRangeFilters]);
 
   const segmentData = React.useMemo(() => {
-    return observations.filter(interactiveTimeFilters);
-  }, [observations, interactiveTimeFilters]);
+    return observations.filter(overEvery(interactiveTimeRangeFilters));
+  }, [observations, interactiveTimeRangeFilters]);
 
   const timeRangeData = React.useMemo(() => {
-    return observations.filter(timeFilters);
-  }, [observations, timeFilters]);
+    return observations.filter(overEvery(timeRangeFilters));
+  }, [observations, timeRangeFilters]);
 
   return {
     chartData,
