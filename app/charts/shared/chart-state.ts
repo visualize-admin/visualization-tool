@@ -1,7 +1,11 @@
+import { ScaleTime } from "d3";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
 import React from "react";
 
+import { AreasState } from "@/charts/area/areas-state";
+import { ColumnsState } from "@/charts/column/columns-state";
+import { LinesState } from "@/charts/line/lines-state";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -18,6 +22,7 @@ import {
   isAnimationInConfig,
 } from "@/configurator";
 import {
+  parseDate,
   useErrorMeasure,
   useErrorRange,
   useErrorVariable,
@@ -38,6 +43,8 @@ import {
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/resolver-types";
+
+import { getFieldComponentIri } from "..";
 
 // TODO: usetemporalXchartstate...
 export type CommonChartState = {
@@ -297,6 +304,8 @@ export type ChartStateData = {
    * color values that can be used in a chart, to save unchecked color legend items
    * from being removed. */
   segmentData: Observation[];
+  /** Data to be used for interactive time range slider domain. */
+  timeRangeData: Observation[];
   /** Full dataset, needed to show the timeline when using time slider.
    * We can't use `scalesData` here, due to the fact the the `useChartData` hook gets
    * re-rendered and prevents the timeline from working it such case. */
@@ -317,70 +326,91 @@ export const useChartData = (
     getXAsDate?: (d: Observation) => Date;
     getSegment?: (d: Observation) => string;
   }
-): {
-  /** Data to be used in the chart. */
-  chartData: Observation[];
-  /** Data to be used to compute the scales.
-   * They are different when a time slider is present, since the scales
-   * should be computed using all the data, to prevent them from changing
-   * when the time slider is moved, while the chart should only show the data
-   * corresponding to the selected time.*/
-  scalesData: Observation[];
-  /** Data to be used to compute the full color scales. */
-  segmentData: Observation[];
-} => {
-  const { interactiveFiltersConfig } = chartConfig;
+): Omit<ChartStateData, "allData"> => {
+  const { fields, interactiveFiltersConfig } = chartConfig;
   const [IFState] = useInteractiveFilters();
 
   // time range
-  const timeRange = interactiveFiltersConfig?.timeRange;
-  const fromTime = IFState.timeRange.from?.getTime();
-  const toTime = IFState.timeRange.to?.getTime();
+  // FIXME: for some reason we keep the time range componentIri empty.
+  // This should be fixed.
+  const timeRangeFilterComponentIri = getFieldComponentIri(fields, "x") ?? "";
+  const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
+  const getTimeRangeTime = useTemporalVariable(timeRangeFilterComponentIri);
+  const timeRangeFromTime = interactiveTimeRange?.presets.from
+    ? parseDate(interactiveTimeRange?.presets.from).getTime()
+    : undefined;
+  const timeRangeToTime = interactiveTimeRange?.presets.to
+    ? parseDate(interactiveTimeRange?.presets.to).getTime()
+    : undefined;
 
-  // time slider
+  // interactive time range
+  const interactiveFromTime = IFState.timeRange.from?.getTime();
+  const interactiveToTime = IFState.timeRange.to?.getTime();
+
+  // interactive time slider
   const animationField = isAnimationInConfig(chartConfig)
     ? chartConfig.fields.animation
     : undefined;
   const getTime = useTemporalVariable(animationField?.componentIri ?? "");
   const timeSliderValue = IFState.timeSlider.value;
 
-  // legend
+  // interactive legend
   const legend = interactiveFiltersConfig?.legend;
   const legendItems = Object.keys(IFState.categories);
 
-  const { allFilters, legendFilters, timeFilters } = React.useMemo(() => {
-    const timeRangeFilter =
-      getXAsDate && fromTime && toTime && timeRange?.active
+  const {
+    allInteractiveFilters,
+    interactiveLegendFilters,
+    interactiveTimeFilters,
+    timeFilters,
+  } = React.useMemo(() => {
+    const interactiveTimeRangeFilter =
+      getXAsDate &&
+      interactiveFromTime &&
+      interactiveToTime &&
+      interactiveTimeRange?.active
         ? (d: Observation) => {
             const time = getXAsDate(d).getTime();
-            return time >= fromTime && time <= toTime;
+            return time >= interactiveFromTime && time <= interactiveToTime;
           }
         : null;
-    const timeSliderFilter =
+    const interactiveTimeSliderFilter =
       animationField?.componentIri && timeSliderValue
         ? (d: Observation) => {
             return getTime(d).getTime() === timeSliderValue.getTime();
           }
         : null;
-    const legendFilter =
+    const interactiveLegendFilter =
       legend?.active && getSegment
         ? (d: Observation) => {
             return !legendItems.includes(getSegment(d));
           }
         : null;
+    const timeRangeFilter =
+      timeRangeFromTime && timeRangeToTime
+        ? (d: Observation) => {
+            const time = getTimeRangeTime(d).getTime();
+            return time >= timeRangeFromTime && time <= timeRangeToTime;
+          }
+        : null;
 
     return {
-      allFilters: overEvery(
+      allInteractiveFilters: overEvery(
         (
           [
-            timeRangeFilter,
-            timeSliderFilter,
-            legendFilter,
+            interactiveTimeRangeFilter,
+            interactiveTimeSliderFilter,
+            interactiveLegendFilter,
           ] as (ValuePredicate | null)[]
         ).filter(truthy)
       ),
-      legendFilters: overEvery(
-        ([legendFilter] as (ValuePredicate | null)[]).filter(truthy)
+      interactiveLegendFilters: overEvery(
+        ([interactiveLegendFilter] as (ValuePredicate | null)[]).filter(truthy)
+      ),
+      interactiveTimeFilters: overEvery(
+        ([interactiveTimeRangeFilter] as (ValuePredicate | null)[]).filter(
+          truthy
+        )
       ),
       timeFilters: overEvery(
         ([timeRangeFilter] as (ValuePredicate | null)[]).filter(truthy)
@@ -388,26 +418,35 @@ export const useChartData = (
     };
   }, [
     getXAsDate,
-    fromTime,
-    toTime,
-    timeRange?.active,
+    interactiveFromTime,
+    interactiveToTime,
+    interactiveTimeRange?.active,
     animationField?.componentIri,
     timeSliderValue,
     legend?.active,
     getSegment,
     getTime,
     legendItems,
+    timeRangeFromTime,
+    timeRangeToTime,
+    getTimeRangeTime,
   ]);
 
   const chartData = React.useMemo(() => {
-    return observations.filter(allFilters);
-  }, [allFilters, observations]);
+    return observations.filter(allInteractiveFilters);
+  }, [allInteractiveFilters, observations]);
 
   const scalesData = React.useMemo(() => {
-    return observations.filter(overEvery(legendFilters, timeFilters));
-  }, [observations, legendFilters, timeFilters]);
+    return observations.filter(
+      overEvery(interactiveLegendFilters, interactiveTimeFilters)
+    );
+  }, [observations, interactiveLegendFilters, interactiveTimeFilters]);
 
   const segmentData = React.useMemo(() => {
+    return observations.filter(interactiveTimeFilters);
+  }, [observations, interactiveTimeFilters]);
+
+  const timeRangeData = React.useMemo(() => {
     return observations.filter(timeFilters);
   }, [observations, timeFilters]);
 
@@ -415,5 +454,16 @@ export const useChartData = (
     chartData,
     scalesData,
     segmentData,
+    timeRangeData,
   };
 };
+
+// TODO: base this on UI encodings?
+export type InteractiveXTimeRangeState = {
+  interactiveXTimeRangeScale: ScaleTime<number, number>;
+};
+
+export type ChartWithInteractiveXTimeRangeState =
+  | AreasState
+  | ColumnsState
+  | LinesState;

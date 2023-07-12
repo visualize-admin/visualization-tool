@@ -10,7 +10,6 @@ import {
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
-  ScaleTime,
   scaleTime,
   stack,
   stackOffsetDiverging,
@@ -35,7 +34,10 @@ import {
   PADDING_OUTER,
 } from "@/charts/column/constants";
 import { getWideData, normalizeData } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import {
+  CommonChartState,
+  InteractiveXTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
@@ -55,11 +57,11 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type StackedColumnsState = CommonChartState &
-  ColumnsStackedStateVariables & {
+  ColumnsStackedStateVariables &
+  InteractiveXTimeRangeState & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
-    xEntireScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
@@ -92,8 +94,14 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, allData, plottableDataWide } =
-    data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    allData,
+    plottableDataWide,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -229,7 +237,7 @@ const useColumnsStackedState = (
     colors,
     xScale,
     xScaleInteraction,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yStackDomain,
     xDomainLabels,
   } = useMemo(() => {
@@ -291,12 +299,12 @@ const useColumnsStackedState = (
       .paddingInner(0)
       .paddingOuter(0);
 
-    // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
-      Date,
-      Date
-    ];
-    const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
+    const interactiveXTimeRangeScale = scaleTime().domain(
+      interactiveXTimeRangeDomain
+    );
 
     // y
     const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
@@ -317,7 +325,7 @@ const useColumnsStackedState = (
       colors,
       yStackDomain,
       xScale,
-      xEntireScale,
+      interactiveXTimeRangeScale,
       xScaleInteraction,
       xDomainLabels,
     };
@@ -333,6 +341,7 @@ const useColumnsStackedState = (
     getXLabel,
     getXAsDate,
     scalesData,
+    timeRangeData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     allSegments,
@@ -401,7 +410,7 @@ const useColumnsStackedState = (
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
-  xEntireScale.range([0, chartWidth]);
+  interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltips
@@ -507,7 +516,7 @@ const useColumnsStackedState = (
     allData,
     xScale,
     xScaleInteraction,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yScale,
     segments,
     colors,

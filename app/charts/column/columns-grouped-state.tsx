@@ -11,7 +11,6 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
   scaleTime,
-  ScaleTime,
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
@@ -29,7 +28,11 @@ import {
   PADDING_OUTER,
   PADDING_WITHIN,
 } from "@/charts/column/constants";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateData,
+  CommonChartState,
+  InteractiveXTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
@@ -49,12 +52,12 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type GroupedColumnsState = CommonChartState &
-  ColumnsGroupedStateVariables & {
+  ColumnsGroupedStateVariables &
+  InteractiveXTimeRangeState & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     xScaleIn: ScaleBand<string>;
-    xEntireScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
@@ -82,7 +85,7 @@ const useColumnsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, allData } = data;
+  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -164,7 +167,7 @@ const useColumnsGroupedState = (
     xDomainLabels,
     colors,
     yScale,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     xScale,
     xScaleIn,
     xScaleInteraction,
@@ -217,12 +220,12 @@ const useColumnsGroupedState = (
       .paddingOuter(0);
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
-    // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
-      Date,
-      Date
-    ];
-    const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
+    const interactiveXTimeRangeScale = scaleTime().domain(
+      interactiveXTimeRangeDomain
+    );
 
     // y
     const minValue = Math.min(
@@ -243,7 +246,7 @@ const useColumnsGroupedState = (
     return {
       colors,
       yScale,
-      xEntireScale,
+      interactiveXTimeRangeScale,
       xScale,
       xScaleIn,
       xScaleInteraction,
@@ -260,6 +263,7 @@ const useColumnsGroupedState = (
     segments,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
+    timeRangeData,
     scalesData,
     getX,
     getXLabel,
@@ -326,7 +330,7 @@ const useColumnsGroupedState = (
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
-  xEntireScale.range([0, chartWidth]);
+  interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -403,7 +407,7 @@ const useColumnsGroupedState = (
     xScale,
     xScaleInteraction,
     xScaleIn,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yScale,
     segments,
     colors,

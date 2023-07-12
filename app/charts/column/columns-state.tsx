@@ -8,7 +8,6 @@ import {
   ScaleLinear,
   scaleLinear,
   scaleTime,
-  ScaleTime,
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
@@ -25,7 +24,11 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/column/constants";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartStateData,
+  CommonChartState,
+  InteractiveXTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
@@ -47,10 +50,10 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsState = CommonChartState &
-  ColumnsStateVariables & {
+  ColumnsStateVariables &
+  InteractiveXTimeRangeState & {
     chartType: "column";
     xScale: ScaleBand<string>;
-    xEntireScale: ScaleTime<number, number>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
@@ -75,7 +78,7 @@ const useColumnsState = (
     getYError,
     getYErrorRange,
   } = variables;
-  const { chartData, scalesData, allData } = data;
+  const { chartData, scalesData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -93,78 +96,81 @@ const useColumnsState = (
     ]);
   }, [chartData, getX, getY]);
 
-  // Scales
-  const { xScale, yScale, xEntireScale, xScaleInteraction, bandDomainLabels } =
-    useMemo(() => {
-      // x
-      const sorters = makeDimensionValueSorters(xDimension, {
-        sorting: fields.x.sorting,
-        measureBySegment: sumsByX,
-        useAbbreviations: fields.x.useAbbreviations,
-        dimensionFilter: xDimension?.iri
-          ? chartConfig.filters[xDimension.iri]
-          : undefined,
-      });
-      const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
-      const bandDomain = orderBy(
-        [...new Set(scalesData.map(getX))],
-        sorters,
-        sortingOrders
-      );
-      const bandDomainLabels = bandDomain.map(getXLabel);
-      const xScale = scaleBand()
-        .domain(bandDomain)
-        .paddingInner(PADDING_INNER)
-        .paddingOuter(PADDING_OUTER);
-      const xScaleInteraction = scaleBand()
-        .domain(bandDomain)
-        .paddingInner(0)
-        .paddingOuter(0);
+  const {
+    xScale,
+    yScale,
+    interactiveXTimeRangeScale,
+    xScaleInteraction,
+    bandDomainLabels,
+  } = useMemo(() => {
+    const sorters = makeDimensionValueSorters(xDimension, {
+      sorting: fields.x.sorting,
+      measureBySegment: sumsByX,
+      useAbbreviations: fields.x.useAbbreviations,
+      dimensionFilter: xDimension?.iri
+        ? chartConfig.filters[xDimension.iri]
+        : undefined,
+    });
+    const sortingOrders = getSortingOrders(sorters, fields.x.sorting);
+    const bandDomain = orderBy(
+      [...new Set(scalesData.map(getX))],
+      sorters,
+      sortingOrders
+    );
+    const bandDomainLabels = bandDomain.map(getXLabel);
+    const xScale = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(PADDING_INNER)
+      .paddingOuter(PADDING_OUTER);
+    const xScaleInteraction = scaleBand()
+      .domain(bandDomain)
+      .paddingInner(0)
+      .paddingOuter(0);
 
-      // x as time, needs to be memoized!
-      const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
-        Date,
-        Date
-      ];
+    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
 
-      const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    const interactiveXTimeRangeScale = scaleTime().domain(
+      interactiveXTimeRangeDomain
+    );
 
-      // y
-      const minValue = Math.min(
-        min(scalesData, (d) =>
-          getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-        ) ?? 0,
-        0
-      );
-      const maxValue = Math.max(
-        max(scalesData, (d) =>
-          getYErrorRange ? getYErrorRange(d)[1] : getY(d)
-        ) ?? 0,
-        0
-      );
+    const minValue = Math.min(
+      min(scalesData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+      ) ?? 0,
+      0
+    );
+    const maxValue = Math.max(
+      max(scalesData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+      ) ?? 0,
+      0
+    );
 
-      const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-      return {
-        xScale,
-        yScale,
-        xEntireScale,
-        xScaleInteraction,
-        bandDomainLabels,
-      };
-    }, [
-      getX,
-      getXLabel,
-      getXAsDate,
-      getY,
-      getYErrorRange,
-      scalesData,
-      fields.x.sorting,
-      fields.x.useAbbreviations,
-      xDimension,
-      chartConfig.filters,
-      sumsByX,
-    ]);
+    return {
+      xScale,
+      yScale,
+      interactiveXTimeRangeScale,
+      xScaleInteraction,
+      bandDomainLabels,
+    };
+  }, [
+    getX,
+    getXLabel,
+    getXAsDate,
+    getY,
+    getYErrorRange,
+    scalesData,
+    timeRangeData,
+    fields.x.sorting,
+    fields.x.useAbbreviations,
+    xDimension,
+    chartConfig.filters,
+    sumsByX,
+  ]);
 
   const { left, bottom } = useChartPadding(
     yScale,
@@ -193,7 +199,7 @@ const useColumnsState = (
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
-  xEntireScale.range([0, chartWidth]);
+  interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -256,7 +262,7 @@ const useColumnsState = (
     chartData,
     allData,
     xScale,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
