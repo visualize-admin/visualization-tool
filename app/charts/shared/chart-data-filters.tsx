@@ -167,8 +167,6 @@ const DataFilter = ({
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
-    console.log(dimension.values);
-
     const configFilter = chartConfig.filters[dimension.iri];
     const configFilterValue =
       configFilter && configFilter.type === "single"
