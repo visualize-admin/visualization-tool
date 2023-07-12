@@ -56,15 +56,13 @@ export const usePieStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
+  const data = useChartData(plottableData, {
     chartConfig,
     getSegment,
   });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: plottableData,
   };
 };

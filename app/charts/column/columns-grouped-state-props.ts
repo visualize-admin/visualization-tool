@@ -87,19 +87,14 @@ export const useColumnsGroupedStateData = (
       getY,
     });
   }, [plottableData, x, getX, getY]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate,
-      getSegment,
-    }
-  );
+  const data = useChartData(sortedPlottableData, {
+    chartConfig,
+    getXAsDate,
+    getSegment,
+  });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: sortedPlottableData,
   };
 };

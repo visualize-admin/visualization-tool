@@ -92,19 +92,14 @@ export const useColumnsStackedStateData = (
       plottableDataWide,
     };
   }, [plottableData, x, getX, getY, getSegment]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate,
-      getSegment,
-    }
-  );
+  const data = useChartData(sortedPlottableData, {
+    chartConfig,
+    getXAsDate,
+    getSegment,
+  });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: sortedPlottableData,
     plottableDataWide,
   };

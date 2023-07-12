@@ -92,7 +92,7 @@ export const useMapStateData = (
   const { areaLayerDimension, symbolLayerDimension, getSymbol } = variables;
   // No need to sort the data for map.
   const plottableData = usePlottableData(observations, {});
-  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
+  const data = useChartData(plottableData, {
     chartConfig,
   });
 
@@ -103,7 +103,7 @@ export const useMapStateData = (
         dimensionIri: areaLayerDimension.iri,
         topology,
         filters: chartConfig.filters[areaLayerDimension.iri],
-        observations: chartData,
+        observations: data.chartData,
       });
 
       return {
@@ -111,7 +111,7 @@ export const useMapStateData = (
         mesh: mesh(topology, topology.objects.shapes),
       };
     }
-  }, [areaLayerDimension?.iri, shapes, chartConfig.filters, chartData]);
+  }, [areaLayerDimension?.iri, shapes, chartConfig.filters, data.chartData]);
 
   const symbolLayer = React.useMemo(() => {
     if (
@@ -123,7 +123,7 @@ export const useMapStateData = (
       const points: GeoPoint[] = [];
       const coordsByLabel = keyBy(coordinates, (d) => d.label);
 
-      chartData.forEach((d) => {
+      data.chartData.forEach((d) => {
         const label = getSymbol(d);
         const coords = coordsByLabel[label];
 
@@ -159,7 +159,7 @@ export const useMapStateData = (
         topology,
         // @ts-ignore
         filters: chartConfig.filters[symbolLayerDimension.iri],
-        observations: chartData,
+        observations: data.chartData,
       });
 
       const points = topojson.features.map((d) => ({
@@ -172,16 +172,14 @@ export const useMapStateData = (
   }, [
     symbolLayerDimension,
     getSymbol,
-    chartData,
+    data.chartData,
     shapes,
     coordinates,
     chartConfig.filters,
   ]);
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: plottableData,
     features: {
       areaLayer,

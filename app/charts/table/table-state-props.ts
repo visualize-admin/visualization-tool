@@ -10,14 +10,12 @@ export const useTableStateData = (
   const { chartConfig, observations } = chartProps;
   // No need to sort the data for table.
   const plottableData = usePlottableData(observations, {});
-  const { chartData, scalesData, segmentData } = useChartData(plottableData, {
+  const data = useChartData(plottableData, {
     chartConfig,
   });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: plottableData,
   };
 };

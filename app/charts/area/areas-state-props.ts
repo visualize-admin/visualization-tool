@@ -60,19 +60,14 @@ export const useAreasStateData = (
       getX,
     });
   }, [plottableData, getX]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate: getX,
-      getSegment,
-    }
-  );
+  const data = useChartData(sortedPlottableData, {
+    chartConfig,
+    getXAsDate: getX,
+    getSegment,
+  });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: sortedPlottableData,
   };
 };
