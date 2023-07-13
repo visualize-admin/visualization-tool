@@ -75,17 +75,19 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const componentFilter = filters[component.iri];
 
   const timelineProps: TimelineProps = React.useMemo(() => {
-    console.log("timelineProps");
     const commonProps = {
       animationType,
       msDuration: animationDuration * 1000,
     };
-    const values = chartState.allData
-      .map((d) => d[component.iri])
-      .filter(Boolean) as string[];
+    const uniqueValues = Array.from(
+      new Set(
+        chartState.allData
+          .map((d) => d[component.iri])
+          .filter(Boolean) as string[]
+      )
+    );
 
     if (hasTimeUnit) {
-      const uniqueValues = Array.from(new Set(values));
       const msValues = uniqueValues.map((d) => parseDate(d).getTime());
       const formatValue = (d: number) => timeFormatUnit(new Date(d), timeUnit!);
 
@@ -105,7 +107,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
         sorting,
       });
       const sortingOrders = getSortingOrders(sorters, sorting);
-      const sortedData = orderBy(values, sorters, sortingOrders);
+      const sortedData = orderBy(uniqueValues, sorters, sortingOrders);
 
       return {
         type: "ordinal",
