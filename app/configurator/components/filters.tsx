@@ -11,6 +11,7 @@ import {
   IconButton,
   Input,
   InputAdornment,
+  SelectChangeEvent,
   Switch,
   Theme,
   Tooltip,
@@ -25,7 +26,7 @@ import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import {
+import React, {
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -36,8 +37,10 @@ import {
   useState,
 } from "react";
 
+import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
+import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
   getFilterValue,
@@ -51,6 +54,10 @@ import {
   MultiFilterFieldColorPicker,
   SingleFilterField,
 } from "@/configurator/components/field";
+import {
+  canRenderDatePickerField,
+  DatePickerField,
+} from "@/configurator/components/field-date-picker";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
@@ -58,9 +65,8 @@ import {
   Maybe,
   useDimensionHierarchyQuery,
   useDimensionValuesQuery,
-  useTemporalDimensionValuesQuery,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue, TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -948,14 +954,12 @@ export const DimensionValuesMultiFilter = ({
   }
 };
 
-export const TimeFilter = ({
-  dataSetIri,
-  dimensionIri,
-}: {
-  dataSetIri: string;
-  dimensionIri: string;
-}) => {
-  const locale = useLocale();
+type TimeFilterProps = {
+  dimension: TemporalDimension;
+};
+
+export const TimeFilter = (props: TimeFilterProps) => {
+  const { dimension } = props;
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
@@ -965,69 +969,203 @@ export const TimeFilter = ({
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_RANGE",
         value: {
-          dimensionIri,
+          dimensionIri: dimension.iri,
           from,
           to,
         },
       });
     },
-    [dispatch, dimensionIri]
+    [dispatch, dimension.iri]
   );
 
-  const [{ data }] = useTemporalDimensionValuesQuery({
-    variables: {
-      dimensionIri,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      dataCubeIri: dataSetIri,
+  // const dimension = data?.dataCubeByIri?.dimensionByIri;
+  const temporalDimension =
+    dimension?.__typename === "TemporalDimension" ? dimension : null;
+
+  const activeFilter = temporalDimension?.iri
+    ? getFilterValue(state, temporalDimension.iri)
+    : null;
+  const rangeActiveFilter =
+    activeFilter?.type === "range" ? activeFilter : null;
+
+  const onChangeFrom = useEvent(
+    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+      if (rangeActiveFilter) {
+        const from = e.target.value as string;
+        setFilterRange([from, rangeActiveFilter.to]);
+      }
+    }
+  );
+
+  const onChangeTo = useEvent(
+    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+      if (rangeActiveFilter) {
+        const to = e.target.value as string;
+        setFilterRange([rangeActiveFilter.from, to]);
+      }
+    }
+  );
+
+  const { sortedOptions, sortedValues } = useMemo(() => {
+    if (temporalDimension) {
+      const { timeFormat, timeUnit } = temporalDimension;
+      const parse = formatLocale.parse(timeFormat);
+      const sortedOptions = temporalDimension.values
+        .map(({ value }) => {
+          const date = parse(`${value}`) as Date;
+
+          return {
+            value,
+            label: timeFormatUnit(date, timeUnit),
+            date,
+          };
+        })
+        .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+      return {
+        sortedOptions,
+        sortedValues: sortedOptions.map((d) => d.value),
+      };
+    }
+
+    return {
+      sortedOptions: [],
+      sortedValues: [],
+    };
+  }, [temporalDimension, formatLocale, timeFormatUnit]);
+
+  const getClosestDatesFromDateRange = React.useCallback(
+    (from: Date, to: Date) => {
+      const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
+        sortedOptions,
+        (d) => d.date
+      );
+
+      return getClosestDatesFromDateRange(from, to);
     },
-  });
+    [sortedOptions]
+  );
 
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
-
-  if (
-    dimension &&
-    dimension.__typename === "TemporalDimension" &&
-    state.state === "CONFIGURING_CHART"
-  ) {
-    const { timeUnit, timeFormat } = dimension;
-
-    const activeFilter = getFilterValue(state, dimension.iri);
-
+  if (temporalDimension && isConfiguring(state)) {
+    const { timeUnit, timeFormat } = temporalDimension;
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
     const formatDateValue = formatLocale.format(timeFormat);
 
-    const from = parse(dimension.values[0].value as string);
-    const to = parse(
-      dimension.values[dimension.values.length - 1].value as string
-    );
+    const from = sortedOptions[0].date;
+    const to = sortedOptions[sortedOptions.length - 1].date;
 
     if (!from || !to) {
       return null;
     }
 
-    const timeRange =
-      activeFilter && activeFilter.type === "range"
-        ? [parse(activeFilter.from)!, parse(activeFilter.to)!]
-        : [from, to];
+    const timeRange = rangeActiveFilter
+      ? [
+          parse(rangeActiveFilter.from) as Date,
+          parse(rangeActiveFilter.to) as Date,
+        ]
+      : [from, to];
+
+    const fromOptions = sortedOptions.filter(({ date }) => {
+      return date <= timeRange[1];
+    });
+
+    const toOptions = sortedOptions.filter(({ date }) => {
+      return date >= timeRange[0];
+    });
 
     return (
       <Box>
-        <Typography variant="body2">
-          {timeFormatUnit(timeRange[0], timeUnit)} –{" "}
-          {timeFormatUnit(timeRange[1], timeUnit)}
-        </Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          {rangeActiveFilter && (
+            <>
+              {canRenderDatePickerField(timeUnit) ? (
+                <DatePickerField
+                  name="time-range-start"
+                  label={t({
+                    id: "controls.filters.select.from",
+                    message: "From",
+                  })}
+                  value={timeRange[0]}
+                  onChange={onChangeFrom}
+                  isDateDisabled={(date) => {
+                    return (
+                      date > timeRange[1] ||
+                      !sortedValues.includes(formatDateValue(date))
+                    );
+                  }}
+                  timeUnit={timeUnit}
+                  dateFormat={formatDateValue}
+                  minDate={from}
+                  maxDate={to}
+                />
+              ) : (
+                <Select
+                  id="time-range-start"
+                  label={t({
+                    id: "controls.filters.select.from",
+                    message: "From",
+                  })}
+                  options={fromOptions}
+                  sortOptions={false}
+                  value={rangeActiveFilter.from}
+                  onChange={onChangeFrom}
+                />
+              )}
+
+              {canRenderDatePickerField(timeUnit) ? (
+                <DatePickerField
+                  name="time-range-end"
+                  label={t({
+                    id: "controls.filters.select.to",
+                    message: "To",
+                  })}
+                  value={timeRange[1]}
+                  onChange={onChangeTo}
+                  isDateDisabled={(date) => {
+                    return (
+                      date < timeRange[0] ||
+                      !sortedValues.includes(formatDateValue(date))
+                    );
+                  }}
+                  timeUnit={timeUnit}
+                  dateFormat={formatDateValue}
+                  minDate={from}
+                  maxDate={to}
+                />
+              ) : (
+                <Select
+                  id="time-range-end"
+                  label={t({
+                    id: "controls.filters.select.to",
+                    message: "To",
+                  })}
+                  options={toOptions}
+                  sortOptions={false}
+                  value={rangeActiveFilter.to}
+                  onChange={onChangeTo}
+                />
+              )}
+            </>
+          )}
+        </Box>
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
           timeUnit={timeUnit}
-          onChange={([from, to]) =>
-            setFilterRange([formatDateValue(from), formatDateValue(to)])
-          }
+          onChange={([from, to]) => {
+            const [closestFrom, closestTo] = getClosestDatesFromDateRange(
+              from,
+              to
+            );
+
+            setFilterRange([
+              formatDateValue(closestFrom),
+              formatDateValue(closestTo),
+            ]);
+          }}
         />
       </Box>
     );

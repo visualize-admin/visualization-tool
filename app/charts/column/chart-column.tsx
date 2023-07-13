@@ -1,12 +1,12 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { Columns, ErrorWhiskers } from "@/charts/column/columns";
 import {
   ColumnsGrouped,
   ErrorWhiskers as ErrorWhiskersGrouped,
 } from "@/charts/column/columns-grouped";
 import { GroupedColumnChart } from "@/charts/column/columns-grouped-state";
-import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
 import { ColumnsStacked } from "@/charts/column/columns-stacked";
 import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
 import { ColumnChart } from "@/charts/column/columns-state";

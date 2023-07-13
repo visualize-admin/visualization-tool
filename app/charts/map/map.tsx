@@ -1,7 +1,7 @@
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { easeCubic, geoArea } from "d3";
+import { geoArea } from "d3";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibregl from "maplibre-gl";
@@ -231,13 +231,6 @@ export const MapComponent = () => {
       stroked: false,
       // @ts-ignore
       getFillColor,
-      transitions: {
-        getFillColor: {
-          // FIXME: share with other transitions, especially in column chart
-          duration: 750,
-          easing: easeCubic,
-        },
-      },
       onHover: ({
         x,
         y,
@@ -312,8 +305,8 @@ export const MapComponent = () => {
   ]);
 
   const dataLoaded =
-    features.areaLayer ||
-    features.symbolLayer ||
+    features.areaLayer ??
+    features.symbolLayer ??
     // Raw map without data layers.
     (areaLayer === undefined && symbolLayer === undefined);
 

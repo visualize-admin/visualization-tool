@@ -4,7 +4,6 @@ import React from "react";
 
 import {
   getLabelWithUnit,
-  getMaybeTemporalDimensionValues,
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
   usePlottableData,
@@ -15,8 +14,10 @@ import {
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
+  RenderingVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
 import {
   useErrorMeasure,
@@ -33,17 +34,18 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStateVariables = BandXVariables &
   NumericalYVariables &
-  NumericalYErrorVariables;
+  NumericalYErrorVariables &
+  RenderingVariables;
 
 export const useColumnsStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y } = fields;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { x, y, animation } = fields;
 
-  const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!_xDimension) {
+  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
@@ -57,11 +59,6 @@ export const useColumnsStateVariables = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const xDimension = React.useMemo(() => {
-    const values = getMaybeTemporalDimensionValues(_xDimension, observations);
-    return { ..._xDimension, values };
-  }, [_xDimension, observations]);
 
   const xTimeUnit = isTemporalDimension(xDimension)
     ? xDimension.timeUnit
@@ -83,6 +80,13 @@ export const useColumnsStateVariables = (
   const getYError = useErrorVariable(yErrorMeasure);
   const showYStandardError = get(fields, ["y", "showStandardError"], true);
 
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensions,
+    filters,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xDimension,
     getX,
@@ -97,6 +101,7 @@ export const useColumnsStateVariables = (
     getYError,
     getYErrorRange,
     yAxisLabel,
+    getRenderingKey,
   };
 };
 

@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -74,6 +74,7 @@ import {
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
 import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 
 import { ColorRampField } from "./chart-controls/color-ramp";
@@ -499,9 +500,29 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
             <Box component="fieldset" mt={4}>
               <FieldSetLegend
                 legendTitle={
-                  <Trans id="controls.section.animation.type">
-                    Animation Type
-                  </Trans>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Trans id="controls.section.animation.type">
+                      Animation Type
+                    </Trans>
+                    <Tooltip
+                      arrow
+                      title={t({
+                        id: "controls.section.animation.type.explanation",
+                        message:
+                          "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
+                      })}
+                    >
+                      <Typography sx={{ color: "primary.main" }}>
+                        <SvgIcExclamation
+                          style={{
+                            transform: "scale(0.8)",
+                            width: 18,
+                            height: 18,
+                          }}
+                        />
+                      </Typography>
+                    </Tooltip>
+                  </Box>
                 }
               />
               <Flex sx={{ justifyContent: "flex-start" }}>
@@ -572,11 +593,7 @@ const ChartFieldMultiFilter = ({
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
         {isTemporalDimension(component) ? (
-          <TimeFilter
-            key={component.iri}
-            dimensionIri={component.iri}
-            dataSetIri={state.dataSet}
-          />
+          <TimeFilter key={component.iri} dimension={component} />
         ) : (
           component && (
             <DimensionValuesMultiFilter

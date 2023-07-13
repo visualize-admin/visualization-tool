@@ -1,18 +1,18 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { DatePicker, PickersDay } from "@mui/lab";
 import { TextField } from "@mui/material";
-import { markdown, ReactSpecimen } from "catalog";
-import React, { useState } from "react";
+import { ReactSpecimen, markdown } from "catalog";
+import { useState } from "react";
 
 import { BrowseStateProvider } from "@/browser/context";
 import {
-  Radio,
   Checkbox,
-  Select,
   Input,
-  SearchField,
-  Switch,
   MinimalisticSelect,
+  Radio,
+  SearchField,
+  Select,
+  Switch,
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 
@@ -263,12 +263,7 @@ ${(
             );
           }}
           renderInput={(params) => (
-            <TextField
-              // InputLabelProps={{ sx: { display: "none" } }}
-              hiddenLabel
-              size="small"
-              {...params}
-            />
+            <TextField hiddenLabel size="small" {...params} />
           )}
         />
       </ReactSpecimen>

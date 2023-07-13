@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/charts/chart-config-ui-options.ts
+msgid ""
+msgstr ""
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Filter hinzufügen"
@@ -29,8 +33,8 @@ msgstr "Filter nach unten verschieben"
 msgid "Move filter up"
 msgstr "Filter nach oben verschieben"
 
+#: app/browser/dataset-browse.tsx
 #: app/components/select-tree.tsx
-#: app/configurator/components/dataset-browse.tsx
 msgid "No results"
 msgstr "Kein Ergebnis"
 
@@ -42,23 +46,23 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
-#: app/configurator/components/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Visualisierung von diesem Datensatz erstellen"
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.all-datasets"
 msgstr "Alle Datensätze"
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
@@ -340,6 +344,11 @@ msgid "controls.filters.interactive.tooltip"
 msgstr "Erlauben Sie Benutzern, Filter zu ändern"
 
 #: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.select.from"
+msgstr "Von"
+
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
 msgstr "Farben auffrischen"
 
@@ -350,6 +359,11 @@ msgstr "Farben zurücksetzen"
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.selected-filters"
 msgstr "Ausgewählte Filter"
+
+#: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.select.to"
+msgstr "Zu"
 
 #: app/configurator/interactive-filters/editor-time-interval-brush.tsx
 msgid "controls.filters.time.range"
@@ -476,6 +490,10 @@ msgstr "Animation Typ"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.continuous"
 msgstr "Kontinuierlich"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.type.explanation"
+msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmäßigen Verteilung der Daten animieren möchten."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.type.stepped"
@@ -758,11 +776,11 @@ msgstr "Datenquelle"
 msgid "data.source.notTrusted"
 msgstr "Dieses Diagramm verwendet keine vertrauenswürdige Datenquelle."
 
-#: app/configurator/components/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Datensätzen"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset-preview.keywords"
 msgstr "Schlüsselwörter"
 
@@ -778,50 +796,50 @@ msgstr "Neuestes Update"
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschließen"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.date.created"
 msgstr "Erstellungsdatum"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.email"
 msgstr "Kontaktstellen"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.furtherinformation"
 msgstr "Weitere Informationen"
 
 #: app/components/chart-footnotes.tsx
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
 msgstr "Erfahren Sie mehr über diesen Datensatz"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.source"
 msgstr "Quelle"
 
-#: app/configurator/components/dataset-metadata.tsx
+#: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.order.title"
 msgstr "Titel"
 
+#: app/browser/dataset-preview.tsx
 #: app/components/chart-preview.tsx
 #: app/components/chart-published.tsx
-#: app/configurator/components/dataset-preview.tsx
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
@@ -829,27 +847,27 @@ msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik ni
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.search.label"
 msgstr "Suchen"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, Organisation, Stichwort..."
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 msgid "dataset.tag.draft"
 msgstr "Entwurf"
 
-#: app/configurator/components/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
@@ -1041,7 +1059,7 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/dataset-browse.tsx
+#: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
 msgid "select.controls.filters.search"
 msgstr "Suche"

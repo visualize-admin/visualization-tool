@@ -882,14 +882,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       animation: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          // Temporal dimension could be used as X or Y axis, in this case we need to
-          // remove the animation.
-          if (
-            newChartConfig.fields.x.componentIri !== oldValue?.componentIri &&
-            newChartConfig.fields.y.componentIri !== oldValue?.componentIri
-          ) {
-            draft.fields.animation = oldValue;
-          }
+          draft.fields.animation = oldValue;
         });
       },
     },
@@ -1021,6 +1014,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             });
           },
         },
+      },
+      animation: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          draft.fields.animation = oldValue;
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,

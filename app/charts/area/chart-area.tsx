@@ -90,12 +90,12 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
         <Ruler />
       </ChartContainer>
 
-      <LegendColor
-        symbol="square"
-        interactive={
-          fields.segment && interactiveFiltersConfig?.legend.active === true
-        }
-      />
+      {fields.segment && (
+        <LegendColor
+          symbol="square"
+          interactive={interactiveFiltersConfig?.legend.active === true}
+        />
+      )}
     </AreaChart>
   );
 });

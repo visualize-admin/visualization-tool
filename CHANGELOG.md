@@ -11,10 +11,15 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
+  - Scatterplot and Pie are now animating the data changes
+  - Time filter now shows explicit `from` and `to` fields to filter by (and the brush snaps to values actually existing in the data)
+  - Time filter now uses date picker for months and years 🗓️
 - Fixes
   - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
   - Scales now adapt to color legend filter when using time slider
   - Columns now properly animate out, instead of disappearing
+  - Empty color legend is no longer shown
+  - Scatterplot X axis now correctly aligns its title on Safari
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:

@@ -27,6 +27,7 @@ import { ckmeans } from "simple-statistics";
 import { getBBox } from "@/charts/map/helpers";
 import {
   MapStateData,
+  MapStateVariables,
   useMapStateData,
   useMapStateVariables,
 } from "@/charts/map/map-state-props";
@@ -71,6 +72,178 @@ import { getColorInterpolator } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
 
+export type MapState = CommonChartState &
+  MapStateVariables & {
+    chartType: "map";
+    features: GeoData;
+    locked: boolean;
+    lockedBBox: BBox | undefined;
+    featuresBBox: BBox | undefined;
+    showBaseLayer: boolean;
+    identicalLayerComponentIris: boolean;
+    areaLayer:
+      | {
+          data: Observation[];
+          dataDomain: [number, number];
+          getLabel: (d: Observation) => string;
+          colors: AreaLayerColors;
+        }
+      | undefined;
+    symbolLayer:
+      | {
+          data: Observation[];
+          dataDomain: [number, number];
+          measureDimension?: DimensionMetadataFragment;
+          measureLabel: string;
+          getLabel: (d: Observation) => string;
+          getValue: (d: Observation) => number | null;
+          errorDimension?: DimensionMetadataFragment;
+          getFormattedError: null | ((d: Observation) => string);
+          radiusScale: ScalePower<number, number>;
+          colors: SymbolLayerColors;
+        }
+      | undefined;
+  };
+
+const useMapState = (
+  chartProps: ChartProps<MapConfig> & {
+    shapes: GeoShapes | undefined;
+    coordinates: GeoCoordinates[] | undefined | null;
+  },
+  variables: MapStateVariables,
+  data: MapStateData
+): MapState => {
+  const width = useWidth();
+  const { chartConfig, measures, dimensions } = chartProps;
+  const { chartData, scalesData, allData, features } = data;
+  const { fields, baseLayer } = chartConfig;
+  const { areaLayer, symbolLayer } = fields;
+
+  const areaLayerState = useLayerState({
+    componentIri: fields.areaLayer?.componentIri,
+    measureIri: fields.areaLayer?.color.componentIri,
+    data: scalesData,
+    features,
+    dimensions,
+    measures,
+  });
+
+  const areaColors = useColors({
+    color: areaLayer?.color,
+    data: areaLayerState.data,
+    dimensions,
+    measures,
+  });
+
+  const preparedAreaLayerState: MapState["areaLayer"] = useMemo(() => {
+    if (areaLayer?.componentIri === undefined) {
+      return undefined;
+    }
+
+    return {
+      data: areaLayerState.data,
+      dataDomain: areaLayerState.dataDomain,
+      getLabel: areaLayerState.getLabel,
+      colors: areaColors as AreaLayerColors,
+    };
+  }, [areaColors, areaLayer, areaLayerState]);
+
+  const symbolLayerState = useLayerState({
+    componentIri: symbolLayer?.componentIri,
+    measureIri: symbolLayer?.measureIri,
+    data: scalesData,
+    features,
+    dimensions,
+    measures,
+  });
+
+  const symbolColors = useColors({
+    color: symbolLayer?.color,
+    data: symbolLayerState.data,
+    dimensions,
+    measures,
+  });
+
+  const radiusScale = useMemo(() => {
+    // Measure dimension is undefined. Can be useful when the user want to
+    // encode only the color of symbols, and the size is irrelevant.
+    if (symbolLayerState.dataDomain[1] === undefined) {
+      return scaleSqrt().range([0, 12]).unknown(12);
+    } else {
+      return scaleSqrt()
+        .domain([0, symbolLayerState.dataDomain[1]])
+        .range([0, 24]);
+    }
+  }, [symbolLayerState.dataDomain]) as ScalePower<number, number>;
+
+  const preparedSymbolLayerState: MapState["symbolLayer"] = useMemo(() => {
+    if (symbolLayer?.componentIri === undefined) {
+      return undefined;
+    }
+
+    return {
+      ...symbolLayerState,
+      colors: symbolColors as SymbolLayerColors,
+      radiusScale,
+    };
+  }, [symbolLayer?.componentIri, symbolLayerState, radiusScale, symbolColors]);
+
+  const identicalLayerComponentIris =
+    areaLayer?.componentIri !== undefined &&
+    symbolLayer?.componentIri !== undefined &&
+    areaLayer.componentIri === symbolLayer.componentIri;
+
+  const bounds = {
+    width,
+    height: width * 0.5,
+    margins: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+    chartWidth: width,
+    chartHeight: width * 0.5,
+  };
+
+  const featuresBBox = useMemo(() => {
+    return getBBox(
+      areaLayer?.componentIri !== undefined
+        ? filterFeatureCollection(
+            features.areaLayer?.shapes,
+            (f) => f?.properties?.observation !== undefined
+          )
+        : undefined,
+      symbolLayer?.componentIri !== undefined
+        ? features.symbolLayer?.points.filter(
+            (p) => p?.properties?.observation !== undefined
+          )
+        : undefined
+    );
+  }, [
+    areaLayer?.componentIri,
+    features.areaLayer?.shapes,
+    symbolLayer?.componentIri,
+    features.symbolLayer?.points,
+  ]);
+
+  return {
+    chartType: "map",
+    chartData,
+    allData,
+    bounds,
+    features,
+    showBaseLayer: baseLayer.show,
+    locked: baseLayer.locked || false,
+    lockedBBox: baseLayer.bbox,
+    featuresBBox,
+    identicalLayerComponentIris,
+    areaLayer: preparedAreaLayerState,
+    symbolLayer: preparedSymbolLayerState,
+    ...variables,
+  };
+};
+
 type AreaLayerColors =
   | {
       type: "categorical";
@@ -102,38 +275,6 @@ type AreaLayerColors =
 type SymbolLayerColors =
   | { type: "fixed"; getColor: (d: Observation) => number[] }
   | AreaLayerColors;
-
-export interface MapState extends CommonChartState {
-  chartType: "map";
-  features: GeoData;
-  locked: boolean;
-  lockedBBox: BBox | undefined;
-  featuresBBox: BBox | undefined;
-  showBaseLayer: boolean;
-  identicalLayerComponentIris: boolean;
-  areaLayer:
-    | {
-        data: Observation[];
-        dataDomain: [number, number];
-        getLabel: (d: Observation) => string;
-        colors: AreaLayerColors;
-      }
-    | undefined;
-  symbolLayer:
-    | {
-        data: Observation[];
-        dataDomain: [number, number];
-        measureDimension?: DimensionMetadataFragment;
-        measureLabel: string;
-        getLabel: (d: Observation) => string;
-        getValue: (d: Observation) => number | null;
-        errorDimension?: DimensionMetadataFragment;
-        getFormattedError: null | ((d: Observation) => string);
-        radiusScale: ScalePower<number, number>;
-        colors: SymbolLayerColors;
-      }
-    | undefined;
-}
 
 const getNumericalColorScale = ({
   color,
@@ -454,143 +595,6 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
   };
 };
 
-const useMapState = (
-  chartProps: ChartProps<MapConfig> & {
-    shapes: GeoShapes | undefined;
-    coordinates: GeoCoordinates[] | undefined | null;
-  },
-  data: MapStateData
-): MapState => {
-  const width = useWidth();
-  const { chartConfig, measures, dimensions } = chartProps;
-  const { chartData, scalesData, allData, features } = data;
-  const { fields, baseLayer } = chartConfig;
-  const { areaLayer, symbolLayer } = fields;
-
-  const areaLayerState = useLayerState({
-    componentIri: fields.areaLayer?.componentIri,
-    measureIri: fields.areaLayer?.color.componentIri,
-    data: scalesData,
-    features,
-    dimensions,
-    measures,
-  });
-
-  const areaColors = useColors({
-    color: areaLayer?.color,
-    data: areaLayerState.data,
-    dimensions,
-    measures,
-  });
-
-  const preparedAreaLayerState: MapState["areaLayer"] = useMemo(() => {
-    if (areaLayer?.componentIri === undefined) {
-      return undefined;
-    }
-
-    return {
-      data: areaLayerState.data,
-      dataDomain: areaLayerState.dataDomain,
-      getLabel: areaLayerState.getLabel,
-      colors: areaColors as AreaLayerColors,
-    };
-  }, [areaColors, areaLayer, areaLayerState]);
-
-  const symbolLayerState = useLayerState({
-    componentIri: symbolLayer?.componentIri,
-    measureIri: symbolLayer?.measureIri,
-    data: scalesData,
-    features,
-    dimensions,
-    measures,
-  });
-
-  const symbolColors = useColors({
-    color: symbolLayer?.color,
-    data: symbolLayerState.data,
-    dimensions,
-    measures,
-  });
-
-  const radiusScale = useMemo(() => {
-    // Measure dimension is undefined. Can be useful when the user want to
-    // encode only the color of symbols, and the size is irrelevant.
-    if (symbolLayerState.dataDomain[1] === undefined) {
-      return scaleSqrt().range([0, 12]).unknown(12);
-    } else {
-      return scaleSqrt()
-        .domain([0, symbolLayerState.dataDomain[1]])
-        .range([0, 24]);
-    }
-  }, [symbolLayerState.dataDomain]) as ScalePower<number, number>;
-
-  const preparedSymbolLayerState: MapState["symbolLayer"] = useMemo(() => {
-    if (symbolLayer?.componentIri === undefined) {
-      return undefined;
-    }
-
-    return {
-      ...symbolLayerState,
-      colors: symbolColors as SymbolLayerColors,
-      radiusScale,
-    };
-  }, [symbolLayer?.componentIri, symbolLayerState, radiusScale, symbolColors]);
-
-  const identicalLayerComponentIris =
-    areaLayer?.componentIri !== undefined &&
-    symbolLayer?.componentIri !== undefined &&
-    areaLayer.componentIri === symbolLayer.componentIri;
-
-  const bounds = {
-    width,
-    height: width * 0.5,
-    margins: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-    },
-    chartWidth: width,
-    chartHeight: width * 0.5,
-  };
-
-  const featuresBBox = useMemo(() => {
-    return getBBox(
-      areaLayer?.componentIri !== undefined
-        ? filterFeatureCollection(
-            features.areaLayer?.shapes,
-            (f) => f?.properties?.observation !== undefined
-          )
-        : undefined,
-      symbolLayer?.componentIri !== undefined
-        ? features.symbolLayer?.points.filter(
-            (p) => p?.properties?.observation !== undefined
-          )
-        : undefined
-    );
-  }, [
-    areaLayer?.componentIri,
-    features.areaLayer?.shapes,
-    symbolLayer?.componentIri,
-    features.symbolLayer?.points,
-  ]);
-
-  return {
-    chartType: "map",
-    chartData,
-    allData,
-    bounds,
-    features,
-    showBaseLayer: baseLayer.show,
-    locked: baseLayer.locked || false,
-    lockedBBox: baseLayer.bbox,
-    featuresBBox,
-    identicalLayerComponentIris,
-    areaLayer: preparedAreaLayerState,
-    symbolLayer: preparedSymbolLayerState,
-  };
-};
-
 const MapChartProvider = (
   props: React.PropsWithChildren<
     ChartProps<MapConfig> & {
@@ -602,7 +606,7 @@ const MapChartProvider = (
   const { children, ...chartProps } = props;
   const variables = useMapStateVariables(chartProps);
   const data = useMapStateData(chartProps, variables);
-  const state = useMapState(chartProps, data);
+  const state = useMapState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

@@ -3,7 +3,6 @@ import React from "react";
 
 import {
   getLabelWithUnit,
-  getMaybeTemporalDimensionValues,
   getWideData,
   useDimensionWithAbbreviations,
   useOptionalNumericVariable,
@@ -14,9 +13,11 @@ import {
   BandXVariables,
   ChartStateData,
   NumericalYVariables,
+  RenderingVariables,
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
 import {
   Observation,
@@ -29,17 +30,18 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsStackedStateVariables = BandXVariables &
   NumericalYVariables &
-  SegmentVariables;
+  SegmentVariables &
+  RenderingVariables;
 
 export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStackedStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y, segment } = fields;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { x, y, segment, animation } = fields;
 
-  const _xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!_xDimension) {
+  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
@@ -53,11 +55,6 @@ export const useColumnsStackedStateVariables = (
   }
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const xDimension = React.useMemo(() => {
-    const values = getMaybeTemporalDimensionValues(_xDimension, observations);
-    return { ..._xDimension, values };
-  }, [_xDimension, observations]);
 
   const xTimeUnit = isTemporalDimension(xDimension)
     ? xDimension.timeUnit
@@ -88,6 +85,13 @@ export const useColumnsStackedStateVariables = (
     field: segment,
   });
 
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensions,
+    filters,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xDimension,
     getX,
@@ -103,6 +107,7 @@ export const useColumnsStackedStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 

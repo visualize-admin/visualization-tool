@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
   AxisHeightLinear,
@@ -96,12 +96,12 @@ export const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
         <Tooltip type="single" />
       </ChartContainer>
 
-      <LegendColor
-        symbol="circle"
-        interactive={
-          fields.segment && interactiveFiltersConfig?.legend.active === true
-        }
-      />
+      {fields.segment && (
+        <LegendColor
+          symbol="circle"
+          interactive={interactiveFiltersConfig?.legend.active === true}
+        />
+      )}
 
       {fields.animation && (
         <TimeSlider

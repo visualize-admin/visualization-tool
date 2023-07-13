@@ -334,36 +334,6 @@ query GeoShapesByDimensionIri(
   }
 }
 
-query TemporalDimensionValues(
-  $dataCubeIri: String!
-  $dimensionIri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-  $filters: Filters
-) {
-  dataCubeByIri(
-    iri: $dataCubeIri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    dimensionByIri(
-      iri: $dimensionIri
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-    ) {
-      ... on TemporalDimension {
-        ...dimensionMetadata
-        timeUnit
-        timeFormat
-      }
-    }
-  }
-}
-
 query DataCubeObservations(
   $iri: String!
   $sourceType: String!

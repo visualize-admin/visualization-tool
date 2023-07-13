@@ -3,8 +3,8 @@ import React from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
+import { VerticalWhisker } from "@/charts/column/whiskers";
 import { useChartState } from "@/charts/shared/use-chart-state";
-import { VerticalWhisker } from "@/charts/whiskers";
 
 export const ErrorWhiskers = () => {
   const {
@@ -26,34 +26,28 @@ export const ErrorWhiskers = () => {
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {grouped.map((segment) => (
-        <g key={segment[0]} transform={`translate(${xScale(segment[0])}, 0)`}>
-          {segment[1].map((d, i) => {
-            const x0 = xScaleIn(getSegment(d)) as number;
-            const bandwidth = xScaleIn.bandwidth();
-            const barwidth = Math.min(bandwidth, 15);
-            const [y1, y2] = getYErrorRange(d);
+      {grouped.map(([segment, observations]) =>
+        observations.map((d, i) => {
+          const x0 = xScaleIn(getSegment(d)) as number;
+          const bandwidth = xScaleIn.bandwidth();
+          const barwidth = Math.min(bandwidth, 15);
+          const [y1, y2] = getYErrorRange(d);
 
-            return (
-              <VerticalWhisker
-                key={i}
-                x={x0 + bandwidth / 2 - barwidth / 2}
-                width={barwidth}
-                y1={yScale(y1)}
-                y2={yScale(y2)}
-              />
-            );
-          })}
-        </g>
-      ))}
+          return (
+            <VerticalWhisker
+              key={i}
+              x={
+                (xScale(segment) as number) + x0 + bandwidth / 2 - barwidth / 2
+              }
+              width={barwidth}
+              y1={yScale(y1)}
+              y2={yScale(y2)}
+            />
+          );
+        })
+      )}
     </g>
   );
-};
-
-type GroupedRenderDatum = {
-  key: string;
-  x: number;
-  data: RenderDatum[];
 };
 
 export const ColumnsGrouped = () => {
@@ -66,33 +60,28 @@ export const ColumnsGrouped = () => {
     getSegment,
     colors,
     grouped,
+    getRenderingKey,
   } = useChartState() as GroupedColumnsState;
   const ref = React.useRef<SVGGElement>(null);
   const { margins } = bounds;
-
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
-  const renderData: GroupedRenderDatum[] = React.useMemo(() => {
-    return grouped.map((segment) => {
-      const key = segment[0];
+  const renderData: RenderDatum[] = React.useMemo(() => {
+    return grouped.flatMap(([segment, observations]) => {
+      return observations.map((d) => {
+        const key = getRenderingKey(d);
+        const x = getSegment(d);
+        const y = getY(d) ?? NaN;
 
-      return {
-        key,
-        x: xScale(key) as number,
-        data: segment[1].map((d) => {
-          const x = getSegment(d);
-          const y = getY(d) ?? NaN;
-
-          return {
-            key: `${key}-${x}`,
-            x: xScaleIn(x) as number,
-            y: yScale(Math.max(y, 0)),
-            width: bandwidth,
-            height: Math.abs(yScale(y) - y0),
-            color: colors(x),
-          };
-        }),
-      };
+        return {
+          key,
+          x: (xScale(segment) as number) + (xScaleIn(x) as number),
+          y: yScale(Math.max(y, 0)),
+          width: bandwidth,
+          height: Math.abs(yScale(y) - y0),
+          color: colors(x),
+        };
+      });
     });
   }, [
     colors,
@@ -104,20 +93,14 @@ export const ColumnsGrouped = () => {
     xScale,
     yScale,
     y0,
+    getRenderingKey,
   ]);
 
   React.useEffect(() => {
     if (ref.current) {
       select(ref.current)
-        .selectAll<SVGGElement, GroupedRenderDatum>("g")
-        .data(renderData, (d) => d.key)
-        .join("g")
-        .attr("transform", (d) => `translate(${d.x}, 0)`)
         .selectAll<SVGRectElement, RenderDatum>("rect")
-        .data(
-          (d) => d.data,
-          (d) => d.key
-        )
+        .data(renderData, (d) => d.key)
         .call(renderColumn, y0);
     }
   }, [renderData, y0]);

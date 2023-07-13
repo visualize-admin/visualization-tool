@@ -4,7 +4,10 @@ import React from "react";
 import { mesh } from "topojson-client";
 
 import { prepareTopojson } from "@/charts/map/helpers";
-import { usePlottableData } from "@/charts/shared/chart-helpers";
+import {
+  useDimensionWithAbbreviations,
+  usePlottableData,
+} from "@/charts/shared/chart-helpers";
 import {
   AreaLayerVariables,
   ChartStateData,
@@ -30,7 +33,7 @@ export type MapStateVariables = AreaLayerVariables & SymbolLayerVariables;
 export const useMapStateVariables = (
   chartProps: ChartProps<MapConfig>
 ): MapStateVariables => {
-  const { chartConfig, dimensions } = chartProps;
+  const { chartConfig, observations, dimensions } = chartProps;
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
 
@@ -45,6 +48,11 @@ export const useMapStateVariables = (
     );
   }
 
+  const { getValue: getArea } = useDimensionWithAbbreviations(
+    areaLayerDimension,
+    { observations, field: areaLayer }
+  );
+
   const symbolLayerDimension = dimensions.find(
     (d) => d.iri === symbolLayer?.componentIri
   );
@@ -56,9 +64,16 @@ export const useMapStateVariables = (
     );
   }
 
+  const { getValue: getSymbol } = useDimensionWithAbbreviations(
+    symbolLayerDimension,
+    { observations, field: symbolLayer }
+  );
+
   return {
     areaLayerDimension,
+    getArea,
     symbolLayerDimension,
+    getSymbol,
   };
 };
 
@@ -74,7 +89,7 @@ export const useMapStateData = (
   variables: MapStateVariables
 ): MapStateData => {
   const { chartConfig, observations, shapes, coordinates } = chartProps;
-  const { areaLayerDimension, symbolLayerDimension } = variables;
+  const { areaLayerDimension, symbolLayerDimension, getSymbol } = variables;
   // No need to sort the data for map.
   const plottableData = usePlottableData(observations, {});
   const { chartData, scalesData, segmentData } = useChartData(plottableData, {
@@ -108,11 +123,8 @@ export const useMapStateData = (
       const points: GeoPoint[] = [];
       const coordsByLabel = keyBy(coordinates, (d) => d.label);
 
-      // FIXME: chart data
       chartData.forEach((d) => {
-        // FIXME: use getSymbolLayer
-        // @ts-ignore
-        const label = d[symbolLayerDimension.iri] as string;
+        const label = getSymbol(d);
         const coords = coordsByLabel[label];
 
         if (coords) {
@@ -159,6 +171,7 @@ export const useMapStateData = (
     }
   }, [
     symbolLayerDimension,
+    getSymbol,
     chartData,
     shapes,
     coordinates,

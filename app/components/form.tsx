@@ -1,41 +1,37 @@
 import { Trans } from "@lingui/macro";
-import { DatePicker, DatePickerProps } from "@mui/lab";
 import {
   Box,
   BoxProps,
   ButtonBase,
-  Checkbox as MUICheckbox,
   FormControlLabel,
   FormControlLabelProps,
-  Input as MUIInput,
   InputProps,
   ListSubheader,
+  Checkbox as MUICheckbox,
+  Input as MUIInput,
+  Radio as MUIRadio,
+  Select as MUISelect,
+  Slider as MUISlider,
+  Switch as MUISwitch,
   MenuItem,
   Paper,
   PaperProps,
-  Radio as MUIRadio,
-  Select as MUISelect,
   SelectProps,
   Skeleton,
-  Slider as MUISlider,
   SliderProps,
   Stack,
-  styled,
-  Switch as MUISwitch,
-  TextField,
   Typography,
   TypographyProps,
+  styled
 } from "@mui/material";
 import { useId } from "@reach/auto-id";
-import { timeFormat } from "d3-time-format";
 import flatten from "lodash/flatten";
 import React, {
-  ChangeEvent,
-  forwardRef,
   ReactNode,
+  forwardRef,
   useCallback,
   useContext,
-  useMemo,
+  useMemo
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
@@ -339,7 +335,7 @@ export const Select = ({
 
   return (
     <LoadingMenuPaperContext.Provider value={loading}>
-      <Box>
+      <Box sx={{ width: "100%" }}>
         {label && (
           <Label htmlFor={id} smaller sx={{ my: 1 }}>
             {label}
@@ -347,9 +343,7 @@ export const Select = ({
           </Label>
         )}
         <MUISelect
-          sx={{
-            width: "100%",
-          }}
+          sx={{ width: "100%" }}
           id={id}
           name={id}
           onChange={onChange}
@@ -474,85 +468,6 @@ export const Input = ({
     />
   </Box>
 );
-
-const formatDate = timeFormat("%Y-%m-%d");
-
-export const DayPickerField = ({
-  label,
-  name,
-  value,
-  isDayDisabled,
-  onChange,
-  disabled,
-  controls,
-  ...props
-}: {
-  name: string;
-  value: Date;
-  isDayDisabled: (day: Date) => boolean;
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
-  controls?: ReactNode;
-  label?: string | ReactNode;
-  disabled?: boolean;
-} & Omit<
-  DatePickerProps<Date>,
-  | "onChange"
-  | "value"
-  | "shouldDisableDate"
-  | "onChange"
-  | "inputFormat"
-  | "renderInput"
->) => {
-  const handleChange = useCallback(
-    (day: Date | null) => {
-      if (!day) {
-        return;
-      }
-      const isDisabled = isDayDisabled(day);
-      if (isDisabled) {
-        return;
-      }
-
-      const ev = {
-        target: {
-          value: formatDate(day),
-        },
-      } as ChangeEvent<HTMLSelectElement>;
-
-      onChange(ev);
-    },
-    [isDayDisabled, onChange]
-  );
-
-  return (
-    <Box
-      sx={{
-        color: disabled ? "grey.300" : "grey.700",
-        fontSize: "1rem",
-      }}
-    >
-      {label && name && (
-        <Label htmlFor={name} smaller>
-          {label}
-          {controls}
-        </Label>
-      )}
-      <DatePicker<Date>
-        {...props}
-        inputFormat="dd.MM.yyyy"
-        views={["day"]}
-        value={value}
-        shouldDisableDate={isDayDisabled}
-        onChange={handleChange}
-        onYearChange={handleChange}
-        renderInput={(params) => (
-          <TextField hiddenLabel size="small" {...params} />
-        )}
-        disabled={disabled}
-      />
-    </Box>
-  );
-};
 
 export const SearchField = ({
   id,

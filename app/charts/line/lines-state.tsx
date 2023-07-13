@@ -54,7 +54,7 @@ export type LinesState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: ArrayLike<Observation>;
+    allDataWide: Observation[];
     xKey: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };

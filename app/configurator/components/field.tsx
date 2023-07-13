@@ -1,7 +1,7 @@
 import { t } from "@lingui/macro";
 import { CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
+import { TimeLocaleObject, extent, timeFormat, timeParse } from "d3";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import React, {
@@ -15,7 +15,6 @@ import React, {
 import Flex from "@/components/flex";
 import {
   Checkbox,
-  DayPickerField,
   Input,
   Label,
   Radio,
@@ -32,13 +31,14 @@ import {
   ControlTab,
   OnOffControlTab,
 } from "@/configurator/components/chart-controls/control-tab";
+import { DatePickerField } from "@/configurator/components/field-date-picker";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "@/configurator/components/ui-helpers";
 import {
-  isMultiFilterFieldChecked,
   Option,
+  isMultiFilterFieldChecked,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionBooleanField,
@@ -77,18 +77,16 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-export const ControlTabField = ({
-  component,
-  value,
-  labelId,
-}: {
+type ControlTabFieldProps = {
   component?: DimensionMetadataFragment;
   value: string;
   labelId: string;
-}) => {
-  const field = useActiveFieldField({
-    value,
-  });
+  warnMessage?: ReactNode;
+};
+
+export const ControlTabField = (props: ControlTabFieldProps) => {
+  const { component, value, labelId, warnMessage } = props;
+  const field = useActiveFieldField({ value });
 
   return (
     <ControlTab
@@ -97,6 +95,7 @@ export const ControlTabField = ({
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
+      warnMessage={warnMessage}
     />
   );
 };
@@ -309,14 +308,14 @@ export const DataFilterSelectDay = ({
   }, [allOptionsSet]);
 
   return (
-    <DayPickerField
+    <DatePickerField
       label={isOptional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
       controls={controls}
       onChange={fieldProps.onChange}
       name={dimension.iri}
       value={dateValue}
-      isDayDisabled={isDisabled}
+      isDateDisabled={isDisabled}
       minDate={minDate}
       maxDate={maxDate}
     />

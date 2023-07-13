@@ -756,27 +756,29 @@ export const ChartConfigurator = ({
   );
 };
 
-const ChartFields = ({
-  chartConfig,
-  metaData,
-}: {
+type ChartFieldsProps = {
   chartConfig: ChartConfig;
   metaData: DataCubeMetadata;
-}) => {
+};
+
+const ChartFields = (props: ChartFieldsProps) => {
+  const { chartConfig, metaData } = props;
   const { chartType } = chartConfig;
   const { dimensions, measures } = metaData;
   const components = [...dimensions, ...measures];
 
   return (
     <>
-      {chartConfigOptionsUISpec[chartType].encodings.map(({ field }) => {
+      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
+        const { field, getWarnMessage } = encoding;
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
 
-        return field === "animation" &&
-          !flag("timeslider") ? null : isMapConfig(chartConfig) &&
-          field === "baseLayer" ? (
+        const disabled = field === "animation" && !flag("timeslider");
+        const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
+
+        return disabled ? null : baseLayer ? (
           <OnOffControlTabField
             key={field}
             value={field}
@@ -796,6 +798,7 @@ const ChartFields = ({
             }
             value={field}
             labelId={`${chartConfig.chartType}.${field}`}
+            warnMessage={getWarnMessage?.(dimensions)}
           />
         );
       })}

@@ -8,9 +8,11 @@ import {
   ChartStateData,
   NumericalXVariables,
   NumericalYVariables,
+  RenderingVariables,
   SegmentVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ScatterPlotConfig } from "@/configurator";
 import { isNumericalMeasure } from "@/domain/data";
 
@@ -18,14 +20,15 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ScatterplotStateVariables = NumericalXVariables &
   NumericalYVariables &
-  SegmentVariables;
+  SegmentVariables &
+  RenderingVariables;
 
 export const useScatterplotStateVariables = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
 ): ScatterplotStateVariables => {
   const { chartConfig, observations, dimensions, measures } = props;
-  const { fields } = chartConfig;
-  const { x, y, segment } = fields;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
+  const { x, y, segment, animation } = fields;
 
   const xMeasure = measures.find((d) => d.iri === x.componentIri);
   if (!xMeasure) {
@@ -64,6 +67,13 @@ export const useScatterplotStateVariables = (
     field: segment,
   });
 
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensions,
+    filters,
+    interactiveFiltersConfig,
+    animation
+  );
+
   return {
     xMeasure,
     getX,
@@ -76,6 +86,7 @@ export const useScatterplotStateVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    getRenderingKey,
   };
 };
 
