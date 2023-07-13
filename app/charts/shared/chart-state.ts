@@ -375,18 +375,33 @@ export const useChartData = (
 
   // interactive time slider
   const animationField = getAnimationField(chartConfig);
-  const getTime = useTemporalVariable(animationField?.componentIri ?? "");
-  const timeSliderValue = IFState.timeSlider.value;
+  const animationComponentIri = animationField?.componentIri ?? "";
+  const getAnimationDate = useTemporalVariable(animationComponentIri);
+  const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
   const interactiveTimeSliderFilters = React.useMemo(() => {
     const interactiveTimeSliderFilter: ValuePredicate | null =
-      animationField?.componentIri && timeSliderValue
+      animationField?.componentIri && IFState.timeSlider.value
         ? (d: Observation) => {
-            return getTime(d).getTime() === timeSliderValue.getTime();
+            if (IFState.timeSlider.type === "interval") {
+              return (
+                getAnimationDate(d).getTime() ===
+                IFState.timeSlider.value!.getTime()
+              );
+            }
+
+            const ordinalDate = getAnimationOrdinalDate(d);
+            return ordinalDate === IFState.timeSlider.value!;
           }
         : null;
 
     return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
-  }, [animationField?.componentIri, timeSliderValue, getTime]);
+  }, [
+    animationField?.componentIri,
+    IFState.timeSlider.type,
+    IFState.timeSlider.value,
+    getAnimationDate,
+    getAnimationOrdinalDate,
+  ]);
 
   // interactive legend
   const legend = interactiveFiltersConfig?.legend;

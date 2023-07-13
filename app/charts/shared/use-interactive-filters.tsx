@@ -6,7 +6,9 @@ import { FilterValueSingle } from "@/configurator";
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };
   timeRange: { from: Date | undefined; to: Date | undefined };
-  timeSlider: { value: Date | undefined };
+  timeSlider:
+    | { type: "interval"; value: Date | undefined }
+    | { type: "ordinal"; value: string | undefined };
   dataFilters: { [x: string]: FilterValueSingle };
 };
 
@@ -25,7 +27,15 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "SET_TIME_SLIDER_FILTER";
-      value: Date;
+      value:
+        | {
+            type: "interval";
+            value: Date | undefined;
+          }
+        | {
+            type: "ordinal";
+            value: string | undefined;
+          };
     }
   | {
       type: "RESET_TIME_SLIDER_FILTER";
@@ -51,7 +61,7 @@ type InteractiveFiltersStateAction =
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
   timeRange: { from: undefined, to: undefined },
-  timeSlider: { value: undefined },
+  timeSlider: { type: "interval", value: undefined },
   dataFilters: {},
 };
 
@@ -75,7 +85,7 @@ const InteractiveFiltersStateReducer = (
       draft.timeRange = { from: action.value[0], to: action.value[1] };
       return draft;
     case "SET_TIME_SLIDER_FILTER":
-      draft.timeSlider = { value: action.value };
+      draft.timeSlider = action.value;
       return draft;
     case "RESET_TIME_SLIDER_FILTER":
       draft.timeSlider.value = undefined;

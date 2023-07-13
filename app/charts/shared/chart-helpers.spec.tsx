@@ -56,6 +56,7 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
     to: new Date(2021, 11, 31),
   },
   timeSlider: {
+    type: "interval",
     value: undefined,
   },
   dataFilters: {
