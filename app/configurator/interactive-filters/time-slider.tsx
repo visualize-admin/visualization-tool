@@ -75,6 +75,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const componentFilter = filters[component.iri];
 
   const timelineProps: TimelineProps = React.useMemo(() => {
+    console.log("timelineProps");
     const commonProps = {
       animationType,
       msDuration: animationDuration * 1000,
@@ -209,7 +210,7 @@ const Slider = () => {
   });
 
   React.useEffect(() => {
-    if (IFState.timeSlider.type !== timeline.type) {
+    if (timeline.type !== IFState.timeSlider.type) {
       dispatch({
         type: "SET_TIME_SLIDER_FILTER",
         value: {
@@ -218,10 +219,9 @@ const Slider = () => {
         },
       });
     }
-  }, [IFState.timeSlider.type, timeline.type, dispatch]);
 
-  React.useEffect(() => {
     if (
+      timeline.type === "interval" &&
       IFState.timeSlider.type === "interval" &&
       IFState.timeSlider.value?.getTime() !== timeline.value
     ) {
@@ -235,6 +235,7 @@ const Slider = () => {
     }
 
     if (
+      timeline.type === "ordinal" &&
       IFState.timeSlider.type === "ordinal" &&
       IFState.timeSlider?.value !== timeline.value
     ) {
@@ -248,6 +249,7 @@ const Slider = () => {
     }
   }, [
     timeline.value,
+    timeline.type,
     IFState.timeSlider.type,
     IFState.timeSlider.value,
     dispatch,
