@@ -88,7 +88,7 @@ export const ColumnsGrouped = () => {
   const renderData: RenderColumnDatum[] = React.useMemo(() => {
     return grouped.flatMap(([segment, observations]) => {
       return observations.map((d) => {
-        const key = getRenderingKey(d);
+        const key = getRenderingKey(d, getSegment(d));
         const x = getSegment(d);
         const y = getY(d) ?? NaN;
 
