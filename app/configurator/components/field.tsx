@@ -358,7 +358,13 @@ export const DataFilterSelectTime = ({
     message: `optional`,
   });
 
-  const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
+  const fullLabel = isOptional ? (
+    <>
+      {label} <div style={{ marginLeft: "0.25rem" }}>({optionalLabel})</div>
+    </>
+  ) : (
+    label
+  );
 
   const timeIntervalWithProps = useMemo(() => {
     return getTimeIntervalWithProps(
