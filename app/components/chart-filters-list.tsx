@@ -8,7 +8,7 @@ import {
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, getAnimationField } from "@/configurator";
-import { isTemporalDimension } from "@/domain/data";
+import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -25,13 +25,22 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const timeFormatUnit = useTimeFormatUnit();
   const [IFState] = useInteractiveFilters();
 
+  const animationField = getAnimationField(chartConfig);
+  const componentIris = Array.from(
+    new Set(
+      getChartConfigFilterComponentIris(chartConfig).concat(
+        // Animation field also needs to be displayed in the filters, if present.
+        animationField ? [animationField.componentIri] : []
+      )
+    )
+  );
   const [{ data }] = useComponentsQuery({
     variables: {
       iri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      componentIris: getChartConfigFilterComponentIris(chartConfig),
+      componentIris,
     },
   });
 
@@ -59,21 +68,41 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       return [{ dimension, value }];
     });
 
-    const animationField = getAnimationField(chartConfig);
     if (animationField) {
       const dimension = dimensions.find(
         (d) => d.iri === animationField.componentIri
       );
-      const timeSliderFilter = IFState.timeSlider.value;
 
-      if (isTemporalDimension(dimension) && timeSliderFilter) {
-        namedFilters.push({
-          dimension,
-          value: {
-            value: timeSliderFilter,
-            label: timeFormatUnit(timeSliderFilter, dimension.timeUnit),
-          },
-        });
+      if (IFState.timeSlider.value) {
+        if (
+          IFState.timeSlider.type === "interval" &&
+          isTemporalDimension(dimension)
+        ) {
+          namedFilters.push({
+            dimension,
+            value: {
+              value: IFState.timeSlider.value,
+              label: timeFormatUnit(
+                IFState.timeSlider.value,
+                dimension.timeUnit
+              ),
+            },
+          });
+        }
+
+        if (
+          IFState.timeSlider.type === "ordinal" &&
+          IFState.timeSlider.value &&
+          isTemporalOrdinalDimension(dimension)
+        ) {
+          namedFilters.push({
+            dimension,
+            value: {
+              value: IFState.timeSlider.value,
+              label: IFState.timeSlider.value,
+            },
+          });
+        }
       }
     }
 
