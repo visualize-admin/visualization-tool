@@ -70,7 +70,8 @@ export const useColumnsStackedStateData = (
   const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
   const { x } = fields;
-  const { getX, getXAsDate, getY, getSegment } = variables;
+  const { getX, getXAsDate, getY, getSegment, getSegmentAbbreviationOrLabel } =
+    variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -95,7 +96,7 @@ export const useColumnsStackedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
-    getSegment,
+    getSegmentAbbreviationOrLabel,
   });
 
   return {

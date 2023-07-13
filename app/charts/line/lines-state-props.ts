@@ -53,7 +53,7 @@ export const useLinesStateData = (
   variables: LinesStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, getY, getSegment } = variables;
+  const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -65,7 +65,7 @@ export const useLinesStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
-    getSegment,
+    getSegmentAbbreviationOrLabel,
   });
 
   return {

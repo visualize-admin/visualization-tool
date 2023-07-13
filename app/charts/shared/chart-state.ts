@@ -317,11 +317,11 @@ export const useChartData = (
   {
     chartConfig,
     getXAsDate,
-    getSegment,
+    getSegmentAbbreviationOrLabel,
   }: {
     chartConfig: ChartConfig;
     getXAsDate?: (d: Observation) => Date;
-    getSegment?: (d: Observation) => string;
+    getSegmentAbbreviationOrLabel?: (d: Observation) => string;
   }
 ): Omit<ChartStateData, "allData"> => {
   const { interactiveFiltersConfig } = chartConfig;
@@ -408,14 +408,14 @@ export const useChartData = (
   const legendItems = Object.keys(IFState.categories);
   const interactiveLegendFilters = React.useMemo(() => {
     const interactiveLegendFilter: ValuePredicate | null =
-      legend?.active && getSegment
+      legend?.active && getSegmentAbbreviationOrLabel
         ? (d: Observation) => {
-            return !legendItems.includes(getSegment(d));
+            return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
           }
         : null;
 
     return interactiveLegendFilter ? [interactiveLegendFilter] : [];
-  }, [getSegment, legend?.active, legendItems]);
+  }, [getSegmentAbbreviationOrLabel, legend?.active, legendItems]);
 
   const chartData = React.useMemo(() => {
     return observations.filter(

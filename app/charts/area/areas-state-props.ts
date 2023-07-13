@@ -50,7 +50,7 @@ export const useAreasStateData = (
   variables: AreasStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, getY, getSegment } = variables;
+  const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
@@ -63,7 +63,7 @@ export const useAreasStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate: getX,
-    getSegment,
+    getSegmentAbbreviationOrLabel,
   });
 
   return {

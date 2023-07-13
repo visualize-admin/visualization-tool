@@ -76,7 +76,7 @@ export const useColumnsGroupedStateData = (
   const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
   const { x } = fields;
-  const { getX, getXAsDate, getY, getSegment } = variables;
+  const { getX, getXAsDate, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getY,
   });
@@ -90,7 +90,7 @@ export const useColumnsGroupedStateData = (
   const data = useChartData(sortedPlottableData, {
     chartConfig,
     getXAsDate,
-    getSegment,
+    getSegmentAbbreviationOrLabel,
   });
 
   return {
