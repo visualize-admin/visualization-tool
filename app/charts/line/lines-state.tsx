@@ -22,13 +22,13 @@ import {
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getWideData } from "@/charts/shared/chart-helpers";
 import {
+  ChartContext,
   ChartStateData,
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { LineConfig } from "@/configurator";

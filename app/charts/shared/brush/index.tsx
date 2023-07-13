@@ -14,7 +14,7 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observation } from "@/domain/data";

@@ -3,7 +3,7 @@ import { hcl } from "d3";
 import * as React from "react";
 import { Row } from "react-table";
 
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import Flex from "@/components/flex";

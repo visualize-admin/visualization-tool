@@ -4,8 +4,13 @@ import overEvery from "lodash/overEvery";
 import React from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
+import { MapState } from "@/charts/map/map-state";
+import { PieState } from "@/charts/pie/pie-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -15,6 +20,7 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds } from "@/charts/shared/use-width";
+import { TableChartState } from "@/charts/table/table-state";
 import {
   ChartConfig,
   ChartType,
@@ -34,6 +40,7 @@ import {
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
+import { Has } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   GeoCoordinatesDimension,
@@ -43,13 +50,42 @@ import {
   TimeUnit,
 } from "@/graphql/resolver-types";
 
-// TODO: usetemporalXchartstate...
+export type ChartState =
+  | AreasState
+  | ColumnsState
+  | StackedColumnsState
+  | GroupedColumnsState
+  | LinesState
+  | MapState
+  | PieState
+  | ScatterplotState
+  | TableChartState
+  | undefined;
+
 export type CommonChartState = {
   chartType: ChartType;
   chartData: Observation[];
   allData: Observation[];
   bounds: Bounds;
 };
+
+export type ColorsChartState = Has<ChartState, "colors">;
+export const ChartContext = React.createContext<ChartState>(undefined);
+
+export const useChartState = () => {
+  const ctx = React.useContext(ChartContext);
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <ChartContext.Provider /> to useChartState()"
+    );
+  }
+  return ctx;
+};
+
+export type ChartWithInteractiveXTimeRangeState =
+  | AreasState
+  | ColumnsState
+  | LinesState;
 
 type NumericalValueGetter = (d: Observation) => number | null;
 
@@ -458,8 +494,3 @@ export const useChartData = (
 export type InteractiveXTimeRangeState = {
   interactiveXTimeRangeScale: ScaleTime<number, number>;
 };
-
-export type ChartWithInteractiveXTimeRangeState =
-  | AreasState
-  | ColumnsState
-  | LinesState;

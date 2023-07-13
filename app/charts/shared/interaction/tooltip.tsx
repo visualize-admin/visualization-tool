@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
 import { PieState } from "@/charts/pie/pie-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   TooltipBox,
   TooltipPlacement,
@@ -10,7 +11,6 @@ import {
   TooltipMultiple,
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
-import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 

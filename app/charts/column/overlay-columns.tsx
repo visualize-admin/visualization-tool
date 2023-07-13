@@ -1,5 +1,5 @@
 import { ColumnsState } from "@/charts/column/columns-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 

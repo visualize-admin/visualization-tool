@@ -2,7 +2,7 @@ import { line } from "d3";
 import { Fragment, memo } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { Observation } from "@/domain/data";
 
 export const Lines = () => {

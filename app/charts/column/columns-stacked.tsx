@@ -6,7 +6,7 @@ import {
   RenderColumnDatum,
   renderColumn,
 } from "@/charts/column/rendering-utils";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);

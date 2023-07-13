@@ -35,13 +35,13 @@ import {
 } from "@/charts/column/constants";
 import { getWideData, normalizeData } from "@/charts/shared/chart-helpers";
 import {
+  ChartContext,
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";

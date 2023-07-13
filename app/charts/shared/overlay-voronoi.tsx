@@ -4,7 +4,7 @@ import { MouseEvent as ReactMouseEvent, memo, useRef } from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 
 export const InteractionVoronoi = memo(function InteractionVoronoi({

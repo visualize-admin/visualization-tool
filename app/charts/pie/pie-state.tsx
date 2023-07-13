@@ -15,10 +15,13 @@ import {
   usePieStateData,
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartContext,
+  ChartStateData,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";

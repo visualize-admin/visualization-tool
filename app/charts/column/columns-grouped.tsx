@@ -8,7 +8,7 @@ import {
   renderColumn,
   renderWhisker,
 } from "@/charts/column/rendering-utils";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 
 export const ErrorWhiskers = () => {
   const {

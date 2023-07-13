@@ -25,6 +25,7 @@ import {
   PADDING_OUTER,
 } from "@/charts/column/constants";
 import {
+  ChartContext,
   ChartStateData,
   CommonChartState,
   InteractiveXTimeRangeState,
@@ -32,7 +33,6 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";

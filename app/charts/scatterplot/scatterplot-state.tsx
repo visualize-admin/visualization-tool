@@ -15,10 +15,13 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartContext,
+  ChartStateData,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ScatterPlotConfig, SortingField } from "@/configurator";

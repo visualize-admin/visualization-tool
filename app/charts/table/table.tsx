@@ -12,7 +12,7 @@ import {
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
 
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { CellDesktop } from "@/charts/table/cell-desktop";
 import { DDContent } from "@/charts/table/cell-mobile";
 import { TABLE_HEIGHT } from "@/charts/table/constants";

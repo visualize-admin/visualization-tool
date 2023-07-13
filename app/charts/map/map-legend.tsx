@@ -15,9 +15,9 @@ import {
 import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { MapLegendColor } from "@/charts/shared/legend-color";
-import { useChartState } from "@/charts/shared/use-chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useWidth } from "@/charts/shared/use-width";

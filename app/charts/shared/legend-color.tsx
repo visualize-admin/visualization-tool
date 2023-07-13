@@ -5,12 +5,9 @@ import clsx from "clsx";
 import orderBy from "lodash/orderBy";
 import { memo, useMemo } from "react";
 
+import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
-import {
-  ColorsChartState,
-  useChartState,
-} from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";

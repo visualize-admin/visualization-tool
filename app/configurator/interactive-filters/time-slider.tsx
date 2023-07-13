@@ -3,7 +3,7 @@ import orderBy from "lodash/orderBy";
 import React, { ChangeEvent } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
-import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
+import { ChartState, useChartState } from "@/charts/shared/chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";

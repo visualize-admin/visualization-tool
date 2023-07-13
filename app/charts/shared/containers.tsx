@@ -1,7 +1,7 @@
 import { Box, BoxProps } from "@mui/material";
 import { ReactNode } from "react";
 
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const { bounds } = useChartState();

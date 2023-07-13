@@ -7,7 +7,7 @@ import type { StackedColumnsState } from "@/charts/column/columns-stacked-state"
 import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";

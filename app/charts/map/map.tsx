@@ -8,7 +8,7 @@ import maplibregl from "maplibre-gl";
 import React, { useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";

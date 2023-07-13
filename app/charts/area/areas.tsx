@@ -2,7 +2,7 @@ import { area } from "d3";
 import { memo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 
 export const Areas = () => {
   const { bounds, getX, xScale, yScale, colors, series } =

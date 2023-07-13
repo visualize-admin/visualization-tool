@@ -2,7 +2,7 @@ import { arc, PieArcDatum, select } from "d3";
 import React from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import useEvent from "@/utils/use-event";
