@@ -80,7 +80,7 @@ export const ChartPieVisualization = ({
 export const ChartPie = memo(
   (props: ChartProps<PieConfig> & { published: boolean }) => {
     const { chartConfig, observations, dimensions, published } = props;
-    const { fields, interactiveFiltersConfig } = chartConfig;
+    const { fields, filters, interactiveFiltersConfig } = chartConfig;
     const somePositive = observations.some(
       (d) => (d[fields?.y?.componentIri] as number) > 0
     );
@@ -101,6 +101,7 @@ export const ChartPie = memo(
           {fields.animation && (
             <TimeSlider
               componentIri={fields.animation.componentIri}
+              filters={filters}
               dimensions={dimensions}
               showPlayButton={fields.animation.showPlayButton}
               animationDuration={fields.animation.duration}

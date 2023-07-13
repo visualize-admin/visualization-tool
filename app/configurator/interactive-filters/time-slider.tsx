@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import { ascending } from "d3";
+import orderBy from "lodash/orderBy";
 import React, { ChangeEvent } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
@@ -7,13 +7,17 @@ import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
-import { AnimationType } from "@/config-types";
+import { AnimationType, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Timeline, TimelineProps } from "@/utils/observables";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 const TimelineContext = React.createContext<Timeline | undefined>(undefined);
@@ -34,6 +38,7 @@ const useTimeline = () => {
 
 type TimeSliderProps = {
   componentIri?: string;
+  filters: Filters;
   dimensions: DimensionMetadataFragment[];
   showPlayButton: boolean;
   /** Animation duration in seconds. */
@@ -44,6 +49,7 @@ type TimeSliderProps = {
 export const TimeSlider = (props: TimeSliderProps) => {
   const {
     componentIri,
+    filters,
     dimensions,
     showPlayButton,
     animationDuration,
@@ -66,6 +72,8 @@ export const TimeSlider = (props: TimeSliderProps) => {
     Exclude<ChartState, TableChartState>
   >;
 
+  const componentFilter = filters[component.iri];
+
   const timelineProps: TimelineProps = React.useMemo(() => {
     const commonProps = {
       animationType,
@@ -87,7 +95,16 @@ export const TimeSlider = (props: TimeSliderProps) => {
         ...commonProps,
       };
     } else {
-      const sortedData = values.sort(ascending);
+      const sorting: NonNullable<SortingField["sorting"]> = {
+        sortingType: "byAuto",
+        sortingOrder: "asc",
+      };
+      const sorters = makeDimensionValueSorters(component, {
+        dimensionFilter: componentFilter,
+        sorting,
+      });
+      const sortingOrders = getSortingOrders(sorters, sorting);
+      const sortedData = orderBy(values, sorters, sortingOrders);
 
       return {
         type: "ordinal",
@@ -103,6 +120,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     component,
     timeFormatUnit,
     timeUnit,
+    componentFilter,
   ]);
 
   const timeline = React.useMemo(() => {

@@ -89,7 +89,7 @@ export const ChartColumnsVisualization = ({
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
 
   return (
     <>
@@ -108,6 +108,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             {fields.animation && (
               <TimeSlider
                 componentIri={fields.animation.componentIri}
+                filters={filters}
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
@@ -140,6 +141,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             {fields.animation && (
               <TimeSlider
                 componentIri={fields.animation.componentIri}
+                filters={filters}
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
@@ -172,6 +174,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             <ChartControlsContainer>
               <TimeSlider
                 componentIri={fields.animation.componentIri}
+                filters={filters}
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}

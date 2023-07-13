@@ -145,7 +145,7 @@ export const ChartMap = (
   }
 ) => {
   const { chartConfig, dimensions } = props;
-  const { fields } = chartConfig;
+  const { fields, filters } = chartConfig;
 
   return (
     <MapChart {...props}>
@@ -157,6 +157,7 @@ export const ChartMap = (
         {fields.animation && (
           <TimeSlider
             componentIri={fields.animation.componentIri}
+            filters={filters}
             dimensions={dimensions}
             showPlayButton={fields.animation.showPlayButton}
             animationDuration={fields.animation.duration}

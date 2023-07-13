@@ -88,7 +88,7 @@ export const ChartScatterplotVisualization = ({
 export const ChartScatterplot = memo(
   (props: ChartProps<ScatterPlotConfig> & { published: boolean }) => {
     const { chartConfig, dimensions, published } = props;
-    const { fields, interactiveFiltersConfig } = chartConfig;
+    const { fields, filters, interactiveFiltersConfig } = chartConfig;
 
     return (
       <ScatterplotChart aspectRatio={published ? 1 : 0.4} {...props}>
@@ -108,6 +108,7 @@ export const ChartScatterplot = memo(
             {fields.animation && (
               <TimeSlider
                 componentIri={fields.animation.componentIri}
+                filters={filters}
                 dimensions={dimensions}
                 showPlayButton={fields.animation.showPlayButton}
                 animationDuration={fields.animation.duration}
