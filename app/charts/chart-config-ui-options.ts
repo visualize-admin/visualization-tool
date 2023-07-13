@@ -6,7 +6,7 @@ import {
   SortingOrder,
   SortingType,
 } from "@/config-types";
-import { isTemporalDimension } from "@/domain/data";
+import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 /**
@@ -84,6 +84,7 @@ interface ChartSpecs {
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "NominalDimension",
   "OrdinalDimension",
+  "TemporalOrdinalDimension",
   "GeoCoordinatesDimension",
   "GeoShapesDimension",
 ];
@@ -111,10 +112,12 @@ export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
 const ANIMATION_FIELD_SPEC: EncodingSpec = {
   field: "animation",
   optional: true,
-  componentTypes: ["TemporalDimension"],
+  componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
-    const noTemporalDimensions = !dimensions.some(isTemporalDimension);
+    const noTemporalDimensions = !dimensions.some((d) => {
+      return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
+    });
     if (noTemporalDimensions) {
       return t({
         id: "",
@@ -170,6 +173,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: [
           "TemporalDimension",
+          "TemporalOrdinalDimension",
           "NominalDimension",
           "OrdinalDimension",
           "GeoCoordinatesDimension",
@@ -248,7 +252,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           {
             field: "color",
             type: "component",
-            componentTypes: ["NumericalMeasure", "OrdinalMeasure"],
+            componentTypes: [
+              "NumericalMeasure",
+              "OrdinalMeasure",
+              "TemporalOrdinalDimension",
+            ],
             optional: false,
             enableUseAbbreviations: true,
           },
@@ -276,6 +284,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
               "GeoShapesDimension",
               "NominalDimension",
               "OrdinalDimension",
+              "TemporalOrdinalDimension",
             ],
             optional: true,
             enableUseAbbreviations: true,

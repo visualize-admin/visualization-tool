@@ -1,7 +1,6 @@
 import { Literal, NamedNode, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
-
 import {
   DimensionMetadataFragment,
   GeoCoordinatesDimension,
@@ -11,8 +10,9 @@ import {
   OrdinalDimension,
   OrdinalMeasure,
   TemporalDimension,
-} from "../graphql/query-hooks";
-import { ResolvedDimension } from "../graphql/shared-types";
+  TemporalOrdinalDimension,
+} from "@/graphql/query-hooks";
+import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -147,19 +147,25 @@ export const parseObservationValue = ({
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: DimensionMetadataFragment[]) =>
-  dimensions.filter((d) => d.__typename === "TemporalDimension");
+export const getTemporalDimensions = (
+  dimensions: DimensionMetadataFragment[]
+) => dimensions.filter((d) => d.__typename === "TemporalDimension");
 
 export const isCategoricalDimension = (
   d: DimensionMetadataFragment
-): d is NominalDimension | OrdinalDimension => {
-  return isNominalDimension(d) || isOrdinalDimension(d);
+): d is NominalDimension | OrdinalDimension | TemporalOrdinalDimension => {
+  return (
+    isNominalDimension(d) ||
+    isOrdinalDimension(d) ||
+    isTemporalOrdinalDimension(d)
+  );
 };
 
 export const canDimensionBeMultiFiltered = (d: DimensionMetadataFragment) => {
   return (
     isNominalDimension(d) ||
     isOrdinalDimension(d) ||
+    isTemporalOrdinalDimension(d) ||
     isGeoCoordinatesDimension(d) ||
     isGeoShapesDimension(d)
   );
@@ -255,6 +261,12 @@ export const isTemporalDimension = (
   dimension?: DimensionMetadataFragment | null
 ): dimension is TemporalDimension => {
   return dimension?.__typename === "TemporalDimension";
+};
+
+export const isTemporalOrdinalDimension = (
+  dimension?: DimensionMetadataFragment | null
+): dimension is TemporalOrdinalDimension => {
+  return dimension?.__typename === "TemporalOrdinalDimension";
 };
 
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

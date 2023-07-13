@@ -84,11 +84,13 @@ const DataCube: DataCubeResolvers = {
 };
 
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
-  // TODO: how to pass dataSource here? If it's possible, then we also could have
-  // different resolvers for RDF and SQL.
   __resolveType({ data: { dataKind, scaleType } }) {
     if (dataKind === "Time") {
-      return "TemporalDimension";
+      if (scaleType === "Ordinal") {
+        return "TemporalOrdinalDimension";
+      } else {
+        return "TemporalDimension";
+      }
     } else if (dataKind === "GeoCoordinates") {
       return "GeoCoordinatesDimension";
     } else if (dataKind === "GeoShape") {
@@ -173,7 +175,11 @@ export const resolvers: Resolvers = {
   Dimension: {
     __resolveType({ data: { dataKind, scaleType } }) {
       if (dataKind === "Time") {
-        return "TemporalDimension";
+        if (scaleType === "Ordinal") {
+          return "TemporalOrdinalDimension";
+        } else {
+          return "TemporalDimension";
+        }
       } else if (dataKind === "GeoCoordinates") {
         return "GeoCoordinatesDimension";
       } else if (dataKind === "GeoShape") {
@@ -205,6 +211,9 @@ export const resolvers: Resolvers = {
 
       return data.timeFormat;
     },
+  },
+  TemporalOrdinalDimension: {
+    ...mkDimensionResolvers("TemporalOrdinalDimension"),
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("GeoCoordinatesDimension"),

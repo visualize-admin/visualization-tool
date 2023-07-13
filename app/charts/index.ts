@@ -38,7 +38,7 @@ import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
   getGeoDimensions,
-  getTimeDimensions,
+  getTemporalDimensions,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
@@ -236,7 +236,7 @@ export const getInitialConfig = ({
 
   switch (chartType) {
     case "area":
-      const areaXComponentIri = getTimeDimensions(dimensions)[0].iri;
+      const areaXComponentIri = getTemporalDimensions(dimensions)[0].iri;
 
       return {
         version: CHART_CONFIG_VERSION,
@@ -274,7 +274,7 @@ export const getInitialConfig = ({
         },
       };
     case "line":
-      const lineXComponentIri = getTimeDimensions(dimensions)[0].iri;
+      const lineXComponentIri = getTemporalDimensions(dimensions)[0].iri;
 
       return {
         version: CHART_CONFIG_VERSION,
@@ -1166,7 +1166,7 @@ export const getPossibleChartType = ({
   const ordinalMeasures = measures.filter(isOrdinalMeasure);
   const categoricalDimensions = getCategoricalDimensions(dimensions);
   const geoDimensions = getGeoDimensions(dimensions);
-  const timeDimensions = getTimeDimensions(dimensions);
+  const temporalDimensions = getTemporalDimensions(dimensions);
 
   const categoricalEnabled: ChartType[] = ["column", "pie"];
   const geoEnabled: ChartType[] = ["column", "map", "pie"];
@@ -1187,7 +1187,7 @@ export const getPossibleChartType = ({
       possibles.push(...multipleNumericalMeasuresEnabled);
     }
 
-    if (timeDimensions.length > 0) {
+    if (temporalDimensions.length > 0) {
       possibles.push(...timeEnabled);
     }
   }

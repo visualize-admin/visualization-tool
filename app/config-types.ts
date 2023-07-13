@@ -13,6 +13,7 @@ const ComponentType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
   t.literal("TemporalDimension"),
+  t.literal("TemporalOrdinalDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;
