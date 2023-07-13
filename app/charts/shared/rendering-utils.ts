@@ -5,7 +5,7 @@ import {
   Filters,
   InteractiveFiltersConfig,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { Observation, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const TRANSITION_DURATION = 400;
@@ -43,6 +43,7 @@ export const useRenderingKeyVariable = (
     }
 
     return dimensions
+      .filter((d) => !isStandardErrorDimension(d))
       .map((d) => d.iri)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);
