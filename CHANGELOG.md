@@ -11,19 +11,23 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
+  - Added support for a new dimension type - TemporalOrdinalDimension. This dimension can be used in all the places where you can use regular ordinal dimensions as well as to animate the chart
   - Scatterplot and Pie are now animating the data changes
   - Time filter now shows explicit `from` and `to` fields to filter by (and the brush snaps to values actually existing in the data)
   - Time filter now uses date picker for months and years 🗓️
+  - Changed the aspect ratios of Pie and Scatterplot charts in the Editor mode, so they fit on a screen without the need to scroll
 - Fixes
   - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
   - Scales now adapt to color legend filter when using time slider
   - Columns now properly animate out, instead of disappearing
   - Empty color legend is no longer shown
-  - Scatterplot X axis now correctly aligns its title on Safari
+  - Scatterplot X axis now correctly aligns its title in Safari
+  - Interactive time range filter now respects the filter range set in the X field
+  - Optional filter label is now correctly shown
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:
-  - Consolidated data calculation and sorting for all charts in one place to prepare for app-wide time slider implementation
+  - Consolidated chart state computation logic, which should make the charts less error-prone
 
 # [3.20.3] - 2023-07-04
 
