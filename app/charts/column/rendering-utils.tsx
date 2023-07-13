@@ -2,7 +2,7 @@ import { Selection } from "d3";
 
 import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 
-export type RenderDatum = {
+export type RenderColumnDatum = {
   key: string;
   x: number;
   y: number;
@@ -12,7 +12,7 @@ export type RenderDatum = {
 };
 
 export const renderColumn = (
-  g: Selection<SVGRectElement, RenderDatum, SVGGElement, unknown>,
+  g: Selection<SVGRectElement, RenderColumnDatum, SVGGElement, unknown>,
   y0: number
 ) => {
   g.join(
@@ -51,6 +51,93 @@ export const renderColumn = (
           .attr("y", y0)
           .attr("height", 0)
           .remove()
+      )
+  );
+};
+
+export type RenderWhiskerDatum = {
+  key: string;
+  x: number;
+  y1: number;
+  y2: number;
+  width: number;
+};
+
+export const renderWhisker = (
+  g: Selection<SVGGElement, RenderWhiskerDatum, SVGGElement, unknown>
+) => {
+  g.join(
+    (enter) =>
+      enter
+        .append("g")
+        .attr("opacity", 0)
+        .call((g) =>
+          g
+            .append("rect")
+            .attr("class", "top")
+            .attr("x", (d) => d.x)
+            .attr("y", (d) => d.y2)
+            .attr("width", (d) => d.width)
+            .attr("height", 2)
+            .attr("fill", "black")
+            .attr("stroke", "none")
+        )
+        .call((g) =>
+          g
+            .append("rect")
+            .attr("class", "middle")
+            .attr("x", (d) => d.x + d.width / 2 - 1)
+            .attr("y", (d) => d.y2)
+            .attr("width", 2)
+            .attr("height", (d) => d.y1 - d.y2)
+            .attr("fill", "black")
+            .attr("stroke", "none")
+        )
+        .call((g) =>
+          g
+            .append("rect")
+            .attr("class", "bottom")
+            .attr("x", (d) => d.x)
+            .attr("y", (d) => d.y1)
+            .attr("width", (d) => d.width)
+            .attr("height", 2)
+            .attr("fill", "black")
+            .attr("stroke", "none")
+        )
+        .call((g) =>
+          g.transition().duration(TRANSITION_DURATION).attr("opacity", 1)
+        ),
+    (update) =>
+      update.call((g) =>
+        g
+          .transition()
+          .duration(TRANSITION_DURATION)
+          .attr("opacity", 1)
+          .call((g) =>
+            g
+              .select(".top")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y2)
+              .attr("width", (d) => d.width)
+          )
+          .call((g) =>
+            g
+              .select(".middle")
+              .attr("x", (d) => d.x + d.width / 2 - 1)
+              .attr("y", (d) => d.y2)
+              .attr("height", (d) => d.y1 - d.y2)
+          )
+          .call((g) =>
+            g
+              .select(".bottom")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y1)
+              .attr("width", (d) => d.width)
+          )
+      ),
+    (exit) =>
+      exit.call((g) =>
+        g.transition().duration(TRANSITION_DURATION).attr("opacity", 0).remove()
       )
   );
 };
