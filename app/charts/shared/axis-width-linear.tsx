@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
@@ -22,21 +23,21 @@ export const AxisWidthLinear = () => {
     const ticks = Math.min(bounds.chartWidth / (maxLabelLength + 20), 4);
     const tickValues = xScale.ticks(ticks);
 
-    g.call(
-      axisBottom(xScale)
-        .tickValues(tickValues)
-        .tickSizeInner(-chartHeight)
-        .tickSizeOuter(-chartHeight)
-        .tickFormat(formatNumber)
-    );
+    g.transition()
+      .duration(TRANSITION_DURATION)
+      .call(
+        axisBottom(xScale)
+          .tickValues(tickValues)
+          .tickSizeInner(-chartHeight)
+          .tickSizeOuter(-chartHeight)
+          .tickFormat(formatNumber)
+      );
 
-    // Default styles (scatterplot)
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor)
-      .attr("x", 0)
       .attr("dy", labelFontSize)
       .attr("text-anchor", "middle");
 

@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTimeFormatUnit } from "@/formatters";
 
@@ -19,43 +20,44 @@ export const AxisWidthBand = () => {
     useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    // FIXME: make dynamic
     const rotation = true;
     const hasNegativeValues = yScale.domain()[0] < 0;
+    const fontSize =
+      xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
 
     const axis = axisBottom(xScale)
       .tickSizeOuter(0)
-      .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
+      .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
+      .tickPadding(rotation ? -10 : 0);
 
     if (xTimeUnit) {
       axis.tickFormat((d) => formatDate(d, xTimeUnit));
     } else {
       axis.tickFormat((d) => getXLabel(d));
     }
-    const fontSize =
-      xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
 
-    g.call(axis).attr("data-testid", "axis-width-band");
-
+    g.attr("data-testid", "axis-width-band")
+      .transition()
+      .duration(TRANSITION_DURATION)
+      .call(axis);
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
       "stroke",
       hasNegativeValues ? gridColor : domainColor
     );
     g.selectAll(".tick text")
+      .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
+      .attr("x", rotation ? fontSize : 0)
       .attr("font-size", fontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor)
-      .attr("y", rotation ? 0 : fontSize + 6)
-      .attr("x", rotation ? fontSize : 0)
-      .attr("dy", rotation ? ".35em" : 0)
-      .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
       .attr("text-anchor", rotation ? "start" : "unset");
   };
 
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+    if (ref.current) {
+      select<SVGGElement, unknown>(ref.current).call(mkAxis);
+    }
   });
 
   return (

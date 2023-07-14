@@ -8,12 +8,12 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-
-import { getTickNumber } from "./ticks";
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
@@ -33,27 +33,29 @@ export const AxisHeightLinear = () => {
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisLeft(yScale)
-        .ticks(ticks)
-        .tickSizeInner(-bounds.chartWidth)
-        .tickFormat(formatNumber)
-    );
-
+    g.transition()
+      .duration(TRANSITION_DURATION)
+      .call(
+        axisLeft(yScale)
+          .ticks(ticks)
+          .tickSizeInner(-bounds.chartWidth)
+          .tickFormat(formatNumber)
+          .tickPadding(6)
+      );
     g.select(".domain").remove();
-
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("x", -6)
       .attr("dy", 3)
+      .attr("fill", labelColor)
+      .attr("font-family", fontFamily)
+      .style("font-size", labelFontSize)
       .attr("text-anchor", "end");
   };
+
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+    if (ref.current) {
+      select<SVGGElement, unknown>(ref.current).call(mkAxis);
+    }
   });
 
   return (
