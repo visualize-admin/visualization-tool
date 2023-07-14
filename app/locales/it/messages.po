@@ -369,10 +369,6 @@ msgstr "Filtri selezionati"
 msgid "controls.filters.select.to"
 msgstr "Alla"
 
-#: app/configurator/interactive-filters/editor-time-interval-brush.tsx
-msgid "controls.filters.time.range"
-msgstr "intervallo di tempo"
-
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Trascina qui le colonne per creare gruppi."

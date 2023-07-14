@@ -215,3 +215,37 @@ export const toggleInteractiveFilterDataDimension = produce(
     return { ...config, dataFilters: newDataFilters };
   }
 );
+
+/**
+ * Toggles a time range filter
+ */
+export const useInteractiveTimeRangeToggle = () => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const toggle = useEvent(() => {
+    const { interactiveFiltersConfig } = state.chartConfig;
+    const newIFConfig = toggleInteractiveTimeRangeFilter(
+      interactiveFiltersConfig
+    );
+
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newIFConfig,
+    });
+  });
+  const checked = state.chartConfig.interactiveFiltersConfig?.timeRange.active;
+
+  return { checked, toggle };
+};
+
+const toggleInteractiveTimeRangeFilter = (config: InteractiveFiltersConfig) => {
+  if (!config?.timeRange) {
+    return config;
+  }
+
+  const newTimeRange = {
+    ...config.timeRange,
+    active: !config.timeRange.active,
+  };
+
+  return { ...config, timeRange: newTimeRange };
+};

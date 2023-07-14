@@ -8,6 +8,7 @@ import {
   ClickAwayListener,
   Divider,
   FormControlLabel,
+  FormControlLabelProps,
   IconButton,
   Input,
   InputAdornment,
@@ -58,7 +59,11 @@ import {
   canRenderDatePickerField,
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
-import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
+import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
+import {
+  useInteractiveFiltersToggle,
+  useInteractiveTimeRangeToggle,
+} from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
   DimensionMetadataFragment,
@@ -86,7 +91,6 @@ import useEvent from "@/utils/use-event";
 
 import { ConfiguratorState, GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
-import { useInteractiveFiltersToggle } from "../interactive-filters/interactive-filters-config-state";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
 
@@ -1077,6 +1081,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
     return (
       <Box>
+        <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>
@@ -1150,7 +1155,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
             </>
           )}
         </Box>
-        <EditorIntervalBrush
+        <EditorBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
@@ -1172,6 +1177,39 @@ export const TimeFilter = (props: TimeFilterProps) => {
   } else {
     return <Loading />;
   }
+};
+
+export const InteractiveTimeRangeToggle = (
+  props: Omit<FormControlLabelProps, "control" | "label">
+) => {
+  const { checked, toggle } = useInteractiveTimeRangeToggle();
+
+  return (
+    <FormControlLabel
+      componentsProps={{
+        typography: { variant: "caption", color: "text.secondary" },
+      }}
+      {...props}
+      control={<Switch checked={checked} onChange={() => toggle()} />}
+      label={
+        <Tooltip
+          enterDelay={600}
+          arrow
+          title={
+            <span>
+              <Trans id="controls.filters.interactive.tooltip">
+                Allow users to change filters
+              </Trans>
+            </span>
+          }
+        >
+          <Typography variant="caption">
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </Typography>
+        </Tooltip>
+      }
+    />
+  );
 };
 
 // This component is now only used in the Table Chart options.
