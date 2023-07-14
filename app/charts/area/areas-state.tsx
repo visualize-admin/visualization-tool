@@ -43,6 +43,7 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
+import { flag } from "@/flags";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -77,7 +78,7 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const normalize = true;
+  const normalize = flag("normalize");
   const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
