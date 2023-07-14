@@ -318,17 +318,13 @@ export const BrushTime = () => {
 
   // This effect makes the brush responsive
   useEffect(() => {
-    const g = select(ref.current);
-
-    const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
-    console.log(coord);
-    (g as Selection<SVGGElement, unknown, null, undefined>).call(
-      brush.move,
-      coord
-    );
+    if (ref.current) {
+      const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
+      select<SVGGElement, unknown>(ref.current).call(brush.move, coord);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brushWidth, BRUSH_HEIGHT]);
+  }, [brushWidth]);
 
   return (
     <>
