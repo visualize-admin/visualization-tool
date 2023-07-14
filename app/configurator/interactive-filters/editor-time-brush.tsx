@@ -12,7 +12,6 @@ import {
 } from "@/configurator/configurator-state";
 import { updateInteractiveTimeRangeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { DimensionValue } from "@/domain/data";
-import { useFormatFullDateAuto } from "@/formatters";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 const HANDLE_HEIGHT = 20;
@@ -28,15 +27,16 @@ export const EditorBrush = ({
   timeExtent,
   timeDataPoints,
   disabled,
+  formatDate,
 }: {
   timeExtent: Date[];
   timeDataPoints?: DimensionValue[];
   disabled: boolean;
+  formatDate: (d: Date) => string;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
-  const formatDateAuto = useFormatFullDateAuto();
 
   // FIXME: make component responsive (currently triggers infinite loop)
   const brushWidth = 267;
@@ -82,8 +82,9 @@ export const EditorBrush = ({
       // The dates don't correspond to a data point.
       const newIFConfig = updateInteractiveTimeRangeFilter(
         chartConfig.interactiveFiltersConfig,
-        { timeExtent: [xStart.toISOString(), xEnd.toISOString()] }
+        { timeExtent: [formatDate(xStart), formatDate(xEnd)] }
       );
+
       dispatch({
         type: "INTERACTIVE_FILTER_CHANGED",
         value: newIFConfig,
@@ -178,7 +179,7 @@ export const EditorBrush = ({
         <Typography component="div" variant="caption">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.timeRange.presets.from &&
-            formatDateAuto(
+            formatDate(
               getClosestDimensionValue(
                 parseDate(
                   chartConfig.interactiveFiltersConfig?.timeRange.presets.from
@@ -189,7 +190,7 @@ export const EditorBrush = ({
         <Typography component="div" variant="caption">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.timeRange.presets.to &&
-            formatDateAuto(
+            formatDate(
               getClosestDimensionValue(
                 parseDate(
                   chartConfig.interactiveFiltersConfig?.timeRange.presets.to

@@ -16,7 +16,8 @@ import { parseDate } from "@/configurator/components/ui-helpers";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-time-brush";
 import { useInteractiveTimeRangeFiltersToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import { useFormatFullDateAuto } from "@/formatters";
+import { isTemporalDimension } from "@/domain/data";
+import { useTimeFormatUnit } from "@/formatters";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -97,7 +98,6 @@ const InteractiveTimeRangeFilterOptions = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const formatDateAuto = useFormatFullDateAuto();
 
   const [{ data }] = useComponentsQuery({
     variables: {
@@ -108,13 +108,23 @@ const InteractiveTimeRangeFilterOptions = ({
     },
   });
 
-  if (data?.dataCubeByIri) {
-    const { dimensions, measures } = data.dataCubeByIri;
-    const componentIri = getFieldComponentIri(state.chartConfig.fields, "x");
-    const component = [...dimensions, ...measures].find(
-      (d) => d.iri === componentIri
-    );
+  const { dimensions, measures } = data?.dataCubeByIri ?? {
+    dimensions: [],
+    measures: [],
+  };
+  const componentIri = getFieldComponentIri(state.chartConfig.fields, "x");
+  const component = [...dimensions, ...measures].find(
+    (d) => d.iri === componentIri
+  );
 
+  if (!isTemporalDimension(component)) {
+    throw new Error(`Component ${componentIri} is not a temporal dimension`);
+  }
+
+  const timeUnit = component.timeUnit;
+  const formatDate = useTimeFormatUnit();
+
+  if (data?.dataCubeByIri) {
     const filter = componentIri
       ? state.chartConfig.filters[componentIri]
       : undefined;
@@ -145,8 +155,8 @@ const InteractiveTimeRangeFilterOptions = ({
               defaultChecked={false}
               disabled={false}
               timeExtent={[
-                formatDateAuto(timeExtent[0]),
-                formatDateAuto(timeExtent[1]),
+                formatDate(timeExtent[0], timeUnit),
+                formatDate(timeExtent[1], timeUnit),
               ]}
             />
 
@@ -158,6 +168,7 @@ const InteractiveTimeRangeFilterOptions = ({
                   !state.chartConfig.interactiveFiltersConfig?.timeRange
                     .active ?? true
                 }
+                formatDate={(d: Date) => formatDate(d, timeUnit)}
               />
             </Box>
           </>

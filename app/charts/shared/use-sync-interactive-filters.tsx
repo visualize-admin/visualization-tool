@@ -24,10 +24,10 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   // Time range filter
   const presetFrom =
     interactiveFiltersConfig?.timeRange.presets.from &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.from.toString());
+    parseDate(interactiveFiltersConfig?.timeRange.presets.from);
   const presetTo =
     interactiveFiltersConfig?.timeRange.presets.to &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.to.toString());
+    parseDate(interactiveFiltersConfig?.timeRange.presets.to);
 
   const presetFromStr = presetFrom?.toString();
   const presetToStr = presetTo?.toString();

@@ -309,10 +309,10 @@ const ChartWithInteractiveFilters = React.forwardRef(
 
     const presetFrom =
       interactiveFiltersConfig?.timeRange.presets.from &&
-      parseDate(interactiveFiltersConfig?.timeRange.presets.from.toString());
+      parseDate(interactiveFiltersConfig?.timeRange.presets.from);
     const presetTo =
       interactiveFiltersConfig?.timeRange.presets.to &&
-      parseDate(interactiveFiltersConfig?.timeRange.presets.to.toString());
+      parseDate(interactiveFiltersConfig?.timeRange.presets.to);
 
     // Reset data filters if chart type changes
     useEffect(() => {
