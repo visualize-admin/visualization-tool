@@ -974,12 +974,12 @@ export const TimeFilter = (props: TimeFilterProps) => {
         type: "CHART_CONFIG_FILTER_SET_RANGE",
         value: {
           dimensionIri: dimension.iri,
-          from: timeFormatUnit(from, dimension.timeUnit),
-          to: timeFormatUnit(to, dimension.timeUnit),
+          from,
+          to,
         },
       });
     },
-    [dispatch, dimension.iri, dimension.timeUnit, timeFormatUnit]
+    [dispatch, dimension.iri]
   );
 
   // const dimension = data?.dataCubeByIri?.dimensionByIri;
