@@ -182,11 +182,14 @@ const ActiveFieldSwitch = ({
     return null;
   }
 
-  const animatable = isAnimationInConfig(state.chartConfig);
-  const baseEncodings =
-    chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
+  const chartSpec = chartConfigOptionsUISpec[state.chartConfig.chartType];
+
   // Animation field is a special field that is not part of the encodings,
   // but rather is selected from interactive filters menu.
+  const animatable =
+    isAnimationInConfig(state.chartConfig) &&
+    chartSpec.interactiveFilters.includes("animation");
+  const baseEncodings = chartSpec.encodings;
   const encodings = animatable
     ? baseEncodings.concat(ANIMATION_FIELD_SPEC)
     : baseEncodings;
@@ -422,13 +425,6 @@ const EncodingOptionsPanel = ({
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
 
-      {fieldDimension &&
-        field === "animation" &&
-        isAnimationInConfig(state.chartConfig) &&
-        state.chartConfig.fields.animation && (
-          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
-        )}
-
       <ChartFieldMultiFilter
         state={state}
         component={component}
@@ -437,6 +433,13 @@ const EncodingOptionsPanel = ({
         dimensions={dimensions}
         measures={measures}
       />
+
+      {fieldDimension &&
+        field === "animation" &&
+        isAnimationInConfig(state.chartConfig) &&
+        state.chartConfig.fields.animation && (
+          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        )}
     </div>
   );
 };
@@ -628,7 +631,11 @@ const ChartFieldMultiFilter = ({
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
         {isTemporalDimension(component) ? (
-          <TimeFilter key={component.iri} dimension={component} />
+          <TimeFilter
+            key={component.iri}
+            dimension={component}
+            disableInteractiveFilters={encoding.disableInteractiveFilters}
+          />
         ) : (
           component && (
             <DimensionValuesMultiFilter

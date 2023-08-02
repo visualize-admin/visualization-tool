@@ -960,10 +960,11 @@ export const DimensionValuesMultiFilter = ({
 
 type TimeFilterProps = {
   dimension: TemporalDimension;
+  disableInteractiveFilters?: boolean;
 };
 
 export const TimeFilter = (props: TimeFilterProps) => {
-  const { dimension } = props;
+  const { dimension, disableInteractiveFilters = false } = props;
   const formatLocale = useTimeFormatLocale();
   const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
@@ -1081,7 +1082,10 @@ export const TimeFilter = (props: TimeFilterProps) => {
 
     return (
       <Box>
-        <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
+        {!disableInteractiveFilters && (
+          <InteractiveTimeRangeToggle sx={{ mb: 1 }} />
+        )}
+
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter && (
             <>

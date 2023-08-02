@@ -54,6 +54,7 @@ export interface EncodingSpec {
   /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
   exclusive?: boolean;
   filters: boolean;
+  disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
   getWarnMessage?: (
@@ -62,8 +63,7 @@ export interface EncodingSpec {
 }
 
 // dataFilters is enabled by default
-// timeSlider is enabled dynamically based on availability of temporal dimensions
-type InteractiveFilterType = "legend" | "timeRange" | "timeSlider";
+type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
 export interface ChartSpec {
   chartType: ChartType;
@@ -114,6 +114,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
+  disableInteractiveFilters: true,
   getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
     const noTemporalDimensions = !dimensions.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
@@ -200,7 +201,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "timeRange", "timeSlider"],
+    interactiveFilters: ["legend", "timeRange", "animation"],
   },
   line: {
     chartType: "line",
@@ -291,7 +292,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["timeSlider"],
+    interactiveFilters: ["animation"],
   },
   pie: {
     chartType: "pie",
@@ -314,7 +315,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "timeSlider"],
+    interactiveFilters: ["legend", "animation"],
   },
   scatterplot: {
     chartType: "scatterplot",
@@ -342,7 +343,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
-    interactiveFilters: ["legend", "timeSlider"],
+    interactiveFilters: ["legend", "animation"],
   },
   table: {
     // TODO: Add abbreviations here.
