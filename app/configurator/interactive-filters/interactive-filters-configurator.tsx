@@ -3,8 +3,14 @@ import get from "lodash/get";
 import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
-import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
-import { ConfiguratorStateConfiguringChart } from "@/config-types";
+import {
+  ANIMATION_FIELD_SPEC,
+  chartConfigOptionsUISpec,
+} from "@/charts/chart-config-ui-options";
+import {
+  ConfiguratorStateConfiguringChart,
+  isAnimationInConfig,
+} from "@/config-types";
 import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
@@ -12,6 +18,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ControlTabField } from "@/configurator/components/field";
 import {
   isConfiguring,
   useConfiguratorState,
@@ -57,7 +64,12 @@ export const InteractiveFiltersConfigurator = ({
         "timeRange"
       );
 
-    if (!canFilterTimeRange) {
+    const animationComponent = allComponents.find(
+      (d) => d.iri === getFieldComponentIri(fields, "animation")
+    );
+    const canFilterAnimation = isAnimationInConfig(chartConfig);
+
+    if (!canFilterTimeRange && !canFilterAnimation) {
       return null;
     }
 
@@ -83,6 +95,15 @@ export const InteractiveFiltersConfigurator = ({
               value="timeRange"
               icon="time"
               label={xComponent!.label}
+            />
+          )}
+          {canFilterAnimation && (
+            // Animation is technically a field, so we need to use an appropriate component.
+            <ControlTabField
+              component={animationComponent}
+              value="animation"
+              labelId={`${chartConfig.chartType}.animation`}
+              warnMessage={ANIMATION_FIELD_SPEC.getWarnMessage?.(dimensions)}
             />
           )}
         </ControlSectionContent>

@@ -63,7 +63,7 @@ export interface EncodingSpec {
 
 // dataFilters is enabled by default
 // timeSlider is enabled dynamically based on availability of temporal dimensions
-type InteractiveFilterType = "legend" | "timeRange";
+type InteractiveFilterType = "legend" | "timeRange" | "timeSlider";
 
 export interface ChartSpec {
   chartType: ChartType;
@@ -109,7 +109,7 @@ export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-const ANIMATION_FIELD_SPEC: EncodingSpec = {
+export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   field: "animation",
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
@@ -199,9 +199,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend", "timeRange"],
+    interactiveFilters: ["legend", "timeRange", "timeSlider"],
   },
   line: {
     chartType: "line",
@@ -291,9 +290,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: [],
+    interactiveFilters: ["timeSlider"],
   },
   pie: {
     chartType: "pie",
@@ -315,9 +313,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend"],
+    interactiveFilters: ["legend", "timeSlider"],
   },
   scatterplot: {
     chartType: "scatterplot",
@@ -344,9 +341,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend"],
+    interactiveFilters: ["legend", "timeSlider"],
   },
   table: {
     // TODO: Add abbreviations here.

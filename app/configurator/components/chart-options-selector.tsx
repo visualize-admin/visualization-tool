@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
+  ANIMATION_FIELD_SPEC,
   chartConfigOptionsUISpec,
   EncodingFieldType,
   EncodingOption,
@@ -181,8 +182,14 @@ const ActiveFieldSwitch = ({
     return null;
   }
 
-  const encodings =
+  const animatable = isAnimationInConfig(state.chartConfig);
+  const baseEncodings =
     chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
+  // Animation field is a special field that is not part of the encodings,
+  // but rather is selected from interactive filters menu.
+  const encodings = animatable
+    ? baseEncodings.concat(ANIMATION_FIELD_SPEC)
+    : baseEncodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;
