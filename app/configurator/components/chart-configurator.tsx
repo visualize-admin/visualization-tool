@@ -62,7 +62,6 @@ import {
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
-import { flag } from "@/flags";
 import {
   HierarchyValue,
   PossibleFiltersDocument,
@@ -773,11 +772,9 @@ const ChartFields = (props: ChartFieldsProps) => {
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
-
-        const disabled = field === "animation" && !flag("timeslider");
         const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 
-        return disabled ? null : baseLayer ? (
+        return baseLayer ? (
           <OnOffControlTabField
             key={field}
             value={field}
