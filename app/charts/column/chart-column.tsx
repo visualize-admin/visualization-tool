@@ -107,12 +107,9 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
-                componentIri={fields.animation.componentIri}
                 filters={filters}
                 dimensions={dimensions}
-                showPlayButton={fields.animation.showPlayButton}
-                animationDuration={fields.animation.duration}
-                animationType={fields.animation.type}
+                {...fields.animation}
               />
             )}
             <LegendColor
@@ -140,12 +137,9 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
-                componentIri={fields.animation.componentIri}
                 filters={filters}
                 dimensions={dimensions}
-                showPlayButton={fields.animation.showPlayButton}
-                animationDuration={fields.animation.duration}
-                animationType={fields.animation.type}
+                {...fields.animation}
               />
             )}
             <LegendColor
@@ -173,12 +167,9 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           {fields.animation && (
             <ChartControlsContainer>
               <TimeSlider
-                componentIri={fields.animation.componentIri}
                 filters={filters}
                 dimensions={dimensions}
-                showPlayButton={fields.animation.showPlayButton}
-                animationDuration={fields.animation.duration}
-                animationType={fields.animation.type}
+                {...fields.animation}
               />
             </ChartControlsContainer>
           )}

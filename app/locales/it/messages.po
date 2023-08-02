@@ -176,8 +176,8 @@ msgid "columnStyle.textStyle.regular"
 msgstr "Regular"
 
 #: app/configurator/interactive-filters/editor-time-brush.tsx
-msgid "controls..interactiveFilters.time.defaultSettings"
-msgstr "Impostazioni predefinite"
+#~ msgid "controls..interactiveFilters.time.defaultSettings"
+#~ msgstr "Impostazioni predefinite"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
@@ -339,10 +339,12 @@ msgstr "È necessario selezionare almeno un filtro."
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
 msgstr "Interattivo"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.tooltip"
 msgstr "Consenti agli utenti di modificare il filtro"
@@ -394,12 +396,12 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zeri"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.noTimeDimension"
-msgstr "Nessuna dimensione temporale disponibile!"
+#~ msgid "controls.interactiveFilters.time.noTimeDimension"
+#~ msgstr "Nessuna dimensione temporale disponibile!"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.toggleTimeFilter"
-msgstr "Mostra i filtri temporali"
+#~ msgid "controls.interactiveFilters.time.toggleTimeFilter"
+#~ msgstr "Mostra i filtri temporali"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -474,6 +476,14 @@ msgstr "Informazioni aggiuntive"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Durata dell'animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling"
+msgstr "Scalatura dinamica"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling.explanation"
+msgstr "Abilitare la scalatura dinamica per regolare la scala del grafico in base all'intervallo di dati, garantendo una visualizzazione ottimale."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"

@@ -553,6 +553,34 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 />
               </Flex>
             </Box>
+            <Box sx={{ display: "flex", alignItems: "center", mt: 5 }}>
+              <ChartOptionSwitchField
+                label={t({
+                  id: "controls.section.animation.dynamic-scaling",
+                  message: "Dynamic Scaling",
+                })}
+                field="animation"
+                path="dynamicScales"
+              />
+              <Tooltip
+                arrow
+                title={t({
+                  id: "controls.section.animation.dynamic-scaling.explanation",
+                  message:
+                    "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization.",
+                })}
+              >
+                <Typography sx={{ ml: "-12px", color: "primary.main" }}>
+                  <SvgIcExclamation
+                    style={{
+                      transform: "scale(0.8)",
+                      width: 18,
+                      height: 18,
+                    }}
+                  />
+                </Typography>
+              </Tooltip>
+            </Box>
           </>
         )}
       </ControlSectionContent>

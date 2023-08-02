@@ -411,6 +411,7 @@ export const useChartData = (
 
   // interactive time slider
   const animationField = getAnimationField(chartConfig);
+  const dynamicScales = animationField?.dynamicScales ?? true;
   const animationComponentIri = animationField?.componentIri ?? "";
   const getAnimationDate = useTemporalVariable(animationComponentIri);
   const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
@@ -469,10 +470,20 @@ export const useChartData = (
   ]);
 
   const scalesData = React.useMemo(() => {
-    return observations.filter(
-      overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
-    );
-  }, [observations, interactiveLegendFilters, interactiveTimeRangeFilters]);
+    if (dynamicScales) {
+      return chartData;
+    } else {
+      return observations.filter(
+        overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
+      );
+    }
+  }, [
+    dynamicScales,
+    chartData,
+    observations,
+    interactiveLegendFilters,
+    interactiveTimeRangeFilters,
+  ]);
 
   const segmentData = React.useMemo(() => {
     return observations.filter(overEvery(interactiveTimeRangeFilters));

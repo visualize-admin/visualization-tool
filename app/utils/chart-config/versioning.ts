@@ -506,6 +506,7 @@ const migrations: Migration[] = [
               showPlayButton: true,
               duration: 30,
               type: "continuous",
+              dynamicScales: false,
             };
           }
         });

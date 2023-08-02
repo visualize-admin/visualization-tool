@@ -822,6 +822,7 @@ export const handleChartFieldChanged = (
         showPlayButton: true,
         duration: 30,
         type: "continuous",
+        dynamicScales: false,
       };
 
       // TODO: consolidate this in UI encodings?
@@ -894,6 +895,8 @@ export const handleChartFieldChanged = (
           draft.chartConfig.fields.animation?.showPlayButton ?? true,
         duration: draft.chartConfig.fields.animation?.duration ?? 30,
         type: draft.chartConfig.fields.animation?.type ?? "continuous",
+        dynamicScales:
+          draft.chartConfig.fields.animation?.dynamicScales ?? false,
       };
 
       // TODO: consolidate this in UI encodings?

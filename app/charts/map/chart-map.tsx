@@ -156,12 +156,9 @@ export const ChartMap = (
       <ChartControlsContainer sx={{ mt: 6 }}>
         {fields.animation && (
           <TimeSlider
-            componentIri={fields.animation.componentIri}
             filters={filters}
             dimensions={dimensions}
-            showPlayButton={fields.animation.showPlayButton}
-            animationDuration={fields.animation.duration}
-            animationType={fields.animation.type}
+            {...fields.animation}
           />
         )}
         <MapLegend chartConfig={chartConfig} />

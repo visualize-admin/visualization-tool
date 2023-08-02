@@ -166,8 +166,9 @@ const AnimationField = t.intersection([
   GenericField,
   t.type({
     showPlayButton: t.boolean,
-    duration: t.number,
     type: AnimationType,
+    duration: t.number,
+    dynamicScales: t.boolean,
   }),
 ]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
