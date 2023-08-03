@@ -561,7 +561,7 @@ msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Interaktive Filter hinzufügen"
+msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

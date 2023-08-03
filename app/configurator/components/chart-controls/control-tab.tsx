@@ -17,7 +17,7 @@ type ControlTabProps = {
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
-  labelId: string;
+  labelId: string | null;
   warnMessage?: React.ReactNode;
 } & FieldProps;
 
@@ -31,7 +31,7 @@ export const ControlTab = (props: ControlTabProps) => {
       <ControlTabButton checked={checked} value={value} onClick={handleClick}>
         <ControlTabButtonInner
           iconName={getIconName(value)}
-          upperLabel={getFieldLabel(labelId)}
+          upperLabel={labelId ? getFieldLabel(labelId) : null}
           mainLabel={
             component?.label ?? <Trans id="controls.color.add">Add…</Trans>
           }

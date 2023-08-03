@@ -561,7 +561,7 @@ msgstr "For this chart type, replacement values should be assigned to missing va
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Interactive Filters"
+msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

@@ -64,9 +64,7 @@ export const InteractiveFiltersConfigurator = ({
           titleId="controls-interactive-filters"
           gutterBottom={false}
         >
-          <Trans id="controls.section.interactive.filters">
-            Interactive Filters
-          </Trans>
+          <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
           {canFilterAnimation && (
@@ -74,7 +72,7 @@ export const InteractiveFiltersConfigurator = ({
             <ControlTabField
               component={animationComponent}
               value="animation"
-              labelId={`${chartConfig.chartType}.animation`}
+              labelId={null}
               warnMessage={ANIMATION_FIELD_SPEC.getWarnMessage?.(dimensions)}
             />
           )}
@@ -92,9 +90,7 @@ export const InteractiveFiltersConfigurator = ({
           titleId="controls-interactive-filters"
           gutterBottom={false}
         >
-          <Trans id="controls.section.interactive.filters">
-            Interactive Filters
-          </Trans>
+          <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
 
         <ControlSectionSkeleton showTitle={false} sx={{ mt: 0 }} />

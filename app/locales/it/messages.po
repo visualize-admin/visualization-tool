@@ -561,7 +561,7 @@ msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere asseg
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Filtri interattivi"
+msgstr "Animazione"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

@@ -80,7 +80,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 type ControlTabFieldProps = {
   component?: DimensionMetadataFragment;
   value: string;
-  labelId: string;
+  labelId: string | null;
   warnMessage?: ReactNode;
 };
 

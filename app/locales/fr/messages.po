@@ -561,7 +561,7 @@ msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doi
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Filtres interactifs"
+msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
