@@ -118,13 +118,13 @@ const useColumnsStackedState = (
   }, [segmentDimension?.values]);
 
   const sumsBySegment = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
-      ),
-    ]);
+      )
+    );
   }, [getSegment, getY, scalesData]);
 
   const segmentFilter = segmentDimension?.iri
@@ -162,13 +162,13 @@ const useColumnsStackedState = (
   ]);
 
   const sumsByX = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
-      ),
-    ]);
+      )
+    );
   }, [getX, getY, scalesData]);
 
   const preparedDataGroupedByX = useMemo(() => {

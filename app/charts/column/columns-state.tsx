@@ -87,13 +87,13 @@ const useColumnsState = (
   const timeFormatUnit = useTimeFormatUnit();
 
   const sumsByX = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
-      ),
-    ]);
+      )
+    );
   }, [chartData, getX, getY]);
 
   const {

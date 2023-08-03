@@ -116,13 +116,13 @@ const useAreasState = (
     : undefined;
 
   const sumsBySegment = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         segmentData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
-      ),
-    ]);
+      )
+    );
   }, [segmentData, getY, getSegment]);
 
   const { allSegments, segments } = useMemo(() => {
@@ -177,13 +177,13 @@ const useAreasState = (
   );
 
   const sumsByX = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getXAsString(x)
-      ),
-    ]);
+      )
+    );
   }, [getXAsString, getY, scalesData]);
 
   const preparedDataGroupedByX = useMemo(() => {
