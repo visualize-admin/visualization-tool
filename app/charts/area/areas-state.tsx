@@ -43,7 +43,6 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { flag } from "@/flags";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -78,7 +77,6 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const normalize = flag("normalize");
   const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
@@ -186,6 +184,7 @@ const useAreasState = (
     );
   }, [getXAsString, getY, scalesData]);
 
+  const normalize = fields.segment?.calculation === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(

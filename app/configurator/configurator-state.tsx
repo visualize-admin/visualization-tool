@@ -856,7 +856,10 @@ export const handleChartFieldChanged = (
           componentIri,
           palette,
           // Type exists only within column charts.
-          ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
+          ...(isColumnConfig(draft.chartConfig) && {
+            type: "stacked",
+            calculation: "identity",
+          }),
           sorting: DEFAULT_SORTING,
           colorMapping,
         };
@@ -1085,6 +1088,13 @@ export const handleChartOptionChanged = (
               );
             }
           }
+        }
+      } else if (action.value.path === "type") {
+        if (action.value.value === "grouped") {
+          delete (draft.chartConfig.fields as any)["segment"]["calculation"];
+        } else if (action.value.value === "stacked") {
+          (draft.chartConfig.fields as any)["segment"]["calculation"] =
+            "identity";
         }
       }
     }

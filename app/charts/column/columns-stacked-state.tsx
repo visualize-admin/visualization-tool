@@ -46,7 +46,6 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { flag } from "@/flags";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -80,7 +79,6 @@ const useColumnsStackedState = (
   variables: ColumnsStackedStateVariables,
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
-  const normalize = flag("normalize");
   const { aspectRatio, chartConfig } = chartProps;
   const {
     xDimension,
@@ -171,6 +169,10 @@ const useColumnsStackedState = (
     );
   }, [getX, getY, scalesData]);
 
+  const normalize =
+    fields.segment && "calculation" in fields.segment
+      ? fields.segment.calculation === "percent"
+      : false;
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
@@ -375,12 +377,11 @@ const useColumnsStackedState = (
       .offset(stackOffsetDiverging)
       .keys(segments);
 
-    const series = stacked(
+    return stacked(
       chartWideData as {
         [key: string]: number;
       }[]
     );
-    return series;
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */

@@ -412,7 +412,7 @@ export const normalizeData = (
 
     return {
       ...d,
-      [yKey]: y ? y / totalGroupValue : y,
+      [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
     };
   });
 };

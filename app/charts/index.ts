@@ -658,6 +658,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               ...tableSegment,
               sorting: DEFAULT_SORTING,
               type: "stacked",
+              calculation: "identity",
             };
           }
           // Otherwise we are dealing with a segment field.
@@ -673,6 +674,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               defaultValue: "byTotalSize",
             }),
             type: "stacked",
+            calculation:
+              "calculation" in oldSegment ? oldSegment.calculation : "identity",
           };
         }
 
@@ -815,6 +818,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             newSegment = {
               ...tableSegment,
               sorting: DEFAULT_SORTING,
+              calculation: "identity",
             };
           }
         } else {
@@ -828,6 +832,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byTotalSize",
             }),
+            calculation: "identity",
           };
         }
 

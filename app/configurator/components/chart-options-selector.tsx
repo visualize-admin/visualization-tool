@@ -334,7 +334,7 @@ const EncodingOptionsPanel = ({
               optional={encoding.optional}
               options={options}
             />
-            {optionsByField["useAbbreviations"] && (
+            {optionsByField.useAbbreviations && (
               <Box mt={3}>
                 <ChartFieldAbbreviations
                   field={field}
@@ -350,8 +350,12 @@ const EncodingOptionsPanel = ({
                 chartType={chartType}
               />
             )}
-            {optionsByField["color"]?.field === "color" &&
-              optionsByField["color"].type === "palette" && (
+            {optionsByField.calculation?.field === "calculation" &&
+              get(fields, "segment.type") !== "grouped" && (
+                <ChartFieldCalculation />
+              )}
+            {optionsByField.color?.field === "color" &&
+              optionsByField.color.type === "palette" && (
                 <ColorPalette
                   disabled={!component}
                   field={field}
@@ -375,35 +379,33 @@ const EncodingOptionsPanel = ({
         />
       )}
 
-      {optionsByField["size"]?.field === "size" && component && (
+      {optionsByField.size?.field === "size" && component && (
         <ChartFieldSize
           field={field}
-          componentTypes={optionsByField["size"].componentTypes}
+          componentTypes={optionsByField.size.componentTypes}
           dimensions={dimensions}
           measures={measures}
-          optional={optionsByField["size"].optional}
+          optional={optionsByField.size.optional}
         />
       )}
 
-      {optionsByField["color"]?.field === "color" &&
-        optionsByField["color"].type === "component" &&
+      {optionsByField.color?.field === "color" &&
+        optionsByField.color.type === "component" &&
         component && (
           <ChartFieldColorComponent
             state={state}
             chartConfig={state.chartConfig}
             field={encoding.field}
             component={component}
-            componentTypes={optionsByField["color"].componentTypes}
+            componentTypes={optionsByField.color.componentTypes}
             dimensions={dimensions}
             measures={measures}
-            optional={optionsByField["color"].optional}
-            enableUseAbbreviations={
-              optionsByField["color"].enableUseAbbreviations
-            }
+            optional={optionsByField.color.optional}
+            enableUseAbbreviations={optionsByField.color.enableUseAbbreviations}
           />
         )}
 
-      {optionsByField["showStandardError"] && hasStandardError && (
+      {optionsByField.showStandardError && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
@@ -421,7 +423,7 @@ const EncodingOptionsPanel = ({
         </ControlSection>
       )}
 
-      {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
+      {optionsByField.imputationType && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
 
@@ -681,19 +683,54 @@ const ChartFieldOptions = ({
                 label={getFieldLabel("stacked")}
                 field={field}
                 path="type"
-                value={"stacked"}
+                value="stacked"
                 disabled={disabled}
               />
               <ChartOptionRadioField
                 label={getFieldLabel("grouped")}
                 field={field}
                 path="type"
-                value={"grouped"}
+                value="grouped"
                 disabled={disabled}
               />
             </Flex>
           </Box>
         )}
+    </>
+  );
+};
+
+type ChartFieldCalculationProps = {
+  disabled?: boolean;
+};
+
+const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
+  const { disabled } = props;
+
+  return (
+    <>
+      <FieldSetLegend
+        legendTitle={
+          <Trans id="controls.select.calculation">Calculation</Trans>
+        }
+        sx={{ mt: 2 }}
+      />
+      <Flex sx={{ justifyContent: "flex-start" }}>
+        <ChartOptionRadioField
+          label={getFieldLabel("identity")}
+          field="segment"
+          path="calculation"
+          value="identity"
+          disabled={disabled}
+        />
+        <ChartOptionRadioField
+          label={getFieldLabel("percent")}
+          field="segment"
+          path="calculation"
+          value="percent"
+          disabled={disabled}
+        />
+      </Flex>
     </>
   );
 };

@@ -24,6 +24,7 @@ export type EncodingFieldType =
 
 export type EncodingOption =
   | { field: "chartSubType" }
+  | { field: "calculation" }
   | { field: "color"; type: "palette" }
   | {
       field: "color";
@@ -151,6 +152,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
         options: [
+          { field: "calculation" },
           { field: "color", type: "palette" },
           { field: "imputationType" },
           { field: "useAbbreviations" },
@@ -196,6 +198,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType" },
+          { field: "calculation" },
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
         ],

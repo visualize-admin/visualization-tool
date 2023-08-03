@@ -92,6 +92,14 @@ const fieldLabels = {
     id: "controls.abbreviations",
     message: "Use abbreviations",
   }),
+  "controls.calculation.identity": defineMessage({
+    id: "controls.calculation.identity",
+    message: "Identity",
+  }),
+  "controls.calculation.percent": defineMessage({
+    id: "controls.calculation.percent",
+    message: "Percent",
+  }),
   "controls.imputation": defineMessage({
     id: "controls.imputation",
     message: "Imputation type",
@@ -209,7 +217,7 @@ export function getFieldLabel(field: string): string {
     case "description":
       return i18n._(fieldLabels["controls.description"]);
 
-    // Encoding Options (right column)
+    // Encoding Options
     case "stacked":
       return i18n._(fieldLabels["controls.column.stacked"]);
     case "grouped":
@@ -220,6 +228,10 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.imputation"]);
     case "abbreviations":
       return i18n._(fieldLabels["controls.abbreviations"]);
+    case "identity":
+      return i18n._(fieldLabels["controls.calculation.identity"]);
+    case "percent":
+      return i18n._(fieldLabels["controls.calculation.percent"]);
 
     case "bar.stacked.byDimensionLabel.asc":
     case "bar.grouped.byDimensionLabel.asc":
