@@ -115,17 +115,22 @@ const InteractiveTimeRangeFilterOptions = ({
       (d) => d.iri === componentIri
     );
 
-    const hardFilters = componentIri
+    const filter = componentIri
       ? state.chartConfig.filters[componentIri]
       : undefined;
-    const hardFiltersValues =
-      hardFilters?.type === "multi" ? hardFilters.values ?? false : false;
-    // Time extent uses the "hard filters" (filters defined in the editor)
-    // and defaults to full time extent (from dimension metadata).
-    const timeExtent = hardFiltersValues
-      ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))
+    const timeRangeFilter = filter?.type === "range" ? filter : undefined;
+    const timeRange: [Date, Date] | undefined = timeRangeFilter
+      ? [parseDate(timeRangeFilter.from), parseDate(timeRangeFilter.to)]
+      : undefined;
+
+    // Limit the available time range to the time range defined in the editor.
+    const timeExtent: [Date, Date] | undefined = timeRange
+      ? timeRange
       : component
-      ? extent(component?.values, (d) => parseDate(d.value.toString()))
+      ? (extent(component.values, (d) => parseDate(`${d.value}`)) as [
+          Date,
+          Date
+        ])
       : undefined;
 
     return (

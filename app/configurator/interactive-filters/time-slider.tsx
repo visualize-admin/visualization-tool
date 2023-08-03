@@ -1,18 +1,23 @@
 import { Box, Button, Typography } from "@mui/material";
+import orderBy from "lodash/orderBy";
 import React, { ChangeEvent } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
-import { ChartState, useChartState } from "@/charts/shared/use-chart-state";
+import { ChartState, useChartState } from "@/charts/shared/chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
-import { AnimationType } from "@/config-types";
+import { AnimationType, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
+import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
-import { TemporalDimension } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
-import { Timeline } from "@/utils/observables";
+import { Timeline, TimelineProps } from "@/utils/observables";
+import {
+  getSortingOrders,
+  makeDimensionValueSorters,
+} from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 const TimelineContext = React.createContext<Timeline | undefined>(undefined);
@@ -31,61 +36,99 @@ const useTimeline = () => {
   return timeline;
 };
 
-export const TimeSlider = ({
-  componentIri,
-  dimensions,
-  showPlayButton,
-  animationDuration,
-  animationType,
-}: {
+type TimeSliderProps = {
   componentIri?: string;
+  filters: Filters;
   dimensions: DimensionMetadataFragment[];
   showPlayButton: boolean;
   /** Animation duration in seconds. */
   animationDuration: number;
   animationType: AnimationType;
-}) => {
+};
+
+export const TimeSlider = (props: TimeSliderProps) => {
+  const {
+    componentIri,
+    filters,
+    dimensions,
+    showPlayButton,
+    animationDuration,
+    animationType,
+  } = props;
   const component = React.useMemo(() => {
-    return dimensions.find((d) => d.iri === componentIri) as
-      | TemporalDimension
-      | undefined;
+    return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
 
+  const hasTimeUnit = isTemporalDimension(component);
+  if (!(hasTimeUnit || isTemporalOrdinalDimension(component))) {
+    throw new Error("You can only use TimeSlider with temporal dimensions!");
+  }
+
   const timeFormatUnit = useTimeFormatUnit();
-  const timeUnit = component?.timeUnit ?? TimeUnit.Day;
-  const formatDate = React.useCallback(
-    (d: number) => {
-      return timeFormatUnit(new Date(d), timeUnit);
-    },
-    [timeFormatUnit, timeUnit]
-  );
+  const timeUnit = hasTimeUnit ? component.timeUnit ?? TimeUnit.Day : undefined;
+
   // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
 
-  const timelineData: number[] = React.useMemo(() => {
-    if (component) {
-      const uniqueValues = [
-        ...new Set(
-          chartState.allData.map((d) => d[component.iri]).filter(Boolean)
-        ),
-      ] as string[];
+  const componentFilter = filters[component.iri];
 
-      return uniqueValues.map((d) => parseDate(d).getTime());
+  const timelineProps: TimelineProps = React.useMemo(() => {
+    const commonProps = {
+      animationType,
+      msDuration: animationDuration * 1000,
+    };
+    const uniqueValues = Array.from(
+      new Set(
+        chartState.allData
+          .map((d) => d[component.iri])
+          .filter(Boolean) as string[]
+      )
+    );
+
+    if (hasTimeUnit) {
+      const msValues = uniqueValues.map((d) => parseDate(d).getTime());
+      const formatValue = (d: number) => timeFormatUnit(new Date(d), timeUnit!);
+
+      return {
+        type: "interval",
+        msValues,
+        formatValue,
+        ...commonProps,
+      };
+    } else {
+      const sorting: NonNullable<SortingField["sorting"]> = {
+        sortingType: "byAuto",
+        sortingOrder: "asc",
+      };
+      const sorters = makeDimensionValueSorters(component, {
+        dimensionFilter: componentFilter,
+        sorting,
+      });
+      const sortingOrders = getSortingOrders(sorters, sorting);
+      const sortedData = orderBy(uniqueValues, sorters, sortingOrders);
+
+      return {
+        type: "ordinal",
+        sortedData,
+        ...commonProps,
+      };
     }
-
-    return [];
-  }, [chartState.allData, component]);
+  }, [
+    hasTimeUnit,
+    animationType,
+    animationDuration,
+    chartState.allData,
+    component,
+    timeFormatUnit,
+    timeUnit,
+    componentFilter,
+  ]);
 
   const timeline = React.useMemo(() => {
-    return new Timeline({
-      type: animationType,
-      msDuration: animationDuration * 1000,
-      msValues: timelineData,
-      formatMsValue: formatDate,
-    });
-  }, [animationType, animationDuration, timelineData, formatDate]);
+    return new Timeline(timelineProps);
+  }, [timelineProps]);
 
   return (
     <TimelineContext.Provider value={timeline}>
@@ -169,14 +212,50 @@ const Slider = () => {
   });
 
   React.useEffect(() => {
-    // Dispatch time slider update event when progress changes.
-    if (IFState.timeSlider.value?.getTime() !== timeline.value) {
+    if (timeline.type !== IFState.timeSlider.type) {
       dispatch({
         type: "SET_TIME_SLIDER_FILTER",
-        value: new Date(timeline.value),
+        value: {
+          type: timeline.type,
+          value: undefined,
+        },
       });
     }
-  }, [timeline.value, IFState.timeSlider.value, dispatch]);
+
+    if (
+      timeline.type === "interval" &&
+      IFState.timeSlider.type === "interval" &&
+      IFState.timeSlider.value?.getTime() !== timeline.value
+    ) {
+      dispatch({
+        type: "SET_TIME_SLIDER_FILTER",
+        value: {
+          type: "interval",
+          value: new Date(timeline.value),
+        },
+      });
+    }
+
+    if (
+      timeline.type === "ordinal" &&
+      IFState.timeSlider.type === "ordinal" &&
+      IFState.timeSlider?.value !== timeline.value
+    ) {
+      dispatch({
+        type: "SET_TIME_SLIDER_FILTER",
+        value: {
+          type: "ordinal",
+          value: timeline.value as string,
+        },
+      });
+    }
+  }, [
+    timeline.value,
+    timeline.type,
+    IFState.timeSlider.type,
+    IFState.timeSlider.value,
+    dispatch,
+  ]);
 
   return (
     <GenericSlider

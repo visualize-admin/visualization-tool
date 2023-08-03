@@ -20,8 +20,11 @@ import {
   getLabelWithUnit,
   getSlugifiedIri,
 } from "@/charts/shared/chart-helpers";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
-import { ChartContext } from "@/charts/shared/use-chart-state";
+import {
+  ChartContext,
+  ChartStateData,
+  CommonChartState,
+} from "@/charts/shared/chart-state";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 import { useTableStateData } from "@/charts/table/table-state-props";

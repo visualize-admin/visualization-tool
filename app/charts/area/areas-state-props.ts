@@ -2,33 +2,23 @@ import { ascending } from "d3";
 import React from "react";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
-import {
-  getLabelWithUnit,
-  useDimensionWithAbbreviations,
-  useOptionalNumericVariable,
-  usePlottableData,
-  useStringVariable,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
+import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   ChartStateData,
   NumericalYVariables,
   SegmentVariables,
   TemporalXVariables,
   useChartData,
+  useNumericalYVariables,
+  useSegmentVariables,
+  useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { AreaConfig } from "@/config-types";
-import {
-  Observation,
-  isNumericalMeasure,
-  isTemporalDimension,
-} from "@/domain/data";
+import { Observation } from "@/domain/data";
 
 export type AreasStateVariables = TemporalXVariables &
   NumericalYVariables &
-  SegmentVariables & {
-    getGroups: (d: Observation) => string;
-  };
+  SegmentVariables;
 
 export const useAreasStateVariables = (
   props: ChartProps<AreaConfig> & { aspectRatio: number }
@@ -37,55 +27,21 @@ export const useAreasStateVariables = (
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
-  }
-
-  if (!isTemporalDimension(xDimension)) {
-    throw Error(`Dimension <${x.componentIri}> is not temporal!`);
-  }
-
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
-  if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
-  }
-
-  if (!isNumericalMeasure(yMeasure)) {
-    throw Error(`Measure <${y.componentIri}> is not numerical!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const getX = useTemporalVariable(x.componentIri);
-  const getY = useOptionalNumericVariable(y.componentIri);
-  const getGroups = useStringVariable(x.componentIri);
-
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === segment?.componentIri
-  );
-  const {
-    getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
-    abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
-    getValue: getSegment,
-    getLabel: getSegmentLabel,
-  } = useDimensionWithAbbreviations(segmentDimension, {
+  const temporalXVariables = useTemporalXVariables(x, {
+    dimensions,
+  });
+  const numericalYVariables = useNumericalYVariables(y, {
+    measures,
+  });
+  const segmentVariables = useSegmentVariables(segment, {
+    dimensions,
     observations,
-    field: segment,
   });
 
   return {
-    xDimension,
-    getX,
-    yMeasure,
-    getY,
-    yAxisLabel,
-    getGroups,
-    segmentDimension,
-    segmentsByAbbreviationOrLabel,
-    getSegment,
-    getSegmentAbbreviationOrLabel,
-    getSegmentLabel,
+    ...temporalXVariables,
+    ...numericalYVariables,
+    ...segmentVariables,
   };
 };
 
@@ -94,7 +50,7 @@ export const useAreasStateData = (
   variables: AreasStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getX, getY, getSegment } = variables;
+  const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
@@ -104,19 +60,14 @@ export const useAreasStateData = (
       getX,
     });
   }, [plottableData, getX]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate: getX,
-      getSegment,
-    }
-  );
+  const data = useChartData(sortedPlottableData, {
+    chartConfig,
+    getXAsDate: getX,
+    getSegmentAbbreviationOrLabel,
+  });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: sortedPlottableData,
   };
 };

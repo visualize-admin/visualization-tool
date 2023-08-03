@@ -1,13 +1,12 @@
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import * as React from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
-  TooltipValue,
   TooltipPlacement,
+  TooltipValue,
 } from "@/charts/shared/interaction/tooltip";
-import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Margins } from "@/charts/shared/use-width";
 import { Observation } from "@/domain/data";

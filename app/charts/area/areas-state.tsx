@@ -17,7 +17,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import {
   AreasStateVariables,
@@ -28,16 +28,22 @@ import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import {
   getWideData,
+  normalizeData,
   stackOffsetDivergingPositiveZeros,
 } from "@/charts/shared/chart-helpers";
-import { ChartStateData, CommonChartState } from "@/charts/shared/chart-state";
+import {
+  ChartContext,
+  ChartStateData,
+  CommonChartState,
+  InteractiveXTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
+import { flag } from "@/flags";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -54,10 +60,10 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type AreasState = CommonChartState &
-  AreasStateVariables & {
+  AreasStateVariables &
+  InteractiveXTimeRangeState & {
     chartType: "area";
     xScale: ScaleTime<number, number>;
-    xEntireScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
@@ -72,19 +78,20 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
+  const normalize = flag("normalize");
   const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
     getX,
+    getXAsString,
     yMeasure,
     getY,
-    getGroups,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, allData } = data;
+  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -154,10 +161,9 @@ const useAreasState = (
 
   const xKey = fields.x.componentIri;
 
-  const dataGroupedByX = useMemo(
-    () => group(chartData, getGroups),
-    [chartData, getGroups]
-  );
+  const dataGroupedByX = useMemo(() => {
+    return group(chartData, getXAsString);
+  }, [chartData, getXAsString]);
 
   const allDataWide = useMemo(
     () =>
@@ -170,24 +176,50 @@ const useAreasState = (
     [dataGroupedByX, xKey, getY, getSegment]
   );
 
-  const chartWideData = useMemo(() => {
-    const preparedDataGroupedByX = group(chartData, getGroups);
+  const sumsByX = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        scalesData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getXAsString(x)
+      ),
+    ]);
+  }, [getXAsString, getY, scalesData]);
 
-    return getWideData({
+  const preparedDataGroupedByX = useMemo(() => {
+    if (normalize) {
+      return group(
+        normalizeData(chartData, {
+          yKey: yMeasure.iri,
+          getY,
+          getTotalGroupValue: (d) => {
+            return sumsByX[getXAsString(d)];
+          },
+        }),
+        getXAsString
+      );
+    }
+
+    return group(chartData, getXAsString);
+  }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
+
+  const chartWideData = React.useMemo(() => {
+    const wideData = getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
       getY,
-      allSegments,
       getSegment,
+      allSegments: segments,
       imputationType: fields.y.imputationType,
     });
+
+    return wideData;
   }, [
-    chartData,
-    getGroups,
-    xKey,
-    getY,
-    allSegments,
     getSegment,
+    getY,
+    preparedDataGroupedByX,
+    segments,
+    xKey,
     fields.y.imputationType,
   ]);
 
@@ -213,16 +245,28 @@ const useAreasState = (
     (d) => d.total ?? 0
   ) as unknown as number;
 
-  const { colors, xScale, yScale, xEntireScale } = useMemo(() => {
+  const { colors, xScale, yScale, interactiveXTimeRangeScale } = useMemo(() => {
     const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
     const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
     const yDomain = [minTotal, maxTotal];
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
 
-    const xEntireDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
-    const xEntireScale = scaleTime().domain(xEntireDomain);
-    const yScale = scaleLinear().domain(yDomain).nice();
+    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+      getX(d)
+    ) as [Date, Date];
+    const interactiveXTimeRangeScale = scaleTime().domain(
+      interactiveXTimeRangeDomain
+    );
+    const yScale = scaleLinear().domain(yDomain);
+
+    // If we're showing a normalized chart, the .nice() makes the chart y axis
+    // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
+    // to avoid rounding issues.
+    if (!normalize) {
+      yScale.nice();
+    }
+
     const colors = scaleOrdinal<string, string>();
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
@@ -246,17 +290,23 @@ const useAreasState = (
       colors.range(getPalette(fields.segment?.palette));
       colors.unknown(() => undefined);
     }
-    return { colors, xScale, yScale, xEntireScale };
+    return {
+      colors,
+      xScale,
+      yScale,
+      interactiveXTimeRangeScale,
+    };
   }, [
     fields.segment,
     getX,
-    chartData,
     scalesData,
+    timeRangeData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     allSegments,
     series,
     segmentDimension,
+    normalize,
   ]);
 
   /** Dimensions */
@@ -286,7 +336,7 @@ const useAreasState = (
 
   /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);
-  xEntireScale.range([0, chartWidth]);
+  interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   /** Tooltip */
@@ -339,7 +389,7 @@ const useAreasState = (
     chartData,
     allData,
     xScale,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yScale,
     segments,
     colors,

@@ -617,6 +617,7 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
   switch (dim.__typename) {
     case "NominalDimension":
     case "OrdinalDimension":
+    case "TemporalOrdinalDimension":
     case "OrdinalMeasure":
     case "GeoCoordinatesDimension":
     case "GeoShapesDimension":

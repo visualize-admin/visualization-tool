@@ -1,10 +1,9 @@
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hcl } from "d3";
-import * as React from "react";
 import { Cell, Row } from "react-table";
 
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { getBarLeftOffset, getBarWidth } from "@/charts/table/cell-desktop";
 import { ColumnMeta, TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";

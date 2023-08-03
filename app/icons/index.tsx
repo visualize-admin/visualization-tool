@@ -69,6 +69,7 @@ export const getDimensionIconName = (
     case "NumericalMeasure":
       return "numerical";
     case "OrdinalDimension":
+    case "TemporalOrdinalDimension":
       return "sort";
     case "OrdinalMeasure":
       return "sort";

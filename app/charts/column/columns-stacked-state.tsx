@@ -10,7 +10,6 @@ import {
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
-  ScaleTime,
   scaleTime,
   stack,
   stackOffsetDiverging,
@@ -20,7 +19,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import {
   ColumnsStackedStateData,
@@ -34,16 +33,20 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/column/constants";
-import { getWideData } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import { getWideData, normalizeData } from "@/charts/shared/chart-helpers";
+import {
+  ChartContext,
+  CommonChartState,
+  InteractiveXTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
+import { flag } from "@/flags";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -55,17 +58,16 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type StackedColumnsState = CommonChartState &
-  ColumnsStackedStateVariables & {
+  ColumnsStackedStateVariables &
+  InteractiveXTimeRangeState & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
-    xEntireScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
     allDataWide: ArrayLike<Observation>;
-    grouped: [string, Observation[]][];
     series: $FixMe[];
     getAnnotationInfo: (
       d: Observation,
@@ -78,6 +80,7 @@ const useColumnsStackedState = (
   variables: ColumnsStackedStateVariables,
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
+  const normalize = flag("normalize");
   const { aspectRatio, chartConfig } = chartProps;
   const {
     xDimension,
@@ -92,8 +95,14 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, allData, plottableDataWide } =
-    data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    allData,
+    plottableDataWide,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -108,22 +117,15 @@ const useColumnsStackedState = (
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
 
-  const preparedDataGroupedByX = useMemo(
-    () => group(chartData, getX),
-    [chartData, getX]
-  );
-
-  const sumsBySegment = useMemo(
-    () =>
-      Object.fromEntries([
-        ...rollup(
-          scalesData,
-          (v) => sum(v, (x) => getY(x)),
-          (x) => getSegment(x)
-        ),
-      ]),
-    [getSegment, getY, scalesData]
-  );
+  const sumsBySegment = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        scalesData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]);
+  }, [getSegment, getY, scalesData]);
 
   const segmentFilter = segmentDimension?.iri
     ? chartConfig.filters[segmentDimension?.iri]
@@ -159,46 +161,84 @@ const useColumnsStackedState = (
     getSegment,
   ]);
 
-  const chartWideData = getWideData({
-    dataGroupedByX: preparedDataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-    allSegments: segments,
-    imputationType: "zeros",
-  });
+  const sumsByX = useMemo(() => {
+    return Object.fromEntries([
+      ...rollup(
+        scalesData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getX(x)
+      ),
+    ]);
+  }, [getX, getY, scalesData]);
 
-  const scalesDataGroupedByX = useMemo(
-    () => group(scalesData, getX),
-    [scalesData, getX]
-  );
+  const preparedDataGroupedByX = useMemo(() => {
+    if (normalize) {
+      return group(
+        normalizeData(chartData, {
+          yKey: yMeasure.iri,
+          getY,
+          getTotalGroupValue: (d) => {
+            return sumsByX[getX(d)];
+          },
+        }),
+        getX
+      );
+    }
 
-  const scalesWideData = getWideData({
-    dataGroupedByX: scalesDataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
+    return group(chartData, getX);
+  }, [chartData, getX, sumsByX, getY, yMeasure.iri, normalize]);
+
+  const chartWideData = React.useMemo(() => {
+    const wideData = getWideData({
+      dataGroupedByX: preparedDataGroupedByX,
+      xKey,
+      getY,
+      getSegment,
+      allSegments: segments,
+      imputationType: "zeros",
+    });
+
+    return wideData;
+  }, [getSegment, getY, preparedDataGroupedByX, segments, xKey]);
+
+  const scalesDataGroupedByX = useMemo(() => {
+    if (normalize) {
+      return group(
+        normalizeData(scalesData, {
+          yKey: yMeasure.iri,
+          getY,
+          getTotalGroupValue: (d) => {
+            return sumsByX[getX(d)];
+          },
+        }),
+        getX
+      );
+    }
+
+    return group(scalesData, getX);
+  }, [normalize, scalesData, getX, yMeasure.iri, getY, sumsByX]);
+
+  const scalesWideData = React.useMemo(() => {
+    const wideData = getWideData({
+      dataGroupedByX: scalesDataGroupedByX,
+      xKey,
+      getY,
+      getSegment,
+      allSegments: segments,
+      imputationType: "zeros",
+    });
+
+    return wideData;
+  }, [xKey, getSegment, getY, scalesDataGroupedByX, segments]);
 
   // Scales
   const xFilter = chartConfig.filters[xDimension.iri];
-  const sumsByX = useMemo(
-    () =>
-      Object.fromEntries([
-        ...rollup(
-          scalesData,
-          (v) => sum(v, (x) => getY(x)),
-          (x) => getX(x)
-        ),
-      ]),
-    [scalesData, getX, getY]
-  );
   // Map ordered segments labels to colors
   const {
     colors,
     xScale,
     xScaleInteraction,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yStackDomain,
     xDomainLabels,
   } = useMemo(() => {
@@ -260,12 +300,12 @@ const useColumnsStackedState = (
       .paddingInner(0)
       .paddingOuter(0);
 
-    // x as time, needs to be memoized!
-    const xEntireDomainAsTime = extent(scalesData, (d) => getXAsDate(d)) as [
-      Date,
-      Date
-    ];
-    const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+      getXAsDate(d)
+    ) as [Date, Date];
+    const interactiveXTimeRangeScale = scaleTime().domain(
+      interactiveXTimeRangeDomain
+    );
 
     // y
     const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
@@ -286,7 +326,7 @@ const useColumnsStackedState = (
       colors,
       yStackDomain,
       xScale,
-      xEntireScale,
+      interactiveXTimeRangeScale,
       xScaleInteraction,
       xDomainLabels,
     };
@@ -302,12 +342,20 @@ const useColumnsStackedState = (
     getXLabel,
     getXAsDate,
     scalesData,
+    timeRangeData,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     allSegments,
   ]);
 
-  const yScale = scaleLinear().domain(yStackDomain).nice();
+  const yScale = scaleLinear().domain(yStackDomain);
+
+  // If we're showing a normalized chart, the .nice() makes the chart y axis
+  // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
+  // to avoid rounding issues.
+  if (!normalize) {
+    yScale.nice();
+  }
 
   // stack order
   const series = useMemo(() => {
@@ -363,7 +411,7 @@ const useColumnsStackedState = (
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
-  xEntireScale.range([0, chartWidth]);
+  interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltips
@@ -469,13 +517,12 @@ const useColumnsStackedState = (
     allData,
     xScale,
     xScaleInteraction,
-    xEntireScale,
+    interactiveXTimeRangeScale,
     yScale,
     segments,
     colors,
     chartWideData,
     allDataWide: plottableDataWide,
-    grouped: [...preparedDataGroupedByX],
     series,
     getAnnotationInfo,
     ...variables,

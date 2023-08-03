@@ -2,8 +2,11 @@ import { select } from "d3";
 import React from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
-import { RenderDatum, renderColumn } from "@/charts/column/rendering-utils";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import {
+  RenderColumnDatum,
+  renderColumn,
+} from "@/charts/column/rendering-utils";
+import { useChartState } from "@/charts/shared/chart-state";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);
@@ -12,7 +15,7 @@ export const ColumnsStacked = () => {
   const { margins } = bounds;
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderDatum[] = React.useMemo(() => {
+  const renderData: RenderColumnDatum[] = React.useMemo(() => {
     return series.flatMap((d) => {
       const color = colors(d.key);
 
@@ -34,7 +37,7 @@ export const ColumnsStacked = () => {
   React.useEffect(() => {
     if (ref.current) {
       select(ref.current)
-        .selectAll<SVGRectElement, RenderDatum>("rect")
+        .selectAll<SVGRectElement, RenderColumnDatum>("rect")
         .data(renderData, (d) => d.key)
         .call(renderColumn, y0);
     }

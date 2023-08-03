@@ -1,34 +1,21 @@
 import { ascending, descending } from "d3";
-import get from "lodash/get";
 import React from "react";
 
-import {
-  getLabelWithUnit,
-  useDimensionWithAbbreviations,
-  useOptionalNumericVariable,
-  usePlottableData,
-  useTemporalVariable,
-} from "@/charts/shared/chart-helpers";
+import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
+  useBandXVariables,
   useChartData,
+  useNumericalYErrorVariables,
+  useNumericalYVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ColumnConfig, ColumnFields } from "@/configurator";
-import {
-  useErrorMeasure,
-  useErrorRange,
-  useErrorVariable,
-} from "@/configurator/components/ui-helpers";
-import {
-  Observation,
-  isNumericalMeasure,
-  isTemporalDimension,
-} from "@/domain/data";
+import { Observation } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -44,41 +31,18 @@ export const useColumnsStateVariables = (
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, animation } = fields;
 
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
-  if (!xDimension) {
-    throw Error(`No dimension <${x.componentIri}> in cube!`);
-  }
-
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
-  if (!yMeasure) {
-    throw Error(`No dimension <${y.componentIri}> in cube!`);
-  }
-
-  if (!isNumericalMeasure(yMeasure)) {
-    throw Error(`Measure <${y.componentIri}> is not numerical!`);
-  }
-
-  const yAxisLabel = getLabelWithUnit(yMeasure);
-
-  const xTimeUnit = isTemporalDimension(xDimension)
-    ? xDimension.timeUnit
-    : undefined;
-
-  const {
-    getAbbreviationOrLabelByValue: getXAbbreviationOrLabel,
-    getValue: getX,
-    getLabel: getXLabel,
-  } = useDimensionWithAbbreviations(xDimension, {
+  const bandXVariables = useBandXVariables(x, {
+    dimensions,
     observations,
-    field: x,
   });
-
-  const getXAsDate = useTemporalVariable(fields.x.componentIri);
-  const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const yErrorMeasure = useErrorMeasure(props, fields.y.componentIri);
-  const getYErrorRange = useErrorRange(yErrorMeasure, getY);
-  const getYError = useErrorVariable(yErrorMeasure);
-  const showYStandardError = get(fields, ["y", "showStandardError"], true);
+  const numericalYVariables = useNumericalYVariables(y, {
+    measures,
+  });
+  const numericalYErrorVariables = useNumericalYErrorVariables(y, {
+    numericalYVariables,
+    dimensions,
+    measures,
+  });
 
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
@@ -88,19 +52,9 @@ export const useColumnsStateVariables = (
   );
 
   return {
-    xDimension,
-    getX,
-    getXAsDate,
-    getXAbbreviationOrLabel,
-    getXLabel,
-    xTimeUnit,
-    yMeasure,
-    getY,
-    showYStandardError,
-    yErrorMeasure,
-    getYError,
-    getYErrorRange,
-    yAxisLabel,
+    ...bandXVariables,
+    ...numericalYVariables,
+    ...numericalYErrorVariables,
     getRenderingKey,
   };
 };
@@ -123,18 +77,13 @@ export const useColumnsStateData = (
       getY,
     });
   }, [plottableData, x, getX, getY]);
-  const { chartData, scalesData, segmentData } = useChartData(
-    sortedPlottableData,
-    {
-      chartConfig,
-      getXAsDate,
-    }
-  );
+  const data = useChartData(sortedPlottableData, {
+    chartConfig,
+    getXAsDate,
+  });
 
   return {
-    chartData,
-    scalesData,
-    segmentData,
+    ...data,
     allData: sortedPlottableData,
   };
 };

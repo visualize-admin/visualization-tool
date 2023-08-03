@@ -415,6 +415,13 @@ const EncodingOptionsPanel = ({
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
 
+      {fieldDimension &&
+        field === "animation" &&
+        isAnimationInConfig(state.chartConfig) &&
+        state.chartConfig.fields.animation && (
+          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        )}
+
       <ChartFieldMultiFilter
         state={state}
         component={component}
@@ -423,13 +430,6 @@ const EncodingOptionsPanel = ({
         dimensions={dimensions}
         measures={measures}
       />
-
-      {fieldDimension &&
-        field === "animation" &&
-        isAnimationInConfig(state.chartConfig) &&
-        state.chartConfig.fields.animation && (
-          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
-        )}
     </div>
   );
 };

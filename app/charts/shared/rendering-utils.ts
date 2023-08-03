@@ -5,7 +5,7 @@ import {
   Filters,
   InteractiveFiltersConfig,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { Observation, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const TRANSITION_DURATION = 400;
@@ -27,7 +27,7 @@ export const useRenderingKeyVariable = (
       .map((d) => d[0]);
 
     if (interactiveFiltersConfig) {
-      const { dataFilters, legend, timeRange } = interactiveFiltersConfig;
+      const { dataFilters, legend } = interactiveFiltersConfig;
 
       if (dataFilters.componentIris.length > 0) {
         keysToRemove.push(...dataFilters.componentIris);
@@ -36,10 +36,6 @@ export const useRenderingKeyVariable = (
       if (legend.componentIri) {
         keysToRemove.push(legend.componentIri);
       }
-
-      if (timeRange.componentIri) {
-        keysToRemove.push(timeRange.componentIri);
-      }
     }
 
     if (animationField) {
@@ -47,6 +43,7 @@ export const useRenderingKeyVariable = (
     }
 
     return dimensions
+      .filter((d) => !isStandardErrorDimension(d))
       .map((d) => d.iri)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);

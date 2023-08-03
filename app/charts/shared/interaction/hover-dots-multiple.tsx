@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { Fragment } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 

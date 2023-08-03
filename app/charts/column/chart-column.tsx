@@ -18,7 +18,11 @@ import {
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { ColumnConfig, DataSource, QueryFilters } from "@/config-types";
@@ -85,7 +89,7 @@ export const ChartColumnsVisualization = ({
 
 export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
 
   return (
     <>
@@ -100,21 +104,24 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
-          <LegendColor
-            symbol="square"
-            interactive={
-              fields.segment && interactiveFiltersConfig?.legend.active
-            }
-          />
-          {fields.animation && (
-            <TimeSlider
-              componentIri={fields.animation.componentIri}
-              dimensions={dimensions}
-              showPlayButton={fields.animation.showPlayButton}
-              animationDuration={fields.animation.duration}
-              animationType={fields.animation.type}
+          <ChartControlsContainer>
+            {fields.animation && (
+              <TimeSlider
+                componentIri={fields.animation.componentIri}
+                filters={filters}
+                dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
+              />
+            )}
+            <LegendColor
+              symbol="square"
+              interactive={
+                fields.segment && interactiveFiltersConfig?.legend.active
+              }
             />
-          )}
+          </ChartControlsContainer>
         </StackedColumnsChart>
       ) : fields.segment?.componentIri && fields.segment.type === "grouped" ? (
         <GroupedColumnChart aspectRatio={0.4} {...props}>
@@ -130,21 +137,24 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             </ChartSvg>
             <Tooltip type="multiple" />
           </ChartContainer>
-          <LegendColor
-            symbol="square"
-            interactive={
-              fields.segment && interactiveFiltersConfig?.legend.active
-            }
-          />
-          {fields.animation && (
-            <TimeSlider
-              componentIri={fields.animation.componentIri}
-              dimensions={dimensions}
-              showPlayButton={fields.animation.showPlayButton}
-              animationDuration={fields.animation.duration}
-              animationType={fields.animation.type}
+          <ChartControlsContainer>
+            {fields.animation && (
+              <TimeSlider
+                componentIri={fields.animation.componentIri}
+                filters={filters}
+                dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
+              />
+            )}
+            <LegendColor
+              symbol="square"
+              interactive={
+                fields.segment && interactiveFiltersConfig?.legend.active
+              }
             />
-          )}
+          </ChartControlsContainer>
         </GroupedColumnChart>
       ) : (
         <ColumnChart aspectRatio={0.4} {...props}>
@@ -161,13 +171,16 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             <Tooltip type="single" />
           </ChartContainer>
           {fields.animation && (
-            <TimeSlider
-              componentIri={fields.animation.componentIri}
-              dimensions={dimensions}
-              showPlayButton={fields.animation.showPlayButton}
-              animationDuration={fields.animation.duration}
-              animationType={fields.animation.type}
-            />
+            <ChartControlsContainer>
+              <TimeSlider
+                componentIri={fields.animation.componentIri}
+                filters={filters}
+                dimensions={dimensions}
+                showPlayButton={fields.animation.showPlayButton}
+                animationDuration={fields.animation.duration}
+                animationType={fields.animation.type}
+              />
+            </ChartControlsContainer>
           )}
         </ColumnChart>
       )}

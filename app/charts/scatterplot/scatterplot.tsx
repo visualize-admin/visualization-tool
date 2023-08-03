@@ -1,11 +1,13 @@
 import { select } from "d3";
 import React from "react";
 
+import {
+  RenderDatum,
+  renderCircles,
+} from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useTheme } from "@/themes";
-
-import { RenderDatum, renderCircles } from "./rendering-utils";
 
 export const Scatterplot = () => {
   const {

@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.4.0";
+export const CHART_CONFIG_VERSION = "1.4.1";
 
 type Migration = {
   description: string;
@@ -530,6 +530,56 @@ const migrations: Migration[] = [
           } else {
             draft.interactiveFiltersConfig.timeSlider = { componentIri: "" };
           }
+        });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL
+    interactiveFiltersConfig {
+      timeRange {
+        componentIri is tied to x.componentIri
+      }
+    }`,
+    from: "1.4.0",
+    to: "1.4.1",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.4.1" };
+
+      const { fields, interactiveFiltersConfig } = newConfig;
+      const { x } = fields;
+
+      if (interactiveFiltersConfig) {
+        const { timeRange } = interactiveFiltersConfig;
+
+        newConfig = produce(newConfig, (draft: any) => {
+          if (
+            ["area", "column", "line"].includes(draft.chartType) &&
+            timeRange.active
+          ) {
+            draft.interactiveFiltersConfig.timeRange = {
+              ...timeRange,
+              componentIri: x.componentIri,
+            };
+          }
+        });
+      }
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.4.0" };
+
+      const { interactiveFiltersConfig } = config;
+
+      if (interactiveFiltersConfig) {
+        newConfig = produce(newConfig, (draft: any) => {
+          draft.interactiveFiltersConfig.timeRange = {
+            ...draft.interactiveFiltersConfig.timeRange,
+            componentIri: "",
+          };
         });
       }
 

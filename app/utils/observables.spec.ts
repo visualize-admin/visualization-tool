@@ -5,10 +5,11 @@ describe("Timeline", () => {
   const [min, max] = [values[0], values[values.length - 1]];
   const formatValue = (d: number) => `${d}ms`;
   const timeline = new Timeline({
-    type: "continuous",
+    type: "interval",
+    animationType: "continuous",
     msDuration: 1000,
     msValues: values,
-    formatMsValue: formatValue,
+    formatValue,
   });
 
   beforeEach(() => timeline.setProgress(0));

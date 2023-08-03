@@ -13,7 +13,8 @@ import type { AreasState } from "@/charts/area/areas-state";
 import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
-import { useChartState } from "@/charts/shared/use-chart-state";
+import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observation } from "@/domain/data";
@@ -46,10 +47,8 @@ export const BrushTime = () => {
     brushHandleFillColor,
     labelFontSize,
   } = useChartTheme();
-  const { chartType, xEntireScale, bounds } = useChartState() as
-    | LinesState
-    | AreasState
-    | ColumnsState;
+  const { chartType, bounds, interactiveXTimeRangeScale } =
+    useChartState() as ChartWithInteractiveXTimeRangeState;
   const { getX, allDataWide } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
   const getDate = chartType === "column" ? getXAsDate : getX;
@@ -58,11 +57,14 @@ export const BrushTime = () => {
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
-    estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), labelFontSize) *
+    estimateTextWidth(
+      formatDateAuto(interactiveXTimeRangeScale.domain()[0]),
+      labelFontSize
+    ) *
       2 +
     20;
   const brushWidth = width - brushLabelsWidth - margins.right;
-  const brushWidthScale = xEntireScale.copy();
+  const brushWidthScale = interactiveXTimeRangeScale.copy();
 
   brushWidthScale.range([0, brushWidth]);
 
@@ -302,14 +304,10 @@ export const BrushTime = () => {
   // without transition
   useEffect(() => {
     const g = select(ref.current);
-    // Happens when transitioning from e.g. '2010-2020' to '1990-2000';
-    // the selection is then changed to the full extent
-    const identical = closestFrom.getTime() === closestTo.getTime();
     const defaultSelection = [
-      brushWidthScale(identical ? minBrushDomainValue : closestFrom),
-      brushWidthScale(identical ? maxBrushDomainValue : closestTo),
+      brushWidthScale(minBrushDomainValue),
+      brushWidthScale(maxBrushDomainValue),
     ];
-
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,
       defaultSelection

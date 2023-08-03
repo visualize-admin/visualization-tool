@@ -1,20 +1,19 @@
 import { Box, Typography } from "@mui/material";
 import { hcl } from "d3";
-import * as React from "react";
 import {
-  createContext,
   Dispatch,
   ReactNode,
+  createContext,
   useContext,
   useMemo,
   useState,
 } from "react";
 
 import { MapState } from "@/charts/map/map-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";

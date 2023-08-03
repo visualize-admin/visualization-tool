@@ -126,6 +126,16 @@ export const getScaleType = (
     : undefined;
 };
 
+const getDataKind = (term: Term | undefined) => {
+  return term?.equals(ns.time.GeneralDateTimeDescription)
+    ? "Time"
+    : term?.equals(ns.schema.GeoCoordinates)
+    ? "GeoCoordinates"
+    : term?.equals(ns.schema.GeoShape)
+    ? "GeoShape"
+    : undefined;
+};
+
 export const parseDimensionDatatype = (dim: CubeDimension) => {
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
@@ -275,13 +285,7 @@ export const parseCubeDimension = ({
         ? parseInt(dimensionUnit?.currencyExponent?.value)
         : undefined,
       order,
-      dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
-        ? "Time"
-        : dataKindTerm?.equals(ns.schema.GeoCoordinates)
-        ? "GeoCoordinates"
-        : dataKindTerm?.equals(ns.schema.GeoShape)
-        ? "GeoShape"
-        : undefined,
+      dataKind: getDataKind(dataKindTerm),
       timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
       timeFormat: timeFormats.get(dataType?.value ?? ""),
       scaleType: getScaleType(dim),

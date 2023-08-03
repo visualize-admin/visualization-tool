@@ -27,10 +27,28 @@ abstract class Observable {
   };
 }
 
+export type TimelineProps =
+  | {
+      // Usual timeline based on the time dimension.
+      type: "interval";
+      animationType: AnimationType;
+      msDuration: number;
+      msValues: number[];
+      formatValue: (d: number) => string;
+    }
+  | {
+      // Special timeline for ordinal temporal dimensions,
+      // where the values are not continuous.
+      type: "ordinal";
+      animationType: AnimationType;
+      msDuration: number;
+      sortedData: string[];
+    };
+
 /** Observable timeline which encloses animation state and logic. */
 export class Timeline extends Observable {
-  /** */
-  private type: AnimationType;
+  public type: "interval" | "ordinal";
+  private animationType: AnimationType;
 
   // Animation state.
   public playing = false;
@@ -43,6 +61,7 @@ export class Timeline extends Observable {
   private t: number | undefined;
 
   // Timeline state.
+  private values: (number | string)[];
   /** Miliseconds mapped to a timeline. */
   private msValues: number[];
   /** Based on current progress. */
@@ -55,25 +74,34 @@ export class Timeline extends Observable {
   /** msValues converted to relative values (0-1). */
   private msRelativeValues: number[];
   // Formatting utils (msValue => Date). Useful for rendering.
-  private formatMsValue: (d: number) => string;
+  private formatValue: (d: number) => string;
   private formattedMsExtent: [min: string, max: string];
 
-  constructor({
-    type,
-    msDuration,
-    msValues,
-    formatMsValue,
-  }: {
-    type: AnimationType;
-    msDuration: number;
-    msValues: number[];
-    formatMsValue: (d: number) => string;
-  }) {
+  constructor(props: TimelineProps) {
     super();
 
+    const { type, animationType, msDuration } = props;
     this.type = type;
+
+    let formatValue: (d: number) => string;
+
+    switch (props.type) {
+      case "interval":
+        formatValue = props.formatValue;
+        this.msValues = props.msValues.sort(ascending);
+        this.values = this.msValues;
+        break;
+      case "ordinal":
+        formatValue = (d: number) => {
+          return props.sortedData[Math.round(d / 1000)];
+        };
+        this.msValues = props.sortedData.map((_, i) => i * 1000);
+        this.values = props.sortedData;
+        break;
+    }
+
+    this.animationType = animationType;
     this.animationDuration = msDuration;
-    this.msValues = msValues.sort(ascending);
     const [min, max] = [
       this.msValues[0],
       this.msValues[this.msValues.length - 1],
@@ -83,8 +111,8 @@ export class Timeline extends Observable {
     this.maxMsValue = max;
     this.msValueScale = this.msValueScale.range([min, max]);
     this.msRelativeValues = this.msValues.map(this.msValueScale.invert);
-    this.formatMsValue = formatMsValue;
-    this.formattedMsExtent = [min, max].map(formatMsValue) as [string, string];
+    this.formatValue = formatValue;
+    this.formattedMsExtent = [min, max].map(formatValue) as [string, string];
   }
 
   public getUpdateKey = () => {
@@ -147,7 +175,7 @@ export class Timeline extends Observable {
   public setProgress = (progress: number, triggeredByAnimation = false) => {
     let value: number;
 
-    switch (this.type) {
+    switch (this.animationType) {
       case "continuous":
         this.animationProgress = progress;
         value = progress;
@@ -185,11 +213,13 @@ export class Timeline extends Observable {
   }
 
   get value() {
-    return this.msValue;
+    return this.type === "interval"
+      ? this.msValue
+      : this.values[Math.round(this.msValue / 1000)];
   }
 
   get formattedValue() {
-    return this.formatMsValue(this.msValue);
+    return this.formatValue(this.msValue);
   }
 
   get formattedExtent() {
@@ -198,7 +228,7 @@ export class Timeline extends Observable {
 
   /** Timeline progress (0-1) (mapped to track background color of Slider). */
   get progress() {
-    switch (this.type) {
+    switch (this.animationType) {
       case "continuous":
         return this.animationProgress;
       case "stepped":

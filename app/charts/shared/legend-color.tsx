@@ -1,13 +1,13 @@
+import { t } from "@lingui/macro";
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
 import { memo, useMemo } from "react";
 
-import {
-  ColorsChartState,
-  useChartState,
-} from "@/charts/shared/use-chart-state";
+import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
+import { rgbArrayToHex } from "@/charts/shared/colors";
+import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
@@ -26,11 +26,9 @@ import {
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { interlace } from "@/utils/interlace";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-
-import { rgbArrayToHex } from "./colors";
-import { getLegendGroups } from "./legend-color-helpers";
 
 type LegendSymbol = "square" | "line" | "circle";
 
@@ -44,7 +42,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: "1rem 1.5rem",
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-    gridTemplateRows: "repeat(4, auto)",
     gridAutoFlow: "row dense",
   },
   legendContainerNoGroups: {
@@ -195,13 +192,13 @@ const useLegendGroups = ({
   return groups;
 };
 
-export const LegendColor = memo(function LegendColor({
-  symbol,
-  interactive,
-}: {
+type LegendColorProps = {
   symbol: LegendSymbol;
   interactive?: boolean;
-}) {
+};
+
+export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
+  const { symbol, interactive } = props;
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ values });
@@ -272,21 +269,18 @@ export const MapLegendColor = memo(function LegendColor({
   );
 });
 
-const LegendColorContent = ({
-  groups,
-  getColor,
-  getLabel,
-  symbol,
-  interactive,
-  numberOfOptions,
-}: {
+type LegendColorContentProps = {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
-}) => {
+};
+
+const LegendColorContent = (props: LegendColorContentProps) => {
+  const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
+    props;
   const classes = useStyles();
   const [state, dispatch] = useInteractiveFilters();
   const { categories } = state;
@@ -295,7 +289,10 @@ const LegendColorContent = ({
     return new Set(Object.keys(categories));
   }, [categories]);
 
+  const soleItemChecked = activeInteractiveFilters.size === numberOfOptions - 1;
+
   const handleToggle: CheckboxProps["onChange"] = useEvent((ev) => {
+    const disabled = soleItemChecked && !ev.target.checked;
     const item = ev.target.value;
 
     if (activeInteractiveFilters.has(item)) {
@@ -303,7 +300,7 @@ const LegendColorContent = ({
         type: "REMOVE_INTERACTIVE_FILTER",
         value: item,
       });
-    } else if (activeInteractiveFilters.size < numberOfOptions - 1) {
+    } else if (!disabled) {
       dispatch({
         type: "ADD_INTERACTIVE_FILTER",
         value: item,
@@ -315,7 +312,7 @@ const LegendColorContent = ({
     <Flex
       className={clsx(
         classes.legendContainer,
-        groups.length === 1 ? classes.legendContainerNoGroups : undefined
+        groups.length === 1 && classes.legendContainerNoGroups
       )}
     >
       {groups
@@ -342,19 +339,23 @@ const LegendColorContent = ({
                     )}
                   </Typography>
                 ) : null}
-                {colorValues.map((d, i) => (
-                  <LegendItem
-                    key={`${d}_${i}`}
-                    item={getLabel(d)}
-                    color={getColor(d)}
-                    symbol={symbol}
-                    interactive={interactive}
-                    onToggle={handleToggle}
-                    checked={
-                      interactive && !activeInteractiveFilters.has(getLabel(d))
-                    }
-                  />
-                ))}
+                {colorValues.map((d, i) => {
+                  const label = getLabel(d);
+                  const active = !activeInteractiveFilters.has(label);
+
+                  return (
+                    <LegendItem
+                      key={`${d}_${i}`}
+                      item={label}
+                      color={getColor(d)}
+                      symbol={symbol}
+                      interactive={interactive}
+                      onToggle={handleToggle}
+                      checked={interactive && active}
+                      disabled={soleItemChecked && active}
+                    />
+                  );
+                })}
               </div>
             );
           })
@@ -363,35 +364,47 @@ const LegendColorContent = ({
   );
 };
 
-export const LegendItem = ({
-  item,
-  color,
-  symbol,
-  interactive,
-  onToggle,
-  checked,
-}: {
+type LegendItemProps = {
   item: string;
   color: string;
   symbol: LegendSymbol;
   interactive?: boolean;
   onToggle?: CheckboxProps["onChange"];
   checked?: boolean;
-}) => {
+  disabled?: boolean;
+};
+
+export const LegendItem = (props: LegendItemProps) => {
+  const { item, color, symbol, interactive, onToggle, checked, disabled } =
+    props;
   const classes = useItemStyles({ symbol, color });
+
   return (
     <>
       {interactive && onToggle ? (
-        <Checkbox
-          label={item}
-          name={item}
-          value={item}
-          checked={checked !== undefined ? checked : true}
-          onChange={onToggle}
-          key={item}
-          color={color}
-          className={classes.legendCheckbox}
-        />
+        <MaybeTooltip
+          text={
+            disabled
+              ? t({
+                  id: "controls.filters.interactive.color.min-1-filter",
+                  message: "At least one filter must be selected.",
+                })
+              : undefined
+          }
+        >
+          <div>
+            <Checkbox
+              label={item}
+              name={item}
+              value={item}
+              checked={checked !== undefined ? checked : true}
+              onChange={onToggle}
+              key={item}
+              color={color}
+              className={classes.legendCheckbox}
+            />
+          </div>
+        </MaybeTooltip>
       ) : (
         <Flex data-testid="legendItem" className={classes.legendItem}>
           {item}

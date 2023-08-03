@@ -13,6 +13,7 @@ const ComponentType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
   t.literal("TemporalDimension"),
+  t.literal("TemporalOrdinalDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;
@@ -644,6 +645,16 @@ export const isAnimationInConfig = (
     chartConfig.chartType === "scatterplot" ||
     chartConfig.chartType === "pie"
   );
+};
+
+export const getAnimationField = (
+  chartConfig: ChartConfig
+): AnimationField | undefined => {
+  if (isAnimationInConfig(chartConfig)) {
+    return chartConfig.fields.animation;
+  }
+
+  return undefined;
 };
 
 export const isColorFieldInConfig = (

@@ -490,6 +490,35 @@ export type TemporalDimensionHierarchyArgs = {
   sourceUrl: Scalars['String'];
 };
 
+export type TemporalOrdinalDimension = Dimension & {
+  __typename?: 'TemporalOrdinalDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
+  isNumerical: Scalars['Boolean'];
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
+};
+
+
+export type TemporalOrdinalDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type TemporalOrdinalDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -601,6 +630,7 @@ export type ResolversTypes = ResolversObject<{
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
+  TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TimeUnit: TimeUnit;
   ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
   ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']>;
@@ -639,6 +669,7 @@ export type ResolversParentTypes = ResolversObject<{
   RawObservation: Scalars['RawObservation'];
   RelatedDimension: RelatedDimension;
   TemporalDimension: ResolvedDimension;
+  TemporalOrdinalDimension: ResolvedDimension;
   ValueIdentifier: Scalars['ValueIdentifier'];
   ValuePosition: Scalars['ValuePosition'];
 }>;
@@ -694,7 +725,7 @@ export type DatasetCountResolvers<ContextType = VisualizeGraphQLContext, ParentT
 }>;
 
 export type DimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'OrdinalMeasure' | 'TemporalDimension', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'GeoCoordinatesDimension' | 'GeoShapesDimension' | 'NominalDimension' | 'NumericalMeasure' | 'OrdinalDimension' | 'OrdinalMeasure' | 'TemporalDimension' | 'TemporalOrdinalDimension', ParentType, ContextType>;
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -909,6 +940,22 @@ export type TemporalDimensionResolvers<ContextType = VisualizeGraphQLContext, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type TemporalOrdinalDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['TemporalOrdinalDimension'] = ResolversParentTypes['TemporalOrdinalDimension']> = ResolversObject<{
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  isNumerical?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalOrdinalDimensionValuesArgs, 'sourceType' | 'sourceUrl'>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
+  hierarchy?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType, RequireFields<TemporalOrdinalDimensionHierarchyArgs, 'sourceType' | 'sourceUrl'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface ValueIdentifierScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ValueIdentifier'], any> {
   name: 'ValueIdentifier';
 }
@@ -944,6 +991,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   RawObservation?: GraphQLScalarType;
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
+  TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;
   ValueIdentifier?: GraphQLScalarType;
   ValuePosition?: GraphQLScalarType;
 }>;

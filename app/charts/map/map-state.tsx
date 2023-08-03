@@ -36,9 +36,8 @@ import {
   useOptionalNumericVariable,
   useStringVariable,
 } from "@/charts/shared/chart-helpers";
-import { CommonChartState } from "@/charts/shared/chart-state";
+import { ChartContext, CommonChartState } from "@/charts/shared/chart-state";
 import { colorToRgbArray } from "@/charts/shared/colors";
-import { ChartContext } from "@/charts/shared/use-chart-state";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import {
@@ -548,7 +547,10 @@ const useLayerState = ({
   const measureDimension = measures.find((d) => d.iri === measureIri);
 
   const errorDimension = findRelatedErrorDimension(measureIri, dimensions);
-  const errorMeasure = useErrorMeasure({ dimensions, measures }, measureIri);
+  const errorMeasure = useErrorMeasure(measureIri, {
+    dimensions,
+    measures,
+  });
   const getError = useErrorVariable(errorMeasure);
   const getFormattedError = makeErrorFormatter(
     getError,

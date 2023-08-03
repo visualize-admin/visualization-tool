@@ -46,3 +46,4 @@ generates:
         NominalDimension: "./shared-types#ResolvedDimension"
         OrdinalDimension: "./shared-types#ResolvedDimension"
         TemporalDimension: "./shared-types#ResolvedDimension"
+        TemporalOrdinalDimension: "./shared-types#ResolvedDimension"
