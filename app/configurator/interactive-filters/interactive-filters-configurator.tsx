@@ -1,17 +1,11 @@
 import { Trans } from "@lingui/macro";
-import get from "lodash/get";
-import { ReactNode, useCallback } from "react";
 
 import { getFieldComponentIri } from "@/charts";
-import {
-  ANIMATION_FIELD_SPEC,
-  chartConfigOptionsUISpec,
-} from "@/charts/chart-config-ui-options";
+import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
 import {
   ConfiguratorStateConfiguringChart,
   isAnimationInConfig,
 } from "@/config-types";
-import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
@@ -19,11 +13,6 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ControlTabField } from "@/configurator/components/field";
-import {
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
-import { isTemporalDimension } from "@/domain/data";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -40,7 +29,7 @@ export const InteractiveFiltersConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { chartType, fields } = chartConfig;
+  const { fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useComponentsQuery({
     variables: {
@@ -55,21 +44,12 @@ export const InteractiveFiltersConfigurator = ({
     const { dimensions, measures } = data.dataCubeByIri;
     const allComponents = [...dimensions, ...measures];
 
-    const xComponentIri = getFieldComponentIri(fields, "x");
-    const xComponent = allComponents.find((d) => d.iri === xComponentIri);
-
-    const canFilterTimeRange =
-      isTemporalDimension(xComponent) &&
-      chartConfigOptionsUISpec[chartType].interactiveFilters.includes(
-        "timeRange"
-      );
-
     const animationComponent = allComponents.find(
       (d) => d.iri === getFieldComponentIri(fields, "animation")
     );
     const canFilterAnimation = isAnimationInConfig(chartConfig);
 
-    if (!canFilterTimeRange && !canFilterAnimation) {
+    if (!canFilterAnimation) {
       return null;
     }
 
@@ -89,14 +69,6 @@ export const InteractiveFiltersConfigurator = ({
           </Trans>
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
-          {/* Time range */}
-          {canFilterTimeRange && (
-            <InteractiveFilterTabField
-              value="timeRange"
-              icon="time"
-              label={xComponent!.label}
-            />
-          )}
           {canFilterAnimation && (
             // Animation is technically a field, so we need to use an appropriate component.
             <ControlTabField
@@ -129,40 +101,4 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   }
-};
-
-const InteractiveFilterTabField = ({
-  value,
-  icon,
-  label,
-}: {
-  value: InteractiveFilterType;
-  icon: string;
-  label: ReactNode;
-}) => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-
-  const onClick = useCallback(() => {
-    dispatch({
-      type: "ACTIVE_FIELD_CHANGED",
-      value,
-    });
-  }, [dispatch, value]);
-
-  const checked = state.activeField === value;
-  const active = !!get(
-    state,
-    `chartConfig.interactiveFiltersConfig["${value}"].active`
-  );
-
-  return (
-    <OnOffControlTab
-      value={value}
-      label={label}
-      icon={icon}
-      checked={checked}
-      active={active}
-      onClick={onClick}
-    />
-  );
 };
