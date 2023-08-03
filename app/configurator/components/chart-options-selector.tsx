@@ -351,6 +351,7 @@ const EncodingOptionsPanel = ({
               />
             )}
             {optionsByField.calculation?.field === "calculation" &&
+              get(fields, "segment") &&
               get(fields, "segment.type") !== "grouped" && (
                 <ChartFieldCalculation />
               )}

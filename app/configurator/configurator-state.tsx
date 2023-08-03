@@ -855,9 +855,12 @@ export const handleChartFieldChanged = (
         draft.chartConfig.fields.segment = {
           componentIri,
           palette,
-          // Type exists only within column charts.
           ...(isColumnConfig(draft.chartConfig) && {
+            // Type exists only within column charts.
             type: "stacked",
+            calculation: "identity",
+          }),
+          ...(isAreaConfig(draft.chartConfig) && {
             calculation: "identity",
           }),
           sorting: DEFAULT_SORTING,
