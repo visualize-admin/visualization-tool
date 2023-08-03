@@ -1,5 +1,6 @@
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
+import keyBy from "lodash/keyBy";
 import {
   Cube,
   CubeDimension,
@@ -15,7 +16,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { PromiseValue, truthy } from "@/domain/types";
 import { pragmas } from "@/rdf/create-source";
 
-import { Filters } from "../configurator";
+import { FilterValueMulti, Filters } from "../configurator";
 import {
   DimensionValue,
   Observation,
@@ -504,7 +505,7 @@ export const getCubeObservations = async ({
     cache,
   });
 
-  const cubeDimensions = allResolvedDimensions.filter((d) => {
+  const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
         componentIris.includes(d.data.iri) ||
@@ -514,10 +515,11 @@ export const getCubeObservations = async ({
 
     return true;
   });
+  const resolvedDimensionsByIri = keyBy(resolvedDimensions, (d) => d.data.iri);
 
-  componentIris = cubeDimensions.map((d) => d.data.iri);
+  componentIris = resolvedDimensions.map((d) => d.data.iri);
 
-  const serverFilters: typeof filters = {};
+  const serverFilters: Record<string, FilterValueMulti> = {};
   let dbFilters: typeof filters = {};
 
   for (const [k, v] of Object.entries(filters || {})) {
@@ -542,8 +544,8 @@ export const getCubeObservations = async ({
 
   const observationDimensions = buildDimensions({
     cubeView,
-    dimensions: componentIris,
-    cubeDimensions,
+    dimensionIris: componentIris,
+    resolvedDimensions,
     cube,
     locale,
     observationFilters,
@@ -562,16 +564,49 @@ export const getCubeObservations = async ({
   });
 
   const serverFilter =
-    Object.keys(dbFilters).length > 0 ? makeServerFilter(dbFilters) : null;
+    Object.keys(serverFilters).length > 0
+      ? makeServerFilter(serverFilters)
+      : null;
   const filteredObservationsRaw: typeof observationsRaw = [];
   const observations: Observation[] = [];
-  const observationParser = parseObservation(cubeDimensions, raw);
+  const observationParser = parseObservation(resolvedDimensions, raw);
 
-  for (let or of observationsRaw) {
-    if (!serverFilter || serverFilter(or)) {
-      const obs = observationParser(or);
+  // As we keep unversioned values in the config, and fetch versioned values in the
+  // observations, we need to unversion the observations to match the filters.
+  const unversionedServerFilters = serverFilter
+    ? await unversionServerFilters(serverFilters, {
+        observationsRaw,
+        resolvedDimensionsByIri,
+        sparqlClient,
+        cache,
+      })
+    : null;
+
+  for (const d of observationsRaw) {
+    if (
+      !serverFilter ||
+      serverFilter(d) ||
+      (unversionedServerFilters &&
+        serverFilter({
+          ...d,
+          // Unversion the values to match the unversioned filters.
+          ...Object.entries(unversionedServerFilters).reduce(
+            (acc, [iri, values]) => {
+              const value = d[iri];
+              const unversionedValue = values[value.value].sameAs;
+
+              return {
+                ...acc,
+                [iri]: unversionedValue ?? value,
+              };
+            },
+            {}
+          ),
+        }))
+    ) {
+      const obs = observationParser(d);
       observations.push(obs);
-      filteredObservationsRaw.push(or);
+      filteredObservationsRaw.push(d);
     }
   }
 
@@ -582,25 +617,107 @@ export const getCubeObservations = async ({
   };
 };
 
-const makeServerFilter = (filters: Filters) => {
+const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
   const sets = new Map<string, Set<ObservationValue>>();
+
   for (const [iri, filter] of Object.entries(filters)) {
-    if (filter.type !== "multi") {
-      continue;
-    }
     const valueSet = new Set(Object.keys(filter.values));
     sets.set(iri, valueSet);
   }
 
-  return (or: RDFObservation) => {
+  return (d: RDFObservation) => {
     for (const [iri, valueSet] of sets.entries()) {
-      if (!valueSet.has(or[iri]?.value)) {
-        return false;
-      }
+      return valueSet.has(d[iri]?.value);
     }
+
     return true;
   };
 };
+
+const unversionServerFilters = async (
+  serverFilters: Record<string, FilterValueMulti>,
+  {
+    observationsRaw,
+    resolvedDimensionsByIri,
+    sparqlClient,
+    cache,
+  }: {
+    observationsRaw: RDFObservation[];
+    resolvedDimensionsByIri: Record<string, ResolvedDimension>;
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
+  const unversionedServerFilters = await Promise.all(
+    Object.keys(serverFilters).map(async (iri) => {
+      const resolvedDimension = resolvedDimensionsByIri[iri];
+
+      if (
+        resolvedDimension &&
+        dimensionIsVersioned(resolvedDimension.dimension)
+      ) {
+        const unversionedValues = await loadUnversionedResources({
+          ids: observationsRaw
+            .map((d) => rdf.namedNode(d[iri]?.value))
+            .filter(truthy),
+          sparqlClient,
+          cache,
+        });
+        const unversionedValuesByValue = keyBy(
+          unversionedValues,
+          (d) => d.iri.value
+        );
+
+        return [iri, unversionedValuesByValue] as const;
+      }
+    })
+  ).then((d) => d.filter(truthy));
+
+  return Object.fromEntries(unversionedServerFilters);
+};
+
+// Experimental method to unversion a dimension value locally. To be used / removed
+// once we have a confirmation from Zazuko that this works.
+// https://zulip.zazuko.com/#narrow/stream/32-bar-ld-ext/topic/unversioning.20dimension.20values
+// const unversionValue = (
+//   d: string,
+//   props: {
+//     resolvedDimension: ResolvedDimension;
+//   }
+// ) => {
+//   const { resolvedDimension } = props;
+//   const { cube, dimension } = resolvedDimension;
+
+//   // If dimension is versioned, the cube must be versioned too.
+//   if (dimensionIsVersioned(dimension)) {
+//     const versionedCubeIri = cube.term?.value ?? "";
+//     const unversionedCubeIri = versionedCubeIri
+//       .split("/")
+//       // Remove the version number.
+//       .slice(0, -1)
+//       .join("/");
+
+//     return `${unversionedCubeIri}/${d.replace(versionedCubeIri + "/", "")}`;
+//   }
+
+//   return d;
+// };
+
+// const unversioned = Object.fromEntries(
+//   Object.entries(d).map(([k, v]) => {
+//     const dim = cubeDimensionsByIri[k];
+
+//     if (dim) {
+//       const unversionedValue = unversionValue(v.value, {
+//         resolvedDimension: dim,
+//       });
+
+//       return [k, rdf.namedNode(unversionedValue)];
+//     }
+
+//     return [k, v];
+//   })
+// );
 
 export const hasHierarchy = (dim: CubeDimension) => {
   return (
@@ -794,16 +911,16 @@ function parseObservation(
 
 function buildDimensions({
   cubeView,
-  dimensions,
-  cubeDimensions,
+  dimensionIris,
+  resolvedDimensions,
   cube,
   locale,
   observationFilters,
   raw,
 }: {
   cubeView: View;
-  dimensions: Maybe<string[]>;
-  cubeDimensions: ResolvedDimension[];
+  dimensionIris: Maybe<string[]>;
+  resolvedDimensions: ResolvedDimension[];
   cube: Cube;
   locale: string;
   observationFilters: Filter[];
@@ -813,12 +930,12 @@ function buildDimensions({
     d.cubeDimensions.every(
       (cd) =>
         isObservationDimension(cd) &&
-        (dimensions ? dimensions.includes(cd.path.value) : true)
+        (dimensionIris ? dimensionIris.includes(cd.path.value) : true)
     )
   );
 
   // Find dimensions which are NOT literal
-  const namedDimensions = cubeDimensions.filter(
+  const namedDimensions = resolvedDimensions.filter(
     ({ data: { isLiteral } }) => !isLiteral
   );
 
