@@ -36,10 +36,33 @@ export const AxisWidthBand = () => {
       axis.tickFormat((d) => getXLabel(d));
     }
 
-    g.attr("data-testid", "axis-width-band")
-      .transition()
-      .duration(TRANSITION_DURATION)
-      .call(axis);
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr("data-testid", "axis-width-band")
+            .attr(
+              "transform",
+              `translate(${margins.left}, ${chartHeight + margins.top})`
+            )
+            .call(axis),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${margins.left}, ${chartHeight + margins.top})`
+              )
+              .call(axis)
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+      );
+
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
       "stroke",
@@ -60,12 +83,7 @@ export const AxisWidthBand = () => {
     }
   });
 
-  return (
-    <g
-      ref={ref}
-      transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
-    />
-  );
+  return <g ref={ref} />;
 };
 
 export const AxisWidthBandDomain = () => {
@@ -77,7 +95,37 @@ export const AxisWidthBandDomain = () => {
   const mkAxisDomain = (
     g: Selection<SVGGElement, unknown, null, undefined>
   ) => {
-    g.call(axisBottom(xScale).tickSizeOuter(0));
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr(
+              "transform",
+              `translate(${margins.left}, ${chartHeight + margins.top})`
+            )
+            .call((g) =>
+              g
+                .transition()
+                .duration(TRANSITION_DURATION)
+                .call(axisBottom(xScale).tickSizeOuter(0))
+            ),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${margins.left}, ${chartHeight + margins.top})`
+              )
+              .call(axisBottom(xScale).tickSizeOuter(0))
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+      );
+
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text").remove();
     g.select(".domain")
@@ -90,10 +138,5 @@ export const AxisWidthBandDomain = () => {
     mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
-  return (
-    <g
-      ref={ref}
-      transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
-    />
-  );
+  return <g ref={ref} />;
 };

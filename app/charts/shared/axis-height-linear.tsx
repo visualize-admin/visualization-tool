@@ -33,15 +33,38 @@ export const AxisHeightLinear = () => {
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.transition()
-      .duration(TRANSITION_DURATION)
-      .call(
-        axisLeft(yScale)
-          .ticks(ticks)
-          .tickSizeInner(-bounds.chartWidth)
-          .tickFormat(formatNumber)
-          .tickPadding(6)
+    const axis = axisLeft(yScale)
+      .ticks(ticks)
+      .tickSizeInner(-bounds.chartWidth)
+      .tickFormat(formatNumber)
+      .tickPadding(6);
+
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr(
+              "transform",
+              `translate(${bounds.margins.left}, ${bounds.margins.top})`
+            )
+            .call(axis),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${bounds.margins.left}, ${bounds.margins.top})`
+              )
+              .call(axis)
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
       );
+
     g.select(".domain").remove();
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
@@ -66,10 +89,7 @@ export const AxisHeightLinear = () => {
           <span style={{ fontSize: labelFontSize }}>{yAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
-      <g
-        ref={ref}
-        transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}
-      />
+      <g ref={ref} />
     </>
   );
 };
@@ -85,25 +105,50 @@ export const AxisHeightLinearDomain = () => {
   const mkAxisDomain = (
     g: Selection<SVGGElement, unknown, null, undefined>
   ) => {
-    g.call(axisLeft(yScale).tickSizeOuter(0));
+    const axis = axisLeft(yScale).tickSizeOuter(0);
+
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr(
+              "transform",
+              `translate(${bounds.margins.left}, ${bounds.margins.top})`
+            )
+            .call((g) =>
+              g.transition().duration(TRANSITION_DURATION).call(axis)
+            ),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${bounds.margins.left}, ${bounds.margins.top})`
+              )
+              .call((g) =>
+                g.transition().duration(TRANSITION_DURATION).call(axis)
+              )
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+      );
 
     g.select(".domain")
       .attr("data-name", "height-axis-domain")
       .attr("transform", `translate(${xScale(0 as $FixMe)}, 0)`)
       .attr("stroke", domainColor);
-
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text").remove();
   };
+
   useEffect(() => {
     const g = select(ref.current);
     mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
-  return (
-    <g
-      ref={ref}
-      transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}
-    />
-  );
+  return <g ref={ref} />;
 };

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatShortDateAuto } from "@/formatters";
 
@@ -14,9 +15,7 @@ const MAX_DATE_LABEL_LENGHT = 70;
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
   const formatDateAuto = useFormatShortDateAuto();
-
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
-
   const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
     useChartTheme();
 
@@ -31,11 +30,40 @@ export const AxisTime = () => {
   const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisBottom(xScale)
-        .ticks(ticks)
-        .tickFormat((x) => formatDateAuto(x as Date))
-    );
+    const axis = axisBottom(xScale)
+      .ticks(ticks)
+      .tickFormat((x) => formatDateAuto(x as Date));
+
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr(
+              "transform",
+              `translate(${bounds.margins.left}, ${
+                bounds.chartHeight + bounds.margins.top
+              })`
+            )
+            .call(axis),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${bounds.margins.left}, ${
+                  bounds.chartHeight + bounds.margins.top
+                })`
+              )
+              .call(axis)
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+      );
+
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
       "stroke",
@@ -52,14 +80,7 @@ export const AxisTime = () => {
     mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
-  return (
-    <g
-      ref={ref}
-      transform={`translate(${bounds.margins.left}, ${
-        bounds.chartHeight + bounds.margins.top
-      })`}
-    />
-  );
+  return <g ref={ref} />;
 };
 
 export const AxisTimeDomain = () => {
@@ -70,7 +91,39 @@ export const AxisTimeDomain = () => {
   const { domainColor } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(axisBottom(xScale).tickSizeOuter(0));
+    const axis = axisBottom(xScale).tickSizeOuter(0);
+
+    g.selectAll<SVGGElement, null>(".content")
+      .data([null])
+      .join(
+        (enter) =>
+          enter
+            .append("g")
+            .attr("class", "content")
+            .attr(
+              "transform",
+              `translate(${bounds.margins.left}, ${
+                bounds.chartHeight + bounds.margins.top
+              })`
+            )
+            .call(axis),
+        (update) =>
+          update.call((g) =>
+            g
+              .transition()
+              .duration(TRANSITION_DURATION)
+              .attr(
+                "transform",
+                `translate(${bounds.margins.left}, ${
+                  bounds.chartHeight + bounds.margins.top
+                })`
+              )
+              .call(axis)
+          ),
+        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+      );
+
+    g.call(axis);
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text").remove();
     g.select(".domain")
@@ -83,12 +136,5 @@ export const AxisTimeDomain = () => {
     mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
-  return (
-    <g
-      ref={ref}
-      transform={`translate(${bounds.margins.left}, ${
-        bounds.chartHeight + bounds.margins.top
-      })`}
-    />
-  );
+  return <g ref={ref} />;
 };

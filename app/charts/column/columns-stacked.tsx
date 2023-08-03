@@ -7,6 +7,7 @@ import {
   renderColumn,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);
@@ -37,13 +38,34 @@ export const ColumnsStacked = () => {
   React.useEffect(() => {
     if (ref.current) {
       select(ref.current)
-        .selectAll<SVGRectElement, RenderColumnDatum>("rect")
-        .data(renderData, (d) => d.key)
-        .call(renderColumn, y0);
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`),
+          (update) =>
+            update.call((g) =>
+              g
+                .transition()
+                .duration(TRANSITION_DURATION)
+                .attr("transform", `translate(${margins.left} ${margins.top})`)
+            ),
+          (exit) =>
+            exit.call((g) =>
+              g.transition().duration(TRANSITION_DURATION).remove()
+            )
+        )
+        .call((g) =>
+          g
+            .selectAll<SVGRectElement, RenderColumnDatum>("rect")
+            .data(renderData, (d) => d.key)
+            .call(renderColumn, y0)
+        );
     }
-  }, [renderData, y0]);
+  }, [renderData, y0, margins.left, margins.top]);
 
-  return (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
-  );
+  return <g ref={ref} />;
 };
