@@ -49,10 +49,10 @@ export const BrushTime = () => {
   } = useChartTheme();
   const { chartType, bounds, interactiveXTimeRangeScale } =
     useChartState() as ChartWithInteractiveXTimeRangeState;
-  const { getX, allDataWide } = useChartState() as LinesState | AreasState;
+  const { getX } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
   const getDate = chartType === "column" ? getXAsDate : getX;
-  const fullData = chartType === "column" ? allData : allDataWide;
+  const fullData = allData;
 
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;

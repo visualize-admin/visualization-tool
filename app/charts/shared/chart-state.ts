@@ -91,7 +91,7 @@ type NumericalValueGetter = (d: Observation) => number | null;
 
 type StringValueGetter = (d: Observation) => string;
 
-type TemporalValueGetter = (d: Observation) => Date;
+export type TemporalValueGetter = (d: Observation) => Date;
 
 export type RenderingVariables = {
   /** Optionally provide an option to pass a segment to the key.
