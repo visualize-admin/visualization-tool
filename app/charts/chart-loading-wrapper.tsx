@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import keyBy from "lodash/keyBy";
 import React from "react";
 import { UseQueryResponse } from "urql";
 
@@ -74,6 +75,8 @@ export const ChartLoadingWrapper = <
 
   if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
+    const dimensionsByIri = keyBy(dimensions, (d) => d.iri);
+    const measuresByIri = keyBy(measures, (d) => d.iri);
 
     return observations.length > 0 ? (
       <Box
@@ -91,7 +94,9 @@ export const ChartLoadingWrapper = <
         {React.createElement(Component, {
           observations,
           dimensions,
+          dimensionsByIri,
           measures,
+          measuresByIri,
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}

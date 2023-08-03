@@ -10,6 +10,7 @@ import { Slider as GenericSlider } from "@/components/form";
 import { AnimationField, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -78,7 +79,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
       new Set(
         chartState.allData
           .map((d) => d[component.iri])
-          .filter(Boolean) as string[]
+          .filter(truthy) as string[]
       )
     );
 

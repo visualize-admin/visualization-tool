@@ -20,15 +20,21 @@ export type PieStateVariables = NumericalYVariables &
 export const usePieStateVariables = (
   props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { y, segment, animation } = fields;
 
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 

@@ -23,18 +23,24 @@ export type ScatterplotStateVariables = NumericalXVariables &
 export const useScatterplotStateVariables = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
 ): ScatterplotStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
   const numericalXVariables = useNumericalXVariables(x, {
-    measures,
+    measuresByIri,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 

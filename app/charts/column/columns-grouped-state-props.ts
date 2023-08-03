@@ -32,16 +32,23 @@ export type ColumnsGroupedStateVariables = BandXVariables &
 export const useColumnsGroupedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsGroupedStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measures,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
   const bandXVariables = useBandXVariables(x, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
     numericalYVariables,
@@ -49,7 +56,7 @@ export const useColumnsGroupedStateVariables = (
     measures,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 

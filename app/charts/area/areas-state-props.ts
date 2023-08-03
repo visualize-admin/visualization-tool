@@ -23,18 +23,18 @@ export type AreasStateVariables = TemporalXVariables &
 export const useAreasStateVariables = (
   props: ChartProps<AreaConfig> & { aspectRatio: number }
 ): AreasStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensions,
+    dimensionsByIri,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 

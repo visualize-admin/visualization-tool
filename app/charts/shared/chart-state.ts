@@ -11,6 +11,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { ComponentsByIri } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -113,14 +114,14 @@ export type BandXVariables = {
 export const useBandXVariables = (
   x: GenericField,
   {
-    dimensions,
+    dimensionsByIri,
     observations,
   }: {
-    dimensions: DimensionMetadataFragment[];
+    dimensionsByIri: ComponentsByIri;
     observations: Observation[];
   }
 ): BandXVariables => {
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -158,9 +159,9 @@ export type TemporalXVariables = {
 
 export const useTemporalXVariables = (
   x: GenericField,
-  { dimensions }: { dimensions: DimensionMetadataFragment[] }
+  { dimensionsByIri }: { dimensionsByIri: ComponentsByIri }
 ): TemporalXVariables => {
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -187,9 +188,9 @@ export type NumericalXVariables = {
 
 export const useNumericalXVariables = (
   x: GenericField,
-  { measures }: { measures: DimensionMetadataFragment[] }
+  { measuresByIri }: { measuresByIri: ComponentsByIri }
 ): NumericalXVariables => {
-  const xMeasure = measures.find((d) => d.iri === x.componentIri);
+  const xMeasure = measuresByIri[x.componentIri];
   if (!xMeasure) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -216,9 +217,9 @@ export type NumericalYVariables = {
 
 export const useNumericalYVariables = (
   y: GenericField,
-  { measures }: { measures: DimensionMetadataFragment[] }
+  { measuresByIri }: { measuresByIri: ComponentsByIri }
 ): NumericalYVariables => {
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
+  const yMeasure = measuresByIri[y.componentIri];
   if (!yMeasure) {
     throw Error(`No dimension <${y.componentIri}> in cube!`);
   }
@@ -283,16 +284,14 @@ export type SegmentVariables = {
 export const useSegmentVariables = (
   segment: GenericField | undefined,
   {
-    dimensions,
+    dimensionsByIri,
     observations,
   }: {
-    dimensions: DimensionMetadataFragment[];
+    dimensionsByIri: ComponentsByIri;
     observations: Observation[];
   }
 ): SegmentVariables => {
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === segment?.componentIri
-  );
+  const segmentDimension = dimensionsByIri[segment?.componentIri ?? ""];
   const {
     getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
