@@ -1,4 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
+import keyBy from "lodash/keyBy";
 
 import { Columns, ErrorWhiskers } from "@/charts/column/columns";
 import { ColumnChart } from "@/charts/column/columns-state";
@@ -22,7 +23,10 @@ ${(
     <InteractiveFiltersProvider>
       <ColumnChart
         observations={columnObservations}
+        measures={columnMeasures}
+        measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
         dimensions={columnDimensions}
+        dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
         chartConfig={
           {
             chartType: "column",
@@ -49,7 +53,6 @@ ${(
             },
           } as unknown as ColumnConfig
         }
-        measures={columnMeasures}
         aspectRatio={0.4}
       >
         <ChartContainer>
