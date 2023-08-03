@@ -832,7 +832,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byTotalSize",
             }),
-            calculation: "identity",
+            calculation:
+              "calculation" in oldSegment ? oldSegment.calculation : "identity",
           };
         }
 
