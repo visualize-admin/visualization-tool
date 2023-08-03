@@ -4,8 +4,8 @@ import { ReactNode } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
-import { AreaConfig } from "@/configurator";
 import { HomepageSection } from "@/homepage/generic";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 export const Examples = ({
   headline,
@@ -52,7 +52,7 @@ export const Examples = ({
               it: "",
             },
           }}
-          chartConfig={{
+          chartConfig={migrateChartConfig({
             version: "1.2.1",
             fields: {
               x: {
@@ -125,7 +125,7 @@ export const Examples = ({
                 ],
               },
             },
-          }}
+          })}
           configKey={""}
         />
       </Example>
@@ -151,63 +151,61 @@ export const Examples = ({
               it: "",
             },
           }}
-          chartConfig={
-            {
-              version: "1.2.1",
-              fields: {
-                x: {
-                  componentIri: "http://www.w3.org/2006/time#Year",
-                },
-                y: {
-                  componentIri: "http://schema.org/amount",
-                },
-                segment: {
-                  palette: "category10",
-                  sorting: {
-                    sortingType: "byDimensionLabel",
-                    sortingOrder: "asc",
-                  },
-                  colorMapping: {
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC1":
-                      "#1f77b4",
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC2":
-                      "#ff7f0e",
-                  },
-                  componentIri:
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",
-                },
+          chartConfig={migrateChartConfig({
+            version: "1.2.1",
+            fields: {
+              x: {
+                componentIri: "http://www.w3.org/2006/time#Year",
               },
-              filters: {
-                "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
-                  type: "single",
-                  value:
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/Office/O7",
-                },
+              y: {
+                componentIri: "http://schema.org/amount",
               },
-              chartType: "area",
-              interactiveFiltersConfig: {
-                timeRange: {
-                  active: true,
-                  presets: {
-                    to: "2013-12-31T23:00:00.000Z",
-                    from: "1950-12-31T23:00:00.000Z",
-                    type: "range",
-                  },
-                  componentIri: "",
+              segment: {
+                palette: "category10",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
                 },
-                legend: {
-                  active: true,
-                  componentIri: "",
+                colorMapping: {
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC1":
+                    "#1f77b4",
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC2":
+                    "#ff7f0e",
                 },
-                dataFilters: {
-                  active: true,
-                  componentIris: [
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office",
-                  ],
-                },
+                componentIri:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",
               },
-            } as any as AreaConfig
-          }
+            },
+            filters: {
+              "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
+                type: "single",
+                value:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/Office/O7",
+              },
+            },
+            chartType: "area",
+            interactiveFiltersConfig: {
+              timeRange: {
+                active: true,
+                presets: {
+                  to: "2013-12-31T23:00:00.000Z",
+                  from: "1950-12-31T23:00:00.000Z",
+                  type: "range",
+                },
+                componentIri: "",
+              },
+              legend: {
+                active: true,
+                componentIri: "",
+              },
+              dataFilters: {
+                active: true,
+                componentIris: [
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office",
+                ],
+              },
+            },
+          })}
           configKey={""}
         />
       </Example>
