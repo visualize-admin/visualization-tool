@@ -30,7 +30,13 @@ export const AxisHeightLinear = () => {
 
   const ticks = getTickNumber(bounds.chartHeight);
 
-  const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
+  const {
+    labelColor,
+    labelFontSize,
+    axisLabelFontSize,
+    gridColor,
+    fontFamily,
+  } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const axis = axisLeft(yScale)
@@ -84,9 +90,9 @@ export const AxisHeightLinear = () => {
   return (
     <>
       {/* TODO: at some point it would make sense to allow wrapping */}
-      <foreignObject width="100%" height={labelFontSize * 2}>
+      <foreignObject width="100%" height={axisLabelFontSize * 2}>
         <OpenMetadataPanelWrapper dim={yMeasure as DimensionMetadataFragment}>
-          <span style={{ fontSize: labelFontSize }}>{yAxisLabel}</span>
+          <span style={{ fontSize: axisLabelFontSize }}>{yAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
       <g ref={ref} />

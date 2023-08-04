@@ -15,7 +15,13 @@ export const AxisWidthLinear = () => {
   const { xScale, bounds, xAxisLabel, xMeasure } =
     useChartState() as ScatterplotState;
   const { chartWidth, chartHeight, margins } = bounds;
-  const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
+  const {
+    labelColor,
+    labelFontSize,
+    axisLabelFontSize,
+    gridColor,
+    fontFamily,
+  } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
@@ -73,13 +79,13 @@ export const AxisWidthLinear = () => {
     <>
       <foreignObject
         x={margins.left}
-        y={margins.top + chartHeight + 20}
+        y={margins.top + chartHeight + 24}
         width={chartWidth}
-        height={labelFontSize * 2}
+        height={axisLabelFontSize * 2}
         style={{ textAlign: "right" }}
       >
         <OpenMetadataPanelWrapper dim={xMeasure as DimensionMetadataFragment}>
-          <span style={{ fontSize: labelFontSize }}>{xAxisLabel}</span>
+          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
       <g ref={ref} />
