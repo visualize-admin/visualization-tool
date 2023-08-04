@@ -67,7 +67,6 @@ export type AreasState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: Observation[];
     series: $FixMe[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -393,7 +392,6 @@ const useAreasState = (
     segments,
     colors,
     chartWideData,
-    allDataWide,
     series,
     getAnnotationInfo,
     ...variables,

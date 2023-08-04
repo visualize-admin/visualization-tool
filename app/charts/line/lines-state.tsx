@@ -58,7 +58,6 @@ export type LinesState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: Observation[];
     xKey: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -96,18 +95,6 @@ const useLinesState = (
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
-
-  const dataGroupedByX = useMemo(
-    () => group(chartData, getXAsString),
-    [chartData, getXAsString]
-  );
-
-  const allDataWide = getWideData({
-    dataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
 
   const preparedDataGroupedBySegment = useMemo(
     () => group(chartData, getSegment),
@@ -288,7 +275,6 @@ const useLinesState = (
     colors,
     grouped: preparedDataGroupedBySegment,
     chartWideData,
-    allDataWide,
     xKey,
     getAnnotationInfo,
     ...variables,

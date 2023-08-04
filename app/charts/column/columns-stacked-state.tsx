@@ -66,7 +66,6 @@ export type StackedColumnsState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (
       d: Observation,
@@ -93,14 +92,7 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const {
-    chartData,
-    scalesData,
-    segmentData,
-    timeRangeData,
-    allData,
-    plottableDataWide,
-  } = data;
+  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -523,7 +515,6 @@ const useColumnsStackedState = (
     segments,
     colors,
     chartWideData,
-    allDataWide: plottableDataWide,
     series,
     getAnnotationInfo,
     ...variables,
