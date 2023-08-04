@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import {
@@ -105,6 +105,17 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     () => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatch, interactiveCategoriesResetTrigger]
   );
+
+  // Calculation
+  const calculationType = interactiveFiltersConfig?.calculation.type;
+  React.useEffect(() => {
+    if (calculationType) {
+      dispatch({
+        type: "SET_CALCULATION_TYPE",
+        value: calculationType,
+      });
+    }
+  }, [calculationType, dispatch]);
 };
 
 export default useSyncInteractiveFilters;

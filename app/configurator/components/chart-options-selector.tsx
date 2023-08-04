@@ -741,7 +741,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
         <Trans id="controls.select.calculation.mode">Mode</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
-        <Flex sx={{ justifyContent: "flex-start" }}>
+        <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}
@@ -757,6 +757,14 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
             disabled={disabled}
           />
         </Flex>
+        <ChartOptionSwitchField
+          label={t({
+            id: "controls.calculation.allow-normalization",
+            message: "Allow normalization of the data",
+          })}
+          field={null}
+          path="interactiveFiltersConfig.calculation.active"
+        />
       </ControlSectionContent>
     </ControlSection>
   );

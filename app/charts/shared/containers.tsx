@@ -2,6 +2,7 @@ import { Box, BoxProps } from "@mui/material";
 import { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
+import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const { bounds } = useChartState();
@@ -15,8 +16,8 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 };
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
-  const { bounds } = useChartState();
-  const { width, height } = bounds;
+  const { bounds, interactiveFiltersConfig } = useChartState();
+  const { width, height, margins } = bounds;
 
   return (
     <svg
@@ -24,6 +25,15 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
       height={height}
       style={{ position: "absolute", left: 0, top: 0 }}
     >
+      {interactiveFiltersConfig?.calculation.active && (
+        <foreignObject
+          width={width - margins.right}
+          height="24"
+          style={{ textAlign: "right" }}
+        >
+          <CalculationToggle />
+        </foreignObject>
+      )}
       {children}
     </svg>
   );
@@ -31,6 +41,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
 
 export const ChartControlsContainer = (props: BoxProps) => {
   const { sx, ...rest } = props;
+
   return (
     <Box
       sx={{
