@@ -27,7 +27,7 @@ const computeChartPadding = (
 
   let bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
-    : 24;
+    : 30;
 
   if (bandDomain?.length) {
     bottom += max(bandDomain, (d) => estimateTextWidth(d) || 70)!;
@@ -72,13 +72,12 @@ export const getChartBounds = (
 ): Bounds => {
   const { left, top, right, bottom } = margins;
 
-  const height = width * aspectRatio;
   const chartWidth = width - left - right;
-  const chartHeight = height - top - bottom;
+  const chartHeight = chartWidth * aspectRatio;
 
   return {
     width,
-    height,
+    height: chartHeight + top + bottom,
     margins,
     chartWidth,
     chartHeight,

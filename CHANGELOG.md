@@ -30,7 +30,6 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Scatterplot X axis now correctly aligns its title in Safari
   - Interactive time range filter now respects the filter range set in the X field
   - Optional filter label is now correctly shown
-  - Chart aspect ratios are now correctly calculated and kept when data updates
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:
