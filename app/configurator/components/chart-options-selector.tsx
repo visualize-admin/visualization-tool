@@ -764,6 +764,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
           })}
           field={null}
           path="interactiveFiltersConfig.calculation.active"
+          disabled={disabled}
         />
       </ControlSectionContent>
     </ControlSection>
