@@ -34,6 +34,10 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     componentIris: [],
   },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
 };
 
 export const Docs = () => markdown`

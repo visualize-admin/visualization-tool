@@ -137,6 +137,8 @@ export const extractComponentIris = (chartConfig: ChartConfig) => {
         case "dataFilters":
           IFIris.push(...(v as InteractiveFiltersDataConfig).componentIris);
           break;
+        case "calculation":
+          break;
         default:
           const _exhaustiveCheck: never = k;
           return _exhaustiveCheck;

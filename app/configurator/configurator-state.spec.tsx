@@ -37,6 +37,7 @@ import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.jso
 import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import * as api from "@/utils/chart-config/api";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -707,7 +708,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   };
 
   it("should retain appropriate x & y fields and discard the others", () => {
-    runChecks(covid19ColumnChartConfig as ColumnConfig, xyChecks);
+    runChecks(migrateChartConfig(covid19ColumnChartConfig), xyChecks);
   });
 
   it("should retain appropriate segment fields and discard the others", () => {
