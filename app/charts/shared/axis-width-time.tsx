@@ -61,7 +61,7 @@ export const AxisTime = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.select(".domain").remove();
@@ -120,7 +120,7 @@ export const AxisTimeDomain = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.call(axis);

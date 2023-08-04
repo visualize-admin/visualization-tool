@@ -51,7 +51,7 @@ export const AxisWidthLinear = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
@@ -121,7 +121,7 @@ export const AxisWidthLinearDomain = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.selectAll(".tick line").remove();

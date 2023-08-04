@@ -62,7 +62,7 @@ export const AxisHeightLinear = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.select(".domain").remove();
@@ -134,7 +134,7 @@ export const AxisHeightLinearDomain = () => {
                 g.transition().duration(TRANSITION_DURATION).call(axis)
               )
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.select(".domain")

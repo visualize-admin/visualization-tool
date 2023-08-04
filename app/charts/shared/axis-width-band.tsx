@@ -60,7 +60,7 @@ export const AxisWidthBand = () => {
               )
               .call(axis)
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.select(".domain").remove();
@@ -123,7 +123,7 @@ export const AxisWidthBandDomain = () => {
               )
               .call(axisBottom(xScale).tickSizeOuter(0))
           ),
-        (exit) => exit.transition().duration(TRANSITION_DURATION).remove()
+        (exit) => exit.remove()
       );
 
     g.selectAll(".tick line").remove();
