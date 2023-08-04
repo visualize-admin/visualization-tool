@@ -242,10 +242,32 @@ const EncodingOptionsPanel = ({
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
-    x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
-    y: t({ id: "controls.select.measure", message: "Select a measure" }),
+  const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    x: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    y: t({
+      id: "controls.select.measure",
+      message: "Select a measure",
+    }),
+    segment: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    baseLayer: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    areaLayer: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    symbolLayer: t({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
@@ -334,6 +356,7 @@ const EncodingOptionsPanel = ({
               optional={encoding.optional}
               options={options}
             />
+
             {optionsByField.useAbbreviations && (
               <Box mt={3}>
                 <ChartFieldAbbreviations
@@ -342,6 +365,7 @@ const EncodingOptionsPanel = ({
                 />
               </Box>
             )}
+
             {encoding.options && (
               <ChartFieldOptions
                 disabled={!component}
@@ -350,11 +374,7 @@ const EncodingOptionsPanel = ({
                 chartType={chartType}
               />
             )}
-            {optionsByField.calculation?.field === "calculation" &&
-              get(fields, "segment") &&
-              get(fields, "segment.type") !== "grouped" && (
-                <ChartFieldCalculation />
-              )}
+
             {optionsByField.color?.field === "color" &&
               optionsByField.color.type === "palette" && (
                 <ColorPalette
@@ -366,6 +386,13 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       ) : null}
+
+      {optionsByField.calculation?.field === "calculation" &&
+        get(fields, "segment") && (
+          <ChartFieldCalculation
+            disabled={get(fields, "segment.type") === "grouped"}
+          />
+        )}
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" ? (
@@ -709,30 +736,29 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   const { disabled } = props;
 
   return (
-    <>
-      <FieldSetLegend
-        legendTitle={
-          <Trans id="controls.select.calculation">Calculation</Trans>
-        }
-        sx={{ mt: 2 }}
-      />
-      <Flex sx={{ justifyContent: "flex-start" }}>
-        <ChartOptionRadioField
-          label={getFieldLabel("identity")}
-          field="segment"
-          path="calculation"
-          value="identity"
-          disabled={disabled}
-        />
-        <ChartOptionRadioField
-          label={getFieldLabel("percent")}
-          field="segment"
-          path="calculation"
-          value="percent"
-          disabled={disabled}
-        />
-      </Flex>
-    </>
+    <ControlSection>
+      <SectionTitle disabled={disabled} iconName="normalize">
+        <Trans id="controls.select.calculation.mode">Mode</Trans>
+      </SectionTitle>
+      <ControlSectionContent component="fieldset">
+        <Flex sx={{ justifyContent: "flex-start" }}>
+          <ChartOptionRadioField
+            label={getFieldLabel("identity")}
+            field="segment"
+            path="calculation"
+            value="identity"
+            disabled={disabled}
+          />
+          <ChartOptionRadioField
+            label={getFieldLabel("percent")}
+            field="segment"
+            path="calculation"
+            value="percent"
+            disabled={disabled}
+          />
+        </Flex>
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 

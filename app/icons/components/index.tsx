@@ -80,6 +80,7 @@ import { default as MobileLandscape } from "@/icons/components/IcMobileLandscape
 import { default as MobilePortrait } from "@/icons/components/IcMobilePortrait";
 import { default as More } from "@/icons/components/IcMore";
 import { default as Next } from "@/icons/components/IcNext";
+import { default as Normalize } from "@/icons/components/IcNormalize";
 import { default as Numerical } from "@/icons/components/IcNumerical";
 import { default as Organisations } from "@/icons/components/IcOrganisations";
 import { default as Origin } from "@/icons/components/IcOrigin";
@@ -218,6 +219,7 @@ export const Icons = {
   mobilePortrait: MobilePortrait,
   more: More,
   next: Next,
+  normalize: Normalize,
   numerical: Numerical,
   organisations: Organisations,
   origin: Origin,

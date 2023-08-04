@@ -18,6 +18,10 @@ const fieldLabels = {
     id: "controls.animation",
     message: "Animation",
   }),
+  "controls.segment": defineMessage({
+    id: "controls.segment",
+    message: "Segmentation",
+  }),
   "controls.color": defineMessage({ id: "controls.color", message: "Color" }),
   "controls.title": defineMessage({ id: "controls.title", message: "Title" }),
   "controls.description": defineMessage({
@@ -94,11 +98,11 @@ const fieldLabels = {
   }),
   "controls.calculation.identity": defineMessage({
     id: "controls.calculation.identity",
-    message: "Identity",
+    message: "Absolute figures",
   }),
   "controls.calculation.percent": defineMessage({
     id: "controls.calculation.percent",
-    message: "Percent",
+    message: "Relative figures",
   }),
   "controls.imputation": defineMessage({
     id: "controls.imputation",
