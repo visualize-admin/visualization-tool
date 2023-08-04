@@ -1,4 +1,4 @@
-import { select } from "d3";
+import { Selection, select } from "d3";
 import React from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
@@ -9,6 +9,7 @@ import {
   renderWhisker,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 
 export const ErrorWhiskers = () => {
   const {
@@ -57,16 +58,43 @@ export const ErrorWhiskers = () => {
 
   React.useEffect(() => {
     if (ref.current && renderData) {
-      select(ref.current)
-        .selectAll<SVGGElement, RenderWhiskerDatum>("g")
-        .data(renderData, (d) => d.key)
-        .call(renderWhisker);
-    }
-  }, [renderData]);
+      const renderWhiskers = (
+        g: Selection<SVGGElement, null, SVGGElement, unknown>
+      ) => {
+        g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+          .data(renderData, (d) => d.key)
+          .call(renderWhisker);
+      };
 
-  return renderData ? (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
-  ) : null;
+      select(ref.current)
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`)
+              .call(renderWhiskers),
+          (update) =>
+            update
+              .call((g) =>
+                g
+                  .transition()
+                  .duration(TRANSITION_DURATION)
+                  .attr(
+                    "transform",
+                    `translate(${margins.left} ${margins.top})`
+                  )
+              )
+              .call(renderWhiskers),
+          (exit) => exit.remove()
+        )
+        .call(renderWhiskers);
+    }
+  }, [renderData, margins.left, margins.top]);
+
+  return renderData ? <g ref={ref} /> : null;
 };
 
 export const ColumnsGrouped = () => {
@@ -117,14 +145,40 @@ export const ColumnsGrouped = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      select(ref.current)
-        .selectAll<SVGRectElement, RenderColumnDatum>("rect")
-        .data(renderData, (d) => d.key)
-        .call(renderColumn, y0);
-    }
-  }, [renderData, y0]);
+      const renderColumns = (
+        g: Selection<SVGGElement, null, SVGGElement, unknown>
+      ) => {
+        g.selectAll<SVGRectElement, RenderColumnDatum>("rect")
+          .data(renderData, (d) => d.key)
+          .call(renderColumn, y0);
+      };
 
-  return (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
-  );
+      select(ref.current)
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`)
+              .call(renderColumns),
+          (update) =>
+            update
+              .call((g) =>
+                g
+                  .transition()
+                  .duration(TRANSITION_DURATION)
+                  .attr(
+                    "transform",
+                    `translate(${margins.left} ${margins.top})`
+                  )
+              )
+              .call(renderColumns),
+          (exit) => exit.remove()
+        );
+    }
+  }, [renderData, y0, margins.left, margins.top]);
+
+  return <g ref={ref} />;
 };

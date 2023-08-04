@@ -7,6 +7,7 @@ import {
 } from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useTheme } from "@/themes";
 
 export const Scatterplot = () => {
@@ -50,11 +51,33 @@ export const Scatterplot = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      select(ref.current).call(renderCircles, renderData);
+      select(ref.current)
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`)
+              .call(renderCircles, renderData),
+          (update) =>
+            update
+              .call((g) =>
+                g
+                  .transition()
+                  .duration(TRANSITION_DURATION)
+                  .attr(
+                    "transform",
+                    `translate(${margins.left} ${margins.top})`
+                  )
+              )
+              .call(renderCircles, renderData),
+          (exit) => exit.remove()
+        )
+        .call(renderCircles, renderData);
     }
-  }, [renderData]);
+  }, [renderData, margins.left, margins.top]);
 
-  return (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
-  );
+  return <g ref={ref} />;
 };

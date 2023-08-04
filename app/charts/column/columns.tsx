@@ -1,14 +1,15 @@
-import { select } from "d3";
+import { select, Selection } from "d3";
 import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
-  RenderColumnDatum,
-  RenderWhiskerDatum,
   renderColumn,
+  RenderColumnDatum,
   renderWhisker,
+  RenderWhiskerDatum,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
@@ -47,20 +48,43 @@ export const ErrorWhiskers = () => {
 
   React.useEffect(() => {
     if (ref.current && renderData) {
-      select(ref.current)
-        .selectAll<SVGGElement, RenderWhiskerDatum>("g")
-        .data(renderData, (d) => d.key)
-        .call(renderWhisker);
-    }
-  }, [renderData]);
+      const renderWhiskers = (
+        g: Selection<SVGGElement, null, SVGGElement, unknown>
+      ) => {
+        g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
+          .data(renderData, (d) => d.key)
+          .call(renderWhisker);
+      };
 
-  return renderData ? (
-    <g
-      id="whiskers"
-      ref={ref}
-      transform={`translate(${margins.left} ${margins.top})`}
-    />
-  ) : null;
+      select(ref.current)
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`)
+              .call(renderWhiskers),
+          (update) =>
+            update
+              .call((g) =>
+                g
+                  .transition()
+                  .duration(TRANSITION_DURATION)
+                  .attr(
+                    "transform",
+                    `translate(${margins.left} ${margins.top})`
+                  )
+              )
+              .call(renderWhiskers),
+          (exit) => exit.remove()
+        )
+        .call(renderWhiskers);
+    }
+  }, [renderData, margins.left, margins.top]);
+
+  return renderData ? <g id="whiskers" ref={ref} /> : null;
 };
 
 export const Columns = () => {
@@ -109,15 +133,41 @@ export const Columns = () => {
   ]);
 
   React.useEffect(() => {
-    if (ref.current) {
-      select(ref.current)
-        .selectAll<SVGRectElement, RenderColumnDatum>("rect")
+    const renderColumns = (
+      g: Selection<SVGGElement, null, SVGGElement, unknown>
+    ) => {
+      g.selectAll<SVGRectElement, RenderColumnDatum>("rect")
         .data(renderData, (d) => d.key)
         .call(renderColumn, y0);
-    }
-  }, [renderData, yScale, y0]);
+    };
 
-  return (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`} />
-  );
+    if (ref.current) {
+      select(ref.current)
+        .selectAll<SVGGElement, null>(".content")
+        .data([null])
+        .join(
+          (enter) =>
+            enter
+              .append("g")
+              .attr("class", "content")
+              .attr("transform", `translate(${margins.left} ${margins.top})`)
+              .call(renderColumns),
+          (update) =>
+            update
+              .call((g) =>
+                g
+                  .transition()
+                  .duration(TRANSITION_DURATION)
+                  .attr(
+                    "transform",
+                    `translate(${margins.left} ${margins.top})`
+                  )
+              )
+              .call(renderColumns),
+          (exit) => exit.remove()
+        );
+    }
+  }, [renderData, yScale, y0, margins.left, margins.top]);
+
+  return <g ref={ref} />;
 };

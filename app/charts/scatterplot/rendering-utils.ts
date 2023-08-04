@@ -1,4 +1,4 @@
-import { Selection } from "d3";
+import { BaseType, Selection } from "d3";
 
 import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 
@@ -10,7 +10,7 @@ export type RenderDatum = {
 };
 
 export const renderCircles = (
-  g: Selection<SVGGElement, unknown, null, unknown>,
+  g: Selection<SVGGElement, null, BaseType, unknown>,
   renderData: RenderDatum[]
 ) => {
   g.selectAll<SVGCircleElement, RenderDatum>("circle")
