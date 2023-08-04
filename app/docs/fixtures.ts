@@ -37,17 +37,33 @@ export const states: ConfiguratorState[] = [
           componentIri: "foo",
           sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
         },
-        y: { componentIri: "foo" },
+        y: {
+          componentIri: "foo",
+        },
       },
       filters: {},
       interactiveFiltersConfig: {
-        legend: { active: false, componentIri: "" },
+        legend: {
+          active: false,
+          componentIri: "",
+        },
         timeRange: {
           active: false,
           componentIri: "",
-          presets: { type: "range", from: "", to: "" },
+          presets: {
+            type: "range",
+            from: "",
+            to: "",
+          },
         },
-        dataFilters: { active: false, componentIris: [] },
+        dataFilters: {
+          active: false,
+          componentIris: [],
+        },
+        calculation: {
+          active: false,
+          type: "identity",
+        },
       },
     },
     meta: {

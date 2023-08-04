@@ -27,7 +27,11 @@ import {
 } from "@/charts/shared/chart-state";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
-import { useTableStateData } from "@/charts/table/table-state-props";
+import {
+  TableStateVariables,
+  useTableStateData,
+  useTableStateVariables,
+} from "@/charts/table/table-state-props";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -106,6 +110,7 @@ export type TableChartState = CommonChartState & {
 
 const useTableState = (
   chartProps: ChartProps<TableConfig>,
+  variables: TableStateVariables,
   data: ChartStateData
 ): TableChartState => {
   const { chartConfig, dimensions, measures } = chartProps;
@@ -404,6 +409,7 @@ const useTableState = (
     groupingIris,
     hiddenIris,
     sortingIris,
+    ...variables,
   };
 };
 
@@ -411,8 +417,9 @@ const TableChartProvider = (
   props: React.PropsWithChildren<ChartProps<TableConfig>>
 ) => {
   const { children, ...chartProps } = props;
+  const variables = useTableStateVariables(chartProps);
   const data = useTableStateData(chartProps);
-  const state = useTableState(chartProps, data);
+  const state = useTableState(chartProps, variables, data);
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

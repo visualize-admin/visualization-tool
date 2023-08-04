@@ -33,6 +33,10 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/column/constants";
+import {
+  getChartBounds,
+  useChartPadding,
+} from "@/charts/shared/chart-dimensions";
 import { getWideData, normalizeData } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -40,13 +44,12 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { flag } from "@/flags";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -67,7 +70,6 @@ export type StackedColumnsState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (
       d: Observation,
@@ -80,7 +82,6 @@ const useColumnsStackedState = (
   variables: ColumnsStackedStateVariables,
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
-  const normalize = flag("normalize");
   const { aspectRatio, chartConfig } = chartProps;
   const {
     xDimension,
@@ -95,19 +96,13 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const {
-    chartData,
-    scalesData,
-    segmentData,
-    timeRangeData,
-    allData,
-    plottableDataWide,
-  } = data;
+  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
+  const [IFState] = useInteractiveFilters();
 
   const xKey = fields.x.componentIri;
 
@@ -118,13 +113,13 @@ const useColumnsStackedState = (
   }, [segmentDimension?.values]);
 
   const sumsBySegment = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
-      ),
-    ]);
+      )
+    );
   }, [getSegment, getY, scalesData]);
 
   const segmentFilter = segmentDimension?.iri
@@ -162,15 +157,16 @@ const useColumnsStackedState = (
   ]);
 
   const sumsByX = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
-      ),
-    ]);
+      )
+    );
   }, [getX, getY, scalesData]);
 
+  const normalize = IFState.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
@@ -375,12 +371,11 @@ const useColumnsStackedState = (
       .offset(stackOffsetDiverging)
       .keys(segments);
 
-    const series = stacked(
+    return stacked(
       chartWideData as {
         [key: string]: number;
       }[]
     );
-    return series;
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
@@ -390,24 +385,17 @@ const useColumnsStackedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels
+    xDomainLabels,
+    normalize
   );
-
   const margins = {
     top: 50,
     right: 40,
     bottom: bottom + BOTTOM_MARGIN_OFFSET,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
@@ -522,7 +510,6 @@ const useColumnsStackedState = (
     segments,
     colors,
     chartWideData,
-    allDataWide: plottableDataWide,
     series,
     getAnnotationInfo,
     ...variables,

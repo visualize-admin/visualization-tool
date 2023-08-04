@@ -26,6 +26,7 @@ import {
 } from "@/charts/area/areas-state-props";
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import {
   getWideData,
   normalizeData,
@@ -40,10 +41,10 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { flag } from "@/flags";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -68,7 +69,6 @@ export type AreasState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: Observation[];
     series: $FixMe[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -78,7 +78,6 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const normalize = flag("normalize");
   const { chartConfig, aspectRatio } = chartProps;
   const {
     xDimension,
@@ -97,8 +96,8 @@ const useAreasState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
+  const [IFState] = useInteractiveFilters();
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -116,13 +115,13 @@ const useAreasState = (
     : undefined;
 
   const sumsBySegment = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         segmentData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getSegment(x)
-      ),
-    ]);
+      )
+    );
   }, [segmentData, getY, getSegment]);
 
   const { allSegments, segments } = useMemo(() => {
@@ -177,15 +176,16 @@ const useAreasState = (
   );
 
   const sumsByX = useMemo(() => {
-    return Object.fromEntries([
-      ...rollup(
+    return Object.fromEntries(
+      rollup(
         scalesData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getXAsString(x)
-      ),
-    ]);
+      )
+    );
   }, [getXAsString, getY, scalesData]);
 
+  const normalize = IFState.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
@@ -204,7 +204,7 @@ const useAreasState = (
   }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
 
   const chartWideData = React.useMemo(() => {
-    const wideData = getWideData({
+    return getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
       getY,
@@ -212,8 +212,6 @@ const useAreasState = (
       allSegments: segments,
       imputationType: fields.y.imputationType,
     });
-
-    return wideData;
   }, [
     getSegment,
     getY,
@@ -310,6 +308,8 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
+  const estimateNumberWidth = (d: number) =>
+    estimateTextWidth(formatNumber(d) + (normalize ? "%" : ""));
   const [yMin, yMax] = yScale.domain();
   const left = interactiveFiltersConfig?.timeRange.active
     ? estimateNumberWidth(entireMaxTotalValue)
@@ -317,22 +317,14 @@ const useAreasState = (
   const bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
     : 40;
-
   const margins = {
     top: 50,
     right: 40,
     bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
 
   /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);
@@ -394,7 +386,6 @@ const useAreasState = (
     segments,
     colors,
     chartWideData,
-    allDataWide,
     series,
     getAnnotationInfo,
     ...variables,

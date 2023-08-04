@@ -3,10 +3,12 @@ import React from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
+  BaseVariables,
   ChartStateData,
   NumericalYVariables,
   SegmentVariables,
   TemporalXVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYVariables,
   useSegmentVariables,
@@ -17,29 +19,32 @@ import { Observation } from "@/domain/data";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type LinesStateVariables = TemporalXVariables &
+export type LinesStateVariables = BaseVariables &
+  TemporalXVariables &
   NumericalYVariables &
   SegmentVariables;
 
 export const useLinesStateVariables = (
   props: ChartProps<LineConfig> & { aspectRatio: number }
 ): LinesStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const { chartConfig, observations, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
-    dimensions,
+    dimensionsByIri,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 
   return {
+    ...baseVariables,
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,

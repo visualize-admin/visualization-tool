@@ -1,15 +1,25 @@
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 
-import { FilterValueSingle } from "@/configurator";
+import { CalculationType, FilterValueSingle } from "@/configurator";
 
 export type InteractiveFiltersState = {
-  categories: { [x: string]: boolean };
-  timeRange: { from: Date | undefined; to: Date | undefined };
+  categories: {
+    [x: string]: boolean;
+  };
+  timeRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
   timeSlider:
     | { type: "interval"; value: Date | undefined }
     | { type: "ordinal"; value: string | undefined };
-  dataFilters: { [x: string]: FilterValueSingle };
+  dataFilters: {
+    [x: string]: FilterValueSingle;
+  };
+  calculation: {
+    type: CalculationType | undefined;
+  };
 };
 
 type InteractiveFiltersStateAction =
@@ -56,6 +66,10 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";
+    }
+  | {
+      type: "SET_CALCULATION_TYPE";
+      value: CalculationType;
     };
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
@@ -63,6 +77,7 @@ const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   timeRange: { from: undefined, to: undefined },
   timeSlider: { type: "interval", value: undefined },
   dataFilters: {},
+  calculation: { type: undefined },
 };
 
 // Reducer
@@ -103,9 +118,11 @@ const InteractiveFiltersStateReducer = (
       };
 
       return draft;
-
     case "RESET_INTERACTIVE_CATEGORIES":
       draft.categories = {};
+      return draft;
+    case "SET_CALCULATION_TYPE":
+      draft.calculation.type = action.value;
       return draft;
 
     default:

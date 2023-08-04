@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
+  ANIMATION_FIELD_SPEC,
   chartConfigOptionsUISpec,
   EncodingFieldType,
   EncodingOption,
@@ -181,8 +182,17 @@ const ActiveFieldSwitch = ({
     return null;
   }
 
-  const encodings =
-    chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
+  const chartSpec = chartConfigOptionsUISpec[state.chartConfig.chartType];
+
+  // Animation field is a special field that is not part of the encodings,
+  // but rather is selected from interactive filters menu.
+  const animatable =
+    isAnimationInConfig(state.chartConfig) &&
+    chartSpec.interactiveFilters.includes("animation");
+  const baseEncodings = chartSpec.encodings;
+  const encodings = animatable
+    ? baseEncodings.concat(ANIMATION_FIELD_SPEC)
+    : baseEncodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;
@@ -232,10 +242,32 @@ const EncodingOptionsPanel = ({
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const fieldLabelHint: Partial<Record<EncodingFieldType, string>> = {
-    x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
-    y: t({ id: "controls.select.measure", message: "Select a measure" }),
+  const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    x: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    y: t({
+      id: "controls.select.measure",
+      message: "Select a measure",
+    }),
+    segment: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    baseLayer: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    areaLayer: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+    symbolLayer: t({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
@@ -324,7 +356,8 @@ const EncodingOptionsPanel = ({
               optional={encoding.optional}
               options={options}
             />
-            {optionsByField["useAbbreviations"] && (
+
+            {optionsByField.useAbbreviations && (
               <Box mt={3}>
                 <ChartFieldAbbreviations
                   field={field}
@@ -332,6 +365,7 @@ const EncodingOptionsPanel = ({
                 />
               </Box>
             )}
+
             {encoding.options && (
               <ChartFieldOptions
                 disabled={!component}
@@ -340,8 +374,9 @@ const EncodingOptionsPanel = ({
                 chartType={chartType}
               />
             )}
-            {optionsByField["color"]?.field === "color" &&
-              optionsByField["color"].type === "palette" && (
+
+            {optionsByField.color?.field === "color" &&
+              optionsByField.color.type === "palette" && (
                 <ColorPalette
                   disabled={!component}
                   field={field}
@@ -351,6 +386,13 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       ) : null}
+
+      {optionsByField.calculation?.field === "calculation" &&
+        get(fields, "segment") && (
+          <ChartFieldCalculation
+            disabled={get(fields, "segment.type") === "grouped"}
+          />
+        )}
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" ? (
@@ -365,35 +407,33 @@ const EncodingOptionsPanel = ({
         />
       )}
 
-      {optionsByField["size"]?.field === "size" && component && (
+      {optionsByField.size?.field === "size" && component && (
         <ChartFieldSize
           field={field}
-          componentTypes={optionsByField["size"].componentTypes}
+          componentTypes={optionsByField.size.componentTypes}
           dimensions={dimensions}
           measures={measures}
-          optional={optionsByField["size"].optional}
+          optional={optionsByField.size.optional}
         />
       )}
 
-      {optionsByField["color"]?.field === "color" &&
-        optionsByField["color"].type === "component" &&
+      {optionsByField.color?.field === "color" &&
+        optionsByField.color.type === "component" &&
         component && (
           <ChartFieldColorComponent
             state={state}
             chartConfig={state.chartConfig}
             field={encoding.field}
             component={component}
-            componentTypes={optionsByField["color"].componentTypes}
+            componentTypes={optionsByField.color.componentTypes}
             dimensions={dimensions}
             measures={measures}
-            optional={optionsByField["color"].optional}
-            enableUseAbbreviations={
-              optionsByField["color"].enableUseAbbreviations
-            }
+            optional={optionsByField.color.optional}
+            enableUseAbbreviations={optionsByField.color.enableUseAbbreviations}
           />
         )}
 
-      {optionsByField["showStandardError"] && hasStandardError && (
+      {optionsByField.showStandardError && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
@@ -411,16 +451,9 @@ const EncodingOptionsPanel = ({
         </ControlSection>
       )}
 
-      {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
+      {optionsByField.imputationType && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
-
-      {fieldDimension &&
-        field === "animation" &&
-        isAnimationInConfig(state.chartConfig) &&
-        state.chartConfig.fields.animation && (
-          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
-        )}
 
       <ChartFieldMultiFilter
         state={state}
@@ -430,6 +463,13 @@ const EncodingOptionsPanel = ({
         dimensions={dimensions}
         measures={measures}
       />
+
+      {fieldDimension &&
+        field === "animation" &&
+        isAnimationInConfig(state.chartConfig) &&
+        state.chartConfig.fields.animation && (
+          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        )}
     </div>
   );
 };
@@ -546,6 +586,34 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 />
               </Flex>
             </Box>
+            <Box sx={{ display: "flex", alignItems: "center", mt: 5 }}>
+              <ChartOptionSwitchField
+                label={t({
+                  id: "controls.section.animation.dynamic-scaling",
+                  message: "Dynamic Scaling",
+                })}
+                field="animation"
+                path="dynamicScales"
+              />
+              <Tooltip
+                arrow
+                title={t({
+                  id: "controls.section.animation.dynamic-scaling.explanation",
+                  message:
+                    "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization.",
+                })}
+              >
+                <Typography sx={{ ml: "-12px", color: "primary.main" }}>
+                  <SvgIcExclamation
+                    style={{
+                      transform: "scale(0.8)",
+                      width: 18,
+                      height: 18,
+                    }}
+                  />
+                </Typography>
+              </Tooltip>
+            </Box>
           </>
         )}
       </ControlSectionContent>
@@ -593,7 +661,11 @@ const ChartFieldMultiFilter = ({
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
         {isTemporalDimension(component) ? (
-          <TimeFilter key={component.iri} dimension={component} />
+          <TimeFilter
+            key={component.iri}
+            dimension={component}
+            disableInteractiveFilters={encoding.disableInteractiveFilters}
+          />
         ) : (
           component && (
             <DimensionValuesMultiFilter
@@ -639,20 +711,63 @@ const ChartFieldOptions = ({
                 label={getFieldLabel("stacked")}
                 field={field}
                 path="type"
-                value={"stacked"}
+                value="stacked"
                 disabled={disabled}
               />
               <ChartOptionRadioField
                 label={getFieldLabel("grouped")}
                 field={field}
                 path="type"
-                value={"grouped"}
+                value="grouped"
                 disabled={disabled}
               />
             </Flex>
           </Box>
         )}
     </>
+  );
+};
+
+type ChartFieldCalculationProps = {
+  disabled?: boolean;
+};
+
+const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
+  const { disabled } = props;
+
+  return (
+    <ControlSection>
+      <SectionTitle disabled={disabled} iconName="normalize">
+        <Trans id="controls.select.calculation.mode">Mode</Trans>
+      </SectionTitle>
+      <ControlSectionContent component="fieldset">
+        <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
+          <ChartOptionRadioField
+            label={getFieldLabel("identity")}
+            field={null}
+            path="interactiveFiltersConfig.calculation.type"
+            value="identity"
+            disabled={disabled}
+          />
+          <ChartOptionRadioField
+            label={getFieldLabel("percent")}
+            field={null}
+            path="interactiveFiltersConfig.calculation.type"
+            value="percent"
+            disabled={disabled}
+          />
+        </Flex>
+        <ChartOptionSwitchField
+          label={t({
+            id: "controls.calculation.allow-normalization",
+            message: "Allow normalization of the data",
+          })}
+          field={null}
+          path="interactiveFiltersConfig.calculation.active"
+          disabled={disabled}
+        />
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 

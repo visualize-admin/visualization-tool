@@ -46,6 +46,10 @@ const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
     componentIris: [col("3"), col("4")],
     active: false,
   },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
 };
 const commonInteractiveFiltersState: InteractiveFiltersState = {
   categories: {
@@ -64,6 +68,9 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
       type: "single",
       value: val("3", "1"),
     },
+  },
+  calculation: {
+    type: "identity",
   },
 };
 

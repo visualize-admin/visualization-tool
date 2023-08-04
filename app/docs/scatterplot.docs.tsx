@@ -1,4 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
+import keyBy from "lodash/keyBy";
 
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
@@ -33,6 +34,10 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     componentIris: [],
   },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
 };
 
 export const Docs = () => markdown`
@@ -62,7 +67,9 @@ ${(
         <ScatterplotChart
           observations={scatterplotObservations}
           dimensions={scatterplotDimensions}
+          dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
           measures={scatterplotMeasures}
+          measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
           chartConfig={
             { interactiveFiltersConfig } as unknown as ScatterPlotConfig
           }

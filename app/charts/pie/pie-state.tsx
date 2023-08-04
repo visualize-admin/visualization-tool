@@ -15,6 +15,7 @@ import {
   usePieStateData,
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
@@ -146,15 +147,8 @@ const usePieState = (
     bottom: 40,
     left: 40,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
 
   // Pie values
   const maxSide = Math.min(chartWidth, chartHeight) / 2;

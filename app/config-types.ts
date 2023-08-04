@@ -112,11 +112,23 @@ export type InteractiveFiltersDataConfig = t.TypeOf<
   typeof InteractiveFiltersDataConfig
 >;
 
+const CalculationType = t.union([t.literal("identity"), t.literal("percent")]);
+export type CalculationType = t.TypeOf<typeof CalculationType>;
+
+const InteractiveFiltersCalculation = t.type({
+  active: t.boolean,
+  type: CalculationType,
+});
+export type InteractiveFiltersCalculation = t.TypeOf<
+  typeof InteractiveFiltersCalculation
+>;
+
 const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
     timeRange: InteractiveFiltersTimeRange,
     dataFilters: InteractiveFiltersDataConfig,
+    calculation: InteractiveFiltersCalculation,
   }),
   t.undefined,
 ]);
@@ -166,8 +178,9 @@ const AnimationField = t.intersection([
   GenericField,
   t.type({
     showPlayButton: t.boolean,
-    duration: t.number,
     type: AnimationType,
+    duration: t.number,
+    dynamicScales: t.boolean,
   }),
 ]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
@@ -183,9 +196,7 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 const ColumnSegmentField = t.intersection([
   GenericSegmentField,
   SortingField,
-  t.type({
-    type: t.union([t.literal("stacked"), t.literal("grouped")]),
-  }),
+  t.type({ type: t.union([t.literal("grouped"), t.literal("stacked")]) }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -256,7 +267,6 @@ const AreaFields = t.intersection([
       t.partial({ imputationType: ImputationType }),
     ]),
   }),
-
   t.partial({
     segment: AreaSegmentField,
   }),
@@ -624,6 +634,17 @@ export const isMapConfig = (
   return chartConfig.chartType === "map";
 };
 
+export const canBeNormalized = (
+  chartConfig: ChartConfig
+): chartConfig is AreaConfig | ColumnConfig => {
+  return (
+    chartConfig.chartType === "area" ||
+    (chartConfig.chartType === "column" &&
+      chartConfig.fields.segment !== undefined &&
+      chartConfig.fields.segment.type === "stacked")
+  );
+};
+
 export const isSegmentInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is
@@ -714,6 +735,7 @@ type _InteractiveFiltersAdjusters = {
     };
   };
   dataFilters: FieldAdjuster<ChartConfig, InteractiveFiltersDataConfig>;
+  calculation: FieldAdjuster<ChartConfig, InteractiveFiltersCalculation>;
 };
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {

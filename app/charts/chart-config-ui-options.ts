@@ -24,6 +24,7 @@ export type EncodingFieldType =
 
 export type EncodingOption =
   | { field: "chartSubType" }
+  | { field: "calculation" }
   | { field: "color"; type: "palette" }
   | {
       field: "color";
@@ -54,6 +55,7 @@ export interface EncodingSpec {
   /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
   exclusive?: boolean;
   filters: boolean;
+  disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
   getWarnMessage?: (
@@ -62,8 +64,7 @@ export interface EncodingSpec {
 }
 
 // dataFilters is enabled by default
-// timeSlider is enabled dynamically based on availability of temporal dimensions
-type InteractiveFilterType = "legend" | "timeRange";
+type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
 export interface ChartSpec {
   chartType: ChartType;
@@ -109,11 +110,12 @@ export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-const ANIMATION_FIELD_SPEC: EncodingSpec = {
+export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   field: "animation",
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
+  disableInteractiveFilters: true,
   getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
     const noTemporalDimensions = !dimensions.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
@@ -150,6 +152,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
         options: [
+          { field: "calculation" },
           { field: "color", type: "palette" },
           { field: "imputationType" },
           { field: "useAbbreviations" },
@@ -195,13 +198,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType" },
+          { field: "calculation" },
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend", "timeRange"],
+    interactiveFilters: ["legend", "timeRange", "animation"],
   },
   line: {
     chartType: "line",
@@ -291,9 +294,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: [],
+    interactiveFilters: ["animation"],
   },
   pie: {
     chartType: "pie",
@@ -315,9 +317,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend"],
+    interactiveFilters: ["legend", "animation"],
   },
   scatterplot: {
     chartType: "scatterplot",
@@ -344,9 +345,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { field: "useAbbreviations" },
         ],
       },
-      ANIMATION_FIELD_SPEC,
     ],
-    interactiveFilters: ["legend"],
+    interactiveFilters: ["legend", "animation"],
   },
   table: {
     // TODO: Add abbreviations here.

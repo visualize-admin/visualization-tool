@@ -20,7 +20,7 @@
     }
   },
   "chartConfig": {
-    "version": "1.4.1",
+    "version": "1.4.2",
     "chartType": "map",
     "filters": {
       "https://environment.ld.admin.ch/foen/nfi/classificationUnit": {

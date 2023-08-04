@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { markdown, ReactSpecimen } from "catalog";
+import keyBy from "lodash/keyBy";
 import { ReactNode } from "react";
 
 import { ColumnChart } from "@/charts/column/columns-state";
@@ -36,7 +37,9 @@ ${(
       <ColumnChart
         observations={observations}
         measures={measures}
+        measuresByIri={keyBy(measures, (d) => d.iri)}
         dimensions={dimensions}
+        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={
           {
             fields,
@@ -183,7 +186,9 @@ ${(
       <ColumnChart
         observations={observations}
         measures={measures}
+        measuresByIri={keyBy(measures, (d) => d.iri)}
         dimensions={dimensions}
+        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={
           {
             fields,
@@ -226,7 +231,9 @@ ${(
       <ColumnChart
         observations={observations}
         measures={measures}
+        measuresByIri={keyBy(measures, (d) => d.iri)}
         dimensions={dimensions}
+        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={
           {
             fields,

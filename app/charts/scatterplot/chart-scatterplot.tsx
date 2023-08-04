@@ -107,18 +107,15 @@ export const ChartScatterplot = memo(
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
-                componentIri={fields.animation.componentIri}
                 filters={filters}
                 dimensions={dimensions}
-                showPlayButton={fields.animation.showPlayButton}
-                animationDuration={fields.animation.duration}
-                animationType={fields.animation.type}
+                {...fields.animation}
               />
             )}
             {fields.segment && (
               <LegendColor
                 symbol="circle"
-                interactive={interactiveFiltersConfig?.legend.active === true}
+                interactive={interactiveFiltersConfig?.legend.active}
               />
             )}
           </ChartControlsContainer>

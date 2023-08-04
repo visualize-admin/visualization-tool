@@ -11,6 +11,7 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { ComponentsByIri } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -25,6 +26,7 @@ import {
   ChartConfig,
   ChartType,
   GenericField,
+  InteractiveFiltersConfig,
   getAnimationField,
 } from "@/configurator";
 import {
@@ -67,6 +69,7 @@ export type CommonChartState = {
   chartData: Observation[];
   allData: Observation[];
   bounds: Bounds;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
 };
 
 export type ColorsChartState = Has<ChartState, "colors">;
@@ -91,7 +94,7 @@ type NumericalValueGetter = (d: Observation) => number | null;
 
 type StringValueGetter = (d: Observation) => string;
 
-type TemporalValueGetter = (d: Observation) => Date;
+export type TemporalValueGetter = (d: Observation) => Date;
 
 export type RenderingVariables = {
   /** Optionally provide an option to pass a segment to the key.
@@ -99,6 +102,16 @@ export type RenderingVariables = {
    * access the segment value from the data.
    */
   getRenderingKey: (d: Observation, segment?: string) => string;
+};
+
+export type BaseVariables = {
+  interactiveFiltersConfig: InteractiveFiltersConfig;
+};
+
+export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
+  return {
+    interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
+  };
 };
 
 export type BandXVariables = {
@@ -113,14 +126,14 @@ export type BandXVariables = {
 export const useBandXVariables = (
   x: GenericField,
   {
-    dimensions,
+    dimensionsByIri,
     observations,
   }: {
-    dimensions: DimensionMetadataFragment[];
+    dimensionsByIri: ComponentsByIri;
     observations: Observation[];
   }
 ): BandXVariables => {
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -158,9 +171,9 @@ export type TemporalXVariables = {
 
 export const useTemporalXVariables = (
   x: GenericField,
-  { dimensions }: { dimensions: DimensionMetadataFragment[] }
+  { dimensionsByIri }: { dimensionsByIri: ComponentsByIri }
 ): TemporalXVariables => {
-  const xDimension = dimensions.find((d) => d.iri === x.componentIri);
+  const xDimension = dimensionsByIri[x.componentIri];
   if (!xDimension) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -187,9 +200,9 @@ export type NumericalXVariables = {
 
 export const useNumericalXVariables = (
   x: GenericField,
-  { measures }: { measures: DimensionMetadataFragment[] }
+  { measuresByIri }: { measuresByIri: ComponentsByIri }
 ): NumericalXVariables => {
-  const xMeasure = measures.find((d) => d.iri === x.componentIri);
+  const xMeasure = measuresByIri[x.componentIri];
   if (!xMeasure) {
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
@@ -216,9 +229,9 @@ export type NumericalYVariables = {
 
 export const useNumericalYVariables = (
   y: GenericField,
-  { measures }: { measures: DimensionMetadataFragment[] }
+  { measuresByIri }: { measuresByIri: ComponentsByIri }
 ): NumericalYVariables => {
-  const yMeasure = measures.find((d) => d.iri === y.componentIri);
+  const yMeasure = measuresByIri[y.componentIri];
   if (!yMeasure) {
     throw Error(`No dimension <${y.componentIri}> in cube!`);
   }
@@ -283,16 +296,14 @@ export type SegmentVariables = {
 export const useSegmentVariables = (
   segment: GenericField | undefined,
   {
-    dimensions,
+    dimensionsByIri,
     observations,
   }: {
-    dimensions: DimensionMetadataFragment[];
+    dimensionsByIri: ComponentsByIri;
     observations: Observation[];
   }
 ): SegmentVariables => {
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === segment?.componentIri
-  );
+  const segmentDimension = dimensionsByIri[segment?.componentIri ?? ""];
   const {
     getAbbreviationOrLabelByValue: getSegmentAbbreviationOrLabel,
     abbreviationOrLabelLookup: segmentsByAbbreviationOrLabel,
@@ -411,6 +422,7 @@ export const useChartData = (
 
   // interactive time slider
   const animationField = getAnimationField(chartConfig);
+  const dynamicScales = animationField?.dynamicScales ?? true;
   const animationComponentIri = animationField?.componentIri ?? "";
   const getAnimationDate = useTemporalVariable(animationComponentIri);
   const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
@@ -469,10 +481,20 @@ export const useChartData = (
   ]);
 
   const scalesData = React.useMemo(() => {
-    return observations.filter(
-      overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
-    );
-  }, [observations, interactiveLegendFilters, interactiveTimeRangeFilters]);
+    if (dynamicScales) {
+      return chartData;
+    } else {
+      return observations.filter(
+        overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
+      );
+    }
+  }, [
+    dynamicScales,
+    chartData,
+    observations,
+    interactiveLegendFilters,
+    interactiveTimeRangeFilters,
+  ]);
 
   const segmentData = React.useMemo(() => {
     return observations.filter(overEvery(interactiveTimeRangeFilters));

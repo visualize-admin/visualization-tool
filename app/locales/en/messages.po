@@ -176,8 +176,8 @@ msgid "columnStyle.textStyle.regular"
 msgstr "Regular"
 
 #: app/configurator/interactive-filters/editor-time-brush.tsx
-msgid "controls..interactiveFilters.time.defaultSettings"
-msgstr "Default Settings"
+#~ msgid "controls..interactiveFilters.time.defaultSettings"
+#~ msgstr "Default Settings"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
@@ -202,6 +202,22 @@ msgstr "Horizontal Axis"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.axis.vertical"
 msgstr "Vertical Axis"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.calculation.allow-normalization"
+msgstr "Allow normalization of the data"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.identity"
+msgstr "Absolute figures"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.percent"
+msgstr "Relative figures"
+
+#: app/charts/shared/interactive-filter-calculation-toggle.tsx
+msgid "controls.calculation.show-in-percentage"
+msgstr "Show in %"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -339,10 +355,12 @@ msgstr "At least one filter must be selected."
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactive"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.tooltip"
 msgstr "Allow users to change filters"
@@ -369,10 +387,6 @@ msgstr "Selected filters"
 msgid "controls.filters.select.to"
 msgstr "To"
 
-#: app/configurator/interactive-filters/editor-time-interval-brush.tsx
-msgid "controls.filters.time.range"
-msgstr "Time Range"
-
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Drag and drop columns here to make groups."
@@ -398,12 +412,12 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.noTimeDimension"
-msgstr "There is no time dimension!"
+#~ msgid "controls.interactiveFilters.time.noTimeDimension"
+#~ msgstr "There is no time dimension!"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.toggleTimeFilter"
-msgstr "Show time filter"
+#~ msgid "controls.interactiveFilters.time.toggleTimeFilter"
+#~ msgstr "Show time filter"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -478,6 +492,14 @@ msgstr "Additional information"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Duration"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling"
+msgstr "Dynamic Scaling"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling.explanation"
+msgstr "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
@@ -555,7 +577,7 @@ msgstr "For this chart type, replacement values should be assigned to missing va
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Interactive Filters"
+msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -580,6 +602,14 @@ msgstr "Table Options"
 #: app/configurator/components/chart-annotator.tsx
 msgid "controls.section.title.warning"
 msgstr "Please add a title or description."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.segment"
+msgstr "Segmentation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.calculation.mode"
+msgstr "Mode"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
@@ -623,6 +653,10 @@ msgstr "Text Color"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Text Style"
 
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"

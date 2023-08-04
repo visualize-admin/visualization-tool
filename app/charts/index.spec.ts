@@ -110,6 +110,10 @@ describe("chart type switch", () => {
             "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           ],
         },
+        calculation: {
+          active: false,
+          type: "identity",
+        },
       },
     };
     const newConfig = getChartConfigAdjustedToChartType({

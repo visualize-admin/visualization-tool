@@ -30,6 +30,10 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
       to: "2021-01-12",
     },
   },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
 };
 
 const chartConfig = {

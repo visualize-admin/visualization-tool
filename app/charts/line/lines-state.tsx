@@ -20,6 +20,7 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import { getWideData } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -58,7 +59,6 @@ export type LinesState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
-    allDataWide: Observation[];
     xKey: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -96,18 +96,6 @@ const useLinesState = (
 
     return new Map(values.map((d) => [d.value, d]));
   }, [segmentDimension?.values]);
-
-  const dataGroupedByX = useMemo(
-    () => group(chartData, getXAsString),
-    [chartData, getXAsString]
-  );
-
-  const allDataWide = getWideData({
-    dataGroupedByX,
-    xKey,
-    getY,
-    getSegment,
-  });
 
   const preparedDataGroupedBySegment = useMemo(
     () => group(chartData, getSegment),
@@ -217,15 +205,9 @@ const useLinesState = (
     bottom: bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
+
   xScale.range([0, chartWidth]);
   interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
@@ -288,7 +270,6 @@ const useLinesState = (
     colors,
     grouped: preparedDataGroupedBySegment,
     chartWideData,
-    allDataWide,
     xKey,
     getAnnotationInfo,
     ...variables,

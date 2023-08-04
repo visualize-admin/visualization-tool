@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import keyBy from "lodash/keyBy";
 import React from "react";
 import { UseQueryResponse } from "urql";
 
@@ -72,6 +73,13 @@ export const ChartLoadingWrapper = <
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
 
+  const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
+    return {
+      dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
+      measuresByIri: keyBy(measures ?? [], (d) => d.iri),
+    };
+  }, [dimensions, measures]);
+
   if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
 
@@ -91,7 +99,9 @@ export const ChartLoadingWrapper = <
         {React.createElement(Component, {
           observations,
           dimensions,
+          dimensionsByIri,
           measures,
+          measuresByIri,
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}

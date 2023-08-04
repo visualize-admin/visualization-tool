@@ -15,6 +15,7 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
@@ -146,15 +147,9 @@ const useScatterplotState = (
     bottom: 50,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
+
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 

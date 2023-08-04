@@ -6,6 +6,7 @@ import sortBy from "lodash/sortBy";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   AreaSegmentField,
+  canBeNormalized,
   ChartConfig,
   ChartConfigsAdjusters,
   ChartSegmentField,
@@ -121,6 +122,10 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIris: [],
+    },
+    calculation: {
+      active: false,
+      type: "identity",
     },
   };
 };
@@ -440,9 +445,12 @@ export const getChartConfigAdjustedToChartType = ({
     dimensions,
     measures,
   });
+  const { interactiveFiltersConfig, ...rest } = chartConfig;
   const newChartConfig = getAdjustedChartConfig({
     path: "",
-    field: chartConfig,
+    // Make sure interactiveFiltersConfig is passed as the last item, so that
+    // it can be adjusted based on other, already adjusted fields.
+    field: { ...rest, interactiveFiltersConfig },
     adjusters: chartConfigsAdjusters[newChartType],
     pathOverrides: chartConfigsPathOverrides[newChartType][oldChartType],
     oldChartConfig: chartConfig,
@@ -479,28 +487,29 @@ const getAdjustedChartConfig = ({
   const isConfigLeaf = (path: string, configValue: any) => {
     if (typeof configValue !== "object" || Array.isArray(configValue)) {
       return true;
-    } else {
-      switch (path) {
-        case "fields":
-          return (
-            oldChartConfig.chartType === "table" &&
-            isSegmentInConfig(newChartConfig)
-          );
-        case "filters":
-        case "fields.segment":
-        case "fields.animation":
-        case "interactiveFiltersConfig.dataFilters":
-        case "interactiveFiltersConfig.legend":
-          return true;
-        default:
-          return false;
-      }
+    }
+
+    switch (path) {
+      case "fields":
+        return (
+          oldChartConfig.chartType === "table" &&
+          isSegmentInConfig(newChartConfig)
+        );
+      case "filters":
+      case "fields.segment":
+      case "fields.animation":
+      case "interactiveFiltersConfig.calculation":
+      case "interactiveFiltersConfig.dataFilters":
+      case "interactiveFiltersConfig.legend":
+        return true;
+      default:
+        return false;
     }
   };
 
   const go = ({ path, field }: { path: string; field: Object }) => {
     for (const [k, v] of Object.entries(field)) {
-      const newPath = path !== "" ? `${path}.${k}` : k;
+      const newPath = path === "" ? k : `${path}.${k}`;
 
       if (v !== undefined) {
         if (isConfigLeaf(newPath, v)) {
@@ -603,6 +612,20 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
             validComponentIris;
         } else {
           draft.interactiveFiltersConfig.dataFilters = oldValue;
+        }
+      }
+    });
+  },
+  calculation: ({ oldValue, newChartConfig }) => {
+    return produce(newChartConfig, (draft) => {
+      if (draft.interactiveFiltersConfig) {
+        if (canBeNormalized(newChartConfig)) {
+          draft.interactiveFiltersConfig.calculation = oldValue;
+        } else {
+          draft.interactiveFiltersConfig.calculation = {
+            active: false,
+            type: "identity",
+          };
         }
       }
     });

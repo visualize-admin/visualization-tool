@@ -59,8 +59,9 @@ import {
   moveFilterField,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
-import { flag } from "@/flags";
 import {
   HierarchyValue,
   PossibleFiltersDocument,
@@ -77,9 +78,6 @@ import {
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
-
-import { useInteractiveDataFilterToggle } from "../interactive-filters/interactive-filters-config-state";
-import { InteractiveFiltersConfigurator } from "../interactive-filters/interactive-filters-configurator";
 
 import { TitleAndDescriptionConfigurator } from "./chart-annotator";
 import { ChartTypeSelector } from "./chart-type-selector";
@@ -510,6 +508,7 @@ const InteractiveDataFilterCheckbox = ({
   ...props
 }: { value: string } & Omit<FormControlLabelProps, "control" | "label">) => {
   const { checked, toggle } = useInteractiveDataFilterToggle(value);
+
   return (
     <FormControlLabel
       componentsProps={{
@@ -628,7 +627,6 @@ export const ChartConfigurator = ({
             ) : null}
             <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
           </SectionTitle>
-
           <ControlSectionContent
             aria-labelledby="controls-data"
             data-testid="configurator-filters"
@@ -774,11 +772,9 @@ const ChartFields = (props: ChartFieldsProps) => {
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
-
-        const disabled = field === "animation" && !flag("timeslider");
         const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 
-        return disabled ? null : baseLayer ? (
+        return baseLayer ? (
           <OnOffControlTabField
             key={field}
             value={field}

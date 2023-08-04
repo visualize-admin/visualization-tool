@@ -10,8 +10,10 @@ import {
 } from "@/charts/shared/chart-helpers";
 import {
   AreaLayerVariables,
+  BaseVariables,
   ChartStateData,
   SymbolLayerVariables,
+  useBaseVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
 import { MapConfig } from "@/configurator";
@@ -28,7 +30,9 @@ import { GeoCoordinates } from "@/rdf/query-geo-coordinates";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type MapStateVariables = AreaLayerVariables & SymbolLayerVariables;
+export type MapStateVariables = BaseVariables &
+  AreaLayerVariables &
+  SymbolLayerVariables;
 
 export const useMapStateVariables = (
   chartProps: ChartProps<MapConfig>
@@ -36,6 +40,8 @@ export const useMapStateVariables = (
   const { chartConfig, observations, dimensions } = chartProps;
   const { fields } = chartConfig;
   const { areaLayer, symbolLayer } = fields;
+
+  const baseVariables = useBaseVariables(chartConfig);
 
   // TODO: add abbreviations
   const areaLayerDimension = dimensions.find(
@@ -70,6 +76,7 @@ export const useMapStateVariables = (
   );
 
   return {
+    ...baseVariables,
     areaLayerDimension,
     getArea,
     symbolLayerDimension,

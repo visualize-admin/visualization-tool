@@ -5,12 +5,14 @@ import React from "react";
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
+  BaseVariables,
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
   useBandXVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYErrorVariables,
   useNumericalYVariables,
@@ -23,7 +25,8 @@ import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ColumnsGroupedStateVariables = BandXVariables &
+export type ColumnsGroupedStateVariables = BaseVariables &
+  BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
   SegmentVariables &
@@ -32,16 +35,24 @@ export type ColumnsGroupedStateVariables = BandXVariables &
 export const useColumnsGroupedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsGroupedStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measures,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const numericalYErrorVariables = useNumericalYErrorVariables(y, {
     numericalYVariables,
@@ -49,7 +60,7 @@ export const useColumnsGroupedStateVariables = (
     measures,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 
@@ -61,6 +72,7 @@ export const useColumnsGroupedStateVariables = (
   );
 
   return {
+    ...baseVariables,
     ...bandXVariables,
     ...numericalYVariables,
     ...numericalYErrorVariables,

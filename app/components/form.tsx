@@ -20,6 +20,7 @@ import {
   Skeleton,
   SliderProps,
   Stack,
+  SxProps,
   Typography,
   TypographyProps,
   styled,
@@ -574,10 +575,12 @@ export const Switch = ({
   checked,
   disabled,
   onChange,
+  sx,
 }: {
   id?: string;
   label: React.ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
+  sx?: SxProps;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
 
@@ -600,7 +603,7 @@ export const Switch = ({
           onChange={onChange}
         />
       }
-      sx={{ fontSize: "0.875rem" }}
+      sx={{ fontSize: "0.875rem", ...sx }}
     />
   );
 };

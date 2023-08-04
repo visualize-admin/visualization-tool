@@ -1,10 +1,12 @@
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
+  BaseVariables,
   ChartStateData,
   NumericalXVariables,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
+  useBaseVariables,
   useChartData,
   useNumericalXVariables,
   useNumericalYVariables,
@@ -15,7 +17,8 @@ import { ScatterPlotConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ScatterplotStateVariables = NumericalXVariables &
+export type ScatterplotStateVariables = BaseVariables &
+  NumericalXVariables &
   NumericalYVariables &
   SegmentVariables &
   RenderingVariables;
@@ -23,18 +26,25 @@ export type ScatterplotStateVariables = NumericalXVariables &
 export const useScatterplotStateVariables = (
   props: ChartProps<ScatterPlotConfig> & { aspectRatio: number }
 ): ScatterplotStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const numericalXVariables = useNumericalXVariables(x, {
-    measures,
+    measuresByIri,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 
@@ -46,6 +56,7 @@ export const useScatterplotStateVariables = (
   );
 
   return {
+    ...baseVariables,
     ...numericalXVariables,
     ...numericalYVariables,
     ...segmentVariables,

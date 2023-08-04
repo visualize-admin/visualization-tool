@@ -49,10 +49,10 @@ export const BrushTime = () => {
   } = useChartTheme();
   const { chartType, bounds, interactiveXTimeRangeScale } =
     useChartState() as ChartWithInteractiveXTimeRangeState;
-  const { getX, allDataWide } = useChartState() as LinesState | AreasState;
+  const { getX } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
   const getDate = chartType === "column" ? getXAsDate : getX;
-  const fullData = chartType === "column" ? allData : allDataWide;
+  const fullData = allData;
 
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
@@ -224,55 +224,58 @@ export const BrushTime = () => {
   );
 
   useEffect(() => {
-    const g = select(ref.current);
-    const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-      g.call(brush);
-      g.select(".overlay")
-        .datum({ type: "selection" })
-        .attr("fill-opacity", 0)
-        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
-        .style("height", HANDLE_HEIGHT)
-        .on(
-          "mousedown touchstart",
-          (e) => {
-            const [[cx]] = pointers(e);
-            const x0 = cx - selectionExtent / 2;
-            const x1 = cx + selectionExtent / 2;
-            const overflowingLeft = x0 < 0;
-            const overflowingRight = x1 > brushWidth;
+    if (ref.current) {
+      const g = select<SVGGElement, unknown>(ref.current);
+      const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+        g.call(brush);
+        g.select(".overlay")
+          .datum({ type: "selection" })
+          .attr("fill-opacity", 0)
+          .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
+          .style("height", HANDLE_HEIGHT)
+          .on(
+            "mousedown touchstart",
+            (e) => {
+              const [[cx]] = pointers(e);
+              const x0 = cx - selectionExtent / 2;
+              const x1 = cx + selectionExtent / 2;
+              const overflowingLeft = x0 < 0;
+              const overflowingRight = x1 > brushWidth;
 
-            g.call(
-              brush.move,
-              overflowingLeft
-                ? [0, selectionExtent]
-                : overflowingRight
-                ? [brushWidth - selectionExtent, brushWidth]
-                : [x0, x1]
-            );
-          },
-          { passive: true }
-        );
-      g.select(".selection")
-        .attr("fill", brushSelectionColor)
-        .attr("fill-opacity", 1)
-        .attr("stroke", "none");
-      g.selectAll(".handle")
-        .attr("fill", brushHandleFillColor)
-        .attr("stroke", brushHandleStrokeColor)
-        .attr("stroke-width", 2)
-        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
-        .style("width", `${HANDLE_HEIGHT}px`)
-        .style("height", `${HANDLE_HEIGHT}px`)
-        .attr("rx", `${HANDLE_HEIGHT}px`);
+              g.call(
+                brush.move,
+                overflowingLeft
+                  ? [0, selectionExtent]
+                  : overflowingRight
+                  ? [brushWidth - selectionExtent, brushWidth]
+                  : [x0, x1]
+              );
+            },
+            { passive: true }
+          );
+        g.select(".selection")
+          .attr("fill", brushSelectionColor)
+          .attr("fill-opacity", 1)
+          .attr("stroke", "none");
+        g.selectAll(".handle")
+          .attr("fill", brushHandleFillColor)
+          .attr("stroke", brushHandleStrokeColor)
+          .attr("stroke-width", 2)
+          .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
+          .style("width", `${HANDLE_HEIGHT}px`)
+          .style("height", `${HANDLE_HEIGHT}px`)
+          .attr("rx", `${HANDLE_HEIGHT}px`);
 
-      g.select(".handle--w")
-        .attr("tabindex", 0)
-        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
-      g.select(".handle--e")
-        .attr("tabindex", 0)
-        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
-    };
-    mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
+        g.select(".handle--w")
+          .attr("tabindex", 0)
+          .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
+        g.select(".handle--e")
+          .attr("tabindex", 0)
+          .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
+      };
+
+      g.call(mkBrush);
+    }
   }, [
     brush,
     brushWidth,
@@ -304,10 +307,7 @@ export const BrushTime = () => {
   // without transition
   useEffect(() => {
     const g = select(ref.current);
-    const defaultSelection = [
-      brushWidthScale(minBrushDomainValue),
-      brushWidthScale(maxBrushDomainValue),
-    ];
+    const defaultSelection = [0, selectionExtent];
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,
       defaultSelection
@@ -318,16 +318,13 @@ export const BrushTime = () => {
 
   // This effect makes the brush responsive
   useEffect(() => {
-    const g = select(ref.current);
-
-    const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
-    (g as Selection<SVGGElement, unknown, null, undefined>).call(
-      brush.move,
-      coord
-    );
+    if (ref.current) {
+      const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
+      select<SVGGElement, unknown>(ref.current).call(brush.move, coord);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brushWidth, BRUSH_HEIGHT]);
+  }, [brushWidth]);
 
   return (
     <>

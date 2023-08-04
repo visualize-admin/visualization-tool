@@ -2,10 +2,10 @@ import { max } from "d3";
 import { useMemo } from "react";
 
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
+import { getTickNumber } from "@/charts/shared/ticks";
+import { Bounds, Margins } from "@/charts/shared/use-width";
 import { ChartConfig } from "@/configurator";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
-
-import { getTickNumber } from "./ticks";
 
 const computeChartPadding = (
   yScale: d3.ScaleLinear<number, number>,
@@ -13,7 +13,8 @@ const computeChartPadding = (
   aspectRatio: number,
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
-  bandDomain?: string[]
+  bandDomain?: string[],
+  normalize?: boolean
 ) => {
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
@@ -22,15 +23,19 @@ const computeChartPadding = (
   // since we do not have access to chartHeight yet.
   const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
   const left = Math.max(
-    ...fakeTicks.map((x) => estimateTextWidth(`${formatNumber(x)}`))
+    ...fakeTicks.map((x) =>
+      estimateTextWidth(`${formatNumber(x)}${normalize ? "%" : ""}`)
+    )
   );
 
   let bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
-    : 40;
-  if (bandDomain && bandDomain.length) {
+    : 30;
+
+  if (bandDomain?.length) {
     bottom += max(bandDomain, (d) => estimateTextWidth(d) || 70)!;
   }
+
   return { left, bottom };
 };
 
@@ -40,7 +45,8 @@ export const useChartPadding = (
   aspectRatio: number,
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
-  bandDomain?: string[]
+  bandDomain?: string[],
+  normalize?: boolean
 ) => {
   return useMemo(
     () =>
@@ -50,7 +56,8 @@ export const useChartPadding = (
         aspectRatio,
         interactiveFiltersConfig,
         formatNumber,
-        bandDomain
+        bandDomain,
+        normalize
       ),
     [
       yScale,
@@ -59,6 +66,26 @@ export const useChartPadding = (
       interactiveFiltersConfig,
       formatNumber,
       bandDomain,
+      normalize,
     ]
   );
+};
+
+export const getChartBounds = (
+  width: number,
+  margins: Margins,
+  aspectRatio: number
+): Bounds => {
+  const { left, top, right, bottom } = margins;
+
+  const chartWidth = width - left - right;
+  const chartHeight = chartWidth * aspectRatio;
+
+  return {
+    width,
+    height: chartHeight + top + bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
 };

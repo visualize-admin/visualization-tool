@@ -822,6 +822,7 @@ export const handleChartFieldChanged = (
         showPlayButton: true,
         duration: 30,
         type: "continuous",
+        dynamicScales: false,
       };
 
       // TODO: consolidate this in UI encodings?
@@ -854,8 +855,10 @@ export const handleChartFieldChanged = (
         draft.chartConfig.fields.segment = {
           componentIri,
           palette,
-          // Type exists only within column charts.
-          ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
+          ...(isColumnConfig(draft.chartConfig) && {
+            // Type exists only within column charts.
+            type: "stacked",
+          }),
           sorting: DEFAULT_SORTING,
           colorMapping,
         };
@@ -894,6 +897,8 @@ export const handleChartFieldChanged = (
           draft.chartConfig.fields.animation?.showPlayButton ?? true,
         duration: draft.chartConfig.fields.animation?.duration ?? 30,
         type: draft.chartConfig.fields.animation?.type ?? "continuous",
+        dynamicScales:
+          draft.chartConfig.fields.animation?.dynamicScales ?? false,
       };
 
       // TODO: consolidate this in UI encodings?
@@ -1083,6 +1088,19 @@ export const handleChartOptionChanged = (
             }
           }
         }
+      } else if (
+        action.value.path === "type" &&
+        action.value.value === "grouped"
+      ) {
+        setWith(
+          draft,
+          "chartConfig.interactiveFiltersConfig.calculation",
+          {
+            active: false,
+            type: "identity",
+          },
+          Object
+        );
       }
     }
 

@@ -1,17 +1,15 @@
-import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import {
-  brushX,
   CountableTimeInterval,
+  Selection,
+  brushX,
   pointer,
   scaleTime,
   select,
-  Selection,
 } from "d3";
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import Flex from "@/components/flex";
-import { Label } from "@/components/form";
 import { useTimeFormatUnit } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";
@@ -22,21 +20,24 @@ const HANDLE_OFFSET = HANDLE_SIZE / 8;
 const BRUSH_HEIGHT = 3;
 const MARGIN = HANDLE_SIZE / 2;
 
-export const EditorIntervalBrush = ({
-  timeExtent,
-  timeRange,
-  timeInterval,
-  timeUnit,
-  onChange,
-  disabled = false,
-}: {
+type EditorBrushProps = {
   timeExtent: Date[];
   timeRange: Date[];
   timeInterval: CountableTimeInterval;
   timeUnit: TimeUnit;
   onChange: (extent: Date[]) => void;
   disabled?: boolean;
-}) => {
+};
+
+export const EditorBrush = (props: EditorBrushProps) => {
+  const {
+    timeExtent,
+    timeRange,
+    timeInterval,
+    timeUnit,
+    onChange,
+    disabled = false,
+  } = props;
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
@@ -124,9 +125,6 @@ export const EditorIntervalBrush = ({
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Label smaller htmlFor="editor-brush">
-        <Trans id="controls.filters.time.range">Time Range</Trans>
-      </Label>
       <Box ref={resizeRef} id="editor-brush">
         {width > 0 && (
           <svg width={width} height={BRUSH_HEIGHT + MARGIN * 2}>

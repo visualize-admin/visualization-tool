@@ -1,9 +1,11 @@
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
+  BaseVariables,
   ChartStateData,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYVariables,
   useSegmentVariables,
@@ -13,22 +15,30 @@ import { PieConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type PieStateVariables = NumericalYVariables &
+export type PieStateVariables = BaseVariables &
+  NumericalYVariables &
   SegmentVariables &
   RenderingVariables;
 
 export const usePieStateVariables = (
   props: ChartProps<PieConfig> & { aspectRatio: number }
 ): PieStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { y, segment, animation } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 
@@ -40,6 +50,7 @@ export const usePieStateVariables = (
   );
 
   return {
+    ...baseVariables,
     ...numericalYVariables,
     ...segmentVariables,
     getRenderingKey,

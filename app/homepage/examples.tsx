@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { HomepageSection } from "@/homepage/generic";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 export const Examples = ({
   headline,
@@ -51,7 +52,7 @@ export const Examples = ({
               it: "",
             },
           }}
-          chartConfig={{
+          chartConfig={migrateChartConfig({
             version: "1.2.1",
             fields: {
               x: {
@@ -124,7 +125,7 @@ export const Examples = ({
                 ],
               },
             },
-          }}
+          })}
           configKey={""}
         />
       </Example>
@@ -150,7 +151,7 @@ export const Examples = ({
               it: "",
             },
           }}
-          chartConfig={{
+          chartConfig={migrateChartConfig({
             version: "1.2.1",
             fields: {
               x: {
@@ -160,7 +161,6 @@ export const Examples = ({
                 componentIri: "http://schema.org/amount",
               },
               segment: {
-                type: "stacked",
                 palette: "category10",
                 sorting: {
                   sortingType: "byDimensionLabel",
@@ -205,7 +205,7 @@ export const Examples = ({
                 ],
               },
             },
-          }}
+          })}
           configKey={""}
         />
       </Example>

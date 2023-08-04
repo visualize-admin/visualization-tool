@@ -4,11 +4,13 @@ import React from "react";
 import { getWideData, usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
+  BaseVariables,
   ChartStateData,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
   useBandXVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYVariables,
   useSegmentVariables,
@@ -20,7 +22,8 @@ import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ColumnsStackedStateVariables = BandXVariables &
+export type ColumnsStackedStateVariables = BaseVariables &
+  BandXVariables &
   NumericalYVariables &
   SegmentVariables &
   RenderingVariables;
@@ -28,19 +31,26 @@ export type ColumnsStackedStateVariables = BandXVariables &
 export const useColumnsStackedStateVariables = (
   props: ChartProps<ColumnConfig> & { aspectRatio: number }
 ): ColumnsStackedStateVariables => {
-  const { chartConfig, observations, dimensions, measures } = props;
+  const {
+    chartConfig,
+    observations,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+  } = props;
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
   const numericalYVariables = useNumericalYVariables(y, {
-    measures,
+    measuresByIri,
   });
   const segmentVariables = useSegmentVariables(segment, {
-    dimensions,
+    dimensionsByIri,
     observations,
   });
 
@@ -52,6 +62,7 @@ export const useColumnsStackedStateVariables = (
   );
 
   return {
+    ...baseVariables,
     ...bandXVariables,
     ...numericalYVariables,
     ...segmentVariables,

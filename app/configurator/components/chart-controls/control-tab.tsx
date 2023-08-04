@@ -17,30 +17,32 @@ type ControlTabProps = {
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
-  labelId: string;
+  labelId: string | null;
   warnMessage?: React.ReactNode;
 } & FieldProps;
 
 export const ControlTab = (props: ControlTabProps) => {
   const { component, value, onClick, checked, labelId, warnMessage } = props;
   const handleClick = useEvent(() => onClick(value));
+  const isActive = !!component;
 
   return (
     <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
       <ControlTabButton checked={checked} value={value} onClick={handleClick}>
         <ControlTabButtonInner
           iconName={getIconName(value)}
-          upperLabel={getFieldLabel(labelId)}
+          upperLabel={labelId ? getFieldLabel(labelId) : null}
           mainLabel={
             component?.label ?? <Trans id="controls.color.add">Add…</Trans>
           }
+          isActive={isActive}
           checked={checked}
           optional={!component}
           rightIcon={
             warnMessage ? (
               <WarnIconTooltip title={warnMessage} />
             ) : (
-              <FieldEditIcon />
+              <FieldEditIcon isActive={isActive} />
             )
           }
         />
@@ -49,9 +51,10 @@ export const ControlTab = (props: ControlTabProps) => {
   );
 };
 
-const useIconStyles = makeStyles<Theme>((theme) => ({
+const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
   root: {
-    color: theme.palette.primary.main,
+    color: ({ isActive }) =>
+      isActive ? theme.palette.primary.main : theme.palette.grey[500],
     width: 18,
     height: 18,
   },
@@ -63,7 +66,7 @@ type WarnIconTooltipProps = {
 
 const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   const { title } = props;
-  const iconStyles = useIconStyles();
+  const iconStyles = useIconStyles({ isActive: false });
 
   return (
     <Tooltip arrow title={title}>
@@ -74,8 +77,13 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   );
 };
 
-const FieldEditIcon = () => {
-  const classes = useIconStyles();
+type FieldEditIconProps = {
+  isActive: boolean;
+};
+
+const FieldEditIcon = (props: FieldEditIconProps) => {
+  const { isActive } = props;
+  const classes = useIconStyles({ isActive });
 
   return <SvgIcEdit className={classes.root} />;
 };
@@ -305,12 +313,7 @@ export const ControlTabButtonInner = ({
           className={classes.controlTabButtonInnerIcon}
           sx={{
             backgroundColor: checked ? "primary.main" : "grey.100",
-            color:
-              optional && !checked
-                ? "grey.500"
-                : checked
-                ? "grey.100"
-                : "grey.700",
+            color: "grey.700",
           }}
         >
           <Icon size={24} name={iconName} />
@@ -327,7 +330,10 @@ export const ControlTabButtonInner = ({
           {upperLabel && (
             <Typography
               variant="caption"
-              sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
+              sx={{
+                color: isActive ? "grey.600" : "grey.500",
+                lineHeight: ["1rem", "1rem", "1rem"],
+              }}
             >
               {upperLabel}
             </Typography>
@@ -335,7 +341,7 @@ export const ControlTabButtonInner = ({
           <Typography
             variant="h5"
             sx={{
-              color: optional && !checked ? "grey.600" : "grey.800",
+              color: optional && !checked ? "grey.500" : "grey.800",
               textAlign: "left",
             }}
           >

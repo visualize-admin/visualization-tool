@@ -176,8 +176,8 @@ msgid "columnStyle.textStyle.regular"
 msgstr "Normal"
 
 #: app/configurator/interactive-filters/editor-time-brush.tsx
-msgid "controls..interactiveFilters.time.defaultSettings"
-msgstr "Paramètres d'origine"
+#~ msgid "controls..interactiveFilters.time.defaultSettings"
+#~ msgstr "Paramètres d'origine"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.abbreviations"
@@ -202,6 +202,22 @@ msgstr "Axe horizontal"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.calculation.allow-normalization"
+msgstr "Permettre la normalisation des données"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.identity"
+msgstr "Valeurs absolues"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.percent"
+msgstr "Pourcentages"
+
+#: app/charts/shared/interactive-filter-calculation-toggle.tsx
+msgid "controls.calculation.show-in-percentage"
+msgstr "Afficher en %"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -339,10 +355,12 @@ msgstr "Au moins un filtre doit être sélectionné."
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactif"
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.tooltip"
 msgstr "Permettre aux utilisateurs de changer le filtre"
@@ -369,10 +387,6 @@ msgstr "Filtres sélectionnés"
 msgid "controls.filters.select.to"
 msgstr "Au"
 
-#: app/configurator/interactive-filters/editor-time-interval-brush.tsx
-msgid "controls.filters.time.range"
-msgstr "Intervalle de temps"
-
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Glisser-déposer des colonnes ici pour créer des groupes."
@@ -398,12 +412,12 @@ msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.noTimeDimension"
-msgstr "Il n'y a pas de dimension temporelle!"
+#~ msgid "controls.interactiveFilters.time.noTimeDimension"
+#~ msgstr "Il n'y a pas de dimension temporelle!"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx
-msgid "controls.interactiveFilters.time.toggleTimeFilter"
-msgstr "Afficher le filtre temporel"
+#~ msgid "controls.interactiveFilters.time.toggleTimeFilter"
+#~ msgstr "Afficher le filtre temporel"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
@@ -478,6 +492,14 @@ msgstr "Informations supplémentaires"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Durée de l'animation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling"
+msgstr "Mise à l'échelle dynamique"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.animation.dynamic-scaling.explanation"
+msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graphique en fonction de la plage de données, afin de garantir une visualisation optimale."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
@@ -555,7 +577,7 @@ msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doi
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
-msgstr "Filtres interactifs"
+msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
@@ -580,6 +602,14 @@ msgstr "Options du tableau"
 #: app/configurator/components/chart-annotator.tsx
 msgid "controls.section.title.warning"
 msgstr "Ajoutez un titre et une description"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.segment"
+msgstr "Segmentation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.calculation.mode"
+msgstr "Mode"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
@@ -623,6 +653,10 @@ msgstr "Couleur du texte"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Style du texte"
 
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"

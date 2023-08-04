@@ -7,9 +7,10 @@ import { ChartState, useChartState } from "@/charts/shared/chart-state";
 import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
-import { AnimationType, Filters, SortingField } from "@/config-types";
+import { AnimationField, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -37,23 +38,18 @@ const useTimeline = () => {
 };
 
 type TimeSliderProps = {
-  componentIri?: string;
   filters: Filters;
   dimensions: DimensionMetadataFragment[];
-  showPlayButton: boolean;
-  /** Animation duration in seconds. */
-  animationDuration: number;
-  animationType: AnimationType;
-};
+} & AnimationField;
 
 export const TimeSlider = (props: TimeSliderProps) => {
   const {
     componentIri,
+    showPlayButton,
+    type: animationType,
+    duration: animationDuration,
     filters,
     dimensions,
-    showPlayButton,
-    animationDuration,
-    animationType,
   } = props;
   const component = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
@@ -83,7 +79,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
       new Set(
         chartState.allData
           .map((d) => d[component.iri])
-          .filter(Boolean) as string[]
+          .filter(truthy) as string[]
       )
     );
 

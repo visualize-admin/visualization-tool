@@ -1,6 +1,6 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.4.1";
+export const CHART_CONFIG_VERSION = "1.4.2";
 
 type Migration = {
   description: string;
@@ -506,6 +506,7 @@ const migrations: Migration[] = [
               showPlayButton: true,
               duration: 30,
               type: "continuous",
+              dynamicScales: false,
             };
           }
         });
@@ -580,6 +581,47 @@ const migrations: Migration[] = [
             ...draft.interactiveFiltersConfig.timeRange,
             componentIri: "",
           };
+        });
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    description: `ALL
+    interactiveFiltersConfig {
+      + calculation
+    }`,
+    from: "1.4.1",
+    to: "1.4.2",
+    up: (config: any) => {
+      let newConfig = { ...config, version: "1.4.2" };
+
+      const { interactiveFiltersConfig } = newConfig;
+
+      if (interactiveFiltersConfig) {
+        newConfig = produce(newConfig, (draft: any) => {
+          draft.interactiveFiltersConfig = {
+            ...draft.interactiveFiltersConfig,
+            calculation: {
+              active: false,
+              type: "identity",
+            },
+          };
+        });
+      }
+
+      return newConfig;
+    },
+    down: (config: any) => {
+      let newConfig = { ...config, version: "1.4.1" };
+
+      const { interactiveFiltersConfig } = config;
+
+      if (interactiveFiltersConfig) {
+        newConfig = produce(newConfig, (draft: any) => {
+          const { calculation, ...rest } = interactiveFiltersConfig;
+          draft.interactiveFiltersConfig = rest;
         });
       }
 
