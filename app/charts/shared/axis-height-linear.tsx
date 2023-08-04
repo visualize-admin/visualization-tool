@@ -14,6 +14,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
@@ -37,6 +38,7 @@ export const AxisHeightLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
+  const titleWidth = estimateTextWidth(yAxisLabel, axisLabelFontSize);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const axis = axisLeft(yScale)
@@ -90,7 +92,7 @@ export const AxisHeightLinear = () => {
   return (
     <>
       {/* TODO: at some point it would make sense to allow wrapping */}
-      <foreignObject width="100%" height={axisLabelFontSize * 2}>
+      <foreignObject width={titleWidth} height={axisLabelFontSize * 2}>
         <OpenMetadataPanelWrapper dim={yMeasure as DimensionMetadataFragment}>
           <span style={{ fontSize: axisLabelFontSize }}>{yAxisLabel}</span>
         </OpenMetadataPanelWrapper>
