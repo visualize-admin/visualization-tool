@@ -1,7 +1,7 @@
 import { Drawer as MuiDrawer } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export const DRAWER_WIDTH = 319;
+export const DRAWER_WIDTH = 340;
 
 export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
   "&": {
