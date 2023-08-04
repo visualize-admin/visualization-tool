@@ -73,10 +73,15 @@ export const ChartLoadingWrapper = <
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
 
+  const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
+    return {
+      dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
+      measuresByIri: keyBy(measures ?? [], (d) => d.iri),
+    };
+  }, [dimensions, measures]);
+
   if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
-    const dimensionsByIri = keyBy(dimensions, (d) => d.iri);
-    const measuresByIri = keyBy(measures, (d) => d.iri);
 
     return observations.length > 0 ? (
       <Box

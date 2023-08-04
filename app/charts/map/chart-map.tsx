@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
@@ -138,31 +140,33 @@ export const ChartMapVisualization = ({
   );
 };
 
-export const ChartMap = (
-  props: ChartProps<MapConfig> & {
-    shapes: GeoShapes | undefined;
-    coordinates: GeoCoordinates[] | undefined | null;
-  }
-) => {
-  const { chartConfig, dimensions } = props;
-  const { fields, filters } = chartConfig;
+export const ChartMap = memo(
+  (
+    props: ChartProps<MapConfig> & {
+      shapes: GeoShapes | undefined;
+      coordinates: GeoCoordinates[] | undefined | null;
+    }
+  ) => {
+    const { chartConfig, dimensions } = props;
+    const { fields, filters } = chartConfig;
 
-  return (
-    <MapChart {...props}>
-      <ChartContainer>
-        <MapComponent />
-        <MapTooltip />
-      </ChartContainer>
-      <ChartControlsContainer sx={{ mt: 6 }}>
-        {fields.animation && (
-          <TimeSlider
-            filters={filters}
-            dimensions={dimensions}
-            {...fields.animation}
-          />
-        )}
-        <MapLegend chartConfig={chartConfig} />
-      </ChartControlsContainer>
-    </MapChart>
-  );
-};
+    return (
+      <MapChart {...props}>
+        <ChartContainer>
+          <MapComponent />
+          <MapTooltip />
+        </ChartContainer>
+        <ChartControlsContainer sx={{ mt: 6 }}>
+          {fields.animation && (
+            <TimeSlider
+              filters={filters}
+              dimensions={dimensions}
+              {...fields.animation}
+            />
+          )}
+          <MapLegend chartConfig={chartConfig} />
+        </ChartControlsContainer>
+      </MapChart>
+    );
+  }
+);
