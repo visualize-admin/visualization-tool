@@ -216,7 +216,7 @@ msgid "controls.calculation.percent"
 msgstr "Relative Zahlen"
 
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
-msgid "controls.caluculation.show-in-percentage"
+msgid "controls.calculation.show-in-percentage"
 msgstr "In % anzeigen"
 
 #: app/configurator/components/field-i18n.ts

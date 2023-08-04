@@ -18,9 +18,7 @@ export const useTableStateVariables = (
 
   const baseVariables = useBaseVariables(chartConfig);
 
-  return {
-    ...baseVariables,
-  };
+  return baseVariables;
 };
 
 export const useTableStateData = (

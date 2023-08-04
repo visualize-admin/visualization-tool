@@ -17,7 +17,7 @@ export const CalculationToggle = () => {
   return (
     <Switch
       label={t({
-        id: "controls.caluculation.show-in-percentage",
+        id: "controls.calculation.show-in-percentage",
         message: "Show in %",
       })}
       checked={state.calculation.type === "percent"}
