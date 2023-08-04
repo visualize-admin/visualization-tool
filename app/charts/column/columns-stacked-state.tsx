@@ -46,6 +46,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -101,6 +102,7 @@ const useColumnsStackedState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
+  const [IFState] = useInteractiveFilters();
 
   const xKey = fields.x.componentIri;
 
@@ -164,7 +166,7 @@ const useColumnsStackedState = (
     );
   }, [getX, getY, scalesData]);
 
-  const normalize = interactiveFiltersConfig?.calculation.type === "percent";
+  const normalize = IFState.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(

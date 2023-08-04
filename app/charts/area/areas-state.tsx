@@ -41,6 +41,7 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -97,6 +98,7 @@ const useAreasState = (
   const formatters = useChartFormatters(chartProps);
   const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
+  const [IFState] = useInteractiveFilters();
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -184,7 +186,7 @@ const useAreasState = (
     );
   }, [getXAsString, getY, scalesData]);
 
-  const normalize = interactiveFiltersConfig?.calculation.type === "percent";
+  const normalize = IFState.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
