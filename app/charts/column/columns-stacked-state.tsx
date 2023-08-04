@@ -164,10 +164,7 @@ const useColumnsStackedState = (
     );
   }, [getX, getY, scalesData]);
 
-  const normalize =
-    fields.segment && "calculation" in fields.segment
-      ? fields.segment.calculation === "percent"
-      : false;
+  const normalize = interactiveFiltersConfig?.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(

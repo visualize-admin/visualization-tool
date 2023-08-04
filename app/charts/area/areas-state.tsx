@@ -184,7 +184,7 @@ const useAreasState = (
     );
   }, [getXAsString, getY, scalesData]);
 
-  const normalize = fields.segment?.calculation === "percent";
+  const normalize = interactiveFiltersConfig?.calculation.type === "percent";
   const preparedDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(

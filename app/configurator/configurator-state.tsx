@@ -858,10 +858,6 @@ export const handleChartFieldChanged = (
           ...(isColumnConfig(draft.chartConfig) && {
             // Type exists only within column charts.
             type: "stacked",
-            calculation: "identity",
-          }),
-          ...(isAreaConfig(draft.chartConfig) && {
-            calculation: "identity",
           }),
           sorting: DEFAULT_SORTING,
           colorMapping,
@@ -1092,13 +1088,19 @@ export const handleChartOptionChanged = (
             }
           }
         }
-      } else if (action.value.path === "type") {
-        if (action.value.value === "grouped") {
-          delete (draft.chartConfig.fields as any)["segment"]["calculation"];
-        } else if (action.value.value === "stacked") {
-          (draft.chartConfig.fields as any)["segment"]["calculation"] =
-            "identity";
-        }
+      } else if (
+        action.value.path === "type" &&
+        action.value.value === "grouped"
+      ) {
+        setWith(
+          draft,
+          "chartConfig.interactiveFiltersConfig.calculation",
+          {
+            active: false,
+            type: "identity",
+          },
+          Object
+        );
       }
     }
 

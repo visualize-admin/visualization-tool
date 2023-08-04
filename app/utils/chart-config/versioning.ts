@@ -588,29 +588,26 @@ const migrations: Migration[] = [
     },
   },
   {
-    description: `AREA & COLUMN
-    segment {
-      + calculation (for column, only for stacked subtype)
+    description: `ALL
+    interactiveFiltersConfig {
+      + calculation
     }`,
     from: "1.4.1",
     to: "1.4.2",
     up: (config: any) => {
       let newConfig = { ...config, version: "1.4.2" };
 
-      const { fields } = newConfig;
-      const { segment } = fields;
+      const { interactiveFiltersConfig } = newConfig;
 
-      if (segment) {
+      if (interactiveFiltersConfig) {
         newConfig = produce(newConfig, (draft: any) => {
-          if (
-            ["area", "column"].includes(draft.chartType) &&
-            segment.type !== "grouped"
-          ) {
-            draft.fields.segment = {
-              ...segment,
-              calculation: "identity",
-            };
-          }
+          draft.interactiveFiltersConfig = {
+            ...draft.interactiveFiltersConfig,
+            calculation: {
+              active: false,
+              type: "identity",
+            },
+          };
         });
       }
 
@@ -619,13 +616,12 @@ const migrations: Migration[] = [
     down: (config: any) => {
       let newConfig = { ...config, version: "1.4.1" };
 
-      const { fields } = config;
-      const { segment } = fields;
+      const { interactiveFiltersConfig } = config;
 
-      if (segment) {
+      if (interactiveFiltersConfig) {
         newConfig = produce(newConfig, (draft: any) => {
-          const { calculation, ...rest } = segment;
-          draft.fields.segment = rest;
+          const { calculation, ...rest } = interactiveFiltersConfig;
+          draft.interactiveFiltersConfig = rest;
         });
       }
 

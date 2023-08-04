@@ -112,11 +112,23 @@ export type InteractiveFiltersDataConfig = t.TypeOf<
   typeof InteractiveFiltersDataConfig
 >;
 
+const CalculationType = t.union([t.literal("identity"), t.literal("percent")]);
+export type CalculationType = t.TypeOf<typeof CalculationType>;
+
+const InteractiveFiltersCalculation = t.type({
+  active: t.boolean,
+  type: CalculationType,
+});
+export type InteractiveFiltersCalculation = t.TypeOf<
+  typeof InteractiveFiltersCalculation
+>;
+
 const InteractiveFiltersConfig = t.union([
   t.type({
     legend: InteractiveFiltersLegend,
     timeRange: InteractiveFiltersTimeRange,
     dataFilters: InteractiveFiltersDataConfig,
+    calculation: InteractiveFiltersCalculation,
   }),
   t.undefined,
 ]);
@@ -159,11 +171,6 @@ const GenericSegmentField = t.intersection([
 ]);
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
-const CalculationField = t.type({
-  calculation: t.union([t.literal("identity"), t.literal("percent")]),
-});
-export type CalculationField = t.TypeOf<typeof CalculationField>;
-
 const AnimationType = t.union([t.literal("continuous"), t.literal("stepped")]);
 export type AnimationType = t.TypeOf<typeof AnimationType>;
 
@@ -189,15 +196,7 @@ export type SortingField = t.TypeOf<typeof SortingField>;
 const ColumnSegmentField = t.intersection([
   GenericSegmentField,
   SortingField,
-  t.union([
-    t.intersection([
-      t.type({
-        type: t.literal("stacked"),
-      }),
-      CalculationField,
-    ]),
-    t.type({ type: t.literal("grouped") }),
-  ]),
+  t.type({ type: t.union([t.literal("grouped"), t.literal("stacked")]) }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -249,11 +248,7 @@ const LineConfig = t.type(
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
-const AreaSegmentField = t.intersection([
-  GenericSegmentField,
-  CalculationField,
-  SortingField,
-]);
+const AreaSegmentField = t.intersection([GenericSegmentField, SortingField]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
@@ -639,6 +634,17 @@ export const isMapConfig = (
   return chartConfig.chartType === "map";
 };
 
+export const canBeNormalized = (
+  chartConfig: ChartConfig
+): chartConfig is AreaConfig | ColumnConfig => {
+  return (
+    chartConfig.chartType === "area" ||
+    (chartConfig.chartType === "column" &&
+      chartConfig.fields.segment !== undefined &&
+      chartConfig.fields.segment.type === "stacked")
+  );
+};
+
 export const isSegmentInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is
@@ -729,6 +735,7 @@ type _InteractiveFiltersAdjusters = {
     };
   };
   dataFilters: FieldAdjuster<ChartConfig, InteractiveFiltersDataConfig>;
+  calculation: FieldAdjuster<ChartConfig, InteractiveFiltersCalculation>;
 };
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {

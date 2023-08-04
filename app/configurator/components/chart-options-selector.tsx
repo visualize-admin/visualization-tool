@@ -744,15 +744,15 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
         <Flex sx={{ justifyContent: "flex-start" }}>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
-            field="segment"
-            path="calculation"
+            field={null}
+            path="interactiveFiltersConfig.calculation.type"
             value="identity"
             disabled={disabled}
           />
           <ChartOptionRadioField
             label={getFieldLabel("percent")}
-            field="segment"
-            path="calculation"
+            field={null}
+            path="interactiveFiltersConfig.calculation.type"
             value="percent"
             disabled={disabled}
           />
