@@ -96,7 +96,6 @@ const useAreasState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const estimateNumberWidth = (d: number) => estimateTextWidth(formatNumber(d));
   const timeFormatUnit = useTimeFormatUnit();
   const [IFState] = useInteractiveFilters();
 
@@ -309,6 +308,8 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
+  const estimateNumberWidth = (d: number) =>
+    estimateTextWidth(formatNumber(d) + (normalize ? "%" : ""));
   const [yMin, yMax] = yScale.domain();
   const left = interactiveFiltersConfig?.timeRange.active
     ? estimateNumberWidth(entireMaxTotalValue)

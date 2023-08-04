@@ -1,4 +1,4 @@
-import { axisLeft, select, Selection } from "d3";
+import { axisLeft, NumberValue, select, Selection } from "d3";
 import { useEffect, useRef } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
@@ -11,6 +11,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -19,6 +20,8 @@ import { estimateTextWidth } from "@/utils/estimate-text-width";
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const formatNumber = useFormatNumber({ decimals: "auto" });
+  const [IFState] = useInteractiveFilters();
+  const isNormalized = IFState.calculation.type === "percent";
 
   // FIXME: add "NumericalY" chart type here.
   const { yScale, yAxisLabel, yMeasure, bounds } = useChartState() as
@@ -30,6 +33,9 @@ export const AxisHeightLinear = () => {
     | ScatterplotState;
 
   const ticks = getTickNumber(bounds.chartHeight);
+  const tickFormat = isNormalized
+    ? (d: NumberValue) => `${formatNumber(d)}%`
+    : formatNumber;
 
   const {
     labelColor,
@@ -44,7 +50,7 @@ export const AxisHeightLinear = () => {
     const axis = axisLeft(yScale)
       .ticks(ticks)
       .tickSizeInner(-bounds.chartWidth)
-      .tickFormat(formatNumber)
+      .tickFormat(tickFormat)
       .tickPadding(6);
 
     g.selectAll<SVGGElement, null>(".content")
