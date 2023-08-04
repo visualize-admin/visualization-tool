@@ -4,10 +4,12 @@ import React from "react";
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
+  BaseVariables,
   ChartStateData,
   NumericalYVariables,
   SegmentVariables,
   TemporalXVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYVariables,
   useSegmentVariables,
@@ -16,7 +18,8 @@ import {
 import { AreaConfig } from "@/config-types";
 import { Observation } from "@/domain/data";
 
-export type AreasStateVariables = TemporalXVariables &
+export type AreasStateVariables = BaseVariables &
+  TemporalXVariables &
   NumericalYVariables &
   SegmentVariables;
 
@@ -27,6 +30,7 @@ export const useAreasStateVariables = (
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
@@ -39,6 +43,7 @@ export const useAreasStateVariables = (
   });
 
   return {
+    ...baseVariables,
     ...temporalXVariables,
     ...numericalYVariables,
     ...segmentVariables,

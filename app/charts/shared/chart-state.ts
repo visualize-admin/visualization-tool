@@ -26,6 +26,7 @@ import {
   ChartConfig,
   ChartType,
   GenericField,
+  InteractiveFiltersConfig,
   getAnimationField,
 } from "@/configurator";
 import {
@@ -68,6 +69,7 @@ export type CommonChartState = {
   chartData: Observation[];
   allData: Observation[];
   bounds: Bounds;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
 };
 
 export type ColorsChartState = Has<ChartState, "colors">;
@@ -100,6 +102,16 @@ export type RenderingVariables = {
    * access the segment value from the data.
    */
   getRenderingKey: (d: Observation, segment?: string) => string;
+};
+
+export type BaseVariables = {
+  interactiveFiltersConfig: InteractiveFiltersConfig;
+};
+
+export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
+  return {
+    interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
+  };
 };
 
 export type BandXVariables = {

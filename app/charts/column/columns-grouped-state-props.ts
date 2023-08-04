@@ -5,12 +5,14 @@ import React from "react";
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
+  BaseVariables,
   ChartStateData,
   NumericalYErrorVariables,
   NumericalYVariables,
   RenderingVariables,
   SegmentVariables,
   useBandXVariables,
+  useBaseVariables,
   useChartData,
   useNumericalYErrorVariables,
   useNumericalYVariables,
@@ -23,7 +25,8 @@ import { sortByIndex } from "@/utils/array";
 
 import { ChartProps } from "../shared/ChartProps";
 
-export type ColumnsGroupedStateVariables = BandXVariables &
+export type ColumnsGroupedStateVariables = BaseVariables &
+  BandXVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
   SegmentVariables &
@@ -43,6 +46,7 @@ export const useColumnsGroupedStateVariables = (
   const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x, y, segment, animation } = fields;
 
+  const baseVariables = useBaseVariables(chartConfig);
   const bandXVariables = useBandXVariables(x, {
     dimensionsByIri,
     observations,
@@ -68,6 +72,7 @@ export const useColumnsGroupedStateVariables = (
   );
 
   return {
+    ...baseVariables,
     ...bandXVariables,
     ...numericalYVariables,
     ...numericalYErrorVariables,
