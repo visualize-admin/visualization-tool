@@ -6,6 +6,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const { bounds } = useChartState();
   const { width, height } = bounds;
+
   return (
     <div aria-hidden="true" style={{ position: "relative", width, height }}>
       {children}
@@ -16,6 +17,7 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const { bounds } = useChartState();
   const { width, height } = bounds;
+
   return (
     <svg
       width={width}

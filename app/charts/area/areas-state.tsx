@@ -26,6 +26,7 @@ import {
 } from "@/charts/area/areas-state-props";
 import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import {
   getWideData,
   normalizeData,
@@ -202,7 +203,7 @@ const useAreasState = (
   }, [chartData, getXAsString, sumsByX, getY, yMeasure.iri, normalize]);
 
   const chartWideData = React.useMemo(() => {
-    const wideData = getWideData({
+    return getWideData({
       dataGroupedByX: preparedDataGroupedByX,
       xKey,
       getY,
@@ -210,8 +211,6 @@ const useAreasState = (
       allSegments: segments,
       imputationType: fields.y.imputationType,
     });
-
-    return wideData;
   }, [
     getSegment,
     getY,
@@ -315,22 +314,14 @@ const useAreasState = (
   const bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
     : 40;
-
   const margins = {
     top: 50,
     right: 40,
     bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
 
   /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);

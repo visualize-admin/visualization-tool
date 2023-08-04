@@ -29,13 +29,16 @@ import {
   PADDING_WITHIN,
 } from "@/charts/column/constants";
 import {
+  getChartBounds,
+  useChartPadding,
+} from "@/charts/shared/chart-dimensions";
+import {
   ChartContext,
   ChartStateData,
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import { useChartPadding } from "@/charts/shared/padding";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -309,22 +312,14 @@ const useColumnsGroupedState = (
     formatNumber,
     xDomainLabels
   );
-
   const margins = {
     top: 50,
     right: 40,
     bottom: bottom + BOTTOM_MARGIN_OFFSET,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
 
   // Adjust of scales based on chart dimensions
   xScale.range([0, chartWidth]);

@@ -20,6 +20,7 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
+import { getChartBounds } from "@/charts/shared/chart-dimensions";
 import { getWideData } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -204,15 +205,9 @@ const useLinesState = (
     bottom: bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * aspectRatio;
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
+  const bounds = getChartBounds(width, margins, aspectRatio);
+  const { chartWidth, chartHeight } = bounds;
+
   xScale.range([0, chartWidth]);
   interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
