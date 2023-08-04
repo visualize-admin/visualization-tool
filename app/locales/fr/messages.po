@@ -203,6 +203,22 @@ msgstr "Axe horizontal"
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.calculation.allow-normalization"
+msgstr "Permettre la normalisation des données"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.identity"
+msgstr "Chiffres absolus"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.percent"
+msgstr "Chiffres relatifs"
+
+#: app/charts/shared/interactive-filter-calculation-toggle.tsx
+msgid "controls.caluculation.show-in-percentage"
+msgstr "Afficher en %"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Surfaces"
@@ -587,6 +603,14 @@ msgstr "Options du tableau"
 msgid "controls.section.title.warning"
 msgstr "Ajoutez un titre et une description"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.segment"
+msgstr "Segmentation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.select.calculation.mode"
+msgstr "Mode"
+
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
 #: app/configurator/table/table-chart-configurator.tsx
@@ -629,6 +653,10 @@ msgstr "Couleur du texte"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Style du texte"
 
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
