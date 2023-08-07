@@ -3,6 +3,8 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React from "react";
 
+import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+
 const useStyles = makeStyles((theme: Theme) => ({
   panelLeft: {
     overflowX: "hidden",
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "100%",
     height: "calc(100vh - 96px)",
     display: "grid",
-    gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr)",
+    gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
     gridTemplateRows: "auto minmax(0, 1fr)",
     gridTemplateAreas: `
     "header header"
