@@ -90,9 +90,9 @@ export type ChartWithInteractiveXTimeRangeState =
   | ColumnsState
   | LinesState;
 
-type NumericalValueGetter = (d: Observation) => number | null;
+export type NumericalValueGetter = (d: Observation) => number | null;
 
-type StringValueGetter = (d: Observation) => string;
+export type StringValueGetter = (d: Observation) => string;
 
 export type TemporalValueGetter = (d: Observation) => Date;
 

@@ -1,7 +1,7 @@
 import { group, InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
 import uniq from "lodash/uniq";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
@@ -396,6 +396,16 @@ const getBaseWideData = ({
   return wideData;
 };
 
+const getIdentityIri = (iri: string) => `${iri}/__identity__`;
+export const useGetIdentityY = (iri: string) => {
+  return React.useCallback(
+    (d: Observation) => {
+      return (d[getIdentityIri(iri)] as number | null) ?? null;
+    },
+    [iri]
+  );
+};
+
 export const normalizeData = (
   data: Observation[],
   {
@@ -415,6 +425,7 @@ export const normalizeData = (
     return {
       ...d,
       [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
+      [getIdentityIri(yKey)]: y,
     };
   });
 };

@@ -6,6 +6,7 @@ import {
   PieArcDatum,
   ScaleOrdinal,
   scaleOrdinal,
+  sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
@@ -28,6 +29,7 @@ import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -53,11 +55,13 @@ const usePieState = (
   const {
     yMeasure,
     getY,
-    segmentDimension,
+    segmentDimension: _segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
+  // Segment dimension is guaranteed to be present, because it is required.
+  const segmentDimension = _segmentDimension as DimensionMetadataFragment;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
 
@@ -66,16 +70,12 @@ const usePieState = (
   const formatters = useChartFormatters(chartProps);
 
   const segmentsByValue = useMemo(() => {
-    const values = segmentDimension?.values || [];
-
-    return new Map(values.map((d) => [d.value, d]));
-  }, [segmentDimension?.values]);
+    return new Map(segmentDimension.values.map((d) => [d.value, d]));
+  }, [segmentDimension.values]);
 
   // Map ordered segments to colors
-  const segmentFilter = segmentDimension?.iri
-    ? chartConfig.filters[segmentDimension.iri]
-    : undefined;
-  const { colors, allSegments, segments } = useMemo(() => {
+  const segmentFilter = chartConfig.filters[segmentDimension.iri];
+  const { colors, allSegments, segments, ySum } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
     const measureBySegment = Object.fromEntries(
       segmentData.map((d) => [getSegment(d), getY(d)])
@@ -87,7 +87,7 @@ const usePieState = (
 
     const sorting = fields.segment.sorting;
     const sorters = makeDimensionValueSorters(segmentDimension, {
-      sorting: sorting,
+      sorting,
       measureBySegment,
       useAbbreviations: fields.segment.useAbbreviations,
       dimensionFilter: segmentFilter,
@@ -123,10 +123,13 @@ const usePieState = (
     // on unknown values
     colors.unknown(() => undefined);
 
+    const ySum = sum(chartData, getY);
+
     return {
       colors,
       allSegments,
       segments,
+      ySum,
     };
   }, [
     fields.segment,
@@ -174,16 +177,26 @@ const usePieState = (
       );
     };
   }, [colors, getSegment]);
+
   const getPieData = pie<Observation>()
     .value((d) => getY(d) ?? 0)
     .sort(pieSorter);
 
-  const valueFormatter = (value: number | null) =>
-    formatNumberWithUnit(
+  const valueFormatter = (value: number | null) => {
+    if (value === null) {
+      return "-";
+    }
+
+    const fValue = formatNumberWithUnit(
       value,
-      formatters[yMeasure.iri] || formatNumber,
+      formatters[yMeasure.iri] ?? formatNumber,
       yMeasure.unit
     );
+    const percentage = value / ySum;
+    const rounded = Math.round(percentage * 100 * 10) / 10;
+
+    return `${rounded}% (${fValue})`;
+  };
 
   // Tooltip
   const getAnnotationInfo = (
