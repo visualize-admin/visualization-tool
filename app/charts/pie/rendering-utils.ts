@@ -1,6 +1,5 @@
 import { PieArcDatum, Selection, Transition, interpolate } from "d3";
 
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
 export type RenderDatum = {
@@ -14,7 +13,8 @@ export const renderPie = (
   renderData: RenderDatum[],
   arcGenerator: d3.Arc<any, any>,
   handleMouseEnter: (d: PieArcDatum<Observation>) => void,
-  handleMouseLeave: () => void
+  handleMouseLeave: () => void,
+  transitionDuration: number
 ) => {
   g.selectAll<SVGPathElement, RenderDatum>("path")
     .data(renderData, (d) => d.key)
@@ -29,14 +29,14 @@ export const renderPie = (
           .call((enter) =>
             enter
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .call(animatePath, arcGenerator)
           ),
       (update) =>
         update.call((update) =>
           update
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .attr("fill", (d) => d.color)
             .call(animatePath, arcGenerator)
         ),
@@ -44,7 +44,7 @@ export const renderPie = (
         exit.call((exit) =>
           exit
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .call(animatePath, arcGenerator)
             .remove()
         )

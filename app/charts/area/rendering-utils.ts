@@ -1,8 +1,6 @@
 import { Selection, select } from "d3";
 import { interpolatePath } from "d3-interpolate-path";
 
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
-
 export type RenderAreaDatum = {
   key: string;
   d: string;
@@ -11,7 +9,8 @@ export type RenderAreaDatum = {
 };
 
 export const renderArea = (
-  g: Selection<SVGRectElement, RenderAreaDatum, SVGGElement, unknown>
+  g: Selection<SVGRectElement, RenderAreaDatum, SVGGElement, unknown>,
+  transitionDuration: number
 ) => {
   g.join(
     (enter) =>
@@ -22,14 +21,14 @@ export const renderArea = (
         .call((enter) =>
           enter
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .attrTween("d", (d) => interpolatePath(d.dEmpty, d.d))
         ),
     (update) =>
       update.call((update) =>
         update
           .transition()
-          .duration(TRANSITION_DURATION)
+          .duration(transitionDuration)
           .attrTween("d", function (d) {
             return interpolatePath(select(this).attr("d"), d.d);
           })
@@ -39,7 +38,7 @@ export const renderArea = (
       exit.call((exit) =>
         exit
           .transition()
-          .duration(TRANSITION_DURATION)
+          .duration(transitionDuration)
           .attrTween("d", (d) => interpolatePath(d.d, d.dEmpty))
           .remove()
       )

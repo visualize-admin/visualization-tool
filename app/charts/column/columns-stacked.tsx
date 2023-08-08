@@ -7,10 +7,11 @@ import {
   renderColumn,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { useTransitionStore } from "@/stores/transition";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
     useChartState() as StackedColumnsState;
   const { margins } = bounds;
@@ -50,22 +51,22 @@ export const ColumnsStacked = () => {
             update.call((g) =>
               g
                 .transition()
-                .duration(TRANSITION_DURATION)
+                .duration(transitionDuration)
                 .attr("transform", `translate(${margins.left} ${margins.top})`)
             ),
           (exit) =>
             exit.call((g) =>
-              g.transition().duration(TRANSITION_DURATION).remove()
+              g.transition().duration(transitionDuration).remove()
             )
         )
         .call((g) =>
           g
             .selectAll<SVGRectElement, RenderColumnDatum>("rect")
             .data(renderData, (d) => d.key)
-            .call(renderColumn, y0)
+            .call(renderColumn, y0, transitionDuration)
         );
     }
-  }, [renderData, y0, margins.left, margins.top]);
+  }, [renderData, y0, margins.left, margins.top, transitionDuration]);
 
   return <g ref={ref} />;
 };

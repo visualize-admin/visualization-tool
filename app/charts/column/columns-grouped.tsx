@@ -9,7 +9,7 @@ import {
   renderWhisker,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
   const {
@@ -24,6 +24,7 @@ export const ErrorWhiskers = () => {
   } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
 
   const renderData: RenderWhiskerDatum[] | undefined = React.useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
@@ -63,7 +64,7 @@ export const ErrorWhiskers = () => {
       ) => {
         g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
           .data(renderData, (d) => d.key)
-          .call(renderWhisker);
+          .call(renderWhisker, transitionDuration);
       };
 
       select(ref.current)
@@ -81,7 +82,7 @@ export const ErrorWhiskers = () => {
               .call((g) =>
                 g
                   .transition()
-                  .duration(TRANSITION_DURATION)
+                  .duration(transitionDuration)
                   .attr(
                     "transform",
                     `translate(${margins.left} ${margins.top})`
@@ -92,7 +93,7 @@ export const ErrorWhiskers = () => {
         )
         .call(renderWhiskers);
     }
-  }, [renderData, margins.left, margins.top]);
+  }, [renderData, margins.left, margins.top, transitionDuration]);
 
   return renderData ? <g ref={ref} /> : null;
 };
@@ -110,6 +111,7 @@ export const ColumnsGrouped = () => {
     getRenderingKey,
   } = useChartState() as GroupedColumnsState;
   const ref = React.useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { margins } = bounds;
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
@@ -150,7 +152,7 @@ export const ColumnsGrouped = () => {
       ) => {
         g.selectAll<SVGRectElement, RenderColumnDatum>("rect")
           .data(renderData, (d) => d.key)
-          .call(renderColumn, y0);
+          .call(renderColumn, y0, transitionDuration);
       };
 
       select(ref.current)
@@ -168,7 +170,7 @@ export const ColumnsGrouped = () => {
               .call((g) =>
                 g
                   .transition()
-                  .duration(TRANSITION_DURATION)
+                  .duration(transitionDuration)
                   .attr(
                     "transform",
                     `translate(${margins.left} ${margins.top})`
@@ -178,7 +180,7 @@ export const ColumnsGrouped = () => {
           (exit) => exit.remove()
         );
     }
-  }, [renderData, y0, margins.left, margins.top]);
+  }, [renderData, y0, margins.left, margins.top, transitionDuration]);
 
   return <g ref={ref} />;
 };

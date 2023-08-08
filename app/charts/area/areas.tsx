@@ -4,13 +4,14 @@ import React from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { renderArea, RenderAreaDatum } from "@/charts/area/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { useTransitionStore } from "@/stores/transition";
 
 export const Areas = () => {
   const { bounds, getX, xScale, yScale, colors, series } =
     useChartState() as AreasState;
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const areaGenerator = area<$FixMe>()
     .defined((d) => d[0] !== null && d[1] !== null)
     .x((d) => xScale(getX(d.data)))
@@ -40,7 +41,7 @@ export const Areas = () => {
     ) => {
       g.selectAll<SVGRectElement, RenderAreaDatum>("path")
         .data(renderData, (d) => d.key)
-        .call(renderArea);
+        .call(renderArea, transitionDuration);
     };
 
     if (ref.current) {
@@ -59,7 +60,7 @@ export const Areas = () => {
               .call((g) =>
                 g
                   .transition()
-                  .duration(TRANSITION_DURATION)
+                  .duration(transitionDuration)
                   .attr(
                     "transform",
                     `translate(${margins.left} ${margins.top})`
@@ -69,7 +70,7 @@ export const Areas = () => {
           (exit) => exit.remove()
         );
     }
-  }, [renderData, yScale, margins.left, margins.top]);
+  }, [renderData, yScale, margins.left, margins.top, transitionDuration]);
 
   return <g ref={ref} />;
 };

@@ -3,12 +3,13 @@ import { useEffect, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTimeFormatUnit } from "@/formatters";
+import { useTransitionStore } from "@/stores/transition";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { xScale, yScale, bounds, xTimeUnit, getXLabel } =
     useChartState() as ColumnsState;
 
@@ -53,7 +54,7 @@ export const AxisWidthBand = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${margins.left}, ${chartHeight + margins.top})`
@@ -88,6 +89,7 @@ export const AxisWidthBand = () => {
 
 export const AxisWidthBandDomain = () => {
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { xScale, yScale, bounds } = useChartState() as ColumnsState;
   const { chartHeight, margins } = bounds;
   const { domainColor } = useChartTheme();
@@ -109,14 +111,14 @@ export const AxisWidthBandDomain = () => {
             .call((g) =>
               g
                 .transition()
-                .duration(TRANSITION_DURATION)
+                .duration(transitionDuration)
                 .call(axisBottom(xScale).tickSizeOuter(0))
             ),
         (update) =>
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${margins.left}, ${chartHeight + margins.top})`
