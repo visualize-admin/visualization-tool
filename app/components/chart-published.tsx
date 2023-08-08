@@ -13,6 +13,7 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
+import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -49,19 +50,17 @@ import { useLocale } from "@/locales/use-locale";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
-export const ChartPublished = ({
-  dataSet,
-  dataSource,
-  meta,
-  chartConfig,
-  configKey,
-}: {
+type ChartPublishedProps = {
   dataSet: string;
   dataSource: DataSource;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
-}) => {
+};
+
+export const ChartPublished = (props: ChartPublishedProps) => {
+  const { dataSet, dataSource, meta, chartConfig, configKey } = props;
+
   return (
     <ChartTablePreviewProvider>
       <ChartPublishedInner
@@ -90,19 +89,22 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
   },
 }));
 
-export const ChartPublishedInner = ({
-  dataSet,
-  dataSource = DEFAULT_DATA_SOURCE,
-  meta,
-  chartConfig,
-  configKey,
-}: {
+type ChartPublishInnerProps = {
   dataSet: string;
   dataSource: DataSource | undefined;
   meta: Meta;
   chartConfig: ChartConfig;
   configKey: string;
-}) => {
+};
+
+export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
+  const {
+    dataSet,
+    dataSource = DEFAULT_DATA_SOURCE,
+    meta,
+    chartConfig,
+    configKey,
+  } = props;
   const rootRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -291,28 +293,24 @@ export const ChartPublishedInner = ({
   );
 };
 
-const ChartWithInteractiveFilters = React.forwardRef(
-  (
-    {
-      dataSet,
-      dataSource,
-      chartConfig,
-    }: {
-      dataSet: string;
-      dataSource: DataSource;
-      chartConfig: ChartConfig;
-    },
-    ref
-  ) => {
-    const [_, dispatch] = useInteractiveFilters();
-    const { interactiveFiltersConfig } = chartConfig;
+type ChartWithInteractiveFiltersProps = {
+  dataSet: string;
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+};
 
+const ChartWithInteractiveFilters = React.forwardRef(
+  (props: ChartWithInteractiveFiltersProps, ref) => {
+    const { dataSet, dataSource, chartConfig } = props;
+
+    useSyncInteractiveFilters(chartConfig);
+
+    const [, dispatch] = useInteractiveFilters();
+    const { interactiveFiltersConfig } = chartConfig;
+    const timeRange = interactiveFiltersConfig?.timeRange;
     const presetFrom =
-      interactiveFiltersConfig?.timeRange.presets.from &&
-      parseDate(interactiveFiltersConfig?.timeRange.presets.from);
-    const presetTo =
-      interactiveFiltersConfig?.timeRange.presets.to &&
-      parseDate(interactiveFiltersConfig?.timeRange.presets.to);
+      timeRange?.presets.from && parseDate(timeRange.presets.from);
+    const presetTo = timeRange?.presets.to && parseDate(timeRange.presets.to);
 
     // Reset data filters if chart type changes
     useEffect(() => {
