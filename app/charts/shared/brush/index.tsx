@@ -106,6 +106,11 @@ export const BrushTime = () => {
         xEnd,
       ]);
 
+      // Need to use current state as the function is not updated during brushing
+      // and the local state accessed here is not up to date. This leads to
+      // making a dispatch on each brush move, which makes the animations laggy
+      // and generally shouldn't happen.
+      const { from, to } = useInteractiveFiltersStore.getState().timeRange;
 
       if (
         from?.getTime() !== newFrom.getTime() ||
