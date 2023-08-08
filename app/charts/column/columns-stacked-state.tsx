@@ -52,12 +52,12 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -109,7 +109,7 @@ const useColumnsStackedState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const [IFState] = useInteractiveFilters();
+  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
 
   const xKey = fields.x.componentIri;
 
@@ -173,7 +173,7 @@ const useColumnsStackedState = (
     );
   }, [getX, getY, scalesData]);
 
-  const normalize = IFState.calculation.type === "percent";
+  const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(

@@ -10,10 +10,6 @@ import {
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
 import {
-  InteractiveFiltersState,
-  useInteractiveFilters,
-} from "@/charts/shared/use-interactive-filters";
-import {
   ChartConfig,
   ChartType,
   Filters,
@@ -36,6 +32,10 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  InteractiveFiltersState,
+  useInteractiveFiltersStore,
+} from "@/stores/interactive-filters";
 
 // Prepare filters used in data query:
 // - merges publisher data filters and interactive data filters (user-defined),
@@ -65,20 +65,20 @@ export const useQueryFilters = ({
 }: {
   chartConfig: ChartConfig;
 }): QueryFilters => {
-  const [IFState] = useInteractiveFilters();
+  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
 
   return useMemo(() => {
     return prepareQueryFilters(
       chartConfig.chartType,
       chartConfig.filters,
       chartConfig.interactiveFiltersConfig,
-      IFState.dataFilters
+      dataFilters
     );
   }, [
     chartConfig.chartType,
     chartConfig.filters,
     chartConfig.interactiveFiltersConfig,
-    IFState.dataFilters,
+    dataFilters,
   ]);
 };
 

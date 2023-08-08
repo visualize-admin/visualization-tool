@@ -5,13 +5,13 @@ import {
   getChartConfigFilterComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, getAnimationField } from "@/configurator";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
   dataSetIri: string;
@@ -23,7 +23,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const { dataSetIri, dataSource, chartConfig } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
-  const [IFState] = useInteractiveFilters();
+  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
 
   const animationField = getAnimationField(chartConfig);
   const componentIris = Array.from(
@@ -73,33 +73,27 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
         (d) => d.iri === animationField.componentIri
       );
 
-      if (IFState.timeSlider.value) {
-        if (
-          IFState.timeSlider.type === "interval" &&
-          isTemporalDimension(dimension)
-        ) {
+      if (timeSlider.value) {
+        if (timeSlider.type === "interval" && isTemporalDimension(dimension)) {
           namedFilters.push({
             dimension,
             value: {
-              value: IFState.timeSlider.value,
-              label: timeFormatUnit(
-                IFState.timeSlider.value,
-                dimension.timeUnit
-              ),
+              value: timeSlider.value,
+              label: timeFormatUnit(timeSlider.value, dimension.timeUnit),
             },
           });
         }
 
         if (
-          IFState.timeSlider.type === "ordinal" &&
-          IFState.timeSlider.value &&
+          timeSlider.type === "ordinal" &&
+          timeSlider.value &&
           isTemporalOrdinalDimension(dimension)
         ) {
           namedFilters.push({
             dimension,
             value: {
-              value: IFState.timeSlider.value,
-              label: IFState.timeSlider.value,
+              value: timeSlider.value,
+              label: timeSlider.value,
             },
           });
         }

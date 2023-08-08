@@ -8,7 +8,6 @@ import { memo, useMemo } from "react";
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import {
@@ -25,6 +24,7 @@ import {
 } from "@/graphql/query-hooks";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -282,8 +282,12 @@ const LegendColorContent = (props: LegendColorContentProps) => {
   const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
     props;
   const classes = useStyles();
-  const [state, dispatch] = useInteractiveFilters();
-  const { categories } = state;
+  const { categories, addCategory, removeCategory } =
+    useInteractiveFiltersStore((d) => ({
+      categories: d.categories,
+      addCategory: d.addCategory,
+      removeCategory: d.removeCategory,
+    }));
 
   const activeInteractiveFilters = useMemo(() => {
     return new Set(Object.keys(categories));
@@ -296,15 +300,9 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     const item = ev.target.value;
 
     if (activeInteractiveFilters.has(item)) {
-      dispatch({
-        type: "REMOVE_INTERACTIVE_FILTER",
-        value: item,
-      });
+      removeCategory(item);
     } else if (!disabled) {
-      dispatch({
-        type: "ADD_INTERACTIVE_FILTER",
-        value: item,
-      });
+      addCategory(item);
     }
   });
 

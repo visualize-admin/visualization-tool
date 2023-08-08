@@ -15,8 +15,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
-import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/configurator";
+import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -63,34 +62,32 @@ ${(
         },
       }}
     >
-      <InteractiveFiltersProvider>
-        <ScatterplotChart
-          observations={scatterplotObservations}
-          dimensions={scatterplotDimensions}
-          dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
-          measures={scatterplotMeasures}
-          measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
-          chartConfig={
-            { interactiveFiltersConfig } as unknown as ScatterPlotConfig
-          }
-          aspectRatio={1}
-        >
-          <ChartContainer>
-            <ChartSvg>
-              <AxisWidthLinear />
-              <AxisHeightLinear />
-              <AxisWidthLinearDomain />
-              <AxisHeightLinearDomain />
-              <Scatterplot />
-              <InteractionVoronoi />
-            </ChartSvg>
-            <Tooltip type="single" />
-          </ChartContainer>
-          {scatterplotFields.segment && (
-            <LegendColor symbol="square" interactive />
-          )}
-        </ScatterplotChart>
-      </InteractiveFiltersProvider>
+      <ScatterplotChart
+        observations={scatterplotObservations}
+        dimensions={scatterplotDimensions}
+        dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+        measures={scatterplotMeasures}
+        measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+        chartConfig={
+          { interactiveFiltersConfig } as unknown as ScatterPlotConfig
+        }
+        aspectRatio={1}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <AxisWidthLinear />
+            <AxisHeightLinear />
+            <AxisWidthLinearDomain />
+            <AxisHeightLinearDomain />
+            <Scatterplot />
+            <InteractionVoronoi />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+        {scatterplotFields.segment && (
+          <LegendColor symbol="square" interactive />
+        )}
+      </ScatterplotChart>
     </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}
@@ -124,16 +121,9 @@ const scatterplotFields = {
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5":
         "#8c564b",
     },
-    // interactiveFilterPresets: {
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0": true,
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1": true,
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/2": true,
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/3": true,
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/4": true,
-    //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5": true,
-    // },
   },
 };
+
 const scatterplotMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",

@@ -11,7 +11,6 @@ import {
   TooltipMultiple,
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import Flex from "@/components/flex";
 import { ColumnConfig } from "@/configurator";
 import {
@@ -33,139 +32,137 @@ export default () => markdown`
 ### TooltipBox
 ${(
   <ReactSpecimen>
-    <InteractiveFiltersProvider>
-      <ColumnChart
-        observations={observations}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        chartConfig={
-          {
-            fields,
-            interactiveFiltersConfig: {
-              legend: { active: false, componentIri: "" },
-              timeRange: {
-                active: false,
-                componentIri: "",
-                presets: { type: "range", from: "", to: "" },
-              },
-              timeSlider: {
-                componentIri: "",
-              },
-              dataFilters: { active: false, componentIris: [] },
+    <ColumnChart
+      observations={observations}
+      measures={measures}
+      measuresByIri={keyBy(measures, (d) => d.iri)}
+      dimensions={dimensions}
+      dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+      chartConfig={
+        {
+          fields,
+          interactiveFiltersConfig: {
+            legend: { active: false, componentIri: "" },
+            timeRange: {
+              active: false,
+              componentIri: "",
+              presets: { type: "range", from: "", to: "" },
             },
-          } as unknown as ColumnConfig
-        }
-        aspectRatio={0.4}
-      >
-        <Flex>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "left", y: "top" }}
-              margins={margins}
-            >
-              <TooltipContent>Left / Top </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "center", y: "top" }}
-              margins={margins}
-            >
-              <TooltipContent>Center / Top </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "right", y: "top" }}
-              margins={margins}
-            >
-              <TooltipContent>Right / Top </TooltipContent>
-            </TooltipBox>
-          </div>
-        </Flex>
-        <Flex>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "left", y: "middle" }}
-              margins={margins}
-            >
-              <TooltipContent>Left / Middle </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "center", y: "middle" }}
-              margins={margins}
-            >
-              <TooltipContent>Center / Middle </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "right", y: "middle" }}
-              margins={margins}
-            >
-              <TooltipContent>Right / Middle </TooltipContent>
-            </TooltipBox>
-          </div>
-        </Flex>
-        <Flex>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "left", y: "bottom" }}
-              margins={margins}
-            >
-              <TooltipContent>Left / Bottom </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "center", y: "bottom" }}
-              margins={margins}
-            >
-              <TooltipContent>Center / Bottom </TooltipContent>
-            </TooltipBox>
-          </div>
-          <div style={{ width: 200, height: 150, position: "relative" }}>
-            <Dot />
-            <TooltipBox
-              x={100}
-              y={100}
-              placement={{ x: "right", y: "bottom" }}
-              margins={margins}
-            >
-              <TooltipContent>Right / Bottom </TooltipContent>
-            </TooltipBox>
-          </div>
-        </Flex>
-      </ColumnChart>
-    </InteractiveFiltersProvider>
+            timeSlider: {
+              componentIri: "",
+            },
+            dataFilters: { active: false, componentIris: [] },
+          },
+        } as unknown as ColumnConfig
+      }
+      aspectRatio={0.4}
+    >
+      <Flex>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "left", y: "top" }}
+            margins={margins}
+          >
+            <TooltipContent>Left / Top </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "center", y: "top" }}
+            margins={margins}
+          >
+            <TooltipContent>Center / Top </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "right", y: "top" }}
+            margins={margins}
+          >
+            <TooltipContent>Right / Top </TooltipContent>
+          </TooltipBox>
+        </div>
+      </Flex>
+      <Flex>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "left", y: "middle" }}
+            margins={margins}
+          >
+            <TooltipContent>Left / Middle </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "center", y: "middle" }}
+            margins={margins}
+          >
+            <TooltipContent>Center / Middle </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "right", y: "middle" }}
+            margins={margins}
+          >
+            <TooltipContent>Right / Middle </TooltipContent>
+          </TooltipBox>
+        </div>
+      </Flex>
+      <Flex>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "left", y: "bottom" }}
+            margins={margins}
+          >
+            <TooltipContent>Left / Bottom </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "center", y: "bottom" }}
+            margins={margins}
+          >
+            <TooltipContent>Center / Bottom </TooltipContent>
+          </TooltipBox>
+        </div>
+        <div style={{ width: 200, height: 150, position: "relative" }}>
+          <Dot />
+          <TooltipBox
+            x={100}
+            y={100}
+            placement={{ x: "right", y: "bottom" }}
+            margins={margins}
+          >
+            <TooltipContent>Right / Bottom </TooltipContent>
+          </TooltipBox>
+        </div>
+      </Flex>
+    </ColumnChart>
   </ReactSpecimen>
 )}
 
@@ -182,94 +179,90 @@ There are two types of tooltips:
 
 ${(
   <ReactSpecimen span={2}>
-    <InteractiveFiltersProvider>
-      <ColumnChart
-        observations={observations}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        chartConfig={
-          {
-            fields,
-            interactiveFiltersConfig: {
-              legend: { active: false, componentIri: "" },
-              timeRange: {
-                active: false,
-                componentIri: "",
-                presets: { type: "range", from: "", to: "" },
-              },
-              dataFilters: { active: false, componentIris: [] },
+    <ColumnChart
+      observations={observations}
+      measures={measures}
+      measuresByIri={keyBy(measures, (d) => d.iri)}
+      dimensions={dimensions}
+      dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+      chartConfig={
+        {
+          fields,
+          interactiveFiltersConfig: {
+            legend: { active: false, componentIri: "" },
+            timeRange: {
+              active: false,
+              componentIri: "",
+              presets: { type: "range", from: "", to: "" },
             },
-          } as unknown as ColumnConfig
-        }
-        aspectRatio={0.4}
-      >
-        <div style={{ width: 200, height: 150, position: "relative" }}>
-          <Dot />
-          <TooltipBox
-            x={100}
-            y={100}
-            placement={{ x: "left", y: "top" }}
-            margins={margins}
-          >
-            <TooltipSingle
-              xValue="Jahr 2017"
-              segment="10'987'372"
-              yValue="Alpen"
-            />
-          </TooltipBox>
-        </div>
-      </ColumnChart>
-    </InteractiveFiltersProvider>
+            dataFilters: { active: false, componentIris: [] },
+          },
+        } as unknown as ColumnConfig
+      }
+      aspectRatio={0.4}
+    >
+      <div style={{ width: 200, height: 150, position: "relative" }}>
+        <Dot />
+        <TooltipBox
+          x={100}
+          y={100}
+          placement={{ x: "left", y: "top" }}
+          margins={margins}
+        >
+          <TooltipSingle
+            xValue="Jahr 2017"
+            segment="10'987'372"
+            yValue="Alpen"
+          />
+        </TooltipBox>
+      </div>
+    </ColumnChart>
   </ReactSpecimen>
 )}
 
 ${(
   <ReactSpecimen span={2}>
-    <InteractiveFiltersProvider>
-      <ColumnChart
-        observations={observations}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        chartConfig={
-          {
-            fields,
-            interactiveFiltersConfig: {
-              legend: { active: false, componentIri: "" },
-              timeRange: {
-                active: false,
-                componentIri: "",
-                presets: { type: "range", from: "", to: "" },
-              },
-              dataFilters: { active: false, componentIris: [] },
+    <ColumnChart
+      observations={observations}
+      measures={measures}
+      measuresByIri={keyBy(measures, (d) => d.iri)}
+      dimensions={dimensions}
+      dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+      chartConfig={
+        {
+          fields,
+          interactiveFiltersConfig: {
+            legend: { active: false, componentIri: "" },
+            timeRange: {
+              active: false,
+              componentIri: "",
+              presets: { type: "range", from: "", to: "" },
             },
-          } as unknown as ColumnConfig
-        }
-        aspectRatio={0.4}
-      >
-        <div style={{ width: 200, height: 150, position: "relative" }}>
-          <Dot />
-          <TooltipBox
-            x={100}
-            y={100}
-            placement={{ x: "right", y: "middle" }}
-            margins={margins}
-          >
-            <TooltipMultiple
-              xValue="Jahr 2014"
-              segmentValues={[
-                { label: "Bern", value: "235", color: "Orchid" },
-                { label: "Zürich", value: "450", color: "LightSeaGreen" },
-                { label: "Lausanne", value: "435", color: "Orange" },
-              ]}
-            />
-          </TooltipBox>
-        </div>
-      </ColumnChart>
-    </InteractiveFiltersProvider>
+            dataFilters: { active: false, componentIris: [] },
+          },
+        } as unknown as ColumnConfig
+      }
+      aspectRatio={0.4}
+    >
+      <div style={{ width: 200, height: 150, position: "relative" }}>
+        <Dot />
+        <TooltipBox
+          x={100}
+          y={100}
+          placement={{ x: "right", y: "middle" }}
+          margins={margins}
+        >
+          <TooltipMultiple
+            xValue="Jahr 2014"
+            segmentValues={[
+              { label: "Bern", value: "235", color: "Orchid" },
+              { label: "Zürich", value: "450", color: "LightSeaGreen" },
+              { label: "Lausanne", value: "435", color: "Orange" },
+            ]}
+          />
+        </TooltipBox>
+      </div>
+    </ColumnChart>
   </ReactSpecimen>
 )}
 

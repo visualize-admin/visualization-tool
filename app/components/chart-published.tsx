@@ -9,10 +9,6 @@ import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
@@ -47,6 +43,7 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
@@ -245,48 +242,46 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               {meta.description[locale]}
             </Typography>
           )}
-          <InteractiveFiltersProvider>
-            <Flex
-              flexDirection="column"
-              ref={containerRef}
-              height={containerHeight.current!}
-              flexGrow={1}
+          <Flex
+            flexDirection="column"
+            ref={containerRef}
+            height={containerHeight.current!}
+            flexGrow={1}
+          >
+            <PublishedConfiguratorStateProvider
+              chartId={configKey}
+              initialState={publishedConfiguratorState}
             >
-              <PublishedConfiguratorStateProvider
-                chartId={configKey}
-                initialState={publishedConfiguratorState}
-              >
-                {isTablePreview ? (
-                  <DataSetTable
-                    sx={{ maxHeight: "100%" }}
-                    dataSetIri={dataSet}
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                  />
-                ) : (
-                  <ChartWithInteractiveFilters
-                    dataSet={dataSet}
-                    dataSource={dataSource}
-                    chartConfig={chartConfig}
-                  />
-                )}
-              </PublishedConfiguratorStateProvider>
-            </Flex>
-            <ChartFootnotes
-              dataSetIri={dataSet}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              configKey={configKey}
-              onToggleTableView={handleToggleTableView}
-              visualizeLinkText={
-                showDownload === false ? (
-                  <Trans id="metadata.link.created.with.visualize.alternate">
-                    visualize.admin.ch
-                  </Trans>
-                ) : undefined
-              }
-            />
-          </InteractiveFiltersProvider>
+              {isTablePreview ? (
+                <DataSetTable
+                  sx={{ maxHeight: "100%" }}
+                  dataSetIri={dataSet}
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                />
+              ) : (
+                <ChartWithInteractiveFilters
+                  dataSet={dataSet}
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                />
+              )}
+            </PublishedConfiguratorStateProvider>
+          </Flex>
+          <ChartFootnotes
+            dataSetIri={dataSet}
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            configKey={configKey}
+            onToggleTableView={handleToggleTableView}
+            visualizeLinkText={
+              showDownload === false ? (
+                <Trans id="metadata.link.created.with.visualize.alternate">
+                  visualize.admin.ch
+                </Trans>
+              ) : undefined
+            }
+          />
         </ChartErrorBoundary>
       </Box>
     </MetadataPanelStoreContext.Provider>
@@ -305,7 +300,12 @@ const ChartWithInteractiveFilters = React.forwardRef(
 
     useSyncInteractiveFilters(chartConfig);
 
-    const [, dispatch] = useInteractiveFilters();
+    const { setTimeRange, resetDataFilters } = useInteractiveFiltersStore(
+      (d) => ({
+        setTimeRange: d.setTimeRange,
+        resetDataFilters: d.resetDataFilters,
+      })
+    );
     const { interactiveFiltersConfig } = chartConfig;
     const timeRange = interactiveFiltersConfig?.timeRange;
     const presetFrom =
@@ -314,9 +314,7 @@ const ChartWithInteractiveFilters = React.forwardRef(
 
     // Reset data filters if chart type changes
     useEffect(() => {
-      dispatch({
-        type: "RESET_DATA_FILTER",
-      });
+      resetDataFilters();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chartConfig.chartType]);
 
@@ -325,13 +323,10 @@ const ChartWithInteractiveFilters = React.forwardRef(
     const presetToStr = presetTo?.toString();
     useEffect(() => {
       if (presetFrom && presetTo) {
-        dispatch({
-          type: "SET_TIME_RANGE_FILTER",
-          value: [presetFrom, presetTo],
-        });
+        setTimeRange(presetFrom, presetTo);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, presetFromStr, presetToStr]);
+    }, [setTimeRange, presetFromStr, presetToStr]);
 
     return (
       <Flex

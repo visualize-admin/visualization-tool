@@ -2,7 +2,6 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, SelectChangeEvent } from "@mui/material";
 import * as React from "react";
 
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
@@ -34,6 +33,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 
 export const ChartDataFilters = ({
@@ -138,11 +138,11 @@ const DataFilter = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
 }) => {
-  const [state, dispatch] = useInteractiveFilters();
-  const { dataFilters } = state;
-
+  const { dataFilters, updateDataFilter } = useInteractiveFiltersStore((d) => ({
+    dataFilters: d.dataFilters,
+    updateDataFilter: d.updateDataFilter,
+  }));
   const locale = useLocale();
-
   const [{ data }] = useDimensionValuesQuery({
     variables: {
       dimensionIri,
@@ -152,16 +152,12 @@ const DataFilter = ({
       dataCubeIri: dataSetIri,
     },
   });
-
   const hierarchy = data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
   const setDataFilter = (
     e: SelectChangeEvent<unknown> | { target: { value: string } }
   ) => {
-    dispatch({
-      type: "UPDATE_DATA_FILTER",
-      value: { dimensionIri, dimensionValueIri: e.target.value as string },
-    });
+    updateDataFilter(dimensionIri, e.target.value as string);
   };
 
   if (data?.dataCubeByIri?.dimensionByIri) {

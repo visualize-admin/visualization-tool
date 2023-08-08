@@ -45,12 +45,12 @@ import {
 } from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
@@ -98,7 +98,7 @@ const useAreasState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
-  const [IFState] = useInteractiveFilters();
+  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -186,7 +186,7 @@ const useAreasState = (
     );
   }, [getXAsString, getY, scalesData]);
 
-  const normalize = IFState.calculation.type === "percent";
+  const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
