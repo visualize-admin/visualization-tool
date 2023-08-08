@@ -58,9 +58,8 @@ export const useInteractiveFiltersStore = create<
     },
     removeCategory: (category: string) => {
       return set((state) => {
-        const { categories } = state;
-        delete categories[category];
-        return { ...state, categories };
+        delete state.categories[category];
+        return { ...state, categories: { ...state.categories } };
       });
     },
     resetCategories: () => {
