@@ -13,7 +13,6 @@ import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
-  const state = useChartState() as ColumnsState;
   const {
     getX,
     getYErrorRange,
@@ -21,8 +20,9 @@ export const ErrorWhiskers = () => {
     yScale,
     xScale,
     showYStandardError,
-  } = state;
-  const { margins } = state.bounds;
+    bounds,
+  } = useChartState() as ColumnsState;
+  const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
 
   const renderData: RenderWhiskerDatum[] | undefined = React.useMemo(() => {
