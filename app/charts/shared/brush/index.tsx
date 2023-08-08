@@ -19,6 +19,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useTransitionStore } from "@/stores/transition";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 // Brush constants
@@ -31,6 +32,12 @@ export const BrushTime = () => {
     timeRange: d.timeRange,
     setTimeRange: d.setTimeRange,
   }));
+  const { setDefaultDuration, setInstantDuration } = useTransitionStore(
+    (d) => ({
+      setDefaultDuration: d.setDefaultDuration,
+      setInstantDuration: d.setInstantDuration,
+    })
+  );
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
@@ -127,8 +134,13 @@ export const BrushTime = () => {
       [0, 0],
       [brushWidth, BRUSH_HEIGHT],
     ])
-    .on("start brush", brushed)
+    .on("start", (e) => {
+      setInstantDuration();
+      brushed(e);
+    })
+    .on("brush", brushed)
     .on("end", function (event) {
+      setDefaultDuration();
       updateSelectionExtent(event.selection);
 
       // Happens when snapping to actual values.
