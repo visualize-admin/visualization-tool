@@ -38,6 +38,7 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -328,18 +329,14 @@ const useAreasState = (
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const x = getXAsString(datum);
-      const xAnchor = xScale(getX(datum));
       const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const yValues = tooltipValues.map(getY);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
         order: segments,
         getCategory: getSegment,
         sortingOrder: "asc",
       });
-
-      const yAnchor = 0;
-      const xPlacement = "center";
-      const yPlacement = "top";
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         yMeasureIri: yMeasure.iri,
@@ -347,11 +344,19 @@ const useAreasState = (
         formatters,
         formatNumber,
       });
+      const xAnchor = xScale(getX(datum));
+      const yAnchor = normalize
+        ? yScale.range()[0] * 0.5
+        : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
 
       return {
         xAnchor,
         yAnchor,
-        placement: { x: xPlacement, y: yPlacement },
+        placement: getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor,
+          segment: !!fields.segment,
+        }),
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
@@ -368,6 +373,7 @@ const useAreasState = (
       };
     },
     [
+      yScale,
       colors,
       fields.segment,
       formatNumber,
@@ -386,6 +392,7 @@ const useAreasState = (
       yMeasure.unit,
       normalize,
       getIdentityY,
+      chartWidth,
     ]
   );
 

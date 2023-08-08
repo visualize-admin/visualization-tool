@@ -35,6 +35,7 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -199,32 +200,8 @@ const useColumnsState = (
 
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const xRef = xScale(getX(d)) as number;
-    const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(Math.max(getY(d) ?? NaN, 0));
-    const yAnchor = yRef;
-
-    const yPlacement = "top";
-
-    const getXPlacement = () => {
-      if (xRef + xOffset * 2 > 0.75 * chartWidth) {
-        return "left";
-      } else if (xRef < 0.25 * chartWidth) {
-        return "right";
-      } else {
-        return "center";
-      }
-    };
-    const xPlacement = getXPlacement();
-
-    const getXAnchor = () => {
-      return xPlacement === "right"
-        ? xRef
-        : xPlacement === "center"
-        ? xRef + xOffset
-        : xRef + xOffset * 2;
-    };
-    const xAnchor = getXAnchor();
+    const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
+    const yAnchor = yScale(Math.max(getY(d) ?? NaN, 0));
     const xLabel = getXAbbreviationOrLabel(d);
 
     const yValueFormatter = (value: number | null) =>
@@ -237,7 +214,11 @@ const useColumnsState = (
     return {
       xAnchor,
       yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
+      placement: getCenteredTooltipPlacement({
+        chartWidth,
+        xAnchor,
+        segment: !!fields.segment,
+      }),
       xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,

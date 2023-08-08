@@ -69,6 +69,24 @@ const usePosition = () => {
   return [box, handleRef] as const;
 };
 
+export const getCenteredTooltipPlacement = (props: {
+  chartWidth: number;
+  xAnchor: number;
+  segment: boolean;
+}): TooltipPlacement => {
+  const { chartWidth, xAnchor, segment } = props;
+
+  return segment
+    ? {
+        x: xAnchor < chartWidth * 0.25 ? "right" : "left",
+        y: "middle",
+      }
+    : {
+        x: "center",
+        y: "top",
+      };
+};
+
 export const TooltipBox = ({
   x,
   y,

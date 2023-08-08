@@ -45,6 +45,7 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -353,51 +354,17 @@ const useColumnsStackedState = (
   // Tooltips
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
+      const bw = xScale.bandwidth();
       const x = getX(datum);
-      const xRef = xScale(x) as number;
-      const xOffset = xScale.bandwidth() / 2;
-      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
 
+      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const yValues = tooltipValues.map(getY);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
         order: segments,
         getCategory: getSegment,
         sortingOrder: "asc",
       });
-
-      const cumulativeSum = (
-        (sum) => (d: Observation) =>
-          (sum += getY(d) ?? 0)
-      )(0);
-      const cumulativeRulerItemValues = sortedTooltipValues.map(cumulativeSum);
-
-      const yRef = yScale(
-        Math.max(
-          cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
-          0
-        )
-      );
-      const yPlacement = "top";
-
-      const getXPlacement = () => {
-        if (xRef + xOffset * 2 > 0.75 * chartWidth) {
-          return "left";
-        } else if (xRef < 0.25 * chartWidth) {
-          return "right";
-        } else {
-          return "center";
-        }
-      };
-      const xPlacement = getXPlacement();
-
-      const getXAnchor = () => {
-        return xPlacement === "right"
-          ? xRef
-          : xPlacement === "center"
-          ? xRef + xOffset
-          : xRef + xOffset * 2;
-      };
-      const xAnchor = getXAnchor();
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         yMeasureIri: yMeasure.iri,
@@ -406,10 +373,18 @@ const useColumnsStackedState = (
         formatNumber,
       });
 
+      const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
+      const yAnchor = yScale(sum(yValues.map((d) => Math.abs(d ?? 0))) * 0.5);
+      const placement = getCenteredTooltipPlacement({
+        chartWidth,
+        xAnchor: xAnchorRaw,
+        segment: !!fields.segment,
+      });
+
       return {
-        xAnchor,
-        yAnchor: yRef,
-        placement: { x: xPlacement, y: yPlacement },
+        xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
+        yAnchor,
+        placement,
         xValue: getXAbbreviationOrLabel(datum),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
