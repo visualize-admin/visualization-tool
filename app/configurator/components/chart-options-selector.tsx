@@ -738,7 +738,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   return (
     <ControlSection>
       <SectionTitle disabled={disabled} iconName="normalize">
-        <Trans id="controls.select.calculation.mode">Mode</Trans>
+        <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
         <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>

@@ -209,11 +209,11 @@ msgstr "Consentire la normalizzazione dei dati"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
-msgstr "Numeri assoluti"
+msgstr "Normale"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.percent"
-msgstr "Numeri relativi"
+msgstr "100%"
 
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
@@ -609,7 +609,7 @@ msgstr "Segmentazione"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
-msgstr "Modalità"
+msgstr "Modalità di visualizzazione"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
