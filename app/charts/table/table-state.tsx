@@ -162,7 +162,7 @@ const useTableState = (
       const slugifiedKeys = keys.map(getSlugifiedIri);
 
       return chartData.map((d, index) => {
-        let o = { id: index } as $IntentionalAny;
+        const o = { id: index } as $IntentionalAny;
         // This is run often, so let's optimize it
         for (let i = 0; i < keys.length; i++) {
           o[slugifiedKeys[i]] =

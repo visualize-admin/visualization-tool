@@ -76,29 +76,31 @@ export const PreviewTable = ({
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
   const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
-    if (sortBy !== undefined) {
-      const compare = sortDirection === "asc" ? ascending : descending;
-      const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
-      const convert =
-        isNumericalMeasure(sortBy) || sortBy.isNumerical
-          ? (d: string) => +d
-          : (d: string) => {
-              const value = valuesIndex.get(d);
-              if (value?.position) {
-                return value.position;
-              }
-              return d;
-            };
-
-      return [...observations].sort((a, b) =>
-        compare(
-          convert(a[sortBy.iri] as string),
-          convert(b[sortBy.iri] as string)
-        )
-      );
-    } else {
+    if (sortBy === undefined) {
       return observations;
     }
+
+    const compare = sortDirection === "asc" ? ascending : descending;
+    const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
+    const convert =
+      isNumericalMeasure(sortBy) || sortBy.isNumerical
+        ? (d: string) => +d
+        : (d: string) => {
+            const value = valuesIndex.get(d);
+
+            if (value?.position) {
+              return value.position;
+            }
+
+            return d;
+          };
+
+    return [...observations].sort((a, b) =>
+      compare(
+        convert(a[sortBy.iri] as string),
+        convert(b[sortBy.iri] as string)
+      )
+    );
   }, [observations, sortBy, sortDirection]);
 
   const tooltipContainerRef = useRef(null);

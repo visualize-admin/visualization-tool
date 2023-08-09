@@ -306,9 +306,9 @@ export const getCubeDimensionValuesWithMetadata = async ({
           return d.termType;
         });
 
-        const namedNodes = (grouped.get("NamedNode") || []) as Array<NamedNode>;
-        const literals = (grouped.get("Literal") || []) as Array<Literal>;
-        const undValues = (grouped.get("undefined") || []) as Array<NamedNode>;
+        const namedNodes = (grouped.get("NamedNode") ?? []) as Array<NamedNode>;
+        const literals = (grouped.get("Literal") ?? []) as Array<Literal>;
+        const undValues = (grouped.get("undefined") ?? []) as Array<NamedNode>;
 
         if (namedNodes?.length || literals?.length) {
           return { namedNodes, literals, undValues };
