@@ -1,10 +1,12 @@
 import { t } from "@lingui/macro";
 
 import {
+  ChartConfig,
   ChartType,
   ComponentType,
   SortingOrder,
   SortingType,
+  getAnimationField,
 } from "@/config-types";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -46,6 +48,10 @@ export type EncodingOption =
 export type EncodingSortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
+  getDisabledState?: (d: ChartConfig) => {
+    disabled: boolean;
+    reason?: string;
+  };
 };
 
 export interface EncodingSpec {
@@ -91,9 +97,35 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
 ];
 
 export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
-  { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
-  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-  { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+  {
+    sortingType: "byAuto",
+    sortingOrder: ["asc", "desc"],
+  },
+  {
+    sortingType: "byDimensionLabel",
+    sortingOrder: ["asc", "desc"],
+  },
+  {
+    sortingType: "byTotalSize",
+    sortingOrder: ["asc", "desc"],
+    getDisabledState: (d) => {
+      const animationPresent = !!getAnimationField(d);
+
+      if (animationPresent) {
+        return {
+          disabled: true,
+          reason: t({
+            id: "controls.sorting.byTotalSize.disabled",
+            message: "Sorting by total size is disabled during animation",
+          }),
+        };
+      }
+
+      return {
+        disabled: false,
+      };
+    },
+  },
 ];
 
 export const LINE_SEGMENT_SORTING: EncodingSortingOption[] = [
@@ -122,7 +154,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
     });
     if (noTemporalDimensions) {
       return t({
-        id: "",
+        id: "controls.animation.no-temporal-dimensions",
         message: "There is no dimension that can be animated.",
       });
     }

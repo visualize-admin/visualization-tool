@@ -849,12 +849,16 @@ const ChartFieldSorting = ({
           <Select
             id="sort-by"
             label={getFieldLabel("sortBy")}
-            options={encodingSortingOptions
-              ?.map((s) => s.sortingType)
-              .map((opt) => ({
-                value: opt,
-                label: getSortingTypeLabel(opt),
-              }))}
+            options={encodingSortingOptions?.map((d) => {
+              const disabledState = d.getDisabledState?.(state.chartConfig);
+
+              return {
+                value: d.sortingType,
+                label: getSortingTypeLabel(d.sortingType),
+                disabled: disabledState?.disabled,
+                disabledMessage: disabledState?.reason,
+              };
+            })}
             value={activeSortingType}
             disabled={disabled}
             onChange={(e) => {
