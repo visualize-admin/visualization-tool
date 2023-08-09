@@ -63,6 +63,10 @@
         "dataFilters": {
           "active": false,
           "componentIris": []
+        },
+        "calculation": {
+          "active": false,
+          "type": "identity"
         }
       },
       "baseLayer": {
