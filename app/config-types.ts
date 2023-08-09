@@ -657,14 +657,17 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isSortingInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is AreaConfig | ColumnConfig | LineConfig | PieConfig => {
+  return ["area", "column", "line", "pie"].includes(chartConfig.chartType);
+};
+
 export const isAnimationInConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig => {
-  return (
-    chartConfig.chartType === "column" ||
-    chartConfig.chartType === "map" ||
-    chartConfig.chartType === "scatterplot" ||
-    chartConfig.chartType === "pie"
+  return ["column", "map", "pie", "scatterplot"].includes(
+    chartConfig.chartType
   );
 };
 
@@ -692,13 +695,8 @@ export const isSegmentColorMappingInConfig = (
   | LineConfig
   | ScatterPlotConfig
   | PieConfig => {
-  const { chartType } = chartConfig;
-  return (
-    chartType === "area" ||
-    chartType === "column" ||
-    chartType === "line" ||
-    chartType === "scatterplot" ||
-    chartType === "pie"
+  return ["area", "column", "line", "scatterplot", "pie"].includes(
+    chartConfig.chartType
   );
 };
 

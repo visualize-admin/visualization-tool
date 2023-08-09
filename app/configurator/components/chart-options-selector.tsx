@@ -855,8 +855,7 @@ const ChartFieldSorting = ({
               return {
                 value: d.sortingType,
                 label: getSortingTypeLabel(d.sortingType),
-                disabled: disabledState?.disabled,
-                disabledMessage: disabledState?.reason,
+                ...disabledState,
               };
             })}
             value={activeSortingType}

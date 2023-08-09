@@ -13,10 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/charts/chart-config-ui-options.ts
-msgid ""
-msgstr "There is no dimension that can be animated."
-
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Add filter"
@@ -489,6 +485,10 @@ msgstr "Clear search field"
 msgid "controls.section.additional-information"
 msgstr "Additional information"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.disabled-by-sorting"
+msgstr "Animation is disabled when sorting by total size."
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Duration"
@@ -500,6 +500,10 @@ msgstr "Dynamic Scaling"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization."
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-temporal-dimensions"
+msgstr "There is no dimension that can be animated."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
@@ -732,6 +736,10 @@ msgstr "Total size"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Largest last"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.sorting.byTotalSize.disabled-by-animation"
+msgstr "Sorting by total size is disabled during animation."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.largestBottom"

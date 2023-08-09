@@ -18,17 +18,31 @@ type ControlTabProps = {
   value: string;
   onClick: (x: string) => void;
   labelId: string | null;
-  warnMessage?: React.ReactNode;
+  disabled?: boolean;
+  disabledMessage?: string;
 } & FieldProps;
 
 export const ControlTab = (props: ControlTabProps) => {
-  const { component, value, onClick, checked, labelId, warnMessage } = props;
+  const {
+    component,
+    value,
+    onClick,
+    checked,
+    labelId,
+    disabled,
+    disabledMessage,
+  } = props;
   const handleClick = useEvent(() => onClick(value));
   const isActive = !!component;
 
   return (
     <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
-      <ControlTabButton checked={checked} value={value} onClick={handleClick}>
+      <ControlTabButton
+        disabled={disabled}
+        checked={checked}
+        value={value}
+        onClick={handleClick}
+      >
         <ControlTabButtonInner
           iconName={getIconName(value)}
           upperLabel={labelId ? getFieldLabel(labelId) : null}
@@ -39,11 +53,10 @@ export const ControlTab = (props: ControlTabProps) => {
           checked={checked}
           optional={!component}
           rightIcon={
-            warnMessage ? (
-              <WarnIconTooltip title={warnMessage} />
-            ) : (
+            <Flex gap={2}>
+              {disabledMessage && <WarnIconTooltip title={disabledMessage} />}{" "}
               <FieldEditIcon isActive={isActive} />
-            )
+            </Flex>
           }
         />
       </ControlTabButton>
@@ -52,11 +65,17 @@ export const ControlTab = (props: ControlTabProps) => {
 };
 
 const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
-  root: {
+  edit: {
     color: ({ isActive }) =>
       isActive ? theme.palette.primary.main : theme.palette.grey[500],
     width: 18,
     height: 18,
+  },
+  warn: {
+    color: theme.palette.warning.main,
+    width: 18,
+    height: 18,
+    pointerEvents: "auto",
   },
 }));
 
@@ -71,7 +90,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   return (
     <Tooltip arrow title={title}>
       <Typography>
-        <SvgIcExclamation className={iconStyles.root} />
+        <SvgIcExclamation className={iconStyles.warn} />
       </Typography>
     </Tooltip>
   );
@@ -85,7 +104,7 @@ const FieldEditIcon = (props: FieldEditIconProps) => {
   const { isActive } = props;
   const classes = useIconStyles({ isActive });
 
-  return <SvgIcEdit className={classes.root} />;
+  return <SvgIcEdit className={classes.edit} />;
 };
 
 export const OnOffControlTab = ({
@@ -236,7 +255,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     "&.Mui-disabled": {
       cursor: "initial",
-      backgroundColor: theme.palette.muted.main,
+      backgroundColor: "transparent",
     },
   },
   controlTabButtonInnerIcon: {
@@ -251,19 +270,23 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 // Generic component
 export const ControlTabButton = ({
+  disabled,
   checked,
   value,
   onClick,
   children,
 }: {
+  disabled?: boolean;
   checked?: boolean;
   value: string;
   onClick: (x: string) => void;
   children: ReactNode;
 }) => {
   const classes = useStyles();
+
   return (
     <Button
+      disabled={disabled}
       role="tab"
       aria-selected={checked}
       aria-controls={`filter-panel-${value}`}
@@ -300,6 +323,7 @@ export const ControlTabButtonInner = ({
   rightIcon?: React.ReactNode;
 }) => {
   const classes = useStyles();
+
   return (
     <Flex
       sx={{

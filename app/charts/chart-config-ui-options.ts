@@ -7,6 +7,7 @@ import {
   SortingOrder,
   SortingType,
   getAnimationField,
+  isSortingInConfig,
 } from "@/config-types";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -50,7 +51,7 @@ export type EncodingSortingOption = {
   sortingOrder: SortingOrder[];
   getDisabledState?: (d: ChartConfig) => {
     disabled: boolean;
-    reason?: string;
+    disabledMessage?: string;
   };
 };
 
@@ -64,9 +65,13 @@ export interface EncodingSpec {
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
-  getWarnMessage?: (
+  getDisabledState?: (
+    chartConfig: ChartConfig,
     dimensions: DimensionMetadataFragment[]
-  ) => React.ReactNode | undefined;
+  ) => {
+    disabled: boolean;
+    disabledMessage?: string;
+  };
 }
 
 // dataFilters is enabled by default
@@ -108,15 +113,20 @@ export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
   {
     sortingType: "byTotalSize",
     sortingOrder: ["asc", "desc"],
-    getDisabledState: (d) => {
-      const animationPresent = !!getAnimationField(d);
+    getDisabledState: (
+      chartConfig
+    ): {
+      disabled: boolean;
+      disabledMessage?: string;
+    } => {
+      const animationPresent = !!getAnimationField(chartConfig);
 
       if (animationPresent) {
         return {
           disabled: true,
-          reason: t({
-            id: "controls.sorting.byTotalSize.disabled",
-            message: "Sorting by total size is disabled during animation",
+          disabledMessage: t({
+            id: "controls.sorting.byTotalSize.disabled-by-animation",
+            message: "Sorting by total size is disabled during animation.",
           }),
         };
       }
@@ -148,16 +158,43 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   disableInteractiveFilters: true,
-  getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
+  getDisabledState: (
+    chartConfig,
+    dimensions
+  ): {
+    disabled: boolean;
+    disabledMessage?: string;
+  } => {
     const noTemporalDimensions = !dimensions.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
+
     if (noTemporalDimensions) {
-      return t({
-        id: "controls.animation.no-temporal-dimensions",
-        message: "There is no dimension that can be animated.",
-      });
+      return {
+        disabled: true,
+        disabledMessage: t({
+          id: "controls.section.animation.no-temporal-dimensions",
+          message: "There is no dimension that can be animated.",
+        }),
+      };
     }
+
+    if (
+      isSortingInConfig(chartConfig) &&
+      chartConfig.fields.segment?.sorting?.sortingType === "byTotalSize"
+    ) {
+      return {
+        disabled: true,
+        disabledMessage: t({
+          id: "controls.section.animation.disabled-by-sorting",
+          message: "Animation is disabled when sorting by total size.",
+        }),
+      };
+    }
+
+    return {
+      disabled: false,
+    };
   },
 };
 
