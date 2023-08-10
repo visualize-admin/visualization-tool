@@ -32,6 +32,7 @@ import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import { useTransitionStore } from "@/stores/transition";
 import { useEmbedOptions } from "@/utils/embed";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -256,19 +257,16 @@ export const OpenMetadataPanelWrapper = ({
   );
 };
 
-export const MetadataPanel = ({
-  datasetIri,
-  dataSource,
-  dimensions,
-  container,
-  top = 0,
-}: {
+type MetadataPanelProps = {
   datasetIri: string;
   dataSource: DataSource;
   dimensions: DimensionMetadataFragment[];
   container?: HTMLDivElement | null;
   top?: number;
-}) => {
+};
+
+export const MetadataPanel = (props: MetadataPanelProps) => {
+  const { datasetIri, dataSource, dimensions, container, top = 0 } = props;
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
   const otherClasses = useOtherStyles();
@@ -276,6 +274,12 @@ export const MetadataPanel = ({
     open: state.open,
     activeSection: state.activeSection,
   }));
+  const { setDefaultDuration, setInstantDuration } = useTransitionStore(
+    (d) => ({
+      setDefaultDuration: d.setDefaultDuration,
+      setInstantDuration: d.setInstantDuration,
+    })
+  );
   const { setOpen, toggle, setActiveSection, reset } =
     useMetadataPanelStoreActions();
   const handleToggle = useEvent(() => {
@@ -304,9 +308,15 @@ export const MetadataPanel = ({
         open={open}
         anchor="left"
         hideBackdrop
+        disableEnforceFocus
         ModalProps={{ container }}
         PaperProps={{ style: { position: "absolute" } }}
-        disableEnforceFocus
+        SlideProps={{
+          onEnter: setInstantDuration,
+          onEntered: setDefaultDuration,
+          onExit: setInstantDuration,
+          onExited: setDefaultDuration,
+        }}
       >
         <Header onClose={handleToggle} />
 
