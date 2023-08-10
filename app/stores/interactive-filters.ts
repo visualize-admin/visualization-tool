@@ -53,17 +53,14 @@ export const useInteractiveFiltersStore = create<
   return {
     categories: {},
     addCategory: (category: string) => {
-      return set((state) => {
-        return {
-          ...state,
-          categories: { ...state.categories, [category]: true },
-        };
-      });
+      set((state) => ({
+        categories: { ...state.categories, [category]: true },
+      }));
     },
     removeCategory: (category: string) => {
-      return set((state) => {
+      set((state) => {
         delete state.categories[category];
-        return { ...state, categories: { ...state.categories } };
+        return { categories: { ...state.categories } };
       });
     },
     resetCategories: () => {
@@ -90,11 +87,9 @@ export const useInteractiveFiltersStore = create<
       });
     },
     resetTimeSlider: () => {
-      set((state) => {
-        return {
-          timeSlider: { ...state.timeSlider, value: undefined },
-        };
-      });
+      set((state) => ({
+        timeSlider: { ...state.timeSlider, value: undefined },
+      }));
     },
     dataFilters: {},
     setDataFilters: (dataFilters: DataFilters) => {
@@ -104,17 +99,15 @@ export const useInteractiveFiltersStore = create<
       dimensionIri: string,
       dimensionValueIri: FilterValueSingle["value"]
     ) => {
-      set((state) => {
-        return {
-          dataFilters: {
-            ...state.dataFilters,
-            [dimensionIri]: {
-              type: "single",
-              value: dimensionValueIri,
-            },
+      set((state) => ({
+        dataFilters: {
+          ...state.dataFilters,
+          [dimensionIri]: {
+            type: "single",
+            value: dimensionValueIri,
           },
-        };
-      });
+        },
+      }));
     },
     resetDataFilters: () => {
       set({ dataFilters: {} });

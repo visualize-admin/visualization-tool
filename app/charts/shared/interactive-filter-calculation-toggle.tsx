@@ -5,11 +5,9 @@ import { Switch } from "@/components/form";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 
 export const CalculationToggle = () => {
-  const { calculation, setCalculationType } = useInteractiveFiltersStore(
-    (d) => ({
-      calculation: d.calculation,
-      setCalculationType: d.setCalculationType,
-    })
+  const calculation = useInteractiveFiltersStore((d) => d.calculation);
+  const setCalculationType = useInteractiveFiltersStore(
+    (d) => d.setCalculationType
   );
 
   const onChange = React.useCallback(() => {

@@ -9,7 +9,6 @@ import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
-import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -303,26 +302,12 @@ type ChartWithInteractiveFiltersProps = {
 const ChartWithInteractiveFilters = React.forwardRef(
   (props: ChartWithInteractiveFiltersProps, ref) => {
     const { dataSet, dataSource, chartConfig } = props;
-
-    useSyncInteractiveFilters(chartConfig);
-
-    const { setTimeRange, resetDataFilters } = useInteractiveFiltersStore(
-      (d) => ({
-        setTimeRange: d.setTimeRange,
-        resetDataFilters: d.resetDataFilters,
-      })
-    );
     const { interactiveFiltersConfig } = chartConfig;
+    const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
     const timeRange = interactiveFiltersConfig?.timeRange;
     const presetFrom =
       timeRange?.presets.from && parseDate(timeRange.presets.from);
     const presetTo = timeRange?.presets.to && parseDate(timeRange.presets.to);
-
-    // Reset data filters if chart type changes
-    useEffect(() => {
-      resetDataFilters();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chartConfig.chartType]);
 
     // Editor time presets supersede interactive state
     const presetFromStr = presetFrom?.toString();
@@ -361,3 +346,4 @@ const ChartWithInteractiveFilters = React.forwardRef(
     );
   }
 );
+ChartWithInteractiveFilters.displayName = "ChartWithInteractiveFilters";

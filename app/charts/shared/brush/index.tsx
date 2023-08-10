@@ -28,16 +28,10 @@ export const BRUSH_HEIGHT = 3;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const { timeRange, setTimeRange } = useInteractiveFiltersStore((d) => ({
-    timeRange: d.timeRange,
-    setTimeRange: d.setTimeRange,
-  }));
-  const { setDefaultDuration, setInstantDuration } = useTransitionStore(
-    (d) => ({
-      setDefaultDuration: d.setDefaultDuration,
-      setInstantDuration: d.setInstantDuration,
-    })
-  );
+  const timeRange = useInteractiveFiltersStore((d) => d.timeRange);
+  const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
+  const setDefaultDuration = useTransitionStore((d) => d.setDefaultDuration);
+  const setInstantDuration = useTransitionStore((d) => d.setInstantDuration);
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
