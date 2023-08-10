@@ -1,8 +1,12 @@
-import { axisBottom, select, Selection } from "d3";
+import { axisBottom } from "d3";
 import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import {
+  maybeTransition,
+  renderContainer,
+} from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
@@ -23,58 +27,58 @@ export const AxisWidthLinear = () => {
     fontFamily,
   } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const maxLabelLength = estimateTextWidth(formatNumber(xScale.domain()[1]));
-    const ticks = Math.min(bounds.chartWidth / (maxLabelLength + 20), 4);
-    const tickValues = xScale.ticks(ticks);
-    const axis = axisBottom(xScale)
-      .tickValues(tickValues)
-      .tickSizeInner(-chartHeight)
-      .tickSizeOuter(-chartHeight)
-      .tickFormat(formatNumber);
-
-    g.selectAll<SVGGElement, null>(".content")
-      .data([null])
-      .join(
-        (enter) =>
-          enter
-            .append("g")
-            .attr("class", "content")
-            .attr(
-              "transform",
-              `translate(${margins.left}, ${chartHeight + margins.top})`
-            )
-            .call(axis),
-        (update) =>
-          update.call((g) =>
-            g
-              .transition()
-              .duration(transitionDuration)
-              .attr(
-                "transform",
-                `translate(${margins.left}, ${chartHeight + margins.top})`
-              )
-              .call(axis)
-          ),
-        (exit) => exit.remove()
-      );
-
-    g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
-    g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("dy", labelFontSize)
-      .attr("text-anchor", "middle");
-    g.select("path.domain").attr("stroke", gridColor);
-  };
-
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+    if (ref.current) {
+      const maxLabelLength = estimateTextWidth(
+        formatNumber(xScale.domain()[1])
+      );
+      const ticks = Math.min(bounds.chartWidth / (maxLabelLength + 20), 4);
+      const tickValues = xScale.ticks(ticks);
+      const axis = axisBottom(xScale)
+        .tickValues(tickValues)
+        .tickSizeInner(-chartHeight)
+        .tickSizeOuter(-chartHeight)
+        .tickFormat(formatNumber);
+      const g = renderContainer(ref.current, {
+        id: "axis-width-linear",
+        transform: `translate(${margins.left} ${chartHeight + margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g) => g.call(axis),
+        renderUpdate: (g, opts) =>
+          maybeTransition(g, {
+            transition: opts.transition,
+            s: (g) => g.call(axis),
+          }),
+      });
+
+      g.selectAll(".tick line")
+        .attr("stroke", gridColor)
+        .attr("stroke-width", 1);
+      g.selectAll(".tick text")
+        .attr("font-size", labelFontSize)
+        .attr("font-family", fontFamily)
+        .attr("fill", labelColor)
+        .attr("dy", labelFontSize)
+        .attr("text-anchor", "middle");
+      g.select("path.domain").attr("stroke", gridColor);
+    }
+  }, [
+    bounds.chartWidth,
+    chartHeight,
+    enableTransition,
+    fontFamily,
+    formatNumber,
+    gridColor,
+    labelColor,
+    labelFontSize,
+    margins.left,
+    margins.top,
+    transitionDuration,
+    xScale,
+  ]);
 
   return (
     <>
@@ -99,51 +103,42 @@ export const AxisWidthLinearDomain = () => {
   const { chartHeight, margins } = bounds;
   const { domainColor } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
 
-  const mkAxisDomain = (
-    g: Selection<SVGGElement, unknown, null, undefined>
-  ) => {
-    const axis = axisBottom(xScale).tickSizeOuter(0);
-
-    g.selectAll<SVGGElement, null>(".content")
-      .data([null])
-      .join(
-        (enter) =>
-          enter
-            .append("g")
-            .attr("class", "content")
-            .attr(
-              "transform",
-              `translate(${margins.left}, ${chartHeight + margins.top})`
-            )
-            .call(axis),
-        (update) =>
-          update.call((g) =>
-            g
-              .transition()
-              .duration(transitionDuration)
-              .attr(
-                "transform",
-                `translate(${margins.left}, ${chartHeight + margins.top})`
-              )
-              .call(axis)
-          ),
-        (exit) => exit.remove()
-      );
-
-    g.selectAll(".tick line").remove();
-    g.selectAll(".tick text").remove();
-    g.select("path.domain")
-      .attr("data-name", "width-axis-domain")
-      .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
-      .attr("stroke", domainColor);
-  };
-
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+    if (ref.current) {
+      const axis = axisBottom(xScale).tickSizeOuter(0);
+      const g = renderContainer(ref.current, {
+        id: "axis-width-linear-domain",
+        transform: `translate(${margins.left} ${chartHeight + margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g) => g.call(axis),
+        renderUpdate: (g, opts) =>
+          maybeTransition(g, {
+            transition: opts.transition,
+            s: (g) => g.call(axis),
+          }),
+      });
+
+      g.selectAll(".tick line").remove();
+      g.selectAll(".tick text").remove();
+      g.select("path.domain")
+        .attr("data-name", "width-axis-domain")
+        .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
+        .attr("stroke", domainColor);
+    }
+  }, [
+    bounds.chartHeight,
+    chartHeight,
+    domainColor,
+    enableTransition,
+    margins.left,
+    margins.top,
+    transitionDuration,
+    xScale,
+    yScale,
+  ]);
 
   return <g ref={ref} />;
 };

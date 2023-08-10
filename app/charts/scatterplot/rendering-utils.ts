@@ -1,4 +1,9 @@
-import { BaseType, Selection } from "d3";
+import { Selection } from "d3";
+
+import {
+  RenderOptions,
+  maybeTransition,
+} from "@/charts/shared/rendering-utils";
 
 export type RenderDatum = {
   key: string;
@@ -8,10 +13,12 @@ export type RenderDatum = {
 };
 
 export const renderCircles = (
-  g: Selection<SVGGElement, null, BaseType, unknown>,
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
   renderData: RenderDatum[],
-  transitionDuration: number
+  options: RenderOptions
 ) => {
+  const { transition } = options;
+
   g.selectAll<SVGCircleElement, RenderDatum>("circle")
     .data(renderData, (d) => d.key)
     .join(
@@ -26,25 +33,25 @@ export const renderCircles = (
           .attr("fill", (d) => d.color)
           .attr("opacity", 0)
           .call((enter) =>
-            enter.transition().duration(transitionDuration).attr("opacity", 1)
+            maybeTransition(enter, {
+              transition,
+              s: (g) => g.attr("opacity", 1),
+            })
           ),
       (update) =>
-        update.call((update) =>
-          update
-            .transition()
-            .duration(transitionDuration)
-            .attr("cx", (d) => d.cx)
-            .attr("cy", (d) => d.cy)
-            .attr("fill", (d) => d.color)
-            .attr("opacity", 1)
-        ),
+        maybeTransition(update, {
+          transition,
+          s: (g) =>
+            g
+              .attr("cx", (d) => d.cx)
+              .attr("cy", (d) => d.cy)
+              .attr("fill", (d) => d.color)
+              .attr("opacity", 1),
+        }),
       (exit) =>
-        exit.call((exit) =>
-          exit
-            .transition()
-            .duration(transitionDuration)
-            .attr("opacity", 0)
-            .remove()
-        )
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
     );
 };

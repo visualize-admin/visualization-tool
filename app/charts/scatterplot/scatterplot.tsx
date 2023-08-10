@@ -1,4 +1,3 @@
-import { select } from "d3";
 import React from "react";
 
 import {
@@ -7,6 +6,7 @@ import {
 } from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
@@ -26,8 +26,8 @@ export const Scatterplot = () => {
   const theme = useTheme();
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-
   const renderData: RenderDatum[] = React.useMemo(() => {
     return chartData.map((d) => {
       return {
@@ -51,34 +51,21 @@ export const Scatterplot = () => {
   ]);
 
   React.useEffect(() => {
-    if (ref.current) {
-      select(ref.current)
-        .selectAll<SVGGElement, null>(".content")
-        .data([null])
-        .join(
-          (enter) =>
-            enter
-              .append("g")
-              .attr("class", "content")
-              .attr("transform", `translate(${margins.left} ${margins.top})`)
-              .call(renderCircles, renderData),
-          (update) =>
-            update
-              .call((g) =>
-                g
-                  .transition()
-                  .duration(transitionDuration)
-                  .attr(
-                    "transform",
-                    `translate(${margins.left} ${margins.top})`
-                  )
-              )
-              .call(renderCircles, renderData, transitionDuration),
-          (exit) => exit.remove()
-        )
-        .call(renderCircles, renderData);
+    if (ref.current && renderData) {
+      renderContainer(ref.current, {
+        id: "scatterplot",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderCircles(g, renderData, opts),
+      });
     }
-  }, [renderData, margins.left, margins.top, transitionDuration]);
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+  ]);
 
   return <g ref={ref} />;
 };

@@ -1,18 +1,19 @@
-import { arc, PieArcDatum, select } from "d3";
+import { arc, PieArcDatum } from "d3";
 import React from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
+import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 import useEvent from "@/utils/use-event";
 
-import { RenderDatum, renderPie } from "./rendering-utils";
-
 export const Pie = () => {
   const { chartData, getPieData, getSegment, colors, bounds, getRenderingKey } =
     useChartState() as PieState;
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { width, height, chartWidth, chartHeight } = bounds;
   const [, dispatch] = useInteraction();
@@ -61,23 +62,30 @@ export const Pie = () => {
   });
 
   React.useEffect(() => {
-    if (ref.current) {
-      select(ref.current).call(
-        renderPie,
-        renderData,
-        arcGenerator,
-        handleMouseEnter,
-        handleMouseLeave,
-        transitionDuration
-      );
+    if (ref.current && renderData) {
+      renderContainer(ref.current, {
+        id: "pies",
+        transform: `translate(${xTranslate} ${yTranslate})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) =>
+          renderPies(g, renderData, {
+            ...opts,
+            arcGenerator,
+            handleMouseEnter,
+            handleMouseLeave,
+          }),
+      });
     }
   }, [
-    renderData,
     arcGenerator,
+    enableTransition,
     handleMouseEnter,
     handleMouseLeave,
+    renderData,
     transitionDuration,
+    xTranslate,
+    yTranslate,
   ]);
 
-  return <g ref={ref} transform={`translate(${xTranslate}, ${yTranslate})`} />;
+  return <g ref={ref} />;
 };
