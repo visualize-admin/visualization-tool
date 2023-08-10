@@ -10,22 +10,26 @@ export type InteractiveFiltersState = {
     from: Date | undefined;
     to: Date | undefined;
   };
-  timeSlider:
-    | {
-        type: "interval";
-        value: Date | undefined;
-      }
-    | {
-        type: "ordinal";
-        value: string | undefined;
-      };
-  dataFilters: {
-    [x: string]: FilterValueSingle;
-  };
+  timeSlider: TimeSlider;
+  dataFilters: DataFilters;
   calculation: {
     type: CalculationType | undefined;
   };
 };
+
+type DataFilters = {
+  [d: string]: FilterValueSingle;
+};
+
+type TimeSlider =
+  | {
+      type: "interval";
+      value: Date | undefined;
+    }
+  | {
+      type: "ordinal";
+      value: string | undefined;
+    };
 
 export type InteractiveFiltersStateActions = {
   addCategory: (category: string) => void;
@@ -63,8 +67,8 @@ export const useInteractiveFiltersStore = create<
       });
     },
     resetCategories: () => {
-      return set((state) => {
-        return { ...state, categories: {} };
+      set({
+        categories: {},
       });
     },
     timeRange: {
@@ -72,46 +76,36 @@ export const useInteractiveFiltersStore = create<
       to: undefined,
     },
     setTimeRange: (from: Date, to: Date) => {
-      return set((state) => {
-        return { ...state, timeRange: { from, to } };
+      set({
+        timeRange: { from, to },
       });
     },
     timeSlider: {
       type: "interval",
       value: undefined,
     },
-    setTimeSlider: ({ type, value }: InteractiveFiltersState["timeSlider"]) => {
-      return set((state) => {
-        return {
-          ...state,
-          timeSlider: {
-            type,
-            value,
-          } as InteractiveFiltersState["timeSlider"],
-        };
+    setTimeSlider: ({ type, value }: TimeSlider) => {
+      set({
+        timeSlider: { type, value } as TimeSlider,
       });
     },
     resetTimeSlider: () => {
-      return set((state) => {
+      set((state) => {
         return {
-          ...state,
           timeSlider: { ...state.timeSlider, value: undefined },
         };
       });
     },
     dataFilters: {},
-    setDataFilters: (dataFilters: InteractiveFiltersState["dataFilters"]) => {
-      return set((state) => {
-        return { ...state, dataFilters };
-      });
+    setDataFilters: (dataFilters: DataFilters) => {
+      set({ dataFilters });
     },
     updateDataFilter: (
       dimensionIri: string,
       dimensionValueIri: FilterValueSingle["value"]
     ) => {
-      return set((state) => {
+      set((state) => {
         return {
-          ...state,
           dataFilters: {
             ...state.dataFilters,
             [dimensionIri]: {
@@ -123,20 +117,13 @@ export const useInteractiveFiltersStore = create<
       });
     },
     resetDataFilters: () => {
-      return set((state) => {
-        return { ...state, dataFilters: {} };
-      });
+      set({ dataFilters: {} });
     },
     calculation: {
       type: undefined,
     },
     setCalculationType: (calculationType: CalculationType) => {
-      return set((state) => {
-        return {
-          ...state,
-          calculation: { type: calculationType },
-        };
-      });
+      set({ calculation: { type: calculationType } });
     },
   };
 });
