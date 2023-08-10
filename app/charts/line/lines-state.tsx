@@ -13,14 +13,15 @@ import {
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
 
-import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 import {
   LinesStateVariables,
   useLinesStateData,
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
-import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
-import { getChartBounds } from "@/charts/shared/chart-dimensions";
+import {
+  getChartBounds,
+  useChartPadding,
+} from "@/charts/shared/chart-dimensions";
 import { getWideData } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -42,7 +43,6 @@ import {
 } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -130,9 +130,12 @@ const useLinesState = (
   const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
   const maxValue = max(scalesData, getY) ?? 0;
   const yDomain = [minValue, maxValue];
-
-  const entireMaxValue = max(scalesData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
+
+  const allMinValue = Math.min(min(allData, getY) ?? 0, 0);
+  const allMaxValue = max(allData, getY) ?? 0;
+  const allYDomain = [allMinValue, allMaxValue];
+  const allYScale = scaleLinear().domain(allYDomain).nice();
 
   // segments
   const segmentFilter = segmentDimension?.iri
@@ -191,20 +194,18 @@ const useLinesState = (
   }
 
   // Dimensions
-  const left = interactiveFiltersConfig?.timeRange.active
-    ? estimateTextWidth(formatNumber(entireMaxValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
-  const bottom = interactiveFiltersConfig?.timeRange.active
-    ? BRUSH_BOTTOM_SPACE
-    : 40;
+  const { left, bottom } = useChartPadding(
+    allYScale,
+    width,
+    aspectRatio,
+    interactiveFiltersConfig,
+    formatNumber
+  );
   const margins = {
     top: 50,
     right: 40,
-    bottom: bottom,
-    left: left + LEFT_MARGIN_OFFSET,
+    bottom,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;

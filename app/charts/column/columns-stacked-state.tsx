@@ -4,6 +4,7 @@ import {
   rollup,
   scaleBand,
   ScaleBand,
+  scaleLinear,
   ScaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
@@ -24,12 +25,7 @@ import {
   useColumnsStackedStateData,
   useColumnsStackedStateVariables,
 } from "@/charts/column/columns-stacked-state-props";
-import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  PADDING_INNER,
-  PADDING_OUTER,
-} from "@/charts/column/constants";
+import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
   getChartBounds,
   useChartPadding,
@@ -302,6 +298,29 @@ const useColumnsStackedState = (
     return getStackedYScale(scalesData, { normalize, getX, getY });
   }, [scalesData, normalize, getX, getY]);
 
+  const allYScale = useMemo(() => {
+    //  When the user can toggle between absolute and relative values, we use the
+    // absolute values to calculate the yScale domain, so that the yScale doesn't
+    // change when the user toggles between absolute and relative values.
+    if (interactiveFiltersConfig?.calculation.active) {
+      const scale = getStackedYScale(allData, { normalize: false, getX, getY });
+
+      if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
+        return scaleLinear().domain([0, 100]);
+      }
+
+      return scale;
+    }
+
+    return getStackedYScale(allData, { normalize, getX, getY });
+  }, [
+    allData,
+    getX,
+    getY,
+    interactiveFiltersConfig?.calculation.active,
+    normalize,
+  ]);
+
   // stack order
   const series = useMemo(() => {
     const sorting = fields.segment?.sorting;
@@ -329,19 +348,18 @@ const useColumnsStackedState = (
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding(
-    yScale,
+    allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels,
-    normalize
+    xDomainLabels
   );
   const margins = {
     top: 50,
     right: 40,
-    bottom: bottom + BOTTOM_MARGIN_OFFSET,
-    left: left + LEFT_MARGIN_OFFSET,
+    bottom,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;

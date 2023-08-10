@@ -22,8 +22,6 @@ import {
   useColumnsGroupedStateVariables,
 } from "@/charts/column/columns-grouped-state-props";
 import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
   PADDING_WITHIN,
@@ -171,6 +169,7 @@ const useColumnsGroupedState = (
     xDomainLabels,
     colors,
     yScale,
+    allYScale,
     interactiveXTimeRangeScale,
     xScale,
     xScaleIn,
@@ -193,12 +192,12 @@ const useColumnsGroupedState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-      colors.unknown(() => undefined);
     } else {
       colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
-      colors.unknown(() => undefined);
     }
+
+    colors.unknown(() => undefined);
 
     const xValues = [...new Set(scalesData.map(getX))];
     const xSorting = fields.x?.sorting;
@@ -244,12 +243,24 @@ const useColumnsGroupedState = (
       ) ?? 0,
       0
     );
-
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+
+    const allMinValue = Math.min(
+      min(allData, (d) => (getYErrorRange ? getYErrorRange(d)[0] : getY(d))) ??
+        0,
+      0
+    );
+    const allMaxValue = Math.max(
+      max(allData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
+        0,
+      0
+    );
+    const allYScale = scaleLinear().domain([allMinValue, allMaxValue]).nice();
 
     return {
       colors,
       yScale,
+      allYScale,
       interactiveXTimeRangeScale,
       xScale,
       xScaleIn,
@@ -258,23 +269,24 @@ const useColumnsGroupedState = (
     };
   }, [
     fields.segment,
-    xFilter,
-    fields.x.sorting,
-    fields.x.useAbbreviations,
-    sumsByX,
-    xDimension,
-    allSegments,
-    segments,
-    segmentsByAbbreviationOrLabel,
-    segmentsByValue,
-    timeRangeData,
+    fields.x?.sorting,
+    fields.x?.useAbbreviations,
+    segmentDimension,
     scalesData,
     getX,
+    xDimension,
+    sumsByX,
+    xFilter,
     getXLabel,
+    segments,
+    timeRangeData,
+    allData,
+    allSegments,
+    segmentsByAbbreviationOrLabel,
+    segmentsByValue,
     getXAsDate,
     getYErrorRange,
     getY,
-    segmentDimension,
   ]);
 
   // Group
@@ -306,7 +318,7 @@ const useColumnsGroupedState = (
   }, [getSegment, getX, chartData, segmentSortingOrder, segments, xScale]);
 
   const { left, bottom } = useChartPadding(
-    yScale,
+    allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
@@ -316,8 +328,8 @@ const useColumnsGroupedState = (
   const margins = {
     top: 50,
     right: 40,
-    bottom: bottom + BOTTOM_MARGIN_OFFSET,
-    left: left + LEFT_MARGIN_OFFSET,
+    bottom,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;

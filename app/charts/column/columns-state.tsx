@@ -18,12 +18,7 @@ import {
   useColumnsStateData,
   useColumnsStateVariables,
 } from "@/charts/column/columns-state-props";
-import {
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  PADDING_INNER,
-  PADDING_OUTER,
-} from "@/charts/column/constants";
+import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
   getChartBounds,
   useChartPadding,
@@ -103,6 +98,7 @@ const useColumnsState = (
   const {
     xScale,
     yScale,
+    allYScale,
     interactiveXTimeRangeScale,
     xScaleInteraction,
     bandDomainLabels,
@@ -151,12 +147,24 @@ const useColumnsState = (
       ) ?? 0,
       0
     );
-
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+
+    const allMinValue = Math.min(
+      min(allData, (d) => (getYErrorRange ? getYErrorRange(d)[0] : getY(d))) ??
+        0,
+      0
+    );
+    const allMaxValue = Math.max(
+      max(allData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
+        0,
+      0
+    );
+    const allYScale = scaleLinear().domain([allMinValue, allMaxValue]).nice();
 
     return {
       xScale,
       yScale,
+      allYScale,
       interactiveXTimeRangeScale,
       xScaleInteraction,
       bandDomainLabels,
@@ -168,6 +176,7 @@ const useColumnsState = (
     getY,
     getYErrorRange,
     scalesData,
+    allData,
     timeRangeData,
     fields.x.sorting,
     fields.x.useAbbreviations,
@@ -177,7 +186,7 @@ const useColumnsState = (
   ]);
 
   const { left, bottom } = useChartPadding(
-    yScale,
+    allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
@@ -187,8 +196,8 @@ const useColumnsState = (
   const margins = {
     top: 50,
     right: 40,
-    bottom: bottom + BOTTOM_MARGIN_OFFSET,
-    left: left + LEFT_MARGIN_OFFSET,
+    bottom,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;
