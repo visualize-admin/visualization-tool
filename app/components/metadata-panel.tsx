@@ -274,7 +274,6 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
     open: state.open,
     activeSection: state.activeSection,
   }));
-  const enableTransition = useTransitionStore((state) => state.enable);
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const { setOpen, toggle, setActiveSection, reset } =
     useMetadataPanelStoreActions();
