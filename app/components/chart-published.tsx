@@ -303,6 +303,9 @@ const ChartWithInteractiveFilters = React.forwardRef(
   (props: ChartWithInteractiveFiltersProps, ref) => {
     const { dataSet, dataSource, chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;
+    const setCalculationType = useInteractiveFiltersStore(
+      (d) => d.setCalculationType
+    );
     const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
     const timeRange = interactiveFiltersConfig?.timeRange;
     const presetFrom =
@@ -318,6 +321,16 @@ const ChartWithInteractiveFilters = React.forwardRef(
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setTimeRange, presetFromStr, presetToStr]);
+
+    useEffect(() => {
+      if (interactiveFiltersConfig?.calculation.active) {
+        setCalculationType(interactiveFiltersConfig?.calculation.type);
+      }
+    }, [
+      interactiveFiltersConfig?.calculation.active,
+      interactiveFiltersConfig?.calculation.type,
+      setCalculationType,
+    ]);
 
     return (
       <Flex
