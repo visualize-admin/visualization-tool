@@ -224,7 +224,13 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               </HintBlue>
             </Box>
           )}
-          <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Flex
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Typography component="div" variant="h2" mb={2}>
               {meta.title[locale]}
             </Typography>

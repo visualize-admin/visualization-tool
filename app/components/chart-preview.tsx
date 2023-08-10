@@ -139,6 +139,7 @@ export const ChartPreviewInner = ({
                 sx={{
                   justifyContent: "space-between",
                   alignItems: "flex-start",
+                  gap: 2,
                 }}
               >
                 <Typography
