@@ -104,12 +104,13 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   );
 
   // Calculation
+  const calculationActive = interactiveFiltersConfig?.calculation.active;
   const calculationType = interactiveFiltersConfig?.calculation.type;
   React.useEffect(() => {
     if (calculationType) {
       setCalculationType(calculationType);
     }
-  }, [calculationType, setCalculationType]);
+  }, [calculationActive, calculationType, setCalculationType]);
 };
 
 export default useSyncInteractiveFilters;
