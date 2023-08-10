@@ -25,6 +25,7 @@ import { estimateTextWidth } from "@/utils/estimate-text-width";
 // Brush constants
 export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
+export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
@@ -332,13 +333,13 @@ export const BrushTime = () => {
   }, [brushWidth]);
 
   return (
-    <>
+    <g
+      transform={`translate(0, ${
+        chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
+      })`}
+    >
       {/* Selected Dates */}
-      <g
-        transform={`translate(0, ${
-          chartHeight + margins.top + margins.bottom / 2
-        })`}
-      >
+      <g>
         {closestFrom && closestTo && (
           <text
             fontSize={labelFontSize}
@@ -353,11 +354,7 @@ export const BrushTime = () => {
       </g>
 
       {/* Brush */}
-      <g
-        transform={`translate(${brushLabelsWidth}, ${
-          chartHeight + margins.top + margins.bottom / 2
-        })`}
-      >
+      <g transform={`translate(${brushLabelsWidth}, 0)`}>
         {/* Visual overlay (functional overlay is managed by d3) */}
         <rect
           x={0}
@@ -368,13 +365,8 @@ export const BrushTime = () => {
         />
       </g>
       {/* actual Brush */}
-      <g
-        ref={ref}
-        transform={`translate(${brushLabelsWidth}, ${
-          chartHeight + margins.top + margins.bottom / 2
-        })`}
-      />
-    </>
+      <g ref={ref} transform={`translate(${brushLabelsWidth}, 0)`} />
+    </g>
   );
 };
 
