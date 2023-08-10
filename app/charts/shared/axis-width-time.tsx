@@ -123,7 +123,6 @@ export const AxisTimeDomain = () => {
         (exit) => exit.remove()
       );
 
-    g.call(axis);
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text").remove();
     g.select(".domain")
