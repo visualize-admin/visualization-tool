@@ -196,7 +196,7 @@ const DataDownloadInnerMenu = ({
               <Trans id="button.download">Download</Trans>
             </ListSubheader>
           ),
-          sx: { width: 200 },
+          sx: { width: 200, pt: 1, pb: 2 },
         }}
       >
         {filters && (
