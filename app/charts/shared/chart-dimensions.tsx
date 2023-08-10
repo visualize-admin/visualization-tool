@@ -13,8 +13,7 @@ const computeChartPadding = (
   aspectRatio: number,
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
-  bandDomain?: string[],
-  normalize?: boolean
+  bandDomain?: string[]
 ) => {
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
@@ -23,9 +22,7 @@ const computeChartPadding = (
   // since we do not have access to chartHeight yet.
   const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
   const left = Math.max(
-    ...fakeTicks.map((x) =>
-      estimateTextWidth(`${formatNumber(x)}${normalize ? "%" : ""}`)
-    )
+    ...fakeTicks.map((x) => estimateTextWidth(formatNumber(x)))
   );
 
   let bottom = interactiveFiltersConfig?.timeRange.active
@@ -33,7 +30,7 @@ const computeChartPadding = (
     : 30;
 
   if (bandDomain?.length) {
-    bottom += max(bandDomain, (d) => estimateTextWidth(d) || 70)!;
+    bottom += max(bandDomain, (d) => estimateTextWidth(d)) ?? 70;
   }
 
   return { left, bottom };
@@ -45,8 +42,7 @@ export const useChartPadding = (
   aspectRatio: number,
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
-  bandDomain?: string[],
-  normalize?: boolean
+  bandDomain?: string[]
 ) => {
   return useMemo(
     () =>
@@ -56,8 +52,7 @@ export const useChartPadding = (
         aspectRatio,
         interactiveFiltersConfig,
         formatNumber,
-        bandDomain,
-        normalize
+        bandDomain
       ),
     [
       yScale,
@@ -66,7 +61,6 @@ export const useChartPadding = (
       interactiveFiltersConfig,
       formatNumber,
       bandDomain,
-      normalize,
     ]
   );
 };
