@@ -8,6 +8,7 @@ import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const ref = React.useRef<HTMLDivElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds } = useChartState();
   const { width, height } = bounds;
@@ -19,12 +20,12 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
         ref.current.style.height = `${height}px`;
       }
 
-      select(ref.current)
-        .transition()
-        .duration(transitionDuration)
-        .style("height", `${height}px`);
+      (enableTransition
+        ? select(ref.current).transition().duration(transitionDuration)
+        : select(ref.current)
+      ).style("height", `${height}px`);
     }
-  }, [height, transitionDuration]);
+  }, [height, enableTransition, transitionDuration]);
 
   return (
     <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
@@ -35,6 +36,7 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = React.useRef<SVGSVGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, interactiveFiltersConfig } = useChartState();
   const { width, height, margins } = bounds;
@@ -46,12 +48,12 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
         ref.current.setAttribute("height", height.toString());
       }
 
-      select(ref.current)
-        .transition()
-        .duration(transitionDuration)
-        .attr("height", height);
+      (enableTransition
+        ? select(ref.current).transition().duration(transitionDuration)
+        : select(ref.current)
+      ).attr("height", height);
     }
-  }, [height, transitionDuration]);
+  }, [height, enableTransition, transitionDuration]);
 
   return (
     <svg
