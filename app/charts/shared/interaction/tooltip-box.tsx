@@ -103,7 +103,7 @@ export const TooltipBox = ({
         <Box
           data-testid="chart-tooltip"
           style={{
-            zIndex: 10,
+            zIndex: 1301,
             position: "absolute",
             left: x! + margins.left + pos.left,
             top: mxYOffset(y!, placement) + margins.top + pos.top,
