@@ -49,7 +49,6 @@ export const ChartDataFilters = ({
 }) => {
   const [filtersVisible, setFiltersVisible] = React.useState(false);
   const { componentIris } = dataFiltersConfig;
-  console.log("ChartDataFilters");
 
   React.useEffect(() => {
     if (componentIris.length === 0) {

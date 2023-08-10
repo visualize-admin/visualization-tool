@@ -30,8 +30,7 @@ export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const timeRange = useInteractiveFiltersStore((d) => d.timeRange);
   const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
-  const setDefaultDuration = useTransitionStore((d) => d.setDefaultDuration);
-  const setInstantDuration = useTransitionStore((d) => d.setInstantDuration);
+  const setEnableTransition = useTransitionStore((d) => d.setEnable);
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
@@ -129,22 +128,26 @@ export const BrushTime = () => {
       [brushWidth, BRUSH_HEIGHT],
     ])
     .on("start", (e) => {
-      setInstantDuration();
       brushed(e);
+
+      if (e.sourceEvent instanceof MouseEvent) {
+        setEnableTransition(false);
+      }
     })
     .on("brush", brushed)
-    .on("end", function (event) {
-      setDefaultDuration();
-      updateSelectionExtent(event.selection);
+    .on("end", function (e) {
+      updateSelectionExtent(e.selection);
 
       // Happens when snapping to actual values.
-      if (!event.sourceEvent) {
+      if (!e.sourceEvent) {
         updateBrushEndedStatus(false);
       } else {
-        if (!event.selection && ref.current) {
-          // End event fires twice on touchend (MouseEvent and TouchEvent),
-          // we want to compute mx basing on MouseEvent.
-          if (event.sourceEvent instanceof MouseEvent) {
+        // End event fires twice on touchend (MouseEvent and TouchEvent),
+        // we want to compute mx basing on MouseEvent.
+        if (e.sourceEvent instanceof MouseEvent) {
+          setEnableTransition(true);
+
+          if (!e.selection && ref.current) {
             const g = select(ref.current);
             const [mx] = pointer(event, this);
             const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;

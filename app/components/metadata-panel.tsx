@@ -274,12 +274,8 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
     open: state.open,
     activeSection: state.activeSection,
   }));
-  const { setDefaultDuration, setInstantDuration } = useTransitionStore(
-    (d) => ({
-      setDefaultDuration: d.setDefaultDuration,
-      setInstantDuration: d.setInstantDuration,
-    })
-  );
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const { setOpen, toggle, setActiveSection, reset } =
     useMetadataPanelStoreActions();
   const handleToggle = useEvent(() => {
@@ -312,10 +308,10 @@ export const MetadataPanel = (props: MetadataPanelProps) => {
         ModalProps={{ container }}
         PaperProps={{ style: { position: "absolute" } }}
         SlideProps={{
-          onEnter: setInstantDuration,
-          onEntered: setDefaultDuration,
-          onExit: setInstantDuration,
-          onExited: setDefaultDuration,
+          onEnter: () => setEnableTransition(false),
+          onEntered: () => setEnableTransition(true),
+          onExit: () => setEnableTransition(false),
+          onExited: () => setEnableTransition(true),
         }}
       >
         <Header onClose={handleToggle} />
