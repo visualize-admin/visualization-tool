@@ -1,6 +1,11 @@
 import { Selection, select } from "d3";
 import { interpolatePath } from "d3-interpolate-path";
 
+import {
+  RenderOptions,
+  maybeTransition,
+} from "@/charts/shared/rendering-utils";
+
 export type RenderAreaDatum = {
   key: string;
   d: string;
@@ -8,39 +13,43 @@ export type RenderAreaDatum = {
   color: string;
 };
 
-export const renderArea = (
-  g: Selection<SVGRectElement, RenderAreaDatum, SVGGElement, unknown>,
-  transitionDuration: number
+export const renderAreas = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderAreaDatum[],
+  options: RenderOptions
 ) => {
-  g.join(
-    (enter) =>
-      enter
-        .append("path")
-        .attr("d", (d) => d.dEmpty)
-        .attr("fill", (d) => d.color)
-        .call((enter) =>
-          enter
-            .transition()
-            .duration(transitionDuration)
-            .attrTween("d", (d) => interpolatePath(d.dEmpty, d.d))
-        ),
-    (update) =>
-      update.call((update) =>
-        update
-          .transition()
-          .duration(transitionDuration)
-          .attrTween("d", function (d) {
-            return interpolatePath(select(this).attr("d"), d.d);
-          })
+  const { transition } = options;
+
+  g.selectAll<SVGPathElement, RenderAreaDatum>("path")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("path")
+          .attr("d", (d) => d.dEmpty)
           .attr("fill", (d) => d.color)
-      ),
-    (exit) =>
-      exit.call((exit) =>
-        exit
-          .transition()
-          .duration(transitionDuration)
-          .attrTween("d", (d) => interpolatePath(d.d, d.dEmpty))
-          .remove()
-      )
-  );
+          .call((enter) =>
+            maybeTransition(enter, {
+              transition,
+              s: (g) => g.attr("d", (d) => d.d),
+              t: (g) => g.attrTween("d", (d) => interpolatePath(d.dEmpty, d.d)),
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          transition,
+          s: (g) => g.attr("d", (d) => d.d),
+          t: (g) =>
+            g.attrTween("d", function (d) {
+              return interpolatePath(select(this).attr("d"), d.d);
+            }),
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("d", (d) => d.dEmpty).remove(),
+          t: (g) =>
+            g.attrTween("d", (d) => interpolatePath(d.d, d.dEmpty)).remove(),
+        })
+    );
 };

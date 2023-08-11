@@ -14,8 +14,10 @@ import {
   useScatterplotStateData,
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
-import { LEFT_MARGIN_OFFSET } from "@/charts/scatterplot/constants";
-import { getChartBounds } from "@/charts/shared/chart-dimensions";
+import {
+  getChartBounds,
+  useChartPadding,
+} from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
@@ -29,7 +31,6 @@ import { ScatterPlotConfig, SortingField } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -64,7 +65,7 @@ const useScatterplotState = (
     getSegmentAbbreviationOrLabel,
   } = variables;
   const { chartData, scalesData, segmentData, allData } = data;
-  const { fields } = chartConfig;
+  const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -84,6 +85,11 @@ const useScatterplotState = (
   const yMaxValue = max(scalesData, getY) ?? 0;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
+
+  const allYMinValue = Math.min(min(allData, (d) => getY(d)) ?? 0, 0);
+  const allYMaxValue = max(allData, getY) ?? 0;
+  const allYDomain = [allYMinValue, allYMaxValue];
+  const allYScale = scaleLinear().domain(allYDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
   const segmentFilter = segmentDimension?.iri
@@ -137,15 +143,18 @@ const useScatterplotState = (
     colors.range(getPalette(fields.segment?.palette));
   }
   // Dimensions
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
+  const { left, bottom } = useChartPadding(
+    allYScale,
+    width,
+    aspectRatio,
+    interactiveFiltersConfig,
+    formatNumber
   );
   const margins = {
     top: 50,
     right: 40,
-    bottom: 50,
-    left: left + LEFT_MARGIN_OFFSET,
+    bottom,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;

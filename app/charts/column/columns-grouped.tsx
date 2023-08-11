@@ -1,14 +1,14 @@
-import { Selection, select } from "d3";
 import React from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
   RenderColumnDatum,
   RenderWhiskerDatum,
-  renderColumn,
-  renderWhisker,
+  renderColumns,
+  renderWhiskers,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -24,8 +24,8 @@ export const ErrorWhiskers = () => {
   } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-
   const renderData: RenderWhiskerDatum[] | undefined = React.useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
       return;
@@ -59,43 +59,22 @@ export const ErrorWhiskers = () => {
 
   React.useEffect(() => {
     if (ref.current && renderData) {
-      const renderWhiskers = (
-        g: Selection<SVGGElement, null, SVGGElement, unknown>
-      ) => {
-        g.selectAll<SVGGElement, RenderWhiskerDatum>("g")
-          .data(renderData, (d) => d.key)
-          .call(renderWhisker, transitionDuration);
-      };
-
-      select(ref.current)
-        .selectAll<SVGGElement, null>(".content")
-        .data([null])
-        .join(
-          (enter) =>
-            enter
-              .append("g")
-              .attr("class", "content")
-              .attr("transform", `translate(${margins.left} ${margins.top})`)
-              .call(renderWhiskers),
-          (update) =>
-            update
-              .call((g) =>
-                g
-                  .transition()
-                  .duration(transitionDuration)
-                  .attr(
-                    "transform",
-                    `translate(${margins.left} ${margins.top})`
-                  )
-              )
-              .call(renderWhiskers),
-          (exit) => exit.remove()
-        )
-        .call(renderWhiskers);
+      renderContainer(ref.current, {
+        id: "columns-grouped-error-whiskers",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderWhiskers(g, renderData, opts),
+      });
     }
-  }, [renderData, margins.left, margins.top, transitionDuration]);
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+  ]);
 
-  return renderData ? <g ref={ref} /> : null;
+  return <g ref={ref} />;
 };
 
 export const ColumnsGrouped = () => {
@@ -111,6 +90,7 @@ export const ColumnsGrouped = () => {
     getRenderingKey,
   } = useChartState() as GroupedColumnsState;
   const ref = React.useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { margins } = bounds;
   const bandwidth = xScaleIn.bandwidth();
@@ -147,40 +127,21 @@ export const ColumnsGrouped = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      const renderColumns = (
-        g: Selection<SVGGElement, null, SVGGElement, unknown>
-      ) => {
-        g.selectAll<SVGRectElement, RenderColumnDatum>("rect")
-          .data(renderData, (d) => d.key)
-          .call(renderColumn, y0, transitionDuration);
-      };
-
-      select(ref.current)
-        .selectAll<SVGGElement, null>(".content")
-        .data([null])
-        .join(
-          (enter) =>
-            enter
-              .append("g")
-              .attr("class", "content")
-              .attr("transform", `translate(${margins.left} ${margins.top})`)
-              .call(renderColumns),
-          (update) =>
-            update
-              .call((g) =>
-                g
-                  .transition()
-                  .duration(transitionDuration)
-                  .attr(
-                    "transform",
-                    `translate(${margins.left} ${margins.top})`
-                  )
-              )
-              .call(renderColumns),
-          (exit) => exit.remove()
-        );
+      renderContainer(ref.current, {
+        id: "columns-grouped",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderColumns(g, renderData, { ...opts, y0 }),
+      });
     }
-  }, [renderData, y0, margins.left, margins.top, transitionDuration]);
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+    y0,
+  ]);
 
   return <g ref={ref} />;
 };

@@ -1,8 +1,8 @@
 import {
   extent,
   group,
-  max,
   rollup,
+  scaleLinear,
   ScaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
@@ -22,9 +22,10 @@ import {
   useAreasStateData,
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
-import { LEFT_MARGIN_OFFSET } from "@/charts/area/constants";
-import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
-import { getChartBounds } from "@/charts/shared/chart-dimensions";
+import {
+  getChartBounds,
+  useChartPadding,
+} from "@/charts/shared/chart-dimensions";
 import {
   getWideData,
   normalizeData,
@@ -52,7 +53,6 @@ import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -160,22 +160,6 @@ const useAreasState = (
   ]);
 
   const xKey = fields.x.componentIri;
-
-  const dataGroupedByX = useMemo(() => {
-    return group(chartData, getXAsString);
-  }, [chartData, getXAsString]);
-
-  const allDataWide = useMemo(
-    () =>
-      getWideData({
-        dataGroupedByX,
-        xKey,
-        getY,
-        getSegment,
-      }),
-    [dataGroupedByX, xKey, getY, getSegment]
-  );
-
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
@@ -239,11 +223,6 @@ const useAreasState = (
   }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
   /** Scales */
-  const entireMaxTotalValue = max<$FixMe>(
-    allDataWide,
-    (d) => d.total ?? 0
-  ) as unknown as number;
-
   const { colors, xScale, interactiveXTimeRangeScale } = useMemo(() => {
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
@@ -301,21 +280,46 @@ const useAreasState = (
     });
   }, [scalesData, normalize, getXAsString, getY]);
 
+  const allYScale = useMemo(() => {
+    //  When the user can toggle between absolute and relative values, we use the
+    // absolute values to calculate the yScale domain, so that the yScale doesn't
+    // change when the user toggles between absolute and relative values.
+    if (interactiveFiltersConfig?.calculation.active) {
+      const scale = getStackedYScale(allData, {
+        normalize: false,
+        getX: getXAsString,
+        getY,
+      });
+
+      if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
+        return scaleLinear().domain([0, 100]);
+      }
+
+      return scale;
+    }
+
+    return getStackedYScale(allData, { normalize, getX: getXAsString, getY });
+  }, [
+    allData,
+    getXAsString,
+    getY,
+    interactiveFiltersConfig?.calculation.active,
+    normalize,
+  ]);
+
   /** Dimensions */
-  const estimateNumberWidth = (d: number) =>
-    estimateTextWidth(formatNumber(d) + (normalize ? "%" : ""));
-  const [yMin, yMax] = yScale.domain();
-  const left = interactiveFiltersConfig?.timeRange.active
-    ? estimateNumberWidth(entireMaxTotalValue)
-    : Math.max(estimateNumberWidth(yMin), estimateNumberWidth(yMax));
-  const bottom = interactiveFiltersConfig?.timeRange.active
-    ? BRUSH_BOTTOM_SPACE
-    : 40;
+  const { left, bottom } = useChartPadding(
+    allYScale,
+    width,
+    aspectRatio,
+    interactiveFiltersConfig,
+    formatNumber
+  );
   const margins = {
     top: 50,
     right: 40,
     bottom,
-    left: left + LEFT_MARGIN_OFFSET,
+    left,
   };
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;

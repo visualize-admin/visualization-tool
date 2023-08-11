@@ -1,9 +1,13 @@
-import { axisBottom, select, Selection } from "d3";
+import { axisBottom } from "d3";
 import { useEffect, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import {
+  maybeTransition,
+  renderContainer,
+} from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
@@ -14,9 +18,11 @@ const MAX_DATE_LABEL_LENGHT = 70;
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
+  const { chartHeight, margins } = bounds;
   const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
     useChartTheme();
 
@@ -30,110 +36,82 @@ export const AxisTime = () => {
   //     : null;
   const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const axis = axisBottom(xScale)
-      .ticks(ticks)
-      .tickFormat((x) => formatDateAuto(x as Date));
-
-    g.selectAll<SVGGElement, null>(".content")
-      .data([null])
-      .join(
-        (enter) =>
-          enter
-            .append("g")
-            .attr("class", "content")
-            .attr(
-              "transform",
-              `translate(${bounds.margins.left}, ${
-                bounds.chartHeight + bounds.margins.top
-              })`
-            )
-            .call(axis),
-        (update) =>
-          update.call((g) =>
-            g
-              .transition()
-              .duration(transitionDuration)
-              .attr(
-                "transform",
-                `translate(${bounds.margins.left}, ${
-                  bounds.chartHeight + bounds.margins.top
-                })`
-              )
-              .call(axis)
-          ),
-        (exit) => exit.remove()
-      );
-
-    g.select(".domain").remove();
-    g.selectAll(".tick line").attr(
-      "stroke",
-      hasNegativeValues ? gridColor : domainColor
-    );
-    g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor);
-  };
-
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+    if (ref.current) {
+      const axis = axisBottom(xScale)
+        .ticks(ticks)
+        .tickFormat((x) => formatDateAuto(x as Date));
+      const g = renderContainer(ref.current, {
+        id: "axis-width-time",
+        transform: `translate(${margins.left} ${chartHeight + margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g) => g.call(axis),
+        renderUpdate: (g, opts) =>
+          maybeTransition(g, {
+            transition: opts.transition,
+            s: (g) => g.call(axis),
+          }),
+      });
+
+      g.select(".domain").remove();
+      g.selectAll(".tick line").attr(
+        "stroke",
+        hasNegativeValues ? gridColor : domainColor
+      );
+      g.selectAll(".tick text")
+        .attr("font-size", labelFontSize)
+        .attr("font-family", fontFamily)
+        .attr("fill", labelColor);
+    }
+  }, [
+    chartHeight,
+    domainColor,
+    enableTransition,
+    fontFamily,
+    formatDateAuto,
+    gridColor,
+    hasNegativeValues,
+    labelColor,
+    labelFontSize,
+    margins.left,
+    margins.top,
+    ticks,
+    transitionDuration,
+    xScale,
+  ]);
 
   return <g ref={ref} />;
 };
 
 export const AxisTimeDomain = () => {
   const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
+  const { chartHeight, margins } = bounds;
   const { domainColor } = useChartTheme();
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const axis = axisBottom(xScale).tickSizeOuter(0);
-
-    g.selectAll<SVGGElement, null>(".content")
-      .data([null])
-      .join(
-        (enter) =>
-          enter
-            .append("g")
-            .attr("class", "content")
-            .attr(
-              "transform",
-              `translate(${bounds.margins.left}, ${
-                bounds.chartHeight + bounds.margins.top
-              })`
-            )
-            .call(axis),
-        (update) =>
-          update.call((g) =>
-            g
-              .transition()
-              .duration(transitionDuration)
-              .attr(
-                "transform",
-                `translate(${bounds.margins.left}, ${
-                  bounds.chartHeight + bounds.margins.top
-                })`
-              )
-              .call(axis)
-          ),
-        (exit) => exit.remove()
-      );
-
-    g.call(axis);
-    g.selectAll(".tick line").remove();
-    g.selectAll(".tick text").remove();
-    g.select(".domain")
-      .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
-      .attr("stroke", domainColor);
-  };
-
   useEffect(() => {
-    const g = select(ref.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+    if (ref.current) {
+      const axis = axisBottom(xScale).tickSizeOuter(0);
+      const g = renderContainer(ref.current, {
+        id: "axis-width-time-domain",
+        transform: `translate(${margins.left} ${chartHeight + margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g) => g.call(axis),
+        renderUpdate: (g, opts) =>
+          maybeTransition(g, {
+            transition: opts.transition,
+            s: (g) => g.call(axis),
+          }),
+      });
+
+      g.selectAll(".tick line").remove();
+      g.selectAll(".tick text").remove();
+      g.select(".domain")
+        .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
+        .attr("stroke", domainColor);
+    }
   });
 
   return <g ref={ref} />;

@@ -67,14 +67,14 @@ export const ChartDataFilters = ({
               minHeight: 20,
             }}
           >
-            {!filtersVisible ? (
+            {filtersVisible ? (
+              <Box />
+            ) : (
               <ChartFiltersList
                 dataSetIri={dataSet}
                 dataSource={dataSource}
                 chartConfig={chartConfig}
               />
-            ) : (
-              <Box></Box>
             )}
 
             {componentIris.length > 0 && (
@@ -127,21 +127,19 @@ export const ChartDataFilters = ({
   );
 };
 
-const DataFilter = ({
-  dimensionIri,
-  dataSetIri,
-  dataSource,
-  chartConfig,
-}: {
+type DataFilterProps = {
   dimensionIri: string;
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
-}) => {
-  const { dataFilters, updateDataFilter } = useInteractiveFiltersStore((d) => ({
-    dataFilters: d.dataFilters,
-    updateDataFilter: d.updateDataFilter,
-  }));
+};
+
+const DataFilter = (props: DataFilterProps) => {
+  const { dimensionIri, dataSetIri, dataSource, chartConfig } = props;
+  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
+  const updateDataFilter = useInteractiveFiltersStore(
+    (d) => d.updateDataFilter
+  );
   const locale = useLocale();
   const [{ data }] = useDimensionValuesQuery({
     variables: {

@@ -282,12 +282,9 @@ const LegendColorContent = (props: LegendColorContentProps) => {
   const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
     props;
   const classes = useStyles();
-  const { categories, addCategory, removeCategory } =
-    useInteractiveFiltersStore((d) => ({
-      categories: d.categories,
-      addCategory: d.addCategory,
-      removeCategory: d.removeCategory,
-    }));
+  const categories = useInteractiveFiltersStore((d) => d.categories);
+  const addCategory = useInteractiveFiltersStore((d) => d.addCategory);
+  const removeCategory = useInteractiveFiltersStore((d) => d.removeCategory);
 
   const activeInteractiveFilters = useMemo(() => {
     return new Set(Object.keys(categories));

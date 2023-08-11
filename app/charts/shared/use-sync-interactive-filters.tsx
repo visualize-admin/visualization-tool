@@ -18,15 +18,17 @@ import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
  *
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
-  const {
-    resetCategories,
-    dataFilters,
-    setDataFilters,
-    updateDataFilter,
-    setTimeRange,
-    setCalculationType,
-  } = useInteractiveFiltersStore();
   const { interactiveFiltersConfig } = chartConfig;
+  const resetCategories = useInteractiveFiltersStore((d) => d.resetCategories);
+  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
+  const setDataFilters = useInteractiveFiltersStore((d) => d.setDataFilters);
+  const updateDataFilter = useInteractiveFiltersStore(
+    (d) => d.updateDataFilter
+  );
+  const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
+  const setCalculationType = useInteractiveFiltersStore(
+    (d) => d.setCalculationType
+  );
 
   // Time range filter
   const presetFrom =
@@ -102,12 +104,13 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   );
 
   // Calculation
+  const calculationActive = interactiveFiltersConfig?.calculation.active;
   const calculationType = interactiveFiltersConfig?.calculation.type;
   React.useEffect(() => {
     if (calculationType) {
       setCalculationType(calculationType);
     }
-  }, [calculationType, setCalculationType]);
+  }, [calculationActive, calculationType, setCalculationType]);
 };
 
 export default useSyncInteractiveFilters;

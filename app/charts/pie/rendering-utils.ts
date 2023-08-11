@@ -1,5 +1,9 @@
 import { PieArcDatum, Selection, Transition, interpolate } from "d3";
 
+import {
+  RenderOptions,
+  maybeTransition,
+} from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
 export type RenderDatum = {
@@ -8,14 +12,20 @@ export type RenderDatum = {
   color: string;
 };
 
-export const renderPie = (
-  g: Selection<SVGGElement, unknown, null, unknown>,
+type RenderPieOptions = RenderOptions & {
+  arcGenerator: d3.Arc<any, any>;
+  handleMouseEnter: (d: PieArcDatum<Observation>) => void;
+  handleMouseLeave: () => void;
+};
+
+export const renderPies = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
   renderData: RenderDatum[],
-  arcGenerator: d3.Arc<any, any>,
-  handleMouseEnter: (d: PieArcDatum<Observation>) => void,
-  handleMouseLeave: () => void,
-  transitionDuration: number
+  options: RenderPieOptions
 ) => {
+  const { arcGenerator, handleMouseEnter, handleMouseLeave, transition } =
+    options;
+
   g.selectAll<SVGPathElement, RenderDatum>("path")
     .data(renderData, (d) => d.key)
     .join(
@@ -27,27 +37,30 @@ export const renderPie = (
           .on("mouseenter", (_, d) => handleMouseEnter(d.arcDatum))
           .on("mouseleave", handleMouseLeave)
           .call((enter) =>
-            enter
-              .transition()
-              .duration(transitionDuration)
-              .call(animatePath, arcGenerator)
+            maybeTransition(enter, {
+              transition,
+              s: (g) => g.attr("d", (d) => arcGenerator(d.arcDatum)),
+              t: (g) => g.call(animatePath, arcGenerator),
+            })
           ),
       (update) =>
         update.call((update) =>
-          update
-            .transition()
-            .duration(transitionDuration)
-            .attr("fill", (d) => d.color)
-            .call(animatePath, arcGenerator)
+          maybeTransition(update, {
+            transition,
+            s: (g) =>
+              g
+                .attr("d", (d) => arcGenerator(d.arcDatum))
+                .attr("fill", (d) => d.color),
+            t: (g) =>
+              g.call(animatePath, arcGenerator).attr("fill", (d) => d.color),
+          })
         ),
       (exit) =>
-        exit.call((exit) =>
-          exit
-            .transition()
-            .duration(transitionDuration)
-            .call(animatePath, arcGenerator)
-            .remove()
-        )
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("d", (d) => arcGenerator(d.arcDatum)).remove(),
+          t: (g) => g.call(animatePath, arcGenerator).remove(),
+        })
     );
 };
 
@@ -61,7 +74,7 @@ const animatePath = (
     const _d = that.__d__ as PieArcDatum<Observation> | undefined;
     const i = interpolate(_d ?? d.arcDatum, d.arcDatum);
 
-    return function (t) {
+    return (t) => {
       that.__d__ = i(t);
       return arcGenerator(that.__d__) as string;
     };

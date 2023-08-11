@@ -193,10 +193,8 @@ const PlayButton = () => {
 
 const Slider = () => {
   const timeline = useTimeline();
-  const { timeSlider, setTimeSlider } = useInteractiveFiltersStore((d) => ({
-    timeSlider: d.timeSlider,
-    setTimeSlider: d.setTimeSlider,
-  }));
+  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
+  const setTimeSlider = useInteractiveFiltersStore((d) => d.setTimeSlider);
 
   const marks = React.useMemo(() => {
     return timeline.domain.map((d) => ({ value: d })) ?? [];

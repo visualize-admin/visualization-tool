@@ -1,16 +1,17 @@
-import { select } from "d3";
 import React from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import {
   RenderColumnDatum,
-  renderColumn,
+  renderColumns,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ColumnsStacked = () => {
   const ref = React.useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
     useChartState() as StackedColumnsState;
@@ -38,35 +39,21 @@ export const ColumnsStacked = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      select(ref.current)
-        .selectAll<SVGGElement, null>(".content")
-        .data([null])
-        .join(
-          (enter) =>
-            enter
-              .append("g")
-              .attr("class", "content")
-              .attr("transform", `translate(${margins.left} ${margins.top})`),
-          (update) =>
-            update.call((g) =>
-              g
-                .transition()
-                .duration(transitionDuration)
-                .attr("transform", `translate(${margins.left} ${margins.top})`)
-            ),
-          (exit) =>
-            exit.call((g) =>
-              g.transition().duration(transitionDuration).remove()
-            )
-        )
-        .call((g) =>
-          g
-            .selectAll<SVGRectElement, RenderColumnDatum>("rect")
-            .data(renderData, (d) => d.key)
-            .call(renderColumn, y0, transitionDuration)
-        );
+      renderContainer(ref.current, {
+        id: "columns-stacked",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderColumns(g, renderData, { ...opts, y0 }),
+      });
     }
-  }, [renderData, y0, margins.left, margins.top, transitionDuration]);
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+    y0,
+  ]);
 
   return <g ref={ref} />;
 };

@@ -1,3 +1,4 @@
+import { select, Selection, Transition } from "d3";
 import React from "react";
 
 import {
@@ -5,8 +6,9 @@ import {
   Filters,
   InteractiveFiltersConfig,
 } from "@/configurator";
-import { Observation, isStandardErrorDimension } from "@/domain/data";
+import { isStandardErrorDimension, Observation } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { TransitionStore } from "@/stores/transition";
 
 /** Use to create a unique key for rendering the shapes.
  * It's important to animate them correctly when using d3.
@@ -62,3 +64,83 @@ export const useRenderingKeyVariable = (
 
   return getRenderingKey;
 };
+
+export type RenderOptions = {
+  transition: Pick<TransitionStore, "enable" | "duration">;
+};
+
+type RenderContainerOptions = {
+  id: string;
+  transform: string;
+  transition: RenderOptions["transition"];
+  render: (
+    g: Selection<SVGGElement, null, SVGGElement, unknown>,
+    parentRenderOptions: RenderOptions
+  ) => void;
+  renderUpdate?: (
+    g: Selection<SVGGElement, null, SVGGElement, unknown>,
+    parentRenderOptions: RenderOptions
+  ) => void;
+};
+
+export function renderContainer(
+  g: SVGGElement,
+  options: RenderContainerOptions
+) {
+  const { id, transform, render, renderUpdate, transition } = options;
+
+  return select(g)
+    .selectAll<SVGGElement, null>(`#${id}`)
+    .data([null])
+    .join(
+      (enter) => {
+        const g = enter.append("g").attr("id", id).attr("transform", transform);
+        render(g, options);
+        return g;
+      },
+      (update) => {
+        const g = maybeTransition(update, {
+          // We need to use a unique name for the transition, otherwise there could
+          // be conflicts with other transitions.
+          name: `${id}-transform`,
+          transition,
+          s: (g) => g.attr("transform", transform),
+          t: (g) => g.attr("transform", transform),
+        });
+        (renderUpdate ?? render)(g, options);
+        return g;
+      },
+      (exit) => {
+        return exit.remove();
+      }
+    );
+}
+
+type MaybeTransitionOptions<S extends AnySelection, T extends AnyTransition> = {
+  name?: string;
+  transition: Pick<TransitionStore, "enable" | "duration">;
+  /** Render selection. */
+  s: (g: S) => S;
+  /** Render transition. If empty, defaults to `s`. */
+  t?: (g: T) => T;
+};
+
+/** Use to conditionally call a transition if required. */
+export function maybeTransition<
+  S extends AnySelection,
+  T extends AnyTransition
+>(g: S, options: MaybeTransitionOptions<S, T>) {
+  const { name, transition, s, t } = options;
+
+  return transition.enable
+    ? // If transition render is not defined, we use the selection render.
+      // (as selection methods can be called with a transition, we cast the type here
+      // to avoid a type error).
+      (t ?? s)(
+        g.transition(name).duration(transition.duration) as any
+      ).selection()
+    : s(g);
+}
+
+type AnySelection = Selection<any, any, any, any>;
+type AnyTransition = Transition<any, any, any, any>;

@@ -1,9 +1,10 @@
-import { area, select, Selection } from "d3";
+import { area } from "d3";
 import React from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
-import { renderArea, RenderAreaDatum } from "@/charts/area/rendering-utils";
+import { RenderAreaDatum, renderAreas } from "@/charts/area/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
 
 export const Areas = () => {
@@ -11,6 +12,7 @@ export const Areas = () => {
     useChartState() as AreasState;
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const areaGenerator = area<$FixMe>()
     .defined((d) => d[0] !== null && d[1] !== null)
@@ -36,41 +38,21 @@ export const Areas = () => {
   }, [series, areaGenerator, colors]);
 
   React.useEffect(() => {
-    const renderAreas = (
-      g: Selection<SVGGElement, null, SVGGElement, unknown>
-    ) => {
-      g.selectAll<SVGRectElement, RenderAreaDatum>("path")
-        .data(renderData, (d) => d.key)
-        .call(renderArea, transitionDuration);
-    };
-
     if (ref.current) {
-      select(ref.current)
-        .selectAll<SVGGElement, null>(".content")
-        .data([null])
-        .join(
-          (enter) =>
-            enter
-              .append("g")
-              .attr("class", "content")
-              .attr("transform", `translate(${margins.left} ${margins.top})`)
-              .call(renderAreas),
-          (update) =>
-            update
-              .call((g) =>
-                g
-                  .transition()
-                  .duration(transitionDuration)
-                  .attr(
-                    "transform",
-                    `translate(${margins.left} ${margins.top})`
-                  )
-              )
-              .call(renderAreas),
-          (exit) => exit.remove()
-        );
+      renderContainer(ref.current, {
+        id: "areas",
+        transform: `translate(${margins.left} ${margins.top})`,
+        transition: { enable: enableTransition, duration: transitionDuration },
+        render: (g, opts) => renderAreas(g, renderData, opts),
+      });
     }
-  }, [renderData, yScale, margins.left, margins.top, transitionDuration]);
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    renderData,
+    transitionDuration,
+  ]);
 
   return <g ref={ref} />;
 };

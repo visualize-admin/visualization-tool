@@ -372,13 +372,9 @@ export const useChartData = (
   }
 ): Omit<ChartStateData, "allData"> => {
   const { interactiveFiltersConfig } = chartConfig;
-  const { categories, timeRange, timeSlider } = useInteractiveFiltersStore(
-    (d) => ({
-      categories: d.categories,
-      timeRange: d.timeRange,
-      timeSlider: d.timeSlider,
-    })
-  );
+  const categories = useInteractiveFiltersStore((d) => d.categories);
+  const timeRange = useInteractiveFiltersStore((d) => d.timeRange);
+  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
 
   // time range
   const timeRangeFilterComponentIri =

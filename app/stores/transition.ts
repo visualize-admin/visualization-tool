@@ -1,13 +1,17 @@
 import create from "zustand";
 
-type TransitionStore = {
+export type TransitionStore = {
+  enable: boolean;
+  setEnable: (enable: boolean) => void;
   duration: number;
+  setDuration: (duration: number) => void;
   setDefaultDuration: () => void;
-  setInstantDuration: () => void;
 };
 
 export const useTransitionStore = create<TransitionStore>((set) => ({
+  enable: true,
+  setEnable: (enable) => set({ enable }),
   duration: 400,
+  setDuration: (duration) => set({ duration }),
   setDefaultDuration: () => set({ duration: 400 }),
-  setInstantDuration: () => set({ duration: 0 }),
 }));
