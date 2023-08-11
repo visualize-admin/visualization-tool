@@ -121,17 +121,10 @@ export const ChartOptionsSelector = ({
       return {
         ...metadataData.dataCubeByIri,
         measures: componentsData.dataCubeByIri.measures,
-        dimensions: isTableConfig(chartConfig)
-          ? componentsData.dataCubeByIri.dimensions
-          : [
-              // There are no fields that make use of numeric dimensions at the moment.
-              ...componentsData.dataCubeByIri.dimensions.filter(
-                (d) => !d.isNumerical
-              ),
-            ],
+        dimensions: componentsData.dataCubeByIri.dimensions,
       };
     }
-  }, [chartConfig, metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
+  }, [metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
 
   if (metaData) {
     return (

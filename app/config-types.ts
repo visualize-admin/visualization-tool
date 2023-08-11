@@ -14,6 +14,7 @@ const ComponentType = t.union([
   t.literal("OrdinalDimension"),
   t.literal("TemporalDimension"),
   t.literal("TemporalOrdinalDimension"),
+  t.literal("StandardErrorDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;

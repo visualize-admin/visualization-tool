@@ -191,6 +191,25 @@ type OrdinalDimension implements Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
+type StandardErrorDimension implements Dimension {
+  iri: String!
+  label: String!
+  description: String
+  unit: String
+  scaleType: String
+  dataType: String
+  order: Int
+  isNumerical: Boolean!
+  isKeyDimension: Boolean!
+  values(
+    sourceType: String!
+    sourceUrl: String!
+    filters: Filters
+  ): [DimensionValue!]!
+  related: [RelatedDimension!]
+  hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
+}
+
 enum TimeUnit {
   Year
   Month
