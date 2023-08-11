@@ -345,27 +345,19 @@ const EncodingOptionsPanel = ({
                 />
               </Box>
             )}
-
-            {encoding.options && (
-              <ChartFieldOptions
-                disabled={!component}
-                field={encoding.field}
-                encodingOptions={encoding.options}
-                chartType={chartType}
-              />
-            )}
-
-            {optionsByField.color?.field === "color" &&
-              optionsByField.color.type === "palette" && (
-                <ColorPalette
-                  disabled={!component}
-                  field={field}
-                  component={component}
-                />
-              )}
           </ControlSectionContent>
         </ControlSection>
       ) : null}
+
+      <ChartLayoutOptions
+        chartType={chartType}
+        encoding={encoding}
+        component={component}
+        hasColorPalette={
+          optionsByField.color?.field === "color" &&
+          optionsByField.color.type === "palette"
+        }
+      />
 
       {optionsByField.calculation?.field === "calculation" &&
         get(fields, "segment") && (
@@ -454,6 +446,42 @@ const EncodingOptionsPanel = ({
   );
 };
 
+type ChartLayoutOptionsProps = {
+  chartType: ChartType;
+  encoding: EncodingSpec;
+  component: DimensionMetadataFragment | undefined;
+  hasColorPalette: boolean;
+};
+
+const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
+  const { chartType, encoding, component, hasColorPalette } = props;
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="color">
+        <Trans id="controls.section.layout-options">Layout options</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset">
+        {encoding.options && (
+          <ChartFieldOptions
+            disabled={!component}
+            field={encoding.field}
+            encodingOptions={encoding.options}
+            chartType={chartType}
+          />
+        )}
+        {hasColorPalette && (
+          <ColorPalette
+            disabled={!component}
+            field={encoding.field}
+            component={component}
+          />
+        )}
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
 const ChartFieldAbbreviations = ({
   field,
   path,
@@ -482,7 +510,9 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
     <ControlSection collapse>
       <SubsectionTitle iconName="animation">
-        <Trans id="controls.animation.settings">Animation Settings</Trans>
+        <Trans id="controls.section.animation.settings">
+          Animation Settings
+        </Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ChartOptionSwitchField
@@ -677,7 +707,7 @@ const ChartFieldOptions = ({
   return encodingOptions?.map((e) => e.field).includes("chartSubType") &&
     chartType === "column" ? (
     <div>
-      <Box component="fieldset" mt={4}>
+      <Box component="fieldset" mt={2}>
         <FieldSetLegend
           legendTitle={
             <Trans id="controls.select.column.layout">Column layout</Trans>
@@ -714,7 +744,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   return (
     <ControlSection collapse>
       <SubsectionTitle disabled={disabled} iconName="normalize">
-        <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
+        <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         <Flex sx={{ justifyContent: "flex-start", my: 2 }}>

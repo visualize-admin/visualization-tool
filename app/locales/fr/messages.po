@@ -397,7 +397,6 @@ msgid "controls.imputation.type.linear"
 msgstr "Interpolation linéaire"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.none"
 msgstr "-"
@@ -582,6 +581,10 @@ msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doi
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
 msgstr "Animation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.layout-options"
+msgstr "Options de mise en page"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
