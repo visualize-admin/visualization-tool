@@ -23,7 +23,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Interactive time range filter is now configurable via Horizontal Axis field
   - Animation field has been moved to its own category (Animations)
   - Animations can now be run in dynamic-scales mode
-  - Overall UI has been slightly adjusted to better match the design
+  - Overall UI has been slightly adjusted to better match the design. It's now possible to collapse sections inside the field editor panel
 - Fixes
   - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
   - Scales now adapt to color legend filter when using time slider
@@ -32,6 +32,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Scatterplot X axis now correctly aligns its title in Safari
   - Interactive time range filter now respects the filter range set in the X field
   - Optional filter label is now correctly shown
+  - It's now again possible to choose whether or not to show standard error whiskers
+  - "Back to main" label is now always visible when opening the left, edit panel
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:
