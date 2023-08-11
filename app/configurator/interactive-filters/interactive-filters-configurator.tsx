@@ -11,6 +11,7 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ControlTabField } from "@/configurator/components/field";
 import { useComponentsQuery } from "@/graphql/query-hooks";
@@ -60,12 +61,12 @@ export const InteractiveFiltersConfigurator = ({
         collapse
         defaultExpanded={false}
       >
-        <SectionTitle
+        <SubsectionTitle
           titleId="controls-interactive-filters"
           gutterBottom={false}
         >
           <Trans id="controls.section.interactive.filters">Animations</Trans>
-        </SectionTitle>
+        </SubsectionTitle>
         <ControlSectionContent px="small" gap="none">
           {/* Animation is technically a field, so we need to use an appropriate component. */}
           <ControlTabField

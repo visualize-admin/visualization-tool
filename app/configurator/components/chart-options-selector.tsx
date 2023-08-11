@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -42,6 +42,7 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartFieldField,
@@ -57,10 +58,7 @@ import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import {
-  canUseAbbreviations,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
@@ -336,10 +334,8 @@ const EncodingOptionsPanel = ({
     >
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 ? (
-        <ControlSection>
-          <SectionTitle iconName={getIconName(encoding.field)}>
-            {getFieldLabel(encoding.field)}
-          </SectionTitle>
+        <ControlSection hideTopBorder>
+          <SectionTitle>{getFieldLabel(encoding.field)}</SectionTitle>
           <ControlSectionContent gap="none">
             <ChartFieldField
               field={encoding.field}
@@ -426,11 +422,11 @@ const EncodingOptionsPanel = ({
 
       {optionsByField.showStandardError && hasStandardError && (
         <ControlSection>
-          <SectionTitle iconName="eye">
+          <SubsectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
               Show additional information
             </Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent component="fieldset" gap="none">
             <ChartOptionCheckboxField
               path="showStandardError"
@@ -492,10 +488,8 @@ const ChartFieldAbbreviations = ({
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
     <ControlSection>
-      <SectionTitle iconName="settings">
-        <Trans id="controls.section.animation.settings">
-          Animation Settings
-        </Trans>
+      <SectionTitle>
+        <Trans id="controls.animation">Animation</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         <ChartOptionSwitchField
@@ -640,13 +634,13 @@ const ChartFieldMultiFilter = ({
 
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-multi-filters">
-      <SectionTitle
+      <SubsectionTitle
         disabled={!component}
         iconName="filter"
         gutterBottom={false}
       >
         <Trans id="controls.section.filter">Filter</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
@@ -728,9 +722,9 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
 
   return (
     <ControlSection>
-      <SectionTitle disabled={disabled} iconName="normalize">
+      <SubsectionTitle disabled={disabled} iconName="normalize">
         <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
           <ChartOptionRadioField
@@ -832,9 +826,9 @@ const ChartFieldSorting = ({
 
   return (
     <ControlSection>
-      <SectionTitle disabled={disabled} iconName="sort">
+      <SubsectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         <Box>
           <Select
@@ -919,12 +913,12 @@ const ChartFieldSize = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName="size">
+      <SubsectionTitle iconName="size">
         {t({
           id: "controls.size",
           message: "Size",
         })}
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="size-measure"
@@ -1005,9 +999,9 @@ const ChartFieldColorComponent = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName="color">
+      <SubsectionTitle iconName="color">
         <Trans id="controls.color">Color</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="color-component"
@@ -1207,9 +1201,9 @@ const ChartImputationType = ({
 
   return (
     <ControlSection>
-      <SectionTitle disabled={disabled} iconName="info">
+      <SubsectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         {!disabled && (
           <Box mb={5}>
@@ -1281,9 +1275,9 @@ const ChartMapBaseLayerSettings = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName="mapMaptype">
+      <SubsectionTitle iconName="mapMaptype">
         <Trans id="chart.map.layers.base">Map Display</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField
           label={t({

@@ -165,16 +165,14 @@ const PublishStep = () => {
   }
 
   return (
-    <>
-      <PanelMiddleWrapper>
-        <ChartPanelConfigurator>
-          <ChartPreview
-            dataSetIri={state.dataSet}
-            dataSource={state.dataSource}
-          />
-        </ChartPanelConfigurator>
-      </PanelMiddleWrapper>
-    </>
+    <PanelMiddleWrapper>
+      <ChartPanelConfigurator>
+        <ChartPreview
+          dataSetIri={state.dataSet}
+          dataSource={state.dataSource}
+        />
+      </ChartPanelConfigurator>
+    </PanelMiddleWrapper>
   );
 };
 

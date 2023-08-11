@@ -214,11 +214,7 @@ export const TableColumnOptions = ({
       tabIndex={-1}
     >
       <ControlSection>
-        <SectionTitle
-          iconName={getIconName(`tableColumn${component.__typename}`)}
-        >
-          {component.label}
-        </SectionTitle>
+        <SectionTitle>{component.label}</SectionTitle>
         <ControlSectionContent>
           {component.__typename !== "NumericalMeasure" && (
             <ChartOptionGroupHiddenField
@@ -244,9 +240,9 @@ export const TableColumnOptions = ({
       </ControlSection>
       {(isGroup || !isHidden) && (
         <ControlSection>
-          <SectionTitle iconName="formatting" sx={{ mb: 1 }}>
+          <SubsectionTitle iconName="formatting" sx={{ mb: 1 }}>
             <Trans id="controls.section.columnstyle">Column Style</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent>
             <ChartOptionSelectField<ColumnStyle>
               id="columnStyle"
@@ -315,9 +311,9 @@ export const TableColumnOptions = ({
       {canDimensionBeMultiFiltered(component) &&
       !isStandardErrorDimension(component) ? (
         <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
+          <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
@@ -341,9 +337,9 @@ export const TableColumnOptions = ({
         </ControlSection>
       ) : isTemporalDimension(component) ? (
         <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
+          <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
@@ -484,7 +480,7 @@ const ColumnStyleSubOptions = ({
 const TableSettings = () => {
   return (
     <ControlSection>
-      <SectionTitle iconName="settings">
+      <SectionTitle>
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent>

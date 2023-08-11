@@ -8,7 +8,6 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { getIconName } from "@/configurator/components/ui-helpers";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
@@ -32,9 +31,7 @@ const TitleAndDescriptionOptions = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName={getIconName(activeField)}>
-        {getFieldLabel(activeField)}
-      </SectionTitle>
+      <SectionTitle>{getFieldLabel(activeField)}</SectionTitle>
       <ControlSectionContent gap="none">
         {orderedLocales.map((d) => (
           <Box

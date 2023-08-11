@@ -9,7 +9,7 @@ import { DraggableTab } from "@/configurator/components/chart-controls/control-t
 import {
   ControlSection,
   ControlSectionContent,
-  SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
@@ -57,7 +57,7 @@ export const TabDropZone = ({
       {({ innerRef, placeholder }, { isDraggingOver }) => {
         return (
           <ControlSection isHighlighted={isDraggingOver} collapse>
-            <SectionTitle gutterBottom={false}>{title}</SectionTitle>
+            <SubsectionTitle gutterBottom={false}>{title}</SubsectionTitle>
             <ControlSectionContent
               px="small"
               role="tablist"

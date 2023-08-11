@@ -42,7 +42,7 @@ import {
   ControlSection,
   ControlSectionContent,
   ControlSectionSkeleton,
-  SectionTitle,
+  SubsectionTitle,
   useControlSectionContext,
 } from "@/configurator/components/chart-controls/section";
 import {
@@ -594,17 +594,17 @@ export const ChartConfigurator = ({
   return (
     <>
       <ControlSection collapse>
-        <SectionTitle titleId="controls-design" gutterBottom={false}>
+        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </SectionTitle>
+        </SubsectionTitle>
         <ControlSectionContent px="small">
           <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
-        <SectionTitle titleId="controls-design" gutterBottom={false}>
+        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
           <Trans id="controls.section.chart.options">Chart Options</Trans>
-        </SectionTitle>
+        </SubsectionTitle>
         <ControlSectionContent
           px="small"
           gap="none"
@@ -617,7 +617,7 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions.length === 0 ? null : (
         <ControlSection className={classes.filterSection} collapse>
-          <SectionTitle titleId="controls-data" gutterBottom={false}>
+          <SubsectionTitle titleId="controls-data" gutterBottom={false}>
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -626,7 +626,7 @@ export const ChartConfigurator = ({
               />
             ) : null}
             <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent
             aria-labelledby="controls-data"
             data-testid="configurator-filters"
