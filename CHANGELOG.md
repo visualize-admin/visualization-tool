@@ -34,6 +34,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Optional filter label is now correctly shown
   - It's now again possible to choose whether or not to show standard error whiskers
   - "Back to main" label is now always visible when opening the left, edit panel
+  - The count of filters displayed when the filter section is collapsed now displays correct value
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:

@@ -540,10 +540,15 @@ const InteractiveDataFilterCheckbox = ({
 const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
+
   return (
     <Badge
       invisible={ctx.isOpen}
-      badgeContent={Object.values(state.chartConfig.filters).length}
+      badgeContent={
+        Object.values(state.chartConfig.filters).filter(
+          (d) => d.type === "single"
+        ).length
+      }
       color="secondary"
       sx={{ display: "block", ...sx }}
     />
