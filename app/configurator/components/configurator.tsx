@@ -26,9 +26,6 @@ import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configu
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import useEvent from "@/utils/use-event";
 
-import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
-import { isInteractiveFilterType } from "../interactive-filters/interactive-filters-configurator";
-
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
@@ -151,8 +148,6 @@ const ConfigureChartStep = () => {
           </BackContainer>
           {isAnnotationField(state.activeField) ? (
             <ChartAnnotationsSelector state={state} />
-          ) : isInteractiveFilterType(state.activeField) ? (
-            <InteractiveFiltersOptions state={state} />
           ) : (
             <ChartOptionsSelector state={state} />
           )}
