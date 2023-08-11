@@ -239,11 +239,11 @@ export const TableColumnOptions = ({
         </ControlSectionContent>
       </ControlSection>
       {(isGroup || !isHidden) && (
-        <ControlSection>
-          <SubsectionTitle iconName="formatting" sx={{ mb: 1 }}>
+        <ControlSection collapse>
+          <SubsectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
           </SubsectionTitle>
-          <ControlSectionContent>
+          <ControlSectionContent sx={{ mt: 2 }}>
             <ChartOptionSelectField<ColumnStyle>
               id="columnStyle"
               label={t({
@@ -310,7 +310,7 @@ export const TableColumnOptions = ({
       )}
       {canDimensionBeMultiFiltered(component) &&
       !isStandardErrorDimension(component) ? (
-        <ControlSection>
+        <ControlSection collapse>
           <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SubsectionTitle>
@@ -336,7 +336,7 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       ) : isTemporalDimension(component) ? (
-        <ControlSection>
+        <ControlSection collapse>
           <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SubsectionTitle>

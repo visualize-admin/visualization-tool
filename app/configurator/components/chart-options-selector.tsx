@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -414,13 +414,13 @@ const EncodingOptionsPanel = ({
         )}
 
       {optionsByField.showStandardError && hasStandardError && (
-        <ControlSection>
+        <ControlSection collapse>
           <SubsectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
               Show additional information
             </Trans>
           </SubsectionTitle>
-          <ControlSectionContent component="fieldset" gap="none">
+          <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
             <ChartOptionCheckboxField
               path="showStandardError"
               field={encoding.field}
@@ -480,11 +480,11 @@ const ChartFieldAbbreviations = ({
 
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
-    <ControlSection>
-      <SectionTitle>
-        <Trans id="controls.animation">Animation</Trans>
-      </SectionTitle>
-      <ControlSectionContent component="fieldset" gap="none">
+    <ControlSection collapse>
+      <SubsectionTitle iconName="animation">
+        <Trans id="controls.animation.settings">Animation Settings</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ChartOptionSwitchField
           label={t({
             id: "controls.section.animation.show-play-button",
@@ -626,7 +626,7 @@ const ChartFieldMultiFilter = ({
     | undefined;
 
   return encoding.filters && component ? (
-    <ControlSection data-testid="chart-edition-multi-filters">
+    <ControlSection data-testid="chart-edition-multi-filters" collapse>
       <SubsectionTitle
         disabled={!component}
         iconName="filter"
@@ -712,12 +712,12 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   const { disabled } = props;
 
   return (
-    <ControlSection>
+    <ControlSection collapse>
       <SubsectionTitle disabled={disabled} iconName="normalize">
         <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
-        <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
+        <Flex sx={{ justifyContent: "flex-start", my: 2 }}>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}
@@ -816,7 +816,7 @@ const ChartFieldSorting = ({
   );
 
   return (
-    <ControlSection>
+    <ControlSection collapse>
       <SubsectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SubsectionTitle>
@@ -903,7 +903,7 @@ const ChartFieldSize = ({
   }, [dimensions, measures, componentTypes]);
 
   return (
-    <ControlSection>
+    <ControlSection collapse>
       <SubsectionTitle iconName="size">
         {t({
           id: "controls.size",
@@ -989,7 +989,7 @@ const ChartFieldColorComponent = ({
     | undefined;
 
   return (
-    <ControlSection>
+    <ControlSection collapse>
       <SubsectionTitle iconName="color">
         <Trans id="controls.color">Color</Trans>
       </SubsectionTitle>
@@ -1148,26 +1148,28 @@ const ChartImputationType = ({
   disabled?: boolean;
 }) => {
   const [, dispatch] = useConfiguratorState();
-
   const getImputationTypeLabel = (type: ImputationType) => {
     switch (type) {
       case "none":
-        return t({ id: "controls.imputation.type.none", message: `-` });
+        return t({
+          id: "controls.imputation.type.none",
+          message: "-",
+        });
       case "zeros":
         return t({
           id: "controls.imputation.type.zeros",
-          message: `Zeros`,
+          message: "Zeros",
         });
       case "linear":
         return t({
           id: "controls.imputation.type.linear",
-          message: `Linear interpolation`,
+          message: "Linear interpolation",
         });
       default:
-        return t({ id: "controls.imputation.type.none", message: `-` });
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
     }
   };
-
   const updateImputationType = useCallback<(type: ImputationType) => void>(
     (type) => {
       dispatch({
@@ -1180,9 +1182,11 @@ const ChartImputationType = ({
     [dispatch]
   );
 
-  if (disabled) {
-    updateImputationType("none");
-  }
+  React.useEffect(() => {
+    if (disabled) {
+      updateImputationType("none");
+    }
+  }, [disabled, updateImputationType]);
 
   const activeImputationType: ImputationType = get(
     state,
@@ -1191,19 +1195,19 @@ const ChartImputationType = ({
   );
 
   return (
-    <ControlSection>
+    <ControlSection collapse>
       <SubsectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         {!disabled && (
-          <Box mb={5}>
+          <Typography variant="body2" sx={{ my: 2 }}>
             <Trans id="controls.section.imputation.explanation">
               For this chart type, replacement values should be assigned to
               missing values. Decide on the imputation logic or switch to
               another chart type.
             </Trans>
-          </Box>
+          </Typography>
         )}
         <Box mb={1}>
           <Select
@@ -1266,9 +1270,9 @@ const ChartMapBaseLayerSettings = ({
 
   return (
     <ControlSection>
-      <SubsectionTitle iconName="mapMaptype">
+      <SectionTitle>
         <Trans id="chart.map.layers.base">Map Display</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField
           label={t({

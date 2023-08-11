@@ -187,6 +187,7 @@ export const ControlSectionContent = ({
 }: ControlSectionContentProps) => {
   const classes = useControlSectionContentStyles({ gap, px });
   const disclosure = useControlSectionContext();
+
   return (
     <Collapse in={disclosure.isOpen}>
       <Box
