@@ -180,9 +180,8 @@ const DebugPanel = ({
         mr: -5,
         mb: -5,
         backgroundColor: "background.main",
-        // boxShadow: "primary",
         borderTopStyle: "solid",
-        borderColor: "grey.500",
+        borderColor: "divider",
         borderWidth: 1,
       }}
     >

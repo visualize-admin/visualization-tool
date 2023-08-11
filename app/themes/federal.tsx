@@ -40,7 +40,7 @@ export const theme = createTheme({
       active: "#00334D",
       disabled: "#599cbd",
     },
-    divider: "#CCCCCC",
+    divider: "#E5E5E5",
     action: {
       hover: "#F2F7F9",
     },
@@ -711,7 +711,7 @@ theme.components = {
         fontWeight: "bold",
         lineHeight: 1.5,
         borderBottom: "1px solid",
-        borderBottomColor: theme.palette.grey[500],
+        borderBottomColor: theme.palette.divider,
         paddingTop: theme.spacing(1),
         paddingBottom: theme.spacing(1),
       },

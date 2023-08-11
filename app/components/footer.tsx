@@ -49,8 +49,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderBottomWidth: "1px",
     borderTopStyle: "solid",
     borderBottomStyle: "solid",
-    borderTopColor: theme.palette.grey[500],
-    borderBottomColor: theme.palette.grey[500],
+    borderTopColor: theme.palette.divider,
+    borderBottomColor: theme.palette.divider,
   },
 }));
 
@@ -178,7 +178,7 @@ const useFooterLinkStyles = makeStyles((theme: Theme) => ({
     fontSize: "0.875rem",
 
     borderTopStyle: "solid",
-    borderTopColor: theme.palette.grey[500],
+    borderTopColor: theme.palette.divider,
 
     textDecoration: "none",
     cursor: "pointer",

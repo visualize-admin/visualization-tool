@@ -30,7 +30,7 @@ const useControlSectionStyles = makeStyles<
   { isHighlighted?: boolean; hideTopBorder: boolean }
 >((theme) => ({
   controlSection: {
-    borderTopColor: theme.palette.grey[500],
+    borderTopColor: theme.palette.divider,
     borderTopWidth: ({ hideTopBorder }) => (hideTopBorder ? 0 : "1px"),
     borderTopStyle: "solid",
     overflowX: "hidden",

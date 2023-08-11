@@ -58,7 +58,7 @@ export const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
     borderBottomRightRadius: 0,
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: theme.palette.grey[500],
+    borderColor: theme.palette.divider,
   },
   button: {
     color: theme.palette.grey[600],
@@ -74,7 +74,7 @@ export const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
 
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: theme.palette.grey[500],
+    borderColor: theme.palette.divider,
     borderLeft: "none",
 
     cursor: "pointer",

@@ -67,7 +67,7 @@ const useColorPickerStyles = makeStyles((theme: Theme) => ({
   },
   input: {
     color: theme.palette.grey[700],
-    borderColor: theme.palette.grey[500],
+    borderColor: theme.palette.divider,
     backgroundColor: theme.palette.grey[100],
     fontSize: "0.875rem",
     "&:focus": { outline: "none", borderColor: theme.palette.primary.main },
