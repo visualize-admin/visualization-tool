@@ -36,6 +36,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Standard errors are now displayed in grouped bar charts' tooltips
   - "Back to main" label is now always visible when opening the left, edit panel
   - The count of filters displayed when the filter section is collapsed now displays correct value
+  - Tooltips with multiple values now have formatting that is consistent with single-value tooltips
 - Tests
   - Unit tests that import `rdf-js` library now run without errors
 - Refactors:

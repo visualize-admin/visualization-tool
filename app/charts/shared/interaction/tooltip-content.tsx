@@ -67,6 +67,7 @@ export const TooltipMultiple = ({
           }`}
           color={segment.color}
           symbol="square"
+          usage="tooltip"
         />
       ))}
     </Box>
