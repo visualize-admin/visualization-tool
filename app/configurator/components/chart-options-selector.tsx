@@ -681,36 +681,34 @@ const ChartFieldOptions = ({
   encodingOptions?: EncodingOption[];
   disabled?: boolean;
 }) => {
-  return (
-    <>
-      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
-        chartType === "column" && (
-          <Box component="fieldset" mt={4}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.select.column.layout">Column layout</Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }}>
-              <ChartOptionRadioField
-                label={getFieldLabel("stacked")}
-                field={field}
-                path="type"
-                value="stacked"
-                disabled={disabled}
-              />
-              <ChartOptionRadioField
-                label={getFieldLabel("grouped")}
-                field={field}
-                path="type"
-                value="grouped"
-                disabled={disabled}
-              />
-            </Flex>
-          </Box>
-        )}
-    </>
-  );
+  return encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+    chartType === "column" ? (
+    <div>
+      <Box component="fieldset" mt={4}>
+        <FieldSetLegend
+          legendTitle={
+            <Trans id="controls.select.column.layout">Column layout</Trans>
+          }
+        />
+        <Flex sx={{ justifyContent: "flex-start" }}>
+          <ChartOptionRadioField
+            label={getFieldLabel("stacked")}
+            field={field}
+            path="type"
+            value="stacked"
+            disabled={disabled}
+          />
+          <ChartOptionRadioField
+            label={getFieldLabel("grouped")}
+            field={field}
+            path="type"
+            value="grouped"
+            disabled={disabled}
+          />
+        </Flex>
+      </Box>
+    </div>
+  ) : null;
 };
 
 type ChartFieldCalculationProps = {
