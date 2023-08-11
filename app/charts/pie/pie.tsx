@@ -5,6 +5,7 @@ import { PieState } from "@/charts/pie/pie-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
+import { useTransitionStore } from "@/stores/transition";
 import useEvent from "@/utils/use-event";
 
 import { RenderDatum, renderPie } from "./rendering-utils";
@@ -12,6 +13,7 @@ import { RenderDatum, renderPie } from "./rendering-utils";
 export const Pie = () => {
   const { chartData, getPieData, getSegment, colors, bounds, getRenderingKey } =
     useChartState() as PieState;
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { width, height, chartWidth, chartHeight } = bounds;
   const [, dispatch] = useInteraction();
   const ref = React.useRef<SVGGElement>(null);
@@ -65,10 +67,17 @@ export const Pie = () => {
         renderData,
         arcGenerator,
         handleMouseEnter,
-        handleMouseLeave
+        handleMouseLeave,
+        transitionDuration
       );
     }
-  }, [renderData, arcGenerator, handleMouseEnter, handleMouseLeave]);
+  }, [
+    renderData,
+    arcGenerator,
+    handleMouseEnter,
+    handleMouseLeave,
+    transitionDuration,
+  ]);
 
   return <g ref={ref} transform={`translate(${xTranslate}, ${yTranslate})`} />;
 };

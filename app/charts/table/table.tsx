@@ -104,11 +104,12 @@ export const Table = () => {
   }, [tableColumnsMeta, chartData]);
 
   const filteredData = useMemo(() => {
-    const searchResult =
-      searchTerm !== ""
-        ? searchIndex.search({ query: `${searchTerm}` })
-        : chartData;
-    return searchResult as Observation[];
+    const result =
+      searchTerm === ""
+        ? chartData
+        : searchIndex.search({ query: `${searchTerm}` });
+
+    return result as Observation[];
   }, [chartData, searchTerm, searchIndex]);
 
   // Table Instance

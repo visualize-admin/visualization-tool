@@ -1,7 +1,6 @@
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { hcl, ScaleLinear } from "d3";
-import React from "react";
+import { ScaleLinear, hcl } from "d3";
 import { Cell } from "react-table";
 
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
@@ -50,7 +49,6 @@ export const CellDesktop = ({
 }) => {
   const {
     columnComponentType,
-
     textStyle,
     textColor,
     columnColor,

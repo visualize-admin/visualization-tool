@@ -19,7 +19,6 @@ import {
   useStringVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Bounds } from "@/charts/shared/use-width";
 import { TableChartState } from "@/charts/table/table-state";
 import {
@@ -51,6 +50,7 @@ import {
   TemporalDimension,
   TimeUnit,
 } from "@/graphql/resolver-types";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 
 export type ChartState =
   | AreasState
@@ -90,9 +90,9 @@ export type ChartWithInteractiveXTimeRangeState =
   | ColumnsState
   | LinesState;
 
-type NumericalValueGetter = (d: Observation) => number | null;
+export type NumericalValueGetter = (d: Observation) => number | null;
 
-type StringValueGetter = (d: Observation) => string;
+export type StringValueGetter = (d: Observation) => string;
 
 export type TemporalValueGetter = (d: Observation) => Date;
 
@@ -372,7 +372,13 @@ export const useChartData = (
   }
 ): Omit<ChartStateData, "allData"> => {
   const { interactiveFiltersConfig } = chartConfig;
-  const [IFState] = useInteractiveFilters();
+  const { categories, timeRange, timeSlider } = useInteractiveFiltersStore(
+    (d) => ({
+      categories: d.categories,
+      timeRange: d.timeRange,
+      timeSlider: d.timeSlider,
+    })
+  );
 
   // time range
   const timeRangeFilterComponentIri =
@@ -398,8 +404,8 @@ export const useChartData = (
   }, [timeRangeFromTime, timeRangeToTime, getTimeRangeTime]);
 
   // interactive time range
-  const interactiveFromTime = IFState.timeRange.from?.getTime();
-  const interactiveToTime = IFState.timeRange.to?.getTime();
+  const interactiveFromTime = timeRange.from?.getTime();
+  const interactiveToTime = timeRange.to?.getTime();
   const interactiveTimeRangeFilters = React.useMemo(() => {
     const interactiveTimeRangeFilter: ValuePredicate | null =
       getXAsDate &&
@@ -428,32 +434,31 @@ export const useChartData = (
   const getAnimationOrdinalDate = useStringVariable(animationComponentIri);
   const interactiveTimeSliderFilters = React.useMemo(() => {
     const interactiveTimeSliderFilter: ValuePredicate | null =
-      animationField?.componentIri && IFState.timeSlider.value
+      animationField?.componentIri && timeSlider.value
         ? (d: Observation) => {
-            if (IFState.timeSlider.type === "interval") {
+            if (timeSlider.type === "interval") {
               return (
-                getAnimationDate(d).getTime() ===
-                IFState.timeSlider.value!.getTime()
+                getAnimationDate(d).getTime() === timeSlider.value!.getTime()
               );
             }
 
             const ordinalDate = getAnimationOrdinalDate(d);
-            return ordinalDate === IFState.timeSlider.value!;
+            return ordinalDate === timeSlider.value!;
           }
         : null;
 
     return interactiveTimeSliderFilter ? [interactiveTimeSliderFilter] : [];
   }, [
     animationField?.componentIri,
-    IFState.timeSlider.type,
-    IFState.timeSlider.value,
+    timeSlider.type,
+    timeSlider.value,
     getAnimationDate,
     getAnimationOrdinalDate,
   ]);
 
   // interactive legend
   const legend = interactiveFiltersConfig?.legend;
-  const legendItems = Object.keys(IFState.categories);
+  const legendItems = Object.keys(categories);
   const interactiveLegendFilters = React.useMemo(() => {
     const interactiveLegendFilter: ValuePredicate | null =
       legend?.active && getSegmentAbbreviationOrLabel

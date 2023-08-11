@@ -2,12 +2,9 @@ import { fireEvent, render } from "@testing-library/react";
 import merge from "lodash/merge";
 import { useState } from "react";
 
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
@@ -47,7 +44,7 @@ const setup = ({
   modifiedChartConfig: ChartConfig;
 }) => {
   const Component = () => {
-    const [ifstate] = useInteractiveFilters();
+    const IFState = useInteractiveFiltersStore();
     const [useModified, setUseModified] = useState(false);
     useSyncInteractiveFilters(useModified ? modifiedChartConfig : chartConfig);
 
@@ -59,15 +56,11 @@ const setup = ({
         >
           use modified
         </button>
-        <div data-testid="ifstate-dump">{JSON.stringify(ifstate)}</div>
+        <div data-testid="ifstate-dump">{JSON.stringify(IFState)}</div>
       </div>
     );
   };
-  const root = render(
-    <InteractiveFiltersProvider>
-      <Component />
-    </InteractiveFiltersProvider>
-  );
+  const root = render(<Component />);
   const getIFState = () =>
     JSON.parse(root.getByTestId("ifstate-dump").innerHTML);
   const clickUseModified = () =>

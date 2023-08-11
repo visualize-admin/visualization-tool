@@ -12,23 +12,24 @@ import {
 import { useState } from "react";
 import { Inspector } from "react-inspector";
 
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { DataSource, useConfiguratorState } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 const DebugInteractiveFilters = () => {
-  const [interactiveFiltersState] = useInteractiveFilters();
+  const IFState = useInteractiveFiltersStore();
+
   return (
     <>
       <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Interactive Filters State
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={interactiveFiltersState} />
+        <Inspector expandLevel={3} data={IFState} />
       </Box>
     </>
   );

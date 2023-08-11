@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatShortDateAuto } from "@/formatters";
+import { useTransitionStore } from "@/stores/transition";
 
 // Approximate the longest date format we're using for
 // Roughly equivalent to estimateTextWidth("99.99.9999", 12);
@@ -14,6 +14,7 @@ const MAX_DATE_LABEL_LENGHT = 70;
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
   const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
@@ -52,7 +53,7 @@ export const AxisTime = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${bounds.margins.left}, ${
@@ -85,9 +86,8 @@ export const AxisTime = () => {
 
 export const AxisTimeDomain = () => {
   const ref = useRef<SVGGElement>(null);
-
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
-
   const { domainColor } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
@@ -111,7 +111,7 @@ export const AxisTimeDomain = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${bounds.margins.left}, ${

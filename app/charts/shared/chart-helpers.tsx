@@ -1,7 +1,7 @@
 import { group, InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
 import uniq from "lodash/uniq";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { useMaybeAbbreviations } from "@/charts/shared/abbreviations";
 import {
@@ -9,10 +9,6 @@ import {
   interpolateZerosValue,
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
-import {
-  InteractiveFiltersState,
-  useInteractiveFilters,
-} from "@/charts/shared/use-interactive-filters";
 import {
   ChartConfig,
   ChartType,
@@ -36,6 +32,10 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  InteractiveFiltersState,
+  useInteractiveFiltersStore,
+} from "@/stores/interactive-filters";
 
 // Prepare filters used in data query:
 // - merges publisher data filters and interactive data filters (user-defined),
@@ -65,20 +65,20 @@ export const useQueryFilters = ({
 }: {
   chartConfig: ChartConfig;
 }): QueryFilters => {
-  const [IFState] = useInteractiveFilters();
+  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
 
   return useMemo(() => {
     return prepareQueryFilters(
       chartConfig.chartType,
       chartConfig.filters,
       chartConfig.interactiveFiltersConfig,
-      IFState.dataFilters
+      dataFilters
     );
   }, [
     chartConfig.chartType,
     chartConfig.filters,
     chartConfig.interactiveFiltersConfig,
-    IFState.dataFilters,
+    dataFilters,
   ]);
 };
 
@@ -396,6 +396,16 @@ const getBaseWideData = ({
   return wideData;
 };
 
+const getIdentityIri = (iri: string) => `${iri}/__identity__`;
+export const useGetIdentityY = (iri: string) => {
+  return React.useCallback(
+    (d: Observation) => {
+      return (d[getIdentityIri(iri)] as number | null) ?? null;
+    },
+    [iri]
+  );
+};
+
 export const normalizeData = (
   data: Observation[],
   {
@@ -415,6 +425,7 @@ export const normalizeData = (
     return {
       ...d,
       [yKey]: 100 * (y ? y / totalGroupValue : y ?? 0),
+      [getIdentityIri(yKey)]: y,
     };
   });
 };

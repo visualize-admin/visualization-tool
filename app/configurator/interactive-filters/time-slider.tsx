@@ -4,7 +4,6 @@ import React, { ChangeEvent } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/chart-state";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { AnimationField, Filters, SortingField } from "@/config-types";
@@ -14,6 +13,7 @@ import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
 import {
   getSortingOrders,
@@ -193,7 +193,10 @@ const PlayButton = () => {
 
 const Slider = () => {
   const timeline = useTimeline();
-  const [IFState, dispatch] = useInteractiveFilters();
+  const { timeSlider, setTimeSlider } = useInteractiveFiltersStore((d) => ({
+    timeSlider: d.timeSlider,
+    setTimeSlider: d.setTimeSlider,
+  }));
 
   const marks = React.useMemo(() => {
     return timeline.domain.map((d) => ({ value: d })) ?? [];
@@ -208,49 +211,40 @@ const Slider = () => {
   });
 
   React.useEffect(() => {
-    if (timeline.type !== IFState.timeSlider.type) {
-      dispatch({
-        type: "SET_TIME_SLIDER_FILTER",
-        value: {
-          type: timeline.type,
-          value: undefined,
-        },
+    if (timeline.type !== timeSlider.type) {
+      setTimeSlider({
+        type: timeline.type,
+        value: undefined,
       });
     }
 
     if (
       timeline.type === "interval" &&
-      IFState.timeSlider.type === "interval" &&
-      IFState.timeSlider.value?.getTime() !== timeline.value
+      timeSlider.type === "interval" &&
+      timeSlider.value?.getTime() !== timeline.value
     ) {
-      dispatch({
-        type: "SET_TIME_SLIDER_FILTER",
-        value: {
-          type: "interval",
-          value: new Date(timeline.value),
-        },
+      setTimeSlider({
+        type: "interval",
+        value: new Date(timeline.value),
       });
     }
 
     if (
       timeline.type === "ordinal" &&
-      IFState.timeSlider.type === "ordinal" &&
-      IFState.timeSlider?.value !== timeline.value
+      timeSlider.type === "ordinal" &&
+      timeSlider?.value !== timeline.value
     ) {
-      dispatch({
-        type: "SET_TIME_SLIDER_FILTER",
-        value: {
-          type: "ordinal",
-          value: timeline.value as string,
-        },
+      setTimeSlider({
+        type: "ordinal",
+        value: timeline.value as string,
       });
     }
   }, [
     timeline.value,
     timeline.type,
-    IFState.timeSlider.type,
-    IFState.timeSlider.value,
-    dispatch,
+    timeSlider.type,
+    timeSlider.value,
+    setTimeSlider,
   ]);
 
   return (

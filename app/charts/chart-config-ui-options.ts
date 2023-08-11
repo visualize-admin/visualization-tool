@@ -1,10 +1,13 @@
 import { t } from "@lingui/macro";
 
 import {
+  ChartConfig,
   ChartType,
   ComponentType,
   SortingOrder,
   SortingType,
+  getAnimationField,
+  isSortingInConfig,
 } from "@/config-types";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -46,6 +49,10 @@ export type EncodingOption =
 export type EncodingSortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
+  getDisabledState?: (d: ChartConfig) => {
+    disabled: boolean;
+    disabledMessage?: string;
+  };
 };
 
 export interface EncodingSpec {
@@ -58,9 +65,13 @@ export interface EncodingSpec {
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
-  getWarnMessage?: (
+  getDisabledState?: (
+    chartConfig: ChartConfig,
     dimensions: DimensionMetadataFragment[]
-  ) => React.ReactNode | undefined;
+  ) => {
+    disabled: boolean;
+    disabledMessage?: string;
+  };
 }
 
 // dataFilters is enabled by default
@@ -91,9 +102,40 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
 ];
 
 export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
-  { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
-  { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-  { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+  {
+    sortingType: "byAuto",
+    sortingOrder: ["asc", "desc"],
+  },
+  {
+    sortingType: "byDimensionLabel",
+    sortingOrder: ["asc", "desc"],
+  },
+  {
+    sortingType: "byTotalSize",
+    sortingOrder: ["asc", "desc"],
+    getDisabledState: (
+      chartConfig
+    ): {
+      disabled: boolean;
+      disabledMessage?: string;
+    } => {
+      const animationPresent = !!getAnimationField(chartConfig);
+
+      if (animationPresent) {
+        return {
+          disabled: true,
+          disabledMessage: t({
+            id: "controls.sorting.byTotalSize.disabled-by-animation",
+            message: "Sorting by total size is disabled during animation.",
+          }),
+        };
+      }
+
+      return {
+        disabled: false,
+      };
+    },
+  },
 ];
 
 export const LINE_SEGMENT_SORTING: EncodingSortingOption[] = [
@@ -116,16 +158,43 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   disableInteractiveFilters: true,
-  getWarnMessage: (dimensions: DimensionMetadataFragment[]) => {
+  getDisabledState: (
+    chartConfig,
+    dimensions
+  ): {
+    disabled: boolean;
+    disabledMessage?: string;
+  } => {
     const noTemporalDimensions = !dimensions.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
+
     if (noTemporalDimensions) {
-      return t({
-        id: "",
-        message: "There is no dimension that can be animated.",
-      });
+      return {
+        disabled: true,
+        disabledMessage: t({
+          id: "controls.section.animation.no-temporal-dimensions",
+          message: "There is no dimension that can be animated.",
+        }),
+      };
     }
+
+    if (
+      isSortingInConfig(chartConfig) &&
+      chartConfig.fields.segment?.sorting?.sortingType === "byTotalSize"
+    ) {
+      return {
+        disabled: true,
+        disabledMessage: t({
+          id: "controls.section.animation.disabled-by-sorting",
+          message: "Animation is disabled when sorting by total size.",
+        }),
+      };
+    }
+
+    return {
+      disabled: false,
+    };
   },
 };
 

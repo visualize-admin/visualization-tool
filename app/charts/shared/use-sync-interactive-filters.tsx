@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
 
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import {
   ChartConfig,
   FilterValueSingle,
@@ -9,6 +8,7 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 
 /**
  * Makes sure interactive filters are in sync with chart config.
@@ -18,7 +18,14 @@ import useFilterChanges from "@/configurator/use-filter-changes";
  *
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
-  const [IFstate, dispatch] = useInteractiveFilters();
+  const {
+    resetCategories,
+    dataFilters,
+    setDataFilters,
+    updateDataFilter,
+    setTimeRange,
+    setCalculationType,
+  } = useInteractiveFiltersStore();
   const { interactiveFiltersConfig } = chartConfig;
 
   // Time range filter
@@ -34,13 +41,10 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   useEffect(() => {
     // Editor time presets supersede interactive state
     if (presetFrom && presetTo) {
-      dispatch({
-        type: "SET_TIME_RANGE_FILTER",
-        value: [presetFrom, presetTo],
-      });
+      setTimeRange(presetFrom, presetTo);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, presetFromStr, presetToStr]);
+  }, [setTimeRange, presetFromStr, presetToStr]);
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
@@ -53,8 +57,8 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
       }>((obj, iri) => {
         const configFilter = chartConfig.filters[iri];
 
-        if (Object.keys(IFstate.dataFilters).includes(iri)) {
-          obj[iri] = IFstate.dataFilters[iri];
+        if (Object.keys(dataFilters).includes(iri)) {
+          obj[iri] = dataFilters[iri];
         } else if (configFilter?.type === "single") {
           obj[iri] = configFilter;
         }
@@ -62,10 +66,10 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
         return obj;
       }, {});
 
-      dispatch({ type: "SET_DATA_FILTER", value: newInteractiveDataFilters });
+      setDataFilters(newInteractiveDataFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [componentIris, dispatch]);
+  }, [componentIris, setDataFilters]);
 
   const changes = useFilterChanges(chartConfig.filters);
   useEffect(() => {
@@ -75,21 +79,12 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
 
     const [dimensionIri, prev, next] = changes[0];
     if (prev?.type === "single" || next?.type === "single") {
-      dispatch({
-        type: "UPDATE_DATA_FILTER",
-        value:
-          next?.type === "single" && next?.value
-            ? {
-                dimensionIri,
-                dimensionValueIri: next.value,
-              }
-            : {
-                dimensionIri,
-                dimensionValueIri: FIELD_VALUE_NONE,
-              },
-      });
+      updateDataFilter(
+        dimensionIri,
+        next?.type === "single" ? next.value : FIELD_VALUE_NONE
+      );
     }
-  }, [changes, dispatch]);
+  }, [changes, updateDataFilter]);
 
   // Maybe it should be more generic?
   const interactiveCategoriesResetTrigger = useMemo(
@@ -102,20 +97,17 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   // name to persist as filters across different dimensions
   // i.e. Jura as forest zone != Jura as canton.
   useEffect(
-    () => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatch, interactiveCategoriesResetTrigger]
+    () => resetCategories(),
+    [resetCategories, interactiveCategoriesResetTrigger]
   );
 
   // Calculation
   const calculationType = interactiveFiltersConfig?.calculation.type;
   React.useEffect(() => {
     if (calculationType) {
-      dispatch({
-        type: "SET_CALCULATION_TYPE",
-        value: calculationType,
-      });
+      setCalculationType(calculationType);
     }
-  }, [calculationType, dispatch]);
+  }, [calculationType, setCalculationType]);
 };
 
 export default useSyncInteractiveFilters;

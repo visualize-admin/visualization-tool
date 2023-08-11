@@ -1,7 +1,5 @@
 import { BaseType, Selection } from "d3";
 
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
-
 export type RenderDatum = {
   key: string;
   cx: number;
@@ -11,7 +9,8 @@ export type RenderDatum = {
 
 export const renderCircles = (
   g: Selection<SVGGElement, null, BaseType, unknown>,
-  renderData: RenderDatum[]
+  renderData: RenderDatum[],
+  transitionDuration: number
 ) => {
   g.selectAll<SVGCircleElement, RenderDatum>("circle")
     .data(renderData, (d) => d.key)
@@ -27,13 +26,13 @@ export const renderCircles = (
           .attr("fill", (d) => d.color)
           .attr("opacity", 0)
           .call((enter) =>
-            enter.transition().duration(TRANSITION_DURATION).attr("opacity", 1)
+            enter.transition().duration(transitionDuration).attr("opacity", 1)
           ),
       (update) =>
         update.call((update) =>
           update
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .attr("cx", (d) => d.cx)
             .attr("cy", (d) => d.cy)
             .attr("fill", (d) => d.color)
@@ -43,7 +42,7 @@ export const renderCircles = (
         exit.call((exit) =>
           exit
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .attr("opacity", 0)
             .remove()
         )

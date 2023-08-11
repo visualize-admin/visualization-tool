@@ -16,9 +16,10 @@ import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useTransitionStore } from "@/stores/transition";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 // Brush constants
@@ -27,7 +28,16 @@ export const BRUSH_HEIGHT = 3;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const [state, dispatch] = useInteractiveFilters();
+  const { timeRange, setTimeRange } = useInteractiveFiltersStore((d) => ({
+    timeRange: d.timeRange,
+    setTimeRange: d.setTimeRange,
+  }));
+  const { setDefaultDuration, setInstantDuration } = useTransitionStore(
+    (d) => ({
+      setDefaultDuration: d.setDefaultDuration,
+      setInstantDuration: d.setInstantDuration,
+    })
+  );
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
@@ -39,7 +49,7 @@ export const BrushTime = () => {
     }
   };
 
-  const { from, to } = state.timeRange;
+  const { from, to } = timeRange;
   const {
     brushOverlayColor,
     brushSelectionColor,
@@ -98,12 +108,23 @@ export const BrushTime = () => {
 
     if (selection) {
       const [xStart, xEnd] = selection.map((s) => brushWidthScale.invert(s));
-      const newDates = getClosestObservationFromRangeDates([xStart, xEnd]);
+      const [newFrom, newTo] = getClosestObservationFromRangeDates([
+        xStart,
+        xEnd,
+      ]);
 
-      dispatch({
-        type: "SET_TIME_RANGE_FILTER",
-        value: newDates,
-      });
+      // Need to use current state as the function is not updated during brushing
+      // and the local state accessed here is not up to date. This leads to
+      // making a dispatch on each brush move, which makes the animations laggy
+      // and generally shouldn't happen.
+      const { from, to } = useInteractiveFiltersStore.getState().timeRange;
+
+      if (
+        from?.getTime() !== newFrom.getTime() ||
+        to?.getTime() !== newTo.getTime()
+      ) {
+        setTimeRange(newFrom, newTo);
+      }
     }
   };
 
@@ -113,8 +134,13 @@ export const BrushTime = () => {
       [0, 0],
       [brushWidth, BRUSH_HEIGHT],
     ])
-    .on("start brush", brushed)
+    .on("start", (e) => {
+      setInstantDuration();
+      brushed(e);
+    })
+    .on("brush", brushed)
     .on("end", function (event) {
+      setDefaultDuration();
       updateSelectionExtent(event.selection);
 
       // Happens when snapping to actual values.
@@ -158,31 +184,19 @@ export const BrushTime = () => {
 
           if (getDate(indexLeft).getTime() < to.getTime()) {
             // new lower than "to"
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [getDate(indexLeft), to],
-            });
+            setTimeRange(getDate(indexLeft), to);
           } else {
             // new too high, don't do anything
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, to],
-            });
+            setTimeRange(from, to);
           }
         } else if (event.keyCode === 39 && handleDirection === "w") {
           // west handle, moving right
           const index = bisectDateRight(fullData, from, 1);
           const indexRight = fullData[index];
           if (getDate(indexRight).getTime() < to.getTime()) {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [getDate(indexRight), to],
-            });
+            setTimeRange(getDate(indexRight), to);
           } else {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, to],
-            });
+            setTimeRange(from, to);
           }
         } else if (event.keyCode === 37 && handleDirection === "e") {
           // east handle, moving left
@@ -190,15 +204,9 @@ export const BrushTime = () => {
           const indexLeft = fullData[index - 1];
 
           if (getDate(indexLeft).getTime() > from.getTime()) {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, getDate(indexLeft)],
-            });
+            setTimeRange(from, getDate(indexLeft));
           } else {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, to],
-            });
+            setTimeRange(from, to);
           }
         } else if (event.keyCode === 39 && handleDirection === "e") {
           // east handle, moving right
@@ -206,21 +214,15 @@ export const BrushTime = () => {
           const indexLeft = fullData[index];
 
           if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, getDate(indexLeft)],
-            });
+            setTimeRange(from, getDate(indexLeft));
           } else {
-            dispatch({
-              type: "SET_TIME_RANGE_FILTER",
-              value: [from, to],
-            });
+            setTimeRange(from, to);
           }
         }
         updateBrushEndedStatus(true);
       }
     },
-    [fullData, dispatch, from, getDate, to]
+    [fullData, setTimeRange, from, getDate, to]
   );
 
   useEffect(() => {
@@ -301,7 +303,13 @@ export const BrushTime = () => {
       updateBrushEndedStatus(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brushWidthScale, brushedIsEnded, dispatch, closestFromStr, closestToStr]);
+  }, [
+    brushWidthScale,
+    brushedIsEnded,
+    setTimeRange,
+    closestFromStr,
+    closestToStr,
+  ]);
 
   // This effect resets brush defaults to editor values
   // without transition

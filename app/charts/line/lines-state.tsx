@@ -29,6 +29,7 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -214,12 +215,11 @@ const useLinesState = (
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xAnchor = xScale(getX(datum));
-    const yAnchor = yScale(getY(datum) ?? 0);
-
+    const x = getX(datum);
     const tooltipValues = chartData.filter(
-      (j) => getX(j).getTime() === getX(datum).getTime()
+      (d) => getX(d).getTime() === x.getTime()
     );
+    const yValues = tooltipValues.map(getY);
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -227,9 +227,9 @@ const useLinesState = (
       sortingOrder: "asc",
     });
 
-    const xPlacement = "center";
-
-    const yPlacement = "top";
+    const xAnchor = xScale(x);
+    const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
+    const yAnchor = yScale((yMin + yMax) * 0.5);
 
     const yValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -241,7 +241,11 @@ const useLinesState = (
     return {
       xAnchor,
       yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
+      placement: getCenteredTooltipPlacement({
+        chartWidth,
+        xAnchor,
+        segment: !!fields.segment,
+      }),
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),

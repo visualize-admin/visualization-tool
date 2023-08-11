@@ -13,10 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/charts/chart-config-ui-options.ts
-msgid ""
-msgstr ""
-
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Ajouter un filtre"
@@ -209,11 +205,11 @@ msgstr "Permettre la normalisation des données"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
-msgstr "Valeurs absolues"
+msgstr "Normal"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.percent"
-msgstr "Pourcentages"
+msgstr "100%"
 
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
@@ -489,6 +485,10 @@ msgstr "Effacer la recherche"
 msgid "controls.section.additional-information"
 msgstr "Informations supplémentaires"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.disabled-by-sorting"
+msgstr "L'animation est désactivée lors du tri par taille totale."
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Durée de l'animation"
@@ -500,6 +500,10 @@ msgstr "Mise à l'échelle dynamique"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graphique en fonction de la plage de données, afin de garantir une visualisation optimale."
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-temporal-dimensions"
+msgstr "Il n'y a pas de dimension qui puisse être animée."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
@@ -609,7 +613,7 @@ msgstr "Segmentation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
-msgstr "Mode"
+msgstr "Mode de visualisation"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
@@ -732,6 +736,10 @@ msgstr "Taille totale"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Croissant"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.sorting.byTotalSize.disabled-by-animation"
+msgstr "Le tri par taille totale est désactivé pendant l'animation."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.largestBottom"

@@ -8,7 +8,6 @@ import { useMemo } from "react";
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFiltersList } from "@/components/chart-filters-list";
@@ -199,37 +198,35 @@ export const ChartPreviewInner = ({
                 )}
               </Typography>
             </>
-            <InteractiveFiltersProvider>
-              <Box ref={containerRef} height={containerHeight.current!}>
-                {isTablePreview ? (
-                  <DataSetTable
-                    sx={{
-                      width: "100%",
-                      maxHeight: "100%",
-                    }}
-                    dataSetIri={dataSetIri}
-                    dataSource={dataSource}
-                    chartConfig={state.chartConfig}
-                  />
-                ) : (
-                  <ChartWithInteractiveFilters
-                    dataSet={dataSetIri}
-                    dataSource={dataSource}
-                    chartConfig={state.chartConfig}
-                    published={false}
-                  />
-                )}
-              </Box>
-              {state.chartConfig && (
-                <ChartFootnotes
+            <Box ref={containerRef} height={containerHeight.current!}>
+              {isTablePreview ? (
+                <DataSetTable
+                  sx={{
+                    width: "100%",
+                    maxHeight: "100%",
+                  }}
                   dataSetIri={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={state.chartConfig}
-                  onToggleTableView={handleToggleTableView}
+                />
+              ) : (
+                <ChartWithInteractiveFilters
+                  dataSet={dataSetIri}
+                  dataSource={dataSource}
+                  chartConfig={state.chartConfig}
+                  published={false}
                 />
               )}
-              <DebugPanel configurator={true} interactiveFilters={true} />
-            </InteractiveFiltersProvider>
+            </Box>
+            {state.chartConfig && (
+              <ChartFootnotes
+                dataSetIri={dataSetIri}
+                dataSource={dataSource}
+                chartConfig={state.chartConfig}
+                onToggleTableView={handleToggleTableView}
+              />
+            )}
+            <DebugPanel configurator={true} interactiveFilters={true} />
           </>
         )}
       </ChartErrorBoundary>

@@ -2,10 +2,8 @@ import {
   extent,
   group,
   max,
-  min,
   rollup,
   ScaleLinear,
-  scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
   ScaleTime,
@@ -17,7 +15,7 @@ import {
   sum,
 } from "d3";
 import orderBy from "lodash/orderBy";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import {
   AreasStateVariables,
@@ -31,6 +29,7 @@ import {
   getWideData,
   normalizeData,
   stackOffsetDivergingPositiveZeros,
+  useGetIdentityY,
 } from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
@@ -39,18 +38,19 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getStackedTooltipValueFormatter,
+  getStackedYScale,
+} from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import {
-  formatNumberWithUnit,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/formatters";
+import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 import {
@@ -90,6 +90,7 @@ const useAreasState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
+  const getIdentityY = useGetIdentityY(yMeasure.iri);
   const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
@@ -97,7 +98,7 @@ const useAreasState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
-  const [IFState] = useInteractiveFilters();
+  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];
@@ -185,8 +186,8 @@ const useAreasState = (
     );
   }, [getXAsString, getY, scalesData]);
 
-  const normalize = IFState.calculation.type === "percent";
-  const preparedDataGroupedByX = useMemo(() => {
+  const normalize = calculationType === "percent";
+  const chartDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
         normalizeData(chartData, {
@@ -205,7 +206,7 @@ const useAreasState = (
 
   const chartWideData = React.useMemo(() => {
     return getWideData({
-      dataGroupedByX: preparedDataGroupedByX,
+      dataGroupedByX: chartDataGroupedByX,
       xKey,
       getY,
       getSegment,
@@ -215,7 +216,7 @@ const useAreasState = (
   }, [
     getSegment,
     getY,
-    preparedDataGroupedByX,
+    chartDataGroupedByX,
     segments,
     xKey,
     fields.y.imputationType,
@@ -243,28 +244,15 @@ const useAreasState = (
     (d) => d.total ?? 0
   ) as unknown as number;
 
-  const { colors, xScale, yScale, interactiveXTimeRangeScale } = useMemo(() => {
-    const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
-    const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
-    const yDomain = [minTotal, maxTotal];
+  const { colors, xScale, interactiveXTimeRangeScale } = useMemo(() => {
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
-
     const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
       getX(d)
     ) as [Date, Date];
     const interactiveXTimeRangeScale = scaleTime().domain(
       interactiveXTimeRangeDomain
     );
-    const yScale = scaleLinear().domain(yDomain);
-
-    // If we're showing a normalized chart, the .nice() makes the chart y axis
-    // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
-    // to avoid rounding issues.
-    if (!normalize) {
-      yScale.nice();
-    }
-
     const colors = scaleOrdinal<string, string>();
 
     if (fields.segment && segmentDimension && fields.segment.colorMapping) {
@@ -282,16 +270,16 @@ const useAreasState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-      colors.unknown(() => undefined);
     } else {
       colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
-      colors.unknown(() => undefined);
     }
+
+    colors.unknown(() => undefined);
+
     return {
       colors,
       xScale,
-      yScale,
       interactiveXTimeRangeScale,
     };
   }, [
@@ -302,10 +290,16 @@ const useAreasState = (
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
     allSegments,
-    series,
     segmentDimension,
-    normalize,
   ]);
+
+  const yScale = useMemo(() => {
+    return getStackedYScale(scalesData, {
+      normalize,
+      getX: getXAsString,
+      getY,
+    });
+  }, [scalesData, normalize, getXAsString, getY]);
 
   /** Dimensions */
   const estimateNumberWidth = (d: number) =>
@@ -332,48 +326,75 @@ const useAreasState = (
   yScale.range([chartHeight, 0]);
 
   /** Tooltip */
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xAnchor = xScale(getX(datum));
+  const getAnnotationInfo = useCallback(
+    (datum: Observation): TooltipInfo => {
+      const x = getXAsString(datum);
+      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const yValues = tooltipValues.map(getY);
+      const sortedTooltipValues = sortByIndex({
+        data: tooltipValues,
+        order: segments,
+        getCategory: getSegment,
+        sortingOrder: "asc",
+      });
+      const yValueFormatter = getStackedTooltipValueFormatter({
+        normalize,
+        yMeasureIri: yMeasure.iri,
+        yMeasureUnit: yMeasure.unit,
+        formatters,
+        formatNumber,
+      });
+      const xAnchor = xScale(getX(datum));
+      const yAnchor = normalize
+        ? yScale.range()[0] * 0.5
+        : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
 
-    const tooltipValues = chartData.filter(
-      (j) => getX(j).getTime() === getX(datum).getTime()
-    );
-    const sortedTooltipValues = sortByIndex({
-      data: tooltipValues,
-      order: segments,
-      getCategory: getSegment,
-      sortingOrder: "asc",
-    });
-
-    const yAnchor = 0;
-    const xPlacement = "center";
-    const yPlacement = "top";
-    const yValueFormatter = (value: number | null) =>
-      formatNumberWithUnit(
-        value,
-        formatters[yMeasure.iri] || formatNumber,
-        yMeasure.unit
-      );
-
-    return {
-      xAnchor,
-      yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
-      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
-      datum: {
-        label: fields.segment && getSegmentAbbreviationOrLabel(datum),
-        value: yValueFormatter(getY(datum)),
-        color: colors(getSegment(datum)) as string,
-      },
-      values: fields.segment
-        ? sortedTooltipValues.map((td) => ({
-            label: getSegmentAbbreviationOrLabel(td),
-            value: yValueFormatter(getY(td)),
-            color: colors(getSegment(td)) as string,
-          }))
-        : undefined,
-    };
-  };
+      return {
+        xAnchor,
+        yAnchor,
+        placement: getCenteredTooltipPlacement({
+          chartWidth,
+          xAnchor,
+          segment: !!fields.segment,
+        }),
+        xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
+        datum: {
+          label: fields.segment && getSegmentAbbreviationOrLabel(datum),
+          value: yValueFormatter(getY(datum), getIdentityY(datum)),
+          color: colors(getSegment(datum)) as string,
+        },
+        values: fields.segment
+          ? sortedTooltipValues.map((td) => ({
+              label: getSegmentAbbreviationOrLabel(td),
+              value: yValueFormatter(getY(td), getIdentityY(td)),
+              color: colors(getSegment(td)) as string,
+            }))
+          : undefined,
+      };
+    },
+    [
+      yScale,
+      colors,
+      fields.segment,
+      formatNumber,
+      formatters,
+      getSegment,
+      getSegmentAbbreviationOrLabel,
+      getX,
+      getXAsString,
+      getY,
+      chartDataGroupedByX,
+      segments,
+      timeFormatUnit,
+      xDimension.timeUnit,
+      xScale,
+      yMeasure.iri,
+      yMeasure.unit,
+      normalize,
+      getIdentityY,
+      chartWidth,
+    ]
+  );
 
   return {
     chartType: "area",

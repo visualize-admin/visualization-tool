@@ -10,7 +10,6 @@ import {
 } from "@/charts/shared/axis-width-band";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import { ColumnConfig } from "@/configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
@@ -20,54 +19,51 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <InteractiveFiltersProvider>
-      <ColumnChart
-        observations={columnObservations}
-        measures={columnMeasures}
-        measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
-        dimensions={columnDimensions}
-        dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
-        chartConfig={
-          {
-            chartType: "column",
-            filters: {},
-            fields: columnFields,
-            interactiveFiltersConfig: {
-              legend: {
-                active: false,
-                componentIri: "",
-              },
-              dataFilters: {
-                active: false,
-                componentIris: [],
-              },
-              timeRange: {
-                presets: {
-                  type: "range",
-                  from: "0",
-                  to: "0",
-                },
-                active: false,
-                componentIri: "http://fake-iri",
-              },
+    <ColumnChart
+      observations={columnObservations}
+      measures={columnMeasures}
+      measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
+      dimensions={columnDimensions}
+      dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
+      chartConfig={
+        {
+          chartType: "column",
+          filters: {},
+          fields: columnFields,
+          interactiveFiltersConfig: {
+            legend: {
+              active: false,
+              componentIri: "",
             },
-          } as unknown as ColumnConfig
-        }
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <AxisHeightLinear />
-            <AxisWidthBand />
-            <AxisWidthBandDomain />
-            <Columns />
-            <ErrorWhiskers />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        {/* {barFields.segment && <InteractiveLegendColor />} */}
-      </ColumnChart>
-    </InteractiveFiltersProvider>
+            dataFilters: {
+              active: false,
+              componentIris: [],
+            },
+            timeRange: {
+              presets: {
+                type: "range",
+                from: "0",
+                to: "0",
+              },
+              active: false,
+              componentIri: "http://fake-iri",
+            },
+          },
+        } as unknown as ColumnConfig
+      }
+      aspectRatio={0.4}
+    >
+      <ChartContainer>
+        <ChartSvg>
+          <AxisHeightLinear />
+          <AxisWidthBand />
+          <AxisWidthBandDomain />
+          <Columns />
+          <ErrorWhiskers />
+        </ChartSvg>
+        <Tooltip type="single" />
+      </ChartContainer>
+    </ColumnChart>
   </ReactSpecimen>
 )}
 `;
@@ -82,11 +78,6 @@ const columnFields = {
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
-  // segment: {
-  //   componentIri:
-  //     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
-  //   palette: "category10",
-  //   colorMapping: {
   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0":
     "#1f77b4",
   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1":
@@ -99,16 +90,6 @@ const columnFields = {
     "#9467bd",
   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5":
     "#8c564b",
-  // },
-  // interactiveFilterPresets: {
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0": true,
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1": true,
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/2": true,
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/3": true,
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/4": true,
-  //   "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5": true,
-  // },
-  // },
 };
 const columnMeasures = [
   {

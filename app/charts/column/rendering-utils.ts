@@ -1,7 +1,5 @@
 import { Selection } from "d3";
 
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
-
 export type RenderColumnDatum = {
   key: string;
   x: number;
@@ -13,7 +11,8 @@ export type RenderColumnDatum = {
 
 export const renderColumn = (
   g: Selection<SVGRectElement, RenderColumnDatum, SVGGElement, unknown>,
-  y0: number
+  y0: number,
+  transitionDuration: number
 ) => {
   g.join(
     (enter) =>
@@ -28,7 +27,7 @@ export const renderColumn = (
         .call((enter) =>
           enter
             .transition()
-            .duration(TRANSITION_DURATION)
+            .duration(transitionDuration)
             .attr("y", (d) => d.y)
             .attr("height", (d) => d.height)
         ),
@@ -36,7 +35,7 @@ export const renderColumn = (
       update.call((update) =>
         update
           .transition()
-          .duration(TRANSITION_DURATION)
+          .duration(transitionDuration)
           .attr("x", (d) => d.x)
           .attr("y", (d) => d.y)
           .attr("width", (d) => d.width)
@@ -47,7 +46,7 @@ export const renderColumn = (
       exit.call((exit) =>
         exit
           .transition()
-          .duration(TRANSITION_DURATION)
+          .duration(transitionDuration)
           .attr("y", y0)
           .attr("height", 0)
           .remove()
@@ -64,7 +63,8 @@ export type RenderWhiskerDatum = {
 };
 
 export const renderWhisker = (
-  g: Selection<SVGGElement, RenderWhiskerDatum, SVGGElement, unknown>
+  g: Selection<SVGGElement, RenderWhiskerDatum, SVGGElement, unknown>,
+  transitionDuration: number
 ) => {
   g.join(
     (enter) =>
@@ -105,13 +105,13 @@ export const renderWhisker = (
             .attr("stroke", "none")
         )
         .call((g) =>
-          g.transition().duration(TRANSITION_DURATION).attr("opacity", 1)
+          g.transition().duration(transitionDuration).attr("opacity", 1)
         ),
     (update) =>
       update.call((g) =>
         g
           .transition()
-          .duration(TRANSITION_DURATION)
+          .duration(transitionDuration)
           .attr("opacity", 1)
           .call((g) =>
             g
@@ -137,7 +137,7 @@ export const renderWhisker = (
       ),
     (exit) =>
       exit.call((g) =>
-        g.transition().duration(TRANSITION_DURATION).attr("opacity", 0).remove()
+        g.transition().duration(transitionDuration).attr("opacity", 0).remove()
       )
   );
 };

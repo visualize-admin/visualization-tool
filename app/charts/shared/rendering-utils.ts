@@ -8,8 +8,6 @@ import {
 import { Observation, isStandardErrorDimension } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
-export const TRANSITION_DURATION = 400;
-
 /** Use to create a unique key for rendering the shapes.
  * It's important to animate them correctly when using d3.
  */

@@ -168,7 +168,7 @@ export const Logo = () => {
           role="figure"
           aria-labelledby="logo"
           sx={{
-            width: "calc(20rem - 16px)",
+            width: "calc(20rem + 4px)",
             display: ["none", "block"],
             borderRightWidth: "1px",
             borderRightStyle: "solid",

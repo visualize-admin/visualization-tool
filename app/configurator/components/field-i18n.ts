@@ -98,11 +98,11 @@ const fieldLabels = {
   }),
   "controls.calculation.identity": defineMessage({
     id: "controls.calculation.identity",
-    message: "Absolute figures",
+    message: "Normal",
   }),
   "controls.calculation.percent": defineMessage({
     id: "controls.calculation.percent",
-    message: "Relative figures",
+    message: "100%",
   }),
   "controls.imputation": defineMessage({
     id: "controls.imputation",

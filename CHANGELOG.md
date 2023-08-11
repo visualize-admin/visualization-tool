@@ -12,9 +12,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
   - It's now possible to normalize the data in Stacked Column Chart and Stacked Area Chart either in a static mode, or as an interactive filter 📊
+  - Normalized stacked charts, as well as Pie chart, now display both percentages and absolute values in the tooltip
   - Added support for a new dimension type - TemporalOrdinalDimension. This dimension can be used in all the places where you can use regular ordinal dimensions as well as to animate the chart
   - Scatterplot and Pie now animate updates
   - Axes now animate updates
+  - Tooltips for area, column and line charts now behave in more responsive way
   - Time filter now shows explicit `from` and `to` fields to filter by (and the brush snaps to values actually existing in the data)
   - Time filter now uses date picker for months and years 🗓️
   - Changed the aspect ratios of Pie and Scatterplot charts in the Editor mode, so they fit on a screen without the need to scroll

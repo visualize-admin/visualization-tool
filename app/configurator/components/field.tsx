@@ -81,11 +81,12 @@ type ControlTabFieldProps = {
   component?: DimensionMetadataFragment;
   value: string;
   labelId: string | null;
-  warnMessage?: ReactNode;
+  disabled?: boolean;
+  disabledMessage?: string;
 };
 
 export const ControlTabField = (props: ControlTabFieldProps) => {
-  const { component, value, labelId, warnMessage } = props;
+  const { component, value, labelId, disabled, disabledMessage } = props;
   const field = useActiveFieldField({ value });
 
   return (
@@ -95,7 +96,8 @@ export const ControlTabField = (props: ControlTabFieldProps) => {
       labelId={labelId}
       checked={field.checked}
       onClick={field.onClick}
-      warnMessage={warnMessage}
+      disabled={disabled}
+      disabledMessage={disabledMessage}
     />
   );
 };
@@ -932,5 +934,3 @@ export const ChartOptionSwitchField = ({
     />
   );
 };
-
-export const OnOffTabField = () => {};

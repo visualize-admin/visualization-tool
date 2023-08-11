@@ -13,10 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/charts/chart-config-ui-options.ts
-msgid ""
-msgstr ""
-
 #: app/configurator/components/chart-configurator.tsx
 msgid "Add filter"
 msgstr "Filter hinzufügen"
@@ -209,11 +205,11 @@ msgstr "Ermöglicht die Normalisierung der Daten"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
-msgstr "Absolute Zahlen"
+msgstr "Normal"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.percent"
-msgstr "Relative Zahlen"
+msgstr "100%"
 
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
@@ -489,6 +485,10 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.additional-information"
 msgstr "Zusätzliche Informationen"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.disabled-by-sorting"
+msgstr "Die Animation ist bei der Sortierung nach Gesamtgröße deaktiviert."
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Dauer"
@@ -500,6 +500,10 @@ msgstr "Dynamische Skalierung"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Aktivieren Sie die dynamische Skalierung, um die Skalierung des Diagramms auf der Grundlage des Datenbereichs anzupassen und eine optimale Visualisierung zu gewährleisten."
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-temporal-dimensions"
+msgstr "Es gibt keine Dimension, die animiert werden kann."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.animation.settings"
@@ -609,7 +613,7 @@ msgstr "Segmentierung"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
-msgstr "Modus"
+msgstr "Visualisierungsmodus"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx
@@ -732,6 +736,10 @@ msgstr "Gesamtgrösse"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Kleinste zuerst"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.sorting.byTotalSize.disabled-by-animation"
+msgstr "Die Sortierung nach Gesamtgröße ist während der Animation deaktiviert."
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byTotalSize.largestBottom"

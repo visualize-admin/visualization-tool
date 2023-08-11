@@ -4,10 +4,11 @@ import React, { ReactNode } from "react";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { useTransitionStore } from "@/stores/transition";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const ref = React.useRef<HTMLDivElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds } = useChartState();
   const { width, height } = bounds;
 
@@ -20,10 +21,10 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 
       select(ref.current)
         .transition()
-        .duration(TRANSITION_DURATION)
+        .duration(transitionDuration)
         .style("height", `${height}px`);
     }
-  }, [height]);
+  }, [height, transitionDuration]);
 
   return (
     <div ref={ref} aria-hidden="true" style={{ position: "relative", width }}>
@@ -34,6 +35,7 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = React.useRef<SVGSVGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { bounds, interactiveFiltersConfig } = useChartState();
   const { width, height, margins } = bounds;
 
@@ -46,10 +48,10 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
 
       select(ref.current)
         .transition()
-        .duration(TRANSITION_DURATION)
+        .duration(transitionDuration)
         .attr("height", height);
     }
-  }, [height]);
+  }, [height, transitionDuration]);
 
   return (
     <svg

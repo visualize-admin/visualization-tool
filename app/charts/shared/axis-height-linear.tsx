@@ -8,20 +8,21 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useTransitionStore } from "@/stores/transition";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
-  const [IFState] = useInteractiveFilters();
-  const isNormalized = IFState.calculation.type === "percent";
+  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
+  const normalized = calculationType === "percent";
 
   // FIXME: add "NumericalY" chart type here.
   const { yScale, yAxisLabel, yMeasure, bounds } = useChartState() as
@@ -33,7 +34,7 @@ export const AxisHeightLinear = () => {
     | ScatterplotState;
 
   const ticks = getTickNumber(bounds.chartHeight);
-  const tickFormat = isNormalized
+  const tickFormat = normalized
     ? (d: NumberValue) => `${formatNumber(d)}%`
     : formatNumber;
 
@@ -69,7 +70,7 @@ export const AxisHeightLinear = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${bounds.margins.left}, ${bounds.margins.top})`
@@ -110,6 +111,7 @@ export const AxisHeightLinear = () => {
 
 export const AxisHeightLinearDomain = () => {
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
   const { xScale, yScale, bounds } = useChartState() as
     | ColumnsState
     | LinesState
@@ -133,19 +135,19 @@ export const AxisHeightLinearDomain = () => {
               `translate(${bounds.margins.left}, ${bounds.margins.top})`
             )
             .call((g) =>
-              g.transition().duration(TRANSITION_DURATION).call(axis)
+              g.transition().duration(transitionDuration).call(axis)
             ),
         (update) =>
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${bounds.margins.left}, ${bounds.margins.top})`
               )
               .call((g) =>
-                g.transition().duration(TRANSITION_DURATION).call(axis)
+                g.transition().duration(transitionDuration).call(axis)
               )
           ),
         (exit) => exit.remove()

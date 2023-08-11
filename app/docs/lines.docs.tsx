@@ -8,7 +8,6 @@ import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { LegendColor } from "@/charts/shared/legend-color";
-import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
 import {
   InteractiveFiltersConfig,
   LineConfig,
@@ -60,34 +59,32 @@ ${(
         },
       }}
     >
-      <InteractiveFiltersProvider>
-        <LineChart
-          observations={observations}
-          dimensions={dimensions}
-          dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-          measures={measures}
-          measuresByIri={keyBy(measures, (d) => d.iri)}
-          chartConfig={{ interactiveFiltersConfig } as unknown as LineConfig}
-          aspectRatio={0.4}
-        >
-          <ChartContainer>
-            <ChartSvg>
-              <BrushTime />
-              <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-              <Lines />
-              {/* <InteractionHorizontal /> */}
-            </ChartSvg>
+      <LineChart
+        observations={observations}
+        dimensions={dimensions}
+        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        measures={measures}
+        measuresByIri={keyBy(measures, (d) => d.iri)}
+        chartConfig={{ interactiveFiltersConfig } as unknown as LineConfig}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <BrushTime />
+            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+            <Lines />
+            {/* <InteractionHorizontal /> */}
+          </ChartSvg>
 
-            {/* <Ruler />
+          {/* <Ruler />
 
         <HoverDotMultiple />
 
         <Tooltip type={fields.segment ? "multiple" : "single"} /> */}
-          </ChartContainer>
+        </ChartContainer>
 
-          {fields.segment && <LegendColor symbol="line" interactive />}
-        </LineChart>
-      </InteractiveFiltersProvider>
+        {fields.segment && <LegendColor symbol="line" interactive />}
+      </LineChart>
     </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}

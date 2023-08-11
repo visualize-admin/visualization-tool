@@ -39,6 +39,7 @@ import {
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
@@ -330,12 +331,11 @@ const useColumnsGroupedState = (
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xRef = xScale(getX(datum)) as number;
-    const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(getY(datum) ?? NaN);
-    const yAnchor = yRef;
+    const bw = xScale.bandwidth();
+    const x = getX(datum);
 
-    const tooltipValues = chartData.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = chartData.filter((d) => getX(d) === x);
+    const yValues = tooltipValues.map(getY);
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -343,41 +343,27 @@ const useColumnsGroupedState = (
       // Always ascending to match visual order of colors of the stack
       sortingOrder: "asc",
     });
-
-    const yPlacement = "top";
-
-    const getXPlacement = () => {
-      if (xRef + xOffset * 2 > 0.75 * chartWidth) {
-        return "left";
-      } else if (xRef < 0.25 * chartWidth) {
-        return "right";
-      } else {
-        return "center";
-      }
-    };
-    const xPlacement = getXPlacement();
-
-    const getXAnchor = () => {
-      return xPlacement === "right"
-        ? xRef
-        : xPlacement === "center"
-        ? xRef + xOffset
-        : xRef + xOffset * 2;
-    };
-
-    const yValueFormatter = (value: number | null) =>
-      formatNumberWithUnit(
+    const yValueFormatter = (value: number | null) => {
+      return formatNumberWithUnit(
         value,
-        formatters[yMeasure.iri] || formatNumber,
+        formatters[yMeasure.iri] ?? formatNumber,
         yMeasure.unit
       );
+    };
 
-    const xAnchor = getXAnchor();
+    const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
+    const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
+    const yAnchor = yScale((yMin + yMax) * 0.5);
+    const placement = getCenteredTooltipPlacement({
+      chartWidth,
+      xAnchor: xAnchorRaw,
+      segment: !!fields.segment,
+    });
 
     return {
-      xAnchor,
+      xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
+      placement,
       xValue: getXAbbreviationOrLabel(datum),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),

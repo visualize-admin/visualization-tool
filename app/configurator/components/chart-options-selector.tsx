@@ -738,7 +738,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   return (
     <ControlSection>
       <SectionTitle disabled={disabled} iconName="normalize">
-        <Trans id="controls.select.calculation.mode">Mode</Trans>
+        <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
         <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
@@ -849,12 +849,15 @@ const ChartFieldSorting = ({
           <Select
             id="sort-by"
             label={getFieldLabel("sortBy")}
-            options={encodingSortingOptions
-              ?.map((s) => s.sortingType)
-              .map((opt) => ({
-                value: opt,
-                label: getSortingTypeLabel(opt),
-              }))}
+            options={encodingSortingOptions?.map((d) => {
+              const disabledState = d.getDisabledState?.(state.chartConfig);
+
+              return {
+                value: d.sortingType,
+                label: getSortingTypeLabel(d.sortingType),
+                ...disabledState,
+              };
+            })}
             value={activeSortingType}
             disabled={disabled}
             onChange={(e) => {

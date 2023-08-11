@@ -7,7 +7,7 @@ import {
 } from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
+import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
 export const Scatterplot = () => {
@@ -26,6 +26,7 @@ export const Scatterplot = () => {
   const theme = useTheme();
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
 
   const renderData: RenderDatum[] = React.useMemo(() => {
     return chartData.map((d) => {
@@ -66,18 +67,18 @@ export const Scatterplot = () => {
               .call((g) =>
                 g
                   .transition()
-                  .duration(TRANSITION_DURATION)
+                  .duration(transitionDuration)
                   .attr(
                     "transform",
                     `translate(${margins.left} ${margins.top})`
                   )
               )
-              .call(renderCircles, renderData),
+              .call(renderCircles, renderData, transitionDuration),
           (exit) => exit.remove()
         )
         .call(renderCircles, renderData);
     }
-  }, [renderData, margins.left, margins.top]);
+  }, [renderData, margins.left, margins.top, transitionDuration]);
 
   return <g ref={ref} />;
 };

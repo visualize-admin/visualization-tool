@@ -21,7 +21,7 @@ export type InteractiveFilterType = "legend" | "timeRange" | "dataFilters";
 export const isInteractiveFilterType = (
   field: string | undefined
 ): field is InteractiveFilterType => {
-  return field === "legend" || field === "timeRange" || field === "dataFilters";
+  return ["legend", "timeRange", "dataFilters"].includes(field ?? "");
 };
 
 export const InteractiveFiltersConfigurator = ({
@@ -67,15 +67,16 @@ export const InteractiveFiltersConfigurator = ({
           <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
         <ControlSectionContent px="small" gap="none">
-          {canFilterAnimation && (
-            // Animation is technically a field, so we need to use an appropriate component.
-            <ControlTabField
-              component={animationComponent}
-              value="animation"
-              labelId={null}
-              warnMessage={ANIMATION_FIELD_SPEC.getWarnMessage?.(dimensions)}
-            />
-          )}
+          {/* Animation is technically a field, so we need to use an appropriate component. */}
+          <ControlTabField
+            component={animationComponent}
+            value="animation"
+            labelId={null}
+            {...ANIMATION_FIELD_SPEC.getDisabledState?.(
+              chartConfig,
+              dimensions
+            )}
+          />
         </ControlSectionContent>
       </ControlSection>
     );

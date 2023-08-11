@@ -3,11 +3,11 @@ import { useEffect, useRef } from "react";
 
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { TRANSITION_DURATION } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { useTransitionStore } from "@/stores/transition";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
 export const AxisWidthLinear = () => {
@@ -23,6 +23,7 @@ export const AxisWidthLinear = () => {
     fontFamily,
   } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const maxLabelLength = estimateTextWidth(formatNumber(xScale.domain()[1]));
@@ -50,7 +51,7 @@ export const AxisWidthLinear = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${margins.left}, ${chartHeight + margins.top})`
@@ -98,6 +99,7 @@ export const AxisWidthLinearDomain = () => {
   const { chartHeight, margins } = bounds;
   const { domainColor } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
+  const transitionDuration = useTransitionStore((state) => state.duration);
 
   const mkAxisDomain = (
     g: Selection<SVGGElement, unknown, null, undefined>
@@ -120,7 +122,7 @@ export const AxisWidthLinearDomain = () => {
           update.call((g) =>
             g
               .transition()
-              .duration(TRANSITION_DURATION)
+              .duration(transitionDuration)
               .attr(
                 "transform",
                 `translate(${margins.left}, ${chartHeight + margins.top})`

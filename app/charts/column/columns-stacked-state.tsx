@@ -1,13 +1,10 @@
 import {
   extent,
   group,
-  max,
-  min,
   rollup,
   scaleBand,
   ScaleBand,
   ScaleLinear,
-  scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
   scaleTime,
@@ -37,21 +34,30 @@ import {
   getChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
-import { getWideData, normalizeData } from "@/charts/shared/chart-helpers";
+import {
+  getWideData,
+  normalizeData,
+  useGetIdentityY,
+} from "@/charts/shared/chart-helpers";
 import {
   ChartContext,
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import {
+  getStackedTooltipValueFormatter,
+  getStackedYScale,
+} from "@/charts/shared/stacked-helpers";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
+import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -96,13 +102,14 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
+  const getIdentityY = useGetIdentityY(yMeasure.iri);
   const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const [IFState] = useInteractiveFilters();
+  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
 
   const xKey = fields.x.componentIri;
 
@@ -166,16 +173,14 @@ const useColumnsStackedState = (
     );
   }, [getX, getY, scalesData]);
 
-  const normalize = IFState.calculation.type === "percent";
-  const preparedDataGroupedByX = useMemo(() => {
+  const normalize = calculationType === "percent";
+  const chartDataGroupedByX = useMemo(() => {
     if (normalize) {
       return group(
         normalizeData(chartData, {
           yKey: yMeasure.iri,
           getY,
-          getTotalGroupValue: (d) => {
-            return sumsByX[getX(d)];
-          },
+          getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
         getX
       );
@@ -185,49 +190,16 @@ const useColumnsStackedState = (
   }, [chartData, getX, sumsByX, getY, yMeasure.iri, normalize]);
 
   const chartWideData = React.useMemo(() => {
-    const wideData = getWideData({
-      dataGroupedByX: preparedDataGroupedByX,
+    return getWideData({
+      dataGroupedByX: chartDataGroupedByX,
       xKey,
       getY,
       getSegment,
       allSegments: segments,
       imputationType: "zeros",
     });
+  }, [getSegment, getY, chartDataGroupedByX, segments, xKey]);
 
-    return wideData;
-  }, [getSegment, getY, preparedDataGroupedByX, segments, xKey]);
-
-  const scalesDataGroupedByX = useMemo(() => {
-    if (normalize) {
-      return group(
-        normalizeData(scalesData, {
-          yKey: yMeasure.iri,
-          getY,
-          getTotalGroupValue: (d) => {
-            return sumsByX[getX(d)];
-          },
-        }),
-        getX
-      );
-    }
-
-    return group(scalesData, getX);
-  }, [normalize, scalesData, getX, yMeasure.iri, getY, sumsByX]);
-
-  const scalesWideData = React.useMemo(() => {
-    const wideData = getWideData({
-      dataGroupedByX: scalesDataGroupedByX,
-      xKey,
-      getY,
-      getSegment,
-      allSegments: segments,
-      imputationType: "zeros",
-    });
-
-    return wideData;
-  }, [xKey, getSegment, getY, scalesDataGroupedByX, segments]);
-
-  // Scales
   const xFilter = chartConfig.filters[xDimension.iri];
   // Map ordered segments labels to colors
   const {
@@ -235,7 +207,6 @@ const useColumnsStackedState = (
     xScale,
     xScaleInteraction,
     interactiveXTimeRangeScale,
-    yStackDomain,
     xDomainLabels,
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
@@ -266,12 +237,12 @@ const useColumnsStackedState = (
 
       colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
       colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-      colors.unknown(() => undefined);
     } else {
       colors.domain(allSegments);
       colors.range(getPalette(fields.segment?.palette));
-      colors.unknown(() => undefined);
     }
+
+    colors.unknown(() => undefined);
 
     const xValues = [...new Set(scalesData.map(getX))];
     const xSorting = fields.x?.sorting;
@@ -303,31 +274,14 @@ const useColumnsStackedState = (
       interactiveXTimeRangeDomain
     );
 
-    // y
-    const minTotal = min<$FixMe, number>(scalesWideData, (d) =>
-      allSegments
-        .map((s) => d[s])
-        .filter((d) => d < 0)
-        .reduce((a, b) => a + b, 0)
-    );
-    const maxTotal = max<$FixMe, number>(scalesWideData, (d) =>
-      allSegments
-        .map((s) => d[s])
-        .filter((d) => d >= 0)
-        .reduce((a, b) => a + b, 0)
-    );
-    const yStackDomain = [minTotal, maxTotal] as [number, number];
-
     return {
       colors,
-      yStackDomain,
       xScale,
       interactiveXTimeRangeScale,
       xScaleInteraction,
       xDomainLabels,
     };
   }, [
-    scalesWideData,
     fields.segment,
     fields.x.sorting,
     fields.x.useAbbreviations,
@@ -344,14 +298,9 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
-  const yScale = scaleLinear().domain(yStackDomain);
-
-  // If we're showing a normalized chart, the .nice() makes the chart y axis
-  // jump. As the domain is by its nature [0, 1], we can just skip the .nice(),
-  // to avoid rounding issues.
-  if (!normalize) {
-    yScale.nice();
-  }
+  const yScale = useMemo(() => {
+    return getStackedYScale(scalesData, { normalize, getX, getY });
+  }, [scalesData, normalize, getX, getY]);
 
   // stack order
   const series = useMemo(() => {
@@ -405,95 +354,68 @@ const useColumnsStackedState = (
   // Tooltips
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
-      const xRef = xScale(getX(datum)) as number;
-      const xOffset = xScale.bandwidth() / 2;
+      const bw = xScale.bandwidth();
+      const x = getX(datum);
 
-      const tooltipValues = preparedDataGroupedByX.get(
-        getX(datum)
-      ) as Observation[];
-
+      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const yValues = tooltipValues.map(getY);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
         order: segments,
         getCategory: getSegment,
         sortingOrder: "asc",
       });
+      const yValueFormatter = getStackedTooltipValueFormatter({
+        normalize,
+        yMeasureIri: yMeasure.iri,
+        yMeasureUnit: yMeasure.unit,
+        formatters,
+        formatNumber,
+      });
 
-      const cumulativeSum = (
-        (sum) => (d: Observation) =>
-          (sum += getY(d) ?? 0)
-      )(0);
-      const cumulativeRulerItemValues = sortedTooltipValues.map(cumulativeSum);
-
-      const yRef = yScale(
-        Math.max(
-          cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
-          0
-        )
-      );
-      const yAnchor = yRef;
-      const yPlacement = "top";
-
-      const getXPlacement = () => {
-        if (xRef + xOffset * 2 > 0.75 * chartWidth) {
-          return "left";
-        } else if (xRef < 0.25 * chartWidth) {
-          return "right";
-        } else {
-          return "center";
-        }
-      };
-      const xPlacement = getXPlacement();
-
-      const getXAnchor = () => {
-        return xPlacement === "right"
-          ? xRef
-          : xPlacement === "center"
-          ? xRef + xOffset
-          : xRef + xOffset * 2;
-      };
-      const xAnchor = getXAnchor();
-
-      const yValueFormatter = (value: number | null) =>
-        formatNumberWithUnit(
-          value,
-          formatters[yMeasure.iri] || formatNumber,
-          yMeasure.unit
-        );
+      const xAnchorRaw = (xScale(x) as number) + bw * 0.5;
+      const yAnchor = yScale(sum(yValues.map((d) => Math.abs(d ?? 0))) * 0.5);
+      const placement = getCenteredTooltipPlacement({
+        chartWidth,
+        xAnchor: xAnchorRaw,
+        segment: !!fields.segment,
+      });
 
       return {
-        xAnchor,
+        xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
-        placement: { x: xPlacement, y: yPlacement },
+        placement,
         xValue: getXAbbreviationOrLabel(datum),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
-          value: yValueFormatter(getY(datum)),
+          value: yValueFormatter(getY(datum), getIdentityY(datum)),
           color: colors(getSegment(datum)) as string,
         },
         values: sortedTooltipValues.map((td) => ({
           label: getSegmentAbbreviationOrLabel(td),
-          value: yValueFormatter(getY(td)),
+          value: yValueFormatter(getY(td), getIdentityY(td)),
           color: colors(getSegment(td)) as string,
         })),
       };
     },
     [
-      chartWidth,
-      colors,
-      fields.segment,
-      formatNumber,
-      formatters,
-      getSegment,
-      getSegmentAbbreviationOrLabel,
       getX,
-      getXAbbreviationOrLabel,
-      getY,
-      preparedDataGroupedByX,
-      segments,
       xScale,
+      chartDataGroupedByX,
+      segments,
+      getSegment,
       yMeasure.iri,
       yMeasure.unit,
+      formatters,
+      formatNumber,
+      getXAbbreviationOrLabel,
+      fields.segment,
+      getSegmentAbbreviationOrLabel,
+      getY,
+      getIdentityY,
+      colors,
+      chartWidth,
+      normalize,
       yScale,
     ]
   );

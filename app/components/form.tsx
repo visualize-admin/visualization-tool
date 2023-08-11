@@ -21,6 +21,7 @@ import {
   SliderProps,
   Stack,
   SxProps,
+  Tooltip,
   Typography,
   TypographyProps,
   styled,
@@ -44,6 +45,7 @@ import {
   useChartOptionSliderField,
 } from "@/configurator";
 import { Icon } from "@/icons";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 
@@ -292,6 +294,10 @@ const LoadingMenuPaper = forwardRef<HTMLDivElement>(
   }
 );
 
+type SelectOption = Option & {
+  disabledMessage?: string;
+};
+
 export const Select = ({
   label,
   id,
@@ -308,12 +314,12 @@ export const Select = ({
   loading,
 }: {
   id: string;
-  options: Option[];
+  options: SelectOption[];
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
   controls?: React.ReactNode;
-  optionGroups?: [OptionGroup, Option[]][];
+  optionGroups?: [OptionGroup, SelectOption[]][];
   loading?: boolean;
 } & SelectProps) => {
   const locale = useLocale();
@@ -371,14 +377,50 @@ export const Select = ({
                 key={opt.value}
                 disabled={opt.disabled}
                 value={opt.value ?? undefined}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  "&.Mui-disabled": {
+                    opacity: 1,
+
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  },
+                }}
               >
-                {opt.label}
+                <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
+                  {opt.label}
+                </span>
+                {opt.disabledMessage && (
+                  <DisabledMessageIcon message={opt.disabledMessage} />
+                )}
               </MenuItem>
             );
           })}
         </MUISelect>
       </Box>
     </LoadingMenuPaperContext.Provider>
+  );
+};
+
+type DisabledMessageIconProps = {
+  message: string;
+};
+
+const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
+  const { message } = props;
+
+  return (
+    <Tooltip
+      arrow
+      title={message}
+      sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
+    >
+      <Typography color="warning.main">
+        <SvgIcExclamation width={18} height={18} />
+      </Typography>
+    </Tooltip>
   );
 };
 

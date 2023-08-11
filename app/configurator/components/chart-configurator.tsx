@@ -768,7 +768,7 @@ const ChartFields = (props: ChartFieldsProps) => {
   return (
     <>
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        const { field, getWarnMessage } = encoding;
+        const { field, getDisabledState } = encoding;
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
         );
@@ -794,7 +794,7 @@ const ChartFields = (props: ChartFieldsProps) => {
             }
             value={field}
             labelId={`${chartConfig.chartType}.${field}`}
-            warnMessage={getWarnMessage?.(dimensions)}
+            {...getDisabledState?.(chartConfig, dimensions)}
           />
         );
       })}
