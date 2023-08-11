@@ -240,8 +240,6 @@ const EncodingOptionsPanel = ({
   measures: DimensionMetadataFragment[];
   imputationNeeded: boolean;
 }) => {
-  const panelRef = useRef<HTMLDivElement>(null);
-
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -272,12 +270,6 @@ const EncodingOptionsPanel = ({
       message: "Select a dimension",
     }),
   };
-
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [field]);
 
   const { fields } = state.chartConfig;
   const otherFields = Object.keys(fields).filter(
@@ -340,7 +332,6 @@ const EncodingOptionsPanel = ({
       role="tabpanel"
       id={`control-panel-${encoding.field}`}
       aria-labelledby={`tab-${encoding.field}`}
-      ref={panelRef}
       tabIndex={-1}
     >
       {/* Only show component select if necessary */}
