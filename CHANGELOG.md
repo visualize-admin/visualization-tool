@@ -33,6 +33,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Interactive time range filter now respects the filter range set in the X field
   - Optional filter label is now correctly shown
   - It's now again possible to choose whether or not to show standard error whiskers
+  - Standard errors are now displayed in grouped bar charts' tooltips
   - "Back to main" label is now always visible when opening the left, edit panel
   - The count of filters displayed when the filter section is collapsed now displays correct value
 - Tests
