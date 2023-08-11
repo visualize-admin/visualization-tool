@@ -353,7 +353,8 @@ const useColumnsStackedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels
+    xDomainLabels,
+    normalize
   );
   const margins = {
     top: 50,
