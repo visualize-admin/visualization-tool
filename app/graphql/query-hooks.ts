@@ -457,6 +457,35 @@ export type RelatedDimension = {
   iri: Scalars['String'];
 };
 
+export type StandardErrorDimension = Dimension & {
+  __typename: 'StandardErrorDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  dataType?: Maybe<Scalars['String']>;
+  order?: Maybe<Scalars['Int']>;
+  isNumerical: Scalars['Boolean'];
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
+  hierarchy?: Maybe<Array<HierarchyValue>>;
+};
+
+
+export type StandardErrorDimensionValuesArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type StandardErrorDimensionHierarchyArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+};
+
 export type TemporalDimension = Dimension & {
   __typename: 'TemporalDimension';
   iri: Scalars['String'];
@@ -541,11 +570,13 @@ type DimensionMetadata_OrdinalDimension_Fragment = { __typename: 'OrdinalDimensi
 
 type DimensionMetadata_OrdinalMeasure_Fragment = { __typename: 'OrdinalMeasure', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
+type DimensionMetadata_StandardErrorDimension_Fragment = { __typename: 'StandardErrorDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
+
 type DimensionMetadata_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
 type DimensionMetadata_TemporalOrdinalDimension_Fragment = { __typename: 'TemporalOrdinalDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> };
 
-export type DimensionMetadataFragment = DimensionMetadata_GeoCoordinatesDimension_Fragment | DimensionMetadata_GeoShapesDimension_Fragment | DimensionMetadata_NominalDimension_Fragment | DimensionMetadata_NumericalMeasure_Fragment | DimensionMetadata_OrdinalDimension_Fragment | DimensionMetadata_OrdinalMeasure_Fragment | DimensionMetadata_TemporalDimension_Fragment | DimensionMetadata_TemporalOrdinalDimension_Fragment;
+export type DimensionMetadataFragment = DimensionMetadata_GeoCoordinatesDimension_Fragment | DimensionMetadata_GeoShapesDimension_Fragment | DimensionMetadata_NominalDimension_Fragment | DimensionMetadata_NumericalMeasure_Fragment | DimensionMetadata_OrdinalDimension_Fragment | DimensionMetadata_OrdinalMeasure_Fragment | DimensionMetadata_StandardErrorDimension_Fragment | DimensionMetadata_TemporalDimension_Fragment | DimensionMetadata_TemporalOrdinalDimension_Fragment;
 
 type DimensionMetadataWithHierarchies_GeoCoordinatesDimension_Fragment = (
   { __typename: 'GeoCoordinatesDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
@@ -577,6 +608,11 @@ type DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment = (
   & HierarchyMetadata_OrdinalMeasure_Fragment
 );
 
+type DimensionMetadataWithHierarchies_StandardErrorDimension_Fragment = (
+  { __typename: 'StandardErrorDimension', iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
+  & HierarchyMetadata_StandardErrorDimension_Fragment
+);
+
 type DimensionMetadataWithHierarchies_TemporalDimension_Fragment = (
   { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, description?: Maybe<string>, isNumerical: boolean, isKeyDimension: boolean, dataType?: Maybe<string>, order?: Maybe<number>, values: Array<DimensionValue>, unit?: Maybe<string>, related?: Maybe<Array<{ __typename: 'RelatedDimension', iri: string, type: string }>> }
   & HierarchyMetadata_TemporalDimension_Fragment
@@ -587,7 +623,7 @@ type DimensionMetadataWithHierarchies_TemporalOrdinalDimension_Fragment = (
   & HierarchyMetadata_TemporalOrdinalDimension_Fragment
 );
 
-export type DimensionMetadataWithHierarchiesFragment = DimensionMetadataWithHierarchies_GeoCoordinatesDimension_Fragment | DimensionMetadataWithHierarchies_GeoShapesDimension_Fragment | DimensionMetadataWithHierarchies_NominalDimension_Fragment | DimensionMetadataWithHierarchies_NumericalMeasure_Fragment | DimensionMetadataWithHierarchies_OrdinalDimension_Fragment | DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment | DimensionMetadataWithHierarchies_TemporalDimension_Fragment | DimensionMetadataWithHierarchies_TemporalOrdinalDimension_Fragment;
+export type DimensionMetadataWithHierarchiesFragment = DimensionMetadataWithHierarchies_GeoCoordinatesDimension_Fragment | DimensionMetadataWithHierarchies_GeoShapesDimension_Fragment | DimensionMetadataWithHierarchies_NominalDimension_Fragment | DimensionMetadataWithHierarchies_NumericalMeasure_Fragment | DimensionMetadataWithHierarchies_OrdinalDimension_Fragment | DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment | DimensionMetadataWithHierarchies_StandardErrorDimension_Fragment | DimensionMetadataWithHierarchies_TemporalDimension_Fragment | DimensionMetadataWithHierarchies_TemporalOrdinalDimension_Fragment;
 
 type HierarchyMetadata_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', hierarchy?: Maybe<Array<(
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
@@ -709,6 +745,26 @@ type HierarchyMetadata_OrdinalMeasure_Fragment = { __typename: 'OrdinalMeasure',
     & HierarchyValueFieldsFragment
   )>> };
 
+type HierarchyMetadata_StandardErrorDimension_Fragment = { __typename: 'StandardErrorDimension', hierarchy?: Maybe<Array<(
+    { __typename: 'HierarchyValue', children?: Maybe<Array<(
+      { __typename: 'HierarchyValue', children?: Maybe<Array<(
+        { __typename: 'HierarchyValue', children?: Maybe<Array<(
+          { __typename: 'HierarchyValue', children?: Maybe<Array<(
+            { __typename: 'HierarchyValue', children?: Maybe<Array<(
+              { __typename: 'HierarchyValue' }
+              & HierarchyValueFieldsFragment
+            )>> }
+            & HierarchyValueFieldsFragment
+          )>> }
+          & HierarchyValueFieldsFragment
+        )>> }
+        & HierarchyValueFieldsFragment
+      )>> }
+      & HierarchyValueFieldsFragment
+    )>> }
+    & HierarchyValueFieldsFragment
+  )>> };
+
 type HierarchyMetadata_TemporalDimension_Fragment = { __typename: 'TemporalDimension', hierarchy?: Maybe<Array<(
     { __typename: 'HierarchyValue', children?: Maybe<Array<(
       { __typename: 'HierarchyValue', children?: Maybe<Array<(
@@ -749,7 +805,7 @@ type HierarchyMetadata_TemporalOrdinalDimension_Fragment = { __typename: 'Tempor
     & HierarchyValueFieldsFragment
   )>> };
 
-export type HierarchyMetadataFragment = HierarchyMetadata_GeoCoordinatesDimension_Fragment | HierarchyMetadata_GeoShapesDimension_Fragment | HierarchyMetadata_NominalDimension_Fragment | HierarchyMetadata_NumericalMeasure_Fragment | HierarchyMetadata_OrdinalDimension_Fragment | HierarchyMetadata_OrdinalMeasure_Fragment | HierarchyMetadata_TemporalDimension_Fragment | HierarchyMetadata_TemporalOrdinalDimension_Fragment;
+export type HierarchyMetadataFragment = HierarchyMetadata_GeoCoordinatesDimension_Fragment | HierarchyMetadata_GeoShapesDimension_Fragment | HierarchyMetadata_NominalDimension_Fragment | HierarchyMetadata_NumericalMeasure_Fragment | HierarchyMetadata_OrdinalDimension_Fragment | HierarchyMetadata_OrdinalMeasure_Fragment | HierarchyMetadata_StandardErrorDimension_Fragment | HierarchyMetadata_TemporalDimension_Fragment | HierarchyMetadata_TemporalOrdinalDimension_Fragment;
 
 export type DataCubesQueryVariables = Exact<{
   sourceType: Scalars['String'];
@@ -792,6 +848,9 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'OrdinalMeasure' }
       & DimensionMetadata_OrdinalMeasure_Fragment
+    ) | (
+      { __typename: 'StandardErrorDimension' }
+      & DimensionMetadata_StandardErrorDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetadata_TemporalDimension_Fragment
@@ -847,6 +906,9 @@ export type ComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __t
       { __typename: 'OrdinalMeasure' }
       & DimensionMetadata_OrdinalMeasure_Fragment
     ) | (
+      { __typename: 'StandardErrorDimension' }
+      & DimensionMetadata_StandardErrorDimension_Fragment
+    ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetadata_TemporalDimension_Fragment
     ) | (
@@ -889,6 +951,9 @@ export type ComponentsWithHierarchiesQuery = { __typename: 'Query', dataCubeByIr
     ) | (
       { __typename: 'OrdinalMeasure' }
       & DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment
+    ) | (
+      { __typename: 'StandardErrorDimension' }
+      & DimensionMetadataWithHierarchies_StandardErrorDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetadataWithHierarchies_TemporalDimension_Fragment
@@ -933,6 +998,9 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
       { __typename: 'OrdinalMeasure' }
       & DimensionMetadataWithHierarchies_OrdinalMeasure_Fragment
     ) | (
+      { __typename: 'StandardErrorDimension' }
+      & DimensionMetadataWithHierarchies_StandardErrorDimension_Fragment
+    ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetadataWithHierarchies_TemporalDimension_Fragment
     ) | (
@@ -950,7 +1018,7 @@ export type GeoCoordinatesByDimensionIriQueryVariables = Exact<{
 }>;
 
 
-export type GeoCoordinatesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', geoCoordinates?: Maybe<Array<{ __typename: 'GeoCoordinates', iri: string, label: string, latitude: number, longitude: number }>> } | { __typename: 'GeoShapesDimension' } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
+export type GeoCoordinatesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', geoCoordinates?: Maybe<Array<{ __typename: 'GeoCoordinates', iri: string, label: string, latitude: number, longitude: number }>> } | { __typename: 'GeoShapesDimension' } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'StandardErrorDimension' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
 
 export type GeoShapesByDimensionIriQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
@@ -962,7 +1030,7 @@ export type GeoShapesByDimensionIriQueryVariables = Exact<{
 }>;
 
 
-export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension' } | { __typename: 'GeoShapesDimension', geoShapes?: Maybe<any> } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
+export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension' } | { __typename: 'GeoShapesDimension', geoShapes?: Maybe<any> } | { __typename: 'NominalDimension' } | { __typename: 'NumericalMeasure' } | { __typename: 'OrdinalDimension' } | { __typename: 'OrdinalMeasure' } | { __typename: 'StandardErrorDimension' } | { __typename: 'TemporalDimension' } | { __typename: 'TemporalOrdinalDimension' }> }> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1045,6 +1113,9 @@ export type DimensionHierarchyQuery = { __typename: 'Query', dataCubeByIri?: May
     ) | (
       { __typename: 'OrdinalMeasure' }
       & HierarchyMetadata_OrdinalMeasure_Fragment
+    ) | (
+      { __typename: 'StandardErrorDimension' }
+      & HierarchyMetadata_StandardErrorDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & HierarchyMetadata_TemporalDimension_Fragment

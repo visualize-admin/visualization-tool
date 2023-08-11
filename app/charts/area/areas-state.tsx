@@ -313,7 +313,9 @@ const useAreasState = (
     width,
     aspectRatio,
     interactiveFiltersConfig,
-    formatNumber
+    formatNumber,
+    undefined,
+    normalize
   );
   const margins = {
     top: 50,

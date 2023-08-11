@@ -629,6 +629,7 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
       return <DimensionValuesNominal values={sortedValues} />;
     case "NumericalMeasure":
     case "TemporalDimension":
+    case "StandardErrorDimension":
       return sortedValues.length > 0 ? (
         <DimensionValuesNumeric values={sortedValues} />
       ) : null;

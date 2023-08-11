@@ -397,7 +397,6 @@ msgid "controls.imputation.type.linear"
 msgstr "Lineare Interpolation"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.none"
 msgstr "-"
@@ -582,6 +581,10 @@ msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
 msgstr "Animation"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.layout-options"
+msgstr "Layout-Optionen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

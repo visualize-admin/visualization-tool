@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Alert, Box, Typography } from "@mui/material";
 import get from "lodash/get";
-import { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { ChangeEvent, useCallback } from "react";
 
 import { Checkbox } from "@/components/form";
 import {
@@ -15,6 +15,7 @@ import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
@@ -27,10 +28,7 @@ import {
   DimensionValuesSingleFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import {
-  getIconName,
-  mapValueIrisToColor,
-} from "@/configurator/components/ui-helpers";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableSortingOptions } from "@/configurator/table/table-chart-sorting-options";
@@ -142,14 +140,6 @@ export const TableColumnOptions = ({
 }) => {
   const { activeField, chartConfig } = state;
 
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [activeField]);
-
   if (!activeField || chartConfig.chartType !== "table") {
     return null;
   }
@@ -221,15 +211,10 @@ export const TableColumnOptions = ({
       role="tabpanel"
       id={`control-panel-table-column-${activeField}`}
       aria-labelledby={`tab-${activeField}`}
-      ref={panelRef}
       tabIndex={-1}
     >
       <ControlSection>
-        <SectionTitle
-          iconName={getIconName(`tableColumn${component.__typename}`)}
-        >
-          {component.label}
-        </SectionTitle>
+        <SectionTitle>{component.label}</SectionTitle>
         <ControlSectionContent>
           {component.__typename !== "NumericalMeasure" && (
             <ChartOptionGroupHiddenField
@@ -254,11 +239,11 @@ export const TableColumnOptions = ({
         </ControlSectionContent>
       </ControlSection>
       {(isGroup || !isHidden) && (
-        <ControlSection>
-          <SectionTitle iconName="formatting" sx={{ mb: 1 }}>
+        <ControlSection collapse>
+          <SubsectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
-          </SectionTitle>
-          <ControlSectionContent>
+          </SubsectionTitle>
+          <ControlSectionContent sx={{ mt: 2 }}>
             <ChartOptionSelectField<ColumnStyle>
               id="columnStyle"
               label={t({
@@ -325,10 +310,10 @@ export const TableColumnOptions = ({
       )}
       {canDimensionBeMultiFiltered(component) &&
       !isStandardErrorDimension(component) ? (
-        <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
+        <ControlSection collapse>
+          <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
@@ -351,10 +336,10 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       ) : isTemporalDimension(component) ? (
-        <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
+        <ControlSection collapse>
+          <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
@@ -495,7 +480,7 @@ const ColumnStyleSubOptions = ({
 const TableSettings = () => {
   return (
     <ControlSection>
-      <SectionTitle iconName="settings">
+      <SectionTitle>
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent>

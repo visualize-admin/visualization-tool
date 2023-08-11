@@ -9,16 +9,15 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import {
+import React, {
   ElementType,
-  forwardRef,
   HTMLProps,
   ReactNode,
+  forwardRef,
   useContext,
   useEffect,
   useMemo,
 } from "react";
-import React from "react";
 
 import { Icon, IconName } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
@@ -26,66 +25,70 @@ import SvgIcMinus from "@/icons/components/IcMinus";
 
 import useDisclosure from "../../../components/use-disclosure";
 
-const useControlSectionStyles = makeStyles<Theme, { isHighlighted?: boolean }>(
+const useControlSectionStyles = makeStyles<
+  Theme,
+  { isHighlighted?: boolean; hideTopBorder: boolean }
+>((theme) => ({
+  controlSection: {
+    borderTopColor: theme.palette.divider,
+    borderTopWidth: ({ hideTopBorder }) => (hideTopBorder ? 0 : "1px"),
+    borderTopStyle: "solid",
+    overflowX: "hidden",
+    overflowY: "auto",
+    flexShrink: 0,
+    backgroundColor: ({ isHighlighted }) =>
+      isHighlighted ? "primaryLight" : "grey.100",
+  },
+}));
+
+type SectionTitleStylesProps = {
+  disabled?: boolean;
+  color?: string;
+  sectionOpen: boolean;
+  gutterBottom: boolean;
+  collapse?: boolean;
+};
+
+const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
   (theme) => ({
-    controlSection: {
-      borderTopColor: theme.palette.grey[500],
-      borderTopWidth: "1px",
-      borderTopStyle: "solid",
-      overflowX: "hidden",
-      overflowY: "auto",
-      flexShrink: 0,
-      backgroundColor: ({ isHighlighted }) =>
-        isHighlighted ? "primaryLight" : "grey.100",
+    root: {
+      display: "flex",
+      alignItems: "center",
+      width: "100%",
+      padding: theme.spacing(4),
+      paddingBottom: theme.spacing(4),
+      marginBottom: ({ gutterBottom }: SectionTitleStylesProps) =>
+        gutterBottom ? 0 : -theme.spacing(2),
+      transition: "padding-bottom 300ms ease",
+      border: "none",
+      justifyContent: "flex-start",
+      "&:hover": {
+        cursor: ({ collapse }: SectionTitleStylesProps) =>
+          collapse ? "pointer" : "initial",
+        backgroundColor: ({ collapse }: SectionTitleStylesProps) =>
+          collapse ? theme.palette.grey[200] : "transparent",
+
+        "& $icon": {
+          color: theme.palette.grey[600],
+        },
+      },
+    },
+    text: {
+      "& > svg:first-of-type": {
+        marginRight: theme.spacing(2),
+      },
+      flexGrow: 1,
+      display: "flex",
+      alignItems: "center",
+      color: ({ disabled, color }: SectionTitleStylesProps) =>
+        disabled ? "grey.600" : color ?? "grey.800",
+    },
+    icon: {
+      justifySelf: "flex-end",
+      color: theme.palette.grey[500],
     },
   })
 );
-
-const useSectionTitleStyles = makeStyles<
-  Theme,
-  {
-    disabled?: boolean;
-    color?: string;
-    sectionOpen: boolean;
-    gutterBottom: boolean;
-    collapse?: boolean;
-  }
->((theme) => ({
-  root: {
-    display: "flex",
-    alignItems: "center",
-    width: "100%",
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    marginBottom: ({ gutterBottom }) => (gutterBottom ? 0 : -theme.spacing(2)),
-    transition: "padding-bottom 300ms ease",
-    border: "none",
-    justifyContent: "flex-start",
-    "&:hover": {
-      cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
-      backgroundColor: ({ collapse }) =>
-        collapse ? theme.palette.grey[200] : "transparent",
-
-      "& $icon": {
-        color: theme.palette.grey[600],
-      },
-    },
-  },
-  text: {
-    "& > svg:first-of-type": {
-      marginRight: theme.spacing(2),
-    },
-    flexGrow: 1,
-    display: "flex",
-    alignItems: "center",
-    color: ({ disabled, color }) =>
-      disabled ? "grey.600" : color ?? "grey.800",
-  },
-  icon: {
-    justifySelf: "flex-end",
-    color: theme.palette.grey[500],
-  },
-}));
 
 const ControlSectionContext = React.createContext({
   open: () => {},
@@ -103,6 +106,7 @@ export const ControlSection = forwardRef<
     sx?: BoxProps["sx"];
     collapse?: boolean;
     defaultExpanded?: boolean;
+    hideTopBorder?: boolean;
   } & Omit<HTMLProps<HTMLDivElement>, "ref">
 >(function ControlSection(
   {
@@ -112,11 +116,12 @@ export const ControlSection = forwardRef<
     sx,
     collapse = false,
     defaultExpanded = true,
+    hideTopBorder = false,
     ...props
   },
   ref
 ) {
-  const classes = useControlSectionStyles({ isHighlighted });
+  const classes = useControlSectionStyles({ isHighlighted, hideTopBorder });
   const disclosure = useDisclosure(defaultExpanded);
   const ctx = useMemo(
     () => ({ ...disclosure, collapse }),
@@ -182,6 +187,7 @@ export const ControlSectionContent = ({
 }: ControlSectionContentProps) => {
   const classes = useControlSectionContentStyles({ gap, px });
   const disclosure = useControlSectionContext();
+
   return (
     <Collapse in={disclosure.isOpen}>
       <Box
@@ -200,25 +206,30 @@ export const ControlSectionContent = ({
 
 export const useControlSectionContext = () => useContext(ControlSectionContext);
 
-export const SectionTitle = ({
-  color,
-  iconName,
-  titleId,
-  disabled,
-  children,
-  sx,
-  right,
-  gutterBottom = true,
-}: {
+type TitleProps = {
+  variant: "section" | "subsection";
   color?: string;
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
   children: ReactNode;
-  sx?: TypographyProps["sx"];
   right?: React.ReactNode;
   gutterBottom?: boolean;
-}) => {
+  sx?: TypographyProps["sx"];
+};
+
+const Title = (props: TitleProps) => {
+  const {
+    variant,
+    color,
+    iconName,
+    titleId,
+    disabled,
+    children,
+    right,
+    gutterBottom = true,
+    sx,
+  } = props;
   const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
@@ -227,13 +238,20 @@ export const SectionTitle = ({
     gutterBottom,
     collapse,
   });
+  const isSection = variant === "section";
+
   return (
     <div
       className={classes.root}
       onClick={collapse ? () => setOpen((v) => !v) : undefined}
     >
-      <Typography variant="h5" id={titleId} className={classes.text} sx={sx}>
-        {iconName ? <Icon name={iconName} /> : null}
+      <Typography
+        variant={isSection ? "h4" : "h5"}
+        id={titleId}
+        className={classes.text}
+        sx={sx}
+      >
+        {isSection ? null : iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
       {right}
@@ -248,6 +266,16 @@ export const SectionTitle = ({
       </span>
     </div>
   );
+};
+
+export const SectionTitle = (
+  props: Omit<TitleProps, "variant" | "iconName">
+) => {
+  return <Title variant="section" {...props} />;
+};
+
+export const SubsectionTitle = (props: Omit<TitleProps, "variant">) => {
+  return <Title variant="subsection" {...props} />;
 };
 
 export const ControlSectionSkeleton = ({

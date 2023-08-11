@@ -67,6 +67,7 @@ export const getDimensionIconName = (
     case "NominalDimension":
       return "chartPie";
     case "NumericalMeasure":
+    case "StandardErrorDimension":
       return "numerical";
     case "OrdinalDimension":
     case "TemporalOrdinalDimension":

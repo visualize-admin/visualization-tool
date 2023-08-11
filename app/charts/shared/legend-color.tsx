@@ -65,6 +65,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 type ItemStyleProps = {
   symbol: LegendSymbol;
   color: string;
+  usage: "legend" | "tooltip";
 };
 
 const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
@@ -74,7 +75,10 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
     alignItems: "flex-start",
     fontWeight: theme.typography.fontWeightRegular,
     color: theme.palette.grey[700],
-    fontSize: theme.typography.body2.fontSize,
+    fontSize: ({ usage }) =>
+      usage === "legend"
+        ? theme.typography.body2.fontSize
+        : theme.typography.caption.fontSize,
 
     "&::before": {
       content: "''",
@@ -367,12 +371,21 @@ type LegendItemProps = {
   onToggle?: CheckboxProps["onChange"];
   checked?: boolean;
   disabled?: boolean;
+  usage?: "legend" | "tooltip";
 };
 
 export const LegendItem = (props: LegendItemProps) => {
-  const { item, color, symbol, interactive, onToggle, checked, disabled } =
-    props;
-  const classes = useItemStyles({ symbol, color });
+  const {
+    item,
+    color,
+    symbol,
+    interactive,
+    onToggle,
+    checked,
+    disabled,
+    usage = "legend",
+  } = props;
+  const classes = useItemStyles({ symbol, color, usage });
 
   return (
     <>

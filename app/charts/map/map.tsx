@@ -43,7 +43,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     width: 32,
     height: 32,
     border: "1px solid",
-    borderColor: theme.palette.grey[500],
+    borderColor: theme.palette.divider,
     borderBottom: 0,
     borderRadius: 0,
     color: theme.palette.grey[700],
@@ -58,7 +58,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     },
     "&:last-of-type": {
       borderBottom: "1px solid",
-      borderBottomColor: theme.palette.grey[500],
+      borderBottomColor: theme.palette.divider,
       borderBottomRightRadius: 3,
       borderBottomLeftRadius: 3,
     },

@@ -357,7 +357,7 @@ const MultiFilterContent = ({
         <Box sx={{ justifyContent: "space-between", display: "flex" }}>
           {config.activeField === "segment" ? (
             <FormControlLabel
-              componentsProps={{ typography: { variant: "caption" } }}
+              componentsProps={{ typography: { variant: "body2" } }}
               control={<Switch {...interactiveFilterProps} />}
               label={
                 <Tooltip
@@ -1207,7 +1207,7 @@ export const InteractiveTimeRangeToggle = (
             </span>
           }
         >
-          <Typography variant="caption">
+          <Typography variant="body2">
             <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
           </Typography>
         </Tooltip>

@@ -51,7 +51,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     paddingLeft: theme.spacing(4),
     paddingRight: `calc(${theme.spacing(6)} + ${theme.spacing(2)})`,
 
-    borderTopColor: theme.palette.grey[500],
+    borderTopColor: theme.palette.divider,
     borderTopStyle: "solid",
     borderTopWidth: 1,
   },
@@ -382,7 +382,7 @@ export const TableSortingOptions = ({
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <ControlSection>
-        <SectionTitle iconName="sort">
+        <SectionTitle>
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">
@@ -446,7 +446,7 @@ export const TableSortingOptions = ({
                   sx={{
                     py: 4,
                     px: 4,
-                    borderTopColor: "grey.500",
+                    borderTopColor: "divider",
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
                   }}

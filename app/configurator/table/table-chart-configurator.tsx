@@ -15,7 +15,7 @@ import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-d
 import {
   ControlSection,
   ControlSectionContent,
-  SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
@@ -137,17 +137,17 @@ export const ChartConfiguratorTable = ({
     return (
       <>
         <ControlSection collapse>
-          <SectionTitle titleId="controls-design" gutterBottom={false}>
+          <SubsectionTitle titleId="controls-design" gutterBottom={false}>
             <Trans id="controls.select.chart.type">Chart Type</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent px="small" gap="none">
             <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection collapse>
-          <SectionTitle gutterBottom={false}>
+          <SubsectionTitle gutterBottom={false}>
             <Trans id="controls.section.tableoptions">Table Options</Trans>
-          </SectionTitle>
+          </SubsectionTitle>
           <ControlSectionContent
             px="small"
             gap="none"

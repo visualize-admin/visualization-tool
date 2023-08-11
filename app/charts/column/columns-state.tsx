@@ -73,6 +73,7 @@ const useColumnsState = (
     xTimeUnit,
     yMeasure,
     getY,
+    showYStandardError,
     yErrorMeasure,
     getYError,
     getYErrorRange,
@@ -220,6 +221,14 @@ const useColumnsState = (
         yMeasure.unit
       );
 
+    const getError = (d: Observation) => {
+      if (!showYStandardError || !getYError) {
+        return;
+      }
+
+      return `${getYError(d)}${yErrorMeasure?.unit ?? ""}`;
+    };
+
     return {
       xAnchor,
       yAnchor,
@@ -232,9 +241,7 @@ const useColumnsState = (
       datum: {
         label: undefined,
         value: `${yValueFormatter(getY(d))}`,
-        error: getYError
-          ? `${getYError(d)}${yErrorMeasure?.unit ?? ""}`
-          : undefined,
+        error: getError(d),
         color: "",
       },
       values: undefined,

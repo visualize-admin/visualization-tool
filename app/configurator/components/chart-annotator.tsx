@@ -5,7 +5,7 @@ import * as React from "react";
 import {
   ControlSection,
   ControlSectionContent,
-  SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
@@ -45,13 +45,13 @@ export const TitleAndDescriptionConfigurator = () => {
       collapse
       defaultExpanded={false}
     >
-      <SectionTitle
+      <SubsectionTitle
         titleId="controls-design"
         gutterBottom={false}
         right={<WarnTitleDescription />}
       >
-        <Trans id="controls.section.description">Annotate</Trans>
-      </SectionTitle>
+        <Trans id="controls.section.description">Title & Description</Trans>
+      </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
         <AnnotatorTabField
           value={"title"}

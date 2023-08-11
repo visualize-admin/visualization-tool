@@ -397,7 +397,6 @@ msgid "controls.imputation.type.linear"
 msgstr "Interpolazione lineare"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.none"
 msgstr "-"
@@ -582,6 +581,10 @@ msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere asseg
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.section.interactive.filters"
 msgstr "Animazione"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.layout-options"
+msgstr "Opzioni di layout"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"

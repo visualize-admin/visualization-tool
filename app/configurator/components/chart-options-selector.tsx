@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -42,6 +42,7 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartFieldField,
@@ -57,10 +58,7 @@ import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import {
-  canUseAbbreviations,
-  getIconName,
-} from "@/configurator/components/ui-helpers";
+import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
@@ -123,17 +121,10 @@ export const ChartOptionsSelector = ({
       return {
         ...metadataData.dataCubeByIri,
         measures: componentsData.dataCubeByIri.measures,
-        dimensions: isTableConfig(chartConfig)
-          ? componentsData.dataCubeByIri.dimensions
-          : [
-              // There are no fields that make use of numeric dimensions at the moment.
-              ...componentsData.dataCubeByIri.dimensions.filter(
-                (d) => !d.isNumerical
-              ),
-            ],
+        dimensions: componentsData.dataCubeByIri.dimensions,
       };
     }
-  }, [chartConfig, metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
+  }, [metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
 
   if (metaData) {
     return (
@@ -240,8 +231,6 @@ const EncodingOptionsPanel = ({
   measures: DimensionMetadataFragment[];
   imputationNeeded: boolean;
 }) => {
-  const panelRef = useRef<HTMLDivElement>(null);
-
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -272,12 +261,6 @@ const EncodingOptionsPanel = ({
       message: "Select a dimension",
     }),
   };
-
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [field]);
 
   const { fields } = state.chartConfig;
   const otherFields = Object.keys(fields).filter(
@@ -340,15 +323,12 @@ const EncodingOptionsPanel = ({
       role="tabpanel"
       id={`control-panel-${encoding.field}`}
       aria-labelledby={`tab-${encoding.field}`}
-      ref={panelRef}
       tabIndex={-1}
     >
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 ? (
-        <ControlSection>
-          <SectionTitle iconName={getIconName(encoding.field)}>
-            {getFieldLabel(encoding.field)}
-          </SectionTitle>
+        <ControlSection hideTopBorder>
+          <SectionTitle>{getFieldLabel(encoding.field)}</SectionTitle>
           <ControlSectionContent gap="none">
             <ChartFieldField
               field={encoding.field}
@@ -365,27 +345,19 @@ const EncodingOptionsPanel = ({
                 />
               </Box>
             )}
-
-            {encoding.options && (
-              <ChartFieldOptions
-                disabled={!component}
-                field={encoding.field}
-                encodingOptions={encoding.options}
-                chartType={chartType}
-              />
-            )}
-
-            {optionsByField.color?.field === "color" &&
-              optionsByField.color.type === "palette" && (
-                <ColorPalette
-                  disabled={!component}
-                  field={field}
-                  component={component}
-                />
-              )}
           </ControlSectionContent>
         </ControlSection>
       ) : null}
+
+      <ChartLayoutOptions
+        chartType={chartType}
+        encoding={encoding}
+        component={component}
+        hasColorPalette={
+          optionsByField.color?.field === "color" &&
+          optionsByField.color.type === "palette"
+        }
+      />
 
       {optionsByField.calculation?.field === "calculation" &&
         get(fields, "segment") && (
@@ -434,13 +406,13 @@ const EncodingOptionsPanel = ({
         )}
 
       {optionsByField.showStandardError && hasStandardError && (
-        <ControlSection>
-          <SectionTitle iconName="eye">
+        <ControlSection collapse>
+          <SubsectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
               Show additional information
             </Trans>
-          </SectionTitle>
-          <ControlSectionContent component="fieldset" gap="none">
+          </SubsectionTitle>
+          <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
             <ChartOptionCheckboxField
               path="showStandardError"
               field={encoding.field}
@@ -474,6 +446,42 @@ const EncodingOptionsPanel = ({
   );
 };
 
+type ChartLayoutOptionsProps = {
+  chartType: ChartType;
+  encoding: EncodingSpec;
+  component: DimensionMetadataFragment | undefined;
+  hasColorPalette: boolean;
+};
+
+const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
+  const { chartType, encoding, component, hasColorPalette } = props;
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="color">
+        <Trans id="controls.section.layout-options">Layout options</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset">
+        {encoding.options && (
+          <ChartFieldOptions
+            disabled={!component}
+            field={encoding.field}
+            encodingOptions={encoding.options}
+            chartType={chartType}
+          />
+        )}
+        {hasColorPalette && (
+          <ColorPalette
+            disabled={!component}
+            field={encoding.field}
+            component={component}
+          />
+        )}
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
 const ChartFieldAbbreviations = ({
   field,
   path,
@@ -500,13 +508,13 @@ const ChartFieldAbbreviations = ({
 
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
-    <ControlSection>
-      <SectionTitle iconName="settings">
+    <ControlSection collapse>
+      <SubsectionTitle iconName="animation">
         <Trans id="controls.section.animation.settings">
           Animation Settings
         </Trans>
-      </SectionTitle>
-      <ControlSectionContent component="fieldset" gap="none">
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ChartOptionSwitchField
           label={t({
             id: "controls.section.animation.show-play-button",
@@ -648,14 +656,14 @@ const ChartFieldMultiFilter = ({
     | undefined;
 
   return encoding.filters && component ? (
-    <ControlSection data-testid="chart-edition-multi-filters">
-      <SectionTitle
+    <ControlSection data-testid="chart-edition-multi-filters" collapse>
+      <SubsectionTitle
         disabled={!component}
         iconName="filter"
         gutterBottom={false}
       >
         <Trans id="controls.section.filter">Filter</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
@@ -696,36 +704,34 @@ const ChartFieldOptions = ({
   encodingOptions?: EncodingOption[];
   disabled?: boolean;
 }) => {
-  return (
-    <>
-      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
-        chartType === "column" && (
-          <Box component="fieldset" mt={4}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.select.column.layout">Column layout</Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }}>
-              <ChartOptionRadioField
-                label={getFieldLabel("stacked")}
-                field={field}
-                path="type"
-                value="stacked"
-                disabled={disabled}
-              />
-              <ChartOptionRadioField
-                label={getFieldLabel("grouped")}
-                field={field}
-                path="type"
-                value="grouped"
-                disabled={disabled}
-              />
-            </Flex>
-          </Box>
-        )}
-    </>
-  );
+  return encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+    chartType === "column" ? (
+    <div>
+      <Box component="fieldset" mt={2}>
+        <FieldSetLegend
+          legendTitle={
+            <Trans id="controls.select.column.layout">Column layout</Trans>
+          }
+        />
+        <Flex sx={{ justifyContent: "flex-start" }}>
+          <ChartOptionRadioField
+            label={getFieldLabel("stacked")}
+            field={field}
+            path="type"
+            value="stacked"
+            disabled={disabled}
+          />
+          <ChartOptionRadioField
+            label={getFieldLabel("grouped")}
+            field={field}
+            path="type"
+            value="grouped"
+            disabled={disabled}
+          />
+        </Flex>
+      </Box>
+    </div>
+  ) : null;
 };
 
 type ChartFieldCalculationProps = {
@@ -736,12 +742,12 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
   const { disabled } = props;
 
   return (
-    <ControlSection>
-      <SectionTitle disabled={disabled} iconName="normalize">
-        <Trans id="controls.select.calculation.mode">Chart Mode</Trans>
-      </SectionTitle>
+    <ControlSection collapse>
+      <SubsectionTitle disabled={disabled} iconName="normalize">
+        <Trans id="controls.select.calculation.mode">Chart mode</Trans>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset">
-        <Flex sx={{ justifyContent: "flex-start", mb: 2 }}>
+        <Flex sx={{ justifyContent: "flex-start", my: 2 }}>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}
@@ -840,10 +846,10 @@ const ChartFieldSorting = ({
   );
 
   return (
-    <ControlSection>
-      <SectionTitle disabled={disabled} iconName="sort">
+    <ControlSection collapse>
+      <SubsectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         <Box>
           <Select
@@ -927,13 +933,13 @@ const ChartFieldSize = ({
   }, [dimensions, measures, componentTypes]);
 
   return (
-    <ControlSection>
-      <SectionTitle iconName="size">
+    <ControlSection collapse>
+      <SubsectionTitle iconName="size">
         {t({
           id: "controls.size",
           message: "Size",
         })}
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="size-measure"
@@ -1013,10 +1019,10 @@ const ChartFieldColorComponent = ({
     | undefined;
 
   return (
-    <ControlSection>
-      <SectionTitle iconName="color">
-        {t({ id: "controls.color", message: "Color" })}
-      </SectionTitle>
+    <ControlSection collapse>
+      <SubsectionTitle iconName="color">
+        <Trans id="controls.color">Color</Trans>
+      </SubsectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="color-component"
@@ -1024,7 +1030,6 @@ const ChartFieldColorComponent = ({
             id: "controls.select.measure",
             message: "Select a measure",
           })}
-          // FIXME: how to handle nested fields & options?
           field={field}
           path="color.componentIri"
           options={measuresOptions}
@@ -1173,26 +1178,28 @@ const ChartImputationType = ({
   disabled?: boolean;
 }) => {
   const [, dispatch] = useConfiguratorState();
-
   const getImputationTypeLabel = (type: ImputationType) => {
     switch (type) {
       case "none":
-        return t({ id: "controls.imputation.type.none", message: `-` });
+        return t({
+          id: "controls.imputation.type.none",
+          message: "-",
+        });
       case "zeros":
         return t({
           id: "controls.imputation.type.zeros",
-          message: `Zeros`,
+          message: "Zeros",
         });
       case "linear":
         return t({
           id: "controls.imputation.type.linear",
-          message: `Linear interpolation`,
+          message: "Linear interpolation",
         });
       default:
-        return t({ id: "controls.imputation.type.none", message: `-` });
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
     }
   };
-
   const updateImputationType = useCallback<(type: ImputationType) => void>(
     (type) => {
       dispatch({
@@ -1205,9 +1212,11 @@ const ChartImputationType = ({
     [dispatch]
   );
 
-  if (disabled) {
-    updateImputationType("none");
-  }
+  React.useEffect(() => {
+    if (disabled) {
+      updateImputationType("none");
+    }
+  }, [disabled, updateImputationType]);
 
   const activeImputationType: ImputationType = get(
     state,
@@ -1216,19 +1225,19 @@ const ChartImputationType = ({
   );
 
   return (
-    <ControlSection>
-      <SectionTitle disabled={disabled} iconName="info">
+    <ControlSection collapse>
+      <SubsectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
-      </SectionTitle>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         {!disabled && (
-          <Box mb={5}>
+          <Typography variant="body2" sx={{ my: 2 }}>
             <Trans id="controls.section.imputation.explanation">
               For this chart type, replacement values should be assigned to
               missing values. Decide on the imputation logic or switch to
               another chart type.
             </Trans>
-          </Box>
+          </Typography>
         )}
         <Box mb={1}>
           <Select
@@ -1291,7 +1300,7 @@ const ChartMapBaseLayerSettings = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName="mapMaptype">
+      <SectionTitle>
         <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">

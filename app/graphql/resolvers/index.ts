@@ -84,7 +84,11 @@ const DataCube: DataCubeResolvers = {
 };
 
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
-  __resolveType({ data: { dataKind, scaleType } }) {
+  __resolveType({ data: { related, dataKind, scaleType } }) {
+    if (related.some((d) => d.type === "StandardError")) {
+      return "StandardErrorDimension";
+    }
+
     if (dataKind === "Time") {
       if (scaleType === "Ordinal") {
         return "TemporalOrdinalDimension";
@@ -173,7 +177,11 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType({ data: { dataKind, scaleType } }) {
+    __resolveType({ data: { related, dataKind, scaleType } }) {
+      if (related.some((d) => d.type === "StandardError")) {
+        return "StandardErrorDimension";
+      }
+
       if (dataKind === "Time") {
         if (scaleType === "Ordinal") {
           return "TemporalOrdinalDimension";
@@ -214,6 +222,9 @@ export const resolvers: Resolvers = {
   },
   TemporalOrdinalDimension: {
     ...mkDimensionResolvers("TemporalOrdinalDimension"),
+  },
+  StandardErrorDimension: {
+    ...mkDimensionResolvers("StandardErrorDimension"),
   },
   GeoCoordinatesDimension: {
     ...mkDimensionResolvers("GeoCoordinatesDimension"),

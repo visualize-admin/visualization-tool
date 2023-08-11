@@ -26,9 +26,9 @@ export const ErrorWhiskers = () => {
   const ref = React.useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderWhiskerDatum[] | undefined = React.useMemo(() => {
+  const renderData: RenderWhiskerDatum[] = React.useMemo(() => {
     if (!getYErrorRange || !showYStandardError) {
-      return;
+      return [];
     }
 
     return grouped.flatMap(([segment, observations]) =>
@@ -58,7 +58,7 @@ export const ErrorWhiskers = () => {
   ]);
 
   React.useEffect(() => {
-    if (ref.current && renderData) {
+    if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-grouped-error-whiskers",
         transform: `translate(${margins.left} ${margins.top})`,

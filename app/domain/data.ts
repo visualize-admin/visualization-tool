@@ -274,7 +274,7 @@ export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
 };
 
 export const isStandardErrorDimension = (dim: DimensionMetadataFragment) => {
-  return dim?.related?.some((r) => r.type === "StandardError");
+  return dim.__typename === "StandardErrorDimension";
 };
 
 export const findRelatedErrorDimension = (

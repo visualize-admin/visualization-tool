@@ -1,5 +1,5 @@
 import { Fade, Grow } from "@mui/material";
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { Breakpoint, Theme, createTheme } from "@mui/material/styles";
 import merge from "lodash/merge";
 import omit from "lodash/omit";
 
@@ -40,7 +40,7 @@ export const theme = createTheme({
       active: "#00334D",
       disabled: "#599cbd",
     },
-    divider: "#CCCCCC",
+    divider: "#E5E5E5",
     action: {
       hover: "#F2F7F9",
     },
@@ -583,6 +583,7 @@ theme.components = {
         color: theme.palette.grey[700],
         textOverflow: "ellipsis",
         fontSize: theme.typography.body2.fontSize,
+
         "&.MuiInputBase-inputSizeSmall": {
           height: "auto",
           minHeight: 0,
@@ -653,12 +654,11 @@ theme.components = {
             },
             ".MuiSwitch-thumb": {
               opacity: 1,
-              backgroundColor: theme.palette.background.paper,
             },
           },
         },
         "& .MuiSwitch-thumb": {
-          backgroundColor: theme.palette.grey[600],
+          backgroundColor: theme.palette.background.paper,
           width: 12,
           height: 12,
           borderRadius: 6,
@@ -669,7 +669,7 @@ theme.components = {
         "& .MuiSwitch-track": {
           borderRadius: 16 / 2,
           opacity: 1,
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor: "#4F4F4F",
           border: `1px solid ${theme.palette.divider}`,
           boxSizing: "border-box",
         },
@@ -711,7 +711,7 @@ theme.components = {
         fontWeight: "bold",
         lineHeight: 1.5,
         borderBottom: "1px solid",
-        borderBottomColor: theme.palette.grey[500],
+        borderBottomColor: theme.palette.divider,
         paddingTop: theme.spacing(1),
         paddingBottom: theme.spacing(1),
       },

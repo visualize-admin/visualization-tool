@@ -145,7 +145,7 @@ export const getIconName = (name: string): IconName => {
     case "y":
       return "yAxis";
     case "segment":
-      return "color";
+      return "segments";
     case "table":
       return "table";
     case "filter":

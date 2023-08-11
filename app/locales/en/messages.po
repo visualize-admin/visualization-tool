@@ -397,7 +397,6 @@ msgid "controls.imputation.type.linear"
 msgstr "Linear interpolation"
 
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.none"
 msgstr "-"
@@ -584,6 +583,10 @@ msgid "controls.section.interactive.filters"
 msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.layout-options"
+msgstr "Layout options"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.show-standard-error"
 msgstr "Show standard error"
 
@@ -613,7 +616,7 @@ msgstr "Segmentation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
-msgstr "Chart Mode"
+msgstr "Chart mode"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-type-selector.tsx

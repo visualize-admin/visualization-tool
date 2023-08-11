@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   ControlSection,
@@ -8,9 +8,6 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { getIconName } from "@/configurator/components/ui-helpers";
-import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
-import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
@@ -34,9 +31,7 @@ const TitleAndDescriptionOptions = ({
 
   return (
     <ControlSection>
-      <SectionTitle iconName={getIconName(activeField)}>
-        {getFieldLabel(activeField)}
-      </SectionTitle>
+      <SectionTitle>{getFieldLabel(activeField)}</SectionTitle>
       <ControlSectionContent gap="none">
         {orderedLocales.map((d) => (
           <Box
@@ -63,42 +58,23 @@ export const ChartAnnotationsSelector = ({
 }) => {
   const { activeField } = state;
   const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (panelRef && panelRef.current) {
+    if (panelRef?.current) {
       panelRef.current.focus();
     }
   }, [activeField]);
 
-  const isInteractiveFilterField = useMemo(() => {
-    switch (activeField as InteractiveFilterType) {
-      case "dataFilters":
-      case "legend":
-      case "timeRange":
-        return true;
-
-      default:
-        return false;
-    }
-  }, [activeField]);
-
-  if (activeField) {
-    return (
-      <Box
-        role="tabpanel"
-        id={`annotation-panel-${activeField}`}
-        aria-labelledby={`annotation-tab-${activeField}`}
-        ref={panelRef}
-        tabIndex={-1}
-        sx={{ overflowX: "hidden", overflowY: "auto" }}
-      >
-        {isInteractiveFilterField ? (
-          <InteractiveFiltersOptions state={state} />
-        ) : (
-          <TitleAndDescriptionOptions state={state} />
-        )}
-      </Box>
-    );
-  } else {
-    return null;
-  }
+  return activeField ? (
+    <Box
+      role="tabpanel"
+      id={`annotation-panel-${activeField}`}
+      aria-labelledby={`annotation-tab-${activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
+      sx={{ overflowX: "hidden", overflowY: "auto" }}
+    >
+      <TitleAndDescriptionOptions state={state} />
+    </Box>
+  ) : null;
 };
