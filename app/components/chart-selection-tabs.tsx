@@ -89,7 +89,7 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
     borderRadius: 3,
     transition: "0.125s ease background-color",
     "&:hover": {
-      backgroundColor: ({ editable }) =>
+      backgroundColor: ({ editable }: { editable: boolean }) =>
         editable ? theme.palette.grey[200] : undefined,
     },
   },

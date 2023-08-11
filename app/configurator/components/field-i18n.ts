@@ -206,7 +206,7 @@ export function getFieldLabel(field: string): string {
     case "scatterplot.segment":
     case "pie.segment":
     case "segment":
-      return i18n._(fieldLabels["controls.color"]);
+      return i18n._(fieldLabels["controls.segment"]);
     case "baseLayer":
     case "map.baseLayer":
       return i18n._(fieldLabels["chart.map.layers.base"]);

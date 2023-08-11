@@ -1015,7 +1015,7 @@ const ChartFieldColorComponent = ({
   return (
     <ControlSection>
       <SectionTitle iconName="color">
-        {t({ id: "controls.color", message: "Color" })}
+        <Trans id="controls.color">Color</Trans>
       </SectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
@@ -1024,7 +1024,6 @@ const ChartFieldColorComponent = ({
             id: "controls.select.measure",
             message: "Select a measure",
           })}
-          // FIXME: how to handle nested fields & options?
           field={field}
           path="color.componentIri"
           options={measuresOptions}
