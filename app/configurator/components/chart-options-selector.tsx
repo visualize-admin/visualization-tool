@@ -9,7 +9,6 @@ import {
   ANIMATION_FIELD_SPEC,
   chartConfigOptionsUISpec,
   EncodingFieldType,
-  EncodingOption,
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
@@ -307,6 +306,17 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     return keyBy(encoding.options, (d) => d.field);
   }, [encoding]);
 
+  const hasColorPalette =
+    optionsByField.color?.field === "color" &&
+    optionsByField.color.type === "palette";
+
+  const hasSubOptions =
+    (encoding.options?.map((e) => e.field).includes("chartSubType") &&
+      chartType === "column") ??
+    false;
+
+  console.log("encoding", encoding);
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -339,17 +349,16 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         </ControlSection>
       ) : null}
 
-      {fieldDimension && (
-        <ChartLayoutOptions
-          chartType={chartType}
-          encoding={encoding}
-          component={component}
-          hasColorPalette={
-            optionsByField.color?.field === "color" &&
-            optionsByField.color.type === "palette"
-          }
-        />
-      )}
+      {fieldDimension &&
+        encoding.field === "segment" &&
+        (hasSubOptions || hasColorPalette) && (
+          <ChartLayoutOptions
+            encoding={encoding}
+            component={component}
+            hasColorPalette={hasColorPalette}
+            hasSubOptions={hasSubOptions}
+          />
+        )}
 
       {optionsByField.imputation?.field === "imputation" &&
         optionsByField.imputation.shouldShow(
@@ -441,14 +450,14 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 };
 
 type ChartLayoutOptionsProps = {
-  chartType: ChartType;
   encoding: EncodingSpec;
   component: DimensionMetadataFragment | undefined;
   hasColorPalette: boolean;
+  hasSubOptions: boolean;
 };
 
 const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
-  const { chartType, encoding, component, hasColorPalette } = props;
+  const { encoding, component, hasColorPalette, hasSubOptions } = props;
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
@@ -456,13 +465,8 @@ const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
-        {encoding.options && (
-          <ChartFieldOptions
-            disabled={!component}
-            field={encoding.field}
-            encodingOptions={encoding.options}
-            chartType={chartType}
-          />
+        {hasSubOptions && (
+          <ChartFieldOptions disabled={!component} field={encoding.field} />
         )}
         {hasColorPalette && (
           <ColorPalette
@@ -687,19 +691,15 @@ const ChartFieldMultiFilter = ({
   ) : null;
 };
 
-const ChartFieldOptions = ({
-  field,
-  chartType,
-  encodingOptions,
-  disabled = false,
-}: {
+type ChartFieldOptionsProps = {
   field: string;
-  chartType: ChartType;
-  encodingOptions?: EncodingOption[];
   disabled?: boolean;
-}) => {
-  return encodingOptions?.map((e) => e.field).includes("chartSubType") &&
-    chartType === "column" ? (
+};
+
+const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
+  const { field, disabled } = props;
+
+  return (
     <div>
       <Box component="fieldset" mt={2}>
         <FieldSetLegend
@@ -725,7 +725,7 @@ const ChartFieldOptions = ({
         </Flex>
       </Box>
     </div>
-  ) : null;
+  );
 };
 
 type ChartFieldCalculationProps = {
