@@ -303,11 +303,9 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     );
   }, [allComponents, component]);
 
-  // TODO: Add proper types here.
-  const optionsByField = useMemo(
-    () => keyBy(encoding.options, (enc) => enc.field),
-    [encoding]
-  );
+  const optionsByField = useMemo(() => {
+    return keyBy(encoding.options, (d) => d.field);
+  }, [encoding]);
 
   return (
     <div
@@ -341,15 +339,17 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         </ControlSection>
       ) : null}
 
-      <ChartLayoutOptions
-        chartType={chartType}
-        encoding={encoding}
-        component={component}
-        hasColorPalette={
-          optionsByField.color?.field === "color" &&
-          optionsByField.color.type === "palette"
-        }
-      />
+      {fieldDimension && (
+        <ChartLayoutOptions
+          chartType={chartType}
+          encoding={encoding}
+          component={component}
+          hasColorPalette={
+            optionsByField.color?.field === "color" &&
+            optionsByField.color.type === "palette"
+          }
+        />
+      )}
 
       {optionsByField.imputation?.field === "imputation" &&
         optionsByField.imputation.shouldShow(
