@@ -450,7 +450,7 @@ type ChartLayoutOptionsProps = {
 const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
   const { chartType, encoding, component, hasColorPalette } = props;
 
-  return (
+  return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
       <SubsectionTitle iconName="color">
         <Trans id="controls.section.layout-options">Layout options</Trans>
@@ -473,7 +473,7 @@ const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
         )}
       </ControlSectionContent>
     </ControlSection>
-  );
+  ) : null;
 };
 
 const ChartFieldAbbreviations = ({
