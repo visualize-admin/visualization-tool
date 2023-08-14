@@ -214,7 +214,7 @@ type TitleProps = {
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
-  disabledMessage?: string;
+  warnMessage?: string;
   children: ReactNode;
   gutterBottom?: boolean;
   sx?: TypographyProps["sx"];
@@ -227,7 +227,7 @@ const Title = (props: TitleProps) => {
     iconName,
     titleId,
     disabled,
-    disabledMessage,
+    warnMessage,
     children,
     gutterBottom = true,
     sx,
@@ -256,9 +256,7 @@ const Title = (props: TitleProps) => {
         {isSection ? null : iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
-      {disabled && disabledMessage && (
-        <TitleWarningTooltip title={disabledMessage} />
-      )}
+      {warnMessage && <Warning title={warnMessage} />}
       <span className={classes.icon}>
         {collapse ? (
           isOpen ? (
@@ -306,11 +304,11 @@ export const ControlSectionSkeleton = ({
   </ControlSection>
 );
 
-type TitleWarningTooltipProps = {
+type WarningProps = {
   title: string;
 };
 
-const TitleWarningTooltip = (props: TitleWarningTooltipProps) => {
+const Warning = (props: WarningProps) => {
   const { title } = props;
 
   return (

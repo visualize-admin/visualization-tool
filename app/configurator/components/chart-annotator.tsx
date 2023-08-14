@@ -30,10 +30,14 @@ export const TitleAndDescriptionConfigurator = () => {
       <SubsectionTitle
         titleId="controls-design"
         disabled={disabled}
-        disabledMessage={t({
-          id: "controls.section.title.warning",
-          message: "Please add a title or description.",
-        })}
+        warnMessage={
+          disabled
+            ? t({
+                id: "controls.section.title.warning",
+                message: "Please add a title or description.",
+              })
+            : undefined
+        }
         gutterBottom={false}
       >
         <Trans id="controls.section.description">Title & Description</Trans>

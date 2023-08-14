@@ -749,7 +749,7 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
       <SubsectionTitle
         iconName="normalize"
         disabled={disabled}
-        disabledMessage={disabledMessage}
+        warnMessage={disabledMessage}
       >
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SubsectionTitle>
