@@ -331,10 +331,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
 
               return {
                 disabled: grouped,
-                disabledMessage: t({
-                  id: "controls.calculation.disabled-by-grouped",
-                  message: "100% mode cannot be used with a grouped layout.",
-                }),
+                disabledMessage: grouped
+                  ? t({
+                      id: "controls.calculation.disabled-by-grouped",
+                      message:
+                        "100% mode cannot be used with a grouped layout.",
+                    })
+                  : undefined,
               };
             },
           },
