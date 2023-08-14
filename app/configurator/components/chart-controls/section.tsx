@@ -4,6 +4,7 @@ import {
   Collapse,
   Skeleton,
   Theme,
+  Tooltip,
   Typography,
   TypographyProps,
 } from "@mui/material";
@@ -21,6 +22,7 @@ import React, {
 
 import { Icon, IconName } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import SvgIcMinus from "@/icons/components/IcMinus";
 
 import useDisclosure from "../../../components/use-disclosure";
@@ -212,8 +214,8 @@ type TitleProps = {
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
+  disabledMessage?: string;
   children: ReactNode;
-  right?: React.ReactNode;
   gutterBottom?: boolean;
   sx?: TypographyProps["sx"];
 };
@@ -225,8 +227,8 @@ const Title = (props: TitleProps) => {
     iconName,
     titleId,
     disabled,
+    disabledMessage,
     children,
-    right,
     gutterBottom = true,
     sx,
   } = props;
@@ -254,7 +256,9 @@ const Title = (props: TitleProps) => {
         {isSection ? null : iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
-      {right}
+      {disabled && disabledMessage && (
+        <TitleWarningTooltip title={disabledMessage} />
+      )}
       <span className={classes.icon}>
         {collapse ? (
           isOpen ? (
@@ -301,3 +305,19 @@ export const ControlSectionSkeleton = ({
     </ControlSectionContent>
   </ControlSection>
 );
+
+type TitleWarningTooltipProps = {
+  title: string;
+};
+
+const TitleWarningTooltip = (props: TitleWarningTooltipProps) => {
+  const { title } = props;
+
+  return (
+    <Tooltip arrow title={title}>
+      <Typography color="warning.main" sx={{ mr: 2 }}>
+        <SvgIcExclamation width={18} height={18} />
+      </Typography>
+    </Tooltip>
+  );
+};
