@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
 import keyBy from "lodash/keyBy";
-import React, { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -14,7 +14,6 @@ import {
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
-import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import { GenericField } from "@/config-types";
@@ -29,7 +28,6 @@ import {
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
-  isAreaConfig,
   isConfiguring,
   isTableConfig,
   MapConfig,
@@ -65,6 +63,7 @@ import {
   isDimensionSortable,
   isStandardErrorDimension,
   isTemporalDimension,
+  Observation,
 } from "@/domain/data";
 import {
   DimensionMetadataFragment,
@@ -111,12 +110,7 @@ export const ChartOptionsSelector = ({
     },
   });
 
-  const imputationNeeded = useImputationNeeded({
-    chartConfig,
-    data: observationsData?.dataCubeByIri?.observations.data,
-  });
-
-  const metaData = useMemo(() => {
+  const metadata = useMemo(() => {
     if (metadataData?.dataCubeByIri && componentsData?.dataCubeByIri) {
       return {
         ...metadataData.dataCubeByIri,
@@ -125,48 +119,45 @@ export const ChartOptionsSelector = ({
       };
     }
   }, [metadataData?.dataCubeByIri, componentsData?.dataCubeByIri]);
+  const observations = observationsData?.dataCubeByIri?.observations.data;
 
-  if (metaData) {
-    return (
-      <Box
-        sx={{
-          // we need these overflow parameters to allow iOS scrolling
-          overflowX: "hidden",
-          overflowY: "auto",
-        }}
-      >
-        {activeField ? (
-          isTableConfig(chartConfig) ? (
-            <TableColumnOptions state={state} metaData={metaData} />
-          ) : (
-            <ActiveFieldSwitch
-              state={state}
-              metaData={metaData}
-              imputationNeeded={imputationNeeded}
-            />
-          )
-        ) : null}
-      </Box>
-    );
-  } else {
-    return (
-      <>
-        <ControlSectionSkeleton />
-        <ControlSectionSkeleton />
-      </>
-    );
-  }
+  return metadata && observations ? (
+    <Box
+      sx={{
+        // we need these overflow parameters to allow iOS scrolling
+        overflowX: "hidden",
+        overflowY: "auto",
+      }}
+    >
+      {activeField ? (
+        isTableConfig(chartConfig) ? (
+          <TableColumnOptions state={state} metaData={metadata} />
+        ) : (
+          <ActiveFieldSwitch
+            state={state}
+            metadata={metadata}
+            observations={observations}
+          />
+        )
+      ) : null}
+    </Box>
+  ) : (
+    <>
+      <ControlSectionSkeleton />
+      <ControlSectionSkeleton />
+    </>
+  );
 };
 
-const ActiveFieldSwitch = ({
-  state,
-  metaData,
-  imputationNeeded,
-}: {
+type ActiveFieldSwitchProps = {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadataWithHierarchies;
-  imputationNeeded: boolean;
-}) => {
+  metadata: DataCubeMetadataWithHierarchies;
+  observations: Observation[];
+};
+
+const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
+  const { state, metadata, observations } = props;
+  const { dimensions, measures } = metadata;
   const activeField = state.activeField as EncodingFieldType | undefined;
 
   if (!activeField) {
@@ -193,35 +184,24 @@ const ActiveFieldSwitch = ({
     activeField
   );
 
-  const allComponents = [...metaData.dimensions, ...metaData.measures];
-  const component = allComponents.find(
-    (d) => d.iri === activeFieldComponentIri
-  );
+  const components = [...dimensions, ...measures];
+  const component = components.find((d) => d.iri === activeFieldComponentIri);
 
   return (
     <EncodingOptionsPanel
       encoding={encoding}
       state={state}
-      field={activeField} // FIXME: or encoding.field?
+      field={activeField}
       chartType={state.chartConfig.chartType}
       component={component}
-      dimensions={metaData.dimensions}
-      measures={metaData.measures}
-      imputationNeeded={imputationNeeded}
+      dimensions={dimensions}
+      measures={measures}
+      observations={observations}
     />
   );
 };
 
-const EncodingOptionsPanel = ({
-  encoding,
-  state,
-  field,
-  chartType,
-  component,
-  dimensions,
-  measures,
-  imputationNeeded,
-}: {
+type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
   field: EncodingFieldType;
@@ -229,8 +209,20 @@ const EncodingOptionsPanel = ({
   component: DimensionMetadataFragment | undefined;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  imputationNeeded: boolean;
-}) => {
+  observations: Observation[];
+};
+
+const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
+  const {
+    encoding,
+    state,
+    field,
+    chartType,
+    component,
+    dimensions,
+    measures,
+    observations,
+  } = props;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -359,6 +351,12 @@ const EncodingOptionsPanel = ({
         }
       />
 
+      {optionsByField.imputation?.field === "imputation" &&
+        optionsByField.imputation.shouldShow(
+          state.chartConfig,
+          observations
+        ) && <ChartImputation state={state} />}
+
       {optionsByField.calculation?.field === "calculation" &&
         get(fields, "segment") && (
           <ChartFieldCalculation
@@ -369,9 +367,7 @@ const EncodingOptionsPanel = ({
         )}
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
-      {field === "baseLayer" ? (
-        <ChartMapBaseLayerSettings state={state} />
-      ) : null}
+      {field === "baseLayer" && <ChartMapBaseLayerSettings state={state} />}
 
       {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
@@ -423,10 +419,6 @@ const EncodingOptionsPanel = ({
             />
           </ControlSectionContent>
         </ControlSection>
-      )}
-
-      {optionsByField.imputationType && isAreaConfig(state.chartConfig) && (
-        <ChartImputationType state={state} disabled={!imputationNeeded} />
       )}
 
       <ChartFieldMultiFilter
@@ -1177,13 +1169,12 @@ const ChartFieldColorComponent = ({
   );
 };
 
-const ChartImputationType = ({
-  state,
-  disabled,
-}: {
+type ChartImputationProps = {
   state: ConfiguratorStateConfiguringChart;
-  disabled?: boolean;
-}) => {
+};
+
+const ChartImputation = (props: ChartImputationProps) => {
+  const { state } = props;
   const [, dispatch] = useConfiguratorState();
   const getImputationTypeLabel = (type: ImputationType) => {
     switch (type) {
@@ -1219,12 +1210,6 @@ const ChartImputationType = ({
     [dispatch]
   );
 
-  React.useEffect(() => {
-    if (disabled) {
-      updateImputationType("none");
-    }
-  }, [disabled, updateImputationType]);
-
   const activeImputationType: ImputationType = get(
     state,
     ["chartConfig", "fields", "y", "imputationType"],
@@ -1233,34 +1218,29 @@ const ChartImputationType = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle disabled={disabled} iconName="info">
+      <SubsectionTitle
+        iconName="info"
+        warnMessage={t({
+          id: "controls.section.imputation.explanation",
+          message:
+            "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type.",
+        })}
+      >
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
-        {!disabled && (
-          <Typography variant="body2" sx={{ my: 2 }}>
-            <Trans id="controls.section.imputation.explanation">
-              For this chart type, replacement values should be assigned to
-              missing values. Decide on the imputation logic or switch to
-              another chart type.
-            </Trans>
-          </Typography>
-        )}
-        <Box mb={1}>
-          <Select
-            id="imputation-type"
-            label={getFieldLabel("imputation")}
-            options={imputationTypes.map((d) => ({
-              value: d,
-              label: getImputationTypeLabel(d),
-            }))}
-            value={activeImputationType}
-            disabled={disabled}
-            onChange={(e) => {
-              updateImputationType(e.target.value as ImputationType);
-            }}
-          />
-        </Box>
+        <Select
+          id="imputation-type"
+          label={getFieldLabel("imputation")}
+          options={imputationTypes.map((d) => ({
+            value: d,
+            label: getImputationTypeLabel(d),
+          }))}
+          value={activeImputationType}
+          onChange={(e) => {
+            updateImputationType(e.target.value as ImputationType);
+          }}
+        />
       </ControlSectionContent>
     </ControlSection>
   );

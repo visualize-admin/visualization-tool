@@ -1,4 +1,4 @@
-import { group, InternMap, sum } from "d3";
+import { InternMap, sum } from "d3";
 import omitBy from "lodash/omitBy";
 import uniq from "lodash/uniq";
 import React, { useCallback, useMemo } from "react";
@@ -18,7 +18,6 @@ import {
   InteractiveFiltersDataConfig,
   InteractiveFiltersLegend,
   InteractiveFiltersTimeRange,
-  isAreaConfig,
   MapConfig,
   QueryFilters,
 } from "@/config-types";
@@ -229,7 +228,7 @@ export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
 
-const getSegment =
+export const getSegment =
   (segmentKey: string | undefined) =>
   (d: Observation): string =>
     segmentKey ? `${d[segmentKey]}` : "segment";
@@ -442,7 +441,7 @@ export const getLabelWithUnit = (
 };
 
 export const checkForMissingValuesInSegments = (
-  dataGroupedByX: InternMap<string, Array<Observation>>,
+  dataGroupedByX: InternMap<string, Observation[]>,
   segments: Array<string>
 ): boolean => {
   for (const value of dataGroupedByX.values()) {
@@ -452,37 +451,4 @@ export const checkForMissingValuesInSegments = (
   }
 
   return false;
-};
-
-export const useImputationNeeded = ({
-  chartConfig,
-  data,
-}: {
-  chartConfig: ChartConfig;
-  data?: Observation[];
-}): boolean => {
-  return useMemo(() => {
-    if (isAreaConfig(chartConfig) && data) {
-      const groupedData = group(
-        data.filter((d) => {
-          const y = d[chartConfig.fields.y.componentIri];
-          return y !== null && y !== undefined;
-        }),
-        (d) => d[chartConfig.fields.x.componentIri] as string
-      );
-
-      return checkForMissingValuesInSegments(
-        groupedData,
-        Array.from(
-          new Set(
-            data.map((d) => {
-              return getSegment(chartConfig.fields.segment?.componentIri)(d);
-            })
-          )
-        )
-      );
-    }
-
-    return false;
-  }, [chartConfig, data]);
 };

@@ -1,6 +1,12 @@
 import { t } from "@lingui/macro";
+import { group } from "d3";
 
 import {
+  checkForMissingValuesInSegments,
+  getSegment,
+} from "@/charts/shared/chart-helpers";
+import {
+  AreaConfig,
   ChartConfig,
   ChartType,
   ColumnConfig,
@@ -10,7 +16,11 @@ import {
   getAnimationField,
   isSortingInConfig,
 } from "@/config-types";
-import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
+import {
+  Observation,
+  isTemporalDimension,
+  isTemporalOrdinalDimension,
+} from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 /**
@@ -27,15 +37,20 @@ export type EncodingFieldType =
   | XYEncodingFieldType;
 
 export type EncodingOption =
-  | { field: "chartSubType" }
+  | {
+      field: "chartSubType";
+    }
   | {
       field: "calculation";
-      getDisabledState?: (d: ChartConfig) => {
+      getDisabledState?: (chartConfig: ChartConfig) => {
         disabled: boolean;
         disabledMessage?: string;
       };
     }
-  | { field: "color"; type: "palette" }
+  | {
+      field: "color";
+      type: "palette";
+    }
   | {
       field: "color";
       type: "component";
@@ -43,12 +58,26 @@ export type EncodingOption =
       componentTypes: ComponentType[];
       enableUseAbbreviations: boolean;
     }
-  | { field: "imputationType" }
-  | { field: "showStandardError" }
-  | { field: "sorting" }
-  | { field: "size"; componentTypes: ComponentType[]; optional: boolean }
-  | { field: "useAbbreviations" };
+  | EncodingOptionImputation
+  | {
+      field: "showStandardError";
+    }
+  | {
+      field: "sorting";
+    }
+  | {
+      field: "size";
+      componentTypes: ComponentType[];
+      optional: boolean;
+    }
+  | {
+      field: "useAbbreviations";
+    };
 
+export type EncodingOptionImputation = {
+  field: "imputation";
+  shouldShow: (chartConfig: ChartConfig, data: Observation[]) => boolean;
+};
 /**
  * @todo
  * - Differentiate sorting within chart vs. sorting legend / tooltip only
@@ -56,7 +85,7 @@ export type EncodingOption =
 export type EncodingSortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
-  getDisabledState?: (d: ChartConfig) => {
+  getDisabledState?: (chartConfig: ChartConfig) => {
     disabled: boolean;
     disabledMessage?: string;
   };
@@ -230,7 +259,27 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "calculation" },
           { field: "color", type: "palette" },
-          { field: "imputationType" },
+          {
+            field: "imputation",
+            shouldShow: (_chartConfig, data) => {
+              const chartConfig = _chartConfig as AreaConfig;
+              const { fields } = chartConfig;
+              const grouped = group(
+                data.filter((d) => {
+                  const y = d[fields.y.componentIri];
+                  return y !== null && y !== undefined;
+                }),
+                (d) => d[fields.x.componentIri] as string
+              );
+              const segments = Array.from(
+                new Set(
+                  data.map((d) => getSegment(fields.segment?.componentIri)(d))
+                )
+              );
+
+              return checkForMissingValuesInSegments(grouped, segments);
+            },
+          },
           { field: "useAbbreviations" },
         ],
       },
