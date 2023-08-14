@@ -61,7 +61,6 @@ const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
       paddingBottom: theme.spacing(4),
       marginBottom: ({ gutterBottom }: SectionTitleStylesProps) =>
         gutterBottom ? 0 : -theme.spacing(2),
-      transition: "padding-bottom 300ms ease",
       border: "none",
       justifyContent: "flex-start",
       "&:hover": {
