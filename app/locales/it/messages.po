@@ -203,6 +203,10 @@ msgstr "Asse verticale"
 msgid "controls.calculation.allow-normalization"
 msgstr "Consentire la normalizzazione dei dati"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.calculation.disabled-by-grouped"
+msgstr "La modalità 100% non può essere utilizzata con un layout raggruppato."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
 msgstr "Normale"

@@ -3,6 +3,7 @@ import { t } from "@lingui/macro";
 import {
   ChartConfig,
   ChartType,
+  ColumnConfig,
   ComponentType,
   SortingOrder,
   SortingType,
@@ -27,7 +28,13 @@ export type EncodingFieldType =
 
 export type EncodingOption =
   | { field: "chartSubType" }
-  | { field: "calculation" }
+  | {
+      field: "calculation";
+      getDisabledState?: (d: ChartConfig) => {
+        disabled: boolean;
+        disabledMessage?: string;
+      };
+    }
   | { field: "color"; type: "palette" }
   | {
       field: "color";
@@ -267,7 +274,21 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType" },
-          { field: "calculation" },
+          {
+            field: "calculation",
+            getDisabledState: (d) => {
+              const grouped =
+                (d as ColumnConfig).fields.segment?.type === "grouped";
+
+              return {
+                disabled: grouped,
+                disabledMessage: t({
+                  id: "controls.calculation.disabled-by-grouped",
+                  message: "100% mode cannot be used with a grouped layout.",
+                }),
+              };
+            },
+          },
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
         ],

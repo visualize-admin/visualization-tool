@@ -362,7 +362,9 @@ const EncodingOptionsPanel = ({
       {optionsByField.calculation?.field === "calculation" &&
         get(fields, "segment") && (
           <ChartFieldCalculation
-            disabled={get(fields, "segment.type") === "grouped"}
+            {...optionsByField.calculation.getDisabledState?.(
+              state.chartConfig
+            )}
           />
         )}
 
@@ -736,14 +738,19 @@ const ChartFieldOptions = ({
 
 type ChartFieldCalculationProps = {
   disabled?: boolean;
+  disabledMessage?: string;
 };
 
 const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
-  const { disabled } = props;
+  const { disabled, disabledMessage } = props;
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle disabled={disabled} iconName="normalize">
+      <SubsectionTitle
+        iconName="normalize"
+        disabled={disabled}
+        disabledMessage={disabledMessage}
+      >
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">

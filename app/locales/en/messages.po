@@ -203,6 +203,10 @@ msgstr "Vertical Axis"
 msgid "controls.calculation.allow-normalization"
 msgstr "Allow normalization of the data"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.calculation.disabled-by-grouped"
+msgstr "100% mode can't be used with grouped layout."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
 msgstr "Normal"
