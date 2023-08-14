@@ -193,7 +193,7 @@ const usePieState = (
       yMeasure.unit
     );
     const percentage = value / ySum;
-    const rounded = Math.round(percentage * 100 * 10) / 10;
+    const rounded = Math.round(percentage * 100);
 
     return `${rounded}% (${fValue})`;
   };
