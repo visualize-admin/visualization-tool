@@ -340,7 +340,7 @@ const useFilterReorder = ({
   }, [components?.dataCubeByIri?.dimensions]);
 
   const data =
-    metadata && components
+    metadata?.dataCubeByIri && components?.dataCubeByIri
       ? ({
           ...metadata.dataCubeByIri,
           ...components.dataCubeByIri,
@@ -616,7 +616,7 @@ export const ChartConfigurator = ({
           role="tablist"
           aria-labelledby="controls-design"
         >
-          <ChartFields chartConfig={state.chartConfig} metaData={data} />
+          <ChartFields chartConfig={state.chartConfig} metadata={data} />
         </ControlSectionContent>
       </ControlSection>
       {filterDimensions.length === 0 &&
@@ -761,13 +761,13 @@ export const ChartConfigurator = ({
 
 type ChartFieldsProps = {
   chartConfig: ChartConfig;
-  metaData: DataCubeMetadata;
+  metadata: DataCubeMetadata;
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { chartConfig, metaData } = props;
+  const { chartConfig, metadata } = props;
   const { chartType } = chartConfig;
-  const { dimensions, measures } = metaData;
+  const { dimensions, measures } = metadata;
   const components = [...dimensions, ...measures];
 
   return (
