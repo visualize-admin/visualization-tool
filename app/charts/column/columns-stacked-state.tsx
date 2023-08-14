@@ -294,16 +294,34 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
+  const animationIri = fields.animation?.componentIri;
+  const getAnimation = React.useCallback(
+    (d: Observation) => {
+      return animationIri ? (d[animationIri] as string) : "";
+    },
+    [animationIri]
+  );
+
   const yScale = useMemo(() => {
-    return getStackedYScale(scalesData, { normalize, getX, getY });
-  }, [scalesData, normalize, getX, getY]);
+    return getStackedYScale(scalesData, {
+      normalize,
+      getX,
+      getY,
+      getTime: getAnimation,
+    });
+  }, [scalesData, normalize, getX, getY, getAnimation]);
 
   const allYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the yScale domain, so that the yScale doesn't
     // change when the user toggles between absolute and relative values.
     if (interactiveFiltersConfig?.calculation.active) {
-      const scale = getStackedYScale(allData, { normalize: false, getX, getY });
+      const scale = getStackedYScale(allData, {
+        normalize: false,
+        getX,
+        getY,
+        getTime: getAnimation,
+      });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
         return scaleLinear().domain([0, 100]);
@@ -312,13 +330,19 @@ const useColumnsStackedState = (
       return scale;
     }
 
-    return getStackedYScale(allData, { normalize, getX, getY });
+    return getStackedYScale(allData, {
+      normalize,
+      getX,
+      getY,
+      getTime: getAnimation,
+    });
   }, [
+    interactiveFiltersConfig?.calculation.active,
     allData,
+    normalize,
     getX,
     getY,
-    interactiveFiltersConfig?.calculation.active,
-    normalize,
+    getAnimation,
   ]);
 
   // stack order
