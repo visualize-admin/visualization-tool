@@ -157,16 +157,14 @@ const useColumnsGroupedState = (
   /* Scales */
   const xFilter = chartConfig.filters[fields.x.componentIri];
   const sumsByX = useMemo(() => {
-    // TODO: change to chartData to animate groups by measure. Maybe there should be a new
-    // animation field config option?
     return Object.fromEntries(
       rollup(
-        scalesData,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
       )
     );
-  }, [scalesData, getX, getY]);
+  }, [chartData, getX, getY]);
 
   const {
     xDomainLabels,

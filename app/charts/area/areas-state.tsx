@@ -163,12 +163,12 @@ const useAreasState = (
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
-        scalesData,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getXAsString(x)
       )
     );
-  }, [getXAsString, getY, scalesData]);
+  }, [chartData, getXAsString, getY]);
 
   const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {

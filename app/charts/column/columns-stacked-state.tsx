@@ -162,12 +162,12 @@ const useColumnsStackedState = (
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
-        scalesData,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
       )
     );
-  }, [getX, getY, scalesData]);
+  }, [chartData, getX, getY]);
 
   const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {

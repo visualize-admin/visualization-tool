@@ -1,4 +1,4 @@
-import { NumberValue, ScaleLinear, group, min, scaleLinear, sum } from "d3";
+import { NumberValue, ScaleLinear, group, scaleLinear } from "d3";
 
 import {
   NumericalValueGetter,
@@ -30,16 +30,8 @@ export const getStackedYScale = (
 
     for (const [, v] of grouped) {
       const values = v.map(getY).filter((d) => d !== null) as number[];
-      const newYMin =
-        min(
-          values.filter((d) => d < 0),
-          (d) => d
-        ) ?? 0;
-      const newYMax =
-        sum(
-          values.filter((d) => d >= 0),
-          (d) => d
-        ) ?? 0;
+      const newYMin = Math.min(...values.filter((d) => d < 0));
+      const newYMax = Math.max(...values.filter((d) => d >= 0));
 
       if (yMin === undefined || newYMin < yMin) {
         yMin = newYMin;
