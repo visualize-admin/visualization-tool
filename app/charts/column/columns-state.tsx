@@ -102,7 +102,7 @@ const useColumnsState = (
     allYScale,
     interactiveXTimeRangeScale,
     xScaleInteraction,
-    bandDomainLabels,
+    xTimeRangeDomainLabels,
   } = useMemo(() => {
     const sorters = makeDimensionValueSorters(xDimension, {
       sorting: fields.x.sorting,
@@ -118,7 +118,8 @@ const useColumnsState = (
       sorters,
       sortingOrders
     );
-    const bandDomainLabels = bandDomain.map(getXLabel);
+    const xTimeRangeValues = [...new Set(timeRangeData.map(getX))];
+    const xTimeRangeDomainLabels = xTimeRangeValues.map(getXLabel);
     const xScale = scaleBand()
       .domain(bandDomain)
       .paddingInner(PADDING_INNER)
@@ -168,7 +169,7 @@ const useColumnsState = (
       allYScale,
       interactiveXTimeRangeScale,
       xScaleInteraction,
-      bandDomainLabels,
+      xTimeRangeDomainLabels,
     };
   }, [
     getX,
@@ -192,7 +193,7 @@ const useColumnsState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    bandDomainLabels
+    xTimeRangeDomainLabels
   );
   const margins = {
     top: 50,

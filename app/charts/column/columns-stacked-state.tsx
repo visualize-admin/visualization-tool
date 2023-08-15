@@ -201,9 +201,9 @@ const useColumnsStackedState = (
   const {
     colors,
     xScale,
+    xTimeRangeDomainLabels,
     xScaleInteraction,
     interactiveXTimeRangeScale,
-    xDomainLabels,
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
@@ -241,6 +241,7 @@ const useColumnsStackedState = (
     colors.unknown(() => undefined);
 
     const xValues = [...new Set(scalesData.map(getX))];
+    const xTimeRangeValues = [...new Set(timeRangeData.map(getX))];
     const xSorting = fields.x?.sorting;
     const xSorters = makeDimensionValueSorters(xDimension, {
       sorting: xSorting,
@@ -253,7 +254,7 @@ const useColumnsStackedState = (
       xSorters,
       getSortingOrders(xSorters, xSorting)
     );
-    const xDomainLabels = xDomain.map(getXLabel);
+    const xTimeRangeDomainLabels = xTimeRangeValues.map(getXLabel);
     const xScale = scaleBand()
       .domain(xDomain)
       .paddingInner(PADDING_INNER)
@@ -273,9 +274,9 @@ const useColumnsStackedState = (
     return {
       colors,
       xScale,
+      xTimeRangeDomainLabels,
       interactiveXTimeRangeScale,
       xScaleInteraction,
-      xDomainLabels,
     };
   }, [
     fields.segment,
@@ -377,7 +378,7 @@ const useColumnsStackedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels,
+    xTimeRangeDomainLabels,
     normalize
   );
   const margins = {

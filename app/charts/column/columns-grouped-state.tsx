@@ -167,7 +167,7 @@ const useColumnsGroupedState = (
   }, [chartData, getX, getY]);
 
   const {
-    xDomainLabels,
+    xTimeRangeDomainLabels,
     colors,
     yScale,
     allYScale,
@@ -201,6 +201,7 @@ const useColumnsGroupedState = (
     colors.unknown(() => undefined);
 
     const xValues = [...new Set(scalesData.map(getX))];
+    const xTimeRangeValues = [...new Set(timeRangeData.map(getX))];
     const xSorting = fields.x?.sorting;
     const xSorters = makeDimensionValueSorters(xDimension, {
       sorting: xSorting,
@@ -213,7 +214,7 @@ const useColumnsGroupedState = (
       xSorters,
       getSortingOrders(xSorters, xSorting)
     );
-    const xDomainLabels = xDomain.map(getXLabel);
+    const xTimeRangeDomainLabels = xTimeRangeValues.map(getXLabel);
     const xScale = scaleBand()
       .domain(xDomain)
       .paddingInner(PADDING_INNER)
@@ -266,7 +267,7 @@ const useColumnsGroupedState = (
       xScale,
       xScaleIn,
       xScaleInteraction,
-      xDomainLabels,
+      xTimeRangeDomainLabels,
     };
   }, [
     fields.segment,
@@ -324,7 +325,7 @@ const useColumnsGroupedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels
+    xTimeRangeDomainLabels
   );
   const margins = {
     top: 50,
