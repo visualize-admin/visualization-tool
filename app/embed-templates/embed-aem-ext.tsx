@@ -1,4 +1,4 @@
-import * as React from "react";
+import Head from "next/head";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { PUBLIC_URL } from "@/domain/env";
@@ -12,9 +12,9 @@ type Props = {
 
 const EmbedHTML = ({ locale, chartId, embedOptions }: Props) => (
   <html lang={locale}>
-    <head>
+    <Head>
       <meta name="viewport" content="width=device-width,initial-scale=1" />
-    </head>
+    </Head>
     <body style={{ padding: 0, margin: 0, background: "#fff" }}>
       <iframe
         title="chart"
