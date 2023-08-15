@@ -1766,11 +1766,8 @@ export const PublishedConfiguratorStateProvider = ({
   children,
   initialState,
 }: {
-  chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
-  allowDefaultRedirect?: boolean;
-  readonly?: boolean;
 }) => {
   const stateAndDispatch = useMemo(() => {
     return [
@@ -1784,6 +1781,7 @@ export const PublishedConfiguratorStateProvider = ({
       typeof ConfiguratorStateContext.Provider
     >["value"];
   }, [initialState]);
+
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
       {children}

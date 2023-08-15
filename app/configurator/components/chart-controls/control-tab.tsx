@@ -19,19 +19,12 @@ type ControlTabProps = {
   onClick: (x: string) => void;
   labelId: string | null;
   disabled?: boolean;
-  disabledMessage?: string;
+  warnMessage?: string;
 } & FieldProps;
 
 export const ControlTab = (props: ControlTabProps) => {
-  const {
-    component,
-    value,
-    onClick,
-    checked,
-    labelId,
-    disabled,
-    disabledMessage,
-  } = props;
+  const { component, value, onClick, checked, labelId, disabled, warnMessage } =
+    props;
   const handleClick = useEvent(() => onClick(value));
   const isActive = !!component;
 
@@ -54,7 +47,7 @@ export const ControlTab = (props: ControlTabProps) => {
           optional={!component}
           rightIcon={
             <Flex gap={2}>
-              {disabledMessage && <WarnIconTooltip title={disabledMessage} />}{" "}
+              {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
               <FieldEditIcon isActive={isActive} />
             </Flex>
           }

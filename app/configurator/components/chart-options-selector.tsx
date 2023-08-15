@@ -730,18 +730,18 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
 
 type ChartFieldCalculationProps = {
   disabled?: boolean;
-  disabledMessage?: string;
+  warnMessage?: string;
 };
 
 const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
-  const { disabled, disabledMessage } = props;
+  const { disabled, warnMessage } = props;
 
   return (
     <ControlSection collapse>
       <SubsectionTitle
         iconName="normalize"
         disabled={disabled}
-        warnMessage={disabledMessage}
+        warnMessage={warnMessage}
       >
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SubsectionTitle>
@@ -1210,7 +1210,7 @@ const ChartImputation = (props: ChartImputationProps) => {
     [dispatch]
   );
 
-  const activeImputationType: ImputationType = get(
+  const imputationType: ImputationType = get(
     state,
     ["chartConfig", "fields", "y", "imputationType"],
     "none"
@@ -1220,11 +1220,15 @@ const ChartImputation = (props: ChartImputationProps) => {
     <ControlSection collapse>
       <SubsectionTitle
         iconName="info"
-        warnMessage={t({
-          id: "controls.section.imputation.explanation",
-          message:
-            "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type.",
-        })}
+        warnMessage={
+          imputationType === "none"
+            ? t({
+                id: "controls.section.imputation.explanation",
+                message:
+                  "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type.",
+              })
+            : undefined
+        }
       >
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SubsectionTitle>
@@ -1236,7 +1240,7 @@ const ChartImputation = (props: ChartImputationProps) => {
             value: d,
             label: getImputationTypeLabel(d),
           }))}
-          value={activeImputationType}
+          value={imputationType}
           onChange={(e) => {
             updateImputationType(e.target.value as ImputationType);
           }}

@@ -82,11 +82,11 @@ type ControlTabFieldProps = {
   value: string;
   labelId: string | null;
   disabled?: boolean;
-  disabledMessage?: string;
+  warnMessage?: string;
 };
 
 export const ControlTabField = (props: ControlTabFieldProps) => {
-  const { component, value, labelId, disabled, disabledMessage } = props;
+  const { component, value, labelId, disabled, warnMessage } = props;
   const field = useActiveFieldField({ value });
 
   return (
@@ -97,7 +97,7 @@ export const ControlTabField = (props: ControlTabFieldProps) => {
       checked={field.checked}
       onClick={field.onClick}
       disabled={disabled}
-      disabledMessage={disabledMessage}
+      warnMessage={warnMessage}
     />
   );
 };
