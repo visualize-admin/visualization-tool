@@ -4,6 +4,7 @@ import {
   Collapse,
   Skeleton,
   Theme,
+  Tooltip,
   Typography,
   TypographyProps,
 } from "@mui/material";
@@ -21,6 +22,7 @@ import React, {
 
 import { Icon, IconName } from "@/icons";
 import SvgIcAdd from "@/icons/components/IcAdd";
+import SvgIcExclamation from "@/icons/components/IcExclamation";
 import SvgIcMinus from "@/icons/components/IcMinus";
 
 import useDisclosure from "../../../components/use-disclosure";
@@ -59,7 +61,6 @@ const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
       paddingBottom: theme.spacing(4),
       marginBottom: ({ gutterBottom }: SectionTitleStylesProps) =>
         gutterBottom ? 0 : -theme.spacing(2),
-      transition: "padding-bottom 300ms ease",
       border: "none",
       justifyContent: "flex-start",
       "&:hover": {
@@ -212,8 +213,8 @@ type TitleProps = {
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
+  warnMessage?: string;
   children: ReactNode;
-  right?: React.ReactNode;
   gutterBottom?: boolean;
   sx?: TypographyProps["sx"];
 };
@@ -225,8 +226,8 @@ const Title = (props: TitleProps) => {
     iconName,
     titleId,
     disabled,
+    warnMessage,
     children,
-    right,
     gutterBottom = true,
     sx,
   } = props;
@@ -254,7 +255,7 @@ const Title = (props: TitleProps) => {
         {isSection ? null : iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
-      {right}
+      {warnMessage && <Warning title={warnMessage} />}
       <span className={classes.icon}>
         {collapse ? (
           isOpen ? (
@@ -301,3 +302,19 @@ export const ControlSectionSkeleton = ({
     </ControlSectionContent>
   </ControlSection>
 );
+
+type WarningProps = {
+  title: string;
+};
+
+const Warning = (props: WarningProps) => {
+  const { title } = props;
+
+  return (
+    <Tooltip arrow title={title}>
+      <Typography color="warning.main" sx={{ mr: 2 }}>
+        <SvgIcExclamation width={18} height={18} />
+      </Typography>
+    </Tooltip>
+  );
+};

@@ -1247,12 +1247,28 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft,
           action.value.locale
         );
-        const dimensions = metadata?.dimensions || [];
+        const dimensions = metadata?.dimensions ?? [];
 
         draft.chartConfig = deriveFiltersFromFields(
           draft.chartConfig,
           dimensions
         );
+
+        if (
+          action.value.field === "segment" &&
+          draft.chartConfig.interactiveFiltersConfig
+        ) {
+          draft.chartConfig = {
+            ...draft.chartConfig,
+            interactiveFiltersConfig: {
+              ...draft.chartConfig.interactiveFiltersConfig,
+              calculation: {
+                active: false,
+                type: "identity",
+              },
+            },
+          };
+        }
       }
 
       return draft;
@@ -1750,11 +1766,8 @@ export const PublishedConfiguratorStateProvider = ({
   children,
   initialState,
 }: {
-  chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
-  allowDefaultRedirect?: boolean;
-  readonly?: boolean;
 }) => {
   const stateAndDispatch = useMemo(() => {
     return [
@@ -1768,6 +1781,7 @@ export const PublishedConfiguratorStateProvider = ({
       typeof ConfiguratorStateContext.Provider
     >["value"];
   }, [initialState]);
+
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
       {children}

@@ -163,12 +163,12 @@ const useAreasState = (
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
-        scalesData,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getXAsString(x)
       )
     );
-  }, [getXAsString, getY, scalesData]);
+  }, [chartData, getXAsString, getY]);
 
   const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {
@@ -234,7 +234,7 @@ const useAreasState = (
     );
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    if (segmentDimension && fields.segment?.colorMapping) {
       const orderedSegmentLabelsAndColors = allSegments.map((segment) => {
         const dvIri =
           segmentsByAbbreviationOrLabel.get(segment)?.value ??
@@ -262,7 +262,8 @@ const useAreasState = (
       interactiveXTimeRangeScale,
     };
   }, [
-    fields.segment,
+    fields.segment?.palette,
+    fields.segment?.colorMapping,
     getX,
     scalesData,
     timeRangeData,

@@ -1,15 +1,26 @@
 import { t } from "@lingui/macro";
+import { group } from "d3";
 
 import {
+  checkForMissingValuesInSegments,
+  getSegment,
+} from "@/charts/shared/chart-helpers";
+import {
+  AreaConfig,
   ChartConfig,
   ChartType,
+  ColumnConfig,
   ComponentType,
   SortingOrder,
   SortingType,
   getAnimationField,
   isSortingInConfig,
 } from "@/config-types";
-import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
+import {
+  Observation,
+  isTemporalDimension,
+  isTemporalOrdinalDimension,
+} from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 /**
@@ -26,9 +37,20 @@ export type EncodingFieldType =
   | XYEncodingFieldType;
 
 export type EncodingOption =
-  | { field: "chartSubType" }
-  | { field: "calculation" }
-  | { field: "color"; type: "palette" }
+  | {
+      field: "chartSubType";
+    }
+  | {
+      field: "calculation";
+      getDisabledState?: (chartConfig: ChartConfig) => {
+        disabled: boolean;
+        warnMessage?: string;
+      };
+    }
+  | {
+      field: "color";
+      type: "palette";
+    }
   | {
       field: "color";
       type: "component";
@@ -36,12 +58,26 @@ export type EncodingOption =
       componentTypes: ComponentType[];
       enableUseAbbreviations: boolean;
     }
-  | { field: "imputationType" }
-  | { field: "showStandardError" }
-  | { field: "sorting" }
-  | { field: "size"; componentTypes: ComponentType[]; optional: boolean }
-  | { field: "useAbbreviations" };
+  | EncodingOptionImputation
+  | {
+      field: "showStandardError";
+    }
+  | {
+      field: "sorting";
+    }
+  | {
+      field: "size";
+      componentTypes: ComponentType[];
+      optional: boolean;
+    }
+  | {
+      field: "useAbbreviations";
+    };
 
+export type EncodingOptionImputation = {
+  field: "imputation";
+  shouldShow: (chartConfig: ChartConfig, data: Observation[]) => boolean;
+};
 /**
  * @todo
  * - Differentiate sorting within chart vs. sorting legend / tooltip only
@@ -49,9 +85,9 @@ export type EncodingOption =
 export type EncodingSortingOption = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
-  getDisabledState?: (d: ChartConfig) => {
+  getDisabledState?: (chartConfig: ChartConfig) => {
     disabled: boolean;
-    disabledMessage?: string;
+    warnMessage?: string;
   };
 };
 
@@ -67,10 +103,11 @@ export interface EncodingSpec {
   options?: EncodingOption[];
   getDisabledState?: (
     chartConfig: ChartConfig,
-    dimensions: DimensionMetadataFragment[]
+    dimensions: DimensionMetadataFragment[],
+    observations: Observation[]
   ) => {
     disabled: boolean;
-    disabledMessage?: string;
+    warnMessage?: string;
   };
 }
 
@@ -117,14 +154,14 @@ export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
       chartConfig
     ): {
       disabled: boolean;
-      disabledMessage?: string;
+      warnMessage?: string;
     } => {
       const animationPresent = !!getAnimationField(chartConfig);
 
       if (animationPresent) {
         return {
           disabled: true,
-          disabledMessage: t({
+          warnMessage: t({
             id: "controls.sorting.byTotalSize.disabled-by-animation",
             message: "Sorting by total size is disabled during animation.",
           }),
@@ -163,7 +200,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
     dimensions
   ): {
     disabled: boolean;
-    disabledMessage?: string;
+    warnMessage?: string;
   } => {
     const noTemporalDimensions = !dimensions.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
@@ -172,7 +209,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
     if (noTemporalDimensions) {
       return {
         disabled: true,
-        disabledMessage: t({
+        warnMessage: t({
           id: "controls.section.animation.no-temporal-dimensions",
           message: "There is no dimension that can be animated.",
         }),
@@ -185,7 +222,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
     ) {
       return {
         disabled: true,
-        disabledMessage: t({
+        warnMessage: t({
           id: "controls.section.animation.disabled-by-sorting",
           message: "Animation is disabled when sorting by total size.",
         }),
@@ -196,6 +233,22 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
       disabled: false,
     };
   },
+};
+
+const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
+  const { fields } = chartConfig;
+  const grouped = group(
+    data.filter((d) => {
+      const y = d[fields.y.componentIri];
+      return y !== null && y !== undefined;
+    }),
+    (d) => d[fields.x.componentIri] as string
+  );
+  const segments = Array.from(
+    new Set(data.map((d) => getSegment(fields.segment?.componentIri)(d)))
+  );
+
+  return checkForMissingValuesInSegments(grouped, segments);
 };
 
 export const chartConfigOptionsUISpec: ChartSpecs = {
@@ -220,10 +273,34 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
+        getDisabledState: (_chartConfig, _, data) => {
+          const chartConfig = _chartConfig as AreaConfig;
+          const missingDataPresent = isMissingDataPresent(chartConfig, data);
+          const imputationType = chartConfig.fields.y.imputationType;
+          const disabled = false;
+          const warnMessage =
+            missingDataPresent && imputationType === "none"
+              ? t({
+                  id: "controls.section.imputation.explanation",
+                  message:
+                    "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type.",
+                })
+              : undefined;
+
+          return {
+            disabled,
+            warnMessage,
+          };
+        },
         options: [
           { field: "calculation" },
           { field: "color", type: "palette" },
-          { field: "imputationType" },
+          {
+            field: "imputation",
+            shouldShow: (chartConfig, data) => {
+              return isMissingDataPresent(chartConfig as AreaConfig, data);
+            },
+          },
           { field: "useAbbreviations" },
         ],
       },
@@ -267,7 +344,24 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
           { field: "chartSubType" },
-          { field: "calculation" },
+          {
+            field: "calculation",
+            getDisabledState: (d) => {
+              const grouped =
+                (d as ColumnConfig).fields.segment?.type === "grouped";
+
+              return {
+                disabled: grouped,
+                warnMessage: grouped
+                  ? t({
+                      id: "controls.calculation.disabled-by-grouped",
+                      message:
+                        "100% mode cannot be used with a grouped layout.",
+                    })
+                  : undefined,
+              };
+            },
+          },
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
         ],

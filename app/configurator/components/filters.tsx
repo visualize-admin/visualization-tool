@@ -50,7 +50,10 @@ import {
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
-import { ConfiguratorDrawer } from "@/configurator/components/drawer";
+import {
+  ConfiguratorDrawer,
+  DRAWER_WIDTH,
+} from "@/configurator/components/drawer";
 import {
   MultiFilterFieldColorPicker,
   SingleFilterField,
@@ -100,7 +103,7 @@ const useStyles = makeStyles((theme: Theme) => {
       "--mx": "1rem",
       "--colorBoxSize": "1.25rem",
       "--columnGap": "0.75rem",
-      width: 320,
+      width: DRAWER_WIDTH,
     },
     autocompleteHeader: {
       margin: "1rem var(--mx)",
@@ -363,16 +366,16 @@ const MultiFilterContent = ({
                 <Tooltip
                   enterDelay={600}
                   title={
-                    <span>
-                      <Trans id="controls.filters.interactive.tooltip">
-                        Allow users to change filters
-                      </Trans>
-                    </span>
+                    <Trans id="controls.filters.interactive.tooltip">
+                      Allow users to change filters
+                    </Trans>
                   }
                 >
-                  <Trans id="controls.filters.interactive.toggle">
-                    Interactive
-                  </Trans>
+                  <div>
+                    <Trans id="controls.filters.interactive.toggle">
+                      Interactive
+                    </Trans>
+                  </div>
                 </Tooltip>
               }
             />

@@ -203,6 +203,10 @@ msgstr "Vertikale Achse"
 msgid "controls.calculation.allow-normalization"
 msgstr "Ermöglicht die Normalisierung der Daten"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.calculation.disabled-by-grouped"
+msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
 msgstr "Normal"
@@ -344,6 +348,10 @@ msgstr "Alle auswählen"
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Benutzer können den Diagramm-Modus ändern"
 
 #: app/charts/shared/legend-color.tsx
 msgid "controls.filters.interactive.color.min-1-filter"
@@ -573,6 +581,7 @@ msgstr "Gruppierungen"
 msgid "controls.section.imputation"
 msgstr "Fehlende Werte"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."

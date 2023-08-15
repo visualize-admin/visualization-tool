@@ -162,12 +162,12 @@ const useColumnsStackedState = (
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
       rollup(
-        scalesData,
+        chartData,
         (v) => sum(v, (x) => getY(x)),
         (x) => getX(x)
       )
     );
-  }, [getX, getY, scalesData]);
+  }, [chartData, getX, getY]);
 
   const normalize = calculationType === "percent";
   const chartDataGroupedByX = useMemo(() => {
@@ -201,9 +201,9 @@ const useColumnsStackedState = (
   const {
     colors,
     xScale,
+    xTimeRangeDomainLabels,
     xScaleInteraction,
     interactiveXTimeRangeScale,
-    xDomainLabels,
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
@@ -241,6 +241,7 @@ const useColumnsStackedState = (
     colors.unknown(() => undefined);
 
     const xValues = [...new Set(scalesData.map(getX))];
+    const xTimeRangeValues = [...new Set(timeRangeData.map(getX))];
     const xSorting = fields.x?.sorting;
     const xSorters = makeDimensionValueSorters(xDimension, {
       sorting: xSorting,
@@ -253,7 +254,7 @@ const useColumnsStackedState = (
       xSorters,
       getSortingOrders(xSorters, xSorting)
     );
-    const xDomainLabels = xDomain.map(getXLabel);
+    const xTimeRangeDomainLabels = xTimeRangeValues.map(getXLabel);
     const xScale = scaleBand()
       .domain(xDomain)
       .paddingInner(PADDING_INNER)
@@ -273,9 +274,9 @@ const useColumnsStackedState = (
     return {
       colors,
       xScale,
+      xTimeRangeDomainLabels,
       interactiveXTimeRangeScale,
       xScaleInteraction,
-      xDomainLabels,
     };
   }, [
     fields.segment,
@@ -294,16 +295,34 @@ const useColumnsStackedState = (
     allSegments,
   ]);
 
+  const animationIri = fields.animation?.componentIri;
+  const getAnimation = React.useCallback(
+    (d: Observation) => {
+      return animationIri ? (d[animationIri] as string) : "";
+    },
+    [animationIri]
+  );
+
   const yScale = useMemo(() => {
-    return getStackedYScale(scalesData, { normalize, getX, getY });
-  }, [scalesData, normalize, getX, getY]);
+    return getStackedYScale(scalesData, {
+      normalize,
+      getX,
+      getY,
+      getTime: getAnimation,
+    });
+  }, [scalesData, normalize, getX, getY, getAnimation]);
 
   const allYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the yScale domain, so that the yScale doesn't
     // change when the user toggles between absolute and relative values.
     if (interactiveFiltersConfig?.calculation.active) {
-      const scale = getStackedYScale(allData, { normalize: false, getX, getY });
+      const scale = getStackedYScale(allData, {
+        normalize: false,
+        getX,
+        getY,
+        getTime: getAnimation,
+      });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
         return scaleLinear().domain([0, 100]);
@@ -312,13 +331,19 @@ const useColumnsStackedState = (
       return scale;
     }
 
-    return getStackedYScale(allData, { normalize, getX, getY });
+    return getStackedYScale(allData, {
+      normalize,
+      getX,
+      getY,
+      getTime: getAnimation,
+    });
   }, [
+    interactiveFiltersConfig?.calculation.active,
     allData,
+    normalize,
     getX,
     getY,
-    interactiveFiltersConfig?.calculation.active,
-    normalize,
+    getAnimation,
   ]);
 
   // stack order
@@ -353,7 +378,7 @@ const useColumnsStackedState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    xDomainLabels,
+    xTimeRangeDomainLabels,
     normalize
   );
   const margins = {

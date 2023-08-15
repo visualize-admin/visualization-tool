@@ -1,5 +1,10 @@
 import { t } from "@lingui/macro";
-import { CircularProgress, Theme, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  FormControlLabel,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject, extent, timeFormat, timeParse } from "d3";
 import get from "lodash/get";
@@ -82,11 +87,11 @@ type ControlTabFieldProps = {
   value: string;
   labelId: string | null;
   disabled?: boolean;
-  disabledMessage?: string;
+  warnMessage?: string;
 };
 
 export const ControlTabField = (props: ControlTabFieldProps) => {
-  const { component, value, labelId, disabled, disabledMessage } = props;
+  const { component, value, labelId, disabled, warnMessage } = props;
   const field = useActiveFieldField({ value });
 
   return (
@@ -97,7 +102,7 @@ export const ControlTabField = (props: ControlTabFieldProps) => {
       checked={field.checked}
       onClick={field.onClick}
       disabled={disabled}
-      disabledMessage={disabledMessage}
+      warnMessage={warnMessage}
     />
   );
 };
@@ -913,7 +918,7 @@ export const ChartOptionSwitchField = ({
   defaultValue = false,
   disabled = false,
 }: {
-  label: string;
+  label: React.ComponentProps<typeof FormControlLabel>["label"];
   field: string | null;
   path: string;
   defaultValue?: boolean;

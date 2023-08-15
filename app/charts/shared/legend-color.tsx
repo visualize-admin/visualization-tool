@@ -119,7 +119,7 @@ const useDimension = ({
       dimensionIri: dimensionIri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      locale: locale,
+      locale,
     },
     pause: !dimensionIri,
   });
@@ -165,8 +165,8 @@ const useLegendGroups = ({
   const { dataSet: dataset, dataSource } = configState;
   const segmentDimension = useDimension({
     dataset,
-    dataSource: dataSource,
-    locale: locale,
+    dataSource,
+    locale,
     dimensionIri: segmentField?.componentIri,
   });
 
@@ -176,7 +176,7 @@ const useLegendGroups = ({
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      locale: locale,
+      locale,
     },
     pause: !segmentDimension?.iri,
   });

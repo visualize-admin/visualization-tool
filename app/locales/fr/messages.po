@@ -203,6 +203,10 @@ msgstr "Axe vertical"
 msgid "controls.calculation.allow-normalization"
 msgstr "Permettre la normalisation des données"
 
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.calculation.disabled-by-grouped"
+msgstr "Le mode 100% ne peut pas être utilisé avec une mise en page groupée."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
 msgstr "Normal"
@@ -344,6 +348,10 @@ msgstr "Tout sélectionner"
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.select.none"
 msgstr "Tout déselectionner"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Permettre aux utilisateurs de changer de mode graphique"
 
 #: app/charts/shared/legend-color.tsx
 msgid "controls.filters.interactive.color.min-1-filter"
@@ -573,6 +581,7 @@ msgstr "Groupes"
 msgid "controls.section.imputation"
 msgstr "Valeurs manquantes"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."

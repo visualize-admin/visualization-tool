@@ -35,19 +35,6 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
 
       "& > button": {
         minWidth: "auto",
-
-        // Separator between flex elements, the trick to have them not displayed
-        // for each line leftmost element is to have them negatively positioned
-        // cut by the overflow hidden
-        "&:before": {
-          content: '" "',
-          display: "block",
-          height: "3px",
-          width: "3px",
-          borderRadius: "3px",
-          left: "calc(-1 * var(--column-gap) / 2)",
-          backgroundColor: theme.palette.grey[600],
-        },
       },
     },
   })

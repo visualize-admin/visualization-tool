@@ -254,7 +254,6 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             flexGrow={1}
           >
             <PublishedConfiguratorStateProvider
-              chartId={configKey}
               initialState={publishedConfiguratorState}
             >
               {isTablePreview ? (
@@ -323,14 +322,10 @@ const ChartWithInteractiveFilters = React.forwardRef(
     }, [setTimeRange, presetFromStr, presetToStr]);
 
     useEffect(() => {
-      if (interactiveFiltersConfig?.calculation.active) {
+      if (interactiveFiltersConfig?.calculation.type) {
         setCalculationType(interactiveFiltersConfig?.calculation.type);
       }
-    }, [
-      interactiveFiltersConfig?.calculation.active,
-      interactiveFiltersConfig?.calculation.type,
-      setCalculationType,
-    ]);
+    }, [interactiveFiltersConfig?.calculation.type, setCalculationType]);
 
     return (
       <Flex

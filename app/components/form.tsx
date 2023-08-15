@@ -645,7 +645,7 @@ export const Switch = ({
           onChange={onChange}
         />
       }
-      sx={{ fontSize: "0.875rem", ...sx }}
+      sx={{ width: "fit-content", fontSize: "0.875rem", ...sx }}
     />
   );
 };

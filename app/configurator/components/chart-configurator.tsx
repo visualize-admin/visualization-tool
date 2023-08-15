@@ -30,12 +30,14 @@ import {
 import { useClient } from "urql";
 
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import useDisclosure from "@/components/use-disclosure";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  DataSource,
   isMapConfig,
 } from "@/configurator";
 import {
@@ -69,6 +71,7 @@ import {
   PossibleFiltersQueryVariables,
   useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
+  useDataCubeObservationsQuery,
   useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
 import {
@@ -309,15 +312,11 @@ const useFilterReorder = ({
   ]);
 
   const [{ data: metadata, fetching: metadataFetching }, executeMetadataQuery] =
-    useDataCubeMetadataQuery({
-      variables: variables,
-    });
+    useDataCubeMetadataQuery({ variables });
   const [
     { data: components, fetching: componentsFetching },
     exectueComponentsQuery,
-  ] = useComponentsWithHierarchiesQuery({
-    variables: variables,
-  });
+  ] = useComponentsWithHierarchiesQuery({ variables });
 
   useEffect(() => {
     executeMetadataQuery({
@@ -340,7 +339,7 @@ const useFilterReorder = ({
   }, [components?.dataCubeByIri?.dimensions]);
 
   const data =
-    metadata && components
+    metadata?.dataCubeByIri && components?.dataCubeByIri
       ? ({
           ...metadata.dataCubeByIri,
           ...components.dataCubeByIri,
@@ -616,7 +615,11 @@ export const ChartConfigurator = ({
           role="tablist"
           aria-labelledby="controls-design"
         >
-          <ChartFields chartConfig={state.chartConfig} metaData={data} />
+          <ChartFields
+            dataSource={state.dataSource}
+            chartConfig={state.chartConfig}
+            metadata={data}
+          />
         </ControlSectionContent>
       </ControlSection>
       {filterDimensions.length === 0 &&
@@ -760,15 +763,30 @@ export const ChartConfigurator = ({
 };
 
 type ChartFieldsProps = {
+  dataSource: DataSource;
   chartConfig: ChartConfig;
-  metaData: DataCubeMetadata;
+  metadata: DataCubeMetadata;
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { chartConfig, metaData } = props;
+  const { dataSource, chartConfig, metadata } = props;
   const { chartType } = chartConfig;
-  const { dimensions, measures } = metaData;
+  const { dimensions, measures } = metadata;
   const components = [...dimensions, ...measures];
+  const queryFilters = useQueryFilters({ chartConfig });
+  const locale = useLocale();
+
+  const [{ data: observationsData }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: metadata.iri,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      componentIris: components.map((d) => d.iri),
+      filters: queryFilters,
+    },
+  });
+  const observations = observationsData?.dataCubeByIri?.observations.data ?? [];
 
   return (
     <>
@@ -799,7 +817,7 @@ const ChartFields = (props: ChartFieldsProps) => {
             }
             value={field}
             labelId={`${chartConfig.chartType}.${field}`}
-            {...getDisabledState?.(chartConfig, dimensions)}
+            {...getDisabledState?.(chartConfig, dimensions, observations)}
           />
         );
       })}

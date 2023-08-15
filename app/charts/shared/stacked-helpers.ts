@@ -1,4 +1,4 @@
-import { NumberValue, ScaleLinear, group, min, scaleLinear, sum } from "d3";
+import { NumberValue, ScaleLinear, group, scaleLinear, sum } from "d3";
 
 import {
   NumericalValueGetter,
@@ -11,35 +11,28 @@ import { NumericalMeasure } from "@/graphql/resolver-types";
 const NORMALIZED_Y_DOMAIN = [0, 100];
 
 export const getStackedYScale = (
-  scalesData: Observation[],
+  data: Observation[],
   options: {
     normalize: boolean;
     getX: StringValueGetter;
     getY: NumericalValueGetter;
+    getTime?: StringValueGetter;
   }
 ): ScaleLinear<number, number> => {
-  const { normalize, getX, getY } = options;
+  const { normalize, getX, getY, getTime } = options;
   const yScale = scaleLinear();
 
   if (normalize) {
     yScale.domain(NORMALIZED_Y_DOMAIN);
   } else {
-    const grouped = group(scalesData, getX);
+    const grouped = group(data, (d) => getX(d) + getTime?.(d));
     let yMin = 0;
     let yMax = 0;
 
     for (const [, v] of grouped) {
       const values = v.map(getY).filter((d) => d !== null) as number[];
-      const newYMin =
-        min(
-          values.filter((d) => d < 0),
-          (d) => d
-        ) ?? 0;
-      const newYMax =
-        sum(
-          values.filter((d) => d >= 0),
-          (d) => d
-        ) ?? 0;
+      const newYMin = sum(values.filter((d) => d < 0));
+      const newYMax = sum(values.filter((d) => d >= 0));
 
       if (yMin === undefined || newYMin < yMin) {
         yMin = newYMin;

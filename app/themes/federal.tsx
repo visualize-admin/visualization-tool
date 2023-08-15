@@ -47,8 +47,8 @@ export const theme = createTheme({
     secondary: {
       main: "#757575",
       hover: "#616161",
-      active: "#454545",
-      disabled: "#a6a6a6",
+      active: "#4F4F4F",
+      disabled: "#A5A5A5",
     },
     success: {
       main: "#3c763d",
@@ -669,7 +669,7 @@ theme.components = {
         "& .MuiSwitch-track": {
           borderRadius: 16 / 2,
           opacity: 1,
-          backgroundColor: "#4F4F4F",
+          backgroundColor: theme.palette.secondary.active,
           border: `1px solid ${theme.palette.divider}`,
           boxSizing: "border-box",
         },
