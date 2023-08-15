@@ -370,9 +370,11 @@ const MultiFilterContent = ({
                     </span>
                   }
                 >
-                  <Trans id="controls.filters.interactive.toggle">
-                    Interactive
-                  </Trans>
+                  <div>
+                    <Trans id="controls.filters.interactive.toggle">
+                      Interactive
+                    </Trans>
+                  </div>
                 </Tooltip>
               }
             />
