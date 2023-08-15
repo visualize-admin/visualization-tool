@@ -33,7 +33,7 @@ const computeChartPadding = (
 
   let bottom = interactiveFiltersConfig?.timeRange.active
     ? BRUSH_BOTTOM_SPACE
-    : 30;
+    : 40;
 
   if (bandDomain?.length) {
     bottom += max(bandDomain, (d) => estimateTextWidth(d)) ?? 70;
