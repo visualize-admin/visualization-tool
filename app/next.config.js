@@ -95,7 +95,9 @@ module.exports = withPreconstruct(
           "mapbox-gl": "maplibre-gl",
         };
         // For some reason these need to be ignored for serverless target
-        config.plugins.push(new IgnorePlugin(/^(pg-native|vue)$/));
+        config.plugins.push(
+          new IgnorePlugin({ resourceRegExp: /^(pg-native|vue)$/ })
+        );
 
         return config;
       },
