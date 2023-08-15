@@ -1,5 +1,10 @@
 import { t } from "@lingui/macro";
-import { CircularProgress, Theme, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  FormControlLabel,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject, extent, timeFormat, timeParse } from "d3";
 import get from "lodash/get";
@@ -913,7 +918,7 @@ export const ChartOptionSwitchField = ({
   defaultValue = false,
   disabled = false,
 }: {
-  label: string;
+  label: React.ComponentProps<typeof FormControlLabel>["label"];
   field: string | null;
   path: string;
   defaultValue?: boolean;

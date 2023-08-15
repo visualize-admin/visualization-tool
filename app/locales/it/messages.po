@@ -349,6 +349,10 @@ msgstr "Seleziona tutti"
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Consentire agli utenti di cambiare la modalità del grafico"
+
 #: app/charts/shared/legend-color.tsx
 msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "È necessario selezionare almeno un filtro."
@@ -577,6 +581,7 @@ msgstr "Gruppi"
 msgid "controls.section.imputation"
 msgstr "Valori mancanti"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere assegnati ai valori mancanti. Decidi la logica di imputazione o passa a un altro tipo di grafico."

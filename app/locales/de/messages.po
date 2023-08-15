@@ -349,6 +349,10 @@ msgstr "Alle auswählen"
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Benutzer können den Diagramm-Modus ändern"
+
 #: app/charts/shared/legend-color.tsx
 msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "Es muss mindestens ein Filter ausgewählt werden."
@@ -577,6 +581,7 @@ msgstr "Gruppierungen"
 msgid "controls.section.imputation"
 msgstr "Fehlende Werte"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."

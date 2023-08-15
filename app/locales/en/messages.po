@@ -349,6 +349,10 @@ msgstr "Select all"
 msgid "controls.filter.select.none"
 msgstr "Select none"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Allow users to change chart mode"
+
 #: app/charts/shared/legend-color.tsx
 msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "At least one filter must be selected."
@@ -577,6 +581,7 @@ msgstr "Groups"
 msgid "controls.section.imputation"
 msgstr "Missing values"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type."

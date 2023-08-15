@@ -763,10 +763,22 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
           />
         </Flex>
         <ChartOptionSwitchField
-          label={t({
-            id: "controls.calculation.allow-normalization",
-            message: "Allow normalization of the data",
-          })}
+          label={
+            <Tooltip
+              enterDelay={600}
+              title={
+                <Trans id="controls.filters.interactive.calculation">
+                  Allow users to change chart mode
+                </Trans>
+              }
+            >
+              <div>
+                <Trans id="controls.filters.interactive.toggle">
+                  Interactive
+                </Trans>
+              </div>
+            </Tooltip>
+          }
           field={null}
           path="interactiveFiltersConfig.calculation.active"
           disabled={disabled}
