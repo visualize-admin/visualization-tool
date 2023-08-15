@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.21.0] - 2023-08-15
+
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
   - It's now possible to normalize the data in Stacked Column Chart and Stacked Area Chart either in a static mode, or as an interactive filter 📊
