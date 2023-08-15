@@ -38,11 +38,13 @@ export const renderAreas = (
       (update) =>
         maybeTransition(update, {
           transition,
-          s: (g) => g.attr("d", (d) => d.d),
+          s: (g) => g.attr("d", (d) => d.d).attr("fill", (d) => d.color),
           t: (g) =>
-            g.attrTween("d", function (d) {
-              return interpolatePath(select(this).attr("d"), d.d);
-            }),
+            g
+              .attrTween("d", function (d) {
+                return interpolatePath(select(this).attr("d"), d.d);
+              })
+              .attr("fill", (d) => d.color),
         }),
       (exit) =>
         maybeTransition(exit, {
