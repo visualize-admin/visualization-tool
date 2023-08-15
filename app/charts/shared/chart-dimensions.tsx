@@ -1,6 +1,7 @@
 import { max } from "d3";
 import { useMemo } from "react";
 
+import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { Bounds, Margins } from "@/charts/shared/use-width";
@@ -27,7 +28,7 @@ const computeChartPadding = (
       ? estimateTextWidth("100%")
       : 0;
   const left = Math.max(
-    ...fakeTicks.map((x) => estimateTextWidth(formatNumber(x))),
+    ...fakeTicks.map((x) => estimateTextWidth(formatNumber(x)) + TICK_PADDING),
     minLeftTickWidth
   );
 
