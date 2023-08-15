@@ -254,7 +254,6 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             flexGrow={1}
           >
             <PublishedConfiguratorStateProvider
-              chartId={configKey}
               initialState={publishedConfiguratorState}
             >
               {isTablePreview ? (
