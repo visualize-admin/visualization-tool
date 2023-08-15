@@ -24,6 +24,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Animation field has been moved to its own category (Animations)
   - Animations can now be run in dynamic-scales mode
   - Overall UI has been slightly adjusted to better match the design. It's now possible to collapse sections inside the field editor panel
+  - Call to action to fix broken area charts (missing data imputation) is now more visible
 - Fixes
   - Server-side filtering of large dimensions (more than 100 filter values) now works for versioned dimensions
   - Scales now adapt to color legend filter when using time slider
