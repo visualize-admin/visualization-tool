@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Vertical axis' ticks aren't cut anymore when they have low values (from 0 to 99)
+- Maintenance
+  - Updated Node.js to v18
 
 # [3.21.0] - 2023-08-15
 
