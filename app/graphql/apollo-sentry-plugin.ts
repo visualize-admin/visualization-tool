@@ -19,7 +19,7 @@ const getDataCubeIri = (req: GraphQLRequest) => {
   }
 };
 
-const plugin: ApolloServerPlugin = {
+export const SentryPlugin: ApolloServerPlugin = {
   requestDidStart({ request }) {
     const transaction = Sentry.startTransaction({
       op: "gql",
@@ -38,29 +38,27 @@ const plugin: ApolloServerPlugin = {
     if (request.variables?.sourceUrl) {
       transaction.setTag("visualize.sourceUrl", request.variables.sourceUrl);
     }
-    return {
+
+    return Promise.resolve({
       willSendResponse() {
         // hook for transaction finished
         transaction.finish();
+        return Promise.resolve();
       },
       executionDidStart() {
-        return {
+        return Promise.resolve({
           willResolveField({ info }) {
             // hook for each new resolver
             const description = `${info.parentType.name}.${info.fieldName}`;
             const span = transaction.startChild({
               op: "resolver",
-              description: `${description}`,
+              description,
             });
-            return () => {
-              // this will execute once the resolver is finished
-              span.finish();
-            };
+
+            return span.finish();
           },
-        };
+        });
       },
-    };
+    });
   },
 };
-
-export default plugin;

@@ -13,6 +13,7 @@
     "build": "yarn workspace @visualize-admin/visualization-tool run build"
   },
   "dependencies": {
+    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.1",
     "@babel/standalone": "^7.11.6",
     "@date-io/date-fns": "^2.13.1",
     "@deck.gl/carto": "^8.9.19",
@@ -51,7 +52,7 @@
     "@visx/text": "^2.12.2",
     "@visx/zoom": "^2.10.0",
     "@zazuko/cube-hierarchy-query": "^2.0.0",
-    "apollo-server-micro": "^2.25.2",
+    "apollo-server-micro": "^3.0.0",
     "autosuggest-highlight": "^3.3.4",
     "catalog": "^4.0.1-canary.2",
     "clipboard-polyfill": "^3.0.1",
@@ -86,6 +87,7 @@
     "make-plural": "6.2.2",
     "maplibre-gl": "^2.1.6",
     "material-ui-popup-state": "^2.0.0",
+    "micro": "^9.3.4",
     "micro-cors": "^0.1.1",
     "mitt": "^3.0.0",
     "nanoid": "^3.1.12",
