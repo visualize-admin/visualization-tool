@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Vertical axis' ticks aren't cut anymore when they have low values (from 0 to 99)
 
 # [3.21.0] - 2023-08-15
 
