@@ -21,6 +21,8 @@ import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { estimateTextWidth } from "@/utils/estimate-text-width";
 
+export const TICK_PADDING = 6;
+
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
@@ -62,7 +64,7 @@ export const AxisHeightLinear = () => {
         .ticks(ticks)
         .tickSizeInner(-bounds.chartWidth)
         .tickFormat(tickFormat)
-        .tickPadding(6);
+        .tickPadding(TICK_PADDING);
       const g = renderContainer(ref.current, {
         id: "axis-height-linear",
         transform: `translate(${margins.left} ${margins.top})`,
