@@ -1,4 +1,4 @@
-import { Typography, Button, Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
