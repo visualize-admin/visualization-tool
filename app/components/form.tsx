@@ -276,6 +276,7 @@ const LoadingMenuPaperContext = React.createContext(
 const LoadingMenuPaper = forwardRef<HTMLDivElement>(
   (props: PaperProps, ref) => {
     const loading = useContext(LoadingMenuPaperContext);
+
     return (
       <MenuPaper {...props} ref={ref}>
         {loading ? (
@@ -323,7 +324,6 @@ export const Select = ({
   loading?: boolean;
 } & SelectProps) => {
   const locale = useLocale();
-
   const sortedOptions = useMemo(() => {
     if (optionGroups) {
       return flatten(
@@ -370,6 +370,7 @@ export const Select = ({
             if (!opt.value) {
               return null;
             }
+
             return opt.type === "group" ? (
               <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
             ) : (
