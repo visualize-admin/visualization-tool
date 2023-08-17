@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- UI
+  - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
 

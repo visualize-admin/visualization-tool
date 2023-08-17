@@ -19,7 +19,7 @@ import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 
 export const TICK_PADDING = 6;
 
@@ -56,7 +56,9 @@ export const AxisHeightLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
-  const titleWidth = estimateTextWidth(yAxisLabel, axisLabelFontSize);
+  const titleWidth = getTextWidth(yAxisLabel, {
+    fontSize: axisLabelFontSize,
+  });
 
   useEffect(() => {
     if (ref.current) {

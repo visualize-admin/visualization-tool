@@ -4,9 +4,10 @@ import { useMemo } from "react";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
+import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { Bounds, Margins } from "@/charts/shared/use-width";
 import { ChartConfig } from "@/configurator";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
   allYScale: d3.ScaleLinear<number, number>;
@@ -38,10 +39,14 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   const fakeTicks = allYScale.ticks(getTickNumber(width * aspectRatio));
   const minLeftTickWidth =
     !!interactiveFiltersConfig?.calculation.active || normalize
-      ? estimateTextWidth("100%")
+      ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE })
       : 0;
   const left = Math.max(
-    ...fakeTicks.map((x) => estimateTextWidth(formatNumber(x)) + TICK_PADDING),
+    ...fakeTicks.map(
+      (x) =>
+        getTextWidth(formatNumber(x), { fontSize: TICK_FONT_SIZE }) +
+        TICK_PADDING
+    ),
     minLeftTickWidth
   );
 
@@ -51,7 +56,9 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
       : 40;
 
   if (bandDomain?.length) {
-    bottom += max(bandDomain, (d) => estimateTextWidth(d)) ?? 70;
+    bottom +=
+      max(bandDomain, (d) => getTextWidth(d, { fontSize: TICK_FONT_SIZE })) ??
+      70;
   }
 
   return { left, bottom };
