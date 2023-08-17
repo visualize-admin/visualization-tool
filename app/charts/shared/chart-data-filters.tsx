@@ -60,6 +60,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             sx={{
               justifyContent: "space-between",
               alignItems: "flex-start",
+              gap: 3,
               minHeight: 20,
             }}
           >
