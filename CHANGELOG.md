@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Introduced preferred chart type order, which makes the table chart the least preferred option
 - UI
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
 - Fixes

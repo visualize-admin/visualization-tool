@@ -65,8 +65,7 @@ import {
   PIE_SEGMENT_SORTING,
 } from "./chart-config-ui-options";
 
-export const enabledChartTypes: ChartType[] = [
-  // "bar",
+export const chartTypes: ChartType[] = [
   "column",
   "line",
   "area",
@@ -75,6 +74,16 @@ export const enabledChartTypes: ChartType[] = [
   "table",
   "map",
 ];
+
+export const chartTypesOrder: { [k in ChartType]: number } = {
+  column: 0,
+  line: 1,
+  area: 2,
+  scatterplot: 3,
+  pie: 4,
+  map: 5,
+  table: 6,
+};
 
 /**
  * Finds the "best" dimension based on a preferred type (e.g. TemporalDimension) and Key Dimension
@@ -1196,7 +1205,7 @@ export const getPossibleChartType = ({
   const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
   const timeEnabled: ChartType[] = ["area", "column", "line"];
 
-  let possibles: ChartType[] = ["table"];
+  const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
     if (categoricalDimensions.length > 0) {
       possibles.push(...categoricalEnabled);
@@ -1219,7 +1228,9 @@ export const getPossibleChartType = ({
     possibles.push("map");
   }
 
-  return enabledChartTypes.filter((type) => possibles.includes(type));
+  return chartTypes
+    .filter((d) => possibles.includes(d))
+    .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
 export const getFieldComponentIris = (fields: GenericFields) => {
