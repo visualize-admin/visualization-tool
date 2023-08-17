@@ -372,15 +372,16 @@ const useColumnsStackedState = (
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
-  const { left, bottom } = useChartPadding(
+  const { left, bottom } = useChartPadding({
     allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
+    animationPresent: !!fields.animation,
     formatNumber,
-    xTimeRangeDomainLabels,
-    normalize
-  );
+    bandDomain: xTimeRangeDomainLabels,
+    normalize,
+  });
   const margins = {
     top: 50,
     right: 40,

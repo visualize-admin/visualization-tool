@@ -194,13 +194,13 @@ const useLinesState = (
   }
 
   // Dimensions
-  const { left, bottom } = useChartPadding(
+  const { left, bottom } = useChartPadding({
     allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
-    formatNumber
-  );
+    formatNumber,
+  });
   const margins = {
     top: 50,
     right: 40,
