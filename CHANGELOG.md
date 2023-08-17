@@ -9,7 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- UI
+  - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
+- Maintenance
+  - Correctly aligned Sentry environments with deployment environments, which will result in better performance monitoring (`vercel`, `test`, `int`, `prod`)
 
 # [3.21.0] - 2023-08-15
 
