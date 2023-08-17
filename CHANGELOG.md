@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
 
 # [3.21.0] - 2023-08-15
 
