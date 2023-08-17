@@ -20,7 +20,7 @@ import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 
 // Brush constants
 export const HANDLE_HEIGHT = 14;
@@ -61,10 +61,9 @@ export const BrushTime = () => {
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
-    estimateTextWidth(
-      formatDateAuto(interactiveXTimeRangeScale.domain()[0]),
-      labelFontSize
-    ) *
+    getTextWidth(formatDateAuto(interactiveXTimeRangeScale.domain()[0]), {
+      fontSize: labelFontSize,
+    }) *
       2 +
     20;
   const brushWidth = width - brushLabelsWidth - margins.right;

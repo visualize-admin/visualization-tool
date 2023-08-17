@@ -309,15 +309,14 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
-  const { left, bottom } = useChartPadding(
+  const { left, bottom } = useChartPadding({
     allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
-    undefined,
-    normalize
-  );
+    normalize,
+  });
   const margins = {
     top: 50,
     right: 40,
