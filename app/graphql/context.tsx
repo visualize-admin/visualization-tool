@@ -6,6 +6,7 @@ import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
 import { createSource } from "@/rdf/create-source";
@@ -21,12 +22,11 @@ import { createGeoShapesLoader } from "../rdf/query-geo-shapes";
 
 import { RequestQueryMeta } from "./query-meta";
 
-const MAX_BATCH_SIZE = 500;
+export const MAX_BATCH_SIZE = 500;
 
 export const getRawCube = async (sourceUrl: string, iri: string) => {
   const source = createSource({ endpointUrl: sourceUrl });
-  const cube = await source.cube(iri);
-  return cube;
+  return await source.cube(iri);
 };
 
 // const cachedGetRawCube = cachedWithTTL(
@@ -51,6 +51,7 @@ const createCubeLoader = (sourceUrl: string) => {
 const createLoaders = async (
   locale: string,
   sparqlClient: ParsingClient,
+  geoSparqlClient: ParsingClient,
   sourceUrl: string,
   cache: LRUCache | undefined
 ) => {
@@ -67,9 +68,12 @@ const createLoaders = async (
       createGeoCoordinatesLoader({ locale, sparqlClient }),
       { maxBatchSize: MAX_BATCH_SIZE * 0.5 }
     ),
-    geoShapes: new DataLoader(createGeoShapesLoader({ locale, sparqlClient }), {
-      maxBatchSize: MAX_BATCH_SIZE,
-    }),
+    geoShapes: new DataLoader(
+      createGeoShapesLoader({ locale, sparqlClient, geoSparqlClient }),
+      {
+        maxBatchSize: MAX_BATCH_SIZE * 0.5,
+      }
+    ),
     themes: new DataLoader(createThemeLoader({ locale, sparqlClient })),
     organizations: new DataLoader(
       createOrganizationLoader({ locale, sparqlClient })
@@ -89,6 +93,11 @@ const setupSparqlClients = (
   const sparqlClientStream = new StreamClient({
     endpointUrl: sourceUrl,
   });
+  const geoSparqlClient = new ParsingClient({
+    // Geo endpoint is not stored separately in chart config, so we can use the
+    // SPARQL_GEO_ENDPOINT env variable here.
+    endpointUrl: SPARQL_GEO_ENDPOINT,
+  });
 
   const saveTimingToContext: TimingCallback = (t, ...args: [string]) => {
     ctx.queries.push({
@@ -103,7 +112,12 @@ const setupSparqlClients = (
     saveTimingToContext
   );
 
-  return { sparqlClient, sparqlClientStream };
+  geoSparqlClient.query.select = timed(
+    geoSparqlClient.query.select,
+    saveTimingToContext
+  );
+
+  return { sparqlClient, sparqlClientStream, geoSparqlClient };
 };
 
 const sparqlCache = new LRUCache({
@@ -130,15 +144,13 @@ const createContextContent = async ({
   ctx: VisualizeGraphQLContext;
   req: IncomingMessage;
 }) => {
-  const { sparqlClient, sparqlClientStream } = setupSparqlClients(
-    ctx,
-    sourceUrl
-  );
-
+  const { sparqlClient, sparqlClientStream, geoSparqlClient } =
+    setupSparqlClients(ctx, sourceUrl);
   const contextCache = shouldUseServerSideCache(req) ? sparqlCache : undefined;
   const loaders = await createLoaders(
     locale,
     sparqlClient,
+    geoSparqlClient,
     sourceUrl,
     contextCache
   );
@@ -174,8 +186,8 @@ export const createContext = ({ req }: { req: IncomingMessage }) => {
     }: GraphQLResolveInfo) => {
       setupping =
         setupping || createContextContent({ locale, sourceUrl, ctx, req });
-      const res = await setupping;
-      return res;
+
+      return await setupping;
     },
   };
 

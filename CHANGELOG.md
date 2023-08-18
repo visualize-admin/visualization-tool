@@ -15,6 +15,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
+- Performance
+  - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 
 # [3.21.0] - 2023-08-15
 

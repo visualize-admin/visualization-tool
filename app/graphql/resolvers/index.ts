@@ -263,6 +263,7 @@ export const resolvers: Resolvers = {
           } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
         }) as GeoShapes["topology"],
       };
+
       return resolved;
     },
   },
