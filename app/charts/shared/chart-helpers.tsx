@@ -46,17 +46,17 @@ export const prepareQueryFilters = (
   interactiveFiltersConfig: InteractiveFiltersConfig,
   dataFilters: InteractiveFiltersState["dataFilters"]
 ): Filters => {
-  let queryFilters = filters;
+  const queryFilters = { ...filters };
 
   if (chartType !== "table" && interactiveFiltersConfig?.dataFilters.active) {
-    queryFilters = { ...queryFilters, ...dataFilters };
+    for (const [k, v] of Object.entries(dataFilters)) {
+      queryFilters[k] = v;
+    }
   }
 
-  queryFilters = omitBy(queryFilters, (v) => {
+  return omitBy(queryFilters, (v) => {
     return v.type === "single" && v.value === FIELD_VALUE_NONE;
   });
-
-  return queryFilters;
 };
 
 export const useQueryFilters = ({
