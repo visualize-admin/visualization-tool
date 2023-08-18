@@ -102,8 +102,8 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
   async (_, { iri, filters }, { setup }, info) => {
     const { sparqlClient, loaders, cache } = await setup(info);
-
     const cube = await loaders.cube.load(iri);
+
     if (!cube) {
       return [];
     }
@@ -288,17 +288,20 @@ const getDimensionValuesLoader = (
 ): DataLoader<any, any> => {
   let loader: typeof loaders.dimensionValues | undefined;
   const filterKey = filters ? JSON.stringify(filters) : undefined;
+
   if (filterKey && filters) {
-    let existingLoader = loaders.filteredDimensionValues.get(filterKey);
-    if (!existingLoader) {
-      loader = new DataLoader(
-        createCubeDimensionValuesLoader(sparqlClient, cache, filters)
-      );
-      loaders.filteredDimensionValues.set(filterKey, loader);
-      return loader;
-    } else {
+    const existingLoader = loaders.filteredDimensionValues.get(filterKey);
+
+    if (existingLoader) {
       return existingLoader;
     }
+
+    loader = new DataLoader(
+      createCubeDimensionValuesLoader(sparqlClient, cache, filters)
+    );
+    loaders.filteredDimensionValues.set(filterKey, loader);
+
+    return loader;
   } else {
     return loaders.dimensionValues;
   }
