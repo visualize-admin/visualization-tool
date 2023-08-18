@@ -16,6 +16,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
+- Performance
+  - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 - Maintenance
   - Correctly aligned Sentry environments with deployment environments, which will result in better performance monitoring (`vercel`, `test`, `int`, `prod`)
 
