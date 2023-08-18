@@ -112,10 +112,9 @@ export const ChartMapVisualization = ({
 
   const ready =
     (areaDimensionIri !== "" &&
-      // Check if original, unfiltered number of shapes is bigger than 0.
-      (shapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
-    (symbolDimensionIri !== "" && coordinates?.length) ||
-    (shapes?.topology?.objects?.shapes as any)?.geometries?.length ||
+      (shapes?.topology?.objects?.shapes as any)?.geometries) ||
+    (symbolDimensionIri !== "" && coordinates) ||
+    (shapes?.topology?.objects?.shapes as any)?.geometries ||
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
@@ -123,7 +122,7 @@ export const ChartMapVisualization = ({
     ...observationsQuery,
     data:
       measures && dimensions && observations && ready
-        ? observationsQuery["data"]
+        ? observationsQuery.data
         : undefined,
     error: observationsQuery.error ?? geoCoordinatesError ?? geoShapesError,
   };
