@@ -13,10 +13,13 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Introduced preferred chart type order, which makes the table chart the least preferred option
 - UI
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
+  - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
 - Performance
   - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
+- Maintenance
+  - Correctly aligned Sentry environments with deployment environments, which will result in better performance monitoring (`vercel`, `test`, `int`, `prod`)
 
 # [3.21.0] - 2023-08-15
 

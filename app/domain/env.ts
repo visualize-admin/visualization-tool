@@ -58,16 +58,14 @@ export const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER;
  * Variables set at **BUILD TIME** through `NEXT_PUBLIC_*` variables. Available on the client and server.
  */
 
+export const IS_VERCEL = !!process.env.NEXT_PUBLIC_VERCEL_ENV;
 export const BUILD_VERSION = process.env.NEXT_PUBLIC_VERSION;
 export const BUILD_COMMIT = process.env.NEXT_PUBLIC_COMMIT;
 export const BUILD_GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
-
 export const BASE_VECTOR_TILE_URL =
-  process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL || "";
-
+  process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL ?? "";
 export const MAPTILER_STYLE_KEY =
-  process.env.NEXT_PUBLIC_MAPTILER_STYLE_KEY || "";
-
+  process.env.NEXT_PUBLIC_MAPTILER_STYLE_KEY ?? "";
 export const SENTRY_DSN =
-  process.env.NEXT_PUBLIC_SENTRY_DSN ||
+  process.env.NEXT_PUBLIC_SENTRY_DSN ??
   "https://1783a12ef4c64b678167ea8761265825@o65222.ingest.sentry.io/4504922724040704";

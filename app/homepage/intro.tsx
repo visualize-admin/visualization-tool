@@ -65,6 +65,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
     sx={{
       color: "grey.800",
       textAlign: "center",
+      textWrap: "balance",
 
       lineHeight: [1.2, 1.2, 1.2],
       fontWeight: "bold",
