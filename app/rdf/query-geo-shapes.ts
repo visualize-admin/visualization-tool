@@ -76,7 +76,7 @@ export const createGeoShapesLoader =
         rawLabels.map((d) => {
           return {
             iri: d.iri.value,
-            label: d.label.value,
+            label: d.label?.value ?? d.iri,
           };
         }),
         (d) => d.iri
