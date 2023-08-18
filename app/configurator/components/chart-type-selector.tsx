@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { SyntheticEvent } from "react";
 
-import { enabledChartTypes, getPossibleChartType } from "@/charts";
+import { chartTypes, getPossibleChartType } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
@@ -163,7 +163,7 @@ export const ChartTypeSelector = ({
                 mx: 2,
               }}
             >
-              {enabledChartTypes.map((d) => (
+              {chartTypes.map((d) => (
                 <ChartTypeSelectionButton
                   key={d}
                   label={d}

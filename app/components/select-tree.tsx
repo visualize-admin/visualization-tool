@@ -8,23 +8,22 @@ import MUITreeItem, {
 } from "@mui/lab/TreeItem";
 import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
-  Theme,
+  Collapse,
+  IconButton,
+  OutlinedInput,
   Popover,
   PopoverActions,
-  useEventCallback,
-  OutlinedInput,
-  Typography,
-  Collapse,
   TextField,
   TextFieldProps,
-  IconButton,
+  Theme,
+  Typography,
+  useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useId from "@mui/utils/useId";
 import clsx from "clsx";
-import { useCallback, useMemo, useRef, useState } from "react";
 import * as React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Label } from "@/components/form";
 import { HierarchyValue } from "@/graphql/resolver-types";
@@ -296,7 +295,11 @@ function SelectTree({
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
   const [inputValue, setInputValue] = useState("");
   const classes = useStyles({ disabled, open });
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
+
+  React.useEffect(() => {
+    setFilteredOptions(options);
+  }, [options]);
 
   const parentsRef = React.useRef({} as Record<NodeId, NodeId>);
   const menuRef = React.useRef<PopoverActions>(null);
@@ -307,17 +310,19 @@ function SelectTree({
     if (!value && options.length > 0) {
       return options[0].value ? [options[0].value] : [];
     }
+
     const res = value ? [value] : [];
     let cur = value;
     const parents = parentsRef.current;
+
     while (cur && parents[cur]) {
       res.push(parents[cur]);
       cur = parents[cur];
     }
+
     return res;
   }, [value, options]);
   const [expanded, setExpanded] = useState(defaultExpanded);
-
   const labelsByValue = useMemo(() => {
     parentsRef.current = {} as Record<NodeId, NodeId>;
     const res: Record<string, string> = {};
@@ -382,7 +387,7 @@ function SelectTree({
   );
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
-    onChange({ target: { value: value } });
+    onChange({ target: { value } });
     handleClose();
   });
 

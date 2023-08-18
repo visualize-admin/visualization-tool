@@ -143,13 +143,14 @@ const useScatterplotState = (
     colors.range(getPalette(fields.segment?.palette));
   }
   // Dimensions
-  const { left, bottom } = useChartPadding(
+  const { left, bottom } = useChartPadding({
     allYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
-    formatNumber
-  );
+    animationPresent: !!fields.animation,
+    formatNumber,
+  });
   const margins = {
     top: 50,
     right: 40,

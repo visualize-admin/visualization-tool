@@ -12,8 +12,8 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-// Approximate the longest date format we're using for
-// Roughly equivalent to estimateTextWidth("99.99.9999", 12);
+// Approximate the longest date format we're using for.
+// Roughly equivalent to the text width of "99.99.9999" with 12px font size.
 const MAX_DATE_LABEL_LENGHT = 70;
 
 export const AxisTime = () => {

@@ -12,8 +12,6 @@ import {
   ChartConfig,
   DataSource,
   InteractiveFiltersDataConfig,
-  Option,
-  OptionGroup,
 } from "@/configurator";
 import { TimeInput } from "@/configurator/components/field";
 import {
@@ -36,17 +34,15 @@ import { useLocale } from "@/locales/use-locale";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 
-export const ChartDataFilters = ({
-  dataSet,
-  dataSource,
-  chartConfig,
-  dataFiltersConfig,
-}: {
+type ChartDataFiltersProps = {
   dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
-}) => {
+};
+
+export const ChartDataFilters = (props: ChartDataFiltersProps) => {
+  const { dataSet, dataSource, chartConfig, dataFiltersConfig } = props;
   const [filtersVisible, setFiltersVisible] = React.useState(false);
   const { componentIris } = dataFiltersConfig;
 
@@ -64,6 +60,7 @@ export const ChartDataFilters = ({
             sx={{
               justifyContent: "space-between",
               alignItems: "flex-start",
+              gap: 3,
               minHeight: 20,
             }}
           >
@@ -213,26 +210,21 @@ const DataFilter = (props: DataFilterProps) => {
   }
 };
 
-const DataFilterGenericDimension = ({
-  dimension,
-  value,
-  onChange,
-  options: propOptions,
-}: {
+type DataFilterGenericDimensionProps = {
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
   options?: Array<{ label: string; value: string }>;
-  optionGroups?: [OptionGroup, Option[]][];
-}) => {
+};
+
+const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
+  const { dimension, value, onChange, options: propOptions } = props;
+  const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-
-  const { label, isKeyDimension } = dimension;
-  const options = propOptions || dimension.values;
-
+  const options = propOptions ?? dimension.values;
   const allOptions = React.useMemo(() => {
     return isKeyDimension
       ? options
@@ -261,23 +253,22 @@ const DataFilterGenericDimension = ({
   );
 };
 
-const DataFilterHierarchyDimension = ({
-  dimension,
-  value,
-  onChange,
-  hierarchy,
-}: {
+type DataFilterHierarchyDimensionProps = {
   dimension: Dimension;
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
-}) => {
+};
+
+const DataFilterHierarchyDimension = (
+  props: DataFilterHierarchyDimensionProps
+) => {
+  const { dimension, value, onChange, hierarchy } = props;
+  const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-
-  const { label, isKeyDimension, values: dimensionValues } = dimension;
   const options = React.useMemo(() => {
     let opts = [] as { label: string; value: string; isNoneValue?: boolean }[];
     if (hierarchy) {
@@ -286,6 +277,7 @@ const DataFilterHierarchyDimension = ({
       // @ts-ignore
       opts = dimensionValues;
     }
+
     if (!isKeyDimension) {
       opts.unshift({
         value: FIELD_VALUE_NONE,
@@ -293,6 +285,7 @@ const DataFilterHierarchyDimension = ({
         isNoneValue: true,
       });
     }
+
     return opts;
   }, [hierarchy, isKeyDimension, dimensionValues, noneLabel]);
 
