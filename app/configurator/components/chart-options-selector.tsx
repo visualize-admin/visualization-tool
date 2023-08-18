@@ -315,8 +315,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       chartType === "column") ??
     false;
 
-  console.log("encoding", encoding);
-
   return (
     <div
       key={`control-panel-${encoding.field}`}
