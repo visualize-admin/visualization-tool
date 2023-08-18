@@ -151,17 +151,17 @@ export const createGeoShapesLoader =
       );
 
       return dimensionIris.map((iri) => {
-        const geometry = groupedGeometries[iri][0]?.geometry;
         let wktString: string | undefined;
+        // There might be iris without geometries.
+        const geometry = groupedGeometries[iri]?.[0]?.geometry;
 
         if (geometry) {
-          // There might be iris without shapes.
-          wktString = groupedWktStrings[geometry]?.[0].wktString;
+          wktString = groupedWktStrings[geometry]?.[0]?.wktString;
         }
 
         return {
           iri,
-          label: groupedLabels[iri][0].label ?? iri,
+          label: groupedLabels[iri]?.[0]?.label ?? iri,
           wktString,
         };
       });

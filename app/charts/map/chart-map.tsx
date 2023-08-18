@@ -112,7 +112,6 @@ export const ChartMapVisualization = ({
 
   const ready =
     (areaDimensionIri !== "" &&
-      // Check if original, unfiltered number of shapes is bigger than 0.
       (shapes?.topology?.objects?.shapes as any)?.geometries) ||
     (symbolDimensionIri !== "" && coordinates) ||
     (shapes?.topology?.objects?.shapes as any)?.geometries ||
