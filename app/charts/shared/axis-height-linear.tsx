@@ -56,9 +56,10 @@ export const AxisHeightLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
-  const titleWidth = getTextWidth(yAxisLabel, {
-    fontSize: axisLabelFontSize,
-  });
+  const titleWidth =
+    getTextWidth(yAxisLabel, {
+      fontSize: axisLabelFontSize,
+    }) + TICK_PADDING;
 
   useEffect(() => {
     if (ref.current) {
