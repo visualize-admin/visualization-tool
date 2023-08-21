@@ -682,6 +682,12 @@ export const ColorPickerField = ({
   );
 };
 
+export const LoadingIndicator = () => {
+  const classes = useStyles();
+
+  return <CircularProgress size={12} className={classes.loadingIndicator} />;
+};
+
 export const FieldLabel = ({
   label,
   isOptional,
@@ -701,9 +707,7 @@ export const FieldLabel = ({
     <div className={classes.root}>
       {label}
       {isOptional ? <span>({optionalLabel})</span> : null}
-      {isFetching ? (
-        <CircularProgress size={12} className={classes.loadingIndicator} />
-      ) : null}
+      {isFetching ? <LoadingIndicator /> : null}
     </div>
   );
 };

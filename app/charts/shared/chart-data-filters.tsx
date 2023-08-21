@@ -21,7 +21,11 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { orderedIsEqual } from "@/configurator/components/chart-configurator";
-import { FieldLabel, TimeInput } from "@/configurator/components/field";
+import {
+  FieldLabel,
+  LoadingIndicator,
+  TimeInput,
+} from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
@@ -126,10 +130,16 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
               display: "flex",
               fontSize: ["0.75rem", "0.75rem", "0.75rem"],
               alignItems: "center",
+              gap: 2,
               minWidth: "fit-content",
             }}
             onClick={() => setFiltersVisible(!filtersVisible)}
           >
+            {fetching && (
+              <span style={{ marginTop: "0.1rem" }}>
+                <LoadingIndicator />
+              </span>
+            )}
             {filtersVisible ? (
               <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
             ) : (
@@ -161,7 +171,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
                 chartConfig={chartConfig}
                 dataFilters={dataFilters}
                 interactiveFilters={interactiveFilters}
-                fetching={fetching}
+                disabled={fetching}
               />
             ))}
         </Box>
@@ -177,7 +187,7 @@ type DataFilterProps = {
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
   interactiveFilters: QueryFilters;
-  fetching: boolean;
+  disabled: boolean;
 };
 
 const DataFilter = (props: DataFilterProps) => {
@@ -188,7 +198,7 @@ const DataFilter = (props: DataFilterProps) => {
     chartConfig,
     dataFilters,
     interactiveFilters,
-    fetching,
+    disabled,
   } = props;
   const locale = useLocale();
   const updateDataFilter = useInteractiveFiltersStore(
@@ -260,7 +270,7 @@ const DataFilter = (props: DataFilterProps) => {
             value={value as string}
             dimension={dimension}
             onChange={setDataFilter}
-            fetching={fetching}
+            disabled={disabled}
           />
         ) : null
       ) : hierarchy ? (
@@ -269,14 +279,14 @@ const DataFilter = (props: DataFilterProps) => {
           onChange={setDataFilter}
           hierarchy={hierarchy}
           value={value as string}
-          fetching={fetching}
+          disabled={disabled}
         />
       ) : (
         <DataFilterGenericDimension
           dimension={dimension}
           onChange={setDataFilter}
           value={value as string}
-          fetching={fetching}
+          disabled={disabled}
         />
       )}
     </Flex>
@@ -290,11 +300,11 @@ type DataFilterGenericDimensionProps = {
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
   options?: Array<{ label: string; value: string }>;
-  fetching: boolean;
+  disabled: boolean;
 };
 
 const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
-  const { dimension, value, onChange, options: propOptions, fetching } = props;
+  const { dimension, value, onChange, options: propOptions, disabled } = props;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -326,13 +336,12 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
               {label}
             </OpenMetadataPanelWrapper>
           }
-          isFetching={fetching}
         />
       }
       options={allOptions}
       value={value}
       onChange={onChange}
-      disabled={fetching}
+      disabled={disabled}
     />
   );
 };
@@ -342,13 +351,13 @@ type DataFilterHierarchyDimensionProps = {
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
-  fetching: boolean;
+  disabled: boolean;
 };
 
 const DataFilterHierarchyDimension = (
   props: DataFilterHierarchyDimensionProps
 ) => {
-  const { dimension, value, onChange, hierarchy, fetching } = props;
+  const { dimension, value, onChange, hierarchy, disabled } = props;
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -388,10 +397,9 @@ const DataFilterHierarchyDimension = (
               {label}
             </OpenMetadataPanelWrapper>
           }
-          isFetching={fetching}
         />
       }
-      disabled={fetching}
+      disabled={disabled}
     />
   );
 };
@@ -400,12 +408,12 @@ const DataFilterTemporalDimension = ({
   dimension,
   value,
   onChange,
-  fetching,
+  disabled,
 }: {
   dimension: TemporalDimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
-  fetching: boolean;
+  disabled: boolean;
 }) => {
   const {
     isKeyDimension,
@@ -443,7 +451,7 @@ const DataFilterTemporalDimension = ({
           options={timeIntervalOptions}
           value={value}
           onChange={onChange}
-          fetching={fetching}
+          disabled={disabled}
         />
       );
     }
@@ -454,7 +462,7 @@ const DataFilterTemporalDimension = ({
         options={[]}
         value=""
         onChange={onChange}
-        fetching={fetching}
+        disabled={disabled}
       />
     );
   }
@@ -527,7 +535,7 @@ const useEnsurePossibleInteractiveFilters = (
             sourceUrl: dataSource.url,
             filters: interactiveFilters,
             // @ts-ignore This is to make urql requery
-            filterKey: Object.keys(interactiveFilters).join(", "),
+            filterKeys: Object.keys(interactiveFilters).join(", "),
           }
         )
         .toPromise();

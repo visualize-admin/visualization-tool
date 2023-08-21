@@ -278,6 +278,7 @@ const useFilterReorder = ({
         ? Object.keys(unmappedFilters).join(", ")
         : undefined,
     };
+
     return omitBy(vars, (x) => x === undefined) as typeof vars;
   }, [
     state.dataSet,

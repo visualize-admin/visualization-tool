@@ -287,9 +287,9 @@ const getDimensionValuesLoader = (
   filters?: Filters | null
 ): DataLoader<any, any> => {
   let loader: typeof loaders.dimensionValues | undefined;
-  const filterKey = filters ? JSON.stringify(filters) : undefined;
 
-  if (filterKey && filters) {
+  if (filters) {
+    const filterKey = JSON.stringify(filters);
     const existingLoader = loaders.filteredDimensionValues.get(filterKey);
 
     if (existingLoader) {
