@@ -7,7 +7,7 @@ import useEvent from "@/utils/use-event";
 
 import { ENDPOINT } from "../env";
 
-import { SOURCES_BY_VALUE, SOURCES_BY_LABEL } from "./constants";
+import { SOURCES_BY_LABEL, SOURCES_BY_VALUE } from "./constants";
 import {
   retrieveDataSourceFromLocalStorage,
   saveDataSourceToLocalStorage,
@@ -53,11 +53,11 @@ export const useDataSourceState = () => {
       const urlParam = getURLParam("dataSource");
 
       // Priority for initial state: URL -> localStorage -> default
-      const initial =
+      return (
         (urlParam && parseSourceByLabel(urlParam)) ||
         retrieveDataSourceFromLocalStorage() ||
-        DEFAULT_DATA_SOURCE;
-      return initial;
+        DEFAULT_DATA_SOURCE
+      );
     },
     {
       param: "dataSource",
@@ -82,15 +82,7 @@ export const useDataSourceState = () => {
 };
 
 export const isDataSourceChangeable = (pathname: string) => {
-  if (
-    pathname === "/" ||
-    pathname === "/browse" ||
-    pathname === "/_cube-checker"
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  return ["/", "/browse", "/_cube-checker"].includes(pathname);
 };
 
 export const dataSourceToSparqlEditorUrl = (dataSource: DataSource): string => {
