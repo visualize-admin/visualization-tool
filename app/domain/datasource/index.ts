@@ -61,7 +61,7 @@ export const useDataSourceState = () => {
     },
     {
       param: "dataSource",
-      deserialize: (l) => parseSourceByLabel(l) || DEFAULT_DATA_SOURCE,
+      deserialize: (l) => parseSourceByLabel(l) ?? DEFAULT_DATA_SOURCE,
       serialize: sourceToLabel,
       onValueChange: (newSource) => {
         saveDataSourceToLocalStorage(newSource);
