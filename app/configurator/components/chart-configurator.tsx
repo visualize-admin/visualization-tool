@@ -175,7 +175,7 @@ const DataFilterSelectGeneric = ({
   }
 };
 
-const orderedIsEqual = (
+export const orderedIsEqual = (
   obj1: Record<string, unknown>,
   obj2: Record<string, unknown>
 ) => {

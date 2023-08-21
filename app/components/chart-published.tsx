@@ -336,11 +336,10 @@ const ChartWithInteractiveFilters = React.forwardRef(
         }}
       >
         {/* Filters list & Interactive filters */}
-        {chartConfig.interactiveFiltersConfig && (
+        {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
           <ChartDataFilters
             dataSet={dataSet}
             dataSource={dataSource}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
             chartConfig={chartConfig}
           />
         )}

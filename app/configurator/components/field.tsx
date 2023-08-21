@@ -683,7 +683,7 @@ export const ColorPickerField = ({
   );
 };
 
-const FieldLabel = ({
+export const FieldLabel = ({
   label,
   isOptional,
   isFetching,

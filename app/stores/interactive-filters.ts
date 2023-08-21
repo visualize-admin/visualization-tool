@@ -17,7 +17,7 @@ export type InteractiveFiltersState = {
   };
 };
 
-type DataFilters = {
+export type DataFilters = {
   [d: string]: FilterValueSingle;
 };
 

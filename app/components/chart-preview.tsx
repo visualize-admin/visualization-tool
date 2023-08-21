@@ -266,7 +266,6 @@ const ChartWithInteractiveFilters = React.forwardRef(
           <ChartDataFilters
             dataSet={dataSet}
             dataSource={dataSource}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
             chartConfig={chartConfig}
           />
         ) : (
