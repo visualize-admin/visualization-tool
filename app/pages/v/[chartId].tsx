@@ -17,6 +17,7 @@ import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
+import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
 
 type PageProps =
@@ -71,30 +72,40 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status } = deserializeProps(props);
 
+  const { dataSource, setDataSource } = useDataSourceStore();
+
   useEffect(() => {
     // Remove publishSuccess from URL so that when reloading of sharing the link
     // to someone, there is no publishSuccess mention
     if (query.publishSuccess) {
       replace({ pathname: window.location.pathname });
     }
+
+    if (
+      props.status === "found" &&
+      props.config.data.dataSource.url !== dataSource.url
+    ) {
+      setDataSource(props.config.data.dataSource);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dataSource.url, setDataSource, props]);
 
   if (status === "notfound") {
     return <ErrorPage statusCode={404} />;
   }
 
-  const {
-    key,
-    data: { dataSet, dataSource, meta, chartConfig },
-  } = (props as Exclude<PageProps, { status: "notfound" }>).config;
+  const { key, data } = (props as Exclude<PageProps, { status: "notfound" }>)
+    .config;
 
   return (
     <EmbedOptionsProvider>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="og:title" content={meta.title[locale]} />
-        <meta property="og:description" content={meta.description[locale]} />
+        <meta property="og:title" content={data.meta.title[locale]} />
+        <meta
+          property="og:description"
+          content={data.meta.description[locale]}
+        />
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
@@ -116,12 +127,12 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               </Box>
             )}
 
-            <ChartPanelPublished chartType={chartConfig.chartType}>
+            <ChartPanelPublished chartType={data.chartConfig.chartType}>
               <ChartPublished
-                dataSet={dataSet}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                meta={meta}
+                dataSet={data.dataSet}
+                dataSource={data.dataSource}
+                chartConfig={data.chartConfig}
+                meta={data.meta}
                 configKey={key}
               />
             </ChartPanelPublished>
