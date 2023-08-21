@@ -413,6 +413,10 @@ const DataFilterTemporalDimension = ({
   } = dimension;
   const formatLocale = useTimeFormatLocale();
   const timeIntervalWithProps = React.useMemo(() => {
+    if (options.length === 0) {
+      return;
+    }
+
     return getTimeIntervalWithProps(
       options[0].value as string,
       options[options.length - 1].value as string,
@@ -423,15 +427,29 @@ const DataFilterTemporalDimension = ({
   }, [options, timeUnit, timeFormat, formatLocale]);
 
   const timeIntervalOptions = React.useMemo(() => {
-    return getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
+    if (timeIntervalWithProps) {
+      return getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
+    }
   }, [timeIntervalWithProps]);
 
-  if (timeIntervalWithProps.range < 100) {
+  if (timeIntervalWithProps) {
+    if (timeIntervalWithProps.range < 100) {
+      return (
+        <DataFilterGenericDimension
+          dimension={dimension}
+          options={timeIntervalOptions}
+          value={value}
+          onChange={onChange}
+          fetching={fetching}
+        />
+      );
+    }
+  } else {
     return (
       <DataFilterGenericDimension
         dimension={dimension}
-        options={timeIntervalOptions}
-        value={value}
+        options={[]}
+        value=""
         onChange={onChange}
         fetching={fetching}
       />
