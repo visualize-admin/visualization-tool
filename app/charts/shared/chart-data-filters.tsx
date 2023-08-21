@@ -149,18 +149,21 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           }}
         >
-          {componentIris.map((iri) => (
-            <DataFilter
-              key={iri}
-              dimensionIri={iri}
-              dataSetIri={dataSet}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              dataFilters={dataFilters}
-              interactiveFilters={interactiveFilters}
-              fetching={fetching}
-            />
-          ))}
+          {/* We want to persist the ordering of editor filters. */}
+          {Object.keys(interactiveFilters)
+            .filter((d) => componentIris.includes(d))
+            .map((iri) => (
+              <DataFilter
+                key={iri}
+                dimensionIri={iri}
+                dataSetIri={dataSet}
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dataFilters={dataFilters}
+                interactiveFilters={interactiveFilters}
+                fetching={fetching}
+              />
+            ))}
         </Box>
       )}
     </Flex>
