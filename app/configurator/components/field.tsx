@@ -164,12 +164,11 @@ export const DataFilterSelect = ({
 
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
-    const sortedValues = orderBy(
+
+    return orderBy(
       dimension.values,
       sorters.map((s) => (dv) => s(dv.label))
     );
-
-    return sortedValues;
   }, [dimension]);
 
   const allValues = useMemo(() => {
