@@ -73,8 +73,9 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         inputFormat={getInputFormat(timeUnit)}
         views={getViews(timeUnit)}
         value={value}
-        onChange={handleChange}
-        onYearChange={handleChange}
+        onAccept={handleChange}
+        // Need to pass onChange to avoid type error.
+        onChange={() => {}}
         renderInput={(params) => (
           <TextField
             hiddenLabel
