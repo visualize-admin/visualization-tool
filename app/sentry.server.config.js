@@ -4,14 +4,11 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-import { BUILD_VERSION, SENTRY_DSN } from "./domain/env";
-import { getSentryEnv } from "./sentry-utils";
+import { BUILD_VERSION, SENTRY_DSN, SENTRY_ENV } from "./domain/env";
 
 Sentry.init({
   dsn: SENTRY_DSN,
+  environment: SENTRY_ENV,
   release: `visualization-tool@${BUILD_VERSION}`,
   tracesSampleRate: 1.0,
-  environment: getSentryEnv(),
 });
-
-export { Sentry };
