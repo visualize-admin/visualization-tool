@@ -1,23 +1,19 @@
 import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
-import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import GenericChart from "@/components/common-chart";
+import { ChartWithInteractiveFilters } from "@/components/common-chart";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -268,6 +264,7 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   dataSet={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
+                  published
                 />
               )}
             </PublishedConfiguratorStateProvider>
@@ -291,34 +288,3 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     </MetadataPanelStoreContext.Provider>
   );
 };
-
-type ChartWithInteractiveFiltersProps = {
-  dataSet: string;
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-};
-
-const ChartWithInteractiveFilters = React.forwardRef(
-  (props: ChartWithInteractiveFiltersProps, ref) => {
-    useSyncInteractiveFilters(props.chartConfig);
-
-    return (
-      <Flex
-        ref={ref}
-        sx={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-        }}
-      >
-        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-          <ChartDataFilters {...props} />
-        ) : (
-          <ChartFiltersList {...props} />
-        )}
-        <GenericChart {...props} published />
-      </Flex>
-    );
-  }
-);
-ChartWithInteractiveFilters.displayName = "ChartWithInteractiveFilters";
