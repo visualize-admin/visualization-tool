@@ -1,6 +1,7 @@
+import * as Sentry from "@sentry/nextjs";
 import { ApolloServerPlugin, GraphQLRequest } from "apollo-server-plugin-base";
 
-import { Sentry } from "@/sentry.server.config";
+import { getSentryEnv } from "@/sentry-utils";
 
 const getDataCubeIri = (req: GraphQLRequest) => {
   const { variables, operationName } = req;
@@ -25,6 +26,9 @@ const plugin: ApolloServerPlugin = {
     const transaction = Sentry.startTransaction({
       op: "gql",
       name: "GQL - Unnamed", // this will be the default name, unless the gql query has a name
+      tags: {
+        environment: getSentryEnv(),
+      },
     });
 
     if (!!request.operationName) {
