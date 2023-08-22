@@ -9,7 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Interactive filters now work in cascading mode
+  - Date picker is now usable with interactive temporal dimension filters
 
 # [3.21.1] - 2023-08-22
 
