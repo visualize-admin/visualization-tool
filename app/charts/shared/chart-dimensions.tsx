@@ -39,7 +39,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   const fakeTicks = allYScale.ticks(getTickNumber(width * aspectRatio));
   const minLeftTickWidth =
     !!interactiveFiltersConfig?.calculation.active || normalize
-      ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE })
+      ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
       : 0;
   const left = Math.max(
     ...fakeTicks.map(
