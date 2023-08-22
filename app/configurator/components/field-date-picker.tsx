@@ -84,6 +84,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
               ...params.sx,
 
               "& input": {
+                minHeight: "23px",
                 typography: "body2",
               },
             }}
