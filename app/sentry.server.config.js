@@ -13,3 +13,5 @@ Sentry.init({
   tracesSampleRate: 1.0,
   environment: getSentryEnv(),
 });
+
+export { Sentry };

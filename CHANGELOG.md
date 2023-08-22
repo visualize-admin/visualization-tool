@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.21.1] - 2023-08-22
+
 - Features
   - Introduced preferred chart type order, which makes the table chart the least preferred option
   - Interactive data filters now work in cascading mode

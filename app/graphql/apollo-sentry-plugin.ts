@@ -1,6 +1,8 @@
 import * as Sentry from "@sentry/nextjs";
 import { ApolloServerPlugin, GraphQLRequest } from "apollo-server-plugin-base";
 
+import { getSentryEnv } from "@/sentry-utils";
+
 const getDataCubeIri = (req: GraphQLRequest) => {
   const { variables, operationName } = req;
   if (
@@ -24,6 +26,9 @@ const plugin: ApolloServerPlugin = {
     const transaction = Sentry.startTransaction({
       op: "gql",
       name: "GQL - Unnamed", // this will be the default name, unless the gql query has a name
+      tags: {
+        environment: getSentryEnv(),
+      },
     });
 
     if (!!request.operationName) {
@@ -32,12 +37,15 @@ const plugin: ApolloServerPlugin = {
     }
 
     const dataCubeIri = getDataCubeIri(request);
+
     if (dataCubeIri) {
       transaction.setTag("visualize.dataCubeIri", dataCubeIri);
     }
+
     if (request.variables?.sourceUrl) {
       transaction.setTag("visualize.sourceUrl", request.variables.sourceUrl);
     }
+
     return {
       willSendResponse() {
         // hook for transaction finished
