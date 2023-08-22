@@ -1,4 +1,4 @@
-import { DatePicker, DatePickerProps } from "@mui/lab";
+import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import { Box, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
@@ -76,6 +76,16 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         onAccept={handleChange}
         // Need to pass onChange to avoid type error.
         onChange={() => {}}
+        // We need to render the day picker ourselves to correctly highlight
+        // the selected day. It's broken in the MUI date picker.
+        renderDay={(day, _, dayPickerProps) => {
+          return (
+            <PickersDay
+              {...dayPickerProps}
+              selected={value.getTime() === day.getTime()}
+            />
+          );
+        }}
         renderInput={(params) => (
           <TextField
             hiddenLabel
