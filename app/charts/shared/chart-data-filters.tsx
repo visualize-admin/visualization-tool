@@ -123,6 +123,8 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
               alignItems: "center",
               gap: 2,
               minWidth: "fit-content",
+              minHeight: "fit-content",
+              px: 3,
             }}
             onClick={() => setFiltersVisible(!filtersVisible)}
           >
