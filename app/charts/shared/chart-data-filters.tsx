@@ -21,15 +21,11 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { orderedIsEqual } from "@/configurator/components/chart-configurator";
+import { FieldLabel, LoadingIndicator } from "@/configurator/components/field";
 import {
-  FieldLabel,
-  LoadingIndicator,
-  TimeInput,
-} from "@/configurator/components/field";
-import {
-  getTimeIntervalFormattedSelectOptions,
-  getTimeIntervalWithProps,
-} from "@/configurator/components/ui-helpers";
+  canRenderDatePickerField,
+  DatePickerField,
+} from "@/configurator/components/field-date-picker";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { isTemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -41,7 +37,6 @@ import {
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
   TemporalDimension,
-  TimeUnit,
   useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -265,14 +260,12 @@ const DataFilter = (props: DataFilterProps) => {
       }}
     >
       {isTemporalDimension(dimension) ? (
-        dimension.timeUnit === TimeUnit.Year ? (
-          <DataFilterTemporalDimension
-            value={value as string}
-            dimension={dimension}
-            onChange={setDataFilter}
-            disabled={disabled}
-          />
-        ) : null
+        <DataFilterTemporalDimension
+          value={value as string}
+          dimension={dimension}
+          onChange={setDataFilter}
+          disabled={disabled}
+        />
       ) : hierarchy ? (
         <DataFilterHierarchyDimension
           dimension={dimension}
@@ -412,74 +405,84 @@ const DataFilterTemporalDimension = ({
 }: {
   dimension: TemporalDimension;
   value: string;
-  onChange: (e: SelectChangeEvent<unknown>) => void;
+  onChange: (
+    e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>
+  ) => void;
   disabled: boolean;
 }) => {
-  const {
-    isKeyDimension,
-    label,
-    values: options,
-    timeUnit,
-    timeFormat,
-  } = dimension;
+  const { isKeyDimension, label, values, timeUnit, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
-  const timeIntervalWithProps = React.useMemo(() => {
-    if (options.length === 0) {
-      return;
+  const formatDate = formatLocale.format(timeFormat);
+  const parseDate = formatLocale.parse(timeFormat);
+
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: "No Filter",
+  });
+  const { minDate, maxDate, options, optionValues } = React.useMemo(() => {
+    if (values.length) {
+      const options = values.map((d) => {
+        return {
+          label: `${d.value}`,
+          value: `${d.value}`,
+        };
+      });
+
+      return {
+        minDate: parseDate(values[0].value as string) as Date,
+        maxDate: parseDate(values[values.length - 1].value as string) as Date,
+        options: isKeyDimension
+          ? options
+          : [
+              {
+                value: FIELD_VALUE_NONE,
+                label: noneLabel,
+                isNoneValue: true,
+              },
+              ...options,
+            ],
+        optionValues: options.map((d) => d.value),
+      };
+    } else {
+      return {
+        minDate: new Date(),
+        maxDate: new Date(),
+        options: [],
+        optionValues: [],
+      };
     }
+  }, [isKeyDimension, noneLabel, values, parseDate]);
 
-    return getTimeIntervalWithProps(
-      options[0].value as string,
-      options[options.length - 1].value as string,
-      timeUnit,
-      timeFormat,
-      formatLocale
-    );
-  }, [options, timeUnit, timeFormat, formatLocale]);
-
-  const timeIntervalOptions = React.useMemo(() => {
-    if (timeIntervalWithProps) {
-      return getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
-    }
-  }, [timeIntervalWithProps]);
-
-  if (timeIntervalWithProps) {
-    if (timeIntervalWithProps.range < 100) {
-      return (
-        <DataFilterGenericDimension
-          dimension={dimension}
-          options={timeIntervalOptions}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-        />
-      );
-    }
-  } else {
-    return (
-      <DataFilterGenericDimension
-        dimension={dimension}
-        options={[]}
-        value=""
-        onChange={onChange}
-        disabled={disabled}
-      />
-    );
-  }
-
-  return (
-    <TimeInput
-      id="dataFilterTemporalDimension"
+  return canRenderDatePickerField(timeUnit) ? (
+    <DatePickerField
+      name={`interactive-date-picker-${dimension.iri}`}
       label={
-        <OpenMetadataPanelWrapper dim={dimension as DimensionMetadataFragment}>
-          {label}
-        </OpenMetadataPanelWrapper>
+        <FieldLabel
+          label={
+            <OpenMetadataPanelWrapper
+              dim={dimension as DimensionMetadataFragment}
+            >
+              {label}
+            </OpenMetadataPanelWrapper>
+          }
+        />
       }
-      value={value}
-      timeFormat={timeFormat}
-      formatLocale={formatLocale}
-      isOptional={!isKeyDimension}
+      value={parseDate(value) as Date}
       onChange={onChange}
+      isDateDisabled={(d) => !optionValues.includes(formatDate(d))}
+      timeUnit={timeUnit}
+      dateFormat={formatDate}
+      minDate={minDate}
+      maxDate={maxDate}
+      disabled={disabled}
+    />
+  ) : (
+    <DataFilterGenericDimension
+      dimension={dimension}
+      options={options}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
     />
   );
 };
