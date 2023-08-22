@@ -13,7 +13,7 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { ChartWithInteractiveFilters } from "@/components/common-chart";
+import { ChartWithFilters } from "@/components/chart-with-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -260,7 +260,7 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   chartConfig={chartConfig}
                 />
               ) : (
-                <ChartWithInteractiveFilters
+                <ChartWithFilters
                   dataSet={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}

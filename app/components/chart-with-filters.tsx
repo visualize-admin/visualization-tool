@@ -106,16 +106,16 @@ const GenericChart = (props: GenericChartProps) => {
   }
 };
 
-type ChartWithInteractiveFiltersProps = {
+type ChartWithFiltersProps = {
   dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   published: boolean;
 };
 
-export const ChartWithInteractiveFilters = React.forwardRef<
+export const ChartWithFilters = React.forwardRef<
   HTMLDivElement,
-  ChartWithInteractiveFiltersProps
+  ChartWithFiltersProps
 >((props, ref) => {
   useSyncInteractiveFilters(props.chartConfig);
 
@@ -137,4 +137,4 @@ export const ChartWithInteractiveFilters = React.forwardRef<
     </Flex>
   );
 });
-ChartWithInteractiveFilters.displayName = "ChartWithInteractiveFilters";
+ChartWithFilters.displayName = "ChartWithFilters";

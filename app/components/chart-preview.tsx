@@ -11,7 +11,7 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import { ChartWithInteractiveFilters } from "@/components/common-chart";
+import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
@@ -202,7 +202,7 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   chartConfig={state.chartConfig}
                 />
               ) : (
-                <ChartWithInteractiveFilters
+                <ChartWithFilters
                   dataSet={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={state.chartConfig}
