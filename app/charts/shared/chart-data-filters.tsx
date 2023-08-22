@@ -107,15 +107,11 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
           minHeight: 20,
         }}
       >
-        {filtersVisible ? (
-          <Box />
-        ) : (
-          <ChartFiltersList
-            dataSetIri={dataSet}
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-          />
-        )}
+        <ChartFiltersList
+          dataSetIri={dataSet}
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+        />
 
         {componentIris.length > 0 && (
           <Button
