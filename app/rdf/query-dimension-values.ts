@@ -193,8 +193,6 @@ export async function loadDimensionValues(
     }
   `.prologue`${pragmas}`;
 
-  console.log(query.build());
-
   let result: Array<DimensionValue> = [];
 
   try {
