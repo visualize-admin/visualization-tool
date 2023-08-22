@@ -46,19 +46,17 @@ const ChartTableVisualization = dynamic(
   )
 );
 
-const GenericChart = ({
-  dataSet,
-  dataSource,
-  chartConfig,
-  published,
-}: {
+type GenericChartProps = {
   dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   published: boolean;
-}) => {
+};
+
+const GenericChart = (props: GenericChartProps) => {
+  const { dataSet, dataSource, chartConfig, published } = props;
   const queryFilters = useQueryFilters({ chartConfig });
-  const props = {
+  const commonProps = {
     dataSetIri: dataSet,
     dataSource,
     queryFilters,
@@ -67,21 +65,36 @@ const GenericChart = ({
 
   switch (chartConfig.chartType) {
     case "column":
-      return <ChartColumnsVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartColumnsVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "line":
-      return <ChartLinesVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartLinesVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "area":
-      return <ChartAreasVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartAreasVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "scatterplot":
       return (
-        <ChartScatterplotVisualization {...props} chartConfig={chartConfig} />
+        <ChartScatterplotVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
       );
     case "pie":
-      return <ChartPieVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartPieVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "table":
-      return <ChartTableVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartTableVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     case "map":
-      return <ChartMapVisualization {...props} chartConfig={chartConfig} />;
+      return (
+        <ChartMapVisualization {...commonProps} chartConfig={chartConfig} />
+      );
     default:
       const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;

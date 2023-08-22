@@ -7,7 +7,6 @@ import { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFiltersList } from "@/components/chart-filters-list";
@@ -215,7 +214,6 @@ export const ChartPreviewInner = ({
                   dataSet={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={state.chartConfig}
-                  published={false}
                 />
               )}
             </Box>
@@ -235,22 +233,15 @@ export const ChartPreviewInner = ({
   );
 };
 
+type ChartWithInteractiveFiltersProps = {
+  dataSet: string;
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+};
+
 const ChartWithInteractiveFilters = React.forwardRef(
-  (
-    {
-      dataSet,
-      dataSource,
-      chartConfig,
-      published,
-    }: {
-      dataSet: string;
-      dataSource: DataSource;
-      chartConfig: ChartConfig;
-      published: boolean;
-    },
-    ref
-  ) => {
-    useSyncInteractiveFilters(chartConfig);
+  (props: ChartWithInteractiveFiltersProps, ref) => {
+    useSyncInteractiveFilters(props.chartConfig);
 
     return (
       <Flex
@@ -261,52 +252,14 @@ const ChartWithInteractiveFilters = React.forwardRef(
           flexGrow: 1,
         }}
       >
-        {/* Filters list & Interactive filters */}
-        {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-          <ChartDataFilters
-            dataSet={dataSet}
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-          />
+        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+          <ChartDataFilters {...props} />
         ) : (
-          <Flex sx={{ flexDirection: "column", my: 4 }}>
-            <ChartFiltersList
-              dataSetIri={dataSet}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-            />
-          </Flex>
+          <ChartFiltersList {...props} />
         )}
-        <Chart
-          dataSet={dataSet}
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          published={published}
-        />
+        <GenericChart {...props} published={false} />
       </Flex>
     );
   }
 );
-
-const Chart = ({
-  dataSet,
-  dataSource,
-  chartConfig,
-  published,
-}: {
-  dataSet: string;
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  published: boolean;
-}) => {
-  const queryFilters = useQueryFilters({ chartConfig });
-  const props = {
-    dataSet,
-    dataSource,
-    chartConfig,
-    queryFilters,
-    published,
-  };
-
-  return <GenericChart {...props} />;
-};
+ChartWithInteractiveFilters.displayName = "ChartWithInteractiveFilters";

@@ -108,7 +108,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
         }}
       >
         <ChartFiltersList
-          dataSetIri={dataSet}
+          dataSet={dataSet}
           dataSource={dataSource}
           chartConfig={chartConfig}
         />

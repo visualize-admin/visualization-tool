@@ -10,6 +10,7 @@ import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
+import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
@@ -300,8 +301,7 @@ type ChartWithInteractiveFiltersProps = {
 
 const ChartWithInteractiveFilters = React.forwardRef(
   (props: ChartWithInteractiveFiltersProps, ref) => {
-    const { dataSet, dataSource, chartConfig } = props;
-    const { interactiveFiltersConfig } = chartConfig;
+    const { interactiveFiltersConfig } = props.chartConfig;
     const setCalculationType = useInteractiveFiltersStore(
       (d) => d.setCalculationType
     );
@@ -332,23 +332,16 @@ const ChartWithInteractiveFilters = React.forwardRef(
         ref={ref}
         sx={{
           flexDirection: "column",
+          justifyContent: "space-between",
           flexGrow: 1,
         }}
       >
-        {/* Filters list & Interactive filters */}
-        {chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-          <ChartDataFilters
-            dataSet={dataSet}
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-          />
+        {props.chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
+          <ChartDataFilters {...props} />
+        ) : (
+          <ChartFiltersList {...props} />
         )}
-        <GenericChart
-          dataSet={dataSet}
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          published
-        />
+        <GenericChart {...props} published />
       </Flex>
     );
   }
