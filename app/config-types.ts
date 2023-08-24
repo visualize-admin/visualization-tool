@@ -27,7 +27,6 @@ const FilterValueMulti = t.type(
   },
   "FilterValueMulti"
 );
-
 export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
 const FilterValueSingle = t.type(
@@ -37,8 +36,13 @@ const FilterValueSingle = t.type(
   },
   "FilterValueSingle"
 );
-
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
+
+export const isFilterValueSingle = (
+  filterValue: FilterValue
+): filterValue is FilterValueSingle => {
+  return filterValue.type === "single";
+};
 
 const FilterValueRange = t.type(
   {
@@ -48,7 +52,6 @@ const FilterValueRange = t.type(
   },
   "FilterValueRange"
 );
-
 export type FilterValueRange = t.TypeOf<typeof FilterValueRange>;
 
 const FilterValue = t.union(

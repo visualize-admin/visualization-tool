@@ -5,6 +5,7 @@ import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
+import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -52,6 +53,7 @@ export const ChartLoadingWrapper = <
     keyof ChartProps<TChartConfig>
   >;
 }) => {
+  const chartLoadingState = useLoadingState();
   const {
     data: metadataData,
     fetching: fetchingMetadata,
@@ -73,6 +75,10 @@ export const ChartLoadingWrapper = <
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
 
+  const fetching =
+    fetchingMetadata || fetchingComponents || fetchingObservations;
+  chartLoadingState.set("data", fetching);
+
   const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
     return {
       dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
@@ -84,12 +90,7 @@ export const ChartLoadingWrapper = <
     const { title } = metadata;
 
     return observations.length > 0 ? (
-      <Box
-        data-chart-loaded={
-          !(fetchingMetadata && fetchingComponents && fetchingObservations)
-        }
-        sx={{ position: "relative" }}
-      >
+      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations}
@@ -105,9 +106,7 @@ export const ChartLoadingWrapper = <
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
-        {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
-          <LoadingOverlay />
-        )}
+        {fetching && <LoadingOverlay />}
       </Box>
     ) : (
       <NoDataHint />

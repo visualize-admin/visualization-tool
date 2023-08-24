@@ -6,6 +6,7 @@ import * as React from "react";
 import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import { ChartFiltersList } from "@/components/chart-filters-list";
 import Flex from "@/components/flex";
 import { Select } from "@/components/form";
@@ -194,11 +195,12 @@ const DataFilter = (props: DataFilterProps) => {
     disabled,
   } = props;
   const locale = useLocale();
+  const chartLoadingState = useLoadingState();
   const updateDataFilter = useInteractiveFiltersStore(
     (d) => d.updateDataFilter
   );
   const keys = Object.keys(interactiveFilters);
-  const [{ data }] = useDimensionValuesQuery({
+  const [{ data, fetching }] = useDimensionValuesQuery({
     variables: {
       dimensionIri,
       dataCubeIri: dataSetIri,
@@ -234,10 +236,17 @@ const DataFilter = (props: DataFilterProps) => {
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const value =
-    (dimension && dataFilters?.[dimension.iri]?.value) ??
-    configFilterValue ??
-    FIELD_VALUE_NONE;
+  const dataFilterValue = dimension ? dataFilters[dimension.iri].value : null;
+  const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
+
+  if (
+    fetching ||
+    // We only want to disable loading state when the filter is actually valid.
+    // It can be invalid when the application is ensuring possible filters.
+    dimension?.values.map((d) => d.value).includes(value)
+  ) {
+    chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
+  }
 
   React.useEffect(() => {
     if (dimension?.values) {
@@ -510,6 +519,7 @@ const useEnsurePossibleInteractiveFilters = (
     mappedFilters,
   } = props;
   const [, dispatch] = useConfiguratorState();
+  const loadingState = useLoadingState();
   const [fetching, setFetching] = React.useState(false);
   const [error, setError] = React.useState<Error>();
   const lastFilters = React.useRef<Filters>();
@@ -525,8 +535,8 @@ const useEnsurePossibleInteractiveFilters = (
         return;
       }
       lastFilters.current = interactiveFilters;
-
       setFetching(true);
+      loadingState.set("possible-interactive-filters", true);
       const { data, error } = await client
         .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
           PossibleFiltersDocument,
@@ -544,6 +554,7 @@ const useEnsurePossibleInteractiveFilters = (
       if (error || !data) {
         setError(error);
         setFetching(false);
+        loadingState.set("possible-interactive-filters", false);
         console.error("Could not fetch possible filters", error);
 
         return;
@@ -551,6 +562,7 @@ const useEnsurePossibleInteractiveFilters = (
 
       setError(undefined);
       setFetching(false);
+      loadingState.set("possible-interactive-filters", false);
 
       const filters = Object.assign(
         Object.fromEntries(
@@ -587,6 +599,7 @@ const useEnsurePossibleInteractiveFilters = (
     dataFilters,
     interactiveFilters,
     mappedFilters,
+    loadingState,
   ]);
 
   return { error, fetching };

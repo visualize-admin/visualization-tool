@@ -2,7 +2,7 @@ import { ascending, bisect, scaleLinear } from "d3";
 
 import { AnimationType } from "@/config-types";
 
-abstract class Observable {
+export abstract class Observable {
   private observers: Function[];
 
   constructor() {
