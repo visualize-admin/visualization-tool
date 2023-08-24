@@ -77,7 +77,10 @@ export const ChartLoadingWrapper = <
 
   const fetching =
     fetchingMetadata || fetchingComponents || fetchingObservations;
-  chartLoadingState.set("data", fetching);
+
+  React.useEffect(() => {
+    chartLoadingState.set("data", fetching);
+  }, [chartLoadingState, fetching]);
 
   const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
     return {

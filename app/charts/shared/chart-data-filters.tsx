@@ -68,26 +68,31 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     }
   }, [componentIris.length]);
 
-  const { interactiveFilters, mappedFilters } = React.useMemo(() => {
-    const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig);
-    const { mappedFilters, unmappedFilters } = filtersByMappingStatus;
-    const unmappedKeys = Object.keys(unmappedFilters);
+  const { interactiveFilters, unmappedQueryFilters, mappedFilters } =
+    React.useMemo(() => {
+      const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig);
+      const { mappedFilters, unmappedFilters } = filtersByMappingStatus;
+      const unmappedKeys = Object.keys(unmappedFilters);
+      const unmappedQueryFiltersArray = Object.entries(queryFilters).filter(
+        ([k]) => unmappedKeys.includes(k)
+      );
+      const interactiveFiltersArray = unmappedQueryFiltersArray.filter(([k]) =>
+        componentIris.includes(k)
+      );
 
-    return {
-      interactiveFilters: Object.fromEntries(
-        Object.entries(queryFilters).filter(([k]) => unmappedKeys.includes(k))
-      ),
-      mappedFilters,
-      unmappedFilters,
-    };
-  }, [chartConfig, queryFilters]);
+      return {
+        interactiveFilters: Object.fromEntries(interactiveFiltersArray),
+        unmappedQueryFilters: Object.fromEntries(unmappedQueryFiltersArray),
+        mappedFilters,
+      };
+    }, [chartConfig, componentIris, queryFilters]);
 
   const { fetching, error } = useEnsurePossibleInteractiveFilters({
     dataSet,
     dataSource,
     chartConfig,
     dataFilters,
-    interactiveFilters,
+    unmappedQueryFilters,
     mappedFilters,
   });
 
@@ -153,21 +158,18 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           }}
         >
-          {/* We want to persist the ordering of editor filters. */}
-          {Object.keys(interactiveFilters)
-            .filter((d) => componentIris.includes(d))
-            .map((iri) => (
-              <DataFilter
-                key={iri}
-                dimensionIri={iri}
-                dataSetIri={dataSet}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dataFilters={dataFilters}
-                interactiveFilters={interactiveFilters}
-                disabled={fetching}
-              />
-            ))}
+          {Object.keys(interactiveFilters).map((iri) => (
+            <DataFilter
+              key={iri}
+              dimensionIri={iri}
+              dataSetIri={dataSet}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dataFilters={dataFilters}
+              interactiveFilters={interactiveFilters}
+              disabled={fetching}
+            />
+          ))}
         </Box>
       )}
     </Flex>
@@ -236,23 +238,28 @@ const DataFilter = (props: DataFilterProps) => {
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const dataFilterValue = dimension ? dataFilters[dimension.iri].value : null;
+  const dataFilterValue = dimension ? dataFilters[dimension.iri]?.value : null;
   const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
 
-  if (
-    fetching ||
+  React.useEffect(() => {
+    const values = dimension?.values.map((d) => d.value) ?? [];
+
     // We only want to disable loading state when the filter is actually valid.
     // It can be invalid when the application is ensuring possible filters.
-    dimension?.values.map((d) => d.value).includes(value)
-  ) {
-    chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
-  }
-
-  React.useEffect(() => {
-    if (dimension?.values) {
-      updateDataFilter(dimension.iri, value);
+    if (dataFilterValue && values.includes(dataFilterValue)) {
+      updateDataFilter(dimensionIri, dataFilterValue);
+      chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
+    } else if (fetching) {
+      chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
     }
-  }, [dimension?.iri, dimension?.values, updateDataFilter, value]);
+  }, [
+    chartLoadingState,
+    dataFilterValue,
+    dimension?.values,
+    dimensionIri,
+    fetching,
+    updateDataFilter,
+  ]);
 
   return dimension ? (
     <Flex
@@ -499,7 +506,7 @@ type EnsurePossibleInteractiveFiltersProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
-  interactiveFilters: Filters;
+  unmappedQueryFilters: Filters;
   mappedFilters: Filters;
 };
 
@@ -515,7 +522,7 @@ const useEnsurePossibleInteractiveFilters = (
     dataSource,
     chartConfig,
     dataFilters,
-    interactiveFilters,
+    unmappedQueryFilters,
     mappedFilters,
   } = props;
   const [, dispatch] = useConfiguratorState();
@@ -530,11 +537,11 @@ const useEnsurePossibleInteractiveFilters = (
     const run = async () => {
       if (
         lastFilters.current &&
-        orderedIsEqual(lastFilters.current, interactiveFilters)
+        orderedIsEqual(lastFilters.current, unmappedQueryFilters)
       ) {
         return;
       }
-      lastFilters.current = interactiveFilters;
+      lastFilters.current = unmappedQueryFilters;
       setFetching(true);
       loadingState.set("possible-interactive-filters", true);
       const { data, error } = await client
@@ -544,9 +551,9 @@ const useEnsurePossibleInteractiveFilters = (
             iri: dataSet,
             sourceType: dataSource.type,
             sourceUrl: dataSource.url,
-            filters: interactiveFilters,
+            filters: unmappedQueryFilters,
             // @ts-ignore This is to make urql requery
-            filterKeys: Object.keys(interactiveFilters).join(", "),
+            filterKeys: Object.keys(unmappedQueryFilters).join(", "),
           }
         )
         .toPromise();
@@ -597,7 +604,7 @@ const useEnsurePossibleInteractiveFilters = (
     chartConfig,
     setDataFilters,
     dataFilters,
-    interactiveFilters,
+    unmappedQueryFilters,
     mappedFilters,
     loadingState,
   ]);
