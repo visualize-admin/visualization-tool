@@ -92,14 +92,20 @@ export const ChartLoadingWrapper = <
   if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
 
-    return observations.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations}
-          dimensions={dimensions}
-          measures={measures}
-        />
+    return (
+      <Box
+        data-chart-loaded={!chartLoadingState.loading}
+        sx={{ position: "relative" }}
+      >
+        {observations.length > 0 && (
+          <A11yTable
+            title={title}
+            observations={observations}
+            dimensions={dimensions}
+            measures={measures}
+          />
+        )}
+
         {React.createElement(Component, {
           observations,
           dimensions,
@@ -109,10 +115,13 @@ export const ChartLoadingWrapper = <
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
-        {fetching && <LoadingOverlay />}
+
+        {chartLoadingState.loading ? (
+          <LoadingOverlay />
+        ) : observations.length === 0 ? (
+          <NoDataHint />
+        ) : null}
       </Box>
-    ) : (
-      <NoDataHint />
     );
   } else if (metadataError || componentsError || observationsError) {
     return (
