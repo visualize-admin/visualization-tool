@@ -56,6 +56,7 @@ type ChartDataFiltersProps = {
 
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   const { dataSet, dataSource, chartConfig } = props;
+  const { loading } = useLoadingState();
   const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
   const queryFilters = useQueryFilters({ chartConfig });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
@@ -87,7 +88,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
       };
     }, [chartConfig, componentIris, queryFilters]);
 
-  const { fetching, error } = useEnsurePossibleInteractiveFilters({
+  const { error } = useEnsurePossibleInteractiveFilters({
     dataSet,
     dataSource,
     chartConfig,
@@ -134,7 +135,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
             }}
             onClick={() => setFiltersVisible(!filtersVisible)}
           >
-            {fetching && (
+            {loading && (
               <span style={{ marginTop: "0.1rem" }}>
                 <LoadingIndicator />
               </span>
@@ -167,7 +168,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
               chartConfig={chartConfig}
               dataFilters={dataFilters}
               interactiveFilters={interactiveFilters}
-              disabled={fetching}
+              disabled={loading}
             />
           ))}
         </Box>
@@ -527,7 +528,6 @@ const useEnsurePossibleInteractiveFilters = (
   } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
-  const [fetching, setFetching] = React.useState(false);
   const [error, setError] = React.useState<Error>();
   const lastFilters = React.useRef<Filters>();
   const client = useClient();
@@ -542,7 +542,6 @@ const useEnsurePossibleInteractiveFilters = (
         return;
       }
       lastFilters.current = unmappedQueryFilters;
-      setFetching(true);
       loadingState.set("possible-interactive-filters", true);
       const { data, error } = await client
         .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
@@ -560,7 +559,6 @@ const useEnsurePossibleInteractiveFilters = (
 
       if (error || !data) {
         setError(error);
-        setFetching(false);
         loadingState.set("possible-interactive-filters", false);
         console.error("Could not fetch possible filters", error);
 
@@ -568,7 +566,6 @@ const useEnsurePossibleInteractiveFilters = (
       }
 
       setError(undefined);
-      setFetching(false);
       loadingState.set("possible-interactive-filters", false);
 
       const filters = Object.assign(
@@ -609,5 +606,5 @@ const useEnsurePossibleInteractiveFilters = (
     loadingState,
   ]);
 
-  return { error, fetching };
+  return { error };
 };
