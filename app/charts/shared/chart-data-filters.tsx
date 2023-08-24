@@ -260,6 +260,8 @@ const DataFilter = (props: DataFilterProps) => {
     dimensionIri,
     fetching,
     updateDataFilter,
+    // Also reload when the config value changes.
+    configFilterValue,
   ]);
 
   return dimension ? (
