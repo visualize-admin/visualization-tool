@@ -102,7 +102,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     }
 
     return (
-      <Flex sx={{ flexDirection: "column", my: 4 }}>
+      <Flex sx={{ flexDirection: "column", my: 2 }}>
         {namedFilters.length > 0 && (
           <Typography
             component="div"
