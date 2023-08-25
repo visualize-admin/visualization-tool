@@ -794,7 +794,11 @@ describe("colorMapping", () => {
       },
       chartConfig: {
         chartType: "column",
-        fields: {},
+        fields: {
+          y: {
+            componentIri: "measure",
+          },
+        },
         filters: {},
       },
     } as ConfiguratorStateConfiguringChart;
