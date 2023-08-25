@@ -10,7 +10,6 @@ import {
 } from "@/charts/shared/axis-width-band";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { ColumnConfig } from "@/configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
@@ -25,32 +24,35 @@ ${(
       measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
       dimensions={columnDimensions}
       dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
-      chartConfig={
-        {
-          chartType: "column",
-          filters: {},
-          fields: columnFields,
-          interactiveFiltersConfig: {
-            legend: {
-              active: false,
-              componentIri: "",
-            },
-            dataFilters: {
-              active: false,
-              componentIris: [],
-            },
-            timeRange: {
-              presets: {
-                type: "range",
-                from: "0",
-                to: "0",
-              },
-              active: false,
-              componentIri: "http://fake-iri",
-            },
+      chartConfig={{
+        chartType: "column",
+        version: "1.4.2",
+        filters: {},
+        fields: columnFields,
+        interactiveFiltersConfig: {
+          legend: {
+            active: false,
+            componentIri: "",
           },
-        } as unknown as ColumnConfig
-      }
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
+          timeRange: {
+            presets: {
+              type: "range",
+              from: "0",
+              to: "0",
+            },
+            active: false,
+            componentIri: "http://fake-iri",
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        },
+      }}
       aspectRatio={0.4}
     >
       <ChartContainer>
@@ -72,25 +74,14 @@ export default Docs;
 const columnFields = {
   x: {
     componentIri:
-      "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
   },
   y: {
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0":
-    "#1f77b4",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1":
-    "#ff7f0e",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/2":
-    "#2ca02c",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/3":
-    "#d62728",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/4":
-    "#9467bd",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5":
-    "#8c564b",
 };
+
 const columnMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
@@ -182,7 +173,7 @@ const columnMeasures = [
         iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
       },
     ],
-    __typename: "NumericalMeasure",
+    __typename: "StandardErrorDimension",
   },
 ] as DimensionMetadataFragment[];
 
@@ -479,6 +470,7 @@ const columnDimensions = [
     __typename: "NominalDimension",
   },
 ] as unknown as DimensionMetadataFragment[];
+
 const columnObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
