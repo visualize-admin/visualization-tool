@@ -5,6 +5,7 @@ fragment dimensionMetadata on Dimension {
   isNumerical
   isKeyDimension
   dataType
+  scaleType
   order
   values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
   unit
@@ -30,6 +31,7 @@ fragment dimensionMetadataWithHierarchies on Dimension {
   description
   isNumerical
   isKeyDimension
+  scaleType
   dataType
   order
   values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
