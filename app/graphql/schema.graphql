@@ -23,6 +23,13 @@ enum DataCubePublicationStatus {
   PUBLISHED
 }
 
+enum ScaleType {
+  Ordinal
+  Nominal
+  Interval
+  Ratio
+}
+
 type DataCube {
   iri: String!
   identifier: String
@@ -86,7 +93,7 @@ interface Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -112,7 +119,7 @@ type GeoCoordinatesDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -138,7 +145,7 @@ type GeoShapesDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -158,7 +165,7 @@ type NominalDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -177,7 +184,7 @@ type OrdinalDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -196,7 +203,7 @@ type StandardErrorDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -227,7 +234,7 @@ type TemporalDimension implements Dimension {
   timeUnit: TimeUnit!
   timeFormat: String!
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -246,7 +253,7 @@ type TemporalOrdinalDimension implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -267,7 +274,7 @@ type NumericalMeasure implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!
@@ -290,7 +297,7 @@ type OrdinalMeasure implements Dimension {
   label: String!
   description: String
   unit: String
-  scaleType: String
+  scaleType: ScaleType
   dataType: String
   order: Int
   isNumerical: Boolean!

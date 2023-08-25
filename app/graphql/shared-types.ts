@@ -8,6 +8,7 @@ import {
   DataCubeOrganization,
   DataCubePublicationStatus,
   DataCubeTheme,
+  ScaleType,
   TimeUnit,
 } from "./resolver-types";
 
@@ -64,7 +65,7 @@ export type ResolvedDimension = {
     related: Omit<RelatedDimension, "__typename">[];
     timeUnit?: TimeUnit;
     timeFormat?: string;
-    scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
+    scaleType?: ScaleType;
     hasHierarchy?: boolean;
   };
 };
