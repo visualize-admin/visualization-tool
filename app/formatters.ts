@@ -66,7 +66,7 @@ const currencyFormatter = (d: NumericalMeasure) => {
   };
 };
 
-const getFormattersForLocale = memoize((locale) => {
+export const getFormattersForLocale = memoize((locale) => {
   const { format } = getD3TimeFormatLocale(locale);
   return {
     empty: () => "-",
@@ -85,7 +85,7 @@ export const useLocalFormatters = () => {
   return getFormattersForLocale(locale);
 };
 
-const dateFormatterFromDimension = (
+export const dateFormatterFromDimension = (
   dim: TemporalDimension,
   localFormatters: LocalDateFormatters,
   formatDateAuto: (d: Date | string | null) => string

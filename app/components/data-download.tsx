@@ -31,6 +31,11 @@ import Flex from "@/components/flex";
 import { DataSource, QueryFilters } from "@/config-types";
 import { Observation } from "@/domain/data";
 import {
+  dateFormatterFromDimension,
+  getFormatFullDateAuto,
+  getFormattersForLocale,
+} from "@/formatters";
+import {
   ComponentsDocument,
   ComponentsQuery,
   ComponentsQueryVariables,
@@ -40,6 +45,7 @@ import {
   DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useI18n } from "@/utils/use-i18n";
 
@@ -88,27 +94,28 @@ const makeColumnLabel = (dim: DimensionMetadataFragment) => {
 };
 
 const prepareData = ({
-  dimensions,
-  measures,
+  components,
   observations,
+  dimensionParsers,
 }: {
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  components: DimensionMetadataFragment[];
   observations: Observation[];
+  dimensionParsers: DimensionParsers;
 }) => {
-  const columns = keyBy(getSortedColumns(dimensions, measures), (d) => d.iri);
-  const data = observations.map((obs) =>
-    Object.keys(obs).reduce((acc, key) => {
+  const columns = keyBy(getSortedColumns(components), (d) => d.iri);
+  const data = observations.map((obs) => {
+    return Object.keys(obs).reduce((acc, key) => {
       const col = columns[key];
+      const formatter = dimensionParsers[key];
+
       return col
         ? {
             ...acc,
-            ...{ [makeColumnLabel(col)]: obs[key] },
+            ...{ [makeColumnLabel(col)]: formatter(obs[key] as string) },
           }
         : acc;
-    }, {})
-  );
-
+    }, {});
+  });
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
   return { data, columnKeys };
@@ -281,38 +288,34 @@ const DownloadMenuItem = ({
   const i18n = useI18n();
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
-
   const download = useCallback(
     (
       componentsData: ComponentsQuery,
       observationsData: DataCubeObservationsQuery
     ) => {
-      if (componentsData?.dataCubeByIri && observationsData?.dataCubeByIri) {
-        const { dimensions, measures } = componentsData.dataCubeByIri;
-        const { observations } = observationsData.dataCubeByIri;
-        const preparedData = prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        });
-        const { columnKeys, data } = preparedData;
-
-        return fetch("/api/download", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            columnKeys,
-            data,
-            fileFormat,
-          }),
-        }).then((res) =>
-          res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
-        );
+      if (!(componentsData?.dataCubeByIri && observationsData?.dataCubeByIri)) {
+        return;
       }
+
+      const { dimensions, measures } = componentsData.dataCubeByIri;
+      const components = [...dimensions, ...measures];
+      const dimensionParsers = getDimensionParsers(components, { locale });
+      const observations = observationsData.dataCubeByIri.observations.data;
+      const { columnKeys, data } = prepareData({
+        components,
+        observations,
+        dimensionParsers,
+      });
+
+      return fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ columnKeys, data, fileFormat }),
+      }).then((res) =>
+        res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
+      );
     },
-    [fileFormat, fileName]
+    [fileFormat, fileName, locale]
   );
 
   return (
@@ -388,22 +391,61 @@ const DownloadMenuItem = ({
 
 export const RunSparqlQuery = ({ url }: { url: string }) => {
   return (
-    <>
-      <Button
-        component="a"
-        variant="text"
-        color="primary"
-        size="small"
-        href={url}
-        target="_blank"
-        sx={{ p: 0 }}
-      >
-        <Typography variant="caption">
-          <Trans id="button.download.runsparqlquery.visible">
-            Run SPARQL query (visible)
-          </Trans>
-        </Typography>
-      </Button>
-    </>
+    <Button
+      component="a"
+      variant="text"
+      color="primary"
+      size="small"
+      href={url}
+      target="_blank"
+      sx={{ p: 0 }}
+    >
+      <Typography variant="caption">
+        <Trans id="button.download.runsparqlquery.visible">
+          Run SPARQL query (visible)
+        </Trans>
+      </Typography>
+    </Button>
+  );
+};
+
+export type DimensionParsers = {
+  [iri: string]: (d: string) => any;
+};
+
+export const getDimensionParsers = (
+  components: DimensionMetadataFragment[],
+  { locale }: { locale: Locale }
+): DimensionParsers => {
+  return Object.fromEntries(
+    components.map((d) => {
+      switch (d.__typename) {
+        case "GeoCoordinatesDimension":
+        case "GeoShapesDimension":
+        case "NominalDimension":
+        case "OrdinalDimension":
+        case "TemporalOrdinalDimension":
+          return [d.iri, (d) => d];
+        case "NumericalMeasure":
+        case "StandardErrorDimension":
+          return [d.iri, (d) => +d];
+        case "OrdinalMeasure":
+          return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
+        case "TemporalDimension": {
+          // We do not want to parse dates as dates, but strings (for easier
+          // handling in Excel).
+          const dateFormatters = getFormattersForLocale(locale);
+          const formatDateAuto = getFormatFullDateAuto(dateFormatters);
+
+          return [
+            d.iri,
+            dateFormatterFromDimension(d, dateFormatters, formatDateAuto),
+          ];
+        }
+        default:
+          const _exhaustiveCheck: never = d;
+          return _exhaustiveCheck;
+      }
+    })
   );
 };
