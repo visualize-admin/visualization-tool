@@ -262,6 +262,10 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   return checkForMissingValuesInSegments(grouped, segments);
 };
 
+export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
+  return d?.scaleType !== "Ratio";
+};
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
@@ -284,8 +288,23 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
-        getDisabledState: (_chartConfig, _, data) => {
+        getDisabledState: (_chartConfig, components, data) => {
           const chartConfig = _chartConfig as AreaConfig;
+          const yIri = chartConfig.fields.y.componentIri;
+          const yDimension = components.find((d) => d.iri === yIri);
+          const disabledStacked = disableStacked(yDimension);
+
+          if (disabledStacked) {
+            return {
+              disabled: true,
+              warnMessage: t({
+                id: "controls.segment.stacked.disabled-by-scale-type",
+                message:
+                  "Stacked layout can only be enabled if the dimension mapped to the vertical axis has a ratio scale.",
+              }),
+            };
+          }
+
           const missingDataPresent = isMissingDataPresent(chartConfig, data);
           const imputationType = chartConfig.fields.y.imputationType;
           const disabled = false;
@@ -356,11 +375,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           {
             field: "chartSubType",
-            getValues: (d, dimensions) => {
-              const chartConfig = d as ColumnConfig;
+            getValues: (_chartConfig, dimensions) => {
+              const chartConfig = _chartConfig as ColumnConfig;
               const yIri = chartConfig.fields.y.componentIri;
               const yDimension = dimensions.find((d) => d.iri === yIri);
-              const disabledStacked = yDimension?.scaleType !== "Ratio";
+              const disabledStacked = disableStacked(yDimension);
 
               return [
                 {
