@@ -9,6 +9,7 @@ import {
   ANIMATION_FIELD_SPEC,
   chartConfigOptionsUISpec,
   EncodingFieldType,
+  EncodingOptionChartSubType,
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
@@ -315,8 +316,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       chartType === "column") ??
     false;
 
-  console.log("encoding", encoding);
-
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -355,6 +354,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartLayoutOptions
             encoding={encoding}
             component={component}
+            chartConfig={state.chartConfig}
+            components={allComponents}
             hasColorPalette={hasColorPalette}
             hasSubOptions={hasSubOptions}
           />
@@ -452,12 +453,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 type ChartLayoutOptionsProps = {
   encoding: EncodingSpec;
   component: DimensionMetadataFragment | undefined;
+  chartConfig: ChartConfig;
+  components: DimensionMetadataFragment[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
 };
 
 const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
-  const { encoding, component, hasColorPalette, hasSubOptions } = props;
+  const {
+    encoding,
+    component,
+    chartConfig,
+    components,
+    hasColorPalette,
+    hasSubOptions,
+  } = props;
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
@@ -466,7 +476,12 @@ const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         {hasSubOptions && (
-          <ChartFieldOptions disabled={!component} field={encoding.field} />
+          <ChartFieldOptions
+            encoding={encoding}
+            chartConfig={chartConfig}
+            components={components}
+            disabled={!component}
+          />
         )}
         {hasColorPalette && (
           <ColorPalette
@@ -692,12 +707,18 @@ const ChartFieldMultiFilter = ({
 };
 
 type ChartFieldOptionsProps = {
-  field: string;
+  encoding: EncodingSpec;
+  chartConfig: ChartConfig;
+  components: DimensionMetadataFragment[];
   disabled?: boolean;
 };
 
 const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
-  const { field, disabled } = props;
+  const { encoding, chartConfig, components, disabled } = props;
+  const chartSubType = encoding.options?.find(
+    (d) => d.field === "chartSubType"
+  ) as EncodingOptionChartSubType;
+  const values = chartSubType.getValues(chartConfig, components);
 
   return (
     <div>
@@ -708,20 +729,17 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
           }
         />
         <Flex sx={{ justifyContent: "flex-start" }}>
-          <ChartOptionRadioField
-            label={getFieldLabel("stacked")}
-            field={field}
-            path="type"
-            value="stacked"
-            disabled={disabled}
-          />
-          <ChartOptionRadioField
-            label={getFieldLabel("grouped")}
-            field={field}
-            path="type"
-            value="grouped"
-            disabled={disabled}
-          />
+          {values.map((d) => (
+            <ChartOptionRadioField
+              key={d.value}
+              label={getFieldLabel(d.value)}
+              field={encoding.field}
+              path="type"
+              value={d.value}
+              disabled={disabled || d.disabled}
+              warnMessage={d.warnMessage}
+            />
+          ))}
         </Flex>
       </Box>
     </div>

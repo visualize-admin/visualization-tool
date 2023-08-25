@@ -33,6 +33,7 @@ import {
   ChartConfig,
   ChartType,
   ColorMapping,
+  ColumnConfig,
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
@@ -857,7 +858,14 @@ export const handleChartFieldChanged = (
           palette,
           ...(isColumnConfig(draft.chartConfig) && {
             // Type exists only within column charts.
-            type: "stacked",
+            type:
+              measures.find(
+                (d) =>
+                  d.iri ===
+                  (draft.chartConfig as ColumnConfig).fields.y.componentIri
+              )?.scaleType === "Ratio"
+                ? "stacked"
+                : "grouped",
           }),
           sorting: DEFAULT_SORTING,
           colorMapping,
@@ -966,6 +974,23 @@ export const handleChartFieldChanged = (
           dimensions,
           measures,
         });
+      } else if (
+        isColumnConfig(draft.chartConfig) &&
+        field === "y" &&
+        draft.chartConfig.fields.segment?.type === "stacked"
+      ) {
+        const yMeasure = measures.find((d) => d.iri === componentIri);
+
+        if (yMeasure?.scaleType !== "Ratio") {
+          draft.chartConfig.fields.segment.type = "grouped";
+
+          if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
+            draft.chartConfig.interactiveFiltersConfig.calculation = {
+              active: false,
+              type: "identity",
+            };
+          }
+        }
       }
     }
 

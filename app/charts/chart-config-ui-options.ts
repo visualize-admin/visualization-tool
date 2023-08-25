@@ -8,6 +8,7 @@ import {
 import {
   AreaConfig,
   ChartConfig,
+  ChartSubType,
   ChartType,
   ColumnConfig,
   ComponentType,
@@ -36,10 +37,20 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
+export type EncodingOptionChartSubType = {
+  field: "chartSubType";
+  getValues: (
+    chartConfig: ChartConfig,
+    dimensions: DimensionMetadataFragment[]
+  ) => {
+    value: ChartSubType;
+    disabled: boolean;
+    warnMessage?: string;
+  }[];
+};
+
 export type EncodingOption =
-  | {
-      field: "chartSubType";
-    }
+  | EncodingOptionChartSubType
   | {
       field: "calculation";
       getDisabledState?: (chartConfig: ChartConfig) => {
@@ -343,7 +354,33 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
-          { field: "chartSubType" },
+          {
+            field: "chartSubType",
+            getValues: (d, dimensions) => {
+              const chartConfig = d as ColumnConfig;
+              const yIri = chartConfig.fields.y.componentIri;
+              const yDimension = dimensions.find((d) => d.iri === yIri);
+              const disabledStacked = yDimension?.scaleType !== "Ratio";
+
+              return [
+                {
+                  value: "stacked",
+                  disabled: disabledStacked,
+                  warnMessage: disabledStacked
+                    ? t({
+                        id: "controls.segment.stacked.disabled-by-scale-type",
+                        message:
+                          "Stacked layout can only be enabled if the dimension mapped to the vertical axis has a ratio scale.",
+                      })
+                    : undefined,
+                },
+                {
+                  value: "grouped",
+                  disabled: false,
+                },
+              ];
+            },
+          },
           {
             field: "calculation",
             getDisabledState: (d) => {
