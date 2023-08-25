@@ -109,12 +109,12 @@ const prepareData = ({
   const data = observations.map((obs) => {
     return Object.keys(obs).reduce<Observation>((acc, key) => {
       const col = columns[key];
-      const formatter = dimensionParsers[key];
+      const parser = dimensionParsers[key];
 
       return col
         ? {
             ...acc,
-            ...{ [makeColumnLabel(col)]: formatter(obs[key] as string) },
+            ...{ [makeColumnLabel(col)]: parser(obs[key] as string) },
           }
         : acc;
     }, {});
@@ -444,11 +444,11 @@ export const RunSparqlQuery = ({ url }: { url: string }) => {
   );
 };
 
-export type DimensionParsers = {
+type DimensionParsers = {
   [iri: string]: (d: string) => any;
 };
 
-export const getDimensionParsers = (
+const getDimensionParsers = (
   components: DimensionMetadataFragment[],
   { locale }: { locale: Locale }
 ): DimensionParsers => {
