@@ -785,9 +785,11 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
             <Tooltip
               enterDelay={600}
               title={
-                <Trans id="controls.filters.interactive.calculation">
-                  Allow users to change chart mode
-                </Trans>
+                <Typography variant="body2">
+                  <Trans id="controls.filters.interactive.calculation">
+                    Allow users to change chart mode
+                  </Trans>
+                </Typography>
               }
             >
               <div>
