@@ -16,6 +16,48 @@ import {
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
+export const Docs = () => markdown`
+
+## Line Chart
+
+${(
+  <ReactSpecimen span={6}>
+    <PublishedConfiguratorStateProvider
+      initialState={{
+        state: "PUBLISHING",
+        activeField: undefined,
+        // @ts-ignore
+        meta: { title: {}, description: {} },
+        dataSource: { type: "sparql", url: "" },
+        dataSet: "",
+        chartConfig,
+      }}
+    >
+      <LineChart
+        observations={observations}
+        dimensions={dimensions}
+        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+        measures={measures}
+        measuresByIri={keyBy(measures, (d) => d.iri)}
+        chartConfig={chartConfig}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <BrushTime />
+            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+            <Lines />
+          </ChartSvg>
+        </ChartContainer>
+
+        {fields.segment && <LegendColor symbol="line" interactive />}
+      </LineChart>
+    </PublishedConfiguratorStateProvider>
+  </ReactSpecimen>
+)}
+`;
+export default Docs;
+
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
     active: true,
@@ -35,61 +77,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     type: "identity",
   },
 };
-
-export const Docs = () => markdown`
-
-## Line Chart
-
-${(
-  <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
-      initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
-        dataSource: { type: "sparql", url: "" },
-        dataSet: "",
-        chartConfig: {
-          chartType: "line",
-          filters: {},
-          version: "0.0.1",
-          interactiveFiltersConfig,
-          fields,
-        },
-      }}
-    >
-      <LineChart
-        observations={observations}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        chartConfig={{ interactiveFiltersConfig } as unknown as LineConfig}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <BrushTime />
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-            <Lines />
-            {/* <InteractionHorizontal /> */}
-          </ChartSvg>
-
-          {/* <Ruler />
-
-        <HoverDotMultiple />
-
-        <Tooltip type={fields.segment ? "multiple" : "single"} /> */}
-        </ChartContainer>
-
-        {fields.segment && <LegendColor symbol="line" interactive />}
-      </LineChart>
-    </PublishedConfiguratorStateProvider>
-  </ReactSpecimen>
-)}
-`;
-export default Docs;
 
 const fields = {
   x: {
@@ -129,6 +116,15 @@ const fields = {
     },
   },
 };
+
+const chartConfig: LineConfig = {
+  chartType: "line",
+  filters: {},
+  version: "1.4.2",
+  interactiveFiltersConfig,
+  fields,
+};
+
 const measures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
@@ -499,6 +495,7 @@ const dimensions = [
     __typename: "NominalDimension",
   },
 ] as unknown as DimensionMetadataFragment[];
+
 const observations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
