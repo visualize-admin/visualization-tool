@@ -290,7 +290,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           const imputationType = chartConfig.fields.y.imputationType;
           const disabled = false;
           const warnMessage =
-            missingDataPresent && imputationType === "none"
+            missingDataPresent && (!imputationType || imputationType === "none")
               ? t({
                   id: "controls.section.imputation.explanation",
                   message:
