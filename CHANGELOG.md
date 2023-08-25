@@ -15,6 +15,8 @@ Nothing yet.
 
 - Features
   - Introduced preferred chart type order, which makes the table chart the least preferred option
+  - Downloaded data is now sorted automatically, according to dimension types
+  - XLSX data download now correctly formats values (e.g. numbers are numbers and not strings)
 - UI
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
   - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
