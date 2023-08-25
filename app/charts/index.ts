@@ -3,6 +3,12 @@ import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
 
+import {
+  AREA_SEGMENT_SORTING,
+  COLUMN_SEGMENT_SORTING,
+  disableStacked,
+  PIE_SEGMENT_SORTING,
+} from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   AreaSegmentField,
@@ -58,12 +64,6 @@ import {
   DataCubeMetadataWithHierarchies,
 } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
-
-import {
-  AREA_SEGMENT_SORTING,
-  COLUMN_SEGMENT_SORTING,
-  PIE_SEGMENT_SORTING,
-} from "./chart-config-ui-options";
 
 export const chartTypes: ChartType[] = [
   "column",
@@ -676,6 +676,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         measures,
       }) => {
         let newSegment: ColumnSegmentField | undefined;
+        const yMeasure = measures.find(
+          (d) => d.iri === newChartConfig.fields.y.componentIri
+        );
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
         if (oldChartConfig.chartType === "table") {
@@ -689,7 +692,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             newSegment = {
               ...tableSegment,
               sorting: DEFAULT_SORTING,
-              type: "stacked",
+              type: disableStacked(yMeasure) ? "grouped" : "stacked",
             };
           }
           // Otherwise we are dealing with a segment field.
@@ -704,7 +707,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byTotalSize",
             }),
-            type: "stacked",
+            type: disableStacked(yMeasure) ? "grouped" : "stacked",
           };
         }
 
@@ -834,6 +837,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
+        const yMeasure = measures.find(
+          (d) => d.iri === newChartConfig.fields.y.componentIri
+        );
+
+        if (disableStacked(yMeasure)) {
+          return produce(newChartConfig, (draft) => {
+            delete draft.fields.segment;
+          });
+        }
+
         let newSegment: AreaSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
