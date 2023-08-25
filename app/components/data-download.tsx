@@ -6,6 +6,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
+import { ascending } from "d3";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
@@ -28,7 +29,7 @@ import { OperationResult, useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
-import { DataSource, QueryFilters } from "@/config-types";
+import { DataSource, QueryFilters, SortingField } from "@/config-types";
 import { Observation } from "@/domain/data";
 import {
   dateFormatterFromDimension,
@@ -47,6 +48,7 @@ import {
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import { useI18n } from "@/utils/use-i18n";
 
 type DataDownloadState = {
@@ -102,9 +104,10 @@ const prepareData = ({
   observations: Observation[];
   dimensionParsers: DimensionParsers;
 }) => {
-  const columns = keyBy(getSortedColumns(components), (d) => d.iri);
+  const sortedComponents = getSortedColumns(components);
+  const columns = keyBy(sortedComponents, (d) => d.iri);
   const data = observations.map((obs) => {
-    return Object.keys(obs).reduce((acc, key) => {
+    return Object.keys(obs).reduce<Observation>((acc, key) => {
       const col = columns[key];
       const formatter = dimensionParsers[key];
 
@@ -118,7 +121,39 @@ const prepareData = ({
   });
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
-  return { data, columnKeys };
+  // Sort the data from left to right, keeping the order of the columns.
+  const sorting: SortingField["sorting"] = {
+    sortingType: "byAuto",
+    sortingOrder: "asc",
+  };
+  const sorters = sortedComponents.map<
+    [string, ReturnType<typeof makeDimensionValueSorters>]
+  >((d) => {
+    return [d.iri, makeDimensionValueSorters(d, { sorting })];
+  });
+  data.sort((a, b) => {
+    for (const [iri, dimSorters] of sorters) {
+      const colLabel = makeColumnLabel(columns[iri]);
+
+      for (const sorter of dimSorters) {
+        const sortResult = ascending(
+          sorter(a[colLabel] as string),
+          sorter(b[colLabel] as string)
+        );
+
+        if (sortResult !== 0) {
+          return sortResult;
+        }
+      }
+    }
+
+    return 0;
+  });
+
+  return {
+    data,
+    columnKeys,
+  };
 };
 
 const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
