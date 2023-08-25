@@ -14,6 +14,7 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
+import { ScaleType } from "@/graphql/query-hooks";
 
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -111,18 +112,17 @@ const timeFormats = new Map<string, string>([
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
 
-export const getScaleType = (
-  dim: CubeDimension
-): ResolvedDimension["data"]["scaleType"] => {
+export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
+
   return scaleTypeTerm?.equals(ns.qudt.NominalScale)
-    ? "Nominal"
+    ? ScaleType.Nominal
     : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
-    ? "Ordinal"
+    ? ScaleType.Ordinal
     : scaleTypeTerm?.equals(ns.qudt.RatioScale)
-    ? "Ratio"
+    ? ScaleType.Ratio
     : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
-    ? "Interval"
+    ? ScaleType.Interval
     : undefined;
 };
 
