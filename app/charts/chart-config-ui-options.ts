@@ -114,7 +114,7 @@ export interface EncodingSpec {
   options?: EncodingOption[];
   getDisabledState?: (
     chartConfig: ChartConfig,
-    dimensions: DimensionMetadataFragment[],
+    components: DimensionMetadataFragment[],
     observations: Observation[]
   ) => {
     disabled: boolean;
@@ -208,12 +208,12 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   disableInteractiveFilters: true,
   getDisabledState: (
     chartConfig,
-    dimensions
+    components
   ): {
     disabled: boolean;
     warnMessage?: string;
   } => {
-    const noTemporalDimensions = !dimensions.some((d) => {
+    const noTemporalDimensions = !components.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
 
