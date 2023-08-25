@@ -206,7 +206,7 @@ const DataDownloadInnerMenu = ({
             subheader={
               <Trans id="button.download.data.visible">Chart dataset</Trans>
             }
-            fileName={fileName}
+            fileName={`${fileName}-filtered`}
             filters={filters}
           />
         )}
@@ -214,7 +214,7 @@ const DataDownloadInnerMenu = ({
           dataSetIri={dataSetIri}
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
-          fileName={fileName}
+          fileName={`${fileName}-full`}
         />
         {state.error && (
           <RawMenuItem>
