@@ -104,17 +104,25 @@ with aggregation, key dimensions must either be **encoded** or **part of a filte
 | :-------------------------------------- | :----------------------- |
 | `?dimension shacl:datatype xsd:int`     | `dim.isNumerical = true` |
 | `?dimension shacl:datatype xsd:integer` | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:decimal` | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:float`   | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:double`  | `dim.isNumerical = true` |
 
-ℹ️ At the moment, numerical fields are filtered out of encoding fields options.
+ℹ️ At the moment, `isNumerical` property is used when sorting and formatting
+dimension values in some specific cases (e.g. when NominalDimension is numerical).
+Generally, this property is a "last resort property", as numerical dimensions are
+usually treated as `NumericalMeasure`s based on `https://cube.link/MeasureDimension`
+property.
 
 - `isLiteral`
 
-| RDF                                | Visualize               |
-| :--------------------------------- | :---------------------- |
-| `?dimension shacl:datatype ?value` | `dim.isLiteral = false` |
+| RDF                                        | Visualize              |
+| :----------------------------------------- | :--------------------- |
+| `?dimension shacl:nodeKind ?shacl:Literal` | `dim.isLiteral = true` |
 
-`True` when the dimension has no `shacl:datatype`. Non literal dimensions are also
-called _Shared dimensions_, and their values will be fetched outside the cube.
+`True` when the dimension has `shacl:nodeKind` of `shacl:Literal`. Non literal
+dimensions (`shacl:IRI`) are also called _Shared dimensions_, and their values
+will be fetched outside of the cube.
 
 #### Data kind
 
