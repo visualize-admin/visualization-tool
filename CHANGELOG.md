@@ -18,6 +18,7 @@ Nothing yet.
 - UI
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
   - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
+  - Error message is now displayed if there are no geometries available for both area and symbol layers (depending on whether one or the other is used)
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
   - Redirect to versioned cubes now works correctly when using legacy, `/browse/dataset/<iri>` mode
