@@ -20,6 +20,7 @@ Nothing yet.
   - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
+  - Redirect to versioned cubes now works correctly when using legacy, `/browse/dataset/<iri>` mode
 - Performance
   - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 - Maintenance

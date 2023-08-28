@@ -51,7 +51,7 @@ export const useRedirectToVersionedCube = ({
           pathname: `/${locale}/browse`,
           query: {
             ...router.query,
-            dataset: resp.iri,
+            ...(router.query.iri ? { iri: resp.iri } : { dataset: resp.iri }),
           },
         });
       } else {
