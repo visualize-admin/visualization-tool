@@ -761,6 +761,7 @@ export const ChartOptionRadioField = ({
   value,
   defaultChecked,
   disabled = false,
+  warnMessage,
 }: {
   label: string;
   field: string | null;
@@ -768,6 +769,7 @@ export const ChartOptionRadioField = ({
   value: string | number;
   defaultChecked?: boolean;
   disabled?: boolean;
+  warnMessage?: string;
 }) => {
   const fieldProps = useChartOptionRadioField({
     path,
@@ -781,6 +783,7 @@ export const ChartOptionRadioField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
+      warnMessage={warnMessage}
     />
   );
 };

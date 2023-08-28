@@ -15,12 +15,15 @@ Nothing yet.
 
 - Features
   - Introduced preferred chart type order, which makes the table chart the least preferred option
+  - Disabled stacking of non-ratio measures (area and column charts)
 - UI
   - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
   - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
+  - Error message is now displayed if there are no geometries available for both area and symbol layers (depending on whether one or the other is used)
 - Fixes
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
   - Map chart is now again correctly initialized when hierarchy is there
+  - Redirect to versioned cubes now works correctly when using legacy, `/browse/dataset/<iri>` mode
 - Performance
   - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 - Maintenance
