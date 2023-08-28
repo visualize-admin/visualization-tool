@@ -622,7 +622,7 @@ msgstr "Segmentation"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
-msgstr "Stacked layout can only be enabled if the dimension mapped to the vertical axis has a ratio scale."
+msgstr "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"

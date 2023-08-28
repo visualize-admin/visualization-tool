@@ -300,7 +300,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
               warnMessage: t({
                 id: "controls.segment.stacked.disabled-by-scale-type",
                 message:
-                  "Stacked layout can only be enabled if the dimension mapped to the vertical axis has a ratio scale.",
+                  "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale.",
               }),
             };
           }
@@ -389,7 +389,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
                     ? t({
                         id: "controls.segment.stacked.disabled-by-scale-type",
                         message:
-                          "Stacked layout can only be enabled if the dimension mapped to the vertical axis has a ratio scale.",
+                          "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale.",
                       })
                     : undefined,
                 },

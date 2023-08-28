@@ -622,7 +622,7 @@ msgstr "Segmentation"
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
-msgstr "La mise en page empilée ne peut être activée que si la dimension mappée sur l'axe vertical a une échelle de rapport."
+msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio.""
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
