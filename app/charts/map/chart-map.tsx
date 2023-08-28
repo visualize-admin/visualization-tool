@@ -10,6 +10,7 @@ import {
   ChartContainer,
   ChartControlsContainer,
 } from "@/charts/shared/containers";
+import { NoGeometriesHint } from "@/components/hint";
 import { DataSource, MapConfig, QueryFilters } from "@/config-types";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { GeoShapes } from "@/domain/data";
@@ -109,12 +110,14 @@ export const ChartMapVisualization = ({
     "GeoShapesDimension"
       ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as GeoShapes)
       : undefined;
+  const geometries: any[] | undefined = (
+    shapes?.topology?.objects?.shapes as any
+  )?.geometries;
 
   const ready =
-    (areaDimensionIri !== "" &&
-      (shapes?.topology?.objects?.shapes as any)?.geometries) ||
+    (areaDimensionIri !== "" && geometries) ||
     (symbolDimensionIri !== "" && coordinates) ||
-    (shapes?.topology?.objects?.shapes as any)?.geometries ||
+    geometries ||
     // Raw map without any data layer.
     (areaDimensionIri === "" && symbolDimensionIri === "");
 
@@ -127,7 +130,17 @@ export const ChartMapVisualization = ({
     error: observationsQuery.error ?? geoCoordinatesError ?? geoShapesError,
   };
 
-  return (
+  const displayNoDataError =
+    ready &&
+    (areaDimensionIri === "" ||
+      (areaDimensionIri !== "" && geometries?.length === 0)) &&
+    (symbolDimensionIri === "" ||
+      (symbolDimensionIri !== "" && coordinates?.length === 0)) &&
+    areaDimensionIri !== symbolDimensionIri;
+
+  return displayNoDataError ? (
+    <NoGeometriesHint />
+  ) : (
     <ChartLoadingWrapper
       metadataQuery={metadataQuery}
       componentsQuery={componentsQuery}

@@ -1014,6 +1014,14 @@ msgid "hint.nodata.title"
 msgstr "Non ci sono dati corrispondenti ai filtri selezionati"
 
 #: app/components/hint.tsx
+msgid "hint.nogeometries.message"
+msgstr "Provare con un'altra dimensione geografica."
+
+#: app/components/hint.tsx
+msgid "hint.nogeometries.title"
+msgstr "Nessuna geometria disponibile"
+
+#: app/components/hint.tsx
 msgid "hint.only.negative.data.message"
 msgstr "Dati con valori negativi non possono essere visualizzati con questo tipo di grafico."
 
