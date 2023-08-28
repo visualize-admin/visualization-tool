@@ -28,11 +28,13 @@ import {
   getInitialSymbolLayer,
   getPossibleChartType,
 } from "@/charts";
+import { disableStacked } from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   ChartConfig,
   ChartType,
   ColorMapping,
+  ColumnConfig,
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
@@ -857,7 +859,15 @@ export const handleChartFieldChanged = (
           palette,
           ...(isColumnConfig(draft.chartConfig) && {
             // Type exists only within column charts.
-            type: "stacked",
+            type: disableStacked(
+              measures.find(
+                (d) =>
+                  d.iri ===
+                  (draft.chartConfig as ColumnConfig).fields.y.componentIri
+              )
+            )
+              ? "grouped"
+              : "stacked",
           }),
           sorting: DEFAULT_SORTING,
           colorMapping,
@@ -966,6 +976,33 @@ export const handleChartFieldChanged = (
           dimensions,
           measures,
         });
+      } else if (field === "y") {
+        if (
+          isColumnConfig(draft.chartConfig) &&
+          draft.chartConfig.fields.segment?.type === "stacked"
+        ) {
+          const yMeasure = measures.find((d) => d.iri === componentIri);
+
+          if (disableStacked(yMeasure)) {
+            draft.chartConfig.fields.segment.type = "grouped";
+
+            if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
+              draft.chartConfig.interactiveFiltersConfig.calculation = {
+                active: false,
+                type: "identity",
+              };
+            }
+          }
+        } else if (
+          isAreaConfig(draft.chartConfig) &&
+          draft.chartConfig.fields.segment
+        ) {
+          const yMeasure = measures.find((d) => d.iri === componentIri);
+
+          if (disableStacked(yMeasure)) {
+            delete draft.chartConfig.fields.segment;
+          }
+        }
       }
     }
 

@@ -199,10 +199,6 @@ msgstr "Axe horizontal"
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
 
-#: app/configurator/components/chart-options-selector.tsx
-#~ msgid "controls.calculation.allow-normalization"
-#~ msgstr "Permettre la normalisation des données"
-
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "Le mode 100% ne peut pas être utilisé avec une mise en page groupée."
@@ -623,6 +619,10 @@ msgstr "Ajoutez un titre et une description"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.segment"
 msgstr "Segmentation"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.segment.stacked.disabled-by-scale-type"
+msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio.""
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
