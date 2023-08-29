@@ -1,6 +1,5 @@
 import { current, produce } from "immer";
 import get from "lodash/get";
-import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
@@ -193,7 +192,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_DESCRIPTION_CHANGED";
-      value: { path: string | string[]; value: string };
+      value: {
+        path: string | string[];
+        value: string;
+      };
     }
   | {
       type: "INTERACTIVE_FILTER_CHANGED";
@@ -208,19 +210,29 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
-      value: { dimensionIri: string; value: string };
+      value: {
+        dimensionIri: string;
+        value: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_SINGLE";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTERS_UPDATE";
-      value: { filters: Filters };
+      value: {
+        filters: Filters;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
-      value: { dimensionIri: string; values: string[] };
+      value: {
+        dimensionIri: string;
+        values: string[];
+      };
     }
   | {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING";
@@ -234,34 +246,59 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
-      value: { dimensionIri: string; values: string[]; allValues: string[] };
+      value: {
+        dimensionIri: string;
+        values: string[];
+        allValues: string[];
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
-      value: { dimensionIri: string; values: string[]; allValues: string[] };
+      value: {
+        dimensionIri: string;
+        values: string[];
+        allValues: string[];
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
-      value: { dimensionIri: string; from: string; to: string };
+      value: {
+        dimensionIri: string;
+        from: string;
+        to: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_RESET_RANGE";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_RESET_MULTI";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
-      value: { dimensionIri: string };
+      value: {
+        dimensionIri: string;
+      };
     }
-  | { type: "IMPUTATION_TYPE_CHANGED"; value: { type: ImputationType } }
-  | { type: "PUBLISH_FAILED" }
-  | { type: "PUBLISHED"; value: string };
-
-export type ActionType<ConfiguratorStateAction> =
-  ConfiguratorStateAction[keyof ConfiguratorStateAction];
+  | {
+      type: "IMPUTATION_TYPE_CHANGED";
+      value: {
+        type: ImputationType;
+      };
+    }
+  | {
+      type: "PUBLISH_FAILED";
+    }
+  | {
+      type: "PUBLISHED";
+      value: string;
+    };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
@@ -305,7 +342,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
   activeField: undefined,
 };
 
-const getCachedCubeMetadataWithComponentValuesAndHierarchies = (
+const getCachedCubeMetadataAndComponentsWithHierarchies = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ): DataCubeMetadataWithHierarchies | null => {
@@ -346,33 +383,6 @@ export const getFilterValue = (
     : undefined;
 };
 
-export const ensureFilterValuesCorrect = produce(
-  (
-    chartConfig: ChartConfig,
-    { dimensions }: { dimensions: DataCubeMetadata["dimensions"] }
-  ) => {
-    let dirty = false;
-    const newFilters = mapValues(chartConfig.filters, (f, dimensionIri) => {
-      if (f.type !== "single") {
-        return f;
-      }
-      const values = dimensions.find((dim) => dim.iri === dimensionIri)?.values;
-      if (!values || values.length === 0) {
-        return f;
-      }
-      if (values.find((v) => v.value === f.value)) {
-        return f;
-      }
-      dirty = true;
-      f.value = values[0].value;
-      return f;
-    });
-    if (dirty) {
-      chartConfig.filters = newFilters;
-    }
-  }
-);
-
 export const moveFilterField = produce(
   (chartConfig: ChartConfig, { dimensionIri, delta, possibleValues }) => {
     // Use getOwnPropertyNames instead of keys since the spec ensures that
@@ -391,8 +401,7 @@ export const moveFilterField = produce(
     }
     const replacedIndex =
       fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
-    const replaced =
-      fieldIndex === -1 ? keys[replacedIndex] : keys[replacedIndex];
+    const replaced = keys[replacedIndex];
     keys[replacedIndex] = dimensionIri;
     if (fieldIndex === -1) {
       keys.push(replaced);
@@ -420,18 +429,17 @@ export const deriveFiltersFromFields = produce(
       // they need to be handled in a different way.
       const hiddenFieldIris = getHiddenFieldIris(fields);
       const groupedDimensionIris = getGroupedFieldIris(fields);
-
       const isHidden = (iri: string) => hiddenFieldIris.has(iri);
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-      dimensions.forEach((dimension) =>
+      dimensions.forEach((dimension) => {
         applyTableDimensionToFilters({
           filters,
           dimension,
           isHidden: isHidden(dimension.iri),
           isGrouped: isGrouped(dimension.iri),
-        })
-      );
+        });
+      });
     } else {
       const fieldDimensionIris = getFieldComponentIris(fields);
       const isField = (iri: string) => fieldDimensionIris.has(iri);
@@ -442,13 +450,13 @@ export const deriveFiltersFromFields = produce(
         (d) => (isGeoDimension(d) ? -1 : 1),
         (d) => (d.hierarchy ? -1 : 1)
       );
-      sortedDimensions.forEach((dimension) =>
+      sortedDimensions.forEach((dimension) => {
         applyNonTableDimensionToFilters({
           filters,
           dimension,
           isField: isField(dimension.iri),
-        })
-      );
+        });
+      });
     }
 
     return chartConfig;
@@ -497,13 +505,11 @@ export const applyTableDimensionToFilters = ({
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else {
-    if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
-      filters[dimension.iri] = {
-        type: "single",
-        value: dimension.values[0].value,
-      };
-    }
+  } else if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
+    filters[dimension.iri] = {
+      type: "single",
+      value: dimension.values[0].value,
+    };
   }
 };
 
@@ -553,24 +559,22 @@ export const applyNonTableDimensionToFilters = ({
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else {
-    if (!isField && dimension.isKeyDimension) {
-      // If this scenario appears, it means that current filter is undefined -
-      // which means it must be converted to a single-filter (if it's a keyDimension,
-      // otherwise a 'No filter' option should be selected by default).
+  } else if (!isField && dimension.isKeyDimension) {
+    // If this scenario appears, it means that current filter is undefined -
+    // which means it must be converted to a single-filter (if it's a keyDimension,
+    // otherwise a 'No filter' option should be selected by default).
 
-      // Find the topmost hierarchy value
-      const hierarchyTopMost = dimension.hierarchy
-        ? findInHierarchy(dimension.hierarchy, (v) => !!v.hasValue)
-        : undefined;
-      const filterValue = hierarchyTopMost
-        ? hierarchyTopMost.value
-        : dimension.values[0].value;
-      filters[dimension.iri] = {
-        type: "single",
-        value: filterValue,
-      };
-    }
+    // Find the topmost hierarchy value
+    const hierarchyTopMost = dimension.hierarchy
+      ? findInHierarchy(dimension.hierarchy, (v) => !!v.hasValue)
+      : undefined;
+    const filterValue = hierarchyTopMost
+      ? hierarchyTopMost.value
+      : dimension.values[0].value;
+    filters[dimension.iri] = {
+      type: "single",
+      value: filterValue,
+    };
   }
 };
 
@@ -621,28 +625,6 @@ const transitionStepNext = (
   return draft;
 };
 
-export const canTransitionToNextStep = (
-  state: ConfiguratorState,
-  dataSetMetadata: DataCubeMetadata | null | undefined
-): boolean => {
-  if (!dataSetMetadata) {
-    return false;
-  }
-
-  if (dataSetMetadata.dimensions.length === 0) {
-    return false;
-  }
-
-  switch (state.state) {
-    case "SELECTING_DATASET":
-      return state.dataSet !== undefined;
-    case "CONFIGURING_CHART":
-      return true;
-  }
-
-  return false;
-};
-
 const getPreviousState = (
   state: ConfiguratorState["state"]
 ): Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING"> => {
@@ -662,7 +644,7 @@ const transitionStepPrevious = (
   draft: ConfiguratorState,
   to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">
 ): ConfiguratorState => {
-  const stepTo = to || getPreviousState(draft.state);
+  const stepTo = to ?? getPreviousState(draft.state);
 
   // Special case when we're already at INITIAL
   if (draft.state === "INITIAL" || draft.state === "SELECTING_DATASET") {
@@ -686,11 +668,6 @@ const transitionStepPrevious = (
     default:
       return draft;
   }
-};
-
-export const canTransitionToPreviousStep = (_: ConfiguratorState): boolean => {
-  // All states are interchangeable in terms of validity
-  return true;
 };
 
 // FIXME: should by handled better, as color is a subfield and not actual field.
@@ -724,7 +701,6 @@ export const getFiltersByMappingStatus = (chartConfig: ChartConfig) => {
     (d) => d.componentIri
   );
   const nonGenericFieldValues = getNonGenericFieldValues(chartConfig);
-
   const iris = new Set([...genericFieldValues, ...nonGenericFieldValues]);
   const mappedFilters = pickBy(chartConfig.filters, (_, iri) => iris.has(iri));
   const unmappedFilters = pickBy(
@@ -775,7 +751,7 @@ const initializeMapLayerField = ({
       component: dimensions
         .filter(isGeoDimension)
         .find((d) => d.iri === componentIri)!,
-      measure: measures.filter(isNumericalMeasure)[0],
+      measure: measures.find(isNumericalMeasure),
     });
   }
 };
@@ -794,19 +770,14 @@ export const handleChartFieldChanged = (
     componentIri,
     selectedValues: actionSelectedValues,
   } = action.value;
-
-  const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
+  const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
     draft,
     locale
   );
-  const { dimensions = [], measures = [] } = metadata || {
-    dimensions: [],
-    measures: [],
-  };
-
+  const { dimensions, measures } = metadata ?? { dimensions: [], measures: [] };
   const f = get(draft.chartConfig.fields, field);
   const component = [...dimensions, ...measures].find(
-    (dim) => dim.iri === componentIri
+    (d) => d.iri === componentIri
   );
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
 
@@ -843,7 +814,7 @@ export const handleChartFieldChanged = (
         const palette = getDefaultCategoricalPaletteName(component);
         const colorMapping = mapValueIrisToColor({
           palette,
-          dimensionValues: component?.values || [],
+          dimensionValues: component?.values ?? [],
         });
         draft.chartConfig.filters[componentIri] = {
           type: "multi",
@@ -875,7 +846,7 @@ export const handleChartFieldChanged = (
       if (draft.chartConfig.interactiveFiltersConfig) {
         const newComponentIris =
           draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (c) => c !== componentIri
+            (d) => d !== componentIri
           );
         draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
           newComponentIris;
@@ -932,7 +903,7 @@ export const handleChartFieldChanged = (
       );
       const colorMapping = mapValueIrisToColor({
         palette,
-        dimensionValues: component?.values || [],
+        dimensionValues: component?.values ?? [],
       });
 
       draft.chartConfig.fields.segment.componentIri = componentIri;
@@ -945,9 +916,7 @@ export const handleChartFieldChanged = (
       };
     } else {
       // Reset field properties, excluding componentIri.
-      (draft.chartConfig.fields as GenericFields)[field] = {
-        componentIri,
-      };
+      (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
 
       // if x !== time, also deactivate interactive time filter
       if (
@@ -1022,60 +991,49 @@ export const handleChartOptionChanged = (
   action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
+    const { locale, path, field, value } = action.value;
+
     // Side effects of changing an option.
     // Maybe they could be defined in UI encodings?
-    if (action.value.field) {
-      if (action.value.path === "color.scaleType") {
-        const interpolationTypePath = `chartConfig.fields.${action.value.field}.color.interpolationType`;
-        const nbClassPath = `chartConfig.fields.${action.value.field}.color.nbClass`;
+    if (field) {
+      if (path === "color.scaleType") {
+        const interpolationTypePath = `chartConfig.fields.${field}.color.interpolationType`;
+        const nbClassPath = `chartConfig.fields.${field}.color.nbClass`;
 
-        if (action.value.value === "continuous") {
+        if (value === "continuous") {
           setWith(draft, interpolationTypePath, "linear", Object);
           unset(draft, nbClassPath);
-        } else if (action.value.value === "discrete") {
+        } else if (value === "discrete") {
           setWith(draft, interpolationTypePath, "jenks", Object);
           setWith(draft, nbClassPath, 3, Object);
         }
-      } else if (action.value.path === "color.componentIri") {
-        const fieldIri = get(
-          draft,
-          `chartConfig.fields.${action.value.field}.componentIri`
-        );
+      } else if (path === "color.componentIri") {
+        const fieldIri = get(draft, `chartConfig.fields.${field}.componentIri`);
         const previousComponentIri = get(
           draft,
-          `chartConfig.fields.${action.value.field}.color.componentIri`
+          `chartConfig.fields.${field}.color.componentIri`
         ) as string;
-
-        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
+        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
           draft,
-          action.value.locale
+          locale
         );
         const allComponents = metadata
           ? [...metadata.dimensions, ...metadata.measures]
           : [];
-        const component = allComponents.find(
-          (d) => d.iri === action.value.value
-        );
+        const component = allComponents.find((d) => d.iri === value);
 
         // Clear old filters when switching to a new component.
         if (previousComponentIri !== fieldIri) {
           unset(draft, `chartConfig.filters["${previousComponentIri}"]`);
         }
 
-        if (!component) {
-          setWith(
-            draft,
-            `chartConfig.fields.${action.value.field}.color`,
-            DEFAULT_FIXED_COLOR_FIELD,
-            Object
-          );
-        } else {
+        if (component) {
           const previousComponent = allComponents.find(
             (d) => d.iri === previousComponentIri
           );
           const previousPalette = get(
             draft,
-            `chartConfig.fields.${action.value.field}.color.palette`
+            `chartConfig.fields.${field}.color.palette`
           );
 
           if (
@@ -1088,7 +1046,7 @@ export const handleChartOptionChanged = (
             );
             setWith(
               draft,
-              `chartConfig.fields.${action.value.field}.color`,
+              `chartConfig.fields.${field}.color`,
               {
                 type: "categorical",
                 componentIri: component.iri,
@@ -1100,39 +1058,39 @@ export const handleChartOptionChanged = (
               },
               Object
             );
-          } else if (isNumericalMeasure(component)) {
-            if (
-              (previousComponent && !isNumericalMeasure(previousComponent)) ||
-              !previousComponent
-            ) {
-              const newField: NumericalColorField = {
-                type: "numerical",
-                componentIri: component.iri,
-                palette: previousPalette || "oranges",
-                scaleType: "continuous",
-                interpolationType: "linear",
-              };
+          } else if (
+            isNumericalMeasure(component) &&
+            ((previousComponent && !isNumericalMeasure(previousComponent)) ||
+              !previousComponent)
+          ) {
+            const newField: NumericalColorField = {
+              type: "numerical",
+              componentIri: component.iri,
+              palette: previousPalette || "oranges",
+              scaleType: "continuous",
+              interpolationType: "linear",
+            };
 
-              setWith(
-                draft,
-                `chartConfig.fields.${action.value.field}.color`,
-                newField,
-                Object
-              );
-            }
+            setWith(
+              draft,
+              `chartConfig.fields.${field}.color`,
+              newField,
+              Object
+            );
           }
+        } else {
+          setWith(
+            draft,
+            `chartConfig.fields.${field}.color`,
+            DEFAULT_FIXED_COLOR_FIELD,
+            Object
+          );
         }
-      } else if (
-        action.value.path === "type" &&
-        action.value.value === "grouped"
-      ) {
+      } else if (path === "type" && value === "grouped") {
         setWith(
           draft,
           "chartConfig.interactiveFiltersConfig.calculation",
-          {
-            active: false,
-            type: "identity",
-          },
+          { active: false, type: "identity" },
           Object
         );
       }
@@ -1140,10 +1098,10 @@ export const handleChartOptionChanged = (
 
     setWith(
       draft,
-      action.value.field === null
-        ? `chartConfig.${action.value.path}`
-        : `chartConfig.fields["${action.value.field}"].${action.value.path}`,
-      action.value.value,
+      field === null
+        ? `chartConfig.${path}`
+        : `chartConfig.fields.${field}.${path}`,
+      value,
       Object
     );
   }
@@ -1200,7 +1158,7 @@ export const updateColorMapping = (
   return draft;
 };
 
-export const handleInteractiveFilterChanged = (
+const handleInteractiveFilterChanged = (
   draft: ConfiguratorState,
   action: Extract<
     ConfiguratorStateAction,
@@ -1240,7 +1198,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartType } = action.value;
-        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
+        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
           draft,
           locale
         );
@@ -1277,7 +1235,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
-        const metadata = getCachedCubeMetadataWithComponentValuesAndHierarchies(
+        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
           draft,
           action.value.locale
         );
@@ -1456,7 +1414,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         if (f && f.type === "multi" && Object.keys(f.values).length > 0) {
           // If there are existing object keys, we just remove the current one
-          for (let v of values) {
+          for (const v of values) {
             delete f.values[v];
           }
         } else {
@@ -1558,7 +1516,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   }
 };
 
-export const ConfiguratorStateContext = createContext<
+const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
@@ -1570,7 +1528,7 @@ export const initChartStateFromChart = async (
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
 
-  if (config && config.data) {
+  if (config?.data) {
     const {
       dataSet,
       dataSource = DEFAULT_DATA_SOURCE,
@@ -1624,9 +1582,9 @@ export const initChartStateFromCube = async (
       getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
       { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
     );
-  } else {
-    console.warn(`Could not fetch cube with iri ${datasetIri}`);
   }
+
+  console.warn(`Could not fetch cube with iri ${datasetIri}`);
 };
 
 /**
@@ -1651,15 +1609,16 @@ export const initChartStateFromLocalStorage = async (
       console.error("Error while parsing stored state", e);
       // Ignore errors since we are returning undefined and removing bad state from localStorage
     }
+
     if (parsedState) {
       return parsedState;
-    } else {
-      console.warn(
-        "Attempted to restore invalid state. Removing from localStorage.",
-        parsedState
-      );
-      window.localStorage.removeItem(getLocalStorageKey(chartId));
     }
+
+    console.warn(
+      "Attempted to restore invalid state. Removing from localStorage.",
+      parsedState
+    );
+    window.localStorage.removeItem(getLocalStorageKey(chartId));
   }
 };
 
