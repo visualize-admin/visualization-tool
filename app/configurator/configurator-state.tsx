@@ -73,9 +73,6 @@ import {
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
-  ComponentsDocument,
-  ComponentsQuery,
-  ComponentsQueryVariables,
   ComponentsWithHierarchiesDocument,
   ComponentsWithHierarchiesQuery,
   ComponentsWithHierarchiesQueryVariables,
@@ -311,7 +308,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
 const getCachedCubeMetadataWithComponentValuesAndHierarchies = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
-) => {
+): DataCubeMetadataWithHierarchies | null => {
   const metadataQuery = client.readQuery<
     DataCubeMetadataQuery,
     DataCubeMetadataQueryVariables
@@ -322,9 +319,9 @@ const getCachedCubeMetadataWithComponentValuesAndHierarchies = (
     sourceUrl: draft.dataSource.url,
   });
   const componentsQuery = client.readQuery<
-    ComponentsQuery,
-    ComponentsQueryVariables
-  >(ComponentsDocument, {
+    ComponentsWithHierarchiesQuery,
+    ComponentsWithHierarchiesQueryVariables
+  >(ComponentsWithHierarchiesDocument, {
     iri: draft.dataSet,
     locale,
     sourceType: draft.dataSource.type,
