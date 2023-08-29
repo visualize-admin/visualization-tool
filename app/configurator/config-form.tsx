@@ -29,6 +29,7 @@ import {
   DimensionHierarchyDocument,
   DimensionHierarchyQuery,
   DimensionHierarchyQueryVariables,
+  DimensionMetadataFragment,
   DimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
@@ -182,21 +183,25 @@ export const useChartFieldField = ({
   };
 };
 
-export const useChartOptionSelectField = <ValueType extends {} = string>({
-  field,
-  path,
-  getValue,
-  getKey,
-}: {
+type UseChartOptionSelectFieldProps<T> = {
   field: string;
   path: string;
-  getValue?: (key: string) => ValueType | undefined;
-  getKey?: (value: ValueType) => string;
-}): SelectProps => {
+  getValue?: (key: string) => T | undefined;
+  getKey?: (value: T) => string;
+  onChange?: (
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
+    value: any
+  ) => void;
+};
+
+export const useChartOptionSelectField = <T extends {} = string>(
+  props: UseChartOptionSelectFieldProps<T>
+): SelectProps => {
+  const { field, path, getValue, getKey, onChange } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
-
-  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
+  const handleChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
     (e) => {
       const value = e.target.value as string;
       dispatch({
@@ -206,25 +211,22 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
           field,
           path,
           value: getValue ? getValue(value) : value,
+          onChange,
         },
       });
     },
-    [locale, dispatch, field, path, getValue]
+    [dispatch, locale, field, path, getValue, onChange]
   );
 
-  let value: ValueType | undefined;
+  let value: T | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(
-      state,
-      `chartConfig.fields["${field}"].${path}`,
-      FIELD_VALUE_NONE
-    );
+    value = get(state, `chartConfig.fields.${field}.${path}`, FIELD_VALUE_NONE);
   }
+
   return {
     name: path,
     value: getKey ? getKey(value!) : (value as unknown as string),
-    // checked,
-    onChange,
+    onChange: handleChange,
   };
 };
 
@@ -299,7 +301,10 @@ type UseChartOptionRadioFieldProps = {
   field: string | null;
   path: string;
   value: string | number;
-  onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
+  onChange?: (
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[]
+  ) => void;
 };
 
 export const useChartOptionRadioField = (

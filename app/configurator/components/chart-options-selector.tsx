@@ -1074,6 +1074,12 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           path="color.componentIri"
           options={measuresOptions}
           isOptional={optional}
+          onChange={(draft, components, value) =>
+            colorComponentOption.onChange(draft, components, {
+              type: "component",
+              value,
+            })
+          }
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
@@ -1141,8 +1147,8 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                onChange={(draft) =>
-                  colorComponentOption.onChange(draft, {
+                onChange={(draft, components) =>
+                  colorComponentOption.onChange(draft, components, {
                     type: "scaleType",
                     value: "continuous",
                   })
@@ -1158,8 +1164,8 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  onChange={(draft) =>
-                    colorComponentOption.onChange(draft, {
+                  onChange={(draft, components) =>
+                    colorComponentOption.onChange(draft, components, {
                       type: "scaleType",
                       value: "discrete",
                     })

@@ -3,7 +3,6 @@ import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
-import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import {
   Dispatch,
@@ -28,7 +27,6 @@ import {
   getPossibleChartType,
 } from "@/charts";
 import { disableStacked } from "@/charts/chart-config-ui-options";
-import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   ChartConfig,
   ChartType,
@@ -39,7 +37,6 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingDataSet,
   DataSource,
-  DivergingPaletteType,
   FilterValue,
   FilterValueMultiValues,
   Filters,
@@ -48,8 +45,6 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   MapConfig,
-  NumericalColorField,
-  SequentialPaletteType,
   decodeConfiguratorState,
   isAnimationInConfig,
   isAreaConfig,
@@ -64,11 +59,9 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
   DimensionValue,
-  canDimensionBeMultiFiltered,
   isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
-  isOrdinalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -157,7 +150,11 @@ export type ConfiguratorStateAction =
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
-        onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
+        onChange?: (
+          draft: ConfiguratorStateConfiguringChart,
+          components: DimensionMetadataFragment[],
+          value: any
+        ) => void;
       };
     }
   | {
@@ -995,92 +992,19 @@ export const handleChartOptionChanged = (
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
     const { locale, path, field, value, onChange } = action.value;
-    onChange?.(draft);
-
-    if (field && path === "color.componentIri") {
-      const fieldIri: string = get(
-        draft,
-        `chartConfig.fields.${field}.componentIri`
-      );
-      const colorIri: string = get(
-        draft,
-        `chartConfig.fields.${field}.color.componentIri`
-      );
-      const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-        draft,
-        locale
-      );
-      const components = metadata
-        ? [...metadata.dimensions, ...metadata.measures]
-        : [];
-      const component = components.find((d) => d.iri === value);
-
-      if (colorIri !== fieldIri) {
-        unset(draft, `chartConfig.filters["${colorIri}"]`);
-      }
-
-      if (component) {
-        const colorComponent = components.find((d) => d.iri === colorIri);
-        const colorPalette: DivergingPaletteType | SequentialPaletteType = get(
-          draft,
-          `chartConfig.fields.${field}.color.palette`
-        );
-
-        if (
-          canDimensionBeMultiFiltered(component) ||
-          isOrdinalMeasure(component)
-        ) {
-          const palette = getDefaultCategoricalPaletteName(
-            component,
-            colorPalette
-          );
-          setWith(
-            draft,
-            `chartConfig.fields.${field}.color`,
-            {
-              type: "categorical",
-              componentIri: component.iri,
-              palette,
-              colorMapping: mapValueIrisToColor({
-                palette,
-                dimensionValues: component.values,
-              }),
-            },
-            Object
-          );
-        } else if (
-          isNumericalMeasure(component) &&
-          ((colorComponent && !isNumericalMeasure(colorComponent)) ||
-            !colorComponent)
-        ) {
-          const newField: NumericalColorField = {
-            type: "numerical",
-            componentIri: component.iri,
-            palette: colorPalette ?? "oranges",
-            scaleType: "continuous",
-            interpolationType: "linear",
-          };
-
-          setWith(draft, `chartConfig.fields.${field}.color`, newField, Object);
-        }
-      } else {
-        setWith(
-          draft,
-          `chartConfig.fields.${field}.color`,
-          DEFAULT_FIXED_COLOR_FIELD,
-          Object
-        );
-      }
-    }
-
-    setWith(
-      draft,
+    const updatePath =
       field === null
         ? `chartConfig.${path}`
-        : `chartConfig.fields.${field}.${path}`,
-      value,
-      Object
+        : `chartConfig.fields.${field}.${path}`;
+    const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
+      draft,
+      locale
     );
+    const components = metadata
+      ? [...metadata.dimensions, ...metadata.measures]
+      : [];
+    onChange?.(draft, components, value);
+    setWith(draft, updatePath, value, Object);
   }
 
   return draft;

@@ -766,7 +766,10 @@ type ChartOptionRadioFieldProps = {
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-  onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
+  onChange?: (
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[]
+  ) => void;
 };
 
 export const ChartOptionRadioField = (props: ChartOptionRadioFieldProps) => {
@@ -866,32 +869,44 @@ export const ChartOptionCheckboxField = ({
   );
 };
 
-export const ChartOptionSelectField = <ValueType extends {} = string>({
-  id,
-  label,
-  field,
-  path,
-  disabled = false,
-  options,
-  getValue,
-  getKey,
-  isOptional,
-}: {
+type ChartOptionSelectFieldProps<T> = {
   id: string;
   label: string | ReactNode;
   field: string;
   path: string;
   disabled?: boolean;
   options: Option[];
-  getValue?: (x: string) => ValueType | undefined;
-  getKey?: (x: ValueType) => string;
+  getValue?: (x: string) => T | undefined;
+  getKey?: (x: T) => string;
   isOptional?: boolean;
-}) => {
+  onChange?: (
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
+    value: any
+  ) => void;
+};
+
+export const ChartOptionSelectField = <T extends {} = string>(
+  props: ChartOptionSelectFieldProps<T>
+) => {
+  const {
+    id,
+    label,
+    field,
+    path,
+    disabled = false,
+    options,
+    getValue,
+    getKey,
+    isOptional,
+    onChange,
+  } = props;
   const fieldProps = useChartOptionSelectField({
     field,
     path,
     getValue,
     getKey,
+    onChange,
   });
   const noneLabel = t({
     id: "controls.none",
