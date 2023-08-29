@@ -8,7 +8,7 @@ import {
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 /**
  * Makes sure interactive filters are in sync with chart config.
@@ -19,16 +19,12 @@ import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
  */
 const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
   const { interactiveFiltersConfig } = chartConfig;
-  const resetCategories = useInteractiveFiltersStore((d) => d.resetCategories);
-  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
-  const setDataFilters = useInteractiveFiltersStore((d) => d.setDataFilters);
-  const updateDataFilter = useInteractiveFiltersStore(
-    (d) => d.updateDataFilter
-  );
-  const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
-  const setCalculationType = useInteractiveFiltersStore(
-    (d) => d.setCalculationType
-  );
+  const resetCategories = useInteractiveFilters((d) => d.resetCategories);
+  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
+  const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
+  const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
+  const setTimeRange = useInteractiveFilters((d) => d.setTimeRange);
+  const setCalculationType = useInteractiveFilters((d) => d.setCalculationType);
 
   // Time range filter
   const presetFrom =

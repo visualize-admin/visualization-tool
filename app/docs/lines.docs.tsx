@@ -15,6 +15,7 @@ import {
 } from "@/configurator";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
 
@@ -33,25 +34,27 @@ ${(
         chartConfig,
       }}
     >
-      <LineChart
-        observations={observations}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        chartConfig={chartConfig}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <BrushTime />
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-            <Lines />
-          </ChartSvg>
-        </ChartContainer>
+      <InteractiveFiltersProvider>
+        <LineChart
+          observations={observations}
+          dimensions={dimensions}
+          dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+          measures={measures}
+          measuresByIri={keyBy(measures, (d) => d.iri)}
+          chartConfig={chartConfig}
+          aspectRatio={0.4}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <BrushTime />
+              <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+              <Lines />
+            </ChartSvg>
+          </ChartContainer>
 
-        {fields.segment && <LegendColor symbol="line" interactive />}
-      </LineChart>
+          {fields.segment && <LegendColor symbol="line" interactive />}
+        </LineChart>
+      </InteractiveFiltersProvider>
     </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}

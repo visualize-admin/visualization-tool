@@ -17,11 +17,11 @@ import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFiltersRaw } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 const DebugInteractiveFilters = () => {
-  const IFState = useInteractiveFiltersStore();
+  const IFState = useInteractiveFiltersRaw();
 
   return (
     <>

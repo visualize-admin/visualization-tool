@@ -17,7 +17,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -28,7 +28,7 @@ export const AxisHeightLinear = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
-  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
   const normalized = calculationType === "percent";
 
   // FIXME: add "NumericalY" chart type here.

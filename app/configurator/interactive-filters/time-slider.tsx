@@ -13,7 +13,7 @@ import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
 import {
   getSortingOrders,
@@ -193,8 +193,8 @@ const PlayButton = () => {
 
 const Slider = () => {
   const timeline = useTimeline();
-  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
-  const setTimeSlider = useInteractiveFiltersStore((d) => d.setTimeSlider);
+  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
+  const setTimeSlider = useInteractiveFilters((d) => d.setTimeSlider);
 
   const marks = React.useMemo(() => {
     return timeline.domain.map((d) => ({ value: d })) ?? [];
