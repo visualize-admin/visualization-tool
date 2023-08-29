@@ -155,6 +155,7 @@ export type ConfiguratorStateAction =
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
+        onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
       };
     }
   | {
@@ -991,7 +992,8 @@ export const handleChartOptionChanged = (
   action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
-    const { locale, path, field, value } = action.value;
+    const { locale, path, field, value, onChange } = action.value;
+    onChange?.(draft);
 
     // Side effects of changing an option.
     // Maybe they could be defined in UI encodings?
@@ -1086,13 +1088,6 @@ export const handleChartOptionChanged = (
             Object
           );
         }
-      } else if (path === "type" && value === "grouped") {
-        setWith(
-          draft,
-          "chartConfig.interactiveFiltersConfig.calculation",
-          { active: false, type: "identity" },
-          Object
-        );
       }
     }
 

@@ -29,6 +29,7 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
+import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -757,15 +758,7 @@ export const ChartFieldField = ({
   );
 };
 
-export const ChartOptionRadioField = ({
-  label,
-  field,
-  path,
-  value,
-  defaultChecked,
-  disabled = false,
-  warnMessage,
-}: {
+type ChartOptionRadioFieldProps = {
   label: string;
   field: string | null;
   path: string;
@@ -773,11 +766,25 @@ export const ChartOptionRadioField = ({
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-}) => {
+  onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
+};
+
+export const ChartOptionRadioField = (props: ChartOptionRadioFieldProps) => {
+  const {
+    label,
+    field,
+    path,
+    value,
+    defaultChecked,
+    disabled = false,
+    warnMessage,
+    onChange,
+  } = props;
   const fieldProps = useChartOptionRadioField({
     path,
     field,
     value,
+    onChange,
   });
 
   return (

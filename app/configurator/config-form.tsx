@@ -13,10 +13,15 @@ import React, {
 import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
-import { ChartConfig, ChartType } from "@/config-types";
+import {
+  ChartConfig,
+  ChartType,
+  ConfiguratorStateConfiguringChart,
+} from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -290,19 +295,20 @@ export const useChartOptionSliderField = ({
   };
 };
 
-export const useChartOptionRadioField = ({
-  field,
-  path,
-  value,
-}: {
+type UseChartOptionRadioFieldProps = {
   field: string | null;
   path: string;
   value: string | number;
-}): FieldProps => {
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  onChange?: (draft: ConfiguratorStateConfiguringChart) => void;
+};
 
-  const onChange = useCallback(() => {
+export const useChartOptionRadioField = (
+  props: UseChartOptionRadioFieldProps
+): FieldProps => {
+  const { field, path, value, onChange } = props;
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const handleChange = useCallback(() => {
     dispatch({
       type: "CHART_OPTION_CHANGED",
       value: {
@@ -310,9 +316,10 @@ export const useChartOptionRadioField = ({
         field,
         path,
         value,
+        onChange,
       },
     });
-  }, [locale, dispatch, field, path, value]);
+  }, [onChange, dispatch, locale, field, path, value]);
   const stateValue =
     state.state === "CONFIGURING_CHART"
       ? getChartOptionField(state, field, path)
@@ -323,7 +330,7 @@ export const useChartOptionRadioField = ({
     name: path,
     value,
     checked,
-    onChange,
+    onChange: handleChange,
   };
 };
 

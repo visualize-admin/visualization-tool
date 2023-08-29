@@ -738,6 +738,7 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
               value={d.value}
               disabled={disabled || d.disabled}
               warnMessage={d.warnMessage}
+              onChange={(draft) => chartSubType.onChange(draft, d.value)}
             />
           ))}
         </Flex>

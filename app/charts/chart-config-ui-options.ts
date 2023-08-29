@@ -1,5 +1,6 @@
 import { t } from "@lingui/macro";
 import { group } from "d3";
+import setWith from "lodash/setWith";
 
 import {
   checkForMissingValuesInSegments,
@@ -12,6 +13,7 @@ import {
   ChartType,
   ColumnConfig,
   ComponentType,
+  ConfiguratorStateConfiguringChart,
   SortingOrder,
   SortingType,
   getAnimationField,
@@ -47,6 +49,10 @@ export type EncodingOptionChartSubType = {
     disabled: boolean;
     warnMessage?: string;
   }[];
+  onChange: (
+    draft: ConfiguratorStateConfiguringChart,
+    value: ChartSubType
+  ) => void;
 };
 
 export type EncodingOption =
@@ -398,6 +404,15 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
                   disabled: false,
                 },
               ];
+            },
+            onChange: (draft, value) => {
+              if (
+                draft.chartConfig.interactiveFiltersConfig &&
+                value === "grouped"
+              ) {
+                const path = "chartConfig.interactiveFiltersConfig.calculation";
+                setWith(draft, path, { active: false, type: "identity" });
+              }
             },
           },
           {
