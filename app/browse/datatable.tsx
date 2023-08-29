@@ -219,21 +219,19 @@ export const DataSetPreviewTable = ({
   observations: Observation[];
 }) => {
   const headers = useMemo(() => {
-    return getSortedColumns(dimensions, measures);
+    return getSortedColumns([...dimensions, ...measures]);
   }, [dimensions, measures]);
 
-  if (observations) {
-    return (
-      <PreviewTable
-        title={title}
-        headers={headers}
-        observations={observations}
-        linkToMetadataPanel={false}
-      />
-    );
-  } else {
-    return <Loading />;
-  }
+  return observations ? (
+    <PreviewTable
+      title={title}
+      headers={headers}
+      observations={observations}
+      linkToMetadataPanel={false}
+    />
+  ) : (
+    <Loading />
+  );
 };
 
 export const DataSetTable = ({
@@ -278,10 +276,10 @@ export const DataSetTable = ({
       return [];
     }
 
-    return getSortedColumns(
-      componentsData.dataCubeByIri.dimensions,
-      componentsData.dataCubeByIri.measures
-    );
+    return getSortedColumns([
+      ...componentsData.dataCubeByIri.dimensions,
+      ...componentsData.dataCubeByIri.measures,
+    ]);
   }, [componentsData?.dataCubeByIri]);
 
   if (
@@ -304,13 +302,8 @@ export const DataSetTable = ({
   }
 };
 
-export const getSortedColumns = (
-  dimensions: DimensionMetadataFragment[],
-  measures: DimensionMetadataFragment[]
-) => {
-  const allDimensions = [...dimensions, ...measures];
-  allDimensions.sort((a, b) =>
-    ascending(a.order ?? Infinity, b.order ?? Infinity)
-  );
-  return allDimensions;
+export const getSortedColumns = (components: DimensionMetadataFragment[]) => {
+  return [...components].sort((a, b) => {
+    return ascending(a.order ?? Infinity, b.order ?? Infinity);
+  });
 };
