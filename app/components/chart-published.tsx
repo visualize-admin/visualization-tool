@@ -1,12 +1,10 @@
 import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -15,7 +13,7 @@ import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import GenericChart from "@/components/common-chart";
+import { ChartWithFilters } from "@/components/chart-with-filters";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -31,7 +29,6 @@ import {
   PublishedConfiguratorStateProvider,
 } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
-import { parseDate } from "@/configurator/components/ui-helpers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
@@ -42,7 +39,6 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
@@ -264,10 +260,11 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                   chartConfig={chartConfig}
                 />
               ) : (
-                <ChartWithInteractiveFilters
+                <ChartWithFilters
                   dataSet={dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
+                  published
                 />
               )}
             </PublishedConfiguratorStateProvider>
@@ -291,67 +288,3 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     </MetadataPanelStoreContext.Provider>
   );
 };
-
-type ChartWithInteractiveFiltersProps = {
-  dataSet: string;
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-};
-
-const ChartWithInteractiveFilters = React.forwardRef(
-  (props: ChartWithInteractiveFiltersProps, ref) => {
-    const { dataSet, dataSource, chartConfig } = props;
-    const { interactiveFiltersConfig } = chartConfig;
-    const setCalculationType = useInteractiveFiltersStore(
-      (d) => d.setCalculationType
-    );
-    const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
-    const timeRange = interactiveFiltersConfig?.timeRange;
-    const presetFrom =
-      timeRange?.presets.from && parseDate(timeRange.presets.from);
-    const presetTo = timeRange?.presets.to && parseDate(timeRange.presets.to);
-
-    // Editor time presets supersede interactive state
-    const presetFromStr = presetFrom?.toString();
-    const presetToStr = presetTo?.toString();
-    useEffect(() => {
-      if (presetFrom && presetTo) {
-        setTimeRange(presetFrom, presetTo);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setTimeRange, presetFromStr, presetToStr]);
-
-    useEffect(() => {
-      if (interactiveFiltersConfig?.calculation.type) {
-        setCalculationType(interactiveFiltersConfig?.calculation.type);
-      }
-    }, [interactiveFiltersConfig?.calculation.type, setCalculationType]);
-
-    return (
-      <Flex
-        ref={ref}
-        sx={{
-          flexDirection: "column",
-          flexGrow: 1,
-        }}
-      >
-        {/* Filters list & Interactive filters */}
-        {chartConfig.interactiveFiltersConfig && (
-          <ChartDataFilters
-            dataSet={dataSet}
-            dataSource={dataSource}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-            chartConfig={chartConfig}
-          />
-        )}
-        <GenericChart
-          dataSet={dataSet}
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          published
-        />
-      </Flex>
-    );
-  }
-);
-ChartWithInteractiveFilters.displayName = "ChartWithInteractiveFilters";

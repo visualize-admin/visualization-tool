@@ -164,12 +164,11 @@ export const DataFilterSelect = ({
 
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
-    const sortedValues = orderBy(
+
+    return orderBy(
       dimension.values,
       sorters.map((s) => (dv) => s(dv.label))
     );
-
-    return sortedValues;
   }, [dimension]);
 
   const allValues = useMemo(() => {
@@ -683,7 +682,13 @@ export const ColorPickerField = ({
   );
 };
 
-const FieldLabel = ({
+export const LoadingIndicator = () => {
+  const classes = useStyles();
+
+  return <CircularProgress size={12} className={classes.loadingIndicator} />;
+};
+
+export const FieldLabel = ({
   label,
   isOptional,
   isFetching,
@@ -702,9 +707,7 @@ const FieldLabel = ({
     <div className={classes.root}>
       {label}
       {isOptional ? <span>({optionalLabel})</span> : null}
-      {isFetching ? (
-        <CircularProgress size={12} className={classes.loadingIndicator} />
-      ) : null}
+      {isFetching ? <LoadingIndicator /> : null}
     </div>
   );
 };

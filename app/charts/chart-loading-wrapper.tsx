@@ -5,6 +5,7 @@ import { UseQueryResponse } from "urql";
 
 import { ChartProps } from "@/charts/shared/ChartProps";
 import { A11yTable } from "@/charts/shared/a11y-table";
+import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -52,6 +53,7 @@ export const ChartLoadingWrapper = <
     keyof ChartProps<TChartConfig>
   >;
 }) => {
+  const chartLoadingState = useLoadingState();
   const {
     data: metadataData,
     fetching: fetchingMetadata,
@@ -73,6 +75,13 @@ export const ChartLoadingWrapper = <
   const dimensions = componentsData?.dataCubeByIri?.dimensions;
   const measures = componentsData?.dataCubeByIri?.measures;
 
+  const fetching =
+    fetchingMetadata || fetchingComponents || fetchingObservations;
+
+  React.useEffect(() => {
+    chartLoadingState.set("data", fetching);
+  }, [chartLoadingState, fetching]);
+
   const { dimensionsByIri, measuresByIri } = React.useMemo(() => {
     return {
       dimensionsByIri: keyBy(dimensions ?? [], (d) => d.iri),
@@ -83,19 +92,20 @@ export const ChartLoadingWrapper = <
   if (metadata && dimensions && measures && observations) {
     const { title } = metadata;
 
-    return observations.length > 0 ? (
+    return (
       <Box
-        data-chart-loaded={
-          !(fetchingMetadata && fetchingComponents && fetchingObservations)
-        }
+        data-chart-loaded={!chartLoadingState.loading}
         sx={{ position: "relative" }}
       >
-        <A11yTable
-          title={title}
-          observations={observations}
-          dimensions={dimensions}
-          measures={measures}
-        />
+        {observations.length > 0 && (
+          <A11yTable
+            title={title}
+            observations={observations}
+            dimensions={dimensions}
+            measures={measures}
+          />
+        )}
+
         {React.createElement(Component, {
           observations,
           dimensions,
@@ -105,12 +115,13 @@ export const ChartLoadingWrapper = <
           chartConfig,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
-        {(fetchingMetadata || fetchingComponents || fetchingObservations) && (
+
+        {chartLoadingState.loading ? (
           <LoadingOverlay />
-        )}
+        ) : observations.length === 0 ? (
+          <NoDataHint />
+        ) : null}
       </Box>
-    ) : (
-      <NoDataHint />
     );
   } else if (metadataError || componentsError || observationsError) {
     return (

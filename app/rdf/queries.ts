@@ -287,7 +287,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
 }): Promise<DimensionValue[]> => {
   const load = async () => {
     const loaders = [
-      !filters ? () => dimension.in || [] : undefined,
+      filters ? undefined : () => dimension.in ?? [],
       () =>
         loadDimensionValues(
           { datasetIri: cube.term, dimension, cube, sparqlClient },

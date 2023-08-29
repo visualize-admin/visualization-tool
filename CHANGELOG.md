@@ -9,11 +9,14 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Interactive filters now work in cascading mode
+  - Date picker is now usable with interactive temporal dimension filters
 
 # [3.21.1] - 2023-08-22
 
 - Features
+  - Interactive data filters now work in cascading mode
   - Introduced preferred chart type order, which makes the table chart the least preferred option
   - Downloaded data is now sorted automatically, according to dimension types
   - XLSX data download now correctly formats values (e.g. numbers are numbers and not strings)

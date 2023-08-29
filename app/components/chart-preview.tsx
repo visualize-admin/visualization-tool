@@ -2,26 +2,21 @@ import { Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import * as React from "react";
 import { useMemo } from "react";
 
 import { DataSetTable } from "@/browse/datatable";
-import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
-import { ChartFiltersList } from "@/components/chart-filters-list";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
-import GenericChart from "@/components/common-chart";
+import { ChartWithFilters } from "@/components/chart-with-filters";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
-import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
+import { DataSource, useConfiguratorState } from "@/configurator";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,
@@ -30,13 +25,14 @@ import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
-export const ChartPreview = ({
-  dataSetIri,
-  dataSource,
-}: {
+type ChartPreviewProps = {
   dataSetIri: string;
   dataSource: DataSource;
-}) => {
+};
+
+export const ChartPreview = (props: ChartPreviewProps) => {
+  const { dataSetIri, dataSource } = props;
+
   return (
     <ChartTablePreviewProvider>
       <ChartPreviewInner dataSetIri={dataSetIri} dataSource={dataSource} />
@@ -61,13 +57,8 @@ const useStyles = makeStyles<Theme>({
   },
 });
 
-export const ChartPreviewInner = ({
-  dataSetIri,
-  dataSource,
-}: {
-  dataSetIri: string;
-  dataSource: DataSource;
-}) => {
+export const ChartPreviewInner = (props: ChartPreviewProps) => {
+  const { dataSetIri, dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const classes = useStyles();
@@ -211,7 +202,7 @@ export const ChartPreviewInner = ({
                   chartConfig={state.chartConfig}
                 />
               ) : (
-                <ChartWithInteractiveFilters
+                <ChartWithFilters
                   dataSet={dataSetIri}
                   dataSource={dataSource}
                   chartConfig={state.chartConfig}
@@ -227,87 +218,10 @@ export const ChartPreviewInner = ({
                 onToggleTableView={handleToggleTableView}
               />
             )}
-            <DebugPanel configurator={true} interactiveFilters={true} />
+            <DebugPanel configurator interactiveFilters />
           </>
         )}
       </ChartErrorBoundary>
     </Flex>
   );
-};
-
-const ChartWithInteractiveFilters = React.forwardRef(
-  (
-    {
-      dataSet,
-      dataSource,
-      chartConfig,
-      published,
-    }: {
-      dataSet: string;
-      dataSource: DataSource;
-      chartConfig: ChartConfig;
-      published: boolean;
-    },
-    ref
-  ) => {
-    useSyncInteractiveFilters(chartConfig);
-
-    return (
-      <Flex
-        ref={ref}
-        sx={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-        }}
-      >
-        {/* Filters list & Interactive filters */}
-        {chartConfig.interactiveFiltersConfig?.dataFilters.active ? (
-          <ChartDataFilters
-            dataSet={dataSet}
-            dataSource={dataSource}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-            chartConfig={chartConfig}
-          />
-        ) : (
-          <Flex sx={{ flexDirection: "column", my: 4 }}>
-            <ChartFiltersList
-              dataSetIri={dataSet}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-            />
-          </Flex>
-        )}
-        <Chart
-          dataSet={dataSet}
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          published={published}
-        />
-      </Flex>
-    );
-  }
-);
-
-const Chart = ({
-  dataSet,
-  dataSource,
-  chartConfig,
-  published,
-}: {
-  dataSet: string;
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  published: boolean;
-}) => {
-  const queryFilters = useQueryFilters({ chartConfig });
-  const props = {
-    dataSet,
-    dataSource,
-    chartConfig,
-    queryFilters,
-    published,
-  };
-
-  return <GenericChart {...props} />;
 };

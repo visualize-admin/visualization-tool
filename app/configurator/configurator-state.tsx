@@ -481,7 +481,7 @@ export const applyTableDimensionToFilters = ({
           filters[dimension.iri] = {
             type: "single",
             value:
-              Object.keys(currentFilter.values)[0] || dimension.values[0].value,
+              Object.keys(currentFilter.values)[0] ?? dimension.values[0].value,
           };
         }
         break;
@@ -1757,7 +1757,22 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await createConfig(state);
+              const result = await createConfig({
+                ...state,
+                chartConfig: {
+                  ...state.chartConfig,
+                  // Ensure that the filters are in the correct order, as JSON
+                  // does not guarantee order (and we need this as interactive
+                  // filters are dependent on the order of the filters).
+                  filters: Object.fromEntries(
+                    Object.entries(state.chartConfig.filters).map(
+                      ([k, v], i) => {
+                        return [k, { ...v, position: i }];
+                      }
+                    )
+                  ),
+                },
+              });
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
