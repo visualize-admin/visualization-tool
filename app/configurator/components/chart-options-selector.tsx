@@ -10,6 +10,7 @@ import {
   chartConfigOptionsUISpec,
   EncodingFieldType,
   EncodingOptionChartSubType,
+  EncodingOptionColorComponent,
   EncodingSortingOption,
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
@@ -403,7 +404,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartFieldColorComponent
             state={state}
             chartConfig={state.chartConfig}
-            field={encoding.field}
+            encoding={encoding}
             component={component}
             componentTypes={optionsByField.color.componentTypes}
             dimensions={dimensions}
@@ -989,27 +990,34 @@ const ChartFieldSize = ({
   );
 };
 
-const ChartFieldColorComponent = ({
-  state,
-  chartConfig,
-  field,
-  component,
-  componentTypes,
-  dimensions,
-  measures,
-  optional,
-  enableUseAbbreviations,
-}: {
+type ChartFieldColorComponentProps = {
   state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
-  field: EncodingFieldType;
+  encoding: EncodingSpec;
   component: DimensionMetadataFragment;
   componentTypes: ComponentType[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
   optional: boolean;
   enableUseAbbreviations: boolean;
-}) => {
+};
+
+const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
+  const {
+    state,
+    chartConfig,
+    encoding,
+    component,
+    componentTypes,
+    dimensions,
+    measures,
+    optional,
+    enableUseAbbreviations,
+  } = props;
+  const field = encoding.field;
+  const colorComponentOption = encoding.options?.find(
+    (d) => d.field === "color"
+  ) as EncodingOptionColorComponent;
   const nbOptions = component.values.length;
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -1027,7 +1035,7 @@ const ChartFieldColorComponent = ({
 
   const colorComponentIri = get(chartConfig, [
     "fields",
-    field,
+    encoding.field,
     "color",
     "componentIri",
   ]) as string | undefined;
@@ -1133,6 +1141,12 @@ const ChartFieldColorComponent = ({
                 field={field}
                 path="color.scaleType"
                 value="continuous"
+                onChange={(draft) =>
+                  colorComponentOption.onChange(draft, {
+                    type: "scaleType",
+                    value: "continuous",
+                  })
+                }
               />
 
               {nbOptions >= 3 && (
@@ -1144,6 +1158,12 @@ const ChartFieldColorComponent = ({
                   field={field}
                   path="color.scaleType"
                   value="discrete"
+                  onChange={(draft) =>
+                    colorComponentOption.onChange(draft, {
+                      type: "scaleType",
+                      value: "discrete",
+                    })
+                  }
                 />
               )}
             </Flex>

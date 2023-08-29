@@ -1,6 +1,7 @@
 import { t } from "@lingui/macro";
 import { group } from "d3";
 import setWith from "lodash/setWith";
+import unset from "lodash/unset";
 
 import {
   checkForMissingValuesInSegments,
@@ -68,13 +69,7 @@ export type EncodingOption =
       field: "color";
       type: "palette";
     }
-  | {
-      field: "color";
-      type: "component";
-      optional: boolean;
-      componentTypes: ComponentType[];
-      enableUseAbbreviations: boolean;
-    }
+  | EncodingOptionColorComponent
   | EncodingOptionImputation
   | {
       field: "showStandardError";
@@ -90,6 +85,46 @@ export type EncodingOption =
   | {
       field: "useAbbreviations";
     };
+
+const makeOnColorComponentChange = (type: "areaLayer" | "symbolLayer") => {
+  return (
+    draft: ConfiguratorStateConfiguringChart,
+    action: {
+      type: "scaleType";
+      value: "continuous" | "discrete";
+    }
+  ) => {
+    switch (action.type) {
+      case "scaleType": {
+        const interpolationTypePath = `chartConfig.fields.${type}.color.interpolationType`;
+        const nbClassPath = `chartConfig.fields.${type}.color.nbClass`;
+
+        if (action.value === "continuous") {
+          setWith(draft, interpolationTypePath, "linear", Object);
+          unset(draft, nbClassPath);
+        } else if (action.value === "discrete") {
+          setWith(draft, interpolationTypePath, "jenks", Object);
+          setWith(draft, nbClassPath, 3, Object);
+        }
+      }
+    }
+  };
+};
+
+export type EncodingOptionColorComponent = {
+  field: "color";
+  type: "component";
+  optional: boolean;
+  componentTypes: ComponentType[];
+  enableUseAbbreviations: boolean;
+  onChange: (
+    draft: ConfiguratorStateConfiguringChart,
+    action: {
+      type: "scaleType";
+      value: "continuous" | "discrete";
+    }
+  ) => void;
+};
 
 export type EncodingOptionImputation = {
   field: "imputation";
@@ -496,6 +531,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: false,
             enableUseAbbreviations: true,
+            onChange: makeOnColorComponentChange("areaLayer"),
           },
         ],
       },
@@ -525,6 +561,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: true,
             enableUseAbbreviations: true,
+            onChange: makeOnColorComponentChange("symbolLayer"),
           },
         ],
       },

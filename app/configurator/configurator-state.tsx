@@ -39,6 +39,7 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingDataSet,
   DataSource,
+  DivergingPaletteType,
   FilterValue,
   FilterValueMultiValues,
   Filters,
@@ -48,6 +49,7 @@ import {
   InteractiveFiltersConfig,
   MapConfig,
   NumericalColorField,
+  SequentialPaletteType,
   decodeConfiguratorState,
   isAnimationInConfig,
   isAreaConfig,
@@ -995,99 +997,79 @@ export const handleChartOptionChanged = (
     const { locale, path, field, value, onChange } = action.value;
     onChange?.(draft);
 
-    // Side effects of changing an option.
-    // Maybe they could be defined in UI encodings?
-    if (field) {
-      if (path === "color.scaleType") {
-        const interpolationTypePath = `chartConfig.fields.${field}.color.interpolationType`;
-        const nbClassPath = `chartConfig.fields.${field}.color.nbClass`;
+    if (field && path === "color.componentIri") {
+      const fieldIri: string = get(
+        draft,
+        `chartConfig.fields.${field}.componentIri`
+      );
+      const colorIri: string = get(
+        draft,
+        `chartConfig.fields.${field}.color.componentIri`
+      );
+      const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
+        draft,
+        locale
+      );
+      const components = metadata
+        ? [...metadata.dimensions, ...metadata.measures]
+        : [];
+      const component = components.find((d) => d.iri === value);
 
-        if (value === "continuous") {
-          setWith(draft, interpolationTypePath, "linear", Object);
-          unset(draft, nbClassPath);
-        } else if (value === "discrete") {
-          setWith(draft, interpolationTypePath, "jenks", Object);
-          setWith(draft, nbClassPath, 3, Object);
-        }
-      } else if (path === "color.componentIri") {
-        const fieldIri = get(draft, `chartConfig.fields.${field}.componentIri`);
-        const previousComponentIri = get(
+      if (colorIri !== fieldIri) {
+        unset(draft, `chartConfig.filters["${colorIri}"]`);
+      }
+
+      if (component) {
+        const colorComponent = components.find((d) => d.iri === colorIri);
+        const colorPalette: DivergingPaletteType | SequentialPaletteType = get(
           draft,
-          `chartConfig.fields.${field}.color.componentIri`
-        ) as string;
-        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-          draft,
-          locale
+          `chartConfig.fields.${field}.color.palette`
         );
-        const allComponents = metadata
-          ? [...metadata.dimensions, ...metadata.measures]
-          : [];
-        const component = allComponents.find((d) => d.iri === value);
 
-        // Clear old filters when switching to a new component.
-        if (previousComponentIri !== fieldIri) {
-          unset(draft, `chartConfig.filters["${previousComponentIri}"]`);
-        }
-
-        if (component) {
-          const previousComponent = allComponents.find(
-            (d) => d.iri === previousComponentIri
+        if (
+          canDimensionBeMultiFiltered(component) ||
+          isOrdinalMeasure(component)
+        ) {
+          const palette = getDefaultCategoricalPaletteName(
+            component,
+            colorPalette
           );
-          const previousPalette = get(
-            draft,
-            `chartConfig.fields.${field}.color.palette`
-          );
-
-          if (
-            canDimensionBeMultiFiltered(component) ||
-            isOrdinalMeasure(component)
-          ) {
-            const palette = getDefaultCategoricalPaletteName(
-              component,
-              previousPalette
-            );
-            setWith(
-              draft,
-              `chartConfig.fields.${field}.color`,
-              {
-                type: "categorical",
-                componentIri: component.iri,
-                palette,
-                colorMapping: mapValueIrisToColor({
-                  palette,
-                  dimensionValues: component.values,
-                }),
-              },
-              Object
-            );
-          } else if (
-            isNumericalMeasure(component) &&
-            ((previousComponent && !isNumericalMeasure(previousComponent)) ||
-              !previousComponent)
-          ) {
-            const newField: NumericalColorField = {
-              type: "numerical",
-              componentIri: component.iri,
-              palette: previousPalette || "oranges",
-              scaleType: "continuous",
-              interpolationType: "linear",
-            };
-
-            setWith(
-              draft,
-              `chartConfig.fields.${field}.color`,
-              newField,
-              Object
-            );
-          }
-        } else {
           setWith(
             draft,
             `chartConfig.fields.${field}.color`,
-            DEFAULT_FIXED_COLOR_FIELD,
+            {
+              type: "categorical",
+              componentIri: component.iri,
+              palette,
+              colorMapping: mapValueIrisToColor({
+                palette,
+                dimensionValues: component.values,
+              }),
+            },
             Object
           );
+        } else if (
+          isNumericalMeasure(component) &&
+          ((colorComponent && !isNumericalMeasure(colorComponent)) ||
+            !colorComponent)
+        ) {
+          const newField: NumericalColorField = {
+            type: "numerical",
+            componentIri: component.iri,
+            palette: colorPalette ?? "oranges",
+            scaleType: "continuous",
+            interpolationType: "linear",
+          };
+
+          setWith(draft, `chartConfig.fields.${field}.color`, newField, Object);
         }
+      } else {
+        setWith(
+          draft,
+          `chartConfig.fields.${field}.color`,
+          DEFAULT_FIXED_COLOR_FIELD,
+          Object
+        );
       }
     }
 
