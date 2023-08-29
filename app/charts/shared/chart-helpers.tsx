@@ -33,7 +33,7 @@ import { truthy } from "@/domain/types";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   InteractiveFiltersState,
-  useInteractiveFiltersStore,
+  useInteractiveFilters,
 } from "@/stores/interactive-filters";
 
 // Prepare filters used in data query:
@@ -64,7 +64,7 @@ export const useQueryFilters = ({
 }: {
   chartConfig: ChartConfig;
 }): QueryFilters => {
-  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
+  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
 
   return useMemo(() => {
     return prepareQueryFilters(

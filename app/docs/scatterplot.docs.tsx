@@ -18,6 +18,7 @@ import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
 
@@ -36,30 +37,32 @@ ${(
         chartConfig,
       }}
     >
-      <ScatterplotChart
-        observations={scatterplotObservations}
-        dimensions={scatterplotDimensions}
-        dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
-        measures={scatterplotMeasures}
-        measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
-        chartConfig={chartConfig}
-        aspectRatio={1}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <AxisWidthLinear />
-            <AxisHeightLinear />
-            <AxisWidthLinearDomain />
-            <AxisHeightLinearDomain />
-            <Scatterplot />
-            <InteractionVoronoi />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        {scatterplotFields.segment && (
-          <LegendColor symbol="square" interactive />
-        )}
-      </ScatterplotChart>
+      <InteractiveFiltersProvider>
+        <ScatterplotChart
+          observations={scatterplotObservations}
+          dimensions={scatterplotDimensions}
+          dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+          measures={scatterplotMeasures}
+          measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+          chartConfig={chartConfig}
+          aspectRatio={1}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <AxisWidthLinear />
+              <AxisHeightLinear />
+              <AxisWidthLinearDomain />
+              <AxisHeightLinearDomain />
+              <Scatterplot />
+              <InteractionVoronoi />
+            </ChartSvg>
+            <Tooltip type="single" />
+          </ChartContainer>
+          {scatterplotFields.segment && (
+            <LegendColor symbol="square" interactive />
+          )}
+        </ScatterplotChart>
+      </InteractiveFiltersProvider>
     </PublishedConfiguratorStateProvider>
   </ReactSpecimen>
 )}

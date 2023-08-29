@@ -44,7 +44,7 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import {
   DataFilters,
-  useInteractiveFiltersStore,
+  useInteractiveFilters,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 
@@ -57,7 +57,7 @@ type ChartDataFiltersProps = {
 export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   const { dataSet, dataSource, chartConfig } = props;
   const { loading } = useLoadingState();
-  const dataFilters = useInteractiveFiltersStore((d) => d.dataFilters);
+  const dataFilters = useInteractiveFilters((d) => d.dataFilters);
   const queryFilters = useQueryFilters({ chartConfig });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
@@ -199,9 +199,7 @@ const DataFilter = (props: DataFilterProps) => {
   } = props;
   const locale = useLocale();
   const chartLoadingState = useLoadingState();
-  const updateDataFilter = useInteractiveFiltersStore(
-    (d) => d.updateDataFilter
-  );
+  const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
   const keys = Object.keys(interactiveFilters);
   const [{ data, fetching }] = useDimensionValuesQuery({
     variables: {
@@ -533,7 +531,7 @@ const useEnsurePossibleInteractiveFilters = (
   const [error, setError] = React.useState<Error>();
   const lastFilters = React.useRef<Filters>();
   const client = useClient();
-  const setDataFilters = useInteractiveFiltersStore((d) => d.setDataFilters);
+  const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
 
   React.useEffect(() => {
     const run = async () => {
