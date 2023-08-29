@@ -47,6 +47,7 @@ import {
 import { Icon } from "@/icons";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
+import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { valueComparator } from "@/utils/sorting-values";
 
 export const Label = ({
@@ -81,9 +82,11 @@ export const Radio = ({
   checked,
   disabled,
   onChange,
+  warnMessage,
 }: {
   label: string;
   disabled?: boolean;
+  warnMessage?: string;
 } & FieldProps) => {
   const color = checked
     ? disabled
@@ -92,28 +95,30 @@ export const Radio = ({
     : "grey.500";
 
   return (
-    <FormControlLabel
-      label={label || "-"}
-      htmlFor={`${name}-${value}`}
-      componentsProps={{
-        typography: {
-          variant: "body2",
-        },
-      }}
-      control={
-        <MUIRadio
-          name={name}
-          id={`${name}-${value}`}
-          value={value}
-          onChange={onChange}
-          checked={!!checked}
-          disabled={disabled}
-          size="small"
-          sx={{ color, "> *": { fill: color } }}
-        />
-      }
-      disabled={disabled}
-    />
+    <MaybeTooltip text={warnMessage}>
+      <FormControlLabel
+        label={label || "-"}
+        htmlFor={`${name}-${value}`}
+        componentsProps={{
+          typography: {
+            variant: "body2",
+          },
+        }}
+        control={
+          <MUIRadio
+            name={name}
+            id={`${name}-${value}`}
+            value={value}
+            onChange={onChange}
+            checked={!!checked}
+            disabled={disabled}
+            size="small"
+            sx={{ color, "> *": { fill: color } }}
+          />
+        }
+        disabled={disabled}
+      />
+    </MaybeTooltip>
   );
 };
 

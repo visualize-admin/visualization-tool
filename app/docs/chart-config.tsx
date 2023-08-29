@@ -30,93 +30,91 @@ ${(
 
 ## 1.1 Chart configuration panel
 
-### Chart elements: x-axis, y-axis, color, etc.
-After a user has selected a dataset and a chart type, the chart configuration panel (left panel) is updated so that the configuration options match the chart elements of the selected chart type. Some parameters are mandatory. For instance, a column chart requires at least two chart elements to be defined: the horizontal axis and the vertical axis. The other parameters are optional.
+### Chart elements: x-axis, y-axis, segment, etc.
+After a user has selected a dataset and a chart type, the chart configuration panel is updated so that the configuration options match the chart elements of the selected chart type. Some parameters are mandatory. For instance, a column chart requires at least two chart elements to be defined: the horizontal axis and the vertical axis. The other parameters are optional.
 
 ### Dataset dimensions: categories, numbers, time, etc.
 The options available to select for each chart element are based on the dimension types defined in the dataset metadata. For instance, colors of a line chart needs to be defined by a dimension that can create groups (for instance: cantons). The visualization tool tries to select default parameters that should work (for instance, a temporal dimension for the horizontal axis of a line chart). Of course, the user has the power to modify all options.
 
 ### Additional parameters
-Depending on the chart type selected, additional options are available for selection and influence the visualization. Some optional parameter will modify the chart type selected, for instance, defining a data dimension that controls colors in a bar chart will convert the bar chart into a _stacked_ bars chart. Other parameters don’t directly influence the chart type, but modify the view of the dataset, like sorting the columns of a column chart for instance.
+Depending on the chart type selected, additional options are available for selection and influence the visualization. Some optional parameter will modify the chart type selected, for instance, defining a data dimension that controls segments in a column chart will convert it into a _stacked_ column chart. Other parameters don’t directly influence the chart type, but modify the view of the dataset, like sorting the columns of a column chart for instance.
 
 ### Mapping between chart types and dataset dimensions
-Whether a chart element is defined or not controls the visualization. In the table below is a non exhaustive list of some of the configuration combinations that we consider.
+Whether a chart element is defined or not controls the visualization. In the table below is a non exhaustive list of some of the configuration combinations that we consider. For more information about how the dimension types are defined, see the Components / RDF to Visualize section.
 
 ${(
   <TableSpecimen
     span={5}
     rows={[
       {
-        "Chart type": "**bar chart**",
-        "x-axis": "category | time",
-        "y-axis": "number",
-        color: "ø",
-        group: "ø",
-        size: "ø",
-        label: "ø",
-      },
-      {
-        "Chart type": "**stacked bar chart**",
-        "x-axis": "category | time",
-        "y-axis": "number",
-        color: "category",
-        group: "ø",
-        size: "ø",
-        label: "ø",
-      },
-      {
-        "Chart type": "**grouped bar chart**",
-        "x-axis": "category | time",
-        "y-axis": "number",
-        color: "ø",
-        group: "category",
-        size: "ø",
-        label: "ø",
-      },
-      {
-        "Chart type": "**small multiple bar charts**",
-        "x-axis": "category | time",
-        "y-axis": "number",
-        color: "category",
-        group: "category",
-        size: "ø",
-        label: "ø",
-      },
-      {
-        "Chart type": "**line chart**",
+        "Chart type": "**area**",
         "x-axis": "time",
         "y-axis": "number",
         color: "ø",
         group: "ø",
-        size: "ø",
-        label: "ø",
       },
       {
-        "Chart type": "**multi-line chart**",
+        "Chart type": "**stacked area**",
         "x-axis": "time",
         "y-axis": "number",
-        color: "category",
+        color: "category | ordinal time",
         group: "ø",
-        size: "ø",
-        label: "ø",
       },
       {
-        "Chart type": "**small multiple line chart**",
+        "Chart type": "**column**",
+        "x-axis": "category | (ordinal) time",
+        "y-axis": "number",
+        color: "ø",
+        group: "ø",
+      },
+      {
+        "Chart type": "**stacked column**",
+        "x-axis": "category | (ordinal) time",
+        "y-axis": "number",
+        color: "category | ordinal time",
+        group: "ø",
+      },
+      {
+        "Chart type": "**grouped column**",
+        "x-axis": "category | (ordinal) time",
+        "y-axis": "number",
+        color: "ø",
+        group: "category | ordinal time",
+      },
+      {
+        "Chart type": "**line**",
         "x-axis": "time",
         "y-axis": "number",
-        color: "category",
-        group: "category",
-        size: "ø",
-        label: "ø",
+        color: "ø",
+        group: "ø",
+      },
+      {
+        "Chart type": "**multi-line**",
+        "x-axis": "time",
+        "y-axis": "number",
+        color: "category | ordinal time",
+        group: "ø",
+      },
+      {
+        "Chart type": "**map**",
+        "x-axis": "geo",
+        "y-axis": "number",
+        color: "number | category (ordinal measure) | ordinal time",
+        group: "ø",
+      },
+      {
+        "Chart type": "**pie**",
+        "x-axis": "ø",
+        "y-axis": "number",
+        color: "category | ordinal time",
+        group: "ø",
       },
       {
         "Chart type": "**scatterplot**",
         "x-axis": "number",
         "y-axis": "number",
-        color: "category",
+        color: "category | ordinal time",
         group: "ø",
-        size: "number",
-        label: "any",
       },
     ]}
   />

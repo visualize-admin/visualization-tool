@@ -1,5 +1,4 @@
-import { Tooltip } from "@mui/material";
-import React from "react";
+import { Tooltip, Typography } from "@mui/material";
 
 export const MaybeTooltip = ({
   text,
@@ -9,7 +8,7 @@ export const MaybeTooltip = ({
   children: JSX.Element;
 }) => {
   return text ? (
-    <Tooltip arrow title={text}>
+    <Tooltip arrow title={<Typography variant="body2">{text}</Typography>}>
       {children}
     </Tooltip>
   ) : (

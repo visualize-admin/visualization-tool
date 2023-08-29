@@ -212,10 +212,13 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
+const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
+export type ChartSubType = t.TypeOf<typeof ChartSubType>;
+
 const ColumnSegmentField = t.intersection([
   GenericSegmentField,
   SortingField,
-  t.type({ type: t.union([t.literal("grouped"), t.literal("stacked")]) }),
+  t.type({ type: ChartSubType }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 

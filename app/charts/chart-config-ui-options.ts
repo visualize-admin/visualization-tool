@@ -8,6 +8,7 @@ import {
 import {
   AreaConfig,
   ChartConfig,
+  ChartSubType,
   ChartType,
   ColumnConfig,
   ComponentType,
@@ -36,10 +37,20 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
+export type EncodingOptionChartSubType = {
+  field: "chartSubType";
+  getValues: (
+    chartConfig: ChartConfig,
+    dimensions: DimensionMetadataFragment[]
+  ) => {
+    value: ChartSubType;
+    disabled: boolean;
+    warnMessage?: string;
+  }[];
+};
+
 export type EncodingOption =
-  | {
-      field: "chartSubType";
-    }
+  | EncodingOptionChartSubType
   | {
       field: "calculation";
       getDisabledState?: (chartConfig: ChartConfig) => {
@@ -103,7 +114,7 @@ export interface EncodingSpec {
   options?: EncodingOption[];
   getDisabledState?: (
     chartConfig: ChartConfig,
-    dimensions: DimensionMetadataFragment[],
+    components: DimensionMetadataFragment[],
     observations: Observation[]
   ) => {
     disabled: boolean;
@@ -197,12 +208,12 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   disableInteractiveFilters: true,
   getDisabledState: (
     chartConfig,
-    dimensions
+    components
   ): {
     disabled: boolean;
     warnMessage?: string;
   } => {
-    const noTemporalDimensions = !dimensions.some((d) => {
+    const noTemporalDimensions = !components.some((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
 
@@ -251,6 +262,10 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   return checkForMissingValuesInSegments(grouped, segments);
 };
 
+export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
+  return d?.scaleType !== "Ratio";
+};
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
@@ -273,13 +288,28 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
-        getDisabledState: (_chartConfig, _, data) => {
+        getDisabledState: (_chartConfig, components, data) => {
           const chartConfig = _chartConfig as AreaConfig;
+          const yIri = chartConfig.fields.y.componentIri;
+          const yDimension = components.find((d) => d.iri === yIri);
+          const disabledStacked = disableStacked(yDimension);
+
+          if (disabledStacked) {
+            return {
+              disabled: true,
+              warnMessage: t({
+                id: "controls.segment.stacked.disabled-by-scale-type",
+                message:
+                  "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale.",
+              }),
+            };
+          }
+
           const missingDataPresent = isMissingDataPresent(chartConfig, data);
           const imputationType = chartConfig.fields.y.imputationType;
           const disabled = false;
           const warnMessage =
-            missingDataPresent && imputationType === "none"
+            missingDataPresent && (!imputationType || imputationType === "none")
               ? t({
                   id: "controls.section.imputation.explanation",
                   message:
@@ -343,7 +373,33 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
         options: [
-          { field: "chartSubType" },
+          {
+            field: "chartSubType",
+            getValues: (_chartConfig, dimensions) => {
+              const chartConfig = _chartConfig as ColumnConfig;
+              const yIri = chartConfig.fields.y.componentIri;
+              const yDimension = dimensions.find((d) => d.iri === yIri);
+              const disabledStacked = disableStacked(yDimension);
+
+              return [
+                {
+                  value: "stacked",
+                  disabled: disabledStacked,
+                  warnMessage: disabledStacked
+                    ? t({
+                        id: "controls.segment.stacked.disabled-by-scale-type",
+                        message:
+                          "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale.",
+                      })
+                    : undefined,
+                },
+                {
+                  value: "grouped",
+                  disabled: false,
+                },
+              ];
+            },
+          },
           {
             field: "calculation",
             getDisabledState: (d) => {
