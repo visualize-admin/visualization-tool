@@ -12,7 +12,6 @@ import {
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
 import Flex from "@/components/flex";
-import { ColumnConfig } from "@/configurator";
 import {
   dimensions,
   fields,
@@ -38,23 +37,22 @@ ${(
       measuresByIri={keyBy(measures, (d) => d.iri)}
       dimensions={dimensions}
       dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-      chartConfig={
-        {
-          fields,
-          interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
-            timeRange: {
-              active: false,
-              componentIri: "",
-              presets: { type: "range", from: "", to: "" },
-            },
-            timeSlider: {
-              componentIri: "",
-            },
-            dataFilters: { active: false, componentIris: [] },
+      chartConfig={{
+        version: "1.4.2",
+        chartType: "column",
+        fields,
+        interactiveFiltersConfig: {
+          legend: { active: false, componentIri: "" },
+          timeRange: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
           },
-        } as unknown as ColumnConfig
-      }
+          dataFilters: { active: false, componentIris: [] },
+          calculation: { active: false, type: "identity" },
+        },
+        filters: {},
+      }}
       aspectRatio={0.4}
     >
       <Flex>
@@ -185,20 +183,22 @@ ${(
       measuresByIri={keyBy(measures, (d) => d.iri)}
       dimensions={dimensions}
       dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-      chartConfig={
-        {
-          fields,
-          interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
-            timeRange: {
-              active: false,
-              componentIri: "",
-              presets: { type: "range", from: "", to: "" },
-            },
-            dataFilters: { active: false, componentIris: [] },
+      chartConfig={{
+        version: "1.4.2",
+        chartType: "column",
+        fields,
+        interactiveFiltersConfig: {
+          legend: { active: false, componentIri: "" },
+          timeRange: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
           },
-        } as unknown as ColumnConfig
-      }
+          dataFilters: { active: false, componentIris: [] },
+          calculation: { active: false, type: "identity" },
+        },
+        filters: {},
+      }}
       aspectRatio={0.4}
     >
       <div style={{ width: 200, height: 150, position: "relative" }}>
@@ -228,20 +228,22 @@ ${(
       measuresByIri={keyBy(measures, (d) => d.iri)}
       dimensions={dimensions}
       dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-      chartConfig={
-        {
-          fields,
-          interactiveFiltersConfig: {
-            legend: { active: false, componentIri: "" },
-            timeRange: {
-              active: false,
-              componentIri: "",
-              presets: { type: "range", from: "", to: "" },
-            },
-            dataFilters: { active: false, componentIris: [] },
+      chartConfig={{
+        version: "1.4.2",
+        chartType: "column",
+        fields,
+        interactiveFiltersConfig: {
+          legend: { active: false, componentIri: "" },
+          timeRange: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
           },
-        } as unknown as ColumnConfig
-      }
+          dataFilters: { active: false, componentIris: [] },
+          calculation: { active: false, type: "identity" },
+        },
+        filters: {},
+      }}
       aspectRatio={0.4}
     >
       <div style={{ width: 200, height: 150, position: "relative" }}>

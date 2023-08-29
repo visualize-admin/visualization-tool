@@ -14,6 +14,7 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
+import { ScaleType } from "@/graphql/query-hooks";
 
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -111,18 +112,17 @@ const timeFormats = new Map<string, string>([
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
 
-export const getScaleType = (
-  dim: CubeDimension
-): ResolvedDimension["data"]["scaleType"] => {
+export const getScaleType = (dim: CubeDimension): ScaleType | undefined => {
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
+
   return scaleTypeTerm?.equals(ns.qudt.NominalScale)
-    ? "Nominal"
+    ? ScaleType.Nominal
     : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
-    ? "Ordinal"
+    ? ScaleType.Ordinal
     : scaleTypeTerm?.equals(ns.qudt.RatioScale)
-    ? "Ratio"
+    ? ScaleType.Ratio
     : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
-    ? "Interval"
+    ? ScaleType.Interval
     : undefined;
 };
 
@@ -137,6 +137,8 @@ const getDataKind = (term: Term | undefined) => {
 };
 
 export const parseDimensionDatatype = (dim: CubeDimension) => {
+  const isLiteral =
+    dim.out(ns.sh.nodeKind).term?.equals(ns.sh.Literal) ?? false;
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
 
@@ -144,9 +146,7 @@ export const parseDimensionDatatype = (dim: CubeDimension) => {
     // Maybe it has multiple datatypes
     const dataTypes = [
       ...(dim.out(ns.sh.or).list() ?? dim.out(ns.sh.or).toArray()),
-    ].flatMap((item) => {
-      return item.out(ns.sh.datatype).terms;
-    }) as NamedNode[];
+    ].flatMap((d) => d.out(ns.sh.datatype).terms) as NamedNode[];
 
     hasUndefinedValues = dataTypes.some((d) => ns.cube.Undefined.equals(d));
 
@@ -166,7 +166,7 @@ export const parseDimensionDatatype = (dim: CubeDimension) => {
     }
   }
 
-  return { dataType, hasUndefinedValues };
+  return { isLiteral, dataType, hasUndefinedValues };
 };
 
 type RelationType = "StandardError";
@@ -214,6 +214,8 @@ export const parseCubeDimension = ({
   >;
 }): ResolvedDimension => {
   const outOpts = { language: getQueryLocales(locale) };
+  const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
+  const description = dim.out(ns.schema.description, outOpts).value;
 
   const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
   const related = parseRelatedDimensions(dim);
@@ -222,14 +224,14 @@ export const parseCubeDimension = ({
     .out(ns.cube`meta/dataKind`)
     .out(ns.time.unitType).term;
 
-  const { dataType, hasUndefinedValues } = parseDimensionDatatype(dim);
+  const { isLiteral, dataType, hasUndefinedValues } =
+    parseDimensionDatatype(dim);
 
-  const isLiteral = dataType ? true : false;
-
+  const isDecimal = dataType?.equals(ns.xsd.decimal) ?? false;
   const isNumerical =
     dataType?.equals(ns.xsd.int) ||
     dataType?.equals(ns.xsd.integer) ||
-    dataType?.equals(ns.xsd.decimal) ||
+    isDecimal ||
     dataType?.equals(ns.xsd.float) ||
     dataType?.equals(ns.xsd.double) ||
     false;
@@ -243,22 +245,16 @@ export const parseCubeDimension = ({
     .terms.some((t) => t.equals(ns.cube.MeasureDimension));
 
   const unitTerm = dim.out(ns.qudt.unit).term;
-  const dimensionUnit = unitTerm ? units?.get(unitTerm.value) : undefined;
-  const dimensionUnitLabel = dimensionUnit?.label?.value;
+  const unit = unitTerm ? units?.get(unitTerm.value) : undefined;
+  const unitLabel = unit?.label?.value;
 
   const rawOrder = dim.out(ns.sh.order).value;
   const order = rawOrder !== undefined ? parseInt(rawOrder, 10) : undefined;
-
-  const name = dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!;
-  const description = dim.out(ns.schema.description, outOpts).value;
 
   const resolution =
     dataType?.equals(ns.xsd.int) || dataType?.equals(ns.xsd.integer)
       ? 0
       : undefined;
-
-  const isDecimal = dataType?.equals(ns.xsd.decimal) ?? false;
-  const dimensionHasHierarchy = hasHierarchy(dim);
 
   return {
     cube,
@@ -276,13 +272,13 @@ export const parseCubeDimension = ({
       isKeyDimension,
       isMeasureDimension,
       hasUndefinedValues,
-      hasHierarchy: dimensionHasHierarchy,
-      unit: dimensionUnitLabel,
+      hasHierarchy: hasHierarchy(dim),
+      unit: unitLabel,
       dataType: dataType?.value,
       resolution,
-      isCurrency: !!dimensionUnit?.isCurrency?.value,
-      currencyExponent: dimensionUnit?.currencyExponent?.value
-        ? parseInt(dimensionUnit?.currencyExponent?.value)
+      isCurrency: !!unit?.isCurrency?.value,
+      currencyExponent: unit?.currencyExponent?.value
+        ? parseInt(unit.currencyExponent.value)
         : undefined,
       order,
       dataKind: getDataKind(dataKindTerm),

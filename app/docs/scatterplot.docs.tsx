@@ -19,26 +19,6 @@ import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
-const interactiveFiltersConfig: InteractiveFiltersConfig = {
-  legend: {
-    active: true,
-    componentIri: "",
-  },
-  timeRange: {
-    active: false,
-    componentIri: "",
-    presets: { type: "range", from: "", to: "" },
-  },
-  dataFilters: {
-    active: false,
-    componentIris: [],
-  },
-  calculation: {
-    active: false,
-    type: "identity",
-  },
-};
-
 export const Docs = () => markdown`
 
 ## Scatterplot
@@ -53,13 +33,7 @@ ${(
         meta: { title: {}, description: {} },
         dataSource: { type: "sparql", url: "" },
         dataSet: "",
-        chartConfig: {
-          chartType: "scatterplot",
-          filters: {},
-          version: "0.0.1",
-          interactiveFiltersConfig,
-          fields: scatterplotFields,
-        },
+        chartConfig,
       }}
     >
       <ScatterplotChart
@@ -68,9 +42,7 @@ ${(
         dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
         measures={scatterplotMeasures}
         measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
-        chartConfig={
-          { interactiveFiltersConfig } as unknown as ScatterPlotConfig
-        }
+        chartConfig={chartConfig}
         aspectRatio={1}
       >
         <ChartContainer>
@@ -93,6 +65,26 @@ ${(
 )}
 `;
 export default Docs;
+
+const interactiveFiltersConfig: InteractiveFiltersConfig = {
+  legend: {
+    active: true,
+    componentIri: "",
+  },
+  timeRange: {
+    active: false,
+    componentIri: "",
+    presets: { type: "range", from: "", to: "" },
+  },
+  dataFilters: {
+    active: false,
+    componentIris: [],
+  },
+  calculation: {
+    active: false,
+    type: "identity",
+  },
+};
 
 const scatterplotFields = {
   x: {
@@ -122,6 +114,14 @@ const scatterplotFields = {
         "#8c564b",
     },
   },
+};
+
+const chartConfig: ScatterPlotConfig = {
+  chartType: "scatterplot",
+  filters: {},
+  version: "1.4.2",
+  interactiveFiltersConfig,
+  fields: scatterplotFields,
 };
 
 const scatterplotMeasures = [

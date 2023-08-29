@@ -81,7 +81,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   const iconStyles = useIconStyles({ isActive: false });
 
   return (
-    <Tooltip arrow title={title}>
+    <Tooltip arrow title={<Typography variant="body2">{title}</Typography>}>
       <Typography>
         <SvgIcExclamation className={iconStyles.warn} />
       </Typography>

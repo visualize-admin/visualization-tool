@@ -156,7 +156,18 @@ export const NoDataHint = () => (
       </Trans>
     </AlertTitle>
     <Trans id="hint.nodata.message">
-      Please try with another combination of filters.
+      Please try with another geographical dimension.
+    </Trans>
+  </Alert>
+);
+
+export const NoGeometriesHint = () => (
+  <Alert severity="info" icon={<Icon name="warning" size={64} />}>
+    <AlertTitle>
+      <Trans id="hint.nogeometries.title">No geometries available</Trans>
+    </AlertTitle>
+    <Trans id="hint.nogeometries.message">
+      Please try with another geographical dimension.
     </Trans>
   </Alert>
 );

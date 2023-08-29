@@ -817,7 +817,7 @@ const ChartFields = (props: ChartFieldsProps) => {
             }
             value={field}
             labelId={`${chartConfig.chartType}.${field}`}
-            {...getDisabledState?.(chartConfig, dimensions, observations)}
+            {...getDisabledState?.(chartConfig, components, observations)}
           />
         );
       })}
