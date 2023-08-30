@@ -824,19 +824,6 @@ export const handleChartFieldChanged = (
           colorMapping,
         };
       }
-
-      // Remove this component from the interactive filter, if it is there
-      if (draft.chartConfig.interactiveFiltersConfig) {
-        const newComponentIris =
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (d) => d !== componentIri
-          );
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-          newComponentIris;
-
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.active =
-          newComponentIris.length > 0;
-      }
     } else if (
       isMapConfig(draft.chartConfig) &&
       (field === "areaLayer" || field === "symbolLayer")
