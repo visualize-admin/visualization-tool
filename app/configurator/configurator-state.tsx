@@ -144,7 +144,7 @@ export type ConfiguratorStateAction =
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
-        onChange?: OnEncodingOptionChange<any>;
+        onChange?: OnEncodingOptionChange<any, any>;
       };
     }
   | {

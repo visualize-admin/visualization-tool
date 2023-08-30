@@ -185,16 +185,19 @@ export const useChartFieldField = ({
   };
 };
 
-type UseChartOptionSelectFieldProps<T> = {
+type UseChartOptionSelectFieldProps<V, T extends ChartConfig = ChartConfig> = {
   field: string;
   path: string;
-  getValue?: (key: string) => T | undefined;
-  getKey?: (value: T) => string;
-  onChange?: OnEncodingOptionChange<T>;
+  getValue?: (key: string) => V | undefined;
+  getKey?: (value: V) => string;
+  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const useChartOptionSelectField = <T extends {} = string>(
-  props: UseChartOptionSelectFieldProps<T>
+export const useChartOptionSelectField = <
+  V extends {} = string,
+  T extends ChartConfig = ChartConfig
+>(
+  props: UseChartOptionSelectFieldProps<V, T>
 ): SelectProps => {
   const { field, path, getValue, getKey, onChange } = props;
   const locale = useLocale();
@@ -216,7 +219,7 @@ export const useChartOptionSelectField = <T extends {} = string>(
     [dispatch, locale, field, path, getValue, onChange]
   );
 
-  let value: T | undefined;
+  let value: V | undefined;
   if (state.state === "CONFIGURING_CHART") {
     value = get(state, `chartConfig.fields.${field}.${path}`, FIELD_VALUE_NONE);
   }
@@ -295,15 +298,21 @@ export const useChartOptionSliderField = ({
   };
 };
 
-type UseChartOptionRadioFieldProps<T> = {
+type UseChartOptionRadioFieldProps<
+  V extends string | number,
+  T extends ChartConfig = ChartConfig
+> = {
   field: string | null;
   path: string;
-  value: T;
-  onChange?: OnEncodingOptionChange<T>;
+  value: V;
+  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const useChartOptionRadioField = <T extends string | number>(
-  props: UseChartOptionRadioFieldProps<T>
+export const useChartOptionRadioField = <
+  V extends string | number,
+  T extends ChartConfig = ChartConfig
+>(
+  props: UseChartOptionRadioFieldProps<V, T>
 ): FieldProps => {
   const { field, path, value, onChange } = props;
   const locale = useLocale();

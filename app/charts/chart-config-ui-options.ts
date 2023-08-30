@@ -21,9 +21,14 @@ import {
   ColumnSegmentField,
   ComponentType,
   ConfiguratorStateConfiguringChart,
+  LineConfig,
+  MapConfig,
   PaletteType,
+  PieConfig,
+  ScatterPlotConfig,
   SortingOrder,
   SortingType,
+  TableConfig,
   getAnimationField,
   isAnimationInConfig,
   isMapConfig,
@@ -56,33 +61,35 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
-export type OnEncodingOptionChange<T> = (
-  value: T,
+export type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
+  value: V,
   options: {
-    draft: ConfiguratorStateConfiguringChart;
+    draft: Omit<ConfiguratorStateConfiguringChart, "chartConfig"> & {
+      chartConfig: T;
+    };
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
   }
 ) => void;
 
-export type EncodingOptionChartSubType = {
+export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   field: "chartSubType";
   getValues: (
-    chartConfig: ChartConfig,
+    chartConfig: T,
     dimensions: DimensionMetadataFragment[]
   ) => {
     value: ChartSubType;
     disabled: boolean;
     warnMessage?: string;
   }[];
-  onChange: OnEncodingOptionChange<ChartSubType>;
+  onChange: OnEncodingOptionChange<ChartSubType, T>;
 };
 
-export type EncodingOption =
-  | EncodingOptionChartSubType
+export type EncodingOption<T extends ChartConfig = ChartConfig> =
+  | EncodingOptionChartSubType<T>
   | {
       field: "calculation";
-      getDisabledState?: (chartConfig: ChartConfig) => {
+      getDisabledState?: (chartConfig: T) => {
         disabled: boolean;
         warnMessage?: string;
       };
@@ -110,7 +117,7 @@ export type EncodingOption =
 
 export const makeOnColorComponentScaleTypeChange = (
   type: "areaLayer" | "symbolLayer"
-): OnEncodingOptionChange<ColorScaleType> => {
+): OnEncodingOptionChange<ColorScaleType, MapConfig> => {
   const basePath = `chartConfig.fields.${type}`;
   const interpolationTypePath = `${basePath}.color.interpolationType`;
   const nbClassPath = `${basePath}.color.nbClass`;
@@ -128,7 +135,7 @@ export const makeOnColorComponentScaleTypeChange = (
 
 export const makeOnColorComponentIriChange = (
   type: "areaLayer" | "symbolLayer"
-): OnEncodingOptionChange<string> => {
+): OnEncodingOptionChange<string, MapConfig> => {
   const basePath = `chartConfig.fields.${type}`;
 
   return (iri, { draft, dimensions, measures }) => {
@@ -186,11 +193,11 @@ export type EncodingOptionColorComponent = {
   optional: boolean;
   componentTypes: ComponentType[];
   enableUseAbbreviations: boolean;
-  onComponentIriChange: OnEncodingOptionChange<string>;
-  onScaleTypeChange: OnEncodingOptionChange<ColorScaleType>;
+  onComponentIriChange: OnEncodingOptionChange<string, MapConfig>;
+  onScaleTypeChange: OnEncodingOptionChange<ColorScaleType, MapConfig>;
 };
 
-export type EncodingOptionImputation = {
+type EncodingOptionImputation = {
   field: "imputation";
   shouldShow: (chartConfig: ChartConfig, data: Observation[]) => boolean;
 };
@@ -198,19 +205,21 @@ export type EncodingOptionImputation = {
  * @todo
  * - Differentiate sorting within chart vs. sorting legend / tooltip only
  */
-export type EncodingSortingOption = {
+export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
-  getDisabledState?: (chartConfig: ChartConfig) => {
+  getDisabledState?: (chartConfig: T) => {
     disabled: boolean;
     warnMessage?: string;
   };
 };
 
-export type OnEncodingChange = (
+export type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
   options: {
-    draft: ConfiguratorStateConfiguringChart;
+    draft: Omit<ConfiguratorStateConfiguringChart, "chartConfig"> & {
+      chartConfig: T;
+    };
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
     initializing: boolean;
@@ -218,7 +227,7 @@ export type OnEncodingChange = (
   }
 ) => void;
 
-export interface EncodingSpec {
+export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
@@ -226,11 +235,11 @@ export interface EncodingSpec {
   exclusive?: boolean;
   filters: boolean;
   disableInteractiveFilters?: boolean;
-  sorting?: EncodingSortingOption[];
-  options?: EncodingOption[];
-  onChange?: OnEncodingChange;
+  sorting?: EncodingSortingOption<T>[];
+  options?: EncodingOption<T>[];
+  onChange?: OnEncodingChange<T>;
   getDisabledState?: (
-    chartConfig: ChartConfig,
+    chartConfig: T,
     components: DimensionMetadataFragment[],
     observations: Observation[]
   ) => {
@@ -242,20 +251,20 @@ export interface EncodingSpec {
 // dataFilters is enabled by default
 type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
-export interface ChartSpec {
+export interface ChartSpec<T extends ChartConfig = ChartConfig> {
   chartType: ChartType;
-  encodings: EncodingSpec[];
+  encodings: EncodingSpec<T>[];
   interactiveFilters: InteractiveFilterType[];
 }
 
 interface ChartSpecs {
-  area: ChartSpec;
-  column: ChartSpec;
-  line: ChartSpec;
-  map: ChartSpec;
-  pie: ChartSpec;
-  scatterplot: ChartSpec;
-  table: ChartSpec;
+  area: ChartSpec<AreaConfig>;
+  column: ChartSpec<ColumnConfig>;
+  line: ChartSpec<LineConfig>;
+  map: ChartSpec<MapConfig>;
+  pie: ChartSpec<PieConfig>;
+  scatterplot: ChartSpec<ScatterPlotConfig>;
+  table: ChartSpec<TableConfig>;
 }
 
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
@@ -266,7 +275,9 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "GeoShapesDimension",
 ];
 
-export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
+export const getDefaultSegmentSorting = <
+  T extends ChartConfig = ChartConfig
+>(): EncodingSortingOption<T>[] => [
   {
     sortingType: "byAuto",
     sortingOrder: ["asc", "desc"],
@@ -303,21 +314,24 @@ export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
   },
 ];
 
-export const LINE_SEGMENT_SORTING: EncodingSortingOption[] = [
+export const AREA_SEGMENT_SORTING = getDefaultSegmentSorting<AreaConfig>();
+
+export const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-export const COLUMN_SEGMENT_SORTING: EncodingSortingOption[] =
-  AREA_SEGMENT_SORTING;
+export const COLUMN_SEGMENT_SORTING = getDefaultSegmentSorting<ColumnConfig>();
 
-export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
+export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-export const ANIMATION_FIELD_SPEC: EncodingSpec = {
+export const ANIMATION_FIELD_SPEC: EncodingSpec<
+  ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig
+> = {
   field: "animation",
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
@@ -441,7 +455,7 @@ const defaultSegmentOnChange: OnEncodingChange = (
 
 const makeOnMapFieldChange = (
   field: "areaLayer" | "symbolLayer"
-): OnEncodingChange => {
+): OnEncodingChange<MapConfig> => {
   return (iri, { draft, dimensions, measures }) => {
     if (isMapConfig(draft.chartConfig)) {
       initializeMapLayerField({
@@ -478,8 +492,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
-        getDisabledState: (_chartConfig, components, data) => {
-          const chartConfig = _chartConfig as AreaConfig;
+        getDisabledState: (chartConfig, components, data) => {
           const yIri = chartConfig.fields.y.componentIri;
           const yDimension = components.find((d) => d.iri === yIri);
           const disabledStacked = disableStacked(yDimension);
@@ -576,9 +589,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             "chartConfig.fields.segment"
           );
           const yComponent = components.find(
-            (d) =>
-              d.iri ===
-              (draft.chartConfig as ColumnConfig).fields.y.componentIri
+            (d) => d.iri === draft.chartConfig.fields.y.componentIri
           );
           setWith(
             draft,
@@ -593,8 +604,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           {
             field: "chartSubType",
-            getValues: (_chartConfig, dimensions) => {
-              const chartConfig = _chartConfig as ColumnConfig;
+            getValues: (chartConfig, dimensions) => {
               const yIri = chartConfig.fields.y.componentIri;
               const yDimension = dimensions.find((d) => d.iri === yIri);
               const disabledStacked = disableStacked(yDimension);
@@ -629,9 +639,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           },
           {
             field: "calculation",
-            getDisabledState: (d) => {
-              const grouped =
-                (d as ColumnConfig).fields.segment?.type === "grouped";
+            getDisabledState: (chartConfig) => {
+              const grouped = chartConfig.fields.segment?.type === "grouped";
 
               return {
                 disabled: grouped,

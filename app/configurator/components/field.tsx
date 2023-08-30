@@ -33,6 +33,7 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
+import { ChartConfig } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -762,19 +763,25 @@ export const ChartFieldField = ({
   );
 };
 
-type ChartOptionRadioFieldProps<T> = {
+type ChartOptionRadioFieldProps<
+  V extends string | number,
+  T extends ChartConfig = ChartConfig
+> = {
   label: string;
   field: string | null;
   path: string;
-  value: T;
+  value: V;
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-  onChange?: OnEncodingOptionChange<T>;
+  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const ChartOptionRadioField = <T extends string | number>(
-  props: ChartOptionRadioFieldProps<T>
+export const ChartOptionRadioField = <
+  V extends string | number,
+  T extends ChartConfig = ChartConfig
+>(
+  props: ChartOptionRadioFieldProps<V, T>
 ) => {
   const {
     label,
@@ -872,21 +879,24 @@ export const ChartOptionCheckboxField = ({
   );
 };
 
-type ChartOptionSelectFieldProps<T> = {
+type ChartOptionSelectFieldProps<V, T extends ChartConfig = ChartConfig> = {
   id: string;
   label: string | ReactNode;
   field: string;
   path: string;
   disabled?: boolean;
   options: Option[];
-  getValue?: (x: string) => T | undefined;
-  getKey?: (x: T) => string;
+  getValue?: (x: string) => V | undefined;
+  getKey?: (x: V) => string;
   isOptional?: boolean;
-  onChange?: OnEncodingOptionChange<T>;
+  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const ChartOptionSelectField = <T extends {} = string>(
-  props: ChartOptionSelectFieldProps<T>
+export const ChartOptionSelectField = <
+  V extends {} = string,
+  T extends ChartConfig = ChartConfig
+>(
+  props: ChartOptionSelectFieldProps<V, T>
 ) => {
   const {
     id,

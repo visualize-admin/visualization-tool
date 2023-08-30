@@ -174,7 +174,7 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     chartSpec.interactiveFilters.includes("animation");
   const baseEncodings = chartSpec.encodings;
   const encodings = animatable
-    ? baseEncodings.concat(ANIMATION_FIELD_SPEC)
+    ? [...baseEncodings, ANIMATION_FIELD_SPEC]
     : baseEncodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
