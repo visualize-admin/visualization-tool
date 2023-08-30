@@ -30,8 +30,6 @@ import {
   SortingType,
   TableConfig,
   getAnimationField,
-  isAnimationInConfig,
-  isSegmentInConfig,
   isSortingInConfig,
   makeMultiFilter,
 } from "@/config-types";
@@ -337,18 +335,16 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   filters: true,
   disableInteractiveFilters: true,
   onChange: (iri, { draft, initializing }) => {
-    if (isAnimationInConfig(draft.chartConfig)) {
-      if (initializing || !draft.chartConfig.fields.animation) {
-        draft.chartConfig.fields.animation = {
-          componentIri: iri,
-          showPlayButton: true,
-          duration: 30,
-          type: "continuous",
-          dynamicScales: false,
-        };
-      } else {
-        draft.chartConfig.fields.animation.componentIri = iri;
-      }
+    if (initializing || !draft.chartConfig.fields.animation) {
+      draft.chartConfig.fields.animation = {
+        componentIri: iri,
+        showPlayButton: true,
+        duration: 30,
+        type: "continuous",
+        dynamicScales: false,
+      };
+    } else {
+      draft.chartConfig.fields.animation.componentIri = iri;
     }
   },
   getDisabledState: (
@@ -411,14 +407,14 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-export const defaultSegmentOnChange: OnEncodingChange = (
-  iri,
-  { draft, dimensions, measures, initializing, selectedValues }
-) => {
-  if (!isSegmentInConfig(draft.chartConfig)) {
-    return;
-  }
-
+export const defaultSegmentOnChange: OnEncodingChange<
+  | AreaConfig
+  | ColumnConfig
+  | LineConfig
+  | ScatterPlotConfig
+  | PieConfig
+  | TableConfig
+> = (iri, { draft, dimensions, measures, initializing, selectedValues }) => {
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === iri);
   const palette = getDefaultCategoricalPaletteName(
