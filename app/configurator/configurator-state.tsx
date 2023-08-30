@@ -54,6 +54,7 @@ import {
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
+  makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -817,12 +818,9 @@ export const handleChartFieldChanged = (
           palette,
           dimensionValues: component?.values ?? [],
         });
-        draft.chartConfig.filters[componentIri] = {
-          type: "multi",
-          values: Object.fromEntries(
-            selectedValues.map((v) => v.value).map((x) => [x, true])
-          ),
-        };
+        draft.chartConfig.filters[componentIri] = makeMultiFilter(
+          selectedValues.map((d) => d.value)
+        );
         draft.chartConfig.fields.segment = {
           componentIri,
           palette,
@@ -909,12 +907,9 @@ export const handleChartFieldChanged = (
 
       draft.chartConfig.fields.segment.componentIri = componentIri;
       draft.chartConfig.fields.segment.colorMapping = colorMapping;
-      draft.chartConfig.filters[componentIri] = {
-        type: "multi",
-        values: Object.fromEntries(
-          selectedValues.map((v) => v.value).map((x) => [x, true])
-        ),
-      };
+      draft.chartConfig.filters[componentIri] = makeMultiFilter(
+        selectedValues.map((d) => d.value)
+      );
     } else {
       // Reset field properties, excluding componentIri.
       (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
@@ -1282,10 +1277,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
-          type: "multi",
-          values: Object.fromEntries(values.map((v) => [v, true])),
-        };
+        draft.chartConfig.filters[dimensionIri] = makeMultiFilter(values);
       }
       return draft;
 
@@ -1293,23 +1285,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
-        const valuesUpdate = Object.fromEntries(
-          values.map((v: string) => [v, true as true])
-        );
+        const newFilter = makeMultiFilter(values);
         if (f && f.type === "multi") {
           f.values = {
             ...f.values,
-            ...valuesUpdate,
+            ...newFilter.values,
           };
           // If all values are selected, we remove the filter again!
           if (allValues.every((v) => v in f.values)) {
             delete draft.chartConfig.filters[dimensionIri];
           }
         } else {
-          draft.chartConfig.filters[dimensionIri] = {
-            type: "multi",
-            values: valuesUpdate,
-          };
+          draft.chartConfig.filters[dimensionIri] = newFilter;
         }
       }
       return draft;

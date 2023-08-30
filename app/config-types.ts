@@ -3,6 +3,7 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
+import { ObservationValue } from "@/domain/data";
 import { DataCubeMetadata } from "@/graphql/types";
 
 const ComponentType = t.union([
@@ -33,6 +34,15 @@ const FilterValueMulti = t.intersection([
   }),
 ]);
 export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
+
+export const makeMultiFilter = (
+  values: ObservationValue[]
+): FilterValueMulti => {
+  return {
+    type: "multi",
+    values: Object.fromEntries(values.map((d) => [d, true])),
+  };
+};
 
 const FilterValueSingle = t.intersection([
   t.type(
