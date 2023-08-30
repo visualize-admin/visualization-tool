@@ -3,6 +3,7 @@ import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
+import unset from "lodash/unset";
 import { useRouter } from "next/router";
 import {
   Dispatch,
@@ -542,7 +543,7 @@ export const applyNonTableDimensionToFilters = ({
           filters[dimension.iri] = {
             type: "single",
             value:
-              Object.keys(currentFilter.values)[0] || dimension.values[0].value,
+              Object.keys(currentFilter.values)[0] ?? dimension.values[0].value,
           };
         }
         break;
@@ -995,7 +996,7 @@ export const handleChartOptionChanged = (
     const updatePath =
       field === null
         ? `chartConfig.${path}`
-        : `chartConfig.fields.${field}.${path}`;
+        : `chartConfig.fields["${field}"].${path}`;
     const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
       draft,
       locale
@@ -1004,6 +1005,11 @@ export const handleChartOptionChanged = (
       ? [...metadata.dimensions, ...metadata.measures]
       : [];
     onChange?.(draft, components, value);
+
+    if (value === FIELD_VALUE_NONE) {
+      unset(draft, updatePath);
+    }
+
     setWith(draft, updatePath, value, Object);
   }
 

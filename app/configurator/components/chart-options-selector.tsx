@@ -1015,7 +1015,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
     enableUseAbbreviations,
   } = props;
   const field = encoding.field;
-  const colorComponentOption = encoding.options?.find(
+  const option = encoding.options?.find(
     (d) => d.field === "color"
   ) as EncodingOptionColorComponent;
   const nbOptions = component.values.length;
@@ -1074,12 +1074,9 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           path="color.componentIri"
           options={measuresOptions}
           isOptional={optional}
-          onChange={(draft, components, value) =>
-            colorComponentOption.onChange(draft, components, {
-              type: "component",
-              value,
-            })
-          }
+          onChange={(draft, components, value) => {
+            option.onComponentIriChange(draft, components, value);
+          }}
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
@@ -1147,12 +1144,9 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                onChange={(draft, components) =>
-                  colorComponentOption.onChange(draft, components, {
-                    type: "scaleType",
-                    value: "continuous",
-                  })
-                }
+                onChange={(draft) => {
+                  option.onScaleTypeChange(draft, "continuous");
+                }}
               />
 
               {nbOptions >= 3 && (
@@ -1164,12 +1158,9 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  onChange={(draft, components) =>
-                    colorComponentOption.onChange(draft, components, {
-                      type: "scaleType",
-                      value: "discrete",
-                    })
-                  }
+                  onChange={(draft) => {
+                    option.onScaleTypeChange(draft, "discrete");
+                  }}
                 />
               )}
             </Flex>

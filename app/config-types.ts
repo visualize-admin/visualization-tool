@@ -529,6 +529,11 @@ const NumericalColorField = t.intersection([
 ]);
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
 
+export type ColorField =
+  | FixedColorField
+  | CategoricalColorField
+  | NumericalColorField;
+
 const MapAreaLayer = t.type({
   componentIri: t.string,
   color: t.union([CategoricalColorField, NumericalColorField]),
