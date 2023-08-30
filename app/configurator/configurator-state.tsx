@@ -47,7 +47,6 @@ import {
   InteractiveFiltersConfig,
   MapConfig,
   decodeConfiguratorState,
-  isAnimationInConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
@@ -136,6 +135,13 @@ export type ConfiguratorStateAction =
         field: string;
         componentIri: string;
         selectedValues?: $FixMe[];
+        onChange?: (
+          initializing: boolean,
+          draft: ConfiguratorStateConfiguringChart,
+          components: DimensionMetadataFragment[],
+          iri: string,
+          selectedValues: any[]
+        ) => void;
       };
     }
   | {
@@ -771,45 +777,23 @@ export const handleChartFieldChanged = (
     field,
     componentIri,
     selectedValues: actionSelectedValues,
+    onChange,
   } = action.value;
+  const f = get(draft.chartConfig.fields, field);
   const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
     draft,
     locale
   );
-  const { dimensions, measures } = metadata ?? { dimensions: [], measures: [] };
-  const f = get(draft.chartConfig.fields, field);
-  const component = [...dimensions, ...measures].find(
-    (d) => d.iri === componentIri
-  );
+  const { dimensions = [], measures = [] } = metadata ?? {};
+  const components = [...dimensions, ...measures];
+  const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
+
+  onChange?.(!f, draft, components, componentIri, selectedValues);
 
   // The field was not defined before
   if (!f) {
-    // FIXME?
-    // optionalFields = ['animation', 'segment', 'areaLayer', 'symbolLayer'],
-    // should be reflected in chart encodings
-    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
-      draft.chartConfig.fields.animation = {
-        componentIri,
-        showPlayButton: true,
-        duration: 30,
-        type: "continuous",
-        dynamicScales: false,
-      };
-
-      // TODO: consolidate this in UI encodings?
-      if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
-        const newComponentIris =
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (d) => d !== componentIri
-          );
-        const active = newComponentIris.length > 0;
-        draft.chartConfig.interactiveFiltersConfig.dataFilters = {
-          active,
-          componentIris: newComponentIris,
-        };
-      }
-    } else if (field === "segment") {
+    if (field === "segment") {
       // FIXME: This should be more chart specific
       // (no "stacked" for scatterplots for instance)
       if (isSegmentInConfig(draft.chartConfig)) {
@@ -866,31 +850,7 @@ export const handleChartFieldChanged = (
       });
     }
   } else {
-    // The field is being updated
-    if (field === "animation" && isAnimationInConfig(draft.chartConfig)) {
-      draft.chartConfig.fields.animation = {
-        componentIri,
-        showPlayButton:
-          draft.chartConfig.fields.animation?.showPlayButton ?? true,
-        duration: draft.chartConfig.fields.animation?.duration ?? 30,
-        type: draft.chartConfig.fields.animation?.type ?? "continuous",
-        dynamicScales:
-          draft.chartConfig.fields.animation?.dynamicScales ?? false,
-      };
-
-      // TODO: consolidate this in UI encodings?
-      if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
-        const newComponentIris =
-          draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-            (d) => d !== componentIri
-          );
-        const active = newComponentIris.length > 0;
-        draft.chartConfig.interactiveFiltersConfig.dataFilters = {
-          active,
-          componentIris: newComponentIris,
-        };
-      }
-    } else if (
+    if (
       field === "segment" &&
       "segment" in draft.chartConfig.fields &&
       draft.chartConfig.fields.segment &&
@@ -967,16 +927,20 @@ export const handleChartFieldChanged = (
         }
       }
     }
-
-    // Remove this component from the interactive filter, if it is there
-    if (draft.chartConfig.interactiveFiltersConfig) {
-      draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
-        draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-          (c) => c !== componentIri
-        );
-    }
   }
 
+  // Remove the component from interactive data filters.
+  if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
+    const componentIris =
+      draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+        (d) => d !== componentIri
+      );
+    const active = componentIris.length > 0;
+    draft.chartConfig.interactiveFiltersConfig.dataFilters = {
+      active,
+      componentIris,
+    };
+  }
   draft.chartConfig = deriveFiltersFromFields(draft.chartConfig, dimensions);
 
   return draft;
@@ -1023,9 +987,10 @@ export const updateColorMapping = (
     let colorMapping: ColorMapping | undefined;
 
     if (isTableConfig(draft.chartConfig)) {
-      const fieldValue = get(draft.chartConfig, path) as
-        | ColumnStyleCategory
-        | undefined;
+      const fieldValue: ColumnStyleCategory | undefined = get(
+        draft.chartConfig,
+        path
+      );
 
       if (fieldValue) {
         colorMapping = mapValueIrisToColor({
@@ -1035,9 +1000,10 @@ export const updateColorMapping = (
         });
       }
     } else {
-      const fieldValue = get(draft.chartConfig, path) as
-        | (GenericField & { palette: string })
-        | undefined;
+      const fieldValue: (GenericField & { palette: string }) | undefined = get(
+        draft.chartConfig,
+        path
+      );
 
       if (fieldValue?.componentIri === dimensionIri) {
         colorMapping = mapValueIrisToColor({

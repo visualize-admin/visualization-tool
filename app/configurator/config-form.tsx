@@ -85,8 +85,16 @@ const getLeaves = (
 
 export const useChartFieldField = ({
   field,
+  onChange,
 }: {
   field: string;
+  onChange?: (
+    initializing: boolean,
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
+    iri: string,
+    selectedValues: any[]
+  ) => void;
 }): SelectProps & {
   fetching: boolean;
 } => {
@@ -102,7 +110,7 @@ export const useChartFieldField = ({
     };
   }, []);
 
-  const onChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
+  const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (!state.dataSet) {
       return;
     }
@@ -154,6 +162,7 @@ export const useChartFieldField = ({
             field,
             componentIri: dimensionIri,
             selectedValues: leaves,
+            onChange,
           },
         });
         setFetching(false);
@@ -178,7 +187,7 @@ export const useChartFieldField = ({
   return {
     name: field,
     value,
-    onChange,
+    onChange: handleChange,
     fetching,
   };
 };

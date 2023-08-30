@@ -335,6 +335,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               label={fieldLabelHint[encoding.field]}
               optional={encoding.optional}
               options={options}
+              onChange={encoding.onChange}
             />
 
             {optionsByField.useAbbreviations && (

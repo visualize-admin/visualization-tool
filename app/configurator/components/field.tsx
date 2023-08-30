@@ -719,14 +719,22 @@ export const ChartFieldField = ({
   options,
   optional,
   disabled,
+  onChange,
 }: {
   label?: string;
   field: string;
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
+  onChange?: (
+    initializing: boolean,
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
+    iri: string,
+    selectedValues: any[]
+  ) => void;
 }) => {
-  const { fetching, ...fieldProps } = useChartFieldField({ field });
+  const { fetching, ...fieldProps } = useChartFieldField({ field, onChange });
 
   const noneLabel = t({
     id: "controls.none",

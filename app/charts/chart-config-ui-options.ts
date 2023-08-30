@@ -23,6 +23,7 @@ import {
   SortingOrder,
   SortingType,
   getAnimationField,
+  isAnimationInConfig,
   isSortingInConfig,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -220,6 +221,13 @@ export interface EncodingSpec {
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
+  onChange?: (
+    initializing: boolean,
+    draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
+    iri: string,
+    selectedValues: any[]
+  ) => void;
   getDisabledState?: (
     chartConfig: ChartConfig,
     components: DimensionMetadataFragment[],
@@ -314,6 +322,21 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   disableInteractiveFilters: true,
+  onChange: (initializing, draft, _, componentIri) => {
+    if (isAnimationInConfig(draft.chartConfig)) {
+      if (initializing || !draft.chartConfig.fields.animation) {
+        draft.chartConfig.fields.animation = {
+          componentIri,
+          showPlayButton: true,
+          duration: 30,
+          type: "continuous",
+          dynamicScales: false,
+        };
+      } else {
+        draft.chartConfig.fields.animation.componentIri = componentIri;
+      }
+    }
+  },
   getDisabledState: (
     chartConfig,
     components
