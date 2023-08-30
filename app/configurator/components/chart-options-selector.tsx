@@ -1144,8 +1144,8 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                onChange={(draft) => {
-                  option.onScaleTypeChange(draft, "continuous");
+                onChange={(draft, components) => {
+                  option.onScaleTypeChange(draft, components, "continuous");
                 }}
               />
 
@@ -1158,8 +1158,8 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  onChange={(draft) => {
-                    option.onScaleTypeChange(draft, "discrete");
+                  onChange={(draft, components) => {
+                    option.onScaleTypeChange(draft, components, "discrete");
                   }}
                 />
               )}

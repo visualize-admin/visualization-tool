@@ -992,13 +992,9 @@ export const handleChartOptionChanged = (
       field === null
         ? `chartConfig.${path}`
         : `chartConfig.fields["${field}"].${path}`;
-    const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-      draft,
-      locale
-    );
-    const components = metadata
-      ? [...metadata.dimensions, ...metadata.measures]
-      : [];
+    const { dimensions = [], measures = [] } =
+      getCachedCubeMetadataAndComponentsWithHierarchies(draft, locale) ?? {};
+    const components = [...dimensions, ...measures];
     onChange?.(draft, components, value);
 
     if (value === FIELD_VALUE_NONE) {

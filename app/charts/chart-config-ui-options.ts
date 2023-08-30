@@ -96,14 +96,18 @@ export type EncodingOption =
       field: "useAbbreviations";
     };
 
-const makeOnColorComponentScaleTypeChange = (
+export const makeOnColorComponentScaleTypeChange = (
   type: "areaLayer" | "symbolLayer"
 ) => {
   const basePath = `chartConfig.fields.${type}`;
   const interpolationTypePath = `${basePath}.color.interpolationType`;
   const nbClassPath = `${basePath}.color.nbClass`;
 
-  return (draft: ConfiguratorStateConfiguringChart, value: ColorScaleType) => {
+  return (
+    draft: ConfiguratorStateConfiguringChart,
+    _: DimensionMetadataFragment[],
+    value: ColorScaleType
+  ) => {
     if (value === "continuous") {
       setWith(draft, interpolationTypePath, "linear", Object);
       unset(draft, nbClassPath);
@@ -184,6 +188,7 @@ export type EncodingOptionColorComponent = {
   ) => void;
   onScaleTypeChange: (
     draft: ConfiguratorStateConfiguringChart,
+    components: DimensionMetadataFragment[],
     value: ColorScaleType
   ) => void;
 };

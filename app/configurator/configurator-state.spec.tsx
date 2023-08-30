@@ -3,7 +3,10 @@ import { createDraft, current } from "immer";
 import get from "lodash/get";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
-import { makeOnColorComponentIriChange } from "@/charts/chart-config-ui-options";
+import {
+  makeOnColorComponentIriChange,
+  makeOnColorComponentScaleTypeChange,
+} from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
@@ -873,6 +876,48 @@ describe("handleChartFieldChanged", () => {
 });
 
 describe("handleChartOptionChanged", () => {
+  it("should set required scale properties", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSet: "mapDataset",
+      dataSource: {
+        type: "sparql",
+        url: "fakeUrl",
+      },
+      chartConfig: {
+        chartType: "map",
+        fields: {
+          areaLayer: {
+            componentIri: "areaLayerIri",
+            color: {
+              type: "numerical",
+              componentIri: "areaLayerColorIri",
+              palette: "oranges",
+              scaleType: "continuous",
+              interpolationType: "linear",
+            },
+          },
+        },
+        filters: {},
+      },
+    } as unknown as ConfiguratorStateConfiguringChart;
+
+    handleChartOptionChanged(state, {
+      type: "CHART_OPTION_CHANGED",
+      value: {
+        locale: "en",
+        field: "areaLayer",
+        path: "color.scaleType",
+        value: "discrete",
+        onChange: makeOnColorComponentScaleTypeChange("areaLayer"),
+      },
+    });
+
+    expect(
+      (state.chartConfig as any).fields.areaLayer.color.nbClass
+    ).toBeTruthy();
+  });
+
   it("should reset previous color filters", () => {
     const state = {
       state: "CONFIGURING_CHART",
@@ -908,21 +953,18 @@ describe("handleChartOptionChanged", () => {
           },
         },
       },
-    };
+    } as unknown as ConfiguratorStateConfiguringChart;
 
-    handleChartOptionChanged(
-      state as unknown as ConfiguratorStateConfiguringChart,
-      {
-        type: "CHART_OPTION_CHANGED",
-        value: {
-          locale: "en",
-          field: "areaLayer",
-          path: "color.componentIri",
-          value: "newAreaLayerColorIri",
-          onChange: makeOnColorComponentIriChange("areaLayer"),
-        },
-      }
-    );
+    handleChartOptionChanged(state, {
+      type: "CHART_OPTION_CHANGED",
+      value: {
+        locale: "en",
+        field: "areaLayer",
+        path: "color.componentIri",
+        value: "newAreaLayerColorIri",
+        onChange: makeOnColorComponentIriChange("areaLayer"),
+      },
+    });
 
     expect(Object.keys(state.chartConfig.filters)).not.toContain(
       "areaLayerColorIri"
