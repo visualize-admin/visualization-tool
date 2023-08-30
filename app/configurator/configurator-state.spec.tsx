@@ -3,6 +3,7 @@ import { createDraft, current } from "immer";
 import get from "lodash/get";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
+import { makeOnColorComponentIriChange } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
@@ -918,6 +919,7 @@ describe("handleChartOptionChanged", () => {
           field: "areaLayer",
           path: "color.componentIri",
           value: "newAreaLayerColorIri",
+          onChange: makeOnColorComponentIriChange("areaLayer"),
         },
       }
     );

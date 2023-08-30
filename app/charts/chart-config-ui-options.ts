@@ -114,7 +114,9 @@ const makeOnColorComponentScaleTypeChange = (
   };
 };
 
-const makeOnColorComponentIriChange = (type: "areaLayer" | "symbolLayer") => {
+export const makeOnColorComponentIriChange = (
+  type: "areaLayer" | "symbolLayer"
+) => {
   const basePath = `chartConfig.fields.${type}`;
 
   return (
