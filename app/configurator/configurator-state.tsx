@@ -121,7 +121,7 @@ export type ConfiguratorStateAction =
         field: string;
         componentIri: string;
         selectedValues?: $FixMe[];
-        onChange?: OnEncodingChange;
+        onChange?: OnEncodingChange<any>;
       };
     }
   | {

@@ -4,8 +4,10 @@ import get from "lodash/get";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
 import {
+  defaultSegmentOnChange,
   makeOnColorComponentIriChange,
   makeOnColorComponentScaleTypeChange,
+  makeOnMapFieldChange,
 } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -815,6 +817,7 @@ describe("colorMapping", () => {
           locale: "en",
           field: "segment",
           componentIri: "newAreaLayerColorIri",
+          onChange: defaultSegmentOnChange,
         },
       }
     );
@@ -867,6 +870,7 @@ describe("handleChartFieldChanged", () => {
           locale: "en",
           field: "symbolLayer",
           componentIri: "symbolLayerIri",
+          onChange: makeOnMapFieldChange("symbolLayer"),
         },
       }
     );

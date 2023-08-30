@@ -31,7 +31,6 @@ import {
   TableConfig,
   getAnimationField,
   isAnimationInConfig,
-  isMapConfig,
   isSegmentInConfig,
   isSortingInConfig,
   makeMultiFilter,
@@ -412,7 +411,7 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-const defaultSegmentOnChange: OnEncodingChange = (
+export const defaultSegmentOnChange: OnEncodingChange = (
   iri,
   { draft, dimensions, measures, initializing, selectedValues }
 ) => {
@@ -453,19 +452,17 @@ const defaultSegmentOnChange: OnEncodingChange = (
   draft.chartConfig.filters[iri] = multiFilter;
 };
 
-const makeOnMapFieldChange = (
+export const makeOnMapFieldChange = (
   field: "areaLayer" | "symbolLayer"
 ): OnEncodingChange<MapConfig> => {
   return (iri, { draft, dimensions, measures }) => {
-    if (isMapConfig(draft.chartConfig)) {
-      initializeMapLayerField({
-        chartConfig: draft.chartConfig,
-        field,
-        componentIri: iri,
-        dimensions,
-        measures,
-      });
-    }
+    initializeMapLayerField({
+      chartConfig: draft.chartConfig,
+      field,
+      componentIri: iri,
+      dimensions,
+      measures,
+    });
   };
 };
 
