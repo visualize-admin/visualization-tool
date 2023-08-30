@@ -13,12 +13,11 @@ import React, {
 import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
-import { OnEncodingOptionChange } from "@/charts/chart-config-ui-options";
 import {
-  ChartConfig,
-  ChartType,
-  ConfiguratorStateConfiguringChart,
-} from "@/config-types";
+  OnEncodingChange,
+  OnEncodingOptionChange,
+} from "@/charts/chart-config-ui-options";
+import { ChartConfig, ChartType } from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,
@@ -30,7 +29,6 @@ import {
   DimensionHierarchyDocument,
   DimensionHierarchyQuery,
   DimensionHierarchyQueryVariables,
-  DimensionMetadataFragment,
   DimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
@@ -89,13 +87,7 @@ export const useChartFieldField = ({
   onChange,
 }: {
   field: string;
-  onChange?: (
-    initializing: boolean,
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    iri: string,
-    selectedValues: any[]
-  ) => void;
+  onChange?: OnEncodingChange;
 }): SelectProps & {
   fetching: boolean;
 } => {

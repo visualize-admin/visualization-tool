@@ -206,6 +206,17 @@ export type EncodingSortingOption = {
   };
 };
 
+export type OnEncodingChange = (
+  iri: string,
+  options: {
+    draft: ConfiguratorStateConfiguringChart;
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+    initializing: boolean;
+    selectedValues: any[];
+  }
+) => void;
+
 export interface EncodingSpec {
   field: EncodingFieldType;
   optional: boolean;
@@ -216,13 +227,7 @@ export interface EncodingSpec {
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption[];
   options?: EncodingOption[];
-  onChange?: (
-    initializing: boolean,
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    iri: string,
-    selectedValues: any[]
-  ) => void;
+  onChange?: OnEncodingChange;
   getDisabledState?: (
     chartConfig: ChartConfig,
     components: DimensionMetadataFragment[],
@@ -317,18 +322,18 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec = {
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   disableInteractiveFilters: true,
-  onChange: (initializing, draft, _, componentIri) => {
+  onChange: (iri, { draft, initializing }) => {
     if (isAnimationInConfig(draft.chartConfig)) {
       if (initializing || !draft.chartConfig.fields.animation) {
         draft.chartConfig.fields.animation = {
-          componentIri,
+          componentIri: iri,
           showPlayButton: true,
           duration: 30,
           type: "continuous",
           dynamicScales: false,
         };
       } else {
-        draft.chartConfig.fields.animation.componentIri = componentIri;
+        draft.chartConfig.fields.animation.componentIri = iri;
       }
     }
   },
@@ -392,17 +397,15 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-const defaultSegmentOnChange = (
-  initializing: boolean,
-  draft: ConfiguratorStateConfiguringChart,
-  components: DimensionMetadataFragment[],
-  iri: string,
-  selectedValues: any[]
+const defaultSegmentOnChange: OnEncodingChange = (
+  iri,
+  { draft, dimensions, measures, initializing, selectedValues }
 ) => {
   if (!isSegmentInConfig(draft.chartConfig)) {
     return;
   }
 
+  const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === iri);
   const palette = getDefaultCategoricalPaletteName(
     component,
@@ -542,19 +545,15 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
-        onChange: (initializing, draft, components, iri, selectedValues) => {
-          defaultSegmentOnChange(
-            initializing,
-            draft,
-            components,
-            iri,
-            selectedValues
-          );
+        onChange: (iri, options) => {
+          const { draft, dimensions, measures, initializing } = options;
+          defaultSegmentOnChange(iri, options);
 
           if (!initializing) {
             return;
           }
 
+          const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
             draft,
             "chartConfig.fields.segment"

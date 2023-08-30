@@ -26,6 +26,7 @@ import {
   initializeMapLayerField,
 } from "@/charts";
 import {
+  OnEncodingChange,
   OnEncodingOptionChange,
   disableStacked,
 } from "@/charts/chart-config-ui-options";
@@ -128,13 +129,7 @@ export type ConfiguratorStateAction =
         field: string;
         componentIri: string;
         selectedValues?: $FixMe[];
-        onChange?: (
-          initializing: boolean,
-          draft: ConfiguratorStateConfiguringChart,
-          components: DimensionMetadataFragment[],
-          iri: string,
-          selectedValues: any[]
-        ) => void;
+        onChange?: OnEncodingChange;
       };
     }
   | {
@@ -745,7 +740,13 @@ export const handleChartFieldChanged = (
   const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
 
-  onChange?.(!f, draft, components, componentIri, selectedValues);
+  onChange?.(componentIri, {
+    draft,
+    dimensions,
+    measures,
+    initializing: !f,
+    selectedValues,
+  });
 
   // The field was not defined before
   if (!f) {

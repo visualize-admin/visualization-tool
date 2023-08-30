@@ -17,7 +17,10 @@ import React, {
   useState,
 } from "react";
 
-import { OnEncodingOptionChange } from "@/charts/chart-config-ui-options";
+import {
+  OnEncodingChange,
+  OnEncodingOptionChange,
+} from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import {
   Checkbox,
@@ -30,7 +33,6 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -727,16 +729,9 @@ export const ChartFieldField = ({
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  onChange?: (
-    initializing: boolean,
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    iri: string,
-    selectedValues: any[]
-  ) => void;
+  onChange?: OnEncodingChange;
 }) => {
   const { fetching, ...fieldProps } = useChartFieldField({ field, onChange });
-
   const noneLabel = t({
     id: "controls.none",
     message: "None",
