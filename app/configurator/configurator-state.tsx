@@ -21,10 +21,9 @@ import {
   getFieldComponentIris,
   getGroupedFieldIris,
   getHiddenFieldIris,
-  getInitialAreaLayer,
   getInitialConfig,
-  getInitialSymbolLayer,
   getPossibleChartType,
+  initializeMapLayerField,
 } from "@/charts";
 import { disableStacked } from "@/charts/chart-config-ui-options";
 import {
@@ -43,7 +42,6 @@ import {
   GenericFields,
   ImputationType,
   InteractiveFiltersConfig,
-  MapConfig,
   decodeConfiguratorState,
   isAreaConfig,
   isColorFieldInConfig,
@@ -58,8 +56,6 @@ import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive
 import {
   DimensionValue,
   isGeoDimension,
-  isGeoShapesDimension,
-  isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -73,8 +69,6 @@ import {
   DataCubeMetadataQueryVariables,
   DimensionMetadataFragment,
   DimensionMetadataWithHierarchiesFragment,
-  NumericalMeasure,
-  OrdinalMeasure,
 } from "@/graphql/query-hooks";
 import {
   DataCubeMetadata,
@@ -728,36 +722,6 @@ export const getChartOptionField = (
       : `chartConfig.fields["${field}"].${path}`,
     defaultValue
   );
-};
-
-const initializeMapLayerField = ({
-  chartConfig,
-  field,
-  componentIri,
-  dimensions,
-  measures,
-}: {
-  chartConfig: MapConfig;
-  field: "areaLayer" | "symbolLayer";
-  componentIri: string;
-  dimensions: DimensionMetadataFragment[];
-  measures: (NumericalMeasure | OrdinalMeasure)[];
-}) => {
-  if (field === "areaLayer") {
-    chartConfig.fields.areaLayer = getInitialAreaLayer({
-      component: dimensions
-        .filter(isGeoShapesDimension)
-        .find((d) => d.iri === componentIri)!,
-      measure: measures[0],
-    });
-  } else if (field === "symbolLayer") {
-    chartConfig.fields.symbolLayer = getInitialSymbolLayer({
-      component: dimensions
-        .filter(isGeoDimension)
-        .find((d) => d.iri === componentIri)!,
-      measure: measures.find(isNumericalMeasure),
-    });
-  }
 };
 
 export const handleChartFieldChanged = (

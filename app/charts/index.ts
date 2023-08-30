@@ -26,6 +26,7 @@ import {
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
+  MapConfig,
   MapSymbolLayer,
   PieSegmentField,
   ScatterPlotSegmentField,
@@ -47,6 +48,7 @@ import {
   getGeoDimensions,
   getTemporalDimensions,
   isGeoCoordinatesDimension,
+  isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
@@ -188,6 +190,36 @@ const makeInitialFiltersForArea = (
     }
   }
   return filters;
+};
+
+export const initializeMapLayerField = ({
+  chartConfig,
+  field,
+  componentIri,
+  dimensions,
+  measures,
+}: {
+  chartConfig: MapConfig;
+  field: "areaLayer" | "symbolLayer";
+  componentIri: string;
+  dimensions: DimensionMetadataFragment[];
+  measures: (NumericalMeasure | OrdinalMeasure)[];
+}) => {
+  if (field === "areaLayer") {
+    chartConfig.fields.areaLayer = getInitialAreaLayer({
+      component: dimensions
+        .filter(isGeoShapesDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures[0],
+    });
+  } else if (field === "symbolLayer") {
+    chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+      component: dimensions
+        .filter(isGeoDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures.find(isNumericalMeasure),
+    });
+  }
 };
 
 export const getInitialAreaLayer = ({
