@@ -203,14 +203,14 @@ export const initializeMapLayerField = ({
   field: "areaLayer" | "symbolLayer";
   componentIri: string;
   dimensions: DimensionMetadataFragment[];
-  measures: (NumericalMeasure | OrdinalMeasure)[];
+  measures: DimensionMetadataFragment[];
 }) => {
   if (field === "areaLayer") {
     chartConfig.fields.areaLayer = getInitialAreaLayer({
       component: dimensions
         .filter(isGeoShapesDimension)
         .find((d) => d.iri === componentIri)!,
-      measure: measures[0],
+      measure: measures[0] as NumericalMeasure | OrdinalMeasure,
     });
   } else if (field === "symbolLayer") {
     chartConfig.fields.symbolLayer = getInitialSymbolLayer({

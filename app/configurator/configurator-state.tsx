@@ -23,7 +23,6 @@ import {
   getHiddenFieldIris,
   getInitialConfig,
   getPossibleChartType,
-  initializeMapLayerField,
 } from "@/charts";
 import {
   OnEncodingChange,
@@ -50,7 +49,6 @@ import {
   isAreaConfig,
   isColorFieldInConfig,
   isColumnConfig,
-  isMapConfig,
   isTableConfig,
   makeMultiFilter,
 } from "@/config-types";
@@ -748,21 +746,7 @@ export const handleChartFieldChanged = (
     selectedValues,
   });
 
-  // The field was not defined before
-  if (!f) {
-    if (
-      isMapConfig(draft.chartConfig) &&
-      (field === "areaLayer" || field === "symbolLayer")
-    ) {
-      initializeMapLayerField({
-        chartConfig: draft.chartConfig,
-        field,
-        componentIri,
-        dimensions,
-        measures,
-      });
-    }
-  } else {
+  if (f) {
     // Reset field properties, excluding componentIri.
     (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
 
@@ -779,17 +763,6 @@ export const handleChartFieldChanged = (
         false,
         Object
       );
-    } else if (
-      isMapConfig(draft.chartConfig) &&
-      (field === "areaLayer" || field === "symbolLayer")
-    ) {
-      initializeMapLayerField({
-        chartConfig: draft.chartConfig,
-        field,
-        componentIri,
-        dimensions,
-        measures,
-      });
     } else if (field === "y") {
       if (
         isColumnConfig(draft.chartConfig) &&

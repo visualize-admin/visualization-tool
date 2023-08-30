@@ -4,7 +4,7 @@ import get from "lodash/get";
 import setWith from "lodash/setWith";
 import unset from "lodash/unset";
 
-import { DEFAULT_SORTING } from "@/charts";
+import { DEFAULT_SORTING, initializeMapLayerField } from "@/charts";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   checkForMissingValuesInSegments,
@@ -26,6 +26,7 @@ import {
   SortingType,
   getAnimationField,
   isAnimationInConfig,
+  isMapConfig,
   isSegmentInConfig,
   isSortingInConfig,
   makeMultiFilter,
@@ -438,6 +439,22 @@ const defaultSegmentOnChange: OnEncodingChange = (
   draft.chartConfig.filters[iri] = multiFilter;
 };
 
+const makeOnMapFieldChange = (
+  field: "areaLayer" | "symbolLayer"
+): OnEncodingChange => {
+  return (iri, { draft, dimensions, measures }) => {
+    if (isMapConfig(draft.chartConfig)) {
+      initializeMapLayerField({
+        chartConfig: draft.chartConfig,
+        field,
+        componentIri: iri,
+        dimensions,
+        measures,
+      });
+    }
+  };
+};
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
@@ -681,6 +698,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoShapesDimension"],
         exclusive: false,
         filters: true,
+        onChange: makeOnMapFieldChange("areaLayer"),
         options: [
           {
             field: "color",
@@ -703,6 +721,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
         exclusive: false,
         filters: true,
+        onChange: makeOnMapFieldChange("symbolLayer"),
         options: [
           {
             field: "size",
