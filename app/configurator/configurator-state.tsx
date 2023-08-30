@@ -27,7 +27,6 @@ import {
 import {
   OnEncodingChange,
   OnEncodingOptionChange,
-  disableStacked,
 } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -736,16 +735,6 @@ export const handleChartFieldChanged = (
   if (f) {
     // Reset field properties, excluding componentIri.
     (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
-
-    if (field === "y") {
-      if (isAreaConfig(draft.chartConfig) && draft.chartConfig.fields.segment) {
-        const yMeasure = measures.find((d) => d.iri === componentIri);
-
-        if (disableStacked(yMeasure)) {
-          delete draft.chartConfig.fields.segment;
-        }
-      }
-    }
   }
 
   onChange?.(componentIri, {
@@ -755,6 +744,7 @@ export const handleChartFieldChanged = (
     initializing: !f,
     selectedValues,
   });
+
   // Remove the component from interactive data filters.
   if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
     const componentIris =

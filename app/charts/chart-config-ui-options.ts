@@ -478,6 +478,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        onChange: (iri, { draft, measures }) => {
+          const yMeasure = measures.find((d) => d.iri === iri);
+
+          if (disableStacked(yMeasure)) {
+            delete draft.chartConfig.fields.segment;
+          }
+        },
       },
       {
         field: "x",
