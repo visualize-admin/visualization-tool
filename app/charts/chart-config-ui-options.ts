@@ -4,6 +4,7 @@ import get from "lodash/get";
 import setWith from "lodash/setWith";
 import unset from "lodash/unset";
 
+import { DEFAULT_SORTING } from "@/charts";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   checkForMissingValuesInSegments,
@@ -17,6 +18,7 @@ import {
   ColorField,
   ColorScaleType,
   ColumnConfig,
+  ColumnSegmentField,
   ComponentType,
   ConfiguratorStateConfiguringChart,
   PaletteType,
@@ -24,7 +26,9 @@ import {
   SortingType,
   getAnimationField,
   isAnimationInConfig,
+  isSegmentInConfig,
   isSortingInConfig,
+  makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
@@ -397,6 +401,49 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
+const defaultSegmentOnChange = (
+  initializing: boolean,
+  draft: ConfiguratorStateConfiguringChart,
+  components: DimensionMetadataFragment[],
+  iri: string,
+  selectedValues: any[]
+) => {
+  if (!isSegmentInConfig(draft.chartConfig)) {
+    return;
+  }
+
+  const component = components.find((d) => d.iri === iri);
+  const palette = getDefaultCategoricalPaletteName(
+    component,
+    draft.chartConfig.fields.segment &&
+      "palette" in draft.chartConfig.fields.segment
+      ? draft.chartConfig.fields.segment.palette
+      : undefined
+  );
+  const colorMapping = mapValueIrisToColor({
+    palette,
+    dimensionValues: selectedValues,
+  });
+  const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
+
+  if (initializing) {
+    draft.chartConfig.fields.segment = {
+      componentIri: iri,
+      palette,
+      sorting: DEFAULT_SORTING,
+      colorMapping,
+    };
+  } else if (
+    draft.chartConfig.fields.segment &&
+    "palette" in draft.chartConfig.fields.segment
+  ) {
+    draft.chartConfig.fields.segment.componentIri = iri;
+    draft.chartConfig.fields.segment.colorMapping = colorMapping;
+  }
+
+  draft.chartConfig.filters[iri] = multiFilter;
+};
+
 export const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
@@ -419,6 +466,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
+        onChange: defaultSegmentOnChange,
         getDisabledState: (_chartConfig, components, data) => {
           const chartConfig = _chartConfig as AreaConfig;
           const yIri = chartConfig.fields.y.componentIri;
@@ -503,6 +551,38 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
+        onChange: (initializing, draft, components, iri, selectedValues) => {
+          defaultSegmentOnChange(
+            initializing,
+            draft,
+            components,
+            iri,
+            selectedValues
+          );
+
+          if (!initializing) {
+            return;
+          }
+
+          const segment: ColumnSegmentField = get(
+            draft,
+            "chartConfig.fields.segment"
+          );
+          const yComponent = components.find(
+            (d) =>
+              d.iri ===
+              (draft.chartConfig as ColumnConfig).fields.y.componentIri
+          );
+          setWith(
+            draft,
+            "chartConfig.fields.segment",
+            {
+              ...segment,
+              type: disableStacked(yComponent) ? "grouped" : "stacked",
+            },
+            Object
+          );
+        },
         options: [
           {
             field: "chartSubType",
@@ -586,6 +666,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
+        onChange: defaultSegmentOnChange,
         options: [
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
@@ -676,6 +757,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
+        onChange: defaultSegmentOnChange,
         options: [
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },
@@ -704,6 +786,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
+        onChange: defaultSegmentOnChange,
         options: [
           { field: "color", type: "palette" },
           { field: "useAbbreviations" },

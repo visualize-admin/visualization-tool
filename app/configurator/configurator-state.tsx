@@ -17,7 +17,6 @@ import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
 import {
-  DEFAULT_SORTING,
   getChartConfigAdjustedToChartType,
   getFieldComponentIris,
   getGroupedFieldIris,
@@ -32,7 +31,6 @@ import {
   ChartConfig,
   ChartType,
   ColorMapping,
-  ColumnConfig,
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
@@ -51,7 +49,6 @@ import {
   isColorFieldInConfig,
   isColumnConfig,
   isMapConfig,
-  isSegmentInConfig,
   isTableConfig,
   makeMultiFilter,
 } from "@/config-types";
@@ -85,7 +82,6 @@ import {
 } from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { getDefaultCategoricalPaletteName } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import {
   getDataSourceFromLocalStorage,
@@ -793,38 +789,7 @@ export const handleChartFieldChanged = (
 
   // The field was not defined before
   if (!f) {
-    if (field === "segment") {
-      // FIXME: This should be more chart specific
-      // (no "stacked" for scatterplots for instance)
-      if (isSegmentInConfig(draft.chartConfig)) {
-        const palette = getDefaultCategoricalPaletteName(component);
-        const colorMapping = mapValueIrisToColor({
-          palette,
-          dimensionValues: component?.values ?? [],
-        });
-        draft.chartConfig.filters[componentIri] = makeMultiFilter(
-          selectedValues.map((d) => d.value)
-        );
-        draft.chartConfig.fields.segment = {
-          componentIri,
-          palette,
-          ...(isColumnConfig(draft.chartConfig) && {
-            // Type exists only within column charts.
-            type: disableStacked(
-              measures.find(
-                (d) =>
-                  d.iri ===
-                  (draft.chartConfig as ColumnConfig).fields.y.componentIri
-              )
-            )
-              ? "grouped"
-              : "stacked",
-          }),
-          sorting: DEFAULT_SORTING,
-          colorMapping,
-        };
-      }
-    } else if (
+    if (
       isMapConfig(draft.chartConfig) &&
       (field === "areaLayer" || field === "symbolLayer")
     ) {
@@ -837,80 +802,58 @@ export const handleChartFieldChanged = (
       });
     }
   } else {
+    // Reset field properties, excluding componentIri.
+    (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
+
+    // if x !== time, also deactivate interactive time filter
     if (
-      field === "segment" &&
-      "segment" in draft.chartConfig.fields &&
-      draft.chartConfig.fields.segment &&
-      "palette" in draft.chartConfig.fields.segment
+      isColumnConfig(draft.chartConfig) &&
+      field === "x" &&
+      !isTemporalDimension(component) &&
+      draft.chartConfig.interactiveFiltersConfig
     ) {
-      const palette = getDefaultCategoricalPaletteName(
-        component,
-        draft.chartConfig.fields.segment.palette
+      setWith(
+        draft,
+        `chartConfig.interactiveFiltersConfig.timeRange.active`,
+        false,
+        Object
       );
-      const colorMapping = mapValueIrisToColor({
-        palette,
-        dimensionValues: component?.values ?? [],
+    } else if (
+      isMapConfig(draft.chartConfig) &&
+      (field === "areaLayer" || field === "symbolLayer")
+    ) {
+      initializeMapLayerField({
+        chartConfig: draft.chartConfig,
+        field,
+        componentIri,
+        dimensions,
+        measures,
       });
-
-      draft.chartConfig.fields.segment.componentIri = componentIri;
-      draft.chartConfig.fields.segment.colorMapping = colorMapping;
-      draft.chartConfig.filters[componentIri] = makeMultiFilter(
-        selectedValues.map((d) => d.value)
-      );
-    } else {
-      // Reset field properties, excluding componentIri.
-      (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
-
-      // if x !== time, also deactivate interactive time filter
+    } else if (field === "y") {
       if (
         isColumnConfig(draft.chartConfig) &&
-        field === "x" &&
-        !isTemporalDimension(component) &&
-        draft.chartConfig.interactiveFiltersConfig
+        draft.chartConfig.fields.segment?.type === "stacked"
       ) {
-        setWith(
-          draft,
-          `chartConfig.interactiveFiltersConfig.timeRange.active`,
-          false,
-          Object
-        );
+        const yMeasure = measures.find((d) => d.iri === componentIri);
+
+        if (disableStacked(yMeasure)) {
+          draft.chartConfig.fields.segment.type = "grouped";
+
+          if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
+            draft.chartConfig.interactiveFiltersConfig.calculation = {
+              active: false,
+              type: "identity",
+            };
+          }
+        }
       } else if (
-        isMapConfig(draft.chartConfig) &&
-        (field === "areaLayer" || field === "symbolLayer")
+        isAreaConfig(draft.chartConfig) &&
+        draft.chartConfig.fields.segment
       ) {
-        initializeMapLayerField({
-          chartConfig: draft.chartConfig,
-          field,
-          componentIri,
-          dimensions,
-          measures,
-        });
-      } else if (field === "y") {
-        if (
-          isColumnConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.segment?.type === "stacked"
-        ) {
-          const yMeasure = measures.find((d) => d.iri === componentIri);
+        const yMeasure = measures.find((d) => d.iri === componentIri);
 
-          if (disableStacked(yMeasure)) {
-            draft.chartConfig.fields.segment.type = "grouped";
-
-            if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
-              draft.chartConfig.interactiveFiltersConfig.calculation = {
-                active: false,
-                type: "identity",
-              };
-            }
-          }
-        } else if (
-          isAreaConfig(draft.chartConfig) &&
-          draft.chartConfig.fields.segment
-        ) {
-          const yMeasure = measures.find((d) => d.iri === componentIri);
-
-          if (disableStacked(yMeasure)) {
-            delete draft.chartConfig.fields.segment;
-          }
+        if (disableStacked(yMeasure)) {
+          delete draft.chartConfig.fields.segment;
         }
       }
     }
