@@ -389,6 +389,8 @@ const SequentialPaletteType = t.union([
 
 export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
 
+export type PaletteType = DivergingPaletteType | SequentialPaletteType;
+
 const ColorScaleType = t.union([
   t.literal("continuous"),
   t.literal("discrete"),

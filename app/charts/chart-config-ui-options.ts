@@ -19,8 +19,7 @@ import {
   ColumnConfig,
   ComponentType,
   ConfiguratorStateConfiguringChart,
-  DivergingPaletteType,
-  SequentialPaletteType,
+  PaletteType,
   SortingOrder,
   SortingType,
   getAnimationField,
@@ -121,17 +120,17 @@ const makeOnColorComponentIriChange = (type: "areaLayer" | "symbolLayer") => {
   return (
     draft: ConfiguratorStateConfiguringChart,
     components: DimensionMetadataFragment[],
-    value: string
+    iri: string
   ) => {
     let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
-    const component = components.find((d) => d.iri === value);
+    const component = components.find((d) => d.iri === iri);
     const currentColorComponentIri = get(
       draft,
       `${basePath}.color.componentIri`
     );
 
     if (component) {
-      const colorPalette: DivergingPaletteType | SequentialPaletteType = get(
+      const colorPalette: PaletteType | undefined = get(
         draft,
         `${basePath}.color.palette`
       );
@@ -146,7 +145,7 @@ const makeOnColorComponentIriChange = (type: "areaLayer" | "symbolLayer") => {
         );
         newField = {
           type: "categorical",
-          componentIri: component.iri,
+          componentIri: iri,
           palette,
           colorMapping: mapValueIrisToColor({
             palette,
@@ -156,7 +155,7 @@ const makeOnColorComponentIriChange = (type: "areaLayer" | "symbolLayer") => {
       } else if (isNumericalMeasure(component)) {
         newField = {
           type: "numerical",
-          componentIri: component.iri,
+          componentIri: iri,
           palette: colorPalette ?? "oranges",
           scaleType: "continuous",
           interpolationType: "linear",
