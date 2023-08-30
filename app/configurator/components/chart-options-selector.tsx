@@ -7,12 +7,12 @@ import { useCallback, useEffect, useMemo } from "react";
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
-  chartConfigOptionsUISpec,
   EncodingFieldType,
   EncodingOptionChartSubType,
   EncodingOptionColorComponent,
   EncodingSortingOption,
   EncodingSpec,
+  getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
 import Flex from "@/components/flex";
@@ -165,7 +165,7 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     return null;
   }
 
-  const chartSpec = chartConfigOptionsUISpec[state.chartConfig.chartType];
+  const chartSpec = getChartSpec(state.chartConfig);
 
   // Animation field is a special field that is not part of the encodings,
   // but rather is selected from interactive filters menu.

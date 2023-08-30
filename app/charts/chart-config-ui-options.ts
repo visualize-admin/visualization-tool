@@ -466,7 +466,13 @@ export const makeOnMapFieldChange = (
   };
 };
 
-export const chartConfigOptionsUISpec: ChartSpecs = {
+export const getChartSpec = <T extends ChartConfig>(
+  chartConfig: T
+): ChartSpec<T> => {
+  return chartConfigOptionsUISpec[chartConfig.chartType] as ChartSpec<T>;
+};
+
+const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
     encodings: [
