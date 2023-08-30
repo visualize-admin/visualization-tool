@@ -548,6 +548,29 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        onChange: (iri, { draft, measures }) => {
+          if (draft.chartConfig.fields.segment?.type === "stacked") {
+            const yMeasure = measures.find((d) => d.iri === iri);
+
+            if (disableStacked(yMeasure)) {
+              setWith(
+                draft,
+                "chartConfig.fields.segment.type",
+                "grouped",
+                Object
+              );
+
+              if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
+                setWith(
+                  draft,
+                  "chartConfig.interactiveFiltersConfig.calculation",
+                  { active: false, type: "identity" },
+                  Object
+                );
+              }
+            }
+          }
+        },
         options: [{ field: "showStandardError" }],
       },
       {

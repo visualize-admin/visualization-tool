@@ -48,7 +48,6 @@ import {
   decodeConfiguratorState,
   isAreaConfig,
   isColorFieldInConfig,
-  isColumnConfig,
   isTableConfig,
   makeMultiFilter,
 } from "@/config-types";
@@ -739,26 +738,7 @@ export const handleChartFieldChanged = (
     (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
 
     if (field === "y") {
-      if (
-        isColumnConfig(draft.chartConfig) &&
-        draft.chartConfig.fields.segment?.type === "stacked"
-      ) {
-        const yMeasure = measures.find((d) => d.iri === componentIri);
-
-        if (disableStacked(yMeasure)) {
-          draft.chartConfig.fields.segment.type = "grouped";
-
-          if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
-            draft.chartConfig.interactiveFiltersConfig.calculation = {
-              active: false,
-              type: "identity",
-            };
-          }
-        }
-      } else if (
-        isAreaConfig(draft.chartConfig) &&
-        draft.chartConfig.fields.segment
-      ) {
+      if (isAreaConfig(draft.chartConfig) && draft.chartConfig.fields.segment) {
         const yMeasure = measures.find((d) => d.iri === componentIri);
 
         if (disableStacked(yMeasure)) {
