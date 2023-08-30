@@ -567,6 +567,18 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
+        onChange: (iri, { draft, dimensions }) => {
+          const component = dimensions.find((d) => d.iri === iri);
+
+          if (!isTemporalDimension(component)) {
+            setWith(
+              draft,
+              `chartConfig.interactiveFiltersConfig.timeRange.active`,
+              false,
+              Object
+            );
+          }
+        },
         options: [{ field: "useAbbreviations" }],
       },
       {

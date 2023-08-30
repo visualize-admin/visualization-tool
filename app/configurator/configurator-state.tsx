@@ -55,11 +55,7 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import {
-  DimensionValue,
-  isGeoDimension,
-  isTemporalDimension,
-} from "@/domain/data";
+import { DimensionValue, isGeoDimension } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
@@ -738,32 +734,11 @@ export const handleChartFieldChanged = (
   const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
 
-  onChange?.(componentIri, {
-    draft,
-    dimensions,
-    measures,
-    initializing: !f,
-    selectedValues,
-  });
-
   if (f) {
     // Reset field properties, excluding componentIri.
     (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
 
-    // if x !== time, also deactivate interactive time filter
-    if (
-      isColumnConfig(draft.chartConfig) &&
-      field === "x" &&
-      !isTemporalDimension(component) &&
-      draft.chartConfig.interactiveFiltersConfig
-    ) {
-      setWith(
-        draft,
-        `chartConfig.interactiveFiltersConfig.timeRange.active`,
-        false,
-        Object
-      );
-    } else if (field === "y") {
+    if (field === "y") {
       if (
         isColumnConfig(draft.chartConfig) &&
         draft.chartConfig.fields.segment?.type === "stacked"
@@ -793,6 +768,13 @@ export const handleChartFieldChanged = (
     }
   }
 
+  onChange?.(componentIri, {
+    draft,
+    dimensions,
+    measures,
+    initializing: !f,
+    selectedValues,
+  });
   // Remove the component from interactive data filters.
   if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
     const componentIris =
