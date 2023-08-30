@@ -740,7 +740,7 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
               value={d.value}
               disabled={disabled || d.disabled}
               warnMessage={d.warnMessage}
-              onChange={(draft) => chartSubType.onChange(draft, d.value)}
+              onChange={chartSubType.onChange}
             />
           ))}
         </Flex>
@@ -1075,9 +1075,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           path="color.componentIri"
           options={measuresOptions}
           isOptional={optional}
-          onChange={(draft, components, value) => {
-            option.onComponentIriChange(draft, components, value);
-          }}
+          onChange={option.onComponentIriChange}
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
@@ -1145,9 +1143,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                onChange={(draft, components) => {
-                  option.onScaleTypeChange(draft, components, "continuous");
-                }}
+                onChange={option.onScaleTypeChange}
               />
 
               {nbOptions >= 3 && (
@@ -1159,9 +1155,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  onChange={(draft, components) => {
-                    option.onScaleTypeChange(draft, components, "discrete");
-                  }}
+                  onChange={option.onScaleTypeChange}
                 />
               )}
             </Flex>

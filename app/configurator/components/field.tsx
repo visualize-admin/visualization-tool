@@ -17,6 +17,7 @@ import React, {
   useState,
 } from "react";
 
+import { OnEncodingOptionChange } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import {
   Checkbox,
@@ -766,21 +767,20 @@ export const ChartFieldField = ({
   );
 };
 
-type ChartOptionRadioFieldProps = {
+type ChartOptionRadioFieldProps<T> = {
   label: string;
   field: string | null;
   path: string;
-  value: string | number;
+  value: T;
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-  onChange?: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[]
-  ) => void;
+  onChange?: OnEncodingOptionChange<T>;
 };
 
-export const ChartOptionRadioField = (props: ChartOptionRadioFieldProps) => {
+export const ChartOptionRadioField = <T extends string | number>(
+  props: ChartOptionRadioFieldProps<T>
+) => {
   const {
     label,
     field,
@@ -887,11 +887,7 @@ type ChartOptionSelectFieldProps<T> = {
   getValue?: (x: string) => T | undefined;
   getKey?: (x: T) => string;
   isOptional?: boolean;
-  onChange?: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    value: any
-  ) => void;
+  onChange?: OnEncodingOptionChange<T>;
 };
 
 export const ChartOptionSelectField = <T extends {} = string>(

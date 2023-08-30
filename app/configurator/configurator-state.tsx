@@ -25,7 +25,10 @@ import {
   getPossibleChartType,
   initializeMapLayerField,
 } from "@/charts";
-import { disableStacked } from "@/charts/chart-config-ui-options";
+import {
+  OnEncodingOptionChange,
+  disableStacked,
+} from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
@@ -148,11 +151,7 @@ export type ConfiguratorStateAction =
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
-        onChange?: (
-          draft: ConfiguratorStateConfiguringChart,
-          components: DimensionMetadataFragment[],
-          value: any
-        ) => void;
+        onChange?: OnEncodingOptionChange<any>;
       };
     }
   | {
@@ -340,7 +339,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
   activeField: undefined,
 };
 
-const getCachedCubeMetadataAndComponentsWithHierarchies = (
+const getCachedMetadata = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ): DataCubeMetadataWithHierarchies | null => {
@@ -740,11 +739,8 @@ export const handleChartFieldChanged = (
     onChange,
   } = action.value;
   const f = get(draft.chartConfig.fields, field);
-  const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-    draft,
-    locale
-  );
-  const { dimensions = [], measures = [] } = metadata ?? {};
+  const { dimensions = [], measures = [] } =
+    getCachedMetadata(draft, locale) ?? {};
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
@@ -851,9 +847,8 @@ export const handleChartOptionChanged = (
         ? `chartConfig.${path}`
         : `chartConfig.fields["${field}"].${path}`;
     const { dimensions = [], measures = [] } =
-      getCachedCubeMetadataAndComponentsWithHierarchies(draft, locale) ?? {};
-    const components = [...dimensions, ...measures];
-    onChange?.(draft, components, value);
+      getCachedMetadata(draft, locale) ?? {};
+    onChange?.(value, { draft, dimensions, measures });
 
     if (value === FIELD_VALUE_NONE) {
       unset(draft, updatePath);
@@ -956,10 +951,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartType } = action.value;
-        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-          draft,
-          locale
-        );
+        const metadata = getCachedMetadata(draft, locale);
 
         if (metadata) {
           const { dimensions, measures } = metadata;
@@ -993,10 +985,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
-        const metadata = getCachedCubeMetadataAndComponentsWithHierarchies(
-          draft,
-          action.value.locale
-        );
+        const metadata = getCachedMetadata(draft, action.value.locale);
         const dimensions = metadata?.dimensions ?? [];
 
         draft.chartConfig = deriveFiltersFromFields(

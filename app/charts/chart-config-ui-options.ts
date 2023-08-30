@@ -55,6 +55,15 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
+export type OnEncodingOptionChange<T> = (
+  value: T,
+  options: {
+    draft: ConfiguratorStateConfiguringChart;
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+  }
+) => void;
+
 export type EncodingOptionChartSubType = {
   field: "chartSubType";
   getValues: (
@@ -65,10 +74,7 @@ export type EncodingOptionChartSubType = {
     disabled: boolean;
     warnMessage?: string;
   }[];
-  onChange: (
-    draft: ConfiguratorStateConfiguringChart,
-    value: ChartSubType
-  ) => void;
+  onChange: OnEncodingOptionChange<ChartSubType>;
 };
 
 export type EncodingOption =
@@ -103,16 +109,12 @@ export type EncodingOption =
 
 export const makeOnColorComponentScaleTypeChange = (
   type: "areaLayer" | "symbolLayer"
-) => {
+): OnEncodingOptionChange<ColorScaleType> => {
   const basePath = `chartConfig.fields.${type}`;
   const interpolationTypePath = `${basePath}.color.interpolationType`;
   const nbClassPath = `${basePath}.color.nbClass`;
 
-  return (
-    draft: ConfiguratorStateConfiguringChart,
-    _: DimensionMetadataFragment[],
-    value: ColorScaleType
-  ) => {
+  return (value, { draft }) => {
     if (value === "continuous") {
       setWith(draft, interpolationTypePath, "linear", Object);
       unset(draft, nbClassPath);
@@ -125,14 +127,11 @@ export const makeOnColorComponentScaleTypeChange = (
 
 export const makeOnColorComponentIriChange = (
   type: "areaLayer" | "symbolLayer"
-) => {
+): OnEncodingOptionChange<string> => {
   const basePath = `chartConfig.fields.${type}`;
 
-  return (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    iri: string
-  ) => {
+  return (iri, { draft, dimensions, measures }) => {
+    const components = [...dimensions, ...measures];
     let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
     const component = components.find((d) => d.iri === iri);
     const currentColorComponentIri = get(
@@ -186,16 +185,8 @@ export type EncodingOptionColorComponent = {
   optional: boolean;
   componentTypes: ComponentType[];
   enableUseAbbreviations: boolean;
-  onComponentIriChange: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    value: string
-  ) => void;
-  onScaleTypeChange: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    value: ColorScaleType
-  ) => void;
+  onComponentIriChange: OnEncodingOptionChange<string>;
+  onScaleTypeChange: OnEncodingOptionChange<ColorScaleType>;
 };
 
 export type EncodingOptionImputation = {
@@ -610,10 +601,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
                 },
               ];
             },
-            onChange: (draft, value) => {
+            onChange: (d, { draft }) => {
               if (
                 draft.chartConfig.interactiveFiltersConfig &&
-                value === "grouped"
+                d === "grouped"
               ) {
                 const path = "chartConfig.interactiveFiltersConfig.calculation";
                 setWith(draft, path, { active: false, type: "identity" });

@@ -13,6 +13,7 @@ import React, {
 import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
+import { OnEncodingOptionChange } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
   ChartType,
@@ -197,11 +198,7 @@ type UseChartOptionSelectFieldProps<T> = {
   path: string;
   getValue?: (key: string) => T | undefined;
   getKey?: (value: T) => string;
-  onChange?: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[],
-    value: any
-  ) => void;
+  onChange?: OnEncodingOptionChange<T>;
 };
 
 export const useChartOptionSelectField = <T extends {} = string>(
@@ -306,18 +303,15 @@ export const useChartOptionSliderField = ({
   };
 };
 
-type UseChartOptionRadioFieldProps = {
+type UseChartOptionRadioFieldProps<T> = {
   field: string | null;
   path: string;
-  value: string | number;
-  onChange?: (
-    draft: ConfiguratorStateConfiguringChart,
-    components: DimensionMetadataFragment[]
-  ) => void;
+  value: T;
+  onChange?: OnEncodingOptionChange<T>;
 };
 
-export const useChartOptionRadioField = (
-  props: UseChartOptionRadioFieldProps
+export const useChartOptionRadioField = <T extends string | number>(
+  props: UseChartOptionRadioFieldProps<T>
 ): FieldProps => {
   const { field, path, value, onChange } = props;
   const locale = useLocale();
