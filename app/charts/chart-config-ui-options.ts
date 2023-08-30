@@ -153,17 +153,6 @@ const makeOnColorComponentIriChange = (type: "areaLayer" | "symbolLayer") => {
             dimensionValues: component.values,
           }),
         };
-        setWith(
-          draft,
-          `chartConfig.filters["${value}"]`,
-          {
-            type: "multi",
-            values: Object.fromEntries(
-              component.values.map((d) => d.value).map((d) => [d, true])
-            ),
-          },
-          Object
-        );
       } else if (isNumericalMeasure(component)) {
         newField = {
           type: "numerical",
