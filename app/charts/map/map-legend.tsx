@@ -376,15 +376,10 @@ const JenksColorLegend = ({
 }) => {
   const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const formatNumber = useFormatInteger();
-  const thresholds = useMemo(
-    () => (colorScale.domain ? colorScale.domain() : []),
-    [colorScale]
-  );
-
+  const thresholds = useMemo(() => colorScale.domain(), [colorScale]);
   const [min, max] = domain;
 
   // From color index to threshold value
@@ -394,7 +389,7 @@ const JenksColorLegend = ({
 
   // From threshold value to pixel value
   const scale = scaleLinear()
-    .domain([min || 0, max || 10000])
+    .domain([min || 0, max || 10_000])
     .range([MARGIN.left, width - MARGIN.right]);
 
   const tickValues = thresholds.splice(0, thresholds.length - 1);
