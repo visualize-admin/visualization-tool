@@ -12,7 +12,7 @@ import {
   scaleLinear,
   select,
 } from "d3";
-import { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -28,11 +28,13 @@ import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useDimensionFormatters, useFormatInteger } from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
+import { getTextWidth } from "@/utils/get-text-width";
 
 const MAX_WIDTH = 204;
 const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
+const AXIS_TICK_ROTATE_ANGLE = 45;
 
 const useLegendWidth = () => Math.min(useWidth(), MAX_WIDTH);
 
@@ -68,7 +70,7 @@ const makeAxis = (
     .attr("font-size", legendFontSize)
     .attr("font-family", fontFamily)
     .attr("fill", labelColor)
-    .attr("transform", "rotate(45)")
+    .attr("transform", `rotate(${AXIS_TICK_ROTATE_ANGLE})`)
     .attr("text-anchor", "start");
 };
 
@@ -365,6 +367,55 @@ const CircleLegend = ({
   );
 };
 
+const getRotatedAxisLabelHeight = (
+  d: number,
+  options: { formatNumber: (d: number) => string; fontSize: number }
+) => {
+  const { formatNumber, fontSize } = options;
+  const w = getTextWidth(formatNumber(d), { fontSize });
+  const h = 12;
+  const a = AXIS_TICK_ROTATE_ANGLE * (Math.PI / 180);
+
+  return Math.abs(w * Math.sin(a)) + Math.abs(h * Math.cos(a));
+};
+
+const getMaxRotatedAxisLabelHeight = (
+  values: number[],
+  options: {
+    formatNumber: (d: number) => string;
+    legendFontSize: number;
+  }
+) => {
+  const { formatNumber, legendFontSize } = options;
+
+  return Math.max(
+    ...values.map((d) => {
+      return getRotatedAxisLabelHeight(d, {
+        formatNumber,
+        fontSize: legendFontSize,
+      });
+    })
+  );
+};
+
+const useLegendWithRotatedAxisLabelsHeight = (
+  values: number[],
+  options: {
+    formatNumber: (d: number) => string;
+    legendFontSize: number;
+  }
+) => {
+  const { formatNumber, legendFontSize } = options;
+  const maxLabelHeight = React.useMemo(() => {
+    return getMaxRotatedAxisLabelHeight(values, {
+      formatNumber,
+      legendFontSize,
+    });
+  }, [values, formatNumber, legendFontSize]);
+
+  return Math.max(HEIGHT, HEIGHT * 0.4 + maxLabelHeight);
+};
+
 const JenksColorLegend = ({
   colorScale,
   domain,
@@ -416,8 +467,13 @@ const JenksColorLegend = ({
     ]
   );
 
+  const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
+    formatNumber,
+    legendFontSize,
+  });
+
   return (
-    <svg width={width} height={HEIGHT}>
+    <svg width={width} height={height}>
       <g>
         <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
@@ -500,8 +556,13 @@ const QuantileColorLegend = ({
     ]
   );
 
+  const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
+    formatNumber,
+    legendFontSize,
+  });
+
   return (
-    <svg width={width} height={HEIGHT}>
+    <svg width={width} height={height}>
       <g>
         <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
@@ -552,7 +613,7 @@ const QuantizeColorLegend = ({
     .domain(domain)
     .range([MARGIN.left, width - MARGIN.right]);
 
-  const thresholds = useMemo(
+  const thresholds: number[] = useMemo(
     // @ts-ignore
     () => (colorScale.thresholds ? colorScale.thresholds() : []),
     [colorScale]
@@ -580,8 +641,13 @@ const QuantizeColorLegend = ({
     ]
   );
 
+  const height = useLegendWithRotatedAxisLabelsHeight(thresholds, {
+    formatNumber,
+    legendFontSize,
+  });
+
   return (
-    <svg width={width} height={HEIGHT}>
+    <svg width={width} height={height}>
       <g>
         <DataPointIndicator scale={scale} getValue={getValue} />
       </g>
