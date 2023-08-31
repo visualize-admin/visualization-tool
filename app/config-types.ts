@@ -222,6 +222,12 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
+const GenericChartConfig = t.type({
+  version: t.string,
+  filters: Filters,
+});
+export type GenericChartConfig = t.TypeOf<typeof GenericChartConfig>;
+
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
@@ -242,16 +248,17 @@ const ColumnFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
-const ColumnConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("column"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: ColumnFields,
-  },
-  "ColumnConfig"
-);
+const ColumnConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("column"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: ColumnFields,
+    },
+    "ColumnConfig"
+  ),
+]);
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
@@ -267,16 +274,17 @@ const LineFields = t.intersection([
     segment: LineSegmentField,
   }),
 ]);
-const LineConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("line"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: LineFields,
-  },
-  "LineConfig"
-);
+const LineConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("line"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: LineFields,
+    },
+    "LineConfig"
+  ),
+]);
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
@@ -303,16 +311,17 @@ const AreaFields = t.intersection([
     segment: AreaSegmentField,
   }),
 ]);
-const AreaConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("area"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: AreaFields,
-  },
-  "AreaConfig"
-);
+const AreaConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("area"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: AreaFields,
+    },
+    "AreaConfig"
+  ),
+]);
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
@@ -329,16 +338,17 @@ const ScatterPlotFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
-const ScatterPlotConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("scatterplot"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: ScatterPlotFields,
-  },
-  "ScatterPlotConfig"
-);
+const ScatterPlotConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("scatterplot"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: ScatterPlotFields,
+    },
+    "ScatterPlotConfig"
+  ),
+]);
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
@@ -353,16 +363,17 @@ const PieFields = t.intersection([
   }),
   t.partial({ animation: AnimationField }),
 ]);
-const PieConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("pie"),
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    filters: Filters,
-    fields: PieFields,
-  },
-  "PieConfig"
-);
+const PieConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("pie"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: PieFields,
+    },
+    "PieConfig"
+  ),
+]);
 export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
@@ -470,18 +481,19 @@ const TableSortingOption = t.type({
 });
 export type TableSortingOption = t.TypeOf<typeof TableSortingOption>;
 
-const TableConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("table"),
-    fields: TableFields,
-    filters: Filters,
-    settings: TableSettings,
-    sorting: t.array(TableSortingOption),
-    interactiveFiltersConfig: t.undefined,
-  },
-  "TableConfig"
-);
+const TableConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("table"),
+      fields: TableFields,
+      settings: TableSettings,
+      sorting: t.array(TableSortingOption),
+      interactiveFiltersConfig: t.undefined,
+    },
+    "TableConfig"
+  ),
+]);
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
@@ -573,17 +585,18 @@ const MapFields = t.partial({
   animation: AnimationField,
 });
 
-const MapConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("map"),
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    filters: Filters,
-    fields: MapFields,
-    baseLayer: BaseLayer,
-  },
-  "MapConfig"
-);
+const MapConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("map"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: MapFields,
+      baseLayer: BaseLayer,
+    },
+    "MapConfig"
+  ),
+]);
 export type MapFields = t.TypeOf<typeof MapFields>;
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
