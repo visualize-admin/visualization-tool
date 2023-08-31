@@ -1,38 +1,24 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 
 const Page = () => {
-  const handleClick = async (state: any) => {
-    const response = await fetch("/preview", {
-      method: "POST",
-      body: JSON.stringify(state),
-    });
-    const data = await response.text();
-    const iframe = document.getElementById("chart") as HTMLIFrameElement;
-    const doc = iframe?.contentWindow?.document;
-    doc?.open();
-    doc?.write(data);
-    doc?.close();
-  };
-
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 6, p: 6 }}>
-      <Box sx={{ display: "flex", gap: 2 }}>
-        <Button
-          onClick={() => handleClick(photovoltaikanlagenState)}
-          sx={{ width: "fit-content" }}
-        >
-          ☀️ Preview a{" "}
-          <b style={{ marginLeft: 4, marginRight: 4 }}>Photovoltaikanlagen</b>{" "}
-          chart
-        </Button>
-        <Button
-          onClick={() => handleClick(nfiState)}
-          sx={{ width: "fit-content" }}
-        >
-          🎄 Preview an <b style={{ marginLeft: 4, marginRight: 4 }}>NFI</b>{" "}
-          chart
-        </Button>
-      </Box>
+    <Box sx={{ display: "flex", gap: 2, p: 6 }}>
+      <form method="post" action="/preview_post" target="_blank">
+        <input
+          type="hidden"
+          name="chartState"
+          value={JSON.stringify(photovoltaikanlagenState)}
+        />
+        <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
+      </form>
+      <form method="post" action="/preview_post" target="_blank">
+        <input
+          type="hidden"
+          name="chartState"
+          value={JSON.stringify(nfiState)}
+        />
+        <input type="submit" value="🎄 Preview an NFI chart" />
+      </form>
       <iframe
         id="chart"
         style={{
