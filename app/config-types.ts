@@ -894,70 +894,76 @@ const DataSource = t.type({
   type: t.union([t.literal("sql"), t.literal("sparql")]),
   url: t.string,
 });
-
 export type DataSource = t.TypeOf<typeof DataSource>;
 
 const Config = t.type(
   {
     dataSet: t.string,
     dataSource: DataSource,
-    activeField: t.union([t.string, t.undefined]),
     meta: Meta,
     chartConfig: ChartConfig,
+    activeField: t.union([t.string, t.undefined]),
   },
   "Config"
 );
-
 export type Config = t.TypeOf<typeof Config>;
 
-export const isValidConfig = (config: unknown): config is Config =>
-  Config.is(config);
+export const isValidConfig = (config: unknown): config is Config => {
+  return Config.is(config);
+};
 
-export const decodeConfig = (config: unknown) => Config.decode(config);
+export const decodeConfig = (config: unknown) => {
+  return Config.decode(config);
+};
 
 const ConfiguratorStateInitial = t.type({
   state: t.literal("INITIAL"),
-  activeField: t.undefined,
   dataSet: t.undefined,
   dataSource: DataSource,
+  activeField: t.undefined,
 });
+export type ConfiguratorStateInitial = t.TypeOf<
+  typeof ConfiguratorStateInitial
+>;
+
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
-  activeField: t.undefined,
-  meta: Meta,
   dataSet: t.union([t.string, t.undefined]),
   dataSource: DataSource,
+  meta: Meta,
   chartConfig: t.undefined,
+  activeField: t.undefined,
 });
+export type ConfiguratorStateSelectingDataSet = t.TypeOf<
+  typeof ConfiguratorStateSelectingDataSet
+>;
+
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART"),
   }),
   Config,
 ]);
+export type ConfiguratorStateConfiguringChart = t.TypeOf<
+  typeof ConfiguratorStateConfiguringChart
+>;
+
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
     state: t.literal("PUBLISHING"),
   }),
   Config,
 ]);
-
-export type ConfiguratorStateSelectingDataSet = t.TypeOf<
-  typeof ConfiguratorStateSelectingDataSet
->;
-export type ConfiguratorStateConfiguringChart = t.TypeOf<
-  typeof ConfiguratorStateConfiguringChart
->;
 export type ConfiguratorStatePublishing = t.TypeOf<
   typeof ConfiguratorStatePublishing
 >;
+
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
 ]);
-
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;
 
 export const decodeConfiguratorState = (

@@ -22,10 +22,7 @@ export const ChartPanelConfigurator = (props: ChartPanelProps) => {
 
   return (
     <>
-      <ChartSelectionTabs
-        editable={true}
-        chartType={state.chartConfig.chartType}
-      />
+      <ChartSelectionTabs editable chartType={state.chartConfig.chartType} />
       <ChartPanelInner showTabs {...props} />
     </>
   );
@@ -38,8 +35,7 @@ export const ChartPanelPublished = (
 
   return (
     <>
-      {/* TODO: Re-enable in the future, when chart composition is implemented */}
-      {/* <ChartSelectionTabs editable={false} chartType={chartType} /> */}
+      <ChartSelectionTabs editable={false} chartType={chartType} />
       <ChartPanelInner showTabs={false} {...rest} />
     </>
   );

@@ -123,7 +123,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
     <>
       <TabsInner
         chartType={chartType}
-        editable={true}
+        editable
         onActionButtonClick={(e: React.MouseEvent<HTMLElement>) => {
           setPopoverAnchorEl(e.currentTarget);
           setTabsState({ isPopoverOpen: true });
@@ -149,7 +149,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
 };
 
 const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
-  return <TabsInner chartType={chartType} editable={false} />;
+  return <TabsInner chartType={chartType} />;
 };
 
 const PublishChartButton = () => {
@@ -201,11 +201,11 @@ const PublishChartButton = () => {
 
 const TabsInner = ({
   chartType,
-  editable,
+  editable = false,
   onActionButtonClick,
 }: {
   chartType: ChartType;
-  editable: boolean;
+  editable?: boolean;
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
@@ -215,7 +215,6 @@ const TabsInner = ({
         TabIndicatorProps={{ style: { display: "none" } }}
         sx={{ position: "relative", top: 1, flexGrow: 1 }}
       >
-        {/* TODO: Generate dynamically when chart composition is implemented. Add useStyles */}
         <Tab
           sx={{
             p: 0,
@@ -237,10 +236,10 @@ const TabsInner = ({
 
 const TabContent = ({
   iconName,
-  editable = false,
+  editable,
 }: {
   iconName: IconName;
-  editable?: boolean;
+  editable: boolean;
 }) => {
   const classes = useStyles({ editable });
 
