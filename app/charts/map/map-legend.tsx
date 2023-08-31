@@ -698,7 +698,7 @@ const ContinuousColorLegend = ({
       </g>
       <foreignObject
         x={MARGIN.left}
-        y={1} // needed to align with other legends, not sure why
+        y={-1} // needed to align with other legends, not sure why
         width={width - MARGIN.left - MARGIN.right}
         height={COLOR_RAMP_HEIGHT}
       >
@@ -707,6 +707,7 @@ const ContinuousColorLegend = ({
           height={COLOR_RAMP_HEIGHT}
           colorInterpolator={getColorInterpolator(palette as any)}
           nbClass={width - MARGIN.left - MARGIN.right}
+          rx={0}
         />
       </foreignObject>
       <g
