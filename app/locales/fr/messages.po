@@ -327,6 +327,7 @@ msgstr "Description"
 
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
@@ -506,6 +507,10 @@ msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graphique en fonction de la plage de données, afin de garantir une visualisation optimale."
 
 #: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-available-temporal-dimensions"
+msgstr "Il n'y a pas de dimensions temporelles disponibles à utiliser. Modifiez certains des encodages suivants : {fields} pour permettre l'animation."
+
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-temporal-dimensions"
 msgstr "Il n'y a pas de dimension qui puisse être animée."
 
@@ -553,6 +558,7 @@ msgstr "Filtres"
 msgid "controls.section.data.filters.none"
 msgstr "Aucun filtre"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Une erreur s'est produite lors de la récupération des filtres possibles. Merci de réessayer plus tard ou d'actualiser la page."
@@ -621,8 +627,9 @@ msgid "controls.segment"
 msgstr "Segmentation"
 
 #: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
-msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio.""
+msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio.\""
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
