@@ -1,14 +1,15 @@
 import { Trans } from "@lingui/macro";
 import {
   Box,
-  Select,
-  MenuItem,
   ListSubheader,
+  MenuItem,
+  Select,
   SelectProps,
 } from "@mui/material";
 import get from "lodash/get";
 import { useEffect, useMemo, useRef } from "react";
 
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
 import {
   DivergingPaletteType,
@@ -16,7 +17,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { useLocale } from "@/locales/use-locale";
-import { divergingPalettes, Palette, sequentialPalettes } from "@/palettes";
+import { Palette, divergingPalettes, sequentialPalettes } from "@/palettes";
 import useEvent from "@/utils/use-event";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
@@ -63,7 +64,7 @@ export const ColorRamp = ({
 };
 
 type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
-  field: string;
+  field: EncodingFieldType;
   path: string;
 };
 

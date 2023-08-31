@@ -860,3 +860,33 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     interactiveFilters: [],
   },
 };
+
+export const getChartFieldChangeSideEffect = (
+  chartConfig: ChartConfig,
+  field: EncodingFieldType
+): OnEncodingChange | undefined => {
+  const chartSpec = getChartSpec(chartConfig);
+  const encoding = chartSpec.encodings.find((d) => d.field === field);
+
+  return encoding?.onChange;
+};
+
+export const getChartFieldOptionChangeSideEffect = (
+  chartConfig: ChartConfig,
+  field: EncodingFieldType,
+  path: string
+): OnEncodingOptionChange<any> | undefined => {
+  const chartSpec = getChartSpec(chartConfig);
+  const encoding = chartSpec.encodings.find((d) => d.field === field);
+
+  switch (`${field}.${path}`) {
+    case "segment.type":
+      return get(encoding, "options.chartSubType.onChange");
+    case "areaLayer.color.componentIri":
+    case "symbolLayer.color.componentIri":
+      return get(encoding, "options.colorComponent.onComponentIriChange");
+    case "areaLayer.color.scaleType":
+    case "symbolLayer.color.scaleType":
+      return get(encoding, "options.colorComponent.onScaleTypeChange");
+  }
+};

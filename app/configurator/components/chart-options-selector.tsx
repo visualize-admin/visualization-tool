@@ -8,7 +8,6 @@ import {
   ANIMATION_FIELD_SPEC,
   EncodingFieldType,
   EncodingOptionChartSubType,
-  EncodingOptionColorComponent,
   EncodingSortingOption,
   EncodingSpec,
   getChartSpec,
@@ -326,7 +325,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               label={fieldLabelHint[encoding.field]}
               optional={encoding.optional}
               options={options}
-              onChange={encoding.onChange}
             />
 
             {encoding.options?.useAbbreviations && (
@@ -491,7 +489,7 @@ const ChartFieldAbbreviations = ({
   path,
   dimension,
 }: {
-  field: string;
+  field: EncodingFieldType;
   path?: string;
   dimension: DimensionMetadataFragment | undefined;
 }) => {
@@ -728,7 +726,6 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
               value={d.value}
               disabled={disabled || d.disabled}
               warnMessage={d.warnMessage}
-              onChange={chartSubType.onChange}
             />
           ))}
         </Flex>
@@ -806,7 +803,7 @@ const ChartFieldSorting = ({
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  field: string;
+  field: EncodingFieldType;
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
@@ -940,7 +937,7 @@ const ChartFieldSize = ({
   measures,
   optional,
 }: {
-  field: string;
+  field: EncodingFieldType;
   componentTypes: ComponentType[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
@@ -1004,8 +1001,6 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
     enableUseAbbreviations,
   } = props;
   const field = encoding.field;
-  const option = encoding.options
-    ?.colorComponent as EncodingOptionColorComponent;
   const nbOptions = component.values.length;
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -1062,7 +1057,6 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           path="color.componentIri"
           options={measuresOptions}
           isOptional={optional}
-          onChange={option.onComponentIriChange}
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
@@ -1130,7 +1124,6 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                 field={field}
                 path="color.scaleType"
                 value="continuous"
-                onChange={option.onScaleTypeChange}
               />
 
               {nbOptions >= 3 && (
@@ -1142,7 +1135,6 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
                   field={field}
                   path="color.scaleType"
                   value="discrete"
-                  onChange={option.onScaleTypeChange}
                 />
               )}
             </Flex>

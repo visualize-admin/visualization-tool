@@ -25,8 +25,9 @@ import {
   getPossibleChartType,
 } from "@/charts";
 import {
-  OnEncodingChange,
-  OnEncodingOptionChange,
+  EncodingFieldType,
+  getChartFieldChangeSideEffect,
+  getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -118,10 +119,9 @@ export type ConfiguratorStateAction =
       type: "CHART_FIELD_CHANGED";
       value: {
         locale: Locale;
-        field: string;
+        field: EncodingFieldType;
         componentIri: string;
         selectedValues?: $FixMe[];
-        onChange?: OnEncodingChange<any>;
       };
     }
   | {
@@ -129,7 +129,7 @@ export type ConfiguratorStateAction =
       value: {
         locale: Locale;
         path: string;
-        field: string | null;
+        field: EncodingFieldType | null;
         value:
           | string
           | number
@@ -138,7 +138,6 @@ export type ConfiguratorStateAction =
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
-        onChange?: OnEncodingOptionChange<any, any>;
       };
     }
   | {
@@ -723,7 +722,6 @@ export const handleChartFieldChanged = (
     field,
     componentIri,
     selectedValues: actionSelectedValues,
-    onChange,
   } = action.value;
   const f = get(draft.chartConfig.fields, field);
   const { dimensions = [], measures = [] } =
@@ -737,7 +735,8 @@ export const handleChartFieldChanged = (
     (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
   }
 
-  onChange?.(componentIri, {
+  const sideEffect = getChartFieldChangeSideEffect(draft.chartConfig, field);
+  sideEffect?.(componentIri, {
     draft,
     dimensions,
     measures,
@@ -767,14 +766,22 @@ export const handleChartOptionChanged = (
   action: Extract<ConfiguratorStateAction, { type: "CHART_OPTION_CHANGED" }>
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
-    const { locale, path, field, value, onChange } = action.value;
+    const { locale, path, field, value } = action.value;
     const updatePath =
       field === null
         ? `chartConfig.${path}`
         : `chartConfig.fields["${field}"].${path}`;
     const { dimensions = [], measures = [] } =
       getCachedMetadata(draft, locale) ?? {};
-    onChange?.(value, { draft, dimensions, measures });
+
+    if (field) {
+      const sideEffect = getChartFieldOptionChangeSideEffect(
+        draft.chartConfig,
+        field,
+        path
+      );
+      sideEffect?.(value, { draft, dimensions, measures });
+    }
 
     if (value === FIELD_VALUE_NONE) {
       unset(draft, updatePath);

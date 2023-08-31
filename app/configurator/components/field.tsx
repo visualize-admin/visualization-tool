@@ -17,10 +17,7 @@ import React, {
   useState,
 } from "react";
 
-import {
-  OnEncodingChange,
-  OnEncodingOptionChange,
-} from "@/charts/chart-config-ui-options";
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import {
   Checkbox,
@@ -33,7 +30,6 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -640,7 +636,7 @@ export const ColorPickerField = ({
   label,
   disabled,
 }: {
-  field: string;
+  field: EncodingFieldType;
   path: string;
   label: ReactNode;
   disabled?: boolean;
@@ -723,16 +719,14 @@ export const ChartFieldField = ({
   options,
   optional,
   disabled,
-  onChange,
 }: {
   label?: string;
-  field: string;
+  field: EncodingFieldType;
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  onChange?: OnEncodingChange;
 }) => {
-  const { fetching, ...fieldProps } = useChartFieldField({ field, onChange });
+  const { fetching, ...fieldProps } = useChartFieldField({ field });
   const noneLabel = t({
     id: "controls.none",
     message: "None",
@@ -763,25 +757,18 @@ export const ChartFieldField = ({
   );
 };
 
-type ChartOptionRadioFieldProps<
-  V extends string | number,
-  T extends ChartConfig = ChartConfig
-> = {
+type ChartOptionRadioFieldProps<V extends string | number> = {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   value: V;
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const ChartOptionRadioField = <
-  V extends string | number,
-  T extends ChartConfig = ChartConfig
->(
-  props: ChartOptionRadioFieldProps<V, T>
+export const ChartOptionRadioField = <V extends string | number>(
+  props: ChartOptionRadioFieldProps<V>
 ) => {
   const {
     label,
@@ -791,13 +778,11 @@ export const ChartOptionRadioField = <
     defaultChecked,
     disabled = false,
     warnMessage,
-    onChange,
   } = props;
   const fieldProps = useChartOptionRadioField({
     path,
     field,
     value,
-    onChange,
   });
 
   return (
@@ -822,7 +807,7 @@ export const ChartOptionSliderField = ({
   defaultValue,
 }: {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   disabled?: boolean;
   min?: number;
@@ -858,7 +843,7 @@ export const ChartOptionCheckboxField = ({
   disabled = false,
 }: {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
@@ -879,24 +864,20 @@ export const ChartOptionCheckboxField = ({
   );
 };
 
-type ChartOptionSelectFieldProps<V, T extends ChartConfig = ChartConfig> = {
+type ChartOptionSelectFieldProps<V> = {
   id: string;
   label: string | ReactNode;
-  field: string;
+  field: EncodingFieldType;
   path: string;
   disabled?: boolean;
   options: Option[];
   getValue?: (x: string) => V | undefined;
   getKey?: (x: V) => string;
   isOptional?: boolean;
-  onChange?: OnEncodingOptionChange<V, T>;
 };
 
-export const ChartOptionSelectField = <
-  V extends {} = string,
-  T extends ChartConfig = ChartConfig
->(
-  props: ChartOptionSelectFieldProps<V, T>
+export const ChartOptionSelectField = <V extends {} = string>(
+  props: ChartOptionSelectFieldProps<V>
 ) => {
   const {
     id,
@@ -908,14 +889,12 @@ export const ChartOptionSelectField = <
     getValue,
     getKey,
     isOptional,
-    onChange,
   } = props;
   const fieldProps = useChartOptionSelectField({
     field,
     path,
     getValue,
     getKey,
-    onChange,
   });
   const noneLabel = t({
     id: "controls.none",
@@ -956,7 +935,7 @@ export const ChartOptionSwitchField = ({
   disabled = false,
 }: {
   label: React.ComponentProps<typeof FormControlLabel>["label"];
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
