@@ -92,11 +92,10 @@ export type EncodingOption<T extends ChartConfig = ChartConfig> =
       };
     }
   | {
-      field: "color";
-      type: "palette";
+      field: "colorPalette";
     }
   | EncodingOptionColorComponent
-  | EncodingOptionImputation
+  | EncodingOptionImputation<T>
   | {
       field: "showStandardError";
     }
@@ -185,8 +184,7 @@ export const makeOnColorComponentIriChange = (
 };
 
 export type EncodingOptionColorComponent = {
-  field: "color";
-  type: "component";
+  field: "colorComponent";
   optional: boolean;
   componentTypes: ComponentType[];
   enableUseAbbreviations: boolean;
@@ -194,9 +192,9 @@ export type EncodingOptionColorComponent = {
   onScaleTypeChange: OnEncodingOptionChange<ColorScaleType, MapConfig>;
 };
 
-type EncodingOptionImputation = {
+type EncodingOptionImputation<T extends ChartConfig = ChartConfig> = {
   field: "imputation";
-  shouldShow: (chartConfig: ChartConfig, data: Observation[]) => boolean;
+  shouldShow: (chartConfig: T, data: Observation[]) => boolean;
 };
 /**
  * @todo
@@ -233,7 +231,12 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   filters: boolean;
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption<T>[];
-  options?: EncodingOption<T>[];
+  options?: {
+    [K in EncodingOption["field"]]?: Omit<
+      Extract<EncodingOption<T>, { field: K }>,
+      "field"
+    >;
+  };
   onChange?: OnEncodingChange<T>;
   getDisabledState?: (
     chartConfig: T,
@@ -531,17 +534,16 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             warnMessage,
           };
         },
-        options: [
-          { field: "calculation" },
-          { field: "color", type: "palette" },
-          {
-            field: "imputation",
+        options: {
+          calculation: {},
+          colorPalette: {},
+          imputation: {
             shouldShow: (chartConfig, data) => {
-              return isMissingDataPresent(chartConfig as AreaConfig, data);
+              return isMissingDataPresent(chartConfig, data);
             },
           },
-          { field: "useAbbreviations" },
-        ],
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange"],
@@ -577,7 +579,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             }
           }
         },
-        options: [{ field: "showStandardError" }],
+        options: {
+          showStandardError: {},
+        },
       },
       {
         field: "x",
@@ -608,7 +612,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             );
           }
         },
-        options: [{ field: "useAbbreviations" }],
+        options: {
+          useAbbreviations: {},
+        },
       },
       {
         field: "segment",
@@ -642,9 +648,24 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             Object
           );
         },
-        options: [
-          {
-            field: "chartSubType",
+        options: {
+          calculation: {
+            getDisabledState: (chartConfig) => {
+              const grouped = chartConfig.fields.segment?.type === "grouped";
+
+              return {
+                disabled: grouped,
+                warnMessage: grouped
+                  ? t({
+                      id: "controls.calculation.disabled-by-grouped",
+                      message:
+                        "100% mode cannot be used with a grouped layout.",
+                    })
+                  : undefined,
+              };
+            },
+          },
+          chartSubType: {
             getValues: (chartConfig, dimensions) => {
               const yIri = chartConfig.fields.y.componentIri;
               const yDimension = dimensions.find((d) => d.iri === yIri);
@@ -678,26 +699,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               }
             },
           },
-          {
-            field: "calculation",
-            getDisabledState: (chartConfig) => {
-              const grouped = chartConfig.fields.segment?.type === "grouped";
-
-              return {
-                disabled: grouped,
-                warnMessage: grouped
-                  ? t({
-                      id: "controls.calculation.disabled-by-grouped",
-                      message:
-                        "100% mode cannot be used with a grouped layout.",
-                    })
-                  : undefined,
-              };
-            },
-          },
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange", "animation"],
@@ -724,10 +728,10 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange"],
@@ -749,10 +753,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         exclusive: false,
         filters: true,
         onChange: makeOnMapFieldChange("areaLayer"),
-        options: [
-          {
-            field: "color",
-            type: "component",
+        options: {
+          colorComponent: {
             componentTypes: [
               "NumericalMeasure",
               "OrdinalMeasure",
@@ -763,7 +765,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onComponentIriChange: makeOnColorComponentIriChange("areaLayer"),
             onScaleTypeChange: makeOnColorComponentScaleTypeChange("areaLayer"),
           },
-        ],
+        },
       },
       {
         field: "symbolLayer",
@@ -772,15 +774,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         exclusive: false,
         filters: true,
         onChange: makeOnMapFieldChange("symbolLayer"),
-        options: [
-          {
-            field: "size",
-            componentTypes: ["NumericalMeasure"],
-            optional: true,
-          },
-          {
-            field: "color",
-            type: "component",
+        options: {
+          colorComponent: {
             componentTypes: [
               "NumericalMeasure",
               "OrdinalMeasure",
@@ -796,7 +791,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onScaleTypeChange:
               makeOnColorComponentScaleTypeChange("symbolLayer"),
           },
-        ],
+          size: {
+            componentTypes: ["NumericalMeasure"],
+            optional: true,
+          },
+        },
       },
     ],
     interactiveFilters: ["animation"],
@@ -817,10 +816,10 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
         onChange: defaultSegmentOnChange,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "animation"],
@@ -846,10 +845,10 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         onChange: defaultSegmentOnChange,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "animation"],
