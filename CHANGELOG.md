@@ -29,6 +29,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
   - Map chart is now again correctly initialized when hierarchy is there
   - Redirect to versioned cubes now works correctly when using legacy, `/browse/dataset/<iri>` mode
+  - Undefined dates in Temporal dimensions do not break the application anymore
 - Performance
   - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 - Maintenance

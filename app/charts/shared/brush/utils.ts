@@ -5,6 +5,10 @@ export function makeGetClosestDatesFromDateRange<T>(
   getDate: (d: T) => Date
 ) {
   return (from: Date, to: Date) => {
+    if (sortedData.length === 0) {
+      return [from, to] as [Date, Date];
+    }
+
     const fromTime = from.getTime();
     const toTime = to.getTime();
 

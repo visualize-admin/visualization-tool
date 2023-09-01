@@ -67,6 +67,7 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { ObservationValue } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
   DimensionMetadataFragment,
@@ -986,7 +987,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension.iri]
   );
 
-  // const dimension = data?.dataCubeByIri?.dimensionByIri;
   const temporalDimension =
     dimension?.__typename === "TemporalDimension" ? dimension : null;
 
@@ -1018,21 +1018,29 @@ export const TimeFilter = (props: TimeFilterProps) => {
     if (temporalDimension) {
       const { timeFormat, timeUnit } = temporalDimension;
       const parse = formatLocale.parse(timeFormat);
-      const sortedOptions = temporalDimension.values
-        .map(({ value }) => {
-          const date = parse(`${value}`) as Date;
+      const sortedOptions: {
+        value: ObservationValue;
+        label: string;
+        date: Date;
+      }[] = [];
+      const sortedValues: ObservationValue[] = [];
 
-          return {
+      for (const { value } of temporalDimension.values) {
+        const date = parse(`${value}`);
+
+        if (date) {
+          sortedOptions.push({
             value,
             label: timeFormatUnit(date, timeUnit),
             date,
-          };
-        })
-        .sort((a, b) => a.date.getTime() - b.date.getTime());
+          });
+          sortedValues.push(value);
+        }
+      }
 
       return {
         sortedOptions,
-        sortedValues: sortedOptions.map((d) => d.value),
+        sortedValues,
       };
     }
 
