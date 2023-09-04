@@ -98,7 +98,8 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
   },
 
   legendCheckbox: {
-    marginTop: () => "0.25rem",
+    marginBottom: () => "0.25rem",
+    marginRight: 0,
   },
 }));
 
