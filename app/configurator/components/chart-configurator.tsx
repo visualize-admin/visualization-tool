@@ -29,7 +29,7 @@ import {
 } from "react-beautiful-dnd";
 import { useClient } from "urql";
 
-import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import useDisclosure from "@/components/use-disclosure";
@@ -745,7 +745,6 @@ type ChartFieldsProps = {
 
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, metadata } = props;
-  const { chartType } = chartConfig;
   const { dimensions, measures } = metadata;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
@@ -765,7 +764,7 @@ const ChartFields = (props: ChartFieldsProps) => {
 
   return (
     <>
-      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
+      {getChartSpec(chartConfig).encodings.map((encoding) => {
         const { field, getDisabledState } = encoding;
         const component = components.find(
           (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri

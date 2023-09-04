@@ -17,6 +17,7 @@ import React, {
   useState,
 } from "react";
 
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import {
   Checkbox,
@@ -635,7 +636,7 @@ export const ColorPickerField = ({
   label,
   disabled,
 }: {
-  field: string;
+  field: EncodingFieldType;
   path: string;
   label: ReactNode;
   disabled?: boolean;
@@ -720,13 +721,12 @@ export const ChartFieldField = ({
   disabled,
 }: {
   label?: string;
-  field: string;
+  field: EncodingFieldType;
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
 }) => {
   const { fetching, ...fieldProps } = useChartFieldField({ field });
-
   const noneLabel = t({
     id: "controls.none",
     message: "None",
@@ -757,23 +757,28 @@ export const ChartFieldField = ({
   );
 };
 
-export const ChartOptionRadioField = ({
-  label,
-  field,
-  path,
-  value,
-  defaultChecked,
-  disabled = false,
-  warnMessage,
-}: {
+type ChartOptionRadioFieldProps<V extends string | number> = {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
-  value: string | number;
+  value: V;
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-}) => {
+};
+
+export const ChartOptionRadioField = <V extends string | number>(
+  props: ChartOptionRadioFieldProps<V>
+) => {
+  const {
+    label,
+    field,
+    path,
+    value,
+    defaultChecked,
+    disabled = false,
+    warnMessage,
+  } = props;
   const fieldProps = useChartOptionRadioField({
     path,
     field,
@@ -802,7 +807,7 @@ export const ChartOptionSliderField = ({
   defaultValue,
 }: {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   disabled?: boolean;
   min?: number;
@@ -838,7 +843,7 @@ export const ChartOptionCheckboxField = ({
   disabled = false,
 }: {
   label: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
@@ -859,27 +864,32 @@ export const ChartOptionCheckboxField = ({
   );
 };
 
-export const ChartOptionSelectField = <ValueType extends {} = string>({
-  id,
-  label,
-  field,
-  path,
-  disabled = false,
-  options,
-  getValue,
-  getKey,
-  isOptional,
-}: {
+type ChartOptionSelectFieldProps<V> = {
   id: string;
   label: string | ReactNode;
-  field: string;
+  field: EncodingFieldType;
   path: string;
   disabled?: boolean;
   options: Option[];
-  getValue?: (x: string) => ValueType | undefined;
-  getKey?: (x: ValueType) => string;
+  getValue?: (x: string) => V | undefined;
+  getKey?: (x: V) => string;
   isOptional?: boolean;
-}) => {
+};
+
+export const ChartOptionSelectField = <V extends {} = string>(
+  props: ChartOptionSelectFieldProps<V>
+) => {
+  const {
+    id,
+    label,
+    field,
+    path,
+    disabled = false,
+    options,
+    getValue,
+    getKey,
+    isOptional,
+  } = props;
   const fieldProps = useChartOptionSelectField({
     field,
     path,
@@ -925,7 +935,7 @@ export const ChartOptionSwitchField = ({
   disabled = false,
 }: {
   label: React.ComponentProps<typeof FormControlLabel>["label"];
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;

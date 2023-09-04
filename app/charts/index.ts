@@ -7,6 +7,7 @@ import {
   AREA_SEGMENT_SORTING,
   COLUMN_SEGMENT_SORTING,
   disableStacked,
+  EncodingFieldType,
   PIE_SEGMENT_SORTING,
 } from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
@@ -26,6 +27,7 @@ import {
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
+  MapConfig,
   MapSymbolLayer,
   PieSegmentField,
   ScatterPlotSegmentField,
@@ -47,6 +49,7 @@ import {
   getGeoDimensions,
   getTemporalDimensions,
   isGeoCoordinatesDimension,
+  isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
@@ -188,6 +191,36 @@ const makeInitialFiltersForArea = (
     }
   }
   return filters;
+};
+
+export const initializeMapLayerField = ({
+  chartConfig,
+  field,
+  componentIri,
+  dimensions,
+  measures,
+}: {
+  chartConfig: MapConfig;
+  field: EncodingFieldType;
+  componentIri: string;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
+}) => {
+  if (field === "areaLayer") {
+    chartConfig.fields.areaLayer = getInitialAreaLayer({
+      component: dimensions
+        .filter(isGeoShapesDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures[0] as NumericalMeasure | OrdinalMeasure,
+    });
+  } else if (field === "symbolLayer") {
+    chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+      component: dimensions
+        .filter(isGeoDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures.find(isNumericalMeasure),
+    });
+  }
 };
 
 export const getInitialAreaLayer = ({

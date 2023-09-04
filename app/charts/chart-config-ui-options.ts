@@ -1,6 +1,11 @@
 import { t } from "@lingui/macro";
 import { group } from "d3";
+import get from "lodash/get";
+import setWith from "lodash/setWith";
+import unset from "lodash/unset";
 
+import { DEFAULT_SORTING, initializeMapLayerField } from "@/charts";
+import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   checkForMissingValuesInSegments,
   getSegment,
@@ -10,21 +15,37 @@ import {
   ChartConfig,
   ChartSubType,
   ChartType,
+  ColorField,
+  ColorScaleType,
   ColumnConfig,
+  ColumnSegmentField,
   ComponentType,
+  ConfiguratorStateConfiguringChart,
   GenericField,
+  LineConfig,
+  MapConfig,
+  PaletteType,
+  PieConfig,
+  ScatterPlotConfig,
   SortingOrder,
   SortingType,
+  TableConfig,
   getAnimationField,
   isSortingInConfig,
+  makeMultiFilter,
 } from "@/config-types";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   Observation,
+  canDimensionBeMultiFiltered,
+  isNumericalMeasure,
+  isOrdinalMeasure,
   isTemporalDimension,
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { getDefaultCategoricalPaletteName } from "@/palettes";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -39,39 +60,45 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
-export type EncodingOptionChartSubType = {
+type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
+  value: V,
+  options: {
+    draft: Omit<ConfiguratorStateConfiguringChart, "chartConfig"> & {
+      chartConfig: T;
+    };
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+    field: EncodingFieldType;
+  }
+) => void;
+
+export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   field: "chartSubType";
   getValues: (
-    chartConfig: ChartConfig,
+    chartConfig: T,
     dimensions: DimensionMetadataFragment[]
   ) => {
     value: ChartSubType;
     disabled: boolean;
     warnMessage?: string;
   }[];
+  onChange: OnEncodingOptionChange<ChartSubType, T>;
 };
 
-export type EncodingOption =
-  | EncodingOptionChartSubType
+type EncodingOption<T extends ChartConfig = ChartConfig> =
+  | EncodingOptionChartSubType<T>
   | {
       field: "calculation";
-      getDisabledState?: (chartConfig: ChartConfig) => {
+      getDisabledState?: (chartConfig: T) => {
         disabled: boolean;
         warnMessage?: string;
       };
     }
   | {
-      field: "color";
-      type: "palette";
+      field: "colorPalette";
     }
-  | {
-      field: "color";
-      type: "component";
-      optional: boolean;
-      componentTypes: ComponentType[];
-      enableUseAbbreviations: boolean;
-    }
-  | EncodingOptionImputation
+  | EncodingOptionColorComponent
+  | EncodingOptionImputation<T>
   | {
       field: "showStandardError";
     }
@@ -87,24 +114,107 @@ export type EncodingOption =
       field: "useAbbreviations";
     };
 
-export type EncodingOptionImputation = {
+const onColorComponentScaleTypeChange: OnEncodingOptionChange<
+  ColorScaleType,
+  MapConfig
+> = (value, { draft, field }) => {
+  const basePath = `chartConfig.fields.${field}`;
+  const interpolationTypePath = `${basePath}.color.interpolationType`;
+  const nbClassPath = `${basePath}.color.nbClass`;
+
+  if (value === "continuous") {
+    setWith(draft, interpolationTypePath, "linear", Object);
+    unset(draft, nbClassPath);
+  } else if (value === "discrete") {
+    setWith(draft, interpolationTypePath, "jenks", Object);
+    setWith(draft, nbClassPath, 3, Object);
+  }
+};
+
+const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
+  iri,
+  { draft, dimensions, measures, field }
+) => {
+  const basePath = `chartConfig.fields.${field}`;
+  const components = [...dimensions, ...measures];
+  let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
+  const component = components.find((d) => d.iri === iri);
+  const currentColorComponentIri = get(draft, `${basePath}.color.componentIri`);
+
+  if (component) {
+    const colorPalette: PaletteType | undefined = get(
+      draft,
+      `${basePath}.color.palette`
+    );
+
+    if (canDimensionBeMultiFiltered(component) || isOrdinalMeasure(component)) {
+      const palette = getDefaultCategoricalPaletteName(component, colorPalette);
+      newField = {
+        type: "categorical",
+        componentIri: iri,
+        palette,
+        colorMapping: mapValueIrisToColor({
+          palette,
+          dimensionValues: component.values,
+        }),
+      };
+    } else if (isNumericalMeasure(component)) {
+      newField = {
+        type: "numerical",
+        componentIri: iri,
+        palette: colorPalette ?? "oranges",
+        scaleType: "continuous",
+        interpolationType: "linear",
+      };
+    }
+  }
+
+  // Remove old filter.
+  unset(draft, `chartConfig.filters["${currentColorComponentIri}"]`);
+  setWith(draft, `${basePath}.color`, newField, Object);
+};
+
+type EncodingOptionColorComponent = {
+  field: "colorComponent";
+  optional: boolean;
+  componentTypes: ComponentType[];
+  enableUseAbbreviations: boolean;
+  onComponentIriChange: OnEncodingOptionChange<string, MapConfig>;
+  onScaleTypeChange: OnEncodingOptionChange<ColorScaleType, MapConfig>;
+};
+
+type EncodingOptionImputation<T extends ChartConfig = ChartConfig> = {
   field: "imputation";
-  shouldShow: (chartConfig: ChartConfig, data: Observation[]) => boolean;
+  shouldShow: (chartConfig: T, data: Observation[]) => boolean;
 };
 /**
  * @todo
  * - Differentiate sorting within chart vs. sorting legend / tooltip only
  */
-export type EncodingSortingOption = {
+export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
   sortingType: SortingType;
   sortingOrder: SortingOrder[];
-  getDisabledState?: (chartConfig: ChartConfig) => {
+  getDisabledState?: (chartConfig: T) => {
     disabled: boolean;
     warnMessage?: string;
   };
 };
 
-export interface EncodingSpec {
+type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
+  iri: string,
+  options: {
+    draft: Omit<ConfiguratorStateConfiguringChart, "chartConfig"> & {
+      chartConfig: T;
+    };
+    dimensions: DimensionMetadataFragment[];
+    measures: DimensionMetadataFragment[];
+    initializing: boolean;
+    selectedValues: any[];
+    field: EncodingFieldType;
+  }
+) => void;
+
+export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
@@ -112,10 +222,16 @@ export interface EncodingSpec {
   exclusive?: boolean;
   filters: boolean;
   disableInteractiveFilters?: boolean;
-  sorting?: EncodingSortingOption[];
-  options?: EncodingOption[];
+  sorting?: EncodingSortingOption<T>[];
+  options?: {
+    [K in EncodingOption["field"]]?: Omit<
+      Extract<EncodingOption<T>, { field: K }>,
+      "field"
+    >;
+  };
+  onChange?: OnEncodingChange<T>;
   getDisabledState?: (
-    chartConfig: ChartConfig,
+    chartConfig: T,
     components: DimensionMetadataFragment[],
     observations: Observation[]
   ) => {
@@ -127,20 +243,20 @@ export interface EncodingSpec {
 // dataFilters is enabled by default
 type InteractiveFilterType = "legend" | "timeRange" | "animation";
 
-export interface ChartSpec {
+export interface ChartSpec<T extends ChartConfig = ChartConfig> {
   chartType: ChartType;
-  encodings: EncodingSpec[];
+  encodings: EncodingSpec<T>[];
   interactiveFilters: InteractiveFilterType[];
 }
 
 interface ChartSpecs {
-  area: ChartSpec;
-  column: ChartSpec;
-  line: ChartSpec;
-  map: ChartSpec;
-  pie: ChartSpec;
-  scatterplot: ChartSpec;
-  table: ChartSpec;
+  area: ChartSpec<AreaConfig>;
+  column: ChartSpec<ColumnConfig>;
+  line: ChartSpec<LineConfig>;
+  map: ChartSpec<MapConfig>;
+  pie: ChartSpec<PieConfig>;
+  scatterplot: ChartSpec<ScatterPlotConfig>;
+  table: ChartSpec<TableConfig>;
 }
 
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
@@ -151,7 +267,9 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "GeoShapesDimension",
 ];
 
-export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
+const getDefaultSegmentSorting = <
+  T extends ChartConfig = ChartConfig
+>(): EncodingSortingOption<T>[] => [
   {
     sortingType: "byAuto",
     sortingOrder: ["asc", "desc"],
@@ -188,26 +306,42 @@ export const AREA_SEGMENT_SORTING: EncodingSortingOption[] = [
   },
 ];
 
-export const LINE_SEGMENT_SORTING: EncodingSortingOption[] = [
+export const AREA_SEGMENT_SORTING = getDefaultSegmentSorting<AreaConfig>();
+
+const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-export const COLUMN_SEGMENT_SORTING: EncodingSortingOption[] =
-  AREA_SEGMENT_SORTING;
+export const COLUMN_SEGMENT_SORTING = getDefaultSegmentSorting<ColumnConfig>();
 
-export const PIE_SEGMENT_SORTING: EncodingSortingOption[] = [
+export const PIE_SEGMENT_SORTING: EncodingSortingOption<PieConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
 
-export const ANIMATION_FIELD_SPEC: EncodingSpec = {
+export const ANIMATION_FIELD_SPEC: EncodingSpec<
+  ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig
+> = {
   field: "animation",
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
   disableInteractiveFilters: true,
+  onChange: (iri, { draft, initializing }) => {
+    if (initializing || !draft.chartConfig.fields.animation) {
+      draft.chartConfig.fields.animation = {
+        componentIri: iri,
+        showPlayButton: true,
+        duration: 30,
+        type: "continuous",
+        dynamicScales: false,
+      };
+    } else {
+      draft.chartConfig.fields.animation.componentIri = iri;
+    }
+  },
   getDisabledState: (
     chartConfig,
     components
@@ -293,7 +427,67 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-export const chartConfigOptionsUISpec: ChartSpecs = {
+const defaultSegmentOnChange: OnEncodingChange<
+  | AreaConfig
+  | ColumnConfig
+  | LineConfig
+  | ScatterPlotConfig
+  | PieConfig
+  | TableConfig
+> = (iri, { draft, dimensions, measures, initializing, selectedValues }) => {
+  const components = [...dimensions, ...measures];
+  const component = components.find((d) => d.iri === iri);
+  const palette = getDefaultCategoricalPaletteName(
+    component,
+    draft.chartConfig.fields.segment &&
+      "palette" in draft.chartConfig.fields.segment
+      ? draft.chartConfig.fields.segment.palette
+      : undefined
+  );
+  const colorMapping = mapValueIrisToColor({
+    palette,
+    dimensionValues: selectedValues,
+  });
+  const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
+
+  if (initializing) {
+    draft.chartConfig.fields.segment = {
+      componentIri: iri,
+      palette,
+      sorting: DEFAULT_SORTING,
+      colorMapping,
+    };
+  } else if (
+    draft.chartConfig.fields.segment &&
+    "palette" in draft.chartConfig.fields.segment
+  ) {
+    draft.chartConfig.fields.segment.componentIri = iri;
+    draft.chartConfig.fields.segment.colorMapping = colorMapping;
+  }
+
+  draft.chartConfig.filters[iri] = multiFilter;
+};
+
+const onMapFieldChange: OnEncodingChange<MapConfig> = (
+  iri,
+  { draft, dimensions, measures, field }
+) => {
+  initializeMapLayerField({
+    chartConfig: draft.chartConfig,
+    field,
+    componentIri: iri,
+    dimensions,
+    measures,
+  });
+};
+
+export const getChartSpec = <T extends ChartConfig>(
+  chartConfig: T
+): ChartSpec<T> => {
+  return chartConfigOptionsUISpec[chartConfig.chartType] as ChartSpec<T>;
+};
+
+const chartConfigOptionsUISpec: ChartSpecs = {
   area: {
     chartType: "area",
     encodings: [
@@ -302,6 +496,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        onChange: (iri, { draft, measures }) => {
+          const yMeasure = measures.find((d) => d.iri === iri);
+
+          if (disableStacked(yMeasure)) {
+            delete draft.chartConfig.fields.segment;
+          }
+        },
       },
       {
         field: "x",
@@ -315,8 +516,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
-        getDisabledState: (_chartConfig, components, data) => {
-          const chartConfig = _chartConfig as AreaConfig;
+        onChange: defaultSegmentOnChange,
+        getDisabledState: (chartConfig, components, data) => {
           const yIri = chartConfig.fields.y.componentIri;
           const yDimension = components.find((d) => d.iri === yIri);
           const disabledStacked = disableStacked(yDimension);
@@ -349,17 +550,16 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             warnMessage,
           };
         },
-        options: [
-          { field: "calculation" },
-          { field: "color", type: "palette" },
-          {
-            field: "imputation",
+        options: {
+          calculation: {},
+          colorPalette: {},
+          imputation: {
             shouldShow: (chartConfig, data) => {
-              return isMissingDataPresent(chartConfig as AreaConfig, data);
+              return isMissingDataPresent(chartConfig, data);
             },
           },
-          { field: "useAbbreviations" },
-        ],
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange"],
@@ -372,7 +572,32 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
-        options: [{ field: "showStandardError" }],
+        onChange: (iri, { draft, measures }) => {
+          if (draft.chartConfig.fields.segment?.type === "stacked") {
+            const yMeasure = measures.find((d) => d.iri === iri);
+
+            if (disableStacked(yMeasure)) {
+              setWith(
+                draft,
+                "chartConfig.fields.segment.type",
+                "grouped",
+                Object
+              );
+
+              if (draft.chartConfig.interactiveFiltersConfig?.calculation) {
+                setWith(
+                  draft,
+                  "chartConfig.interactiveFiltersConfig.calculation",
+                  { active: false, type: "identity" },
+                  Object
+                );
+              }
+            }
+          }
+        },
+        options: {
+          showStandardError: {},
+        },
       },
       {
         field: "x",
@@ -391,7 +616,21 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
-        options: [{ field: "useAbbreviations" }],
+        onChange: (iri, { draft, dimensions }) => {
+          const component = dimensions.find((d) => d.iri === iri);
+
+          if (!isTemporalDimension(component)) {
+            setWith(
+              draft,
+              `chartConfig.interactiveFiltersConfig.timeRange.active`,
+              false,
+              Object
+            );
+          }
+        },
+        options: {
+          useAbbreviations: {},
+        },
       },
       {
         field: "segment",
@@ -399,11 +638,51 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: COLUMN_SEGMENT_SORTING,
-        options: [
-          {
-            field: "chartSubType",
-            getValues: (_chartConfig, dimensions) => {
-              const chartConfig = _chartConfig as ColumnConfig;
+        onChange: (iri, options) => {
+          const { draft, dimensions, measures, initializing } = options;
+          defaultSegmentOnChange(iri, options);
+
+          if (!initializing) {
+            return;
+          }
+
+          const components = [...dimensions, ...measures];
+          const segment: ColumnSegmentField = get(
+            draft,
+            "chartConfig.fields.segment"
+          );
+          const yComponent = components.find(
+            (d) => d.iri === draft.chartConfig.fields.y.componentIri
+          );
+          setWith(
+            draft,
+            "chartConfig.fields.segment",
+            {
+              ...segment,
+              type: disableStacked(yComponent) ? "grouped" : "stacked",
+            },
+            Object
+          );
+        },
+        options: {
+          calculation: {
+            getDisabledState: (chartConfig) => {
+              const grouped = chartConfig.fields.segment?.type === "grouped";
+
+              return {
+                disabled: grouped,
+                warnMessage: grouped
+                  ? t({
+                      id: "controls.calculation.disabled-by-grouped",
+                      message:
+                        "100% mode cannot be used with a grouped layout.",
+                    })
+                  : undefined,
+              };
+            },
+          },
+          chartSubType: {
+            getValues: (chartConfig, dimensions) => {
               const yIri = chartConfig.fields.y.componentIri;
               const yDimension = dimensions.find((d) => d.iri === yIri);
               const disabledStacked = disableStacked(yDimension);
@@ -426,28 +705,19 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
                 },
               ];
             },
-          },
-          {
-            field: "calculation",
-            getDisabledState: (d) => {
-              const grouped =
-                (d as ColumnConfig).fields.segment?.type === "grouped";
-
-              return {
-                disabled: grouped,
-                warnMessage: grouped
-                  ? t({
-                      id: "controls.calculation.disabled-by-grouped",
-                      message:
-                        "100% mode cannot be used with a grouped layout.",
-                    })
-                  : undefined,
-              };
+            onChange: (d, { draft }) => {
+              if (
+                draft.chartConfig.interactiveFiltersConfig &&
+                d === "grouped"
+              ) {
+                const path = "chartConfig.interactiveFiltersConfig.calculation";
+                setWith(draft, path, { active: false, type: "identity" });
+              }
             },
           },
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange", "animation"],
@@ -473,10 +743,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        onChange: defaultSegmentOnChange,
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "timeRange"],
@@ -497,10 +768,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoShapesDimension"],
         exclusive: false,
         filters: true,
-        options: [
-          {
-            field: "color",
-            type: "component",
+        onChange: onMapFieldChange,
+        options: {
+          colorComponent: {
             componentTypes: [
               "NumericalMeasure",
               "OrdinalMeasure",
@@ -508,8 +778,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: false,
             enableUseAbbreviations: true,
+            onComponentIriChange: onColorComponentIriChange,
+            onScaleTypeChange: onColorComponentScaleTypeChange,
           },
-        ],
+        },
       },
       {
         field: "symbolLayer",
@@ -517,15 +789,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
         exclusive: false,
         filters: true,
-        options: [
-          {
-            field: "size",
-            componentTypes: ["NumericalMeasure"],
-            optional: true,
-          },
-          {
-            field: "color",
-            type: "component",
+        onChange: onMapFieldChange,
+        options: {
+          colorComponent: {
             componentTypes: [
               "NumericalMeasure",
               "OrdinalMeasure",
@@ -537,8 +803,14 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: true,
             enableUseAbbreviations: true,
+            onComponentIriChange: onColorComponentIriChange,
+            onScaleTypeChange: onColorComponentScaleTypeChange,
           },
-        ],
+          size: {
+            componentTypes: ["NumericalMeasure"],
+            optional: true,
+          },
+        },
       },
     ],
     interactiveFilters: ["animation"],
@@ -558,10 +830,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
         sorting: PIE_SEGMENT_SORTING,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        onChange: defaultSegmentOnChange,
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "animation"],
@@ -586,10 +859,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         componentTypes: SEGMENT_COMPONENT_TYPES,
         filters: true,
-        options: [
-          { field: "color", type: "palette" },
-          { field: "useAbbreviations" },
-        ],
+        onChange: defaultSegmentOnChange,
+        options: {
+          colorPalette: {},
+          useAbbreviations: {},
+        },
       },
     ],
     interactiveFilters: ["legend", "animation"],
@@ -600,4 +874,34 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [],
     interactiveFilters: [],
   },
+};
+
+export const getChartFieldChangeSideEffect = (
+  chartConfig: ChartConfig,
+  field: EncodingFieldType
+): OnEncodingChange | undefined => {
+  const chartSpec = getChartSpec(chartConfig);
+  const encoding = chartSpec.encodings.find((d) => d.field === field);
+
+  return encoding?.onChange;
+};
+
+export const getChartFieldOptionChangeSideEffect = (
+  chartConfig: ChartConfig,
+  field: EncodingFieldType,
+  path: string
+): OnEncodingOptionChange<any> | undefined => {
+  const chartSpec = getChartSpec(chartConfig);
+  const encoding = chartSpec.encodings.find((d) => d.field === field);
+
+  switch (`${field}.${path}`) {
+    case "segment.type":
+      return get(encoding, "options.chartSubType.onChange");
+    case "areaLayer.color.componentIri":
+    case "symbolLayer.color.componentIri":
+      return get(encoding, "options.colorComponent.onComponentIriChange");
+    case "areaLayer.color.scaleType":
+    case "symbolLayer.color.scaleType":
+      return get(encoding, "options.colorComponent.onScaleTypeChange");
+  }
 };
