@@ -1,5 +1,6 @@
 import React from "react";
 import create, { StoreApi, UseBoundStore } from "zustand";
+import shallow from "zustand/shallow";
 
 import { CalculationType, FilterValueSingle } from "@/configurator";
 import {
@@ -163,7 +164,7 @@ export const useInteractiveFilters = <T extends unknown>(
 
   const [, useStore] = ctx;
 
-  return useStore(selector);
+  return useStore(selector, shallow);
 };
 
 export const useInteractiveFiltersRaw = () => {
