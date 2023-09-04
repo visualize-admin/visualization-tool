@@ -58,7 +58,8 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
   const { dataSet, dataSource, chartConfig } = props;
   const { loading } = useLoadingState();
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
-  const queryFilters = useQueryFilters({ chartConfig });
+  // We want to keep the none filter without removing them.
+  const queryFilters = useQueryFilters({ chartConfig, allowNoneValues: true });
   const componentIris = chartConfig.interactiveFiltersConfig?.dataFilters
     .componentIris as string[];
   const [filtersVisible, setFiltersVisible] = React.useState(false);
@@ -95,6 +96,7 @@ export const ChartDataFilters = (props: ChartDataFiltersProps) => {
     dataFilters,
     unmappedQueryFilters,
     mappedFilters,
+    interactiveFilters,
   });
 
   return error ? (
@@ -215,7 +217,7 @@ const DataFilter = (props: DataFilterProps) => {
             // are the same  while the order of the keys has changed.
             // If this is not present, we'll have outdated dimension
             // values after we change the filter order
-            filterKeys: Object.keys(keys).join(", "),
+            filterKeys: keys.join(", "),
           }
         : {}),
     },
@@ -245,10 +247,13 @@ const DataFilter = (props: DataFilterProps) => {
 
     // We only want to disable loading state when the filter is actually valid.
     // It can be invalid when the application is ensuring possible filters.
-    if (dataFilterValue && values.includes(dataFilterValue)) {
+    if (
+      (dataFilterValue && values.includes(dataFilterValue)) ||
+      dataFilterValue === FIELD_VALUE_NONE
+    ) {
       updateDataFilter(dimensionIri, dataFilterValue);
       chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
-    } else if (fetching) {
+    } else if (fetching || values.length === 0) {
       chartLoadingState.set(`interactive-filter-${dimensionIri}`, fetching);
     }
   }, [
@@ -509,6 +514,7 @@ type EnsurePossibleInteractiveFiltersProps = {
   dataFilters: DataFilters;
   unmappedQueryFilters: Filters;
   mappedFilters: Filters;
+  interactiveFilters: Filters;
 };
 
 /**
@@ -525,6 +531,7 @@ const useEnsurePossibleInteractiveFilters = (
     dataFilters,
     unmappedQueryFilters,
     mappedFilters,
+    interactiveFilters,
   } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
@@ -570,10 +577,21 @@ const useEnsurePossibleInteractiveFilters = (
 
       const filters = Object.assign(
         Object.fromEntries(
-          data.possibleFilters.map((d) => [
-            d.iri,
-            { type: d.type, value: d.value },
-          ])
+          data.possibleFilters.map((d) => {
+            const interactiveFilter = interactiveFilters[d.iri];
+            return [
+              d.iri,
+              {
+                type: d.type,
+                value:
+                  // We want to keep the none filter without overriding them.
+                  interactiveFilter?.type === "single" &&
+                  interactiveFilter.value === FIELD_VALUE_NONE
+                    ? FIELD_VALUE_NONE
+                    : d.value,
+              },
+            ];
+          })
         ) as Filters,
         mappedFilters
       );
@@ -604,6 +622,7 @@ const useEnsurePossibleInteractiveFilters = (
     unmappedQueryFilters,
     mappedFilters,
     loadingState,
+    interactiveFilters,
   ]);
 
   return { error };
