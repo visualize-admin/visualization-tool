@@ -596,7 +596,7 @@ const useEnsurePossibleInteractiveFilters = (
         mappedFilters
       );
 
-      if (!isEqual(filters, chartConfig.filters) && !isEmpty(filters)) {
+      if (!isEqual(filters, interactiveFilters) && !isEmpty(filters)) {
         for (const [k, v] of Object.entries(filters)) {
           if (k in dataFilters && v.type === "single") {
             dataFilters[k] = v;
