@@ -12,7 +12,7 @@ import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
   dataSet: string;
@@ -24,7 +24,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   const { dataSet, dataSource, chartConfig } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
-  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
+  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
 
   const animationField = getAnimationField(chartConfig);
   const componentIris = Array.from(

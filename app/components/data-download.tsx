@@ -467,6 +467,10 @@ const getDimensionParsers = (
         case "OrdinalMeasure":
           return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
         case "TemporalDimension": {
+          if (d.timeUnit === "Year") {
+            return [d.iri, (d) => +d];
+          }
+
           // We do not want to parse dates as dates, but strings (for easier
           // handling in Excel).
           const dateFormatters = getFormattersForLocale(locale);

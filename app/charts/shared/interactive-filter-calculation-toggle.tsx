@@ -2,13 +2,11 @@ import { t } from "@lingui/macro";
 import React from "react";
 
 import { Switch } from "@/components/form";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 export const CalculationToggle = () => {
-  const calculation = useInteractiveFiltersStore((d) => d.calculation);
-  const setCalculationType = useInteractiveFiltersStore(
-    (d) => d.setCalculationType
-  );
+  const calculation = useInteractiveFilters((d) => d.calculation);
+  const setCalculationType = useInteractiveFilters((d) => d.setCalculationType);
 
   const onChange = React.useCallback(() => {
     setCalculationType(calculation.type === "percent" ? "identity" : "percent");

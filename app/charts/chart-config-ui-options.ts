@@ -21,6 +21,7 @@ import {
   ColumnSegmentField,
   ComponentType,
   ConfiguratorStateConfiguringChart,
+  GenericField,
   LineConfig,
   MapConfig,
   PaletteType,
@@ -33,6 +34,7 @@ import {
   isSortingInConfig,
   makeMultiFilter,
 } from "@/config-types";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   Observation,
@@ -357,9 +359,10 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     disabled: boolean;
     warnMessage?: string;
   } => {
-    const noTemporalDimensions = !components.some((d) => {
+    const temporalDimensions = components.filter((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
+    const noTemporalDimensions = temporalDimensions.length === 0;
 
     if (noTemporalDimensions) {
       return {
@@ -367,6 +370,30 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
         warnMessage: t({
           id: "controls.section.animation.no-temporal-dimensions",
           message: "There is no dimension that can be animated.",
+        }),
+      };
+    }
+
+    const fieldComponentsMap = Object.fromEntries(
+      Object.entries<GenericField>(chartConfig.fields)
+        .filter((d) => d[0] !== "animation")
+        .map(([k, v]) => [v.componentIri, k])
+    );
+    const temporalFieldComponentIris = temporalDimensions.filter((d) => {
+      return fieldComponentsMap[d.iri];
+    });
+
+    if (temporalDimensions.length === temporalFieldComponentIris.length) {
+      return {
+        disabled: true,
+        warnMessage: t({
+          id: "controls.section.animation.no-available-temporal-dimensions",
+          message: `There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation.`,
+          values: {
+            fields: temporalFieldComponentIris
+              .map((d) => `»${getFieldLabel(fieldComponentsMap[d.iri])}«`)
+              .join(", "),
+          },
         }),
       };
     }

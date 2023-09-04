@@ -24,7 +24,7 @@ import {
 } from "@/graphql/query-hooks";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -98,7 +98,8 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
   },
 
   legendCheckbox: {
-    marginTop: () => "0.25rem",
+    marginBottom: () => "0.25rem",
+    marginRight: 0,
   },
 }));
 
@@ -286,9 +287,9 @@ const LegendColorContent = (props: LegendColorContentProps) => {
   const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
     props;
   const classes = useStyles();
-  const categories = useInteractiveFiltersStore((d) => d.categories);
-  const addCategory = useInteractiveFiltersStore((d) => d.addCategory);
-  const removeCategory = useInteractiveFiltersStore((d) => d.removeCategory);
+  const categories = useInteractiveFilters((d) => d.categories);
+  const addCategory = useInteractiveFilters((d) => d.addCategory);
+  const removeCategory = useInteractiveFilters((d) => d.removeCategory);
 
   const activeInteractiveFilters = useMemo(() => {
     return new Set(Object.keys(categories));

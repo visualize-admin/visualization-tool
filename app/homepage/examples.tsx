@@ -13,16 +13,12 @@ export const Examples = ({
   example1Description,
   example2Headline,
   example2Description,
-  example3Headline,
-  example3Description,
 }: {
   headline: string;
   example1Headline: string;
   example1Description: string;
   example2Headline: string;
   example2Description: string;
-  example3Headline?: string;
-  example3Description?: string;
 }) => {
   return (
     <Box
@@ -126,7 +122,7 @@ export const Examples = ({
               },
             },
           })}
-          configKey={""}
+          configKey=""
         />
       </Example>
       <Example
@@ -206,15 +202,9 @@ export const Examples = ({
               },
             },
           })}
-          configKey={""}
+          configKey=""
         />
       </Example>
-      {example3Headline && example3Description && (
-        <Example
-          headline={example3Headline}
-          description={example3Description}
-        ></Example>
-      )}
     </Box>
   );
 };
