@@ -508,7 +508,7 @@ msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graph
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-available-temporal-dimensions"
-msgstr "Il n'y a pas de dimensions temporelles disponibles à utiliser. Modifiez certains des encodages suivants : {fields} pour permettre l'animation."
+msgstr "Il n'y a pas de dimensions temporelles disponibles. Modifiez certains des encodages suivants : {fields} pour permettre l'animation."
 
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-temporal-dimensions"
@@ -629,7 +629,7 @@ msgstr "Segmentation"
 #: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
-msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio.\""
+msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
