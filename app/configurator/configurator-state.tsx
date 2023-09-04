@@ -52,6 +52,7 @@ import {
   makeMultiFilter,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { DimensionValue, isGeoDimension } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
@@ -741,6 +742,7 @@ export const handleChartFieldChanged = (
     measures,
     initializing: !f,
     selectedValues,
+    field,
   });
 
   // Remove the component from interactive data filters.
@@ -779,7 +781,7 @@ export const handleChartOptionChanged = (
         field,
         path
       );
-      sideEffect?.(value, { draft, dimensions, measures });
+      sideEffect?.(value, { draft, dimensions, measures, field });
     }
 
     if (value === FIELD_VALUE_NONE) {
