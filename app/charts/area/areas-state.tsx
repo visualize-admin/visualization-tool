@@ -51,7 +51,7 @@ import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -98,7 +98,7 @@ const useAreasState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const timeFormatUnit = useTimeFormatUnit();
-  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
 
   const segmentsByValue = useMemo(() => {
     const values = segmentDimension?.values || [];

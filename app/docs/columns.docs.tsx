@@ -11,6 +11,7 @@ import {
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
 
@@ -18,54 +19,56 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <ColumnChart
-      observations={columnObservations}
-      measures={columnMeasures}
-      measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
-      dimensions={columnDimensions}
-      dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
-      chartConfig={{
-        chartType: "column",
-        version: "1.4.2",
-        filters: {},
-        fields: columnFields,
-        interactiveFiltersConfig: {
-          legend: {
-            active: false,
-            componentIri: "",
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-          timeRange: {
-            presets: {
-              type: "range",
-              from: "0",
-              to: "0",
+    <InteractiveFiltersProvider>
+      <ColumnChart
+        observations={columnObservations}
+        measures={columnMeasures}
+        measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
+        dimensions={columnDimensions}
+        dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
+        chartConfig={{
+          chartType: "column",
+          version: "1.4.2",
+          filters: {},
+          fields: columnFields,
+          interactiveFiltersConfig: {
+            legend: {
+              active: false,
+              componentIri: "",
             },
-            active: false,
-            componentIri: "http://fake-iri",
+            dataFilters: {
+              active: false,
+              componentIris: [],
+            },
+            timeRange: {
+              presets: {
+                type: "range",
+                from: "0",
+                to: "0",
+              },
+              active: false,
+              componentIri: "http://fake-iri",
+            },
+            calculation: {
+              active: false,
+              type: "identity",
+            },
           },
-          calculation: {
-            active: false,
-            type: "identity",
-          },
-        },
-      }}
-      aspectRatio={0.4}
-    >
-      <ChartContainer>
-        <ChartSvg>
-          <AxisHeightLinear />
-          <AxisWidthBand />
-          <AxisWidthBandDomain />
-          <Columns />
-          <ErrorWhiskers />
-        </ChartSvg>
-        <Tooltip type="single" />
-      </ChartContainer>
-    </ColumnChart>
+        }}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <AxisHeightLinear />
+            <AxisWidthBand />
+            <AxisWidthBandDomain />
+            <Columns />
+            <ErrorWhiskers />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+      </ColumnChart>
+    </InteractiveFiltersProvider>
   </ReactSpecimen>
 )}
 `;

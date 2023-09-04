@@ -184,7 +184,7 @@ export const DataSetPreview = ({
               </Trans>
             </Typography>
           </Flex>
-          <DebugPanel configurator={true} />
+          <DebugPanel configurator />
         </Paper>
       </Flex>
     );
