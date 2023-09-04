@@ -59,7 +59,6 @@ import {
   isTableConfig,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
   DimensionValue,
@@ -1387,14 +1386,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
 
-        if (value === FIELD_VALUE_NONE) {
-          delete draft.chartConfig.filters[dimensionIri];
-        } else {
-          draft.chartConfig.filters[dimensionIri] = {
-            type: "single",
-            value,
-          };
-        }
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "single",
+          value,
+        };
       }
       return draft;
 

@@ -44,7 +44,8 @@ export const prepareQueryFilters = (
   chartType: ChartType,
   filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
-  dataFilters: InteractiveFiltersState["dataFilters"]
+  dataFilters: InteractiveFiltersState["dataFilters"],
+  allowNoneValues = false
 ): Filters => {
   const queryFilters = { ...filters };
 
@@ -54,15 +55,19 @@ export const prepareQueryFilters = (
     }
   }
 
-  return omitBy(queryFilters, (v) => {
-    return v.type === "single" && v.value === FIELD_VALUE_NONE;
-  });
+  return allowNoneValues
+    ? queryFilters
+    : omitBy(queryFilters, (v) => {
+        return v.type === "single" && v.value === FIELD_VALUE_NONE;
+      });
 };
 
 export const useQueryFilters = ({
   chartConfig,
+  allowNoneValues,
 }: {
   chartConfig: ChartConfig;
+  allowNoneValues?: boolean;
 }): QueryFilters => {
   const dataFilters = useInteractiveFilters((d) => d.dataFilters);
 
@@ -71,13 +76,15 @@ export const useQueryFilters = ({
       chartConfig.chartType,
       chartConfig.filters,
       chartConfig.interactiveFiltersConfig,
-      dataFilters
+      dataFilters,
+      allowNoneValues
     );
   }, [
     chartConfig.chartType,
     chartConfig.filters,
     chartConfig.interactiveFiltersConfig,
     dataFilters,
+    allowNoneValues,
   ]);
 };
 
