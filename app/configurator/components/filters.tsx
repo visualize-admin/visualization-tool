@@ -1015,39 +1015,11 @@ export const TimeFilter = (props: TimeFilterProps) => {
   );
 
   const { sortedOptions, sortedValues } = useMemo(() => {
-    if (temporalDimension) {
-      const { timeFormat, timeUnit } = temporalDimension;
-      const parse = formatLocale.parse(timeFormat);
-      const sortedOptions: {
-        value: ObservationValue;
-        label: string;
-        date: Date;
-      }[] = [];
-      const sortedValues: ObservationValue[] = [];
-
-      for (const { value } of temporalDimension.values) {
-        const date = parse(`${value}`);
-
-        if (date) {
-          sortedOptions.push({
-            value,
-            label: timeFormatUnit(date, timeUnit),
-            date,
-          });
-          sortedValues.push(value);
-        }
-      }
-
-      return {
-        sortedOptions,
-        sortedValues,
-      };
-    }
-
-    return {
-      sortedOptions: [],
-      sortedValues: [],
-    };
+    return getTimeFilterOptions({
+      dimension: temporalDimension,
+      formatLocale,
+      timeFormatUnit,
+    });
   }, [temporalDimension, formatLocale, timeFormatUnit]);
 
   const getClosestDatesFromDateRange = React.useCallback(
@@ -1192,6 +1164,50 @@ export const TimeFilter = (props: TimeFilterProps) => {
   } else {
     return <Loading />;
   }
+};
+
+type GetTimeFilterOptionsProps = {
+  dimension: TemporalDimension | null;
+  formatLocale: ReturnType<typeof useTimeFormatLocale>;
+  timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
+};
+
+export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
+  const { dimension, formatLocale, timeFormatUnit } = props;
+
+  if (dimension) {
+    const { timeFormat, timeUnit } = dimension;
+    const parse = formatLocale.parse(timeFormat);
+    const sortedOptions: {
+      value: ObservationValue;
+      label: string;
+      date: Date;
+    }[] = [];
+    const sortedValues: ObservationValue[] = [];
+
+    for (const { value } of dimension.values) {
+      const date = parse(`${value}`);
+
+      if (date) {
+        sortedOptions.push({
+          value,
+          label: timeFormatUnit(date, timeUnit),
+          date,
+        });
+        sortedValues.push(value);
+      }
+    }
+
+    return {
+      sortedOptions,
+      sortedValues,
+    };
+  }
+
+  return {
+    sortedOptions: [],
+    sortedValues: [],
+  };
 };
 
 export const InteractiveTimeRangeToggle = (
