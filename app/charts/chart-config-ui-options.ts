@@ -223,6 +223,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   filters: boolean;
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption<T>[];
+  hide?: boolean;
   options?: {
     [K in EncodingOption["field"]]?: Omit<
       Extract<EncodingOption<T>, { field: K }>,
@@ -328,6 +329,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
+  hide: true,
   disableInteractiveFilters: true,
   onChange: (iri, { draft, initializing }) => {
     if (initializing || !draft.chartConfig.fields.animation) {

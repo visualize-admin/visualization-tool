@@ -764,37 +764,39 @@ const ChartFields = (props: ChartFieldsProps) => {
 
   return (
     <>
-      {getChartSpec(chartConfig).encodings.map((encoding) => {
-        const { field, getDisabledState } = encoding;
-        const component = components.find(
-          (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
-        );
-        const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
+      {getChartSpec(chartConfig)
+        .encodings.filter((d) => !d.hide)
+        .map((encoding) => {
+          const { field, getDisabledState } = encoding;
+          const component = components.find(
+            (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
+          );
+          const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 
-        return baseLayer ? (
-          <OnOffControlTabField
-            key={field}
-            value={field}
-            icon="baseLayer"
-            label={<Trans id="chart.map.layers.base">Map Display</Trans>}
-            active={chartConfig.baseLayer.show}
-          />
-        ) : (
-          <ControlTabField
-            key={field}
-            component={
-              isMapConfig(chartConfig) && field === "symbolLayer"
-                ? chartConfig.fields.symbolLayer
-                  ? component
-                  : undefined
-                : component
-            }
-            value={field}
-            labelId={`${chartConfig.chartType}.${field}`}
-            {...getDisabledState?.(chartConfig, components, observations)}
-          />
-        );
-      })}
+          return baseLayer ? (
+            <OnOffControlTabField
+              key={field}
+              value={field}
+              icon="baseLayer"
+              label={<Trans id="chart.map.layers.base">Map Display</Trans>}
+              active={chartConfig.baseLayer.show}
+            />
+          ) : (
+            <ControlTabField
+              key={field}
+              component={
+                isMapConfig(chartConfig) && field === "symbolLayer"
+                  ? chartConfig.fields.symbolLayer
+                    ? component
+                    : undefined
+                  : component
+              }
+              value={field}
+              labelId={`${chartConfig.chartType}.${field}`}
+              {...getDisabledState?.(chartConfig, components, observations)}
+            />
+          );
+        })}
     </>
   );
 };
