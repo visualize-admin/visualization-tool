@@ -999,15 +999,23 @@ export const decodeConfiguratorState = (
   );
 };
 
-export const getChartConfig = (state: ConfiguratorState, chartKey?: string) => {
+/** Use to extract the chart config from configurator state. Handy in the editor mode,
+ * where the is a need to edit the active chart config.
+ *
+ * @param state configurator state
+ * @param chartKey optional chart key. If not provided, the active chart config will be returned.
+ *
+ */
+export const getChartConfig = (
+  state: ConfiguratorState,
+  chartKey?: string
+): ChartConfig => {
   if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
-    throw new Error("No chart config available");
+    throw new Error("No chart config available!");
   }
 
-  return (
-    state.chartConfigs.find(
-      (d) => d.key === (chartKey ?? state.activeChartKey)
-      // FIXME: color legend currently is scoped to the chart config, it shouldn't
-    ) ?? (state.chartConfigs[0] as ChartConfig)
-  );
+  const { chartConfigs, activeChartKey } = state;
+  const key = chartKey ?? activeChartKey;
+
+  return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
 };
