@@ -9,7 +9,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Animation field not updating
+  - Infinite loading of homepage chart
 
 # [3.22.2] - 2023-09-05
 

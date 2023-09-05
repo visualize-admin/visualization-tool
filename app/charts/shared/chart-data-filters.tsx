@@ -45,6 +45,7 @@ import { useLocale } from "@/locales/use-locale";
 import {
   DataFilters,
   useInteractiveFilters,
+  useInteractiveFiltersRaw,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 
@@ -538,6 +539,7 @@ const useEnsurePossibleInteractiveFilters = (
   const [error, setError] = React.useState<Error>();
   const lastFilters = React.useRef<Filters>();
   const client = useClient();
+  const IFRaw = useInteractiveFiltersRaw();
   const setDataFilters = useInteractiveFilters((d) => d.setDataFilters);
 
   React.useEffect(() => {
@@ -596,6 +598,10 @@ const useEnsurePossibleInteractiveFilters = (
         mappedFilters
       );
 
+      // We need to get the values dynamically, as they can get updated by
+      // useSyncInteractiveFilters and this callback runs with old value.
+      const dataFilters = IFRaw.getState().dataFilters;
+
       if (!isEqual(filters, interactiveFilters) && !isEmpty(filters)) {
         for (const [k, v] of Object.entries(filters)) {
           if (k in dataFilters && v.type === "single") {
@@ -623,6 +629,7 @@ const useEnsurePossibleInteractiveFilters = (
     mappedFilters,
     loadingState,
     interactiveFilters,
+    IFRaw,
   ]);
 
   return { error };
