@@ -13,9 +13,9 @@ import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
-import { Config } from "@/configurator";
+import { Config, getChartConfig } from "@/configurator";
 import { getConfig } from "@/db/config";
-import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
+import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -28,7 +28,7 @@ type PageProps =
       status: "found";
       config: {
         key: string;
-        data: Omit<Config, "activeField">;
+        data: Config;
       };
     };
 
@@ -96,6 +96,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
   const { key, data } = (props as Exclude<PageProps, { status: "notfound" }>)
     .config;
+  const chartConfig = getChartConfig({ ...data, state: "PUBLISHING" });
 
   return (
     <EmbedOptionsProvider>
@@ -127,11 +128,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               </Box>
             )}
 
-            <ChartPanelPublished chartType={data.chartConfig.chartType}>
+            <ChartPanelPublished chartType={data.chartConfigs[0].chartType}>
               <ChartPublished
                 dataSet={data.dataSet}
                 dataSource={data.dataSource}
-                chartConfig={data.chartConfig}
+                chartConfig={chartConfig}
                 meta={data.meta}
                 configKey={key}
               />

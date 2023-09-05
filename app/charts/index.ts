@@ -28,6 +28,7 @@ import {
   MapAreaLayer,
   MapConfig,
   MapSymbolLayer,
+  Meta,
   PieSegmentField,
   ScatterPlotSegmentField,
   SortingOrder,
@@ -40,6 +41,7 @@ import { HierarchyValue } from "@/graphql/resolver-types";
 import { getDefaultCategoricalPaletteName } from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { createChartId } from "@/utils/create-chart-id";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 
 import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
@@ -269,6 +271,21 @@ export const getInitialSymbolLayer = ({
   };
 };
 
+const META: Meta = {
+  title: {
+    en: "",
+    de: "",
+    fr: "",
+    it: "",
+  },
+  description: {
+    en: "",
+    de: "",
+    fr: "",
+    it: "",
+  },
+};
+
 export const getInitialConfig = ({
   chartType,
   dimensions,
@@ -278,6 +295,17 @@ export const getInitialConfig = ({
   dimensions: DataCubeMetadataWithHierarchies["dimensions"];
   measures: DataCubeMetadataWithHierarchies["measures"];
 }): ChartConfig => {
+  const genericConfigProps: {
+    key: string;
+    version: string;
+    meta: Meta;
+    activeField: string | undefined;
+  } = {
+    key: createChartId(),
+    version: CHART_CONFIG_VERSION,
+    meta: META,
+    activeField: undefined,
+  };
   const numericalMeasures = measures.filter(isNumericalMeasure);
 
   switch (chartType) {
@@ -285,7 +313,7 @@ export const getInitialConfig = ({
       const areaXComponentIri = getTemporalDimensions(dimensions)[0].iri;
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
@@ -305,7 +333,7 @@ export const getInitialConfig = ({
       ).iri;
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
@@ -323,7 +351,7 @@ export const getInitialConfig = ({
       const lineXComponentIri = getTemporalDimensions(dimensions)[0].iri;
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
@@ -342,7 +370,7 @@ export const getInitialConfig = ({
       const showSymbolLayer = !showAreaLayer;
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: makeInitialFiltersForArea(areaDimension),
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
@@ -377,7 +405,7 @@ export const getInitialConfig = ({
       const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
@@ -403,7 +431,7 @@ export const getInitialConfig = ({
       );
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType: "scatterplot",
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
@@ -433,7 +461,7 @@ export const getInitialConfig = ({
       );
 
       return {
-        version: CHART_CONFIG_VERSION,
+        ...genericConfigProps,
         chartType,
         filters: {},
         interactiveFiltersConfig: undefined,
@@ -487,11 +515,15 @@ export const getChartConfigAdjustedToChartType = ({
     measures,
   });
   const { interactiveFiltersConfig, ...rest } = chartConfig;
-  const newChartConfig = getAdjustedChartConfig({
+
+  return getAdjustedChartConfig({
     path: "",
     // Make sure interactiveFiltersConfig is passed as the last item, so that
     // it can be adjusted based on other, already adjusted fields.
-    field: { ...rest, interactiveFiltersConfig },
+    field: {
+      ...rest,
+      interactiveFiltersConfig,
+    },
     adjusters: chartConfigsAdjusters[newChartType],
     pathOverrides: chartConfigsPathOverrides[newChartType][oldChartType],
     oldChartConfig: chartConfig,
@@ -499,8 +531,6 @@ export const getChartConfigAdjustedToChartType = ({
     dimensions,
     measures,
   });
-
-  return newChartConfig;
 };
 
 const getAdjustedChartConfig = ({
@@ -819,7 +849,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               "sorting" in oldSegment &&
               oldSegment.sorting &&
               "sortingOrder" in oldSegment.sorting
-                ? oldSegment.sorting || DEFAULT_FIXED_COLOR_FIELD
+                ? oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD
                 : DEFAULT_SORTING,
           };
         }

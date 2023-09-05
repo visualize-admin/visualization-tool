@@ -16,7 +16,11 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
-import { DataSource, useConfiguratorState } from "@/configurator";
+import {
+  DataSource,
+  getChartConfig,
+  useConfiguratorState,
+} from "@/configurator";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,
@@ -60,6 +64,8 @@ const useStyles = makeStyles<Theme>({
 export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const { dataSetIri, dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  console.log(state.activeChartKey, chartConfig);
   const locale = useLocale();
   const classes = useStyles();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
@@ -199,22 +205,22 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   }}
                   dataSetIri={dataSetIri}
                   dataSource={dataSource}
-                  chartConfig={state.chartConfig}
+                  chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithFilters
                   dataSet={dataSetIri}
                   dataSource={dataSource}
-                  chartConfig={state.chartConfig}
+                  chartConfig={chartConfig}
                   published={false}
                 />
               )}
             </Box>
-            {state.chartConfig && (
+            {chartConfig && (
               <ChartFootnotes
                 dataSetIri={dataSetIri}
                 dataSource={dataSource}
-                chartConfig={state.chartConfig}
+                chartConfig={chartConfig}
                 onToggleTableView={handleToggleTableView}
               />
             )}

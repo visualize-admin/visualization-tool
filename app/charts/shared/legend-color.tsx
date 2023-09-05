@@ -14,6 +14,7 @@ import {
   DataSource,
   GenericSegmentField,
   MapConfig,
+  getChartConfig,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
@@ -148,16 +149,15 @@ const useLegendGroups = ({
   }
 
   const locale = useLocale();
+  const chartConfig = getChartConfig(configState);
 
   // FIXME: should color field also be included here?
   const segmentField = (
-    isSegmentInConfig(configState.chartConfig)
-      ? configState.chartConfig.fields.segment
-      : null
+    isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
 
   const segmentFilters = segmentField?.componentIri
-    ? configState.chartConfig.filters[segmentField.componentIri]
+    ? chartConfig.filters[segmentField.componentIri]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;

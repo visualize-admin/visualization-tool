@@ -31,7 +31,9 @@ const Page: NextPage = () => {
 
   if (config) {
     const { dataSet, dataSource, meta, chartConfig } = config.data;
-    const migratedConfig = migrateChartConfig(chartConfig);
+    const migratedConfig = migrateChartConfig(chartConfig, {
+      migrationProps: config.data,
+    });
 
     return (
       <EmbedOptionsProvider>

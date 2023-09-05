@@ -11,6 +11,7 @@ import {
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -25,8 +26,23 @@ ${(
       dimensions={columnDimensions}
       dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
       chartConfig={{
+        key: "column-chart",
         chartType: "column",
-        version: "1.4.2",
+        version: CHART_CONFIG_VERSION,
+        meta: {
+          title: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          },
+          description: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          },
+        },
         filters: {},
         fields: columnFields,
         interactiveFiltersConfig: {
@@ -52,6 +68,7 @@ ${(
             type: "identity",
           },
         },
+        activeField: undefined,
       }}
       aspectRatio={0.4}
     >

@@ -10,24 +10,29 @@ import {
 
 import { Loading } from "@/components/hint";
 import { TableFields } from "@/config-types";
-import { ConfiguratorStateConfiguringChart } from "@/configurator";
+import {
+  ConfiguratorStateConfiguringChart,
+  getChartConfig,
+} from "@/configurator";
 import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { AnnotatorTabField } from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { moveFields } from "@/configurator/table/table-config-state";
 import {
   useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { ChartTypeSelector } from "../components/chart-type-selector";
 
 const useStyles = makeStyles((theme: Theme) => ({
   emptyGroups: {
@@ -84,7 +89,8 @@ export const ChartConfiguratorTable = ({
       : null;
   }, [metadata?.dataCubeByIri, components?.dataCubeByIri]);
 
-  const [, dispatch] = useConfiguratorState();
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
 
   const [currentDraggableId, setCurrentDraggableId] = useState<string | null>(
     null
@@ -94,15 +100,11 @@ export const ChartConfiguratorTable = ({
     ({ source, destination }) => {
       setCurrentDraggableId(null);
 
-      if (
-        !destination ||
-        state.chartConfig.chartType !== "table" ||
-        !metaData
-      ) {
+      if (!destination || chartConfig.chartType !== "table" || !metaData) {
         return;
       }
 
-      const chartConfig = moveFields(state.chartConfig, {
+      const newChartConfig = moveFields(chartConfig, {
         source,
         destination,
       });
@@ -110,19 +112,19 @@ export const ChartConfiguratorTable = ({
       dispatch({
         type: "CHART_CONFIG_REPLACED",
         value: {
-          chartConfig,
+          chartConfig: newChartConfig,
           dataSetMetadata: metaData,
         },
       });
     },
-    [state, dispatch, metaData]
+    [chartConfig, dispatch, metaData]
   );
 
   const onDragStart = useCallback<OnDragStartResponder>(({ draggableId }) => {
     setCurrentDraggableId(draggableId);
   }, []);
 
-  const fields = state.chartConfig.fields as TableFields;
+  const fields = chartConfig.fields as TableFields;
   const fieldsArray = useOrderedTableColumns(fields);
 
   if (metaData) {

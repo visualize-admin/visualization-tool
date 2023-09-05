@@ -30,6 +30,7 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
+import { getChartConfig } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -548,8 +549,9 @@ export const MetaInputField = ({
 
 const useMultiFilterColorPicker = (value: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const { dimensionIri, colorConfigPath } = useMultiFilterContext();
-  const { activeField, chartConfig } = state;
+  const { activeField } = chartConfig;
   const onChange = useCallback(
     (color: string) => {
       if (activeField) {
@@ -642,7 +644,8 @@ export const ColorPickerField = ({
   disabled?: boolean;
 }) => {
   const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
 
   const updateColor = useCallback(
     (value: string) =>
@@ -658,11 +661,7 @@ export const ColorPickerField = ({
     [locale, dispatch, field, path]
   );
 
-  if (state.state !== "CONFIGURING_CHART") {
-    return null;
-  }
-
-  const color = get(state, `chartConfig.fields["${field}"].${path}`);
+  const color = get(chartConfig, `fields["${field}"].${path}`);
 
   return (
     <Flex

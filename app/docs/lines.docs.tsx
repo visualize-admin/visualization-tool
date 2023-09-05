@@ -15,6 +15,7 @@ import {
 } from "@/configurator";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -118,11 +119,27 @@ const fields = {
 };
 
 const chartConfig: LineConfig = {
+  key: "line",
+  version: CHART_CONFIG_VERSION,
+  meta: {
+    title: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+  },
   chartType: "line",
-  filters: {},
-  version: "1.4.2",
   interactiveFiltersConfig,
   fields,
+  filters: {},
+  activeField: undefined,
 };
 
 const measures = [

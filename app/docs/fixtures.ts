@@ -8,7 +8,7 @@ export const states: ConfiguratorState[] = [
     state: "SELECTING_DATASET",
     dataSet: undefined,
     dataSource: DEFAULT_DATA_SOURCE,
-    chartConfig: undefined,
+    chartConfigs: undefined,
     meta: {
       title: {
         de: "",
@@ -23,49 +23,67 @@ export const states: ConfiguratorState[] = [
         en: "",
       },
     },
-    activeField: undefined,
+    activeChartKey: undefined,
   },
   {
     state: "CONFIGURING_CHART",
     dataSet: "foo",
     dataSource: DEFAULT_DATA_SOURCE,
-    chartConfig: {
-      version: "1.2.1",
-      chartType: "column",
-      fields: {
-        x: {
-          componentIri: "foo",
-          sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
-        },
-        y: {
-          componentIri: "foo",
-        },
-      },
-      filters: {},
-      interactiveFiltersConfig: {
-        legend: {
-          active: false,
-          componentIri: "",
-        },
-        timeRange: {
-          active: false,
-          componentIri: "",
-          presets: {
-            type: "range",
-            from: "",
-            to: "",
+    chartConfigs: [
+      {
+        key: "column",
+        version: "1.2.1",
+        meta: {
+          title: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          },
+          description: {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
           },
         },
-        dataFilters: {
-          active: false,
-          componentIris: [],
+        chartType: "column",
+        fields: {
+          x: {
+            componentIri: "foo",
+            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+          },
+          y: {
+            componentIri: "foo",
+          },
         },
-        calculation: {
-          active: false,
-          type: "identity",
+        filters: {},
+        interactiveFiltersConfig: {
+          legend: {
+            active: false,
+            componentIri: "",
+          },
+          timeRange: {
+            active: false,
+            componentIri: "",
+            presets: {
+              type: "range",
+              from: "",
+              to: "",
+            },
+          },
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
         },
+        activeField: undefined,
       },
-    },
+    ],
     meta: {
       title: {
         de: "",
@@ -80,7 +98,7 @@ export const states: ConfiguratorState[] = [
         en: "",
       },
     },
-    activeField: undefined,
+    activeChartKey: undefined,
   },
 ];
 
@@ -790,7 +808,22 @@ export const tableDimensions = [
   },
 ];
 export const tableConfig: TableConfig = {
+  key: "table",
   version: "1.2.1",
+  meta: {
+    title: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+  },
   chartType: "table",
   filters: {},
   interactiveFiltersConfig: undefined,
@@ -1015,4 +1048,5 @@ export const tableConfig: TableConfig = {
       },
     },
   },
+  activeField: undefined,
 };

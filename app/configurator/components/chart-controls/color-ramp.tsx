@@ -14,6 +14,8 @@ import { Label } from "@/components/form";
 import {
   DivergingPaletteType,
   SequentialPaletteType,
+  getChartConfig,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { useLocale } from "@/locales/use-locale";
@@ -75,7 +77,8 @@ export const ColorRampField = ({
   nbClass,
 }: ColorRampFieldProps) => {
   const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
 
   const { palettes, defaultPalette } = useMemo(() => {
     const palettes = [...sequentialPalettes, ...divergingPalettes];
@@ -86,10 +89,9 @@ export const ColorRampField = ({
     return { palettes, defaultPalette };
   }, []);
 
-  const currentPaletteName = get(
-    state,
-    `chartConfig.fields.${field}.${path}`
-  ) as DivergingPaletteType | SequentialPaletteType;
+  const currentPaletteName = get(chartConfig, `fields.${field}.${path}`) as
+    | DivergingPaletteType
+    | SequentialPaletteType;
 
   const currentPalette =
     palettes.find((d) => d.value === currentPaletteName) || defaultPalette;

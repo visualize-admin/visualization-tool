@@ -70,6 +70,7 @@ const useLinesState = (
   data: ChartStateData
 ): LinesState => {
   const { chartConfig, aspectRatio } = chartProps;
+  console.log(chartConfig);
   const {
     xDimension,
     getX,

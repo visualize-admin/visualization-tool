@@ -85,6 +85,7 @@ const useColumnsStackedState = (
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
   const { aspectRatio, chartConfig } = chartProps;
+  console.log(chartConfig);
   const {
     xDimension,
     getX,

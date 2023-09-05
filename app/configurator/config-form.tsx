@@ -14,7 +14,7 @@ import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
-import { ChartConfig, ChartType } from "@/config-types";
+import { ChartConfig, ChartType, getChartConfig } from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,
@@ -167,8 +167,8 @@ export const useChartFieldField = ({
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value =
-      getFieldComponentIri(state.chartConfig.fields, field) ?? FIELD_VALUE_NONE;
+    const chartConfig = getChartConfig(state);
+    value = getFieldComponentIri(chartConfig.fields, field) ?? FIELD_VALUE_NONE;
   }
 
   return {
@@ -210,7 +210,11 @@ export const useChartOptionSelectField = <V extends {} = string>(
 
   let value: V | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(state, `chartConfig.fields.${field}.${path}`, FIELD_VALUE_NONE);
+    value = get(
+      getChartConfig(state),
+      `fields.${field}.${path}`,
+      FIELD_VALUE_NONE
+    );
   }
 
   return {
@@ -370,7 +374,8 @@ export const useActiveFieldField = ({
 }): FieldProps & {
   onClick: (x: string) => void;
 } => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
 
   const onClick = useCallback(() => {
     dispatch({
@@ -379,7 +384,7 @@ export const useActiveFieldField = ({
     });
   }, [dispatch, value]);
 
-  const checked = state.activeField === value;
+  const checked = chartConfig.activeField === value;
 
   return {
     value,
@@ -395,6 +400,7 @@ export const useChartType = (): {
 } => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const onChange = useEvent((chartType: ChartType) => {
     dispatch({
       type: "CHART_TYPE_CHANGED",
@@ -405,10 +411,7 @@ export const useChartType = (): {
     });
   });
 
-  const value =
-    state.state === "CONFIGURING_CHART"
-      ? get(state, "chartConfig.chartType")
-      : "";
+  const value = get(chartConfig, "chartType");
 
   return {
     onChange,
@@ -447,8 +450,9 @@ export const useSingleFilterSelect = ({
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
+    const chartConfig = getChartConfig(state);
     value = get(
-      state.chartConfig,
+      chartConfig,
       ["filters", dimensionIri, "value"],
       FIELD_VALUE_NONE
     );
@@ -484,7 +488,7 @@ export const useSingleFilterField = ({
 
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(state.chartConfig, ["filters", dimensionIri, "value"], "")
+      ? get(getChartConfig(state), ["filters", dimensionIri, "value"], "")
       : "";
 
   const checked = stateValue === value;

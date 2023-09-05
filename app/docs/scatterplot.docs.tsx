@@ -18,6 +18,7 @@ import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -117,11 +118,27 @@ const scatterplotFields = {
 };
 
 const chartConfig: ScatterPlotConfig = {
+  key: "scatterplot",
+  version: CHART_CONFIG_VERSION,
+  meta: {
+    title: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+  },
   chartType: "scatterplot",
   filters: {},
-  version: "1.4.2",
   interactiveFiltersConfig,
   fields: scatterplotFields,
+  activeField: undefined,
 };
 
 const scatterplotMeasures = [

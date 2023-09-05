@@ -14,14 +14,14 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
         dataSet: state.dataSet,
         dataSource: state.dataSource,
         meta: state.meta,
-        chartConfig: state.chartConfig,
+        chartConfigs: state.chartConfigs,
       },
     },
   });
 };
 
-export const fetchChartConfig = async (chartId: string) => {
+export const fetchChartConfig = async (id: string) => {
   return await apiFetch<InferAPIResponse<typeof apiConfig, "GET">>(
-    `/api/config/${chartId}`
+    `/api/config/${id}`
   );
 };

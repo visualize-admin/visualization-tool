@@ -7,6 +7,7 @@ import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  getChartConfig,
 } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
@@ -19,10 +20,11 @@ export const ChartPanelConfigurator = (props: ChartPanelProps) => {
   const [state] = useConfiguratorState() as unknown as [
     ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
   ];
+  const chartConfig = getChartConfig(state);
 
   return (
     <>
-      <ChartSelectionTabs editable chartType={state.chartConfig.chartType} />
+      <ChartSelectionTabs editable chartType={chartConfig.chartType} />
       <ChartPanelInner showTabs {...props} />
     </>
   );

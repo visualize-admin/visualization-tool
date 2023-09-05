@@ -155,7 +155,7 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       state: "PUBLISHING",
       dataSet,
       dataSource,
-      chartConfig,
+      chartConfigs: [chartConfig],
     } as ConfiguratorStatePublishing;
   }, [dataSet, dataSource, chartConfig]);
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));

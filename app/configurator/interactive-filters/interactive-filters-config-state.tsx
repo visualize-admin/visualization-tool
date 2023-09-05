@@ -2,7 +2,7 @@ import produce from "immer";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
-import { InteractiveFiltersConfig } from "@/config-types";
+import { InteractiveFiltersConfig, getChartConfig } from "@/config-types";
 import {
   isConfiguring,
   useConfiguratorState,
@@ -12,27 +12,22 @@ import useEvent from "@/utils/use-event";
 
 export const useInteractiveFiltersToggle = (target: "legend") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    const newConfig = produce(
-      state.chartConfig.interactiveFiltersConfig,
-      (draft) => {
-        if (draft?.[target]) {
-          draft[target].active = e.currentTarget.checked;
-        }
-
-        return draft;
-      }
-    );
+    if (chartConfig.interactiveFiltersConfig?.[target]) {
+      chartConfig.interactiveFiltersConfig[target].active =
+        e.currentTarget.checked;
+    }
 
     dispatch({
       type: "INTERACTIVE_FILTER_CHANGED",
-      value: newConfig,
+      value: chartConfig.interactiveFiltersConfig,
     });
   });
 
   const stateValue = get(
-    state,
-    `chartConfig.interactiveFiltersConfig.${target}.active`
+    chartConfig,
+    `interactiveFiltersConfig.${target}.active`
   );
   const checked = stateValue ? stateValue : false;
 
@@ -49,34 +44,30 @@ export const useInteractiveTimeRangeFiltersToggle = ({
   timeExtent: [string, string];
 }) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const { chartConfig } = state;
+  const chartConfig = getChartConfig(state);
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       const active = e.currentTarget.checked;
 
       if (timeExtent) {
-        const newConfig = produce(
-          chartConfig.interactiveFiltersConfig,
-          (draft) => {
-            if (draft?.timeRange) {
-              const { from, to } = draft.timeRange.presets;
-              draft.timeRange.active = active;
+        if (chartConfig.interactiveFiltersConfig?.timeRange) {
+          const { from, to } =
+            chartConfig.interactiveFiltersConfig.timeRange.presets;
+          chartConfig.interactiveFiltersConfig.timeRange.active = active;
 
-              // set min and max date as default presets for time brush
-              if (active && !from && !to) {
-                draft.timeRange.presets.from = timeExtent[0];
-                draft.timeRange.presets.to = timeExtent[1];
-              }
-            }
-
-            return draft;
+          // set min and max date as default presets for time brush
+          if (active && !from && !to) {
+            chartConfig.interactiveFiltersConfig.timeRange.presets.from =
+              timeExtent[0];
+            chartConfig.interactiveFiltersConfig.timeRange.presets.to =
+              timeExtent[1];
           }
-        );
+        }
 
         dispatch({
           type: "INTERACTIVE_FILTER_CHANGED",
-          value: newConfig,
+          value: chartConfig.interactiveFiltersConfig,
         });
       }
     },
@@ -84,8 +75,8 @@ export const useInteractiveTimeRangeFiltersToggle = ({
   );
 
   const stateValue = get(
-    state,
-    `chartConfig.interactiveFiltersConfig.timeRange.active`
+    chartConfig,
+    `interactiveFiltersConfig.timeRange.active`
   );
   const checked = stateValue ? stateValue : false;
 
@@ -121,7 +112,7 @@ export const useInteractiveDataFiltersToggle = ({
   dimensions: DimensionMetadataFragment[];
 }) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const { chartConfig } = state;
+  const chartConfig = getChartConfig(state);
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
@@ -169,8 +160,9 @@ export const useInteractiveDataFiltersToggle = ({
  */
 export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const toggle = useEvent(() => {
-    const { interactiveFiltersConfig } = state.chartConfig;
+    const { interactiveFiltersConfig } = chartConfig;
     const newIFConfig = toggleInteractiveFilterDataDimension(
       interactiveFiltersConfig,
       dimensionIri
@@ -182,7 +174,7 @@ export const useInteractiveDataFilterToggle = (dimensionIri: string) => {
     });
   });
   const checked =
-    state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
+    chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
       dimensionIri
     );
 
@@ -221,8 +213,9 @@ export const toggleInteractiveFilterDataDimension = produce(
  */
 export const useInteractiveTimeRangeToggle = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const toggle = useEvent(() => {
-    const { interactiveFiltersConfig } = state.chartConfig;
+    const { interactiveFiltersConfig } = chartConfig;
     const newIFConfig = toggleInteractiveTimeRangeFilter(
       interactiveFiltersConfig
     );
@@ -232,7 +225,7 @@ export const useInteractiveTimeRangeToggle = () => {
       value: newIFConfig,
     });
   });
-  const checked = state.chartConfig.interactiveFiltersConfig?.timeRange.active;
+  const checked = chartConfig.interactiveFiltersConfig?.timeRange.active;
 
   return { checked, toggle };
 };

@@ -1,16 +1,18 @@
 import produce from "immer";
 
-export const CHART_CONFIG_VERSION = "1.4.2";
+import { createChartId } from "@/utils/create-chart-id";
 
 type Migration = {
   description: string;
   from: string;
   to: string;
-  up: (config: any) => any;
-  down: (config: any) => any;
+  up: (config: any, migrationProps?: any) => any;
+  down: (config: any, migrationProps?: any) => any;
 };
 
-const migrations: Migration[] = [
+export const CHART_CONFIG_VERSION = "2.0.0";
+
+const chartConfigMigrations: Migration[] = [
   {
     description: `MAP
     baseLayer {
@@ -19,7 +21,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.0.0",
     to: "1.0.1",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.0.1" };
 
       if (newConfig.chartType === "map") {
@@ -34,7 +36,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.0.0" };
 
       if (newConfig.chartType === "map") {
@@ -61,7 +63,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.0.1",
     to: "1.0.2",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.0.2" };
 
       if (newConfig.chartType === "map") {
@@ -84,7 +86,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.0.1" };
 
       if (newConfig.chartType === "map") {
@@ -115,7 +117,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.0.2",
     to: "1.1.0",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.1.0" };
 
       if (newConfig.chartType === "map") {
@@ -144,7 +146,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.0.2" };
 
       if (newConfig.chartType === "map") {
@@ -256,7 +258,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.1.0",
     to: "1.1.1",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.1.1" };
 
       if (newConfig.chartType === "map") {
@@ -319,7 +321,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.1.0" };
 
       if (newConfig.chartType === "map") {
@@ -336,7 +338,7 @@ const migrations: Migration[] = [
               palette: color.palette,
               colorScaleType: color.scaleType,
               colorInterpolationType: color.interpolationType,
-              nbClass: color.nbClass || 3,
+              nbClass: color.nbClass ?? 3,
             };
           });
         }
@@ -369,12 +371,12 @@ const migrations: Migration[] = [
     `,
     from: "1.1.1",
     to: "1.2.0",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.2.0" };
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.1.1" };
 
       if (newConfig.chartType === "map") {
@@ -398,7 +400,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.2.0",
     to: "1.2.1",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.2.1" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -415,7 +417,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.2.0" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -440,7 +442,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.2.1",
     to: "1.3.0",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.3.0" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -458,7 +460,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.2.1" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -485,7 +487,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.3.0",
     to: "1.4.0",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.4.0" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -514,7 +516,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.3.0" };
 
       const { fields } = config;
@@ -546,7 +548,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.4.0",
     to: "1.4.1",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.4.1" };
 
       const { fields, interactiveFiltersConfig } = newConfig;
@@ -570,7 +572,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.4.0" };
 
       const { interactiveFiltersConfig } = config;
@@ -594,7 +596,7 @@ const migrations: Migration[] = [
     }`,
     from: "1.4.1",
     to: "1.4.2",
-    up: (config: any) => {
+    up: (config) => {
       let newConfig = { ...config, version: "1.4.2" };
 
       const { interactiveFiltersConfig } = newConfig;
@@ -613,7 +615,7 @@ const migrations: Migration[] = [
 
       return newConfig;
     },
-    down: (config: any) => {
+    down: (config) => {
       let newConfig = { ...config, version: "1.4.1" };
 
       const { interactiveFiltersConfig } = config;
@@ -628,42 +630,126 @@ const migrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `ALL + key`,
+    from: "1.4.2",
+    to: "2.0.0",
+    up: (config, configuratorState) => {
+      const newConfig = { ...config, version: "2.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        draft.key = createChartId();
+        draft.meta = configuratorState.meta;
+        draft.activeField = configuratorState.activeField;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "1.4.2" };
+
+      return produce(newConfig, (draft: any) => {
+        delete draft.key;
+      });
+    },
+  },
 ];
 
-export const migrateChartConfig = (
-  config: any,
+export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
+  defaultToVersion: CHART_CONFIG_VERSION,
+});
+
+export const CONFIGURATOR_STATE_VERSION = "2.0.0";
+
+const configuratorStateMigrations: Migration[] = [
   {
-    fromVersion,
-    toVersion = CHART_CONFIG_VERSION,
-  }: { fromVersion?: string; toVersion?: string } = {}
-) => {
-  const _migrateChartConfig = (
-    config: any,
-    {
+    description: `ALL`,
+    from: "1.0.0",
+    to: "2.0.0",
+    up: (config: any) => {
+      const newConfig = { ...config, version: "2.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const migratedChartConfig = migrateChartConfig(draft.chartConfig, {
+          migrationProps: draft,
+          toVersion: "2.0.0",
+        });
+        draft.chartConfigs = [migratedChartConfig];
+        delete draft.chartConfig;
+        delete draft.activeField;
+        draft.activeChartKey = migratedChartConfig.key;
+      });
+    },
+    down: (config: any) => {
+      const newConfig = { ...config, version: "1.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfig = draft.chartConfigs[0];
+        delete draft.chartConfigs;
+        delete draft.activeChartKey;
+        draft.meta = chartConfig.meta;
+        draft.activeField = chartConfig.activeField;
+        const migratedChartConfig = migrateChartConfig(chartConfig, {
+          toVersion: "1.4.2",
+        });
+        draft.chartConfig = migratedChartConfig;
+      });
+    },
+  },
+];
+
+export const migrateConfiguratorState = makeMigrate(
+  configuratorStateMigrations,
+  {
+    defaultToVersion: CONFIGURATOR_STATE_VERSION,
+  }
+);
+
+function makeMigrate(
+  migrations: Migration[],
+  options: { defaultToVersion: string }
+) {
+  const { defaultToVersion } = options;
+
+  return (
+    data: any,
+    options: {
+      fromVersion?: string;
+      toVersion?: string;
+      migrationProps?: any;
+    } = {}
+  ) => {
+    const {
       fromVersion,
-      toVersion = CHART_CONFIG_VERSION,
-    }: { fromVersion?: string; toVersion?: string } = {}
-  ): any => {
-    const fromVersionFinal = fromVersion || config.version || "1.0.0";
-    const direction = upOrDown(fromVersionFinal, toVersion);
+      toVersion = defaultToVersion,
+      migrationProps,
+    } = options;
+    const migrate = (
+      data: any,
+      {
+        fromVersion,
+      }: {
+        fromVersion?: string;
+      } = {}
+    ): any => {
+      const fromVersionFinal = fromVersion ?? data.version ?? "1.0.0";
+      const direction = upOrDown(fromVersionFinal, toVersion);
 
-    if (direction === "same") {
-      return config;
-    }
+      if (direction === "same") {
+        return data;
+      }
 
-    const currentMigration = migrations.find(
-      (migration) =>
-        migration[direction === "up" ? "from" : "to"] === fromVersionFinal
-    );
+      const migration = migrations.find(
+        (d) => d[direction === "up" ? "from" : "to"] === fromVersionFinal
+      );
 
-    if (currentMigration) {
-      const newConfig = currentMigration[direction](config);
-      return _migrateChartConfig(newConfig, { fromVersion, toVersion });
-    }
+      if (migration) {
+        const newData = migration[direction](data, migrationProps);
+        return migrate(newData, { fromVersion });
+      }
+    };
+
+    return migrate(data, { fromVersion });
   };
-
-  return _migrateChartConfig(config, { fromVersion, toVersion });
-};
+}
 
 const upOrDown = (
   fromVersion: string,

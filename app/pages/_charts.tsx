@@ -89,16 +89,16 @@ const Page: NextPage<PageProps> = ({ configs }) => {
           <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
             {configs.map(
               (
-                { key, data: { dataSet, dataSource, chartConfig, meta } },
+                { key, data: { dataSet, dataSource, chartConfigs, meta } },
                 i
               ) => {
-                return (
+                return chartConfigs.map((d) => (
                   <Box
                     key={key}
                     id={`chart-${key}`}
                     sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
                   >
-                    <ChartPanelPublished chartType={chartConfig.chartType}>
+                    <ChartPanelPublished chartType={d.chartType}>
                       <HiddenUntilScrolledTo
                         initialVisible={i < 5}
                         fallback={<div>Loading...</div>}
@@ -106,7 +106,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                         <ChartPublished
                           dataSet={dataSet}
                           dataSource={dataSource}
-                          chartConfig={chartConfig}
+                          chartConfig={d}
                           meta={meta}
                           configKey={key}
                         />
@@ -125,7 +125,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       </Box>
                     </ChartPanelPublished>
                   </Box>
-                );
+                ));
               }
             )}
           </Flex>

@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/form";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
+  getChartConfig,
   isTableConfig,
   TableConfig,
 } from "@/config-types";
@@ -31,7 +32,10 @@ import {
 } from "@/configurator/components/filters";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
-import { useConfiguratorState } from "@/configurator/configurator-state";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { TableSortingOptions } from "@/configurator/table/table-chart-sorting-options";
 import {
   updateIsGroup,
@@ -63,16 +67,13 @@ const useTableColumnGroupHiddenField = ({
   field: string;
   metaData: DataCubeMetadata;
 }): FieldProps => {
-  const [state, dispatch] = useConfiguratorState();
-
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (
-        state.state === "CONFIGURING_CHART" &&
-        isTableConfig(state.chartConfig)
-      ) {
+      if (isTableConfig(chartConfig)) {
         const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
-        const chartConfig = updater(state.chartConfig, {
+        const newChartConfig = updater(chartConfig, {
           field,
           value: e.currentTarget.checked,
         });
@@ -80,18 +81,15 @@ const useTableColumnGroupHiddenField = ({
         dispatch({
           type: "CHART_CONFIG_REPLACED",
           value: {
-            chartConfig,
+            chartConfig: newChartConfig,
             dataSetMetadata: metaData,
           },
         });
       }
     },
-    [state, path, field, dispatch, metaData]
+    [path, chartConfig, field, dispatch, metaData]
   );
-  const stateValue =
-    state.state === "CONFIGURING_CHART"
-      ? get(state, `chartConfig.fields["${field}"].${path}`, "")
-      : "";
+  const stateValue = get(chartConfig, `fields["${field}"].${path}`, "");
   const checked = stateValue ? stateValue : false;
 
   return {
@@ -139,7 +137,8 @@ export const TableColumnOptions = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadataWithHierarchies;
 }) => {
-  const { activeField: _activeField, chartConfig } = state;
+  const chartConfig = getChartConfig(state);
+  const { activeField: _activeField } = chartConfig;
   const activeField = _activeField as EncodingFieldType | undefined;
 
   if (!activeField || chartConfig.chartType !== "table") {

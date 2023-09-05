@@ -792,30 +792,31 @@ describe("colorMapping", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "column",
-        fields: {
-          y: {
-            componentIri: "measure",
+      chartConfigs: [
+        {
+          key: "abc",
+          chartType: "column",
+          fields: {
+            y: {
+              componentIri: "measure",
+            },
           },
+          filters: {},
         },
-        filters: {},
-      },
+      ],
+      activeChartKey: "abc",
     } as ConfiguratorStateConfiguringChart;
 
-    handleChartFieldChanged(
-      state as unknown as ConfiguratorStateConfiguringChart,
-      {
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale: "en",
-          field: "segment",
-          componentIri: "newAreaLayerColorIri",
-        },
-      }
-    );
+    handleChartFieldChanged(state, {
+      type: "CHART_FIELD_CHANGED",
+      value: {
+        locale: "en",
+        field: "segment",
+        componentIri: "newAreaLayerColorIri",
+      },
+    });
 
-    const chartConfig = state.chartConfig as ColumnConfig;
+    const chartConfig = state.chartConfigs[0] as ColumnConfig;
 
     expect(chartConfig.fields.segment?.componentIri === "newAreaLayerColorIri");
     expect(chartConfig.fields.segment?.palette === "dimension");
@@ -834,40 +835,43 @@ describe("handleChartFieldChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          symbolLayer: {
-            componentIri: "symbolLayerIri",
-            color: {
-              type: "categorical",
-              componentIri: "symbolLayerColorIri",
-              palette: "oranges",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
+      chartConfigs: [
+        {
+          key: "cba",
+          chartType: "map",
+          fields: {
+            symbolLayer: {
+              componentIri: "symbolLayerIri",
+              color: {
+                type: "categorical",
+                componentIri: "symbolLayerColorIri",
+                palette: "oranges",
+                colorMapping: {
+                  red: "green",
+                  green: "blue",
+                  blue: "red",
+                },
               },
             },
           },
+          filters: {},
         },
-        filters: {},
+      ],
+      activeChartKey: "cba",
+    } as unknown as ConfiguratorStateConfiguringChart;
+
+    handleChartFieldChanged(state, {
+      type: "CHART_FIELD_CHANGED",
+      value: {
+        locale: "en",
+        field: "symbolLayer",
+        componentIri: "symbolLayerIri",
       },
-    };
+    });
 
-    handleChartFieldChanged(
-      state as unknown as ConfiguratorStateConfiguringChart,
-      {
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale: "en",
-          field: "symbolLayer",
-          componentIri: "symbolLayerIri",
-        },
-      }
-    );
-
-    expect(state.chartConfig.fields.symbolLayer.color).toBeDefined();
+    expect(
+      (state.chartConfigs[0] as any).fields.symbolLayer.color
+    ).toBeDefined();
   });
 });
 
@@ -880,22 +884,26 @@ describe("handleChartOptionChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          areaLayer: {
-            componentIri: "areaLayerIri",
-            color: {
-              type: "numerical",
-              componentIri: "areaLayerColorIri",
-              palette: "oranges",
-              scaleType: "continuous",
-              interpolationType: "linear",
+      chartConfigs: [
+        {
+          key: "bac",
+          chartType: "map",
+          fields: {
+            areaLayer: {
+              componentIri: "areaLayerIri",
+              color: {
+                type: "numerical",
+                componentIri: "areaLayerColorIri",
+                palette: "oranges",
+                scaleType: "continuous",
+                interpolationType: "linear",
+              },
             },
           },
+          filters: {},
         },
-        filters: {},
-      },
+      ],
+      activeChartKey: "bac",
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
@@ -909,7 +917,7 @@ describe("handleChartOptionChanged", () => {
     });
 
     expect(
-      (state.chartConfig as any).fields.areaLayer.color.nbClass
+      (state.chartConfigs[0] as any).fields.areaLayer.color.nbClass
     ).toBeTruthy();
   });
 
@@ -921,33 +929,37 @@ describe("handleChartOptionChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          areaLayer: {
-            componentIri: "areaLayerIri",
-            color: {
-              type: "categorical",
-              componentIri: "areaLayerColorIri",
-              palette: "dimension",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
+      chartConfigs: [
+        {
+          key: "cab",
+          chartType: "map",
+          fields: {
+            areaLayer: {
+              componentIri: "areaLayerIri",
+              color: {
+                type: "categorical",
+                componentIri: "areaLayerColorIri",
+                palette: "dimension",
+                colorMapping: {
+                  red: "green",
+                  green: "blue",
+                  blue: "red",
+                },
+              },
+            },
+          },
+          filters: {
+            areaLayerColorIri: {
+              type: "multi",
+              values: {
+                red: true,
+                green: true,
               },
             },
           },
         },
-        filters: {
-          areaLayerColorIri: {
-            type: "multi",
-            values: {
-              red: true,
-              green: true,
-            },
-          },
-        },
-      },
+      ],
+      activeChartKey: "cab",
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
@@ -960,7 +972,7 @@ describe("handleChartOptionChanged", () => {
       },
     });
 
-    expect(Object.keys(state.chartConfig.filters)).not.toContain(
+    expect(Object.keys(state.chartConfigs[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
   });

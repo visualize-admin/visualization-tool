@@ -44,6 +44,8 @@ import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import {
+  ChartConfig,
+  getChartConfig,
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
@@ -92,7 +94,7 @@ import {
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import { ConfiguratorState, GenericSegmentField } from "../../config-types";
+import { GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
 
 import { ControlSectionSkeleton } from "./chart-controls/section";
@@ -168,20 +170,18 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
 };
 
 const getColorConfig = (
-  config: ConfiguratorState,
+  chartConfig: ChartConfig,
   colorConfigPath: string | undefined
 ) => {
-  if (!config.activeField) {
+  if (!chartConfig.activeField) {
     return;
   }
 
   const path = colorConfigPath
-    ? [config.activeField, colorConfigPath]
-    : [config.activeField];
+    ? [chartConfig.activeField, colorConfigPath]
+    : [chartConfig.activeField];
 
-  return get(config.chartConfig.fields, path) as
-    | GenericSegmentField
-    | undefined;
+  return get(chartConfig.fields, path) as GenericSegmentField | undefined;
 };
 
 const FilterControls = ({
@@ -227,9 +227,10 @@ const MultiFilterContent = ({
   tree: HierarchyValue[];
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(config);
   const { dimensionIri, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
-  const rawValues = config.chartConfig.filters[dimensionIri];
+  const rawValues = chartConfig.filters[dimensionIri];
 
   const classes = useStyles();
 
@@ -340,8 +341,8 @@ const MultiFilterContent = ({
   );
 
   const colorConfig = useMemo(() => {
-    return getColorConfig(config, colorConfigPath);
-  }, [config, colorConfigPath]);
+    return getColorConfig(chartConfig, colorConfigPath);
+  }, [chartConfig, colorConfigPath]);
 
   const hasColorMapping = useMemo(() => {
     return (
@@ -358,7 +359,7 @@ const MultiFilterContent = ({
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
         <Box sx={{ justifyContent: "space-between", display: "flex" }}>
-          {config.activeField === "segment" ? (
+          {chartConfig.activeField === "segment" ? (
             <FormControlLabel
               componentsProps={{ typography: { variant: "body2" } }}
               control={<Switch {...interactiveFilterProps} />}
@@ -899,7 +900,9 @@ export const DimensionValuesMultiFilter = ({
   field?: string;
 }) => {
   const locale = useLocale();
-  const [{ dataSource, chartConfig }] = useConfiguratorState(isConfiguring);
+  const [state] = useConfiguratorState(isConfiguring);
+  const { dataSource } = state;
+  const chartConfig = getChartConfig(state);
 
   const [{ data }] = useDimensionValuesQuery({
     variables: {

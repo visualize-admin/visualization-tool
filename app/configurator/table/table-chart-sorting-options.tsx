@@ -21,6 +21,7 @@ import { Radio, Select } from "@/components/form";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   ConfiguratorStateConfiguringChart,
+  getChartConfig,
   TableConfig,
   TableSortingOption,
 } from "@/config-types";
@@ -346,14 +347,15 @@ export const TableSortingOptions = ({
   dataSetMetadata: DataCubeMetadataWithHierarchies;
 }) => {
   const [, dispatch] = useConfiguratorState();
-  const { activeField, chartConfig } = state;
+  const chartConfig = getChartConfig(state);
+  const { activeField } = chartConfig;
   const classes = useStyles();
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
       if (
         !destination ||
-        state.chartConfig.chartType !== "table" ||
+        chartConfig.chartType !== "table" ||
         !dataSetMetadata
       ) {
         return;
@@ -362,7 +364,7 @@ export const TableSortingOptions = ({
       dispatch({
         type: "CHART_CONFIG_REPLACED",
         value: {
-          chartConfig: moveSortingOptions(state.chartConfig, {
+          chartConfig: moveSortingOptions(chartConfig, {
             source,
             destination,
           }),
@@ -370,7 +372,7 @@ export const TableSortingOptions = ({
         },
       });
     },
-    [state, dispatch, dataSetMetadata]
+    [chartConfig, dataSetMetadata, dispatch]
   );
 
   if (!activeField || chartConfig.chartType !== "table") {

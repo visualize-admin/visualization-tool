@@ -4,6 +4,7 @@ import { getFieldComponentIri } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
 import {
   ConfiguratorStateConfiguringChart,
+  getChartConfig,
   isAnimationInConfig,
 } from "@/config-types";
 import {
@@ -26,10 +27,12 @@ export const isInteractiveFilterType = (
 };
 
 export const InteractiveFiltersConfigurator = ({
-  state: { dataSet, dataSource, chartConfig },
+  state,
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const { dataSet, dataSource } = state;
+  const chartConfig = getChartConfig(state);
   const { fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useComponentsQuery({

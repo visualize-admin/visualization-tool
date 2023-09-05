@@ -4,14 +4,12 @@
 
 import { Config, Prisma, User } from "@prisma/client";
 
-import { ChartConfig, Config as ConfigType } from "@/configurator";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import { ChartConfig } from "@/configurator";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 import { createChartId } from "../utils/create-chart-id";
 
 import prisma from "./client";
-
-type PublishedConfig = Omit<ConfigType, "activeField">;
 
 /**
  * Store data in the DB.
@@ -64,16 +62,17 @@ type ChartJsonConfig = {
   chartConfig: Prisma.JsonObject;
 };
 
-const parseDbConfig = (conf: Config) => {
-  const data = conf.data as ChartJsonConfig;
-  const migratedData = {
-    ...data,
-    dataSet: migrateDataSet(data.dataSet),
-    chartConfig: ensureFiltersOrder(migrateChartConfig(data.chartConfig)),
-  } as PublishedConfig;
+const parseDbConfig = (d: Config) => {
+  const data = d.data as ChartJsonConfig;
+  const migratedData = migrateConfiguratorState(data);
+
   return {
-    ...conf,
-    data: migratedData,
+    ...d,
+    data: {
+      ...migratedData,
+      dataSet: migrateDataSet(migratedData.dataSet),
+      chartConfigs: migratedData.chartConfigs.map(ensureFiltersOrder),
+    },
   };
 };
 

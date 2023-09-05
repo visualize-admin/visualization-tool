@@ -14,6 +14,8 @@ import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  getChartConfig,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -24,6 +26,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
+import { createChartId } from "@/utils/create-chart-id";
 import useEvent from "@/utils/use-event";
 
 import Flex from "./flex";
@@ -99,9 +102,8 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
 }));
 
 const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
-  const [configuratorState] = useConfiguratorState() as unknown as [
-    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
-  ];
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
@@ -117,16 +119,39 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
   useEffect(() => {
     handleClose();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configuratorState.chartConfig.chartType]);
+  }, [chartConfig.chartType]);
 
   return (
     <>
       <TabsInner
-        chartType={chartType}
-        editable
+        data={state.chartConfigs.map((d) => {
+          return {
+            key: d.key,
+            chartType: d.chartType,
+            editable: true,
+          };
+        })}
         onActionButtonClick={(e: React.MouseEvent<HTMLElement>) => {
+          e.stopPropagation();
           setPopoverAnchorEl(e.currentTarget);
           setTabsState({ isPopoverOpen: true });
+        }}
+        onSwitchButtonClick={(key: string) => {
+          dispatch({
+            type: "SWITCH_ACTIVE_CHART",
+            value: key,
+          });
+        }}
+        onAddButtonClick={() => {
+          dispatch({
+            type: "CHART_CONFIG_ADD",
+            value: {
+              chartConfig: {
+                ...chartConfig,
+                key: createChartId(),
+              },
+            },
+          });
         }}
       />
       <Popover
@@ -141,7 +166,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
       >
         <ChartTypeSelector
           className={classes.editableChartTypeSelector}
-          state={configuratorState}
+          state={state}
         />
       </Popover>
     </>
@@ -149,7 +174,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
 };
 
 const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
-  return <TabsInner chartType={chartType} />;
+  return <TabsInner data={[{ key: "", chartType }]} />;
 };
 
 const PublishChartButton = () => {
@@ -200,13 +225,15 @@ const PublishChartButton = () => {
 };
 
 const TabsInner = ({
-  chartType,
-  editable = false,
+  data,
   onActionButtonClick,
+  onSwitchButtonClick,
+  onAddButtonClick,
 }: {
-  chartType: ChartType;
-  editable?: boolean;
+  data: { key: string; chartType: ChartType; editable?: boolean }[];
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onSwitchButtonClick?: (key: string) => void;
+  onAddButtonClick?: () => void;
 }) => {
   return (
     <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
@@ -215,6 +242,29 @@ const TabsInner = ({
         TabIndicatorProps={{ style: { display: "none" } }}
         sx={{ position: "relative", top: 1, flexGrow: 1 }}
       >
+        {data.map((d) => (
+          <Tab
+            key={d.key}
+            sx={{
+              p: 0,
+              background: "white",
+              border: "1px solid",
+              borderBottomWidth: 0,
+              borderColor: "divider",
+            }}
+            label={
+              <TabContent
+                iconName={getIconName(d.chartType)}
+                editable={d.editable ?? false}
+                onEditClick={onActionButtonClick}
+                onSwitchClick={(e) => {
+                  e.stopPropagation();
+                  onSwitchButtonClick?.(d.key);
+                }}
+              />
+            }
+          />
+        ))}
         <Tab
           sx={{
             p: 0,
@@ -223,10 +273,8 @@ const TabsInner = ({
             borderBottomWidth: 0,
             borderColor: "divider",
           }}
-          onClick={onActionButtonClick}
-          label={
-            <TabContent iconName={getIconName(chartType)} editable={editable} />
-          }
+          onClick={onAddButtonClick}
+          label={<TabContent iconName="add" editable={false} />}
         />
       </Tabs>
       <PublishChartButton />
@@ -237,19 +285,27 @@ const TabsInner = ({
 const TabContent = ({
   iconName,
   editable,
+  onEditClick,
+  onSwitchClick,
 }: {
   iconName: IconName;
   editable: boolean;
+  onEditClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onSwitchClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   const classes = useStyles({ editable });
 
   return (
     <Flex className={classes.tabContent}>
-      <Icon name={iconName} />
+      <Button variant="text" onClick={onSwitchClick}>
+        <Icon name={iconName} />
+      </Button>
       {editable && (
-        <Box component="span" className={classes.tabContentIconContainer}>
-          <Icon name="chevronDown" size={16} />
-        </Box>
+        <Button variant="text" onClick={onEditClick}>
+          <Box component="span" className={classes.tabContentIconContainer}>
+            <Icon name="chevronDown" size={16} />
+          </Box>
+        </Button>
       )}
     </Flex>
   );

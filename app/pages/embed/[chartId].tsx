@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 
 import { ChartPublished } from "@/components/chart-published";
-import { Config } from "@/configurator";
+import { Config, getChartConfig } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -43,19 +43,17 @@ const EmbedPage = (props: PageProps) => {
   }
 
   const {
-    config: {
-      key,
-      data: { dataSet, dataSource, meta, chartConfig },
-    },
+    config: { key, data },
   } = props;
+  const chartConfig = getChartConfig({ ...data, state: "PUBLISHING" });
 
   return (
     <EmbedOptionsProvider>
       <ChartPublished
-        dataSet={dataSet}
-        dataSource={dataSource}
+        dataSet={data.dataSet}
+        dataSource={data.dataSource}
         chartConfig={chartConfig}
-        meta={meta}
+        meta={chartConfig.meta}
         configKey={key}
       />
     </EmbedOptionsProvider>

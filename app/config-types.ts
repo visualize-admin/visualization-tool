@@ -223,8 +223,11 @@ const SortingField = t.partial({
 export type SortingField = t.TypeOf<typeof SortingField>;
 
 const GenericChartConfig = t.type({
+  key: t.string,
   version: t.string,
+  meta: Meta,
   filters: Filters,
+  activeField: t.union([t.string, t.undefined]),
 });
 export type GenericChartConfig = t.TypeOf<typeof GenericChartConfig>;
 
@@ -911,11 +914,12 @@ export type DataSource = t.TypeOf<typeof DataSource>;
 
 const Config = t.type(
   {
+    version: t.string,
     dataSet: t.string,
     dataSource: DataSource,
     meta: Meta,
-    chartConfig: ChartConfig,
-    activeField: t.union([t.string, t.undefined]),
+    chartConfigs: t.array(ChartConfig),
+    activeChartKey: t.union([t.string, t.undefined]),
   },
   "Config"
 );
@@ -930,22 +934,23 @@ export const decodeConfig = (config: unknown) => {
 };
 
 const ConfiguratorStateInitial = t.type({
+  version: t.string,
   state: t.literal("INITIAL"),
   dataSet: t.undefined,
   dataSource: DataSource,
-  activeField: t.undefined,
 });
 export type ConfiguratorStateInitial = t.TypeOf<
   typeof ConfiguratorStateInitial
 >;
 
 const ConfiguratorStateSelectingDataSet = t.type({
+  version: t.string,
   state: t.literal("SELECTING_DATASET"),
   dataSet: t.union([t.string, t.undefined]),
   dataSource: DataSource,
   meta: Meta,
-  chartConfig: t.undefined,
-  activeField: t.undefined,
+  chartConfigs: t.undefined,
+  activeChartKey: t.undefined,
 });
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
   typeof ConfiguratorStateSelectingDataSet
@@ -991,5 +996,18 @@ export const decodeConfiguratorState = (
       },
       (d) => d
     )
+  );
+};
+
+export const getChartConfig = (state: ConfiguratorState, chartKey?: string) => {
+  if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
+    throw new Error("No chart config available");
+  }
+
+  return (
+    state.chartConfigs.find(
+      (d) => d.key === (chartKey ?? state.activeChartKey)
+      // FIXME: color legend currently is scoped to the chart config, it shouldn't
+    ) ?? (state.chartConfigs[0] as ChartConfig)
   );
 };
