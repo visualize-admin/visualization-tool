@@ -58,7 +58,7 @@ ${(
           <Tooltip type="single" />
         </ChartContainer>
         {scatterplotFields.segment && (
-          <LegendColor symbol="square" interactive />
+          <LegendColor chartConfig={chartConfig} symbol="square" interactive />
         )}
       </ScatterplotChart>
     </PublishedConfiguratorStateProvider>

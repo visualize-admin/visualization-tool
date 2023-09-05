@@ -51,7 +51,9 @@ ${(
           </ChartSvg>
         </ChartContainer>
 
-        {fields.segment && <LegendColor symbol="line" interactive />}
+        {fields.segment && (
+          <LegendColor chartConfig={chartConfig} symbol="line" interactive />
+        )}
       </LineChart>
     </PublishedConfiguratorStateProvider>
   </ReactSpecimen>

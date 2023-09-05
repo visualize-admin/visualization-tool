@@ -114,6 +114,7 @@ export const ChartScatterplot = memo(
             )}
             {fields.segment && (
               <LegendColor
+                chartConfig={chartConfig}
                 symbol="circle"
                 interactive={interactiveFiltersConfig?.legend.active}
               />
