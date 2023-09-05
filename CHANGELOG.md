@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.22.2] - 2023-09-05
+
 - Fixes
   - Fixed sorting of dates in XLSX download
 
