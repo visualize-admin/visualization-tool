@@ -71,11 +71,7 @@ export const ChartSelectionTabs = ({
 }) => {
   return (
     <TabsStateProvider>
-      {editable ? (
-        <TabsEditable chartType={chartType} />
-      ) : (
-        <TabsFixed chartType={chartType} />
-      )}
+      {editable ? <TabsEditable /> : <TabsFixed chartType={chartType} />}
     </TabsStateProvider>
   );
 };
@@ -86,22 +82,20 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
     padding: `0 ${theme.spacing(3)} ${theme.spacing(3)}`,
   },
   tabContent: {
-    gap: theme.spacing(2),
+    gap: theme.spacing(1),
     alignItems: "center",
-    padding: `${theme.spacing(1)} ${theme.spacing(3)}`,
+    padding: theme.spacing(2),
     borderRadius: 3,
     transition: "0.125s ease background-color",
-    "&:hover": {
-      backgroundColor: ({ editable }: { editable: boolean }) =>
-        editable ? theme.palette.grey[200] : undefined,
-    },
+    cursor: "default",
   },
   tabContentIconContainer: {
+    minWidth: "fit-content",
     color: theme.palette.grey[700],
   },
 }));
 
-const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
+const TabsEditable = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const [tabsState, setTabsState] = useTabsState();
@@ -129,6 +123,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
             key: d.key,
             chartType: d.chartType,
             editable: true,
+            active: d.key === chartConfig.key,
           };
         })}
         onActionButtonClick={(e: React.MouseEvent<HTMLElement>) => {
@@ -174,7 +169,7 @@ const TabsEditable = ({ chartType }: { chartType: ChartType }) => {
 };
 
 const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
-  return <TabsInner data={[{ key: "", chartType }]} />;
+  return <TabsInner data={[{ key: "", chartType, active: true }]} />;
 };
 
 const PublishChartButton = () => {
@@ -230,7 +225,12 @@ const TabsInner = ({
   onSwitchButtonClick,
   onAddButtonClick,
 }: {
-  data: { key: string; chartType: ChartType; editable?: boolean }[];
+  data: {
+    key: string;
+    chartType: ChartType;
+    editable?: boolean;
+    active: boolean;
+  }[];
   onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
   onSwitchButtonClick?: (key: string) => void;
   onAddButtonClick?: () => void;
@@ -246,6 +246,7 @@ const TabsInner = ({
           <Tab
             key={d.key}
             sx={{
+              mr: 1,
               p: 0,
               background: "white",
               border: "1px solid",
@@ -256,6 +257,7 @@ const TabsInner = ({
               <TabContent
                 iconName={getIconName(d.chartType)}
                 editable={d.editable ?? false}
+                active={d.active}
                 onEditClick={onActionButtonClick}
                 onSwitchClick={(e) => {
                   e.stopPropagation();
@@ -272,9 +274,10 @@ const TabsInner = ({
             border: "1px solid",
             borderBottomWidth: 0,
             borderColor: "divider",
+            minWidth: "fit-content",
           }}
           onClick={onAddButtonClick}
-          label={<TabContent iconName="add" editable={false} />}
+          label={<TabContent iconName="add" editable={false} active={false} />}
         />
       </Tabs>
       <PublishChartButton />
@@ -285,11 +288,13 @@ const TabsInner = ({
 const TabContent = ({
   iconName,
   editable,
+  active,
   onEditClick,
   onSwitchClick,
 }: {
   iconName: IconName;
   editable: boolean;
+  active: boolean;
   onEditClick?: (e: React.MouseEvent<HTMLElement>) => void;
   onSwitchClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
@@ -297,14 +302,28 @@ const TabContent = ({
 
   return (
     <Flex className={classes.tabContent}>
-      <Button variant="text" onClick={onSwitchClick}>
+      <Button
+        variant="text"
+        onClick={onSwitchClick}
+        sx={{
+          minWidth: "fit-content",
+          backgroundColor: active ? "primary.main" : undefined,
+          color: active ? "primary.contrastText" : undefined,
+
+          "&:hover": {
+            backgroundColor: active ? "primary.main" : undefined,
+          },
+        }}
+      >
         <Icon name={iconName} />
       </Button>
       {editable && (
-        <Button variant="text" onClick={onEditClick}>
-          <Box component="span" className={classes.tabContentIconContainer}>
-            <Icon name="chevronDown" size={16} />
-          </Box>
+        <Button
+          variant="text"
+          onClick={onEditClick}
+          className={classes.tabContentIconContainer}
+        >
+          <Icon name="chevronDown" size={16} />
         </Button>
       )}
     </Flex>
