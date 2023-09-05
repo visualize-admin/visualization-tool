@@ -11,6 +11,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+# [3.22.1] - 2023-09-05
+
+- Fixes
+  - Revert removal of `--openssl-legacy-provider``
+
 # [3.22.0] - 2023-09-05
 
 - Features
