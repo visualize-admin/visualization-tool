@@ -287,10 +287,12 @@ const META: Meta = {
 };
 
 export const getInitialConfig = ({
+  key,
   chartType,
   dimensions,
   measures,
 }: {
+  key?: string;
   chartType: ChartType;
   dimensions: DataCubeMetadataWithHierarchies["dimensions"];
   measures: DataCubeMetadataWithHierarchies["measures"];
@@ -301,7 +303,7 @@ export const getInitialConfig = ({
     meta: Meta;
     activeField: string | undefined;
   } = {
-    key: createChartId(),
+    key: key ?? createChartId(),
     version: CHART_CONFIG_VERSION,
     meta: META,
     activeField: undefined,
@@ -510,6 +512,7 @@ export const getChartConfigAdjustedToChartType = ({
 }): ChartConfig => {
   const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
+    key: chartConfig.key,
     chartType: newChartType,
     dimensions,
     measures,

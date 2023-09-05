@@ -905,7 +905,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
     case "DATASOURCE_CHANGED":
       draft.dataSource = action.value;
+
       return draft;
+
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartType } = action.value;
