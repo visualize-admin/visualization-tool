@@ -78,9 +78,24 @@ describe("possible chart types", () => {
 describe("chart type switch", () => {
   it("should correctly remove non-allowed interactive data filters", () => {
     const chartConfig: ColumnConfig = {
+      key: "column",
       version: "1.4.0",
       chartType: "column",
       filters: {},
+      meta: {
+        title: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+        description: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+      },
       fields: {
         x: {
           componentIri:
@@ -115,6 +130,7 @@ describe("chart type switch", () => {
           type: "identity",
         },
       },
+      activeField: undefined,
     };
     const newConfig = getChartConfigAdjustedToChartType({
       chartConfig,

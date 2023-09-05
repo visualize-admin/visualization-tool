@@ -1,4 +1,5 @@
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
 
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
 import { DimensionMetadataFragment, TimeUnit } from "../graphql/query-hooks";
@@ -6,6 +7,7 @@ import { DimensionMetadataFragment, TimeUnit } from "../graphql/query-hooks";
 export const states: ConfiguratorState[] = [
   {
     state: "SELECTING_DATASET",
+    version: CONFIGURATOR_STATE_VERSION,
     dataSet: undefined,
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfigs: undefined,
@@ -27,6 +29,7 @@ export const states: ConfiguratorState[] = [
   },
   {
     state: "CONFIGURING_CHART",
+    version: CONFIGURATOR_STATE_VERSION,
     dataSet: "foo",
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfigs: [

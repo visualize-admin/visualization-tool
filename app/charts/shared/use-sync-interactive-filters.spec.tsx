@@ -6,6 +6,7 @@ import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filt
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
 import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
+import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
@@ -33,10 +34,17 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
   },
 };
 
-const chartConfig = {
-  ...fixture.data.chartConfig,
-  interactiveFiltersConfig,
-} as ChartConfig;
+const chartConfig = migrateChartConfig(
+  {
+    ...fixture.data.chartConfig,
+    interactiveFiltersConfig,
+  },
+  {
+    migrationProps: {
+      meta: {},
+    },
+  }
+) as ChartConfig;
 
 const setup = ({
   modifiedChartConfig,
