@@ -67,6 +67,7 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { ObservationValue } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
   DimensionMetadataFragment,
@@ -986,7 +987,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
     [dispatch, dimension.iri]
   );
 
-  // const dimension = data?.dataCubeByIri?.dimensionByIri;
   const temporalDimension =
     dimension?.__typename === "TemporalDimension" ? dimension : null;
 
@@ -1015,31 +1015,11 @@ export const TimeFilter = (props: TimeFilterProps) => {
   );
 
   const { sortedOptions, sortedValues } = useMemo(() => {
-    if (temporalDimension) {
-      const { timeFormat, timeUnit } = temporalDimension;
-      const parse = formatLocale.parse(timeFormat);
-      const sortedOptions = temporalDimension.values
-        .map(({ value }) => {
-          const date = parse(`${value}`) as Date;
-
-          return {
-            value,
-            label: timeFormatUnit(date, timeUnit),
-            date,
-          };
-        })
-        .sort((a, b) => a.date.getTime() - b.date.getTime());
-
-      return {
-        sortedOptions,
-        sortedValues: sortedOptions.map((d) => d.value),
-      };
-    }
-
-    return {
-      sortedOptions: [],
-      sortedValues: [],
-    };
+    return getTimeFilterOptions({
+      dimension: temporalDimension,
+      formatLocale,
+      timeFormatUnit,
+    });
   }, [temporalDimension, formatLocale, timeFormatUnit]);
 
   const getClosestDatesFromDateRange = React.useCallback(
@@ -1184,6 +1164,50 @@ export const TimeFilter = (props: TimeFilterProps) => {
   } else {
     return <Loading />;
   }
+};
+
+type GetTimeFilterOptionsProps = {
+  dimension: TemporalDimension | null;
+  formatLocale: ReturnType<typeof useTimeFormatLocale>;
+  timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
+};
+
+export const getTimeFilterOptions = (props: GetTimeFilterOptionsProps) => {
+  const { dimension, formatLocale, timeFormatUnit } = props;
+
+  if (dimension) {
+    const { timeFormat, timeUnit } = dimension;
+    const parse = formatLocale.parse(timeFormat);
+    const sortedOptions: {
+      value: ObservationValue;
+      label: string;
+      date: Date;
+    }[] = [];
+    const sortedValues: ObservationValue[] = [];
+
+    for (const { value } of dimension.values) {
+      const date = parse(`${value}`);
+
+      if (date) {
+        sortedOptions.push({
+          value,
+          label: timeFormatUnit(date, timeUnit),
+          date,
+        });
+        sortedValues.push(value);
+      }
+    }
+
+    return {
+      sortedOptions,
+      sortedValues,
+    };
+  }
+
+  return {
+    sortedOptions: [],
+    sortedValues: [],
+  };
 };
 
 export const InteractiveTimeRangeToggle = (

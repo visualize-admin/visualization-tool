@@ -62,6 +62,7 @@ import {
   findRelatedErrorDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import {
   DimensionMetadataFragment,
@@ -302,7 +303,7 @@ const getNumericalColorScale = ({
       switch (color.interpolationType) {
         case "jenks":
           const ckMeansThresholds = ckmeans(
-            [...(data.length ? data : [{}])].map((d) => getValue(d) ?? NaN),
+            data.map((d) => getValue(d) ?? null).filter(truthy),
             Math.min(color.nbClass, data.length)
           ).map((v) => v.pop() || 0);
 

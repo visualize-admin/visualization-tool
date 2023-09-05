@@ -304,8 +304,10 @@ export const useTimeFormatUnit = () => {
 };
 
 export const getFormatNumber = (props?: { decimals: number | "auto" }) => {
-  const { decimals } = props ?? { decimals: 2 };
+  const { decimals = 2 } = props ?? {};
   const { format } = getD3FormatLocale();
+  // Only valid for up to 6 decimals!
+  // See https://262.ecma-international.org/6.0/#sec-number.prototype.toprecision, 12c.
   const specifier = decimals === "auto" ? ",~f" : `,.${decimals}~f`;
   const formatter = format(specifier);
 

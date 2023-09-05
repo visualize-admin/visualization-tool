@@ -335,7 +335,7 @@ export const BrushTime = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidth]);
 
-  return (
+  return fullData.length ? (
     <g
       transform={`translate(0, ${
         chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
@@ -370,7 +370,7 @@ export const BrushTime = () => {
       {/* actual Brush */}
       <g ref={ref} transform={`translate(${brushLabelsWidth}, 0)`} />
     </g>
-  );
+  ) : null;
 };
 
 // Unused BrushOrdinal

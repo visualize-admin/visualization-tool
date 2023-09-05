@@ -742,6 +742,7 @@ export const handleChartFieldChanged = (
     measures,
     initializing: !f,
     selectedValues,
+    field,
   });
 
   // Remove the component from interactive data filters.
@@ -780,7 +781,7 @@ export const handleChartOptionChanged = (
         field,
         path
       );
-      sideEffect?.(value, { draft, dimensions, measures });
+      sideEffect?.(value, { draft, dimensions, measures, field });
     }
 
     if (value === FIELD_VALUE_NONE) {
@@ -1025,14 +1026,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
 
-        if (value === FIELD_VALUE_NONE) {
-          delete draft.chartConfig.filters[dimensionIri];
-        } else {
-          draft.chartConfig.filters[dimensionIri] = {
-            type: "single",
-            value,
-          };
-        }
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "single",
+          value,
+        };
       }
       return draft;
 

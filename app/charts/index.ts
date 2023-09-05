@@ -7,6 +7,7 @@ import {
   AREA_SEGMENT_SORTING,
   COLUMN_SEGMENT_SORTING,
   disableStacked,
+  EncodingFieldType,
   PIE_SEGMENT_SORTING,
 } from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
@@ -200,7 +201,7 @@ export const initializeMapLayerField = ({
   measures,
 }: {
   chartConfig: MapConfig;
-  field: "areaLayer" | "symbolLayer";
+  field: EncodingFieldType;
   componentIri: string;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
