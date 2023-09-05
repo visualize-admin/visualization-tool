@@ -143,7 +143,12 @@ export const ChartConfiguratorTable = ({
             <Trans id="controls.select.chart.type">Chart Type</Trans>
           </SubsectionTitle>
           <ControlSectionContent px="small" gap="none">
-            <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
+            <ChartTypeSelector
+              showHelp={false}
+              state={state}
+              chartKey={chartConfig.key}
+              sx={{ mt: 2 }}
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection collapse>

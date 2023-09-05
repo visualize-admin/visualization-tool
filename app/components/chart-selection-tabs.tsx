@@ -33,6 +33,7 @@ import Flex from "./flex";
 
 type TabsState = {
   isPopoverOpen: boolean;
+  activeChartKey?: string;
 };
 
 const TabsStateContext = createContext<
@@ -107,7 +108,10 @@ const TabsEditable = () => {
 
   const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
-    setTabsState({ isPopoverOpen: false });
+    setTabsState({
+      isPopoverOpen: false,
+      activeChartKey: tabsState.activeChartKey,
+    });
   });
 
   useEffect(() => {
@@ -126,10 +130,13 @@ const TabsEditable = () => {
             active: d.key === chartConfig.key,
           };
         })}
-        onActionButtonClick={(e: React.MouseEvent<HTMLElement>) => {
+        onActionButtonClick={(
+          e: React.MouseEvent<HTMLElement>,
+          activeChartKey: string
+        ) => {
           e.stopPropagation();
           setPopoverAnchorEl(e.currentTarget);
-          setTabsState({ isPopoverOpen: true });
+          setTabsState({ isPopoverOpen: true, activeChartKey });
         }}
         onSwitchButtonClick={(key: string) => {
           dispatch({
@@ -162,6 +169,7 @@ const TabsEditable = () => {
         <ChartTypeSelector
           className={classes.editableChartTypeSelector}
           state={state}
+          chartKey={tabsState.activeChartKey ?? chartConfig.key}
         />
       </Popover>
     </>
@@ -231,7 +239,10 @@ const TabsInner = ({
     editable?: boolean;
     active: boolean;
   }[];
-  onActionButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onActionButtonClick?: (
+    e: React.MouseEvent<HTMLElement>,
+    activeChartKey: string
+  ) => void;
   onSwitchButtonClick?: (key: string) => void;
   onAddButtonClick?: () => void;
 }) => {
@@ -256,6 +267,7 @@ const TabsInner = ({
             label={
               <TabContent
                 iconName={getIconName(d.chartType)}
+                chartKey={d.key}
                 editable={d.editable ?? false}
                 active={d.active}
                 onEditClick={onActionButtonClick}
@@ -277,7 +289,14 @@ const TabsInner = ({
             minWidth: "fit-content",
           }}
           onClick={onAddButtonClick}
-          label={<TabContent iconName="add" editable={false} active={false} />}
+          label={
+            <TabContent
+              iconName="add"
+              chartKey=""
+              editable={false}
+              active={false}
+            />
+          }
         />
       </Tabs>
       <PublishChartButton />
@@ -287,15 +306,20 @@ const TabsInner = ({
 
 const TabContent = ({
   iconName,
+  chartKey,
   editable,
   active,
   onEditClick,
   onSwitchClick,
 }: {
   iconName: IconName;
+  chartKey: string;
   editable: boolean;
   active: boolean;
-  onEditClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onEditClick?: (
+    e: React.MouseEvent<HTMLElement>,
+    activeChartKey: string
+  ) => void;
   onSwitchClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   const classes = useStyles({ editable });
@@ -320,7 +344,9 @@ const TabContent = ({
       {editable && (
         <Button
           variant="text"
-          onClick={onEditClick}
+          onClick={(e) => {
+            onEditClick?.(e, chartKey);
+          }}
           className={classes.tabContentIconContainer}
         >
           <Icon name="chevronDown" size={16} />

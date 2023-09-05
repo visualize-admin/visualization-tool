@@ -100,15 +100,18 @@ export const ChartTypeSelectionButton = ({
 export const ChartTypeSelector = ({
   state,
   showHelp,
+  chartKey,
   sx,
   ...props
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
   showHelp?: boolean;
+  chartKey: string;
   sx?: BoxProps["sx"];
 } & BoxProps) => {
   const locale = useLocale();
-  const { value: chartType, onChange: onChangeChartType } = useChartType();
+  const { value: chartType, onChange: onChangeChartType } =
+    useChartType(chartKey);
   const [{ data }] = useComponentsQuery({
     variables: {
       iri: state.dataSet,

@@ -394,18 +394,21 @@ export const useActiveFieldField = ({
 };
 
 // Specific ------------------------------------------------------------------
-export const useChartType = (): {
+export const useChartType = (
+  chartKey: string
+): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
 } => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
+  const chartConfig = getChartConfig(state, chartKey);
   const onChange = useEvent((chartType: ChartType) => {
     dispatch({
       type: "CHART_TYPE_CHANGED",
       value: {
         locale,
+        chartKey,
         chartType,
       },
     });

@@ -112,6 +112,7 @@ export type ConfiguratorStateAction =
       type: "CHART_TYPE_CHANGED";
       value: {
         locale: Locale;
+        chartKey: string;
         chartType: ChartType;
       };
     }
@@ -903,12 +904,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        const { locale, chartType } = action.value;
+        const { locale, chartKey, chartType } = action.value;
         const metadata = getCachedMetadata(draft, locale);
 
         if (metadata) {
           const { dimensions, measures } = metadata;
-          const chartConfig = getChartConfig(draft);
+          const chartConfig = getChartConfig(draft, chartKey);
           const newConfig = getChartConfigAdjustedToChartType({
             chartConfig: current(chartConfig),
             newChartType: chartType,
