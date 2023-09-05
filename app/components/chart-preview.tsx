@@ -142,7 +142,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   variant="h2"
                   sx={{
                     color:
-                      state.meta.title[locale] === "" ? "grey.500" : "text",
+                      chartConfig.meta.title[locale] === ""
+                        ? "grey.500"
+                        : "text",
                   }}
                   className={classes.title}
                   onClick={() =>
@@ -152,10 +154,10 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                     })
                   }
                 >
-                  {state.meta.title[locale] === "" ? (
+                  {chartConfig.meta.title[locale] === "" ? (
                     <Trans id="annotation.add.title">[ Title ]</Trans>
                   ) : (
-                    state.meta.title[locale]
+                    chartConfig.meta.title[locale]
                   )}
                 </Typography>
 
@@ -168,9 +170,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
               </Flex>
               <Head>
                 <title key="title">
-                  {state.meta.title[locale] === ""
+                  {chartConfig.meta.title[locale] === ""
                     ? metadata?.dataCubeByIri?.title
-                    : state.meta.title[locale]}{" "}
+                    : chartConfig.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>
               </Head>
@@ -179,7 +181,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                 className={classes.description}
                 sx={{
                   color:
-                    state.meta.description[locale] === "" ? "grey.500" : "text",
+                    chartConfig.meta.description[locale] === ""
+                      ? "grey.500"
+                      : "text",
                 }}
                 onClick={() =>
                   dispatch({
@@ -188,10 +192,10 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   })
                 }
               >
-                {state.meta.description[locale] === "" ? (
+                {chartConfig.meta.description[locale] === "" ? (
                   <Trans id="annotation.add.description">[ Description ]</Trans>
                 ) : (
-                  state.meta.description[locale]
+                  chartConfig.meta.description[locale]
                 )}
               </Typography>
             </>
