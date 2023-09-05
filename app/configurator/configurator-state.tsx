@@ -594,13 +594,14 @@ const transitionStepNext = (
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
         });
-
-        const chartConfig = getInitialConfig({
-          chartType: possibleChartTypes[0],
-          dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures,
-        });
-        deriveFiltersFromFields(chartConfig, dataSetMetadata.dimensions);
+        const chartConfig = deriveFiltersFromFields(
+          getInitialConfig({
+            chartType: possibleChartTypes[0],
+            dimensions: dataSetMetadata.dimensions,
+            measures: dataSetMetadata.measures,
+          }),
+          dataSetMetadata.dimensions
+        );
 
         return {
           version: CONFIGURATOR_STATE_VERSION,
@@ -910,12 +911,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (metadata) {
           const { dimensions, measures } = metadata;
           const chartConfig = getChartConfig(draft, chartKey);
-          const newConfig = getChartConfigAdjustedToChartType({
-            chartConfig: current(chartConfig),
-            newChartType: chartType,
-            dimensions,
-            measures,
-          });
+          const newConfig = deriveFiltersFromFields(
+            getChartConfigAdjustedToChartType({
+              chartConfig: current(chartConfig),
+              newChartType: chartType,
+              dimensions,
+              measures,
+            }),
+            dimensions
+          );
 
           const index = draft.chartConfigs.findIndex(
             (d) => d.key === chartConfig.key
