@@ -778,15 +778,8 @@ export const handleChartFieldChanged = (
   }
 
   const newConfig = deriveFiltersFromFields(chartConfig, dimensions);
-
-  for (const k in chartConfig) {
-    if (chartConfig.hasOwnProperty(k)) {
-      // @ts-ignore
-      delete chartConfig[k];
-    }
-  }
-
-  Object.assign(chartConfig, newConfig);
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  draft.chartConfigs[index] = newConfig;
 
   return draft;
 };
@@ -915,22 +908,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
         if (metadata) {
           const { dimensions, measures } = metadata;
-          const previousConfig = getChartConfig(draft);
+          const chartConfig = getChartConfig(draft);
           const newConfig = getChartConfigAdjustedToChartType({
-            chartConfig: current(previousConfig),
+            chartConfig: current(chartConfig),
             newChartType: chartType,
             dimensions,
             measures,
           });
 
-          for (const k in previousConfig) {
-            if (previousConfig.hasOwnProperty(k)) {
-              // @ts-ignore
-              delete previousConfig[k];
-            }
-          }
-
-          Object.assign(previousConfig, newConfig);
+          const index = draft.chartConfigs.findIndex(
+            (d) => d.key === chartConfig.key
+          );
+          draft.chartConfigs[index] = newConfig;
         }
       }
 
@@ -1050,20 +1039,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
-
-        for (const k in chartConfig) {
-          if (chartConfig.hasOwnProperty(k)) {
-            // @ts-ignore
-            delete chartConfig[k];
-          }
-        }
-
-        Object.assign(
-          chartConfig,
-          deriveFiltersFromFields(
-            action.value.chartConfig,
-            action.value.dataSetMetadata.dimensions
-          )
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === chartConfig.key
+        );
+        draft.chartConfigs[index] = deriveFiltersFromFields(
+          action.value.chartConfig,
+          action.value.dataSetMetadata.dimensions
         );
       }
 
