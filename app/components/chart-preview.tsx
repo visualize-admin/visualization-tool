@@ -65,7 +65,6 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const { dataSetIri, dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
-  console.log(state.activeChartKey, chartConfig);
   const locale = useLocale();
   const classes = useStyles();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
