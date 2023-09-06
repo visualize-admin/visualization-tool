@@ -8,7 +8,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
-import { ChartPanelPublished } from "@/components/chart-panel";
+import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
@@ -153,9 +153,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             )}
 
             <ConfiguratorStateProvider chartId="published" initialState={state}>
-              <ChartPanelPublished>
+              <ChartPanel>
                 <ChartPublished configKey={key} />
-              </ChartPanelPublished>
+              </ChartPanel>
             </ConfiguratorStateProvider>
 
             <Typography component="div" my={4}>

@@ -18,6 +18,7 @@ import {
   ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   getChartConfig,
+  isPublished,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -62,12 +63,7 @@ const TabsStateProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const ChartSelectionTabs = ({
-  editable,
-}: {
-  /** Tabs are not editable when they are published. */
-  editable: boolean;
-}) => {
+export const ChartSelectionTabs = () => {
   const [state] = useConfiguratorState() as [
     (
       | ConfiguratorStateConfiguringChart
@@ -76,6 +72,8 @@ export const ChartSelectionTabs = ({
     ),
     Dispatch<any>
   ];
+  const editable =
+    state.state === "CONFIGURING_CHART" || state.state === "PUBLISHING";
 
   if (!editable && state.chartConfigs.length === 1) {
     return null;
@@ -121,10 +119,7 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
 }));
 
 type TabsEditableProps = {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStatePublishing
-    | ConfiguratorStatePublished;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
   chartConfig: ChartConfig;
   data: TabDatum[];
 };
@@ -215,7 +210,7 @@ type TabsFixedProps = {
 
 const TabsFixed = (props: TabsFixedProps) => {
   const { data } = props;
-  const [, dispatch] = useConfiguratorState();
+  const [, dispatch] = useConfiguratorState(isPublished);
 
   return (
     <TabsInner

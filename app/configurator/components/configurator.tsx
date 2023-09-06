@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { ChartPanelConfigurator } from "@/components/chart-panel";
+import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
@@ -133,12 +133,12 @@ const ConfigureChartStep = () => {
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
-        <ChartPanelConfigurator>
+        <ChartPanel>
           <ChartPreview
             dataSetIri={state.dataSet}
             dataSource={state.dataSource}
           />
-        </ChartPanelConfigurator>
+        </ChartPanel>
       </PanelMiddleWrapper>
       <ConfiguratorDrawer
         anchor="left"
@@ -179,12 +179,12 @@ const PublishStep = () => {
 
   return (
     <PanelMiddleWrapper>
-      <ChartPanelConfigurator>
+      <ChartPanel>
         <ChartPreview
           dataSetIri={state.dataSet}
           dataSource={state.dataSource}
         />
-      </ChartPanelConfigurator>
+      </ChartPanel>
     </PanelMiddleWrapper>
   );
 };

@@ -24,7 +24,7 @@ ${(
       }
       allowDefaultRedirect={false}
     >
-      <ChartSelectionTabs editable />
+      <ChartSelectionTabs />
     </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
@@ -36,11 +36,14 @@ ${(
       <ConfiguratorStateProvider
         chartId={palmerPenguinsFixture.key}
         initialState={
-          palmerPenguinsFixture.data as unknown as ConfiguratorStateConfiguringChart
+          {
+            ...palmerPenguinsFixture.data,
+            state: "PUBLISHED",
+          } as unknown as ConfiguratorStateConfiguringChart
         }
         allowDefaultRedirect={false}
       >
-        <ChartSelectionTabs editable={false} />
+        <ChartSelectionTabs />
       </ConfiguratorStateProvider>
     </ReactSpecimen>
   )}

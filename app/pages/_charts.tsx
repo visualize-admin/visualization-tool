@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
-import { ChartPanelPublished } from "@/components/chart-panel";
+import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
@@ -101,7 +101,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   chartId="published"
                   initialState={config.data as ConfiguratorStatePublished}
                 >
-                  <ChartPanelPublished>
+                  <ChartPanel>
                     <HiddenUntilScrolledTo
                       initialVisible={i < 5}
                       fallback={<div>Loading...</div>}
@@ -120,7 +120,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                         <Link color="primary">Open</Link>
                       </NextLink>{" "}
                     </Box>
-                  </ChartPanelPublished>
+                  </ChartPanel>
                 </ConfiguratorStateProvider>
               </Box>
             );

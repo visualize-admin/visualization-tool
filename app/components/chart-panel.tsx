@@ -5,23 +5,12 @@ import React from "react";
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import Flex from "@/components/flex";
 
-export const ChartPanelConfigurator = (props: React.PropsWithChildren<{}>) => {
+export const ChartPanel = (props: React.PropsWithChildren<{}>) => {
   const { children } = props;
 
   return (
     <>
-      <ChartSelectionTabs editable />
-      <ChartPanelInner>{children}</ChartPanelInner>
-    </>
-  );
-};
-
-export const ChartPanelPublished = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
-
-  return (
-    <>
-      <ChartSelectionTabs editable={false} />
+      <ChartSelectionTabs />
       <ChartPanelInner>{children}</ChartPanelInner>
     </>
   );
