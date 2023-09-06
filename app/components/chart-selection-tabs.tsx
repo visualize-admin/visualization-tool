@@ -99,7 +99,7 @@ export const ChartSelectionTabs = () => {
   );
 };
 
-const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
+const useStyles = makeStyles<Theme>((theme) => ({
   editableChartTypeSelector: {
     width: 320,
     padding: `0 ${theme.spacing(3)} ${theme.spacing(3)}`,
@@ -108,11 +108,13 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
     gap: theme.spacing(1),
     alignItems: "center",
     padding: theme.spacing(2),
-    borderRadius: 3,
+    borderTopLeftRadius: theme.spacing(1),
+    borderTopRightRadius: theme.spacing(1),
     transition: "0.125s ease background-color",
     cursor: "default",
   },
   tabContentIconContainer: {
+    padding: 0,
     minWidth: "fit-content",
     color: theme.palette.grey[700],
   },
@@ -300,12 +302,12 @@ const TabsInner = ({
           <Tab
             key={d.key}
             sx={{
-              mr: 1,
+              mr: 2,
               p: 0,
               background: "white",
-              border: "1px solid",
-              borderBottomWidth: 0,
-              borderColor: "divider",
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              borderBottom: (theme) =>
+                `1px solid ${d.active ? "transparent" : theme.palette.divider}`,
               minWidth: "fit-content",
             }}
             label={
@@ -326,11 +328,12 @@ const TabsInner = ({
         {editable && (
           <Tab
             sx={{
+              ml: (theme) => `-${theme.spacing(2)}`,
               p: 0,
               background: "white",
-              border: "1px solid",
-              borderBottomWidth: 0,
-              borderColor: "divider",
+              borderBottomWidth: 1,
+              borderBottomStyle: "solid",
+              borderBottomColor: "divider",
               minWidth: "fit-content",
             }}
             onClick={onAddButtonClick}
@@ -368,7 +371,7 @@ const TabContent = ({
   ) => void;
   onSwitchClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
-  const classes = useStyles({ editable });
+  const classes = useStyles();
 
   return (
     <Flex className={classes.tabContent}>
@@ -377,12 +380,7 @@ const TabContent = ({
         onClick={onSwitchClick}
         sx={{
           minWidth: "fit-content",
-          backgroundColor: active ? "primary.main" : undefined,
-          color: active ? "primary.contrastText" : undefined,
-
-          "&:hover": {
-            backgroundColor: active ? "primary.main" : undefined,
-          },
+          color: active ? "primary.main" : "secondary.active",
         }}
       >
         <Icon name={iconName} />
