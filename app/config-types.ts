@@ -919,7 +919,7 @@ const Config = t.type(
     dataSource: DataSource,
     meta: Meta,
     chartConfigs: t.array(ChartConfig),
-    activeChartKey: t.union([t.string, t.undefined]),
+    activeChartKey: t.string,
   },
   "Config"
 );
