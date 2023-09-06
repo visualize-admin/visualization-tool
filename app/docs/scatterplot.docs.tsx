@@ -16,7 +16,7 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
-import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -26,15 +26,19 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
+    <ConfiguratorStateProvider
+      chartId="published"
       initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
+        version: "2.0.0",
+        state: "PUBLISHED",
+        meta: {
+          title: { en: "", de: "", fr: "", it: "" },
+          description: { en: "", de: "", fr: "", it: "" },
+        },
         dataSource: { type: "sparql", url: "" },
         dataSet: "",
-        chartConfig,
+        chartConfigs: [chartConfig],
+        activeChartKey: "scatterplot",
       }}
     >
       <ScatterplotChart
@@ -61,7 +65,7 @@ ${(
           <LegendColor chartConfig={chartConfig} symbol="square" interactive />
         )}
       </ScatterplotChart>
-    </PublishedConfiguratorStateProvider>
+    </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;

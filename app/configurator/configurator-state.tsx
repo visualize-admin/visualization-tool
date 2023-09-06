@@ -36,6 +36,7 @@ import {
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublished,
   ConfiguratorStateSelectingDataSet,
   DataSource,
   FilterValue,
@@ -98,7 +99,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "STEP_PREVIOUS";
-      to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
+      to?: Exclude<
+        ConfiguratorState["state"],
+        "INITIAL" | "PUBLISHING" | "PUBLISHED"
+      >;
     }
   | {
       type: "DATASET_SELECTED";
@@ -622,6 +626,7 @@ const transitionStepNext = (
 
     case "INITIAL":
     case "PUBLISHING":
+    case "PUBLISHED":
       break;
     default:
       throw unreachableError(draft);
@@ -1245,7 +1250,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "SWITCH_ACTIVE_CHART":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (draft.state === "CONFIGURING_CHART" || draft.state === "PUBLISHED") {
         draft.activeChartKey = action.value;
       }
 
@@ -1368,13 +1373,14 @@ const ConfiguratorStateProviderInternal = ({
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
 
-  // Re-initialize state on page load
+  // Initialize state on page load.
   useEffect(() => {
     let stateToInitialize = initialStateWithDataSource;
 
     const initialize = async () => {
       try {
         let newChartState;
+
         if (chartId === "new") {
           if (query.from && typeof query.from === "string") {
             newChartState = await initChartStateFromChart(query.from);
@@ -1386,16 +1392,17 @@ const ConfiguratorStateProviderInternal = ({
               locale
             );
           }
-        } else {
+        } else if (chartId !== "published") {
           newChartState = await initChartStateFromLocalStorage(chartId);
           if (!newChartState && allowDefaultRedirect) replace(`/create/new`);
         }
 
-        stateToInitialize = newChartState || stateToInitialize;
+        stateToInitialize = newChartState ?? stateToInitialize;
       } finally {
         dispatch({ type: "INITIALIZED", value: stateToInitialize });
       }
     };
+
     initialize();
   }, [
     dataSource,
@@ -1434,6 +1441,7 @@ const ConfiguratorStateProviderInternal = ({
               JSON.stringify(state)
             );
           }
+
           return;
         case "PUBLISHING":
           (async () => {
@@ -1481,6 +1489,7 @@ const ConfiguratorStateProviderInternal = ({
               dispatch({ type: "PUBLISH_FAILED" });
             }
           })();
+
           return;
       }
     } catch (e) {
@@ -1590,4 +1599,10 @@ export const isConfiguring = (
   s: ConfiguratorState
 ): s is ConfiguratorStateConfiguringChart => {
   return s.state === "CONFIGURING_CHART";
+};
+
+export const isPublished = (
+  s: ConfiguratorState
+): s is ConfiguratorStatePublished => {
+  return s.state === "PUBLISHED";
 };

@@ -101,7 +101,7 @@ export const states: ConfiguratorState[] = [
         en: "",
       },
     },
-    activeChartKey: undefined,
+    activeChartKey: "column",
   },
 ];
 

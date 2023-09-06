@@ -15,6 +15,7 @@ import {
   ChartConfig,
   ChartType,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   getChartConfig,
   useConfiguratorState,
@@ -68,10 +69,13 @@ export const ChartSelectionTabs = ({
   editable: boolean;
 }) => {
   const [state] = useConfiguratorState() as [
-    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing,
+    (
+      | ConfiguratorStateConfiguringChart
+      | ConfiguratorStatePublishing
+      | ConfiguratorStatePublished
+    ),
     Dispatch<any>
   ];
-  const singleConfig = state.chartConfigs.length === 1;
 
   if (singleConfig) {
     return null;
@@ -118,7 +122,10 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
 }));
 
 type TabsEditableProps = {
-  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStatePublishing
+    | ConfiguratorStatePublished;
   chartConfig: ChartConfig;
   data: TabDatum[];
 };
@@ -215,8 +222,8 @@ const TabsFixed = (props: TabsFixedProps) => {
 const PublishChartButton = () => {
   const [state, dispatch] = useConfiguratorState();
   const { dataSet: dataSetIri } = state as
-    | ConfiguratorStatePublishing
-    | ConfiguratorStateConfiguringChart;
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStatePublishing;
   const locale = useLocale();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
     variables: {

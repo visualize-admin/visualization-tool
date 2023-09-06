@@ -13,7 +13,7 @@ import {
   LineConfig,
   SortingField,
 } from "@/configurator";
-import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -23,15 +23,19 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
+    <ConfiguratorStateProvider
+      chartId="published"
       initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
+        version: "2.0.0",
+        state: "PUBLISHED",
+        meta: {
+          title: { en: "", de: "", fr: "", it: "" },
+          description: { en: "", de: "", fr: "", it: "" },
+        },
         dataSource: { type: "sparql", url: "" },
         dataSet: "",
-        chartConfig,
+        chartConfigs: [chartConfig],
+        activeChartKey: "line",
       }}
     >
       <LineChart
@@ -55,7 +59,7 @@ ${(
           <LegendColor chartConfig={chartConfig} symbol="line" interactive />
         )}
       </LineChart>
-    </PublishedConfiguratorStateProvider>
+    </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;

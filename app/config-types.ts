@@ -976,11 +976,22 @@ export type ConfiguratorStatePublishing = t.TypeOf<
   typeof ConfiguratorStatePublishing
 >;
 
+const ConfiguratorStatePublished = t.intersection([
+  t.type({
+    state: t.literal("PUBLISHED"),
+  }),
+  Config,
+]);
+export type ConfiguratorStatePublished = t.TypeOf<
+  typeof ConfiguratorStatePublished
+>;
+
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
 ]);
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;
 
