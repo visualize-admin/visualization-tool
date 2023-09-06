@@ -10,12 +10,13 @@ import React, {
   useState,
 } from "react";
 
+import Flex from "@/components/flex";
 import {
+  ChartConfig,
   ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   getChartConfig,
-  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
@@ -28,8 +29,6 @@ import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import { createChartId } from "@/utils/create-chart-id";
 import useEvent from "@/utils/use-event";
-
-import Flex from "./flex";
 
 type TabsState = {
   isPopoverOpen: boolean;
@@ -63,16 +62,32 @@ const TabsStateProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const ChartSelectionTabs = ({
-  chartType,
   editable,
 }: {
-  chartType: ChartType;
   /** Tabs are not editable when they are published. */
   editable: boolean;
 }) => {
+  const [state] = useConfiguratorState() as [
+    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing,
+    Dispatch<any>
+  ];
+  const chartConfig = getChartConfig(state);
+  const data: TabDatum[] = state.chartConfigs.map((d) => {
+    return {
+      key: d.key,
+      chartType: d.chartType,
+      editable: true,
+      active: d.key === chartConfig.key,
+    };
+  });
+
   return (
     <TabsStateProvider>
-      {editable ? <TabsEditable /> : <TabsFixed chartType={chartType} />}
+      {editable ? (
+        <TabsEditable state={state} chartConfig={chartConfig} data={data} />
+      ) : (
+        <TabsFixed data={data} />
+      )}
     </TabsStateProvider>
   );
 };
@@ -96,9 +111,15 @@ const useStyles = makeStyles<Theme, { editable: boolean }>((theme) => ({
   },
 }));
 
-const TabsEditable = () => {
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const chartConfig = getChartConfig(state);
+type TabsEditableProps = {
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  chartConfig: ChartConfig;
+  data: TabDatum[];
+};
+
+const TabsEditable = (props: TabsEditableProps) => {
+  const { state, chartConfig, data } = props;
+  const [, dispatch] = useConfiguratorState();
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
@@ -122,14 +143,7 @@ const TabsEditable = () => {
   return (
     <>
       <TabsInner
-        data={state.chartConfigs.map((d) => {
-          return {
-            key: d.key,
-            chartType: d.chartType,
-            editable: true,
-            active: d.key === chartConfig.key,
-          };
-        })}
+        data={data}
         onActionButtonClick={(
           e: React.MouseEvent<HTMLElement>,
           activeChartKey: string
@@ -176,8 +190,20 @@ const TabsEditable = () => {
   );
 };
 
-const TabsFixed = ({ chartType }: { chartType: ChartType }) => {
-  return <TabsInner data={[{ key: "", chartType, active: true }]} />;
+type TabDatum = {
+  key: string;
+  chartType: ChartType;
+  active: boolean;
+};
+
+type TabsFixedProps = {
+  data: TabDatum[];
+};
+
+const TabsFixed = (props: TabsFixedProps) => {
+  const { data } = props;
+
+  return <TabsInner data={data} />;
 };
 
 const PublishChartButton = () => {
@@ -222,7 +248,7 @@ const PublishChartButton = () => {
       variant="contained"
       onClick={metadata && components ? goNext : undefined}
     >
-      <Trans id="button.publish">Publish the chart</Trans>
+      <Trans id="button.publish">Publish this visualization</Trans>
     </Button>
   );
 };
