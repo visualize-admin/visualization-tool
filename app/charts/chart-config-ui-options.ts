@@ -383,7 +383,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
           message: `There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation.`,
           values: {
             fields: temporalFieldComponentIris
-              .map((d) => `»${getFieldLabel(fieldComponentsMap[d.iri])}«`)
+              .map((d) => getFieldLabel(fieldComponentsMap[d.iri]))
               .join(", "),
           },
         }),
