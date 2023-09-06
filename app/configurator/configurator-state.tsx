@@ -1440,7 +1440,7 @@ const ConfiguratorStateProviderInternal = ({
             try {
               const result = await createConfig({
                 ...state,
-                chartConfigs: {
+                chartConfigs: [
                   ...state.chartConfigs.map((d) => {
                     return {
                       ...d,
@@ -1454,7 +1454,7 @@ const ConfiguratorStateProviderInternal = ({
                       ),
                     };
                   }),
-                },
+                ],
               });
 
               /**
