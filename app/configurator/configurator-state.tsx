@@ -1265,11 +1265,14 @@ type DatasetIri = string;
 
 export const initChartStateFromChart = async (
   from: ChartId
-): Promise<ConfiguratorState | undefined> => {
+): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
 
   if (config?.data) {
-    return migrateConfiguratorState(config.data);
+    return migrateConfiguratorState({
+      ...config.data,
+      state: "CONFIGURING_CHART",
+    });
   }
 };
 
