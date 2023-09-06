@@ -71,6 +71,12 @@ export const ChartSelectionTabs = ({
     ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing,
     Dispatch<any>
   ];
+  const singleConfig = state.chartConfigs.length === 1;
+
+  if (singleConfig) {
+    return null;
+  }
+
   const chartConfig = getChartConfig(state);
   const data: TabDatum[] = state.chartConfigs.map((d) => {
     return {
