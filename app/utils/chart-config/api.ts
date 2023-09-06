@@ -11,6 +11,7 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
     method: "POST",
     data: {
       data: {
+        version: state.version,
         dataSet: state.dataSet,
         dataSource: state.dataSource,
         meta: state.meta,
