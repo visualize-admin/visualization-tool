@@ -1,34 +1,28 @@
-import { BoxProps, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode } from "react";
+import React from "react";
 
+import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import Flex from "@/components/flex";
-import { ChartType } from "@/configurator";
 
-import { ChartSelectionTabs } from "./chart-selection-tabs";
+export const ChartPanelConfigurator = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
 
-type ChartPanelProps = {
-  children: ReactNode;
-} & BoxProps;
-
-export const ChartPanelConfigurator = (props: ChartPanelProps) => {
   return (
     <>
       <ChartSelectionTabs editable />
-      <ChartPanelInner {...props} />
+      <ChartPanelInner>{children}</ChartPanelInner>
     </>
   );
 };
 
-export const ChartPanelPublished = (
-  props: ChartPanelProps & {
-    chartType: ChartType;
-  }
-) => {
+export const ChartPanelPublished = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
+
   return (
     <>
       <ChartSelectionTabs editable={false} />
-      <ChartPanelInner {...props} />
+      <ChartPanelInner>{children}</ChartPanelInner>
     </>
   );
 };
@@ -44,18 +38,12 @@ const useChartPanelInnerStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-const ChartPanelInner = ({ children, ...boxProps }: ChartPanelProps) => {
+const ChartPanelInner = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
   const classes = useChartPanelInnerStyles();
 
   return (
-    <Flex
-      {...boxProps}
-      className={classes.root}
-      sx={{
-        ...boxProps.sx,
-        minHeight: [150, 300, 500],
-      }}
-    >
+    <Flex className={classes.root} sx={{ minHeight: [150, 300, 500] }}>
       {children}
     </Flex>
   );
