@@ -11,6 +11,11 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 Nothing yet.
 
+# [3.22.4] - 2023-09-06
+
+- Docs
+  - Update legal framework
+
 # [3.22.3] - 2023-09-05
 
 - Fixes
