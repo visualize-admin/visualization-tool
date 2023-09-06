@@ -16,6 +16,7 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
         dataSource: state.dataSource,
         meta: state.meta,
         chartConfigs: state.chartConfigs,
+        activeChartKey: state.activeChartKey,
       },
     },
   });

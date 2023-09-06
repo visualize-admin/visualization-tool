@@ -1455,6 +1455,7 @@ const ConfiguratorStateProviderInternal = ({
                     };
                   }),
                 ],
+                activeChartKey: state.chartConfigs[0].key,
               });
 
               /**
