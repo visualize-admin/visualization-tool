@@ -23,10 +23,10 @@ import {
 } from "@/components/metadata-panel";
 import {
   ChartConfig,
-  ConfiguratorStatePublishing,
   DataSource,
-  Meta,
-  PublishedConfiguratorStateProvider,
+  getChartConfig,
+  isPublished,
+  useConfiguratorState,
 } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
@@ -43,22 +43,20 @@ import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
 type ChartPublishedProps = {
-  dataSet: string;
-  dataSource: DataSource;
-  meta: Meta;
-  chartConfig: ChartConfig;
-  configKey: string;
+  configKey?: string;
 };
 
 export const ChartPublished = (props: ChartPublishedProps) => {
-  const { dataSet, dataSource, meta, chartConfig, configKey } = props;
+  const { configKey } = props;
+  const [state] = useConfiguratorState(isPublished);
+  const { dataSet, dataSource } = state;
+  const chartConfig = getChartConfig(state);
 
   return (
     <ChartTablePreviewProvider>
       <ChartPublishedInner
         dataSet={dataSet}
         dataSource={dataSource}
-        meta={meta}
         chartConfig={chartConfig}
         configKey={configKey}
       />
@@ -84,19 +82,18 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
 type ChartPublishInnerProps = {
   dataSet: string;
   dataSource: DataSource | undefined;
-  meta: Meta;
   chartConfig: ChartConfig;
-  configKey: string;
+  configKey: string | undefined;
 };
 
-export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
+const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const {
     dataSet,
     dataSource = DEFAULT_DATA_SOURCE,
-    meta,
     chartConfig,
     configKey,
   } = props;
+  const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -149,15 +146,6 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
       componentIris: extractComponentIris(chartConfig),
     },
   });
-
-  const publishedConfiguratorState = useMemo(() => {
-    return {
-      state: "PUBLISHING",
-      dataSet,
-      dataSource,
-      chartConfigs: [chartConfig],
-    } as ConfiguratorStatePublishing;
-  }, [dataSet, dataSource, chartConfig]);
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
 
   const allComponents = useMemo(() => {
@@ -249,25 +237,21 @@ export const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             height={containerHeight.current!}
             flexGrow={1}
           >
-            <PublishedConfiguratorStateProvider
-              initialState={publishedConfiguratorState}
-            >
-              {isTablePreview ? (
-                <DataSetTable
-                  sx={{ maxHeight: "100%" }}
-                  dataSetIri={dataSet}
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                />
-              ) : (
-                <ChartWithFilters
-                  dataSet={dataSet}
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  published
-                />
-              )}
-            </PublishedConfiguratorStateProvider>
+            {isTablePreview ? (
+              <DataSetTable
+                sx={{ maxHeight: "100%" }}
+                dataSetIri={dataSet}
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+              />
+            ) : (
+              <ChartWithFilters
+                dataSet={dataSet}
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                published
+              />
+            )}
           </Flex>
           <ChartFootnotes
             dataSetIri={dataSet}

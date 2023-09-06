@@ -7,7 +7,7 @@ import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel";
-import { Configurator, EditorConfiguratorStateProvider } from "@/configurator";
+import { Configurator, ConfiguratorStateProvider } from "@/configurator";
 
 type PageProps = {
   locale: string;
@@ -38,11 +38,11 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
         <meta name="viewport" content="width=1280"></meta>
       </Head>
       <AppLayout>
-        <EditorConfiguratorStateProvider chartId={chartId}>
+        <ConfiguratorStateProvider chartId={chartId}>
           <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
             <Configurator />
           </MetadataPanelStoreContext.Provider>
-        </EditorConfiguratorStateProvider>
+        </ConfiguratorStateProvider>
       </AppLayout>
     </>
   );

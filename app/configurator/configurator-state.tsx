@@ -1504,34 +1504,7 @@ const ConfiguratorStateProviderInternal = ({
   );
 };
 
-export const PublishedConfiguratorStateProvider = ({
-  children,
-  initialState,
-}: {
-  children?: ReactNode;
-  initialState?: ConfiguratorState;
-}) => {
-  const stateAndDispatch = useMemo(() => {
-    return [
-      initialState,
-      () => {
-        throw new Error(
-          "Should not call dispatch on config statefor publishers"
-        );
-      },
-    ] as React.ComponentProps<
-      typeof ConfiguratorStateContext.Provider
-    >["value"];
-  }, [initialState]);
-
-  return (
-    <ConfiguratorStateContext.Provider value={stateAndDispatch}>
-      {children}
-    </ConfiguratorStateContext.Provider>
-  );
-};
-
-export const EditorConfiguratorStateProvider = ({
+export const ConfiguratorStateProvider = ({
   chartId,
   children,
   initialState,

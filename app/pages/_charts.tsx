@@ -7,7 +7,11 @@ import { ChartPanelPublished } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
-import { Config } from "@/configurator";
+import {
+  Config,
+  ConfiguratorStateProvider,
+  ConfiguratorStatePublished,
+} from "@/configurator";
 import { getAllConfigs } from "@/db/config";
 
 type PageProps = {
@@ -76,62 +80,54 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta),
+      configs: configs.filter((c: $Unexpressable) => c.data),
     },
   };
 };
 
 const Page: NextPage<PageProps> = ({ configs }) => {
   return (
-    <>
-      <ContentLayout>
-        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
-          <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
-            {configs.map(
-              (
-                { key, data: { dataSet, dataSource, chartConfigs, meta } },
-                i
-              ) => {
-                return chartConfigs.map((d) => (
-                  <Box
-                    key={key}
-                    id={`chart-${key}`}
-                    sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
-                  >
-                    <ChartPanelPublished chartType={d.chartType}>
-                      <HiddenUntilScrolledTo
-                        initialVisible={i < 5}
-                        fallback={<div>Loading...</div>}
-                      >
-                        <ChartPublished
-                          dataSet={dataSet}
-                          dataSource={dataSource}
-                          chartConfig={d}
-                          meta={meta}
-                          configKey={key}
-                        />
-                      </HiddenUntilScrolledTo>
-                      <Box
-                        mb={2}
-                        mx={4}
-                        mr={6}
-                        textAlign="right"
-                        typography="caption"
-                      >
-                        Id: {key} -{" "}
-                        <NextLink href={`/v/${key}`} passHref>
-                          <Link color="primary">Open</Link>
-                        </NextLink>{" "}
-                      </Box>
-                    </ChartPanelPublished>
-                  </Box>
-                ));
-              }
-            )}
-          </Flex>
-        </Box>
-      </ContentLayout>
-    </>
+    <ContentLayout>
+      <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
+        <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
+          {configs.map((config, i) => {
+            return (
+              <Box
+                key={config.key}
+                id={`chart-${config.key}`}
+                sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
+              >
+                <ConfiguratorStateProvider
+                  chartId="published"
+                  initialState={config.data as ConfiguratorStatePublished}
+                >
+                  <ChartPanelPublished>
+                    <HiddenUntilScrolledTo
+                      initialVisible={i < 5}
+                      fallback={<div>Loading...</div>}
+                    >
+                      <ChartPublished />
+                    </HiddenUntilScrolledTo>
+                    <Box
+                      mb={2}
+                      mx={4}
+                      mr={6}
+                      textAlign="right"
+                      typography="caption"
+                    >
+                      Id: {config.key} -{" "}
+                      <NextLink href={`/v/${config.key}`} passHref>
+                        <Link color="primary">Open</Link>
+                      </NextLink>{" "}
+                    </Box>
+                  </ChartPanelPublished>
+                </ConfiguratorStateProvider>
+              </Box>
+            );
+          })}
+        </Flex>
+      </Box>
+    </ContentLayout>
   );
 };
 

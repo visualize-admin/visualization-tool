@@ -5,7 +5,8 @@ import { ReactNode } from "react";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { HomepageSection } from "@/homepage/generic";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import { ConfiguratorStateProvider } from "@/src";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 export const Examples = ({
   headline,
@@ -34,11 +35,16 @@ export const Examples = ({
       }}
     >
       <HomepageSection>{headline}</HomepageSection>
-      <Example headline={example1Headline} description={example1Description}>
-        <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
-          dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
-          meta={{
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={migrateConfiguratorState({
+          state: "PUBLISHED",
+          dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
+          dataSource: {
+            type: "sparql",
+            url: "https://lindas.admin.ch/query",
+          },
+          meta: {
             title: {
               de: "Lärmbelastung durch Verkehr",
               en: "Traffic noise pollution",
@@ -51,113 +57,99 @@ export const Examples = ({
               fr: "",
               it: "",
             },
-          }}
-          chartConfig={migrateChartConfig(
-            {
-              version: "1.2.1",
-              fields: {
-                x: {
-                  sorting: {
-                    sortingType: "byMeasure",
-                    sortingOrder: "desc",
-                  },
-                  componentIri:
-                    "https://environment.ld.admin.ch/foen/ubd003701/verkehrsart",
+          },
+          chartConfig: {
+            version: "1.2.1",
+            fields: {
+              x: {
+                sorting: {
+                  sortingType: "byMeasure",
+                  sortingOrder: "desc",
                 },
-                y: {
-                  componentIri:
-                    "https://environment.ld.admin.ch/foen/ubd003701/wert",
-                },
-                segment: {
-                  type: "grouped",
-                  palette: "category10",
-                  sorting: {
-                    sortingType: "byTotalSize",
-                    sortingOrder: "asc",
-                  },
-                  colorMapping: {
-                    "https://environment.ld.admin.ch/foen/ubd003701/periode/D":
-                      "#ff7f0e",
-                    "https://environment.ld.admin.ch/foen/ubd003701/periode/N":
-                      "#1f77b4",
-                  },
-                  componentIri:
-                    "https://environment.ld.admin.ch/foen/ubd003701/periode",
-                },
+                componentIri:
+                  "https://environment.ld.admin.ch/foen/ubd003701/verkehrsart",
               },
-              filters: {
-                "https://environment.ld.admin.ch/foen/ubd003701/beurteilung": {
-                  type: "single",
-                  value:
-                    "https://environment.ld.admin.ch/foen/ubd003701/beurteilung/%3EIGWLSV",
-                },
-                "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype": {
-                  type: "single",
-                  value:
-                    "https://environment.ld.admin.ch/foen/ubd003701/gemeindeTyp/CH",
-                },
-                "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit":
-                  {
-                    type: "single",
-                    value:
-                      "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteEinheit/Pers",
-                  },
+              y: {
+                componentIri:
+                  "https://environment.ld.admin.ch/foen/ubd003701/wert",
               },
-              chartType: "column",
-              interactiveFiltersConfig: {
-                timeRange: {
-                  active: false,
-                  presets: {
-                    to: "",
-                    from: "",
-                    type: "range",
-                  },
-                  componentIri: "",
+              segment: {
+                type: "grouped",
+                palette: "category10",
+                sorting: {
+                  sortingType: "byTotalSize",
+                  sortingOrder: "asc",
                 },
-                legend: {
-                  active: false,
-                  componentIri: "",
+                colorMapping: {
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/D":
+                    "#ff7f0e",
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/N":
+                    "#1f77b4",
                 },
-                dataFilters: {
-                  active: true,
-                  componentIris: [
-                    "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
-                    "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",
-                  ],
-                },
+                componentIri:
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode",
               },
             },
-            {
-              migrationProps: {
-                meta: {
-                  title: {
-                    de: "Lärmbelastung durch Verkehr",
-                    en: "Traffic noise pollution",
-                    fr: "Exposition au bruit du trafic",
-                    it: "Esposizione al rumore del traffico",
-                  },
-                  description: {
-                    de: "",
-                    en: "",
-                    fr: "",
-                    it: "",
-                  },
-                },
+            filters: {
+              "https://environment.ld.admin.ch/foen/ubd003701/beurteilung": {
+                type: "single",
+                value:
+                  "https://environment.ld.admin.ch/foen/ubd003701/beurteilung/%3EIGWLSV",
               },
-            }
-          )}
-          configKey={""}
-        />
-      </Example>
-      <Example
-        headline={example2Headline}
-        description={example2Description}
-        reverse
+              "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype": {
+                type: "single",
+                value:
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindeTyp/CH",
+              },
+              "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit":
+                {
+                  type: "single",
+                  value:
+                    "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteEinheit/Pers",
+                },
+            },
+            chartType: "column",
+            interactiveFiltersConfig: {
+              timeRange: {
+                active: false,
+                presets: {
+                  to: "",
+                  from: "",
+                  type: "range",
+                },
+                componentIri: "",
+              },
+              legend: {
+                active: false,
+                componentIri: "",
+              },
+              dataFilters: {
+                active: true,
+                componentIris: [
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
+                  "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",
+                ],
+              },
+            },
+          },
+          activeField: undefined,
+        })}
       >
-        <ChartPublished
-          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
-          dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
-          meta={{
+        <Example headline={example1Headline} description={example1Description}>
+          <ChartPublished />
+        </Example>
+      </ConfiguratorStateProvider>
+
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={migrateConfiguratorState({
+          state: "PUBLISHED",
+          dataSet: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
+          dataSource: {
+            type: "sparql",
+            url: "https://lindas.admin.ch/query",
+          },
+          meta: {
             title: {
               de: "Verteilung der Ausgaben und Einnahmen nach Ämtern",
               en: "Distribution of expenses and income by office",
@@ -170,85 +162,72 @@ export const Examples = ({
               fr: "",
               it: "",
             },
-          }}
-          chartConfig={migrateChartConfig(
-            {
-              version: "1.2.1",
-              fields: {
-                x: {
-                  componentIri: "http://www.w3.org/2006/time#Year",
-                },
-                y: {
-                  componentIri: "http://schema.org/amount",
-                },
-                segment: {
-                  palette: "category10",
-                  sorting: {
-                    sortingType: "byDimensionLabel",
-                    sortingOrder: "asc",
-                  },
-                  colorMapping: {
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC1":
-                      "#1f77b4",
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC2":
-                      "#ff7f0e",
-                  },
-                  componentIri:
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",
-                },
+          },
+          chartConfig: {
+            version: "1.2.1",
+            fields: {
+              x: {
+                componentIri: "http://www.w3.org/2006/time#Year",
               },
-              filters: {
-                "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
-                  type: "single",
-                  value:
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/Office/O7",
-                },
+              y: {
+                componentIri: "http://schema.org/amount",
               },
-              chartType: "area",
-              interactiveFiltersConfig: {
-                timeRange: {
-                  active: true,
-                  presets: {
-                    to: "2013-12-31T23:00:00.000Z",
-                    from: "1950-12-31T23:00:00.000Z",
-                    type: "range",
-                  },
-                  componentIri: "",
+              segment: {
+                palette: "category10",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
                 },
-                legend: {
-                  active: true,
-                  componentIri: "",
+                colorMapping: {
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC1":
+                    "#1f77b4",
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC2":
+                    "#ff7f0e",
                 },
-                dataFilters: {
-                  active: true,
-                  componentIris: [
-                    "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office",
-                  ],
-                },
+                componentIri:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",
               },
             },
-            {
-              migrationProps: {
-                meta: {
-                  title: {
-                    de: "Lärmbelastung durch Verkehr",
-                    en: "Traffic noise pollution",
-                    fr: "Exposition au bruit du trafic",
-                    it: "Esposizione al rumore del traffico",
-                  },
-                  description: {
-                    de: "",
-                    en: "",
-                    fr: "",
-                    it: "",
-                  },
-                },
+            filters: {
+              "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
+                type: "single",
+                value:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/Office/O7",
               },
-            }
-          )}
-          configKey={""}
-        />
-      </Example>
+            },
+            chartType: "area",
+            interactiveFiltersConfig: {
+              timeRange: {
+                active: true,
+                presets: {
+                  to: "2013-12-31T23:00:00.000Z",
+                  from: "1950-12-31T23:00:00.000Z",
+                  type: "range",
+                },
+                componentIri: "",
+              },
+              legend: {
+                active: true,
+                componentIri: "",
+              },
+              dataFilters: {
+                active: true,
+                componentIris: [
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office",
+                ],
+              },
+            },
+          },
+        })}
+      >
+        <Example
+          headline={example2Headline}
+          description={example2Description}
+          reverse
+        >
+          <ChartPublished />
+        </Example>
+      </ConfiguratorStateProvider>
       {example3Headline && example3Description && (
         <Example
           headline={example3Headline}

@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 
 import { ChartPublished } from "@/components/chart-published";
-import { Config, getChartConfig } from "@/configurator";
+import { Config, ConfiguratorStateProvider } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -26,36 +26,41 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 }) => {
   const config = await getConfig(query.chartId as string);
 
-  if (config && config.data) {
-    // TODO validate configuration
-    return { props: serializeProps({ status: "found", config }) };
+  if (config?.data) {
+    return {
+      props: serializeProps({
+        status: "found",
+        config,
+      }),
+    };
   }
 
   res.statusCode = 404;
 
-  return { props: { status: "notfound" } };
+  return {
+    props: {
+      status: "notfound",
+    },
+  };
 };
 
 const EmbedPage = (props: PageProps) => {
   if (props.status === "notfound") {
-    // TODO: display 404 message
     return <ErrorPage statusCode={404} />;
   }
 
   const {
     config: { key, data },
   } = props;
-  const chartConfig = getChartConfig({ ...data, state: "PUBLISHING" });
 
   return (
     <EmbedOptionsProvider>
-      <ChartPublished
-        dataSet={data.dataSet}
-        dataSource={data.dataSource}
-        chartConfig={chartConfig}
-        meta={chartConfig.meta}
-        configKey={key}
-      />
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={{ ...data, state: "PUBLISHED" }}
+      >
+        <ChartPublished configKey={key} />
+      </ConfiguratorStateProvider>
     </EmbedOptionsProvider>
   );
 };

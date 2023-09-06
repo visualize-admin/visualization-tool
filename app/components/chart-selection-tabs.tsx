@@ -77,7 +77,7 @@ export const ChartSelectionTabs = ({
     Dispatch<any>
   ];
 
-  if (singleConfig) {
+  if (!editable && state.chartConfigs.length === 1) {
     return null;
   }
 
@@ -86,7 +86,6 @@ export const ChartSelectionTabs = ({
     return {
       key: d.key,
       chartType: d.chartType,
-      editable: true,
       active: d.key === chartConfig.key,
     };
   });
@@ -157,6 +156,7 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
+        editable
         onActionButtonClick={(
           e: React.MouseEvent<HTMLElement>,
           activeChartKey: string
@@ -215,8 +215,20 @@ type TabsFixedProps = {
 
 const TabsFixed = (props: TabsFixedProps) => {
   const { data } = props;
+  const [, dispatch] = useConfiguratorState();
 
-  return <TabsInner data={data} />;
+  return (
+    <TabsInner
+      data={data}
+      editable={false}
+      onSwitchButtonClick={(key: string) => {
+        dispatch({
+          type: "SWITCH_ACTIVE_CHART",
+          value: key,
+        });
+      }}
+    />
+  );
 };
 
 const PublishChartButton = () => {
@@ -268,16 +280,13 @@ const PublishChartButton = () => {
 
 const TabsInner = ({
   data,
+  editable,
   onActionButtonClick,
   onSwitchButtonClick,
   onAddButtonClick,
 }: {
-  data: {
-    key: string;
-    chartType: ChartType;
-    editable?: boolean;
-    active: boolean;
-  }[];
+  data: TabDatum[];
+  editable: boolean;
   onActionButtonClick?: (
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
@@ -302,12 +311,13 @@ const TabsInner = ({
               border: "1px solid",
               borderBottomWidth: 0,
               borderColor: "divider",
+              minWidth: "fit-content",
             }}
             label={
               <TabContent
                 iconName={getIconName(d.chartType)}
                 chartKey={d.key}
-                editable={d.editable ?? false}
+                editable={editable}
                 active={d.active}
                 onEditClick={onActionButtonClick}
                 onSwitchClick={(e) => {
@@ -318,27 +328,29 @@ const TabsInner = ({
             }
           />
         ))}
-        <Tab
-          sx={{
-            p: 0,
-            background: "white",
-            border: "1px solid",
-            borderBottomWidth: 0,
-            borderColor: "divider",
-            minWidth: "fit-content",
-          }}
-          onClick={onAddButtonClick}
-          label={
-            <TabContent
-              iconName="add"
-              chartKey=""
-              editable={false}
-              active={false}
-            />
-          }
-        />
+        {editable && (
+          <Tab
+            sx={{
+              p: 0,
+              background: "white",
+              border: "1px solid",
+              borderBottomWidth: 0,
+              borderColor: "divider",
+              minWidth: "fit-content",
+            }}
+            onClick={onAddButtonClick}
+            label={
+              <TabContent
+                iconName="add"
+                chartKey=""
+                editable={false}
+                active={false}
+              />
+            }
+          />
+        )}
       </Tabs>
-      <PublishChartButton />
+      {editable && <PublishChartButton />}
     </Box>
   );
 };

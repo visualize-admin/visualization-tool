@@ -1,11 +1,10 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { markdown, ReactSpecimen } from "catalog";
-import React from "react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import {
   ConfiguratorStateConfiguringChart,
-  EditorConfiguratorStateProvider,
+  ConfiguratorStateProvider,
 } from "@/configurator";
 import palmerPenguinsFixture from "@/test/__fixtures/config/int/scatterplot-palmer-penguins.json";
 
@@ -18,15 +17,15 @@ They can be either _editable_, to display a button to show ChartTypeSelector (us
 
 ${(
   <ReactSpecimen span={6}>
-    <EditorConfiguratorStateProvider
+    <ConfiguratorStateProvider
       chartId={palmerPenguinsFixture.key}
       initialState={
         palmerPenguinsFixture.data as unknown as ConfiguratorStateConfiguringChart
       }
       allowDefaultRedirect={false}
     >
-      <ChartSelectionTabs chartType="scatterplot" editable />
-    </EditorConfiguratorStateProvider>
+      <ChartSelectionTabs editable />
+    </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 
@@ -34,15 +33,15 @@ ${(
 
   ${(
     <ReactSpecimen span={6}>
-      <EditorConfiguratorStateProvider
+      <ConfiguratorStateProvider
         chartId={palmerPenguinsFixture.key}
         initialState={
           palmerPenguinsFixture.data as unknown as ConfiguratorStateConfiguringChart
         }
         allowDefaultRedirect={false}
       >
-        <ChartSelectionTabs chartType="scatterplot" editable={false} />
-      </EditorConfiguratorStateProvider>
+        <ChartSelectionTabs editable={false} />
+      </ConfiguratorStateProvider>
     </ReactSpecimen>
   )}
 
