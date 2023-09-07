@@ -28,6 +28,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
+import { createChartId } from "@/utils/create-chart-id";
 import useEvent from "@/utils/use-event";
 
 type TabsState = {
@@ -87,7 +88,6 @@ export const ChartSelectionTabs = () => {
       key: d.key,
       chartType: d.chartType,
       active: d.key === chartConfig.key,
-      editable: editable && state.chartConfigs.length > 1,
     };
   });
 
@@ -132,6 +132,7 @@ type TabsEditableProps = {
 const TabsEditable = (props: TabsEditableProps) => {
   const { state, chartConfig, data } = props;
   const [, dispatch] = useConfiguratorState();
+  const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
     null
@@ -212,21 +213,44 @@ const TabsEditable = (props: TabsEditableProps) => {
             chartKey={tabsState.activeChartKey ?? chartConfig.key}
           />
         ) : (
-          <Box>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
+            {state.chartConfigs.length > 1 && (
+              <Button
+                color="error"
+                onClick={() => {
+                  dispatch({
+                    type: "CHART_CONFIG_REMOVE",
+                    value: {
+                      chartKey: tabsState.activeChartKey as string,
+                    },
+                  });
+                  handleClose();
+                }}
+                sx={{ justifyContent: "center" }}
+              >
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
+              </Button>
+            )}
             <Button
-              sx={{ m: 4, justifyContent: "center" }}
               onClick={() => {
                 dispatch({
-                  type: "CHART_CONFIG_REMOVE",
+                  type: "CHART_CONFIG_ADD",
                   value: {
-                    chartKey: tabsState.activeChartKey as string,
+                    chartConfig: {
+                      ...getChartConfig(state, tabsState.activeChartKey),
+                      key: createChartId(),
+                    },
+                    locale,
                   },
                 });
                 handleClose();
               }}
+              sx={{ justifyContent: "center" }}
             >
-              <Trans id="controls.remove.visualization">
-                Remove this visualization
+              <Trans id="controls.duplicate.visualization">
+                Duplicate this visualization
               </Trans>
             </Button>
           </Box>
@@ -240,7 +264,6 @@ type TabDatum = {
   key: string;
   chartType: ChartType;
   active: boolean;
-  editable: boolean;
 };
 
 type TabsFixedProps = {
@@ -352,7 +375,7 @@ const TabsInner = ({
               <TabContent
                 iconName={getIconName(d.chartType)}
                 chartKey={d.key}
-                editable={d.editable}
+                editable={editable}
                 active={d.active}
                 onEditClick={onActionButtonClick}
                 onSwitchClick={(e) => {
