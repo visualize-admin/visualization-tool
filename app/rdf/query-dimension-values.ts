@@ -8,6 +8,7 @@ import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 
@@ -166,6 +167,10 @@ export async function loadDimensionValues(
               (d) => d.path?.value === iri
             );
             if (!filterDimension || dimensionIri?.value === iri) {
+              return "";
+            }
+
+            if (value.type === "single" && value.value === FIELD_VALUE_NONE) {
               return "";
             }
 

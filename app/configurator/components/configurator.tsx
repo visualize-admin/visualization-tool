@@ -25,6 +25,7 @@ import {
 import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useDataSourceStore } from "@/stores/data-source";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
@@ -112,7 +113,7 @@ const ConfigureChartStep = () => {
   const chartConfig = getChartConfig(state);
 
   return (
-    <>
+    <InteractiveFiltersProvider>
       <PanelLeftWrapper
         sx={{
           flexGrow: 1,
@@ -166,7 +167,7 @@ const ConfigureChartStep = () => {
           )}
         </div>
       </ConfiguratorDrawer>
-    </>
+    </InteractiveFiltersProvider>
   );
 };
 
@@ -180,10 +181,12 @@ const PublishStep = () => {
   return (
     <PanelMiddleWrapper>
       <ChartPanel>
-        <ChartPreview
-          dataSetIri={state.dataSet}
-          dataSource={state.dataSource}
-        />
+        <InteractiveFiltersProvider>
+          <ChartPreview
+            dataSetIri={state.dataSet}
+            dataSource={state.dataSource}
+          />
+        </InteractiveFiltersProvider>
       </ChartPanel>
     </PanelMiddleWrapper>
   );

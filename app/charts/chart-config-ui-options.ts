@@ -20,6 +20,7 @@ import {
   ColumnConfig,
   ColumnSegmentField,
   ComponentType,
+  GenericField,
   LineConfig,
   MapConfig,
   PaletteType,
@@ -32,6 +33,7 @@ import {
   isSortingInConfig,
   makeMultiFilter,
 } from "@/config-types";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   Observation,
@@ -57,12 +59,13 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | XYEncodingFieldType;
 
-export type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
+type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
   value: V,
   options: {
     chartConfig: T;
     dimensions: DimensionMetadataFragment[];
     measures: DimensionMetadataFragment[];
+    field: EncodingFieldType;
   }
 ) => void;
 
@@ -79,7 +82,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   onChange: OnEncodingOptionChange<ChartSubType, T>;
 };
 
-export type EncodingOption<T extends ChartConfig = ChartConfig> =
+type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionChartSubType<T>
   | {
       field: "calculation";
@@ -108,79 +111,70 @@ export type EncodingOption<T extends ChartConfig = ChartConfig> =
       field: "useAbbreviations";
     };
 
-export const makeOnColorComponentScaleTypeChange = (
-  type: "areaLayer" | "symbolLayer"
-): OnEncodingOptionChange<ColorScaleType, MapConfig> => {
-  const basePath = `fields.${type}`;
+const onColorComponentScaleTypeChange: OnEncodingOptionChange<
+  ColorScaleType,
+  MapConfig
+> = (value, { chartConfig, field }) => {
+  const basePath = `fields.${field}`;
   const interpolationTypePath = `${basePath}.color.interpolationType`;
   const nbClassPath = `${basePath}.color.nbClass`;
 
-  return (value, { chartConfig }) => {
-    if (value === "continuous") {
-      setWith(chartConfig, interpolationTypePath, "linear", Object);
-      unset(chartConfig, nbClassPath);
-    } else if (value === "discrete") {
-      setWith(chartConfig, interpolationTypePath, "jenks", Object);
-      setWith(chartConfig, nbClassPath, 3, Object);
-    }
-  };
+  if (value === "continuous") {
+    setWith(chartConfig, interpolationTypePath, "linear", Object);
+    unset(chartConfig, nbClassPath);
+  } else if (value === "discrete") {
+    setWith(chartConfig, interpolationTypePath, "jenks", Object);
+    setWith(chartConfig, nbClassPath, 3, Object);
+  }
 };
 
-export const makeOnColorComponentIriChange = (
-  type: "areaLayer" | "symbolLayer"
-): OnEncodingOptionChange<string, MapConfig> => {
-  const basePath = `fields.${type}`;
+const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
+  iri,
+  { chartConfig, dimensions, measures, field }
+) => {
+  const basePath = `fields.${field}`;
+  const components = [...dimensions, ...measures];
+  let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
+  const component = components.find((d) => d.iri === iri);
+  const currentColorComponentIri = get(
+    chartConfig,
+    `${basePath}.color.componentIri`
+  );
 
-  return (iri, { chartConfig, dimensions, measures }) => {
-    const components = [...dimensions, ...measures];
-    let newField: ColorField = DEFAULT_FIXED_COLOR_FIELD;
-    const component = components.find((d) => d.iri === iri);
-    const currentColorComponentIri = get(
+  if (component) {
+    const colorPalette: PaletteType | undefined = get(
       chartConfig,
-      `${basePath}.color.componentIri`
+      `${basePath}.color.palette`
     );
 
-    if (component) {
-      const colorPalette: PaletteType | undefined = get(
-        chartConfig,
-        `${basePath}.color.palette`
-      );
-
-      if (
-        canDimensionBeMultiFiltered(component) ||
-        isOrdinalMeasure(component)
-      ) {
-        const palette = getDefaultCategoricalPaletteName(
-          component,
-          colorPalette
-        );
-        newField = {
-          type: "categorical",
-          componentIri: iri,
+    if (canDimensionBeMultiFiltered(component) || isOrdinalMeasure(component)) {
+      const palette = getDefaultCategoricalPaletteName(component, colorPalette);
+      newField = {
+        type: "categorical",
+        componentIri: iri,
+        palette,
+        colorMapping: mapValueIrisToColor({
           palette,
-          colorMapping: mapValueIrisToColor({
-            palette,
-            dimensionValues: component.values,
-          }),
-        };
-      } else if (isNumericalMeasure(component)) {
-        newField = {
-          type: "numerical",
-          componentIri: iri,
-          palette: colorPalette ?? "oranges",
-          scaleType: "continuous",
-          interpolationType: "linear",
-        };
-      }
+          dimensionValues: component.values,
+        }),
+      };
+    } else if (isNumericalMeasure(component)) {
+      newField = {
+        type: "numerical",
+        componentIri: iri,
+        palette: colorPalette ?? "oranges",
+        scaleType: "continuous",
+        interpolationType: "linear",
+      };
     }
+  }
 
-    // Remove old filter.
-    unset(chartConfig, `filters["${currentColorComponentIri}"]`);
-    setWith(chartConfig, `${basePath}.color`, newField, Object);
-  };
+  // Remove old filter.
+  unset(chartConfig, `filters["${currentColorComponentIri}"]`);
+  setWith(chartConfig, `${basePath}.color`, newField, Object);
 };
 
-export type EncodingOptionColorComponent = {
+type EncodingOptionColorComponent = {
   field: "colorComponent";
   optional: boolean;
   componentTypes: ComponentType[];
@@ -206,7 +200,7 @@ export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
   };
 };
 
-export type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
+type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
   options: {
     chartConfig: T;
@@ -214,6 +208,7 @@ export type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
     measures: DimensionMetadataFragment[];
     initializing: boolean;
     selectedValues: any[];
+    field: EncodingFieldType;
   }
 ) => void;
 
@@ -226,6 +221,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   filters: boolean;
   disableInteractiveFilters?: boolean;
   sorting?: EncodingSortingOption<T>[];
+  hide?: boolean;
   options?: {
     [K in EncodingOption["field"]]?: Omit<
       Extract<EncodingOption<T>, { field: K }>,
@@ -270,7 +266,7 @@ const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
   "GeoShapesDimension",
 ];
 
-export const getDefaultSegmentSorting = <
+const getDefaultSegmentSorting = <
   T extends ChartConfig = ChartConfig
 >(): EncodingSortingOption<T>[] => [
   {
@@ -311,7 +307,7 @@ export const getDefaultSegmentSorting = <
 
 export const AREA_SEGMENT_SORTING = getDefaultSegmentSorting<AreaConfig>();
 
-export const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
+const LINE_SEGMENT_SORTING: EncodingSortingOption<LineConfig>[] = [
   { sortingType: "byAuto", sortingOrder: ["asc", "desc"] },
   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
 ];
@@ -331,6 +327,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
   optional: true,
   componentTypes: ["TemporalDimension", "TemporalOrdinalDimension"],
   filters: true,
+  hide: true,
   disableInteractiveFilters: true,
   onChange: (iri, { chartConfig, initializing }) => {
     if (initializing || !chartConfig.fields.animation) {
@@ -352,9 +349,10 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     disabled: boolean;
     warnMessage?: string;
   } => {
-    const noTemporalDimensions = !components.some((d) => {
+    const temporalDimensions = components.filter((d) => {
       return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
+    const noTemporalDimensions = temporalDimensions.length === 0;
 
     if (noTemporalDimensions) {
       return {
@@ -362,6 +360,30 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
         warnMessage: t({
           id: "controls.section.animation.no-temporal-dimensions",
           message: "There is no dimension that can be animated.",
+        }),
+      };
+    }
+
+    const fieldComponentsMap = Object.fromEntries(
+      Object.entries<GenericField>(chartConfig.fields)
+        .filter((d) => d[0] !== "animation")
+        .map(([k, v]) => [v.componentIri, k])
+    );
+    const temporalFieldComponentIris = temporalDimensions.filter((d) => {
+      return fieldComponentsMap[d.iri];
+    });
+
+    if (temporalDimensions.length === temporalFieldComponentIris.length) {
+      return {
+        disabled: true,
+        warnMessage: t({
+          id: "controls.section.animation.no-available-temporal-dimensions",
+          message: `There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation.`,
+          values: {
+            fields: temporalFieldComponentIris
+              .map((d) => getFieldLabel(fieldComponentsMap[d.iri]))
+              .join(", "),
+          },
         }),
       };
     }
@@ -405,7 +427,7 @@ export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-export const defaultSegmentOnChange: OnEncodingChange<
+const defaultSegmentOnChange: OnEncodingChange<
   | AreaConfig
   | ColumnConfig
   | LineConfig
@@ -448,18 +470,17 @@ export const defaultSegmentOnChange: OnEncodingChange<
   chartConfig.filters[iri] = multiFilter;
 };
 
-export const makeOnMapFieldChange = (
-  field: "areaLayer" | "symbolLayer"
-): OnEncodingChange<MapConfig> => {
-  return (iri, { chartConfig, dimensions, measures }) => {
-    initializeMapLayerField({
-      chartConfig,
-      field,
-      componentIri: iri,
-      dimensions,
-      measures,
-    });
-  };
+const onMapFieldChange: OnEncodingChange<MapConfig> = (
+  iri,
+  { chartConfig, dimensions, measures, field }
+) => {
+  initializeMapLayerField({
+    chartConfig,
+    field,
+    componentIri: iri,
+    dimensions,
+    measures,
+  });
 };
 
 export const getChartSpec = <T extends ChartConfig>(
@@ -692,6 +713,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           useAbbreviations: {},
         },
       },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend", "timeRange", "animation"],
   },
@@ -741,7 +763,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoShapesDimension"],
         exclusive: false,
         filters: true,
-        onChange: makeOnMapFieldChange("areaLayer"),
+        onChange: onMapFieldChange,
         options: {
           colorComponent: {
             componentTypes: [
@@ -751,8 +773,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: false,
             enableUseAbbreviations: true,
-            onComponentIriChange: makeOnColorComponentIriChange("areaLayer"),
-            onScaleTypeChange: makeOnColorComponentScaleTypeChange("areaLayer"),
+            onComponentIriChange: onColorComponentIriChange,
+            onScaleTypeChange: onColorComponentScaleTypeChange,
           },
         },
       },
@@ -762,7 +784,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: ["GeoCoordinatesDimension", "GeoShapesDimension"],
         exclusive: false,
         filters: true,
-        onChange: makeOnMapFieldChange("symbolLayer"),
+        onChange: onMapFieldChange,
         options: {
           colorComponent: {
             componentTypes: [
@@ -776,9 +798,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             ],
             optional: true,
             enableUseAbbreviations: true,
-            onComponentIriChange: makeOnColorComponentIriChange("symbolLayer"),
-            onScaleTypeChange:
-              makeOnColorComponentScaleTypeChange("symbolLayer"),
+            onComponentIriChange: onColorComponentIriChange,
+            onScaleTypeChange: onColorComponentScaleTypeChange,
           },
           size: {
             componentTypes: ["NumericalMeasure"],
@@ -786,6 +807,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
         },
       },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["animation"],
   },
@@ -810,6 +832,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           useAbbreviations: {},
         },
       },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend", "animation"],
   },
@@ -839,6 +862,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           useAbbreviations: {},
         },
       },
+      ANIMATION_FIELD_SPEC,
     ],
     interactiveFilters: ["legend", "animation"],
   },

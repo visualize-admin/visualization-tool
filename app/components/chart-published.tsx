@@ -39,6 +39,7 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { useEmbedOptions } from "@/utils/embed";
 import useEvent from "@/utils/use-event";
 
@@ -231,42 +232,44 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               {meta.description[locale]}
             </Typography>
           )}
-          <Flex
-            flexDirection="column"
-            ref={containerRef}
-            height={containerHeight.current!}
-            flexGrow={1}
-          >
-            {isTablePreview ? (
-              <DataSetTable
-                sx={{ maxHeight: "100%" }}
-                dataSetIri={dataSet}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-              />
-            ) : (
-              <ChartWithFilters
-                dataSet={dataSet}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                published
-              />
-            )}
-          </Flex>
-          <ChartFootnotes
-            dataSetIri={dataSet}
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-            configKey={configKey}
-            onToggleTableView={handleToggleTableView}
-            visualizeLinkText={
-              showDownload === false ? (
-                <Trans id="metadata.link.created.with.visualize.alternate">
-                  visualize.admin.ch
-                </Trans>
-              ) : undefined
-            }
-          />
+          <InteractiveFiltersProvider>
+            <Flex
+              flexDirection="column"
+              ref={containerRef}
+              height={containerHeight.current!}
+              flexGrow={1}
+            >
+              {isTablePreview ? (
+                <DataSetTable
+                  sx={{ maxHeight: "100%" }}
+                  dataSetIri={dataSet}
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                />
+              ) : (
+                <ChartWithFilters
+                  dataSet={dataSet}
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  published
+                />
+              )}
+            </Flex>
+            <ChartFootnotes
+              dataSetIri={dataSet}
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              configKey={configKey}
+              onToggleTableView={handleToggleTableView}
+              visualizeLinkText={
+                showDownload === false ? (
+                  <Trans id="metadata.link.created.with.visualize.alternate">
+                    visualize.admin.ch
+                  </Trans>
+                ) : undefined
+              }
+            />
+          </InteractiveFiltersProvider>
         </ChartErrorBoundary>
       </Box>
     </MetadataPanelStoreContext.Provider>

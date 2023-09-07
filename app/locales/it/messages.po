@@ -519,6 +519,10 @@ msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Abilitare la scalatura dinamica per regolare la scala del grafico in base all'intervallo di dati, garantendo una visualizzazione ottimale."
 
 #: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-available-temporal-dimensions"
+msgstr "Non ci sono dimensioni temporali disponibili da utilizzare. Modificare alcune delle seguenti codifiche: {fields} per abilitare l'animazione."
+
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-temporal-dimensions"
 msgstr "Non esiste una dimensione che possa essere animata."
 

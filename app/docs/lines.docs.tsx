@@ -15,6 +15,7 @@ import {
 } from "@/configurator";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
@@ -38,27 +39,29 @@ ${(
         activeChartKey: "line",
       }}
     >
-      <LineChart
-        observations={observations}
-        dimensions={dimensions}
-        dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
-        measures={measures}
-        measuresByIri={keyBy(measures, (d) => d.iri)}
-        chartConfig={chartConfig}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <BrushTime />
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-            <Lines />
-          </ChartSvg>
-        </ChartContainer>
+      <InteractiveFiltersProvider>
+        <LineChart
+          observations={observations}
+          dimensions={dimensions}
+          dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
+          measures={measures}
+          measuresByIri={keyBy(measures, (d) => d.iri)}
+          chartConfig={chartConfig}
+          aspectRatio={0.4}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <BrushTime />
+              <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+              <Lines />
+            </ChartSvg>
+          </ChartContainer>
 
-        {fields.segment && (
-          <LegendColor chartConfig={chartConfig} symbol="line" interactive />
-        )}
-      </LineChart>
+          {fields.segment && (
+            <LegendColor chartConfig={chartConfig} symbol="line" interactive />
+          )}
+        </LineChart>
+      </InteractiveFiltersProvider>
     </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}

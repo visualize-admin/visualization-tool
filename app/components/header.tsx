@@ -82,7 +82,6 @@ const useHeaderStyles = makeStyles<Theme, { isConfiguring: boolean }>(
       width: "100%",
       overflowY: "hidden",
       zIndex: 13,
-      backgroundColor: theme.palette.grey[100],
     },
     content: {
       minHeight: HEADER_HEIGHT,
@@ -106,7 +105,10 @@ export const Header = ({
   const classes = useHeaderStyles({ isConfiguring });
 
   return (
-    <Box className={pageType === "app" ? classes.wrapper : undefined}>
+    <Box
+      className={pageType === "app" ? classes.wrapper : undefined}
+      sx={{ backgroundColor: "background.paper" }}
+    >
       <Flex
         component="header"
         className={classes.content}

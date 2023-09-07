@@ -106,7 +106,37 @@ const prepareData = ({
 }) => {
   const sortedComponents = getSortedColumns(components);
   const columns = keyBy(sortedComponents, (d) => d.iri);
-  const data = observations.map((obs) => {
+  // Sort the data from left to right, keeping the order of the columns.
+  const sorting: SortingField["sorting"] = {
+    sortingType: "byAuto",
+    sortingOrder: "asc",
+  };
+  const sorters = sortedComponents.map<
+    [string, ReturnType<typeof makeDimensionValueSorters>]
+  >((d) => {
+    return [d.iri, makeDimensionValueSorters(d, { sorting })];
+  });
+  // We need to sort before parsing, to access raw observation values, where
+  // dates are formatted in the format of YYYY-MM-DD, etc.
+  const sortedData = [...observations];
+  sortedData.sort((a, b) => {
+    for (const [iri, dimSorters] of sorters) {
+      for (const sorter of dimSorters) {
+        const sortResult = ascending(
+          sorter(a[iri] as string),
+          sorter(b[iri] as string)
+        );
+
+        if (sortResult !== 0) {
+          return sortResult;
+        }
+      }
+    }
+
+    return 0;
+  });
+
+  const parsedData = sortedData.map((obs) => {
     return Object.keys(obs).reduce<Observation>((acc, key) => {
       const col = columns[key];
       const parser = dimensionParsers[key];
@@ -121,37 +151,8 @@ const prepareData = ({
   });
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
-  // Sort the data from left to right, keeping the order of the columns.
-  const sorting: SortingField["sorting"] = {
-    sortingType: "byAuto",
-    sortingOrder: "asc",
-  };
-  const sorters = sortedComponents.map<
-    [string, ReturnType<typeof makeDimensionValueSorters>]
-  >((d) => {
-    return [d.iri, makeDimensionValueSorters(d, { sorting })];
-  });
-  data.sort((a, b) => {
-    for (const [iri, dimSorters] of sorters) {
-      const colLabel = makeColumnLabel(columns[iri]);
-
-      for (const sorter of dimSorters) {
-        const sortResult = ascending(
-          sorter(a[colLabel] as string),
-          sorter(b[colLabel] as string)
-        );
-
-        if (sortResult !== 0) {
-          return sortResult;
-        }
-      }
-    }
-
-    return 0;
-  });
-
   return {
-    data,
+    data: parsedData,
     columnKeys,
   };
 };
@@ -467,6 +468,10 @@ const getDimensionParsers = (
         case "OrdinalMeasure":
           return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
         case "TemporalDimension": {
+          if (d.timeUnit === "Year") {
+            return [d.iri, (d) => +d];
+          }
+
           // We do not want to parse dates as dates, but strings (for easier
           // handling in Excel).
           const dateFormatters = getFormattersForLocale(locale);

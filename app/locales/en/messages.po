@@ -519,6 +519,10 @@ msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization."
 
 #: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-available-temporal-dimensions"
+msgstr "There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation."
+
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-temporal-dimensions"
 msgstr "There is no dimension that can be animated."
 

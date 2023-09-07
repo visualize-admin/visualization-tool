@@ -63,7 +63,7 @@ export const StaticContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        backgroundColor: "grey.100",
+        backgroundColor: "#F5F5F5",
       }}
     >
       <Header pageType="content" contentId={contentId} />

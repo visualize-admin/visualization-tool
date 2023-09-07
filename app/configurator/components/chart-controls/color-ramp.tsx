@@ -30,6 +30,7 @@ type ColorRampProps = {
   width?: number;
   height?: number;
   disabled?: boolean;
+  rx?: number;
 };
 
 export const ColorRamp = ({
@@ -38,6 +39,7 @@ export const ColorRamp = ({
   width = 148,
   height = 28,
   disabled = false,
+  rx = 2,
 }: ColorRampProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -49,7 +51,7 @@ export const ColorRamp = ({
       context.clearRect(0, 0, width, height);
       canvas.style.imageRendering = "-moz-crisp-edges";
       canvas.style.imageRendering = "pixelated";
-      canvas.style.borderRadius = "2px";
+      canvas.style.borderRadius = `${rx}px`;
       canvas.style.opacity = disabled ? "0.5" : "1";
 
       const [widthPerClass, numberOfSteps] =
@@ -60,7 +62,7 @@ export const ColorRamp = ({
         context.fillRect(widthPerClass * i, 0, widthPerClass, height);
       }
     }
-  }, [colorInterpolator, nbClass, width, height, disabled]);
+  }, [colorInterpolator, nbClass, width, height, disabled, rx]);
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
