@@ -22,6 +22,7 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
+import { flag } from "@/flags";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,
@@ -375,7 +376,7 @@ const TabsInner = ({
               <TabContent
                 iconName={getIconName(d.chartType)}
                 chartKey={d.key}
-                editable={editable}
+                editable={editable && flag("dashboards")}
                 active={d.active}
                 onEditClick={onActionButtonClick}
                 onSwitchClick={(e) => {
@@ -386,7 +387,7 @@ const TabsInner = ({
             }
           />
         ))}
-        {editable && (
+        {editable && flag("dashboards") && (
           <Tab
             sx={{
               ml: (theme) => `-${theme.spacing(2)}`,
