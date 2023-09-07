@@ -179,6 +179,10 @@ msgstr "Regular"
 msgid "controls.abbreviations"
 msgstr "Usa abbreviazioni"
 
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.add.chart"
+msgstr "Aggiungere un altro grafico."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animazione"
@@ -325,6 +329,7 @@ msgstr "impilate"
 msgid "controls.description"
 msgstr "Descrizione"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
@@ -477,6 +482,10 @@ msgstr "Attivo"
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "controls.remove.visualization"
+msgstr "Rimuovere questa visualizzazione"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
 msgstr "Tipo di scala"
@@ -553,6 +562,7 @@ msgstr "Filtri"
 msgid "controls.section.data.filters.none"
 msgstr "Nessun filtro"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Si è verificato un errore durante il recupero dei possibili filtri. Riprova più tardi o aggiorna la pagina."
@@ -620,6 +630,7 @@ msgstr "Aggiungi un titolo o una descrizione"
 msgid "controls.segment"
 msgstr "Segmentazione"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Il layout impilato può essere abilitato solo se la dimensione mappata sull'asse verticale ha una scala di rapporto."

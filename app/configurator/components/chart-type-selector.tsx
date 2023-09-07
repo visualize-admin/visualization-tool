@@ -145,9 +145,7 @@ export const ChartTypeSelector = ({
         <Box sx={{ m: 4, textAlign: "center" }}>
           <Typography variant="body2">
             {type === "add" ? (
-              <Trans id="controls.switch.chart.type.add">
-                Add another chart type.
-              </Trans>
+              <Trans id="controls.add.chart">Add another chart.</Trans>
             ) : (
               <Trans id="controls.switch.chart.type">
                 Switch to another chart type while maintaining most filter

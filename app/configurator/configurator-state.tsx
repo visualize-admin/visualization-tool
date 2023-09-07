@@ -299,6 +299,12 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_CONFIG_REMOVE";
+      value: {
+        chartKey: string;
+      };
+    }
+  | {
       type: "SWITCH_ACTIVE_CHART";
       value: string;
     };
@@ -1254,6 +1260,21 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             )
           );
           draft.activeChartKey = action.value.chartConfig.key;
+        }
+      }
+
+      return draft;
+
+    case "CHART_CONFIG_REMOVE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === action.value.chartKey
+        );
+        const removedKey = draft.chartConfigs[index].key;
+        draft.chartConfigs.splice(index, 1);
+
+        if (removedKey === draft.activeChartKey) {
+          draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
         }
       }
 

@@ -213,7 +213,18 @@ const TabsEditable = (props: TabsEditableProps) => {
           />
         ) : (
           <Box>
-            <Button sx={{ m: 4, justifyContent: "center" }}>
+            <Button
+              sx={{ m: 4, justifyContent: "center" }}
+              onClick={() => {
+                dispatch({
+                  type: "CHART_CONFIG_REMOVE",
+                  value: {
+                    chartKey: tabsState.activeChartKey as string,
+                  },
+                });
+                handleClose();
+              }}
+            >
               <Trans id="controls.remove.visualization">
                 Remove this visualization
               </Trans>

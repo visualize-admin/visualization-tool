@@ -179,6 +179,10 @@ msgstr "Normal"
 msgid "controls.abbreviations"
 msgstr "Abkürzungen verwenden"
 
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.add.chart"
+msgstr "Fügen Sie ein weiteres Diagramm hinzu."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"
@@ -325,6 +329,7 @@ msgstr "Gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
@@ -477,6 +482,10 @@ msgstr "Ein"
 msgid "controls.option.isNotActive"
 msgstr "Aus"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "controls.remove.visualization"
+msgstr "Diese Visualisierung entfernen"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
@@ -553,6 +562,7 @@ msgstr "Filter"
 msgid "controls.section.data.filters.none"
 msgstr "Keine Filter"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
@@ -620,6 +630,7 @@ msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 msgid "controls.segment"
 msgstr "Segmentierung"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Das gestapelte Layout kann nur aktiviert werden, wenn die der vertikalen Achse zugeordnete Dimension eine Verhältnis-Skala hat."

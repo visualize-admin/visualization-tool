@@ -179,6 +179,10 @@ msgstr "Regular"
 msgid "controls.abbreviations"
 msgstr "Use abbreviations"
 
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.add.chart"
+msgstr "Add another chart."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"
@@ -325,6 +329,7 @@ msgstr "Stacked"
 msgid "controls.description"
 msgstr "Description"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
@@ -477,6 +482,10 @@ msgstr "On"
 msgid "controls.option.isNotActive"
 msgstr "Off"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "controls.remove.visualization"
+msgstr "Remove this visualization"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"
 msgstr "Scale type"
@@ -553,6 +562,7 @@ msgstr "Filters"
 msgid "controls.section.data.filters.none"
 msgstr "No filters"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "An error happened while fetching possible filters, please retry later or reload the page."
@@ -620,6 +630,7 @@ msgstr "Please add a title or description."
 msgid "controls.segment"
 msgstr "Segmentation"
 
+#: app/charts/chart-config-ui-options.ts
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale."
