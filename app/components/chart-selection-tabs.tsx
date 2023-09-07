@@ -214,25 +214,6 @@ const TabsEditable = (props: TabsEditableProps) => {
           />
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
-            {state.chartConfigs.length > 1 && (
-              <Button
-                color="error"
-                onClick={() => {
-                  dispatch({
-                    type: "CHART_CONFIG_REMOVE",
-                    value: {
-                      chartKey: tabsState.activeChartKey as string,
-                    },
-                  });
-                  handleClose();
-                }}
-                sx={{ justifyContent: "center" }}
-              >
-                <Trans id="controls.remove.visualization">
-                  Remove this visualization
-                </Trans>
-              </Button>
-            )}
             <Button
               onClick={() => {
                 dispatch({
@@ -253,6 +234,25 @@ const TabsEditable = (props: TabsEditableProps) => {
                 Duplicate this visualization
               </Trans>
             </Button>
+            {state.chartConfigs.length > 1 && (
+              <Button
+                color="error"
+                onClick={() => {
+                  dispatch({
+                    type: "CHART_CONFIG_REMOVE",
+                    value: {
+                      chartKey: tabsState.activeChartKey as string,
+                    },
+                  });
+                  handleClose();
+                }}
+                sx={{ justifyContent: "center" }}
+              >
+                <Trans id="controls.remove.visualization">
+                  Remove this visualization
+                </Trans>
+              </Button>
+            )}
           </Box>
         )}
       </Popover>
