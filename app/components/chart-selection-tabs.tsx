@@ -339,6 +339,7 @@ const TabsInner = ({
           <Tab
             key={d.key}
             sx={{
+              width: 100,
               mr: 2,
               p: 0,
               background: "white",
