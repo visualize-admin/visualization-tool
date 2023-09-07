@@ -6,7 +6,6 @@ import React, {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 
@@ -29,11 +28,11 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
-import { createChartId } from "@/utils/create-chart-id";
 import useEvent from "@/utils/use-event";
 
 type TabsState = {
   isPopoverOpen: boolean;
+  popoverType: "edit" | "add";
   activeChartKey?: string;
 };
 
@@ -54,7 +53,10 @@ export const useTabsState = () => {
 };
 
 const TabsStateProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useState<TabsState>({ isPopoverOpen: false });
+  const [state, dispatch] = useState<TabsState>({
+    popoverType: "add",
+    isPopoverOpen: false,
+  });
 
   return (
     <TabsStateContext.Provider value={[state, dispatch]}>
@@ -85,6 +87,7 @@ export const ChartSelectionTabs = () => {
       key: d.key,
       chartType: d.chartType,
       active: d.key === chartConfig.key,
+      editable: editable && state.chartConfigs.length > 1,
     };
   });
 
@@ -140,14 +143,23 @@ const TabsEditable = (props: TabsEditableProps) => {
     setPopoverAnchorEl(null);
     setTabsState({
       isPopoverOpen: false,
+      popoverType: tabsState.popoverType,
       activeChartKey: tabsState.activeChartKey,
     });
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     handleClose();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartConfig.chartType]);
+
+  React.useEffect(() => {
+    setTabsState({
+      isPopoverOpen: false,
+      popoverType: "add",
+      activeChartKey: chartConfig.key,
+    });
+  }, [chartConfig.key, setTabsState]);
 
   return (
     <>
@@ -160,7 +172,11 @@ const TabsEditable = (props: TabsEditableProps) => {
         ) => {
           e.stopPropagation();
           setPopoverAnchorEl(e.currentTarget);
-          setTabsState({ isPopoverOpen: true, activeChartKey });
+          setTabsState({
+            isPopoverOpen: true,
+            popoverType: "edit",
+            activeChartKey,
+          });
         }}
         onSwitchButtonClick={(key: string) => {
           dispatch({
@@ -168,15 +184,13 @@ const TabsEditable = (props: TabsEditableProps) => {
             value: key,
           });
         }}
-        onAddButtonClick={() => {
-          dispatch({
-            type: "CHART_CONFIG_ADD",
-            value: {
-              chartConfig: {
-                ...chartConfig,
-                key: createChartId(),
-              },
-            },
+        onAddButtonClick={(e) => {
+          e.stopPropagation();
+          setPopoverAnchorEl(e.currentTarget);
+          setTabsState({
+            isPopoverOpen: true,
+            popoverType: "add",
+            activeChartKey: tabsState.activeChartKey,
           });
         }}
       />
@@ -190,11 +204,22 @@ const TabsEditable = (props: TabsEditableProps) => {
         }}
         onClose={handleClose}
       >
-        <ChartTypeSelector
-          className={classes.editableChartTypeSelector}
-          state={state}
-          chartKey={tabsState.activeChartKey ?? chartConfig.key}
-        />
+        {tabsState.popoverType === "add" ? (
+          <ChartTypeSelector
+            className={classes.editableChartTypeSelector}
+            state={state}
+            type="add"
+            chartKey={tabsState.activeChartKey ?? chartConfig.key}
+          />
+        ) : (
+          <Box>
+            <Button sx={{ m: 4, justifyContent: "center" }}>
+              <Trans id="controls.remove.visualization">
+                Remove this visualization
+              </Trans>
+            </Button>
+          </Box>
+        )}
       </Popover>
     </>
   );
@@ -204,6 +229,7 @@ type TabDatum = {
   key: string;
   chartType: ChartType;
   active: boolean;
+  editable: boolean;
 };
 
 type TabsFixedProps = {
@@ -289,7 +315,7 @@ const TabsInner = ({
     activeChartKey: string
   ) => void;
   onSwitchButtonClick?: (key: string) => void;
-  onAddButtonClick?: () => void;
+  onAddButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }) => {
   return (
     <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
@@ -314,7 +340,7 @@ const TabsInner = ({
               <TabContent
                 iconName={getIconName(d.chartType)}
                 chartKey={d.key}
-                editable={editable}
+                editable={d.editable}
                 active={d.active}
                 onEditClick={onActionButtonClick}
                 onSwitchClick={(e) => {

@@ -295,6 +295,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_ADD";
       value: {
         chartConfig: ChartConfig;
+        locale: Locale;
       };
     }
   | {
@@ -1243,8 +1244,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_ADD":
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfigs.push(action.value.chartConfig);
-        draft.activeChartKey = action.value.chartConfig.key;
+        const metadata = getCachedMetadata(draft, action.value.locale);
+
+        if (metadata) {
+          draft.chartConfigs.push(
+            deriveFiltersFromFields(
+              action.value.chartConfig,
+              metadata.dimensions
+            )
+          );
+          draft.activeChartKey = action.value.chartConfig.key;
+        }
       }
 
       return draft;

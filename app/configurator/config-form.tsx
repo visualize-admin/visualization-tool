@@ -12,7 +12,7 @@ import React, {
 } from "react";
 import { useClient } from "urql";
 
-import { getFieldComponentIri } from "@/charts";
+import { getFieldComponentIri, getInitialConfig } from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { ChartConfig, ChartType, getChartConfig } from "@/config-types";
 import {
@@ -29,6 +29,7 @@ import {
   DimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { HierarchyValue } from "@/graphql/resolver-types";
+import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
@@ -395,7 +396,10 @@ export const useActiveFieldField = ({
 
 // Specific ------------------------------------------------------------------
 export const useChartType = (
-  chartKey: string
+  chartKey: string,
+  type: "add" | "edit" = "edit",
+  dimensions: DataCubeMetadataWithHierarchies["dimensions"],
+  measures: DataCubeMetadataWithHierarchies["measures"]
 ): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
@@ -404,14 +408,28 @@ export const useChartType = (
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
   const onChange = useEvent((chartType: ChartType) => {
-    dispatch({
-      type: "CHART_TYPE_CHANGED",
-      value: {
-        locale,
-        chartKey,
-        chartType,
-      },
-    });
+    if (type === "edit") {
+      dispatch({
+        type: "CHART_TYPE_CHANGED",
+        value: {
+          locale,
+          chartKey,
+          chartType,
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHART_CONFIG_ADD",
+        value: {
+          chartConfig: getInitialConfig({
+            chartType,
+            dimensions,
+            measures,
+          }),
+          locale,
+        },
+      });
+    }
   });
 
   const value = get(chartConfig, "chartType");
