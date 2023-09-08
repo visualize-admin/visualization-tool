@@ -14,9 +14,9 @@ import {
   ChartConfig,
   ChartType,
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublished,
   ConfiguratorStatePublishing,
   getChartConfig,
+  hasChartConfigs,
   isPublished,
   useConfiguratorState,
 } from "@/configurator";
@@ -68,14 +68,7 @@ const TabsStateProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const ChartSelectionTabs = () => {
-  const [state] = useConfiguratorState() as [
-    (
-      | ConfiguratorStateConfiguringChart
-      | ConfiguratorStatePublishing
-      | ConfiguratorStatePublished
-    ),
-    Dispatch<any>
-  ];
+  const [state] = useConfiguratorState(hasChartConfigs);
   const editable =
     state.state === "CONFIGURING_CHART" || state.state === "PUBLISHING";
 
