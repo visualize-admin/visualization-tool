@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Misc
+  - Improved `langString` error message
 
 # [3.22.4] - 2023-09-06
 
