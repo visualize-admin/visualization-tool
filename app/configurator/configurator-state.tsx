@@ -37,6 +37,7 @@ import {
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublished,
+  ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
   FilterValue,
@@ -1601,8 +1602,23 @@ export const isConfiguring = (
   return s.state === "CONFIGURING_CHART";
 };
 
+export const isPublishing = (
+  s: ConfiguratorState
+): s is ConfiguratorStatePublishing => {
+  return s.state === "PUBLISHING";
+};
+
 export const isPublished = (
   s: ConfiguratorState
 ): s is ConfiguratorStatePublished => {
   return s.state === "PUBLISHED";
+};
+
+export const hasChartConfigs = (
+  s: ConfiguratorState
+): s is
+  | ConfiguratorStateConfiguringChart
+  | ConfiguratorStatePublishing
+  | ConfiguratorStatePublished => {
+  return isConfiguring(s) || isPublishing(s) || isPublished(s);
 };

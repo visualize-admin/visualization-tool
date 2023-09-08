@@ -1,15 +1,6 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useMemo,
-  RefObject,
-} from "react";
+import React, { Dispatch, ReactNode, RefObject, SetStateAction } from "react";
+
+import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
 type Context = {
   state: boolean;
@@ -20,7 +11,7 @@ type Context = {
   computeContainerHeight: () => void;
 };
 
-const ChartTablePreviewContext = createContext<Context>({
+const ChartTablePreviewContext = React.createContext<Context>({
   state: true,
   setState: () => {},
   setStateRaw: () => {},
@@ -30,7 +21,7 @@ const ChartTablePreviewContext = createContext<Context>({
 });
 
 export const useChartTablePreview = () => {
-  const ctx = useContext(ChartTablePreviewContext);
+  const ctx = React.useContext(ChartTablePreviewContext);
 
   if (ctx === undefined) {
     throw Error(
@@ -51,25 +42,32 @@ export const ChartTablePreviewProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [state, setStateRaw] = useState<boolean>(false);
-  const containerHeight = useRef("auto" as "auto" | number);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [configuratorState] = useConfiguratorState(hasChartConfigs);
+  const [state, setStateRaw] = React.useState<boolean>(false);
+  const containerHeight = React.useRef("auto" as "auto" | number);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const computeContainerHeight = () => {
     if (!containerRef.current) {
       return;
     }
+
     const bcr = containerRef.current.getBoundingClientRect();
     containerHeight.current = bcr.height;
   };
-  const setState = useCallback(
+  const setState = React.useCallback(
     (v) => {
       computeContainerHeight();
+
       return setStateRaw(v);
     },
     [setStateRaw]
   );
 
-  const ctx = useMemo(() => {
+  React.useEffect(() => {
+    containerHeight.current = "auto";
+  }, [configuratorState.activeChartKey]);
+
+  const ctx = React.useMemo(() => {
     return {
       state,
       setState,
@@ -79,6 +77,7 @@ export const ChartTablePreviewProvider = ({
       computeContainerHeight,
     };
   }, [setState, state, containerRef, containerHeight, setStateRaw]);
+
   return (
     <ChartTablePreviewContext.Provider value={ctx}>
       {children}
