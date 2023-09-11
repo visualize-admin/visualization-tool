@@ -1491,6 +1491,13 @@ const ConfiguratorStateProviderInternal = ({
                     };
                   }),
                 ],
+                // Technically, we do not need to store the active chart key, as
+                // it's only used in the edit mode, but it makes it easier to manage
+                // the state when retrieving the chart from the database. Potentially,
+                // it might also be useful for other things in the future (e.g. when we
+                // have multiple charts in the "stepper mode", and we'd like to start
+                // the story from a specific point and e.g. toggle back and forth between
+                // the different charts).
                 activeChartKey: state.chartConfigs[0].key,
               });
 
