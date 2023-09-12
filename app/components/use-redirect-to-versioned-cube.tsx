@@ -48,7 +48,7 @@ export const useRedirectToVersionedCube = ({
 
       if (resp) {
         router.replace({
-          pathname: `/browse`,
+          pathname: "/browse",
           query: {
             ...router.query,
             ...(router.query.iri ? { iri: resp.iri } : { dataset: resp.iri }),
