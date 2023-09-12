@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Fixes
+  - It's now again possible to map all colors for hierarchical dimensions used as segmentation
 - Misc
   - Improved `langString` error message
 
