@@ -1,13 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, Tab, Tabs, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, {
-  Dispatch,
-  ReactNode,
-  createContext,
-  useContext,
-  useState,
-} from "react";
+import React from "react";
 
 import Flex from "@/components/flex";
 import {
@@ -33,17 +27,23 @@ import { createChartId } from "@/utils/create-chart-id";
 import useEvent from "@/utils/use-event";
 
 type TabsState = {
-  isPopoverOpen: boolean;
+  popoverOpen: boolean;
   popoverType: "edit" | "add";
-  activeChartKey?: string;
+  activeChartKey: string;
 };
 
-const TabsStateContext = createContext<
-  [TabsState, Dispatch<TabsState>] | undefined
+const TABS_STATE: TabsState = {
+  popoverOpen: false,
+  popoverType: "add",
+  activeChartKey: "",
+};
+
+const TabsStateContext = React.createContext<
+  [TabsState, React.Dispatch<TabsState>] | undefined
 >(undefined);
 
 export const useTabsState = () => {
-  const ctx = useContext(TabsStateContext);
+  const ctx = React.useContext(TabsStateContext);
 
   if (ctx === undefined) {
     throw Error(
@@ -54,11 +54,9 @@ export const useTabsState = () => {
   return ctx;
 };
 
-const TabsStateProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useState<TabsState>({
-    popoverType: "add",
-    isPopoverOpen: false,
-  });
+const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
+  const [state, dispatch] = React.useState<TabsState>(TABS_STATE);
 
   return (
     <TabsStateContext.Provider value={[state, dispatch]}>
@@ -128,16 +126,14 @@ const TabsEditable = (props: TabsEditableProps) => {
   const [, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const [tabsState, setTabsState] = useTabsState();
-  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
-    null
-  );
-
+  const [popoverAnchorEl, setPopoverAnchorEl] =
+    React.useState<HTMLElement | null>(null);
   const classes = useStyles({ editable: true });
 
   const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
     setTabsState({
-      isPopoverOpen: false,
+      popoverOpen: false,
       popoverType: tabsState.popoverType,
       activeChartKey: tabsState.activeChartKey,
     });
@@ -146,52 +142,40 @@ const TabsEditable = (props: TabsEditableProps) => {
   React.useEffect(() => {
     handleClose();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartConfig.chartType]);
-
-  React.useEffect(() => {
-    setTabsState({
-      isPopoverOpen: false,
-      popoverType: "add",
-      activeChartKey: chartConfig.key,
-    });
-  }, [chartConfig.key, setTabsState]);
+  }, [state.activeChartKey]);
 
   return (
     <>
       <TabsInner
         data={data}
         editable
-        onActionButtonClick={(
-          e: React.MouseEvent<HTMLElement>,
-          activeChartKey: string
-        ) => {
-          e.stopPropagation();
+        onChartAdd={(e) => {
           setPopoverAnchorEl(e.currentTarget);
           setTabsState({
-            isPopoverOpen: true,
-            popoverType: "edit",
-            activeChartKey,
+            popoverOpen: true,
+            popoverType: "add",
+            activeChartKey: tabsState.activeChartKey,
           });
         }}
-        onSwitchButtonClick={(key: string) => {
+        onChartEdit={(e, key) => {
+          setPopoverAnchorEl(e.currentTarget);
+          setTabsState({
+            popoverOpen: true,
+            popoverType: "edit",
+            activeChartKey: key,
+          });
+        }}
+        onChartSwitch={(key) => {
           dispatch({
             type: "SWITCH_ACTIVE_CHART",
             value: key,
           });
         }}
-        onAddButtonClick={(e) => {
-          e.stopPropagation();
-          setPopoverAnchorEl(e.currentTarget);
-          setTabsState({
-            isPopoverOpen: true,
-            popoverType: "add",
-            activeChartKey: tabsState.activeChartKey,
-          });
-        }}
       />
+
       <Popover
         id="chart-selection-popover"
-        open={tabsState.isPopoverOpen}
+        open={tabsState.popoverOpen}
         anchorEl={popoverAnchorEl}
         anchorOrigin={{
           horizontal: "left",
@@ -228,6 +212,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                 Duplicate this visualization
               </Trans>
             </Button>
+
             {state.chartConfigs.length > 1 && (
               <Button
                 color="error"
@@ -235,7 +220,7 @@ const TabsEditable = (props: TabsEditableProps) => {
                   dispatch({
                     type: "CHART_CONFIG_REMOVE",
                     value: {
-                      chartKey: tabsState.activeChartKey as string,
+                      chartKey: tabsState.activeChartKey,
                     },
                   });
                   handleClose();
@@ -272,7 +257,7 @@ const TabsFixed = (props: TabsFixedProps) => {
     <TabsInner
       data={data}
       editable={false}
-      onSwitchButtonClick={(key: string) => {
+      onChartSwitch={(key: string) => {
         dispatch({
           type: "SWITCH_ACTIVE_CHART",
           value: key,
@@ -283,28 +268,22 @@ const TabsFixed = (props: TabsFixedProps) => {
 };
 
 const PublishChartButton = () => {
-  const [state, dispatch] = useConfiguratorState();
-  const { dataSet: dataSetIri } = state as
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStatePublishing;
   const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(hasChartConfigs);
+  const { dataSet } = state;
+  const variables = {
+    iri: dataSet ?? "",
+    sourceType: state.dataSource.type,
+    sourceUrl: state.dataSource.url,
+    locale,
+  };
   const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSetIri ?? "",
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-    },
-    pause: !dataSetIri,
+    variables,
+    pause: !dataSet,
   });
   const [{ data: components }] = useComponentsQuery({
-    variables: {
-      iri: dataSetIri ?? "",
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-    },
-    pause: !dataSetIri,
+    variables,
+    pause: !dataSet,
   });
   const goNext = useEvent(() => {
     if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
@@ -329,22 +308,17 @@ const PublishChartButton = () => {
   );
 };
 
-const TabsInner = ({
-  data,
-  editable,
-  onActionButtonClick,
-  onSwitchButtonClick,
-  onAddButtonClick,
-}: {
+type TabsInnerProps = {
   data: TabDatum[];
   editable: boolean;
-  onActionButtonClick?: (
-    e: React.MouseEvent<HTMLElement>,
-    activeChartKey: string
-  ) => void;
-  onSwitchButtonClick?: (key: string) => void;
-  onAddButtonClick?: (e: React.MouseEvent<HTMLElement>) => void;
-}) => {
+  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
+  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
+  onChartSwitch?: (key: string) => void;
+};
+
+const TabsInner = (props: TabsInnerProps) => {
+  const { data, editable, onChartEdit, onChartAdd, onChartSwitch } = props;
+
   return (
     <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
       <Tabs
@@ -371,15 +345,17 @@ const TabsInner = ({
                 chartKey={d.key}
                 editable={editable && flag("dashboards")}
                 active={d.active}
-                onEditClick={onActionButtonClick}
-                onSwitchClick={(e) => {
-                  e.stopPropagation();
-                  onSwitchButtonClick?.(d.key);
+                onEditClick={(e) => {
+                  onChartEdit?.(e, d.key);
+                }}
+                onSwitchClick={() => {
+                  onChartSwitch?.(d.key);
                 }}
               />
             }
           />
         ))}
+
         {editable && flag("dashboards") && (
           <Tab
             sx={{
@@ -391,7 +367,7 @@ const TabsInner = ({
               borderBottomColor: "divider",
               minWidth: "fit-content",
             }}
-            onClick={onAddButtonClick}
+            onClick={onChartAdd}
             label={
               <TabContent
                 iconName="add"
@@ -408,14 +384,7 @@ const TabsInner = ({
   );
 };
 
-const TabContent = ({
-  iconName,
-  chartKey,
-  editable,
-  active,
-  onEditClick,
-  onSwitchClick,
-}: {
+type TabContentProps = {
   iconName: IconName;
   chartKey: string;
   editable: boolean;
@@ -424,8 +393,12 @@ const TabContent = ({
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
   ) => void;
-  onSwitchClick?: (e: React.MouseEvent<HTMLElement>) => void;
-}) => {
+  onSwitchClick?: () => void;
+};
+
+const TabContent = (props: TabContentProps) => {
+  const { iconName, chartKey, editable, active, onEditClick, onSwitchClick } =
+    props;
   const classes = useStyles();
 
   return (
