@@ -1,7 +1,7 @@
 import { ascending } from "d3";
 
 import { SelectTreeProps } from "@/components/select-tree";
-import { OptionGroup, Option } from "@/configurator";
+import { Option, OptionGroup } from "@/configurator";
 import { HierarchyParents } from "@/configurator/components/use-hierarchy-parents";
 import { DimensionValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -36,7 +36,7 @@ export const makeOptionGroups = (
 
 export const hierarchyToOptions = (
   hierarchy: HierarchyValue[],
-  possibleValues?: DimensionValue["value"][]
+  possibleValues: DimensionValue["value"][]
 ) => {
   const possibleValuesSet = possibleValues
     ? new Set(possibleValues)
