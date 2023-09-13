@@ -11,6 +11,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Table docs now work correctly again
+  - Cascading mode now works correctly for hierarchical dimensions used as interactive filters
 
 # [3.22.5] - 2023-09-12
 
