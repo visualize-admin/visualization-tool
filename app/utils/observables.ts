@@ -53,7 +53,7 @@ export class Timeline extends Observable {
   // Animation state.
   public playing = false;
   /** Animation progress (0-1). */
-  private animationProgress = 0;
+  private animationProgress = 1;
   /** Duration of the animation in miliseconds. */
   private animationDuration: number;
   private requestAnimationFrameId: number | undefined;
@@ -106,7 +106,7 @@ export class Timeline extends Observable {
       this.msValues[0],
       this.msValues[this.msValues.length - 1],
     ];
-    this.msValue = min;
+    this.msValue = max;
     this.minMsValue = min;
     this.maxMsValue = max;
     this.msValueScale = this.msValueScale.range([min, max]);

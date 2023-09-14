@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Animated charts now show latest data as default
 - Fixes
   - Table docs now work correctly again
   - Cascading mode now works correctly for hierarchical dimensions used as interactive filters
