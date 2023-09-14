@@ -216,7 +216,7 @@ export const DataSetPreviewTable = ({
   title: string;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
-  observations: Observation[];
+  observations: Observation[] | undefined;
 }) => {
   const headers = useMemo(() => {
     return getSortedColumns([...dimensions, ...measures]);
