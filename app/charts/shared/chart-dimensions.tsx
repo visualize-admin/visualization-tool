@@ -10,7 +10,7 @@ import { ChartConfig } from "@/configurator";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
-  allYScale: d3.ScaleLinear<number, number>;
+  yScale: d3.ScaleLinear<number, number>;
   width: number;
   aspectRatio: number;
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"];
@@ -22,7 +22,7 @@ type ComputeChartPaddingProps = {
 
 const computeChartPadding = (props: ComputeChartPaddingProps) => {
   const {
-    allYScale,
+    yScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
@@ -36,7 +36,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   // with decimals have greater text length than the extremes.
   // Width * aspectRatio is taken as an approximation of chartHeight
   // since we do not have access to chartHeight yet.
-  const fakeTicks = allYScale.ticks(getTickNumber(width * aspectRatio));
+  const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
   const minLeftTickWidth =
     !!interactiveFiltersConfig?.calculation.active || normalize
       ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
@@ -66,7 +66,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
   const {
-    allYScale,
+    yScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
@@ -78,7 +78,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
 
   return useMemo(() => {
     return computeChartPadding({
-      allYScale,
+      yScale,
       width,
       aspectRatio,
       interactiveFiltersConfig,
@@ -88,7 +88,7 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       normalize,
     });
   }, [
-    allYScale,
+    yScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
