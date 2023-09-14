@@ -53,7 +53,7 @@ const computeChartPadding = (props: ComputeChartPaddingProps) => {
   let bottom =
     interactiveFiltersConfig?.timeRange.active || animationPresent
       ? BRUSH_BOTTOM_SPACE
-      : 40;
+      : 48;
 
   if (bandDomain?.length) {
     bottom +=
