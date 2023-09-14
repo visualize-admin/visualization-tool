@@ -118,11 +118,9 @@ property.
 
 | RDF                                        | Visualize              |
 | :----------------------------------------- | :--------------------- |
-| `?dimension shacl:nodeKind ?shacl:Literal` | `dim.isLiteral = true` |
+| `?dimension shacl:nodeKind !== ?shacl:IRI` | `dim.isLiteral = true` |
 
-`True` when the dimension has `shacl:nodeKind` of `shacl:Literal`. Non literal
-dimensions (`shacl:IRI`) are also called _Shared dimensions_, and their values
-will be fetched outside of the cube.
+`True` when the dimension has `shacl:nodeKind` different than `shacl:IRI`.
 
 #### Data kind
 

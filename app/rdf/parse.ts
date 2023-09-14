@@ -137,8 +137,7 @@ const getDataKind = (term: Term | undefined) => {
 };
 
 export const parseDimensionDatatype = (dim: CubeDimension) => {
-  const isLiteral =
-    dim.out(ns.sh.nodeKind).term?.equals(ns.sh.Literal) ?? false;
+  const isNamedNode = dim.out(ns.sh.nodeKind).term?.equals(ns.sh.IRI) ?? false;
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
 
@@ -166,7 +165,7 @@ export const parseDimensionDatatype = (dim: CubeDimension) => {
     }
   }
 
-  return { isLiteral, dataType, hasUndefinedValues };
+  return { isLiteral: !isNamedNode, dataType, hasUndefinedValues };
 };
 
 type RelationType = "StandardError";
