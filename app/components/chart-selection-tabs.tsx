@@ -283,6 +283,7 @@ const PublishChartButton = () => {
       color="primary"
       variant="contained"
       onClick={metadata && components ? goNext : undefined}
+      sx={{ minWidth: "fit-content" }}
     >
       <Trans id="button.publish">Publish this visualization</Trans>
     </Button>
@@ -304,7 +305,15 @@ const TabsInner = (props: TabsInnerProps) => {
   const [, dispatch] = useConfiguratorState();
 
   return (
-    <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
+    <Box
+      display="flex"
+      sx={{
+        width: "100%",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        gap: 5,
+      }}
+    >
       <DragDropContext
         onDragEnd={(d) => {
           if (d.destination && d.source.index !== d.destination.index) {
@@ -326,9 +335,11 @@ const TabsInner = (props: TabsInnerProps) => {
           {(provided) => (
             <Tabs
               ref={provided.innerRef}
+              variant="scrollable"
               value={0}
+              scrollButtons={false}
               TabIndicatorProps={{ style: { display: "none" } }}
-              sx={{ position: "relative", top: 1, flexGrow: 1 }}
+              sx={{ position: "relative", top: 1 }}
             >
               {data.map((d, i) => (
                 <Draggable key={d.key} draggableId={d.key} index={i}>
