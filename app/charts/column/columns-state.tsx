@@ -78,7 +78,7 @@ const useColumnsState = (
     getYError,
     getYErrorRange,
   } = variables;
-  const { chartData, scalesData, timeRangeData, allData } = data;
+  const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -99,7 +99,7 @@ const useColumnsState = (
   const {
     xScale,
     yScale,
-    allYScale,
+    paddingYScale,
     interactiveXTimeRangeScale,
     xScaleInteraction,
     xTimeRangeDomainLabels,
@@ -151,22 +151,26 @@ const useColumnsState = (
     );
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-    const allMinValue = Math.min(
-      min(allData, (d) => (getYErrorRange ? getYErrorRange(d)[0] : getY(d))) ??
-        0,
+    const paddingMinValue = Math.min(
+      min(paddingData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+      ) ?? 0,
       0
     );
-    const allMaxValue = Math.max(
-      max(allData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
-        0,
+    const paddingMaxValue = Math.max(
+      max(paddingData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+      ) ?? 0,
       0
     );
-    const allYScale = scaleLinear().domain([allMinValue, allMaxValue]).nice();
+    const paddingYScale = scaleLinear()
+      .domain([paddingMinValue, paddingMaxValue])
+      .nice();
 
     return {
       xScale,
       yScale,
-      allYScale,
+      paddingYScale,
       interactiveXTimeRangeScale,
       xScaleInteraction,
       xTimeRangeDomainLabels,
@@ -178,7 +182,7 @@ const useColumnsState = (
     getY,
     getYErrorRange,
     scalesData,
-    allData,
+    paddingData,
     timeRangeData,
     fields.x.sorting,
     fields.x.useAbbreviations,
@@ -188,7 +192,7 @@ const useColumnsState = (
   ]);
 
   const { left, bottom } = useChartPadding({
-    allYScale,
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,

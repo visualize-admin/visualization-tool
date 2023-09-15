@@ -91,7 +91,14 @@ const useAreasState = (
     getSegmentAbbreviationOrLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.iri);
-  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    paddingData,
+    allData,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -281,12 +288,12 @@ const useAreasState = (
     });
   }, [scalesData, normalize, getXAsString, getY]);
 
-  const allYScale = useMemo(() => {
+  const paddingYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the yScale domain, so that the yScale doesn't
     // change when the user toggles between absolute and relative values.
     if (interactiveFiltersConfig?.calculation.active) {
-      const scale = getStackedYScale(allData, {
+      const scale = getStackedYScale(paddingData, {
         normalize: false,
         getX: getXAsString,
         getY,
@@ -299,9 +306,13 @@ const useAreasState = (
       return scale;
     }
 
-    return getStackedYScale(allData, { normalize, getX: getXAsString, getY });
+    return getStackedYScale(paddingData, {
+      normalize,
+      getX: getXAsString,
+      getY,
+    });
   }, [
-    allData,
+    paddingData,
     getXAsString,
     getY,
     interactiveFiltersConfig?.calculation.active,
@@ -310,7 +321,7 @@ const useAreasState = (
 
   /** Dimensions */
   const { left, bottom } = useChartPadding({
-    allYScale,
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
