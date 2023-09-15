@@ -82,14 +82,9 @@ export const TabDropZone = ({
                         return (
                           <Box
                             ref={innerRef}
-                            sx={{
-                              position: "relative",
-                            }}
                             {...draggableProps}
-                            style={{
-                              ...draggableProps.style,
-                            }}
                             {...dragHandleProps}
+                            sx={{ position: "relative" }}
                           >
                             <DraggableTabField
                               key={componentIri}

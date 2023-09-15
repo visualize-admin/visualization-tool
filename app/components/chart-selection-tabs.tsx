@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, Tab, Tabs, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import Flex from "@/components/flex";
 import {
@@ -94,27 +95,6 @@ export const ChartSelectionTabs = () => {
   );
 };
 
-const useStyles = makeStyles<Theme>((theme) => ({
-  editableChartTypeSelector: {
-    width: 320,
-    padding: `0 ${theme.spacing(3)} ${theme.spacing(3)}`,
-  },
-  tabContent: {
-    gap: theme.spacing(1),
-    alignItems: "center",
-    padding: theme.spacing(2),
-    borderTopLeftRadius: theme.spacing(1),
-    borderTopRightRadius: theme.spacing(1),
-    transition: "0.125s ease background-color",
-    cursor: "default",
-  },
-  tabContentIconContainer: {
-    padding: 0,
-    minWidth: "fit-content",
-    color: theme.palette.grey[700],
-  },
-}));
-
 type TabsEditableProps = {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
   chartConfig: ChartConfig;
@@ -128,7 +108,6 @@ const TabsEditable = (props: TabsEditableProps) => {
   const [tabsState, setTabsState] = useTabsState();
   const [popoverAnchorEl, setPopoverAnchorEl] =
     React.useState<HTMLElement | null>(null);
-  const classes = useStyles({ editable: true });
 
   const handleClose = useEvent(() => {
     setPopoverAnchorEl(null);
@@ -185,10 +164,10 @@ const TabsEditable = (props: TabsEditableProps) => {
       >
         {tabsState.popoverType === "add" ? (
           <ChartTypeSelector
-            className={classes.editableChartTypeSelector}
             state={state}
             type="add"
             chartKey={tabsState.activeChartKey ?? chartConfig.key}
+            sx={{ width: 320, px: 3, pb: 3 }}
           />
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 4 }}>
@@ -318,77 +297,158 @@ type TabsInnerProps = {
 
 const TabsInner = (props: TabsInnerProps) => {
   const { data, editable, onChartEdit, onChartAdd, onChartSwitch } = props;
+  const [, dispatch] = useConfiguratorState();
 
   return (
     <Box display="flex" sx={{ width: "100%", alignItems: "flex-start" }}>
-      <Tabs
-        value={0}
-        TabIndicatorProps={{ style: { display: "none" } }}
-        sx={{ position: "relative", top: 1, flexGrow: 1 }}
+      <DragDropContext
+        onDragEnd={(d) => {
+          if (d.destination && d.source.index !== d.destination.index) {
+            dispatch({
+              type: "CHART_CONFIG_REORDER",
+              value: {
+                oldIndex: d.source.index,
+                newIndex: d.destination.index,
+              },
+            });
+          }
+        }}
       >
-        {data.map((d) => (
-          <Tab
-            key={d.key}
-            sx={{
-              width: 100,
-              mr: 2,
-              p: 0,
-              background: "white",
-              border: (theme) => `1px solid ${theme.palette.divider}`,
-              borderBottom: (theme) =>
-                `1px solid ${d.active ? "transparent" : theme.palette.divider}`,
-              minWidth: "fit-content",
-            }}
-            label={
-              <TabContent
-                iconName={getIconName(d.chartType)}
-                chartKey={d.key}
-                editable={editable && flag("dashboards")}
-                active={d.active}
-                onEditClick={(e) => {
-                  onChartEdit?.(e, d.key);
-                }}
-                onSwitchClick={() => {
-                  onChartSwitch?.(d.key);
-                }}
-              />
-            }
-          />
-        ))}
+        <Droppable
+          droppableId="droppable"
+          direction="horizontal"
+          ignoreContainerClipping
+        >
+          {(provided) => (
+            <Tabs
+              ref={provided.innerRef}
+              value={0}
+              TabIndicatorProps={{ style: { display: "none" } }}
+              sx={{ position: "relative", top: 1, flexGrow: 1 }}
+            >
+              {data.map((d, i) => (
+                <Draggable key={d.key} draggableId={d.key} index={i}>
+                  {(provided, snapshot) => {
+                    const { style } = provided.draggableProps;
+                    const transform = style?.transform
+                      ? `${style.transform.split(",")[0]}, 0px)`
+                      : undefined;
 
-        {editable && flag("dashboards") && (
-          <Tab
-            sx={{
-              ml: (theme) => `-${theme.spacing(2)}`,
-              p: 0,
-              background: "white",
-              borderBottomWidth: 1,
-              borderBottomStyle: "solid",
-              borderBottomColor: "divider",
-              minWidth: "fit-content",
-            }}
-            onClick={onChartAdd}
-            label={
-              <TabContent
-                iconName="add"
-                chartKey=""
-                editable={false}
-                active={false}
-              />
-            }
-          />
-        )}
-      </Tabs>
+                    return (
+                      <Tab
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{
+                          ...provided.draggableProps.style,
+                          transform,
+                          opacity: 1,
+                        }}
+                        key={d.key}
+                        sx={{
+                          mr: 2,
+                          p: 0,
+                          background: "white",
+                          border: (theme) =>
+                            `1px solid ${theme.palette.divider}`,
+                          borderBottom: (theme) =>
+                            `1px solid ${
+                              d.active ? "transparent" : theme.palette.divider
+                            }`,
+                          minWidth: "fit-content",
+                        }}
+                        label={
+                          <TabContent
+                            iconName={getIconName(d.chartType)}
+                            chartKey={d.key}
+                            editable={editable && flag("dashboards")}
+                            active={d.active}
+                            dragging={snapshot.isDragging}
+                            onEditClick={(e) => {
+                              onChartEdit?.(e, d.key);
+                            }}
+                            onSwitchClick={() => {
+                              onChartSwitch?.(d.key);
+                            }}
+                          />
+                        }
+                      />
+                    );
+                  }}
+                </Draggable>
+              ))}
+              <div style={{ opacity: 0 }}>{provided.placeholder}</div>
+
+              {editable && flag("dashboards") && (
+                <Tab
+                  sx={{
+                    ml: (theme) => `-${theme.spacing(2)}`,
+                    p: 0,
+                    background: "white",
+                    borderBottomWidth: 1,
+                    borderBottomStyle: "solid",
+                    borderBottomColor: "divider",
+                    minWidth: "fit-content",
+                  }}
+                  onClick={onChartAdd}
+                  label={<TabContent iconName="add" chartKey="" />}
+                />
+              )}
+            </Tabs>
+          )}
+        </Droppable>
+      </DragDropContext>
+
       {editable && <PublishChartButton />}
     </Box>
   );
 };
 
+const useIconStyles = makeStyles<
+  Theme,
+  { active: boolean | undefined; dragging: boolean | undefined }
+>(({ palette, spacing }) => ({
+  root: {
+    alignItems: "center",
+    padding: spacing(2),
+    borderTopLeftRadius: spacing(1),
+    borderTopRightRadius: spacing(1),
+    cursor: "default",
+  },
+  chartIconWrapper: {
+    minWidth: "fit-content",
+    color: (d) => (d.active ? palette.primary.main : palette.secondary.active),
+  },
+  editIconWrapper: {
+    padding: 0,
+    minWidth: "fit-content",
+    color: palette.secondary.disabled,
+    transition: "0.125s ease color",
+
+    "&:hover": {
+      background: "transparent",
+      color: palette.secondary.hover,
+    },
+  },
+  dragIconWrapper: {
+    width: 24,
+    height: 24,
+    color: (d) =>
+      d.dragging ? palette.secondary.active : palette.secondary.disabled,
+    cursor: "grab",
+
+    "&:hover": {
+      color: palette.secondary.hover,
+    },
+  },
+}));
+
 type TabContentProps = {
   iconName: IconName;
   chartKey: string;
-  editable: boolean;
-  active: boolean;
+  editable?: boolean;
+  active?: boolean;
+  dragging?: boolean;
   onEditClick?: (
     e: React.MouseEvent<HTMLElement>,
     activeChartKey: string
@@ -397,32 +457,47 @@ type TabContentProps = {
 };
 
 const TabContent = (props: TabContentProps) => {
-  const { iconName, chartKey, editable, active, onEditClick, onSwitchClick } =
-    props;
-  const classes = useStyles();
+  const {
+    iconName,
+    chartKey,
+    editable,
+    active,
+    dragging,
+    onEditClick,
+    onSwitchClick,
+  } = props;
+  const classes = useIconStyles({ active, dragging });
 
   return (
-    <Flex className={classes.tabContent}>
+    <Flex className={classes.root}>
       <Button
+        className={classes.chartIconWrapper}
         variant="text"
         onClick={onSwitchClick}
-        sx={{
-          minWidth: "fit-content",
-          color: active ? "primary.main" : "secondary.active",
-        }}
       >
         <Icon name={iconName} />
       </Button>
+
       {editable && (
-        <Button
-          variant="text"
-          onClick={(e) => {
-            onEditClick?.(e, chartKey);
-          }}
-          className={classes.tabContentIconContainer}
-        >
-          <Icon name="chevronDown" size={16} />
-        </Button>
+        <>
+          <Button
+            variant="text"
+            onClick={(e) => {
+              onEditClick?.(e, chartKey);
+            }}
+            className={classes.editIconWrapper}
+          >
+            <Icon name="chevronDown" />
+          </Button>
+          <Box
+            className={classes.dragIconWrapper}
+            sx={{
+              color: dragging ? "secondary.active" : "secondary.disabled",
+            }}
+          >
+            <Icon name="dragndrop" />
+          </Box>
+        </>
       )}
     </Flex>
   );

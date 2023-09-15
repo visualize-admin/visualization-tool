@@ -102,14 +102,12 @@ export const ChartTypeSelector = ({
   type = "edit",
   showHelp,
   chartKey,
-  sx,
   ...props
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
   type?: "add" | "edit";
   showHelp?: boolean;
   chartKey: string;
-  sx?: BoxProps["sx"];
 } & BoxProps) => {
   const locale = useLocale();
   const [{ data }] = useComponentsWithHierarchiesQuery({
@@ -137,7 +135,7 @@ export const ChartTypeSelector = ({
   });
 
   return (
-    <Box sx={sx} {...props}>
+    <Box {...props}>
       <legend style={{ display: "none" }}>
         <Trans id="controls.select.chart.type">Chart Type</Trans>
       </legend>

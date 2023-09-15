@@ -306,6 +306,13 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_CONFIG_REORDER";
+      value: {
+        oldIndex: number;
+        newIndex: number;
+      };
+    }
+  | {
       type: "SWITCH_ACTIVE_CHART";
       value: string;
     };
@@ -1273,6 +1280,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (removedKey === draft.activeChartKey) {
           draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
         }
+      }
+
+      return draft;
+
+    case "CHART_CONFIG_REORDER":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { oldIndex, newIndex } = action.value;
+        const [removed] = draft.chartConfigs.splice(oldIndex, 1);
+        draft.chartConfigs.splice(newIndex, 0, removed);
       }
 
       return draft;
