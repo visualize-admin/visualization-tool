@@ -306,9 +306,8 @@ const TabsInner = (props: TabsInnerProps) => {
 
   return (
     <Box
-      display="flex"
       sx={{
-        width: "100%",
+        display: "flex",
         alignItems: "flex-start",
         justifyContent: "space-between",
         gap: 5,
@@ -327,11 +326,7 @@ const TabsInner = (props: TabsInnerProps) => {
           }
         }}
       >
-        <Droppable
-          droppableId="droppable"
-          direction="horizontal"
-          ignoreContainerClipping
-        >
+        <Droppable droppableId="droppable" direction="horizontal">
           {(provided) => (
             <Tabs
               ref={provided.innerRef}
@@ -345,6 +340,7 @@ const TabsInner = (props: TabsInnerProps) => {
                 <Draggable key={d.key} draggableId={d.key} index={i}>
                   {(provided, snapshot) => {
                     const { style } = provided.draggableProps;
+                    // Limit the drag movement to the x-axis.
                     const transform = style?.transform
                       ? `${style.transform.split(",")[0]}, 0px)`
                       : undefined;
@@ -354,16 +350,12 @@ const TabsInner = (props: TabsInnerProps) => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={{
-                          ...provided.draggableProps.style,
-                          transform,
-                          opacity: 1,
-                        }}
+                        style={{ ...style, transform, opacity: 1 }}
                         key={d.key}
                         sx={{
                           mr: 2,
                           p: 0,
-                          background: "white",
+                          background: (theme) => theme.palette.background.paper,
                           border: (theme) =>
                             `1px solid ${theme.palette.divider}`,
                           borderBottom: (theme) =>
