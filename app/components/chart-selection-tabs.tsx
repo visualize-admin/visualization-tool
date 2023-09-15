@@ -128,6 +128,7 @@ const TabsEditable = (props: TabsEditableProps) => {
       <TabsInner
         data={data}
         editable
+        draggable={state.chartConfigs.length > 1}
         onChartAdd={(e) => {
           setPopoverAnchorEl(e.currentTarget);
           setTabsState({
@@ -236,6 +237,7 @@ const TabsFixed = (props: TabsFixedProps) => {
     <TabsInner
       data={data}
       editable={false}
+      draggable={false}
       onChartSwitch={(key: string) => {
         dispatch({
           type: "SWITCH_ACTIVE_CHART",
@@ -290,13 +292,15 @@ const PublishChartButton = () => {
 type TabsInnerProps = {
   data: TabDatum[];
   editable: boolean;
+  draggable: boolean;
   onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
   onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
   onChartSwitch?: (key: string) => void;
 };
 
 const TabsInner = (props: TabsInnerProps) => {
-  const { data, editable, onChartEdit, onChartAdd, onChartSwitch } = props;
+  const { data, editable, draggable, onChartEdit, onChartAdd, onChartSwitch } =
+    props;
   const [, dispatch] = useConfiguratorState();
 
   return (
@@ -362,6 +366,7 @@ const TabsInner = (props: TabsInnerProps) => {
                             iconName={getIconName(d.chartType)}
                             chartKey={d.key}
                             editable={editable && flag("dashboards")}
+                            draggable={draggable && flag("dashboards")}
                             active={d.active}
                             dragging={snapshot.isDragging}
                             onEditClick={(e) => {
@@ -447,6 +452,7 @@ type TabContentProps = {
   iconName: IconName;
   chartKey: string;
   editable?: boolean;
+  draggable?: boolean;
   active?: boolean;
   dragging?: boolean;
   onEditClick?: (
@@ -461,6 +467,7 @@ const TabContent = (props: TabContentProps) => {
     iconName,
     chartKey,
     editable,
+    draggable,
     active,
     dragging,
     onEditClick,
@@ -479,25 +486,26 @@ const TabContent = (props: TabContentProps) => {
       </Button>
 
       {editable && (
-        <>
-          <Button
-            variant="text"
-            onClick={(e) => {
-              onEditClick?.(e, chartKey);
-            }}
-            className={classes.editIconWrapper}
-          >
-            <Icon name="chevronDown" />
-          </Button>
-          <Box
-            className={classes.dragIconWrapper}
-            sx={{
-              color: dragging ? "secondary.active" : "secondary.disabled",
-            }}
-          >
-            <Icon name="dragndrop" />
-          </Box>
-        </>
+        <Button
+          variant="text"
+          onClick={(e) => {
+            onEditClick?.(e, chartKey);
+          }}
+          className={classes.editIconWrapper}
+        >
+          <Icon name="chevronDown" />
+        </Button>
+      )}
+
+      {draggable && (
+        <Box
+          className={classes.dragIconWrapper}
+          sx={{
+            color: dragging ? "secondary.active" : "secondary.disabled",
+          }}
+        >
+          <Icon name="dragndrop" />
+        </Box>
       )}
     </Flex>
   );
