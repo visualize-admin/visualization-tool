@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.22.6] - 2023-09-19
+
 - Features
   - Animated charts now show latest data as default
 - Fixes
