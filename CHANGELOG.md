@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Cube checker now correctly checks if dimensions are present
 
 # [3.22.6] - 2023-09-19
 
