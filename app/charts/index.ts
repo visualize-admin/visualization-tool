@@ -3,6 +3,13 @@ import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
 
+import {
+  AREA_SEGMENT_SORTING,
+  COLUMN_SEGMENT_SORTING,
+  disableStacked,
+  EncodingFieldType,
+  PIE_SEGMENT_SORTING,
+} from "@/charts/chart-config-ui-options";
 import { DEFAULT_FIXED_COLOR_FIELD } from "@/charts/map/constants";
 import {
   AreaSegmentField,
@@ -20,6 +27,7 @@ import {
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
+  MapConfig,
   MapSymbolLayer,
   PieSegmentField,
   ScatterPlotSegmentField,
@@ -41,6 +49,7 @@ import {
   getGeoDimensions,
   getTemporalDimensions,
   isGeoCoordinatesDimension,
+  isGeoDimension,
   isGeoShapesDimension,
   isNumericalMeasure,
   isOrdinalMeasure,
@@ -59,14 +68,7 @@ import {
 } from "../graphql/types";
 import { unreachableError } from "../utils/unreachable";
 
-import {
-  AREA_SEGMENT_SORTING,
-  COLUMN_SEGMENT_SORTING,
-  PIE_SEGMENT_SORTING,
-} from "./chart-config-ui-options";
-
-export const enabledChartTypes: ChartType[] = [
-  // "bar",
+export const chartTypes: ChartType[] = [
   "column",
   "line",
   "area",
@@ -75,6 +77,16 @@ export const enabledChartTypes: ChartType[] = [
   "table",
   "map",
 ];
+
+export const chartTypesOrder: { [k in ChartType]: number } = {
+  column: 0,
+  line: 1,
+  area: 2,
+  scatterplot: 3,
+  pie: 4,
+  map: 5,
+  table: 6,
+};
 
 /**
  * Finds the "best" dimension based on a preferred type (e.g. TemporalDimension) and Key Dimension
@@ -179,6 +191,36 @@ const makeInitialFiltersForArea = (
     }
   }
   return filters;
+};
+
+export const initializeMapLayerField = ({
+  chartConfig,
+  field,
+  componentIri,
+  dimensions,
+  measures,
+}: {
+  chartConfig: MapConfig;
+  field: EncodingFieldType;
+  componentIri: string;
+  dimensions: DimensionMetadataFragment[];
+  measures: DimensionMetadataFragment[];
+}) => {
+  if (field === "areaLayer") {
+    chartConfig.fields.areaLayer = getInitialAreaLayer({
+      component: dimensions
+        .filter(isGeoShapesDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures[0] as NumericalMeasure | OrdinalMeasure,
+    });
+  } else if (field === "symbolLayer") {
+    chartConfig.fields.symbolLayer = getInitialSymbolLayer({
+      component: dimensions
+        .filter(isGeoDimension)
+        .find((d) => d.iri === componentIri)!,
+      measure: measures.find(isNumericalMeasure),
+    });
+  }
 };
 
 export const getInitialAreaLayer = ({
@@ -667,6 +709,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         measures,
       }) => {
         let newSegment: ColumnSegmentField | undefined;
+        const yMeasure = measures.find(
+          (d) => d.iri === newChartConfig.fields.y.componentIri
+        );
 
         // When switching from a table chart, a whole fields object is passed as oldValue.
         if (oldChartConfig.chartType === "table") {
@@ -680,7 +725,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             newSegment = {
               ...tableSegment,
               sorting: DEFAULT_SORTING,
-              type: "stacked",
+              type: disableStacked(yMeasure) ? "grouped" : "stacked",
             };
           }
           // Otherwise we are dealing with a segment field.
@@ -695,7 +740,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: COLUMN_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byTotalSize",
             }),
-            type: "stacked",
+            type: disableStacked(yMeasure) ? "grouped" : "stacked",
           };
         }
 
@@ -825,6 +870,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
+        const yMeasure = measures.find(
+          (d) => d.iri === newChartConfig.fields.y.componentIri
+        );
+
+        if (disableStacked(yMeasure)) {
+          return produce(newChartConfig, (draft) => {
+            delete draft.fields.segment;
+          });
+        }
+
         let newSegment: AreaSegmentField | undefined;
 
         if (oldChartConfig.chartType === "table") {
@@ -1196,7 +1251,7 @@ export const getPossibleChartType = ({
   const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
   const timeEnabled: ChartType[] = ["area", "column", "line"];
 
-  let possibles: ChartType[] = ["table"];
+  const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
     if (categoricalDimensions.length > 0) {
       possibles.push(...categoricalEnabled);
@@ -1219,7 +1274,9 @@ export const getPossibleChartType = ({
     possibles.push("map");
   }
 
-  return enabledChartTypes.filter((type) => possibles.includes(type));
+  return chartTypes
+    .filter((d) => possibles.includes(d))
+    .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
 export const getFieldComponentIris = (fields: GenericFields) => {

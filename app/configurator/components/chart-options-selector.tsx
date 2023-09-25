@@ -1,16 +1,16 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
-import keyBy from "lodash/keyBy";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
-  chartConfigOptionsUISpec,
   EncodingFieldType,
+  EncodingOptionChartSubType,
   EncodingSortingOption,
   EncodingSpec,
+  getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
 import Flex from "@/components/flex";
@@ -163,7 +163,7 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     return null;
   }
 
-  const chartSpec = chartConfigOptionsUISpec[state.chartConfig.chartType];
+  const chartSpec = getChartSpec(state.chartConfig);
 
   // Animation field is a special field that is not part of the encodings,
   // but rather is selected from interactive filters menu.
@@ -172,7 +172,7 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     chartSpec.interactiveFilters.includes("animation");
   const baseEncodings = chartSpec.encodings;
   const encodings = animatable
-    ? baseEncodings.concat(ANIMATION_FIELD_SPEC)
+    ? [...baseEncodings, ANIMATION_FIELD_SPEC]
     : baseEncodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
@@ -302,20 +302,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     );
   }, [allComponents, component]);
 
-  const optionsByField = useMemo(() => {
-    return keyBy(encoding.options, (d) => d.field);
-  }, [encoding]);
-
-  const hasColorPalette =
-    optionsByField.color?.field === "color" &&
-    optionsByField.color.type === "palette";
+  const hasColorPalette = !!encoding.options?.colorPalette;
 
   const hasSubOptions =
-    (encoding.options?.map((e) => e.field).includes("chartSubType") &&
-      chartType === "column") ??
-    false;
-
-  console.log("encoding", encoding);
+    (encoding.options?.chartSubType && chartType === "column") ?? false;
 
   return (
     <div
@@ -337,7 +327,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               options={options}
             />
 
-            {optionsByField.useAbbreviations && (
+            {encoding.options?.useAbbreviations && (
               <Box mt={3}>
                 <ChartFieldAbbreviations
                   field={field}
@@ -355,25 +345,25 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartLayoutOptions
             encoding={encoding}
             component={component}
+            chartConfig={state.chartConfig}
+            components={allComponents}
             hasColorPalette={hasColorPalette}
             hasSubOptions={hasSubOptions}
           />
         )}
 
-      {optionsByField.imputation?.field === "imputation" &&
-        optionsByField.imputation.shouldShow(
-          state.chartConfig,
-          observations
-        ) && <ChartImputation state={state} />}
+      {encoding.options?.imputation?.shouldShow(
+        state.chartConfig,
+        observations
+      ) && <ChartImputation state={state} />}
 
-      {optionsByField.calculation?.field === "calculation" &&
-        get(fields, "segment") && (
-          <ChartFieldCalculation
-            {...optionsByField.calculation.getDisabledState?.(
-              state.chartConfig
-            )}
-          />
-        )}
+      {encoding.options?.calculation && get(fields, "segment") && (
+        <ChartFieldCalculation
+          {...encoding.options.calculation.getDisabledState?.(
+            state.chartConfig
+          )}
+        />
+      )}
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && <ChartMapBaseLayerSettings state={state} />}
@@ -386,33 +376,33 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         />
       )}
 
-      {optionsByField.size?.field === "size" && component && (
+      {encoding.options?.size && component && (
         <ChartFieldSize
           field={field}
-          componentTypes={optionsByField.size.componentTypes}
+          componentTypes={encoding.options.size.componentTypes}
+          optional={encoding.options.size.optional}
           dimensions={dimensions}
           measures={measures}
-          optional={optionsByField.size.optional}
         />
       )}
 
-      {optionsByField.color?.field === "color" &&
-        optionsByField.color.type === "component" &&
-        component && (
-          <ChartFieldColorComponent
-            state={state}
-            chartConfig={state.chartConfig}
-            field={encoding.field}
-            component={component}
-            componentTypes={optionsByField.color.componentTypes}
-            dimensions={dimensions}
-            measures={measures}
-            optional={optionsByField.color.optional}
-            enableUseAbbreviations={optionsByField.color.enableUseAbbreviations}
-          />
-        )}
+      {encoding.options?.colorComponent && component && (
+        <ChartFieldColorComponent
+          state={state}
+          chartConfig={state.chartConfig}
+          encoding={encoding}
+          component={component}
+          componentTypes={encoding.options.colorComponent.componentTypes}
+          dimensions={dimensions}
+          measures={measures}
+          optional={encoding.options.colorComponent.optional}
+          enableUseAbbreviations={
+            encoding.options.colorComponent.enableUseAbbreviations
+          }
+        />
+      )}
 
-      {optionsByField.showStandardError && hasStandardError && (
+      {encoding.options?.showStandardError && hasStandardError && (
         <ControlSection collapse>
           <SubsectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
@@ -452,12 +442,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 type ChartLayoutOptionsProps = {
   encoding: EncodingSpec;
   component: DimensionMetadataFragment | undefined;
+  chartConfig: ChartConfig;
+  components: DimensionMetadataFragment[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
 };
 
 const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
-  const { encoding, component, hasColorPalette, hasSubOptions } = props;
+  const {
+    encoding,
+    component,
+    chartConfig,
+    components,
+    hasColorPalette,
+    hasSubOptions,
+  } = props;
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
@@ -466,7 +465,12 @@ const ChartLayoutOptions = (props: ChartLayoutOptionsProps) => {
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         {hasSubOptions && (
-          <ChartFieldOptions disabled={!component} field={encoding.field} />
+          <ChartFieldOptions
+            encoding={encoding}
+            chartConfig={chartConfig}
+            components={components}
+            disabled={!component}
+          />
         )}
         {hasColorPalette && (
           <ColorPalette
@@ -485,7 +489,7 @@ const ChartFieldAbbreviations = ({
   path,
   dimension,
 }: {
-  field: string;
+  field: EncodingFieldType;
   path?: string;
   dimension: DimensionMetadataFragment | undefined;
 }) => {
@@ -692,12 +696,17 @@ const ChartFieldMultiFilter = ({
 };
 
 type ChartFieldOptionsProps = {
-  field: string;
+  encoding: EncodingSpec;
+  chartConfig: ChartConfig;
+  components: DimensionMetadataFragment[];
   disabled?: boolean;
 };
 
 const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
-  const { field, disabled } = props;
+  const { encoding, chartConfig, components, disabled } = props;
+  const chartSubType = encoding.options
+    ?.chartSubType as EncodingOptionChartSubType;
+  const values = chartSubType.getValues(chartConfig, components);
 
   return (
     <div>
@@ -708,20 +717,17 @@ const ChartFieldOptions = (props: ChartFieldOptionsProps) => {
           }
         />
         <Flex sx={{ justifyContent: "flex-start" }}>
-          <ChartOptionRadioField
-            label={getFieldLabel("stacked")}
-            field={field}
-            path="type"
-            value="stacked"
-            disabled={disabled}
-          />
-          <ChartOptionRadioField
-            label={getFieldLabel("grouped")}
-            field={field}
-            path="type"
-            value="grouped"
-            disabled={disabled}
-          />
+          {values.map((d) => (
+            <ChartOptionRadioField
+              key={d.value}
+              label={getFieldLabel(d.value)}
+              field={encoding.field}
+              path="type"
+              value={d.value}
+              disabled={disabled || d.disabled}
+              warnMessage={d.warnMessage}
+            />
+          ))}
         </Flex>
       </Box>
     </div>
@@ -767,9 +773,11 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
             <Tooltip
               enterDelay={600}
               title={
-                <Trans id="controls.filters.interactive.calculation">
-                  Allow users to change chart mode
-                </Trans>
+                <Typography variant="body2">
+                  <Trans id="controls.filters.interactive.calculation">
+                    Allow users to change chart mode
+                  </Trans>
+                </Typography>
               }
             >
               <div>
@@ -795,7 +803,7 @@ const ChartFieldSorting = ({
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  field: string;
+  field: EncodingFieldType;
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
@@ -929,7 +937,7 @@ const ChartFieldSize = ({
   measures,
   optional,
 }: {
-  field: string;
+  field: EncodingFieldType;
   componentTypes: ComponentType[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
@@ -968,27 +976,31 @@ const ChartFieldSize = ({
   );
 };
 
-const ChartFieldColorComponent = ({
-  state,
-  chartConfig,
-  field,
-  component,
-  componentTypes,
-  dimensions,
-  measures,
-  optional,
-  enableUseAbbreviations,
-}: {
+type ChartFieldColorComponentProps = {
   state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
-  field: EncodingFieldType;
+  encoding: EncodingSpec;
   component: DimensionMetadataFragment;
   componentTypes: ComponentType[];
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
   optional: boolean;
   enableUseAbbreviations: boolean;
-}) => {
+};
+
+const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
+  const {
+    state,
+    chartConfig,
+    encoding,
+    component,
+    componentTypes,
+    dimensions,
+    measures,
+    optional,
+    enableUseAbbreviations,
+  } = props;
+  const field = encoding.field;
   const nbOptions = component.values.length;
   const measuresOptions = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -1006,7 +1018,7 @@ const ChartFieldColorComponent = ({
 
   const colorComponentIri = get(chartConfig, [
     "fields",
-    field,
+    encoding.field,
     "color",
     "componentIri",
   ]) as string | undefined;

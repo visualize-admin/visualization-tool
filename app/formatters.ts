@@ -1,12 +1,12 @@
 import {
   NumberValue,
+  format,
   timeDay,
   timeHour,
   timeMinute,
   timeMonth,
   timeParse,
   timeYear,
-  format,
 } from "d3";
 import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
@@ -66,7 +66,7 @@ const currencyFormatter = (d: NumericalMeasure) => {
   };
 };
 
-const getFormattersForLocale = memoize((locale) => {
+export const getFormattersForLocale = memoize((locale) => {
   const { format } = getD3TimeFormatLocale(locale);
   return {
     empty: () => "-",
@@ -81,10 +81,11 @@ const getFormattersForLocale = memoize((locale) => {
 
 export const useLocalFormatters = () => {
   const locale = useLocale();
+
   return getFormattersForLocale(locale);
 };
 
-const dateFormatterFromDimension = (
+export const dateFormatterFromDimension = (
   dim: TemporalDimension,
   localFormatters: LocalDateFormatters,
   formatDateAuto: (d: Date | string | null) => string
@@ -134,6 +135,53 @@ const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
   };
 };
 
+export const getDimensionFormatters = ({
+  dimensions,
+  formatNumber,
+  formatDateAuto,
+  dateFormatters,
+}: {
+  dimensions: DimensionMetadataFragment[];
+  formatNumber: (d: number | string) => string;
+  formatDateAuto: (d: Date | string | null) => string;
+  dateFormatters: LocalDateFormatters;
+}) => {
+  return Object.fromEntries(
+    dimensions.map((d) => {
+      let formatter: (s: any) => string;
+      if (isNumericalMeasure(d)) {
+        if (d.isCurrency) {
+          formatter = currencyFormatter(d);
+        } else if (d.isDecimal) {
+          formatter = decimalFormatter(d, formatNumber);
+        } else {
+          formatter = formatNumber;
+        }
+      } else if (isTemporalDimension(d)) {
+        formatter = dateFormatterFromDimension(
+          d,
+          dateFormatters,
+          formatDateAuto
+        );
+      } else if (isNamedNodeDimension(d)) {
+        formatter = namedNodeFormatter(d);
+      } else if (
+        // It makes no sense to format numeric values of ordinal dimensions
+        // as numbers.
+        d.isNumerical &&
+        d.__typename !== "OrdinalDimension" &&
+        d.__typename !== "OrdinalMeasure"
+      ) {
+        formatter = formatNumber;
+      } else {
+        formatter = formatIdentity;
+      }
+
+      return [d.iri, formatter];
+    })
+  );
+};
+
 export const useDimensionFormatters = (
   dimensions: DimensionMetadataFragment[]
 ) => {
@@ -144,41 +192,38 @@ export const useDimensionFormatters = (
   const dateFormatters = useLocalFormatters();
 
   return useMemo(() => {
-    return Object.fromEntries(
-      dimensions.map((d) => {
-        let formatter: (s: any) => string;
-        if (isNumericalMeasure(d)) {
-          if (d.isCurrency) {
-            formatter = currencyFormatter(d);
-          } else if (d.isDecimal) {
-            formatter = decimalFormatter(d, formatNumber);
-          } else {
-            formatter = formatNumber;
-          }
-        } else if (isTemporalDimension(d)) {
-          formatter = dateFormatterFromDimension(
-            d,
-            dateFormatters,
-            formatDateAuto
-          );
-        } else if (isNamedNodeDimension(d)) {
-          formatter = namedNodeFormatter(d);
-        } else if (
-          // It makes no sense to format numeric values of ordinal dimensions
-          // as numbers.
-          d.isNumerical &&
-          d.__typename !== "OrdinalDimension" &&
-          d.__typename !== "OrdinalMeasure"
-        ) {
-          formatter = formatNumber;
-        } else {
-          formatter = formatIdentity;
-        }
+    return getDimensionFormatters({
+      dimensions,
+      formatNumber,
+      formatDateAuto,
+      dateFormatters,
+    });
+  }, [dimensions, formatNumber, formatDateAuto, dateFormatters]);
+};
 
-        return [d.iri, formatter];
-      })
-    );
-  }, [dimensions, formatNumber, dateFormatters, formatDateAuto]);
+export const getFormatFullDateAuto = (formatters: LocalDateFormatters) => {
+  return (dateInput: Date | string | null) => {
+    if (dateInput === null) {
+      return formatters.empty();
+    }
+
+    const date =
+      typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
+
+    return (
+      timeMinute(date) < date
+        ? formatters.second
+        : timeHour(date) < date
+        ? formatters.minute
+        : timeDay(date) < date
+        ? formatters.hour
+        : timeMonth(date) < date
+        ? formatters.day
+        : timeYear(date) < date
+        ? formatters.month
+        : formatters.year
+    )(date);
+  };
 };
 
 export type LocalDateFormatters = ReturnType<typeof getFormattersForLocale>;
@@ -190,32 +235,10 @@ export type LocalDateFormatters = ReturnType<typeof getFormattersForLocale>;
  */
 export const useFormatFullDateAuto = () => {
   const formatters = useLocalFormatters();
-  const formatter = useMemo(() => {
-    return (dateInput: Date | string | null) => {
-      if (dateInput === null) {
-        return formatters.empty();
-      }
 
-      const date =
-        typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
-
-      return (
-        timeMinute(date) < date
-          ? formatters.second
-          : timeHour(date) < date
-          ? formatters.minute
-          : timeDay(date) < date
-          ? formatters.hour
-          : timeMonth(date) < date
-          ? formatters.day
-          : timeYear(date) < date
-          ? formatters.month
-          : formatters.year
-      )(date);
-    };
+  return useMemo(() => {
+    return getFormatFullDateAuto(formatters);
   }, [formatters]);
-
-  return formatter;
 };
 
 /**
@@ -280,26 +303,30 @@ export const useTimeFormatUnit = () => {
   return formatter;
 };
 
+export const getFormatNumber = (props?: { decimals: number | "auto" }) => {
+  const { decimals = 2 } = props ?? {};
+  const { format } = getD3FormatLocale();
+  // Only valid for up to 6 decimals!
+  // See https://262.ecma-international.org/6.0/#sec-number.prototype.toprecision, 12c.
+  const specifier = decimals === "auto" ? ",~f" : `,.${decimals}~f`;
+  const formatter = format(specifier);
+
+  return (d: NumberValue | null | undefined) => {
+    if (d === null || d === undefined) {
+      return "–";
+    }
+    return `${formatter(d)}`;
+  };
+};
+
 export const useFormatNumber = (props?: { decimals: number | "auto" }) => {
-  const { decimals } = props || { decimals: 2 };
-  const formatter = useMemo(() => {
-    const { format } = getD3FormatLocale();
-    const specifier = decimals === "auto" ? ",~f" : `,.${decimals}~f`;
-    const formatter = format(specifier);
-
-    return (x: NumberValue | null | undefined) => {
-      if (x === null || x === undefined) {
-        return "–";
-      }
-      return `${formatter(x)}`;
-    };
-  }, [decimals]);
-
-  return formatter;
+  return useMemo(() => {
+    return getFormatNumber(props);
+  }, [props]);
 };
 
 export const useFormatInteger = () => {
-  const formatter = useMemo(() => {
+  return useMemo(() => {
     const { format } = getD3FormatLocale();
     const formatter = format(",.0~f");
     return (x: NumberValue | null | undefined) => {
@@ -309,7 +336,6 @@ export const useFormatInteger = () => {
       return formatter(x);
     };
   }, []);
-  return formatter;
 };
 
 /**

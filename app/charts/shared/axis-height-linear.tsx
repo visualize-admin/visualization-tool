@@ -17,9 +17,11 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
+
+export const TICK_PADDING = 6;
 
 export const TICK_PADDING = 6;
 
@@ -28,7 +30,7 @@ export const AxisHeightLinear = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
-  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
   const normalized = calculationType === "percent";
 
   // FIXME: add "NumericalY" chart type here.
@@ -56,7 +58,10 @@ export const AxisHeightLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
-  const titleWidth = estimateTextWidth(yAxisLabel, axisLabelFontSize);
+  const titleWidth =
+    getTextWidth(yAxisLabel, {
+      fontSize: axisLabelFontSize,
+    }) + TICK_PADDING;
 
   useEffect(() => {
     if (ref.current) {

@@ -64,7 +64,7 @@ const useScatterplotState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, allData } = data;
+  const { chartData, scalesData, segmentData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -86,10 +86,11 @@ const useScatterplotState = (
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const allYMinValue = Math.min(min(allData, (d) => getY(d)) ?? 0, 0);
-  const allYMaxValue = max(allData, getY) ?? 0;
-  const allYDomain = [allYMinValue, allYMaxValue];
-  const allYScale = scaleLinear().domain(allYDomain).nice();
+  const paddingYMinValue = Math.min(min(paddingData, (d) => getY(d)) ?? 0, 0);
+  const paddingYMaxValue = max(paddingData, getY) ?? 0;
+  const paddingYScale = scaleLinear()
+    .domain([paddingYMinValue, paddingYMaxValue])
+    .nice();
 
   const hasSegment = fields.segment ? true : false;
   const segmentFilter = segmentDimension?.iri
@@ -143,13 +144,14 @@ const useScatterplotState = (
     colors.range(getPalette(fields.segment?.palette));
   }
   // Dimensions
-  const { left, bottom } = useChartPadding(
-    allYScale,
+  const { left, bottom } = useChartPadding({
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
-    formatNumber
-  );
+    animationPresent: !!fields.animation,
+    formatNumber,
+  });
   const margins = {
     top: 50,
     right: 40,

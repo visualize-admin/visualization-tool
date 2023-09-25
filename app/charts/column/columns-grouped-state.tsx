@@ -90,7 +90,14 @@ const useColumnsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    paddingData,
+    allData,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -170,7 +177,7 @@ const useColumnsGroupedState = (
     xTimeRangeDomainLabels,
     colors,
     yScale,
-    allYScale,
+    paddingYScale,
     interactiveXTimeRangeScale,
     xScale,
     xScaleIn,
@@ -247,22 +254,26 @@ const useColumnsGroupedState = (
     );
     const yScale = scaleLinear().domain([minValue, maxValue]).nice();
 
-    const allMinValue = Math.min(
-      min(allData, (d) => (getYErrorRange ? getYErrorRange(d)[0] : getY(d))) ??
-        0,
+    const minPaddingValue = Math.min(
+      min(paddingData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+      ) ?? 0,
       0
     );
-    const allMaxValue = Math.max(
-      max(allData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
-        0,
+    const maxPaddingValue = Math.max(
+      max(paddingData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+      ) ?? 0,
       0
     );
-    const allYScale = scaleLinear().domain([allMinValue, allMaxValue]).nice();
+    const paddingYScale = scaleLinear()
+      .domain([minPaddingValue, maxPaddingValue])
+      .nice();
 
     return {
       colors,
       yScale,
-      allYScale,
+      paddingYScale,
       interactiveXTimeRangeScale,
       xScale,
       xScaleIn,
@@ -282,7 +293,7 @@ const useColumnsGroupedState = (
     getXLabel,
     segments,
     timeRangeData,
-    allData,
+    paddingData,
     allSegments,
     segmentsByAbbreviationOrLabel,
     segmentsByValue,
@@ -319,14 +330,15 @@ const useColumnsGroupedState = (
     });
   }, [getSegment, getX, chartData, segmentSortingOrder, segments, xScale]);
 
-  const { left, bottom } = useChartPadding(
-    allYScale,
+  const { left, bottom } = useChartPadding({
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
+    animationPresent: !!fields.animation,
     formatNumber,
-    xTimeRangeDomainLabels
-  );
+    bandDomain: xTimeRangeDomainLabels,
+  });
   const margins = {
     top: 50,
     right: 40,

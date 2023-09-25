@@ -32,9 +32,11 @@ export const SentryPlugin: ApolloServerPlugin = {
     }
 
     const dataCubeIri = getDataCubeIri(request);
+
     if (dataCubeIri) {
       transaction.setTag("visualize.dataCubeIri", dataCubeIri);
     }
+
     if (request.variables?.sourceUrl) {
       transaction.setTag("visualize.sourceUrl", request.variables.sourceUrl);
     }

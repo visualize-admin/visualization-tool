@@ -18,6 +18,56 @@ import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+
+export const Docs = () => markdown`
+
+## Scatterplot
+
+${(
+  <ReactSpecimen span={6}>
+    <PublishedConfiguratorStateProvider
+      initialState={{
+        state: "PUBLISHING",
+        activeField: undefined,
+        // @ts-ignore
+        meta: { title: {}, description: {} },
+        dataSource: { type: "sparql", url: "" },
+        dataSet: "",
+        chartConfig,
+      }}
+    >
+      <InteractiveFiltersProvider>
+        <ScatterplotChart
+          observations={scatterplotObservations}
+          dimensions={scatterplotDimensions}
+          dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
+          measures={scatterplotMeasures}
+          measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
+          chartConfig={chartConfig}
+          aspectRatio={1}
+        >
+          <ChartContainer>
+            <ChartSvg>
+              <AxisWidthLinear />
+              <AxisHeightLinear />
+              <AxisWidthLinearDomain />
+              <AxisHeightLinearDomain />
+              <Scatterplot />
+              <InteractionVoronoi />
+            </ChartSvg>
+            <Tooltip type="single" />
+          </ChartContainer>
+          {scatterplotFields.segment && (
+            <LegendColor symbol="square" interactive />
+          )}
+        </ScatterplotChart>
+      </InteractiveFiltersProvider>
+    </PublishedConfiguratorStateProvider>
+  </ReactSpecimen>
+)}
+`;
+export default Docs;
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
   legend: {
@@ -38,61 +88,6 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     type: "identity",
   },
 };
-
-export const Docs = () => markdown`
-
-## Scatterplot
-
-${(
-  <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
-      initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
-        dataSource: { type: "sparql", url: "" },
-        dataSet: "",
-        chartConfig: {
-          chartType: "scatterplot",
-          filters: {},
-          version: "0.0.1",
-          interactiveFiltersConfig,
-          fields: scatterplotFields,
-        },
-      }}
-    >
-      <ScatterplotChart
-        observations={scatterplotObservations}
-        dimensions={scatterplotDimensions}
-        dimensionsByIri={keyBy(scatterplotDimensions, (d) => d.iri)}
-        measures={scatterplotMeasures}
-        measuresByIri={keyBy(scatterplotMeasures, (d) => d.iri)}
-        chartConfig={
-          { interactiveFiltersConfig } as unknown as ScatterPlotConfig
-        }
-        aspectRatio={1}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <AxisWidthLinear />
-            <AxisHeightLinear />
-            <AxisWidthLinearDomain />
-            <AxisHeightLinearDomain />
-            <Scatterplot />
-            <InteractionVoronoi />
-          </ChartSvg>
-          <Tooltip type="single" />
-        </ChartContainer>
-        {scatterplotFields.segment && (
-          <LegendColor symbol="square" interactive />
-        )}
-      </ScatterplotChart>
-    </PublishedConfiguratorStateProvider>
-  </ReactSpecimen>
-)}
-`;
-export default Docs;
 
 const scatterplotFields = {
   x: {
@@ -122,6 +117,14 @@ const scatterplotFields = {
         "#8c564b",
     },
   },
+};
+
+const chartConfig: ScatterPlotConfig = {
+  chartType: "scatterplot",
+  filters: {},
+  version: "1.4.2",
+  interactiveFiltersConfig,
+  fields: scatterplotFields,
 };
 
 const scatterplotMeasures = [

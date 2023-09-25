@@ -108,7 +108,13 @@ export const DataSetPreview = ({
     window.scrollTo({ top: 0 });
   }, []);
 
-  if (metadata?.dataCubeByIri) {
+  if (fetching) {
+    return (
+      <Flex className={classes.loadingWrapper}>
+        <Loading />
+      </Flex>
+    );
+  } else if (metadata?.dataCubeByIri) {
     const { dataCubeByIri } = metadata;
 
     return (
@@ -184,14 +190,8 @@ export const DataSetPreview = ({
               </Trans>
             </Typography>
           </Flex>
-          <DebugPanel configurator={true} />
+          <DebugPanel configurator />
         </Paper>
-      </Flex>
-    );
-  } else if (fetching) {
-    return (
-      <Flex className={classes.loadingWrapper}>
-        <Loading />
       </Flex>
     );
   } else {

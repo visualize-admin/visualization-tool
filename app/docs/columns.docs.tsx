@@ -10,8 +10,8 @@ import {
 } from "@/charts/shared/axis-width-band";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { ColumnConfig } from "@/configurator";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
 
@@ -19,15 +19,16 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <ColumnChart
-      observations={columnObservations}
-      measures={columnMeasures}
-      measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
-      dimensions={columnDimensions}
-      dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
-      chartConfig={
-        {
+    <InteractiveFiltersProvider>
+      <ColumnChart
+        observations={columnObservations}
+        measures={columnMeasures}
+        measuresByIri={keyBy(columnMeasures, (d) => d.iri)}
+        dimensions={columnDimensions}
+        dimensionsByIri={keyBy(columnDimensions, (d) => d.iri)}
+        chartConfig={{
           chartType: "column",
+          version: "1.4.2",
           filters: {},
           fields: columnFields,
           interactiveFiltersConfig: {
@@ -48,22 +49,26 @@ ${(
               active: false,
               componentIri: "http://fake-iri",
             },
+            calculation: {
+              active: false,
+              type: "identity",
+            },
           },
-        } as unknown as ColumnConfig
-      }
-      aspectRatio={0.4}
-    >
-      <ChartContainer>
-        <ChartSvg>
-          <AxisHeightLinear />
-          <AxisWidthBand />
-          <AxisWidthBandDomain />
-          <Columns />
-          <ErrorWhiskers />
-        </ChartSvg>
-        <Tooltip type="single" />
-      </ChartContainer>
-    </ColumnChart>
+        }}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <AxisHeightLinear />
+            <AxisWidthBand />
+            <AxisWidthBandDomain />
+            <Columns />
+            <ErrorWhiskers />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+      </ColumnChart>
+    </InteractiveFiltersProvider>
   </ReactSpecimen>
 )}
 `;
@@ -72,25 +77,14 @@ export default Docs;
 const columnFields = {
   x: {
     componentIri:
-      "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
+      "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
   },
   y: {
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
   },
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/0":
-    "#1f77b4",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/1":
-    "#ff7f0e",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/2":
-    "#2ca02c",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/3":
-    "#d62728",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/4":
-    "#9467bd",
-  "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1/5":
-    "#8c564b",
 };
+
 const columnMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/0",
@@ -182,7 +176,7 @@ const columnMeasures = [
         iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
       },
     ],
-    __typename: "NumericalMeasure",
+    __typename: "StandardErrorDimension",
   },
 ] as DimensionMetadataFragment[];
 
@@ -479,6 +473,7 @@ const columnDimensions = [
     __typename: "NominalDimension",
   },
 ] as unknown as DimensionMetadataFragment[];
+
 const columnObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

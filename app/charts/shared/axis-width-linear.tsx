@@ -12,7 +12,7 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useTransitionStore } from "@/stores/transition";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
@@ -32,9 +32,9 @@ export const AxisWidthLinear = () => {
 
   useEffect(() => {
     if (ref.current) {
-      const maxLabelLength = estimateTextWidth(
-        formatNumber(xScale.domain()[1])
-      );
+      const maxLabelLength = getTextWidth(formatNumber(xScale.domain()[1]), {
+        fontSize: labelFontSize,
+      });
       const ticks = Math.min(bounds.chartWidth / (maxLabelLength + 20), 4);
       const tickValues = xScale.ticks(ticks);
       const axis = axisBottom(xScale)

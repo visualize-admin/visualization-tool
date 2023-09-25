@@ -5,25 +5,26 @@ import {
   getChartConfigFilterComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
+import Flex from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, getAnimationField } from "@/configurator";
 import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 
 type ChartFiltersListProps = {
-  dataSetIri: string;
+  dataSet: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
 };
 
 export const ChartFiltersList = (props: ChartFiltersListProps) => {
-  const { dataSetIri, dataSource, chartConfig } = props;
+  const { dataSet, dataSource, chartConfig } = props;
   const locale = useLocale();
   const timeFormatUnit = useTimeFormatUnit();
-  const timeSlider = useInteractiveFiltersStore((d) => d.timeSlider);
+  const timeSlider = useInteractiveFilters((d) => d.timeSlider);
 
   const animationField = getAnimationField(chartConfig);
   const componentIris = Array.from(
@@ -36,7 +37,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
   );
   const [{ data }] = useComponentsQuery({
     variables: {
-      iri: dataSetIri,
+      iri: dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
@@ -101,7 +102,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
     }
 
     return (
-      <>
+      <Flex sx={{ flexDirection: "column", my: 2 }}>
         {namedFilters.length > 0 && (
           <Typography
             component="div"
@@ -127,7 +128,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
             ))}
           </Typography>
         )}
-      </>
+      </Flex>
     );
   } else {
     return null;

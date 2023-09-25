@@ -18,9 +18,12 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Observation } from "@/domain/data";
 import { useFormatFullDateAuto } from "@/formatters";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import {
+  useInteractiveFilters,
+  useInteractiveFiltersRaw,
+} from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 
 // Brush constants
 export const HANDLE_HEIGHT = 14;
@@ -29,8 +32,9 @@ export const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const timeRange = useInteractiveFiltersStore((d) => d.timeRange);
-  const setTimeRange = useInteractiveFiltersStore((d) => d.setTimeRange);
+  const timeRange = useInteractiveFilters((d) => d.timeRange);
+  const setTimeRange = useInteractiveFilters((d) => d.setTimeRange);
+  const IFStateRaw = useInteractiveFiltersRaw();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
   const formatDateAuto = useFormatFullDateAuto();
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
@@ -61,10 +65,9 @@ export const BrushTime = () => {
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
-    estimateTextWidth(
-      formatDateAuto(interactiveXTimeRangeScale.domain()[0]),
-      labelFontSize
-    ) *
+    getTextWidth(formatDateAuto(interactiveXTimeRangeScale.domain()[0]), {
+      fontSize: labelFontSize,
+    }) *
       2 +
     20;
   const brushWidth = width - brushLabelsWidth - margins.right;
@@ -111,7 +114,7 @@ export const BrushTime = () => {
       // and the local state accessed here is not up to date. This leads to
       // making a dispatch on each brush move, which makes the animations laggy
       // and generally shouldn't happen.
-      const { from, to } = useInteractiveFiltersStore.getState().timeRange;
+      const { from, to } = IFStateRaw.getState().timeRange;
 
       if (
         from?.getTime() !== newFrom.getTime() ||
@@ -332,7 +335,7 @@ export const BrushTime = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brushWidth]);
 
-  return (
+  return fullData.length ? (
     <g
       transform={`translate(0, ${
         chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
@@ -367,7 +370,7 @@ export const BrushTime = () => {
       {/* actual Brush */}
       <g ref={ref} transform={`translate(${brushLabelsWidth}, 0)`} />
     </g>
-  );
+  ) : null;
 };
 
 // Unused BrushOrdinal

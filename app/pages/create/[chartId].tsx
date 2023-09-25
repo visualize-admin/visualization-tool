@@ -27,10 +27,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 };
 
 const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
-  const metadataPanelStore = React.useMemo(
-    () => createMetadataPanelStore(),
-    []
-  );
+  const metadataPanelStore = React.useMemo(() => {
+    return createMetadataPanelStore();
+  }, []);
 
   return (
     <>

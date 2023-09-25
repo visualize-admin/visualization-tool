@@ -199,10 +199,6 @@ msgstr "Asse orizzontale"
 msgid "controls.axis.vertical"
 msgstr "Asse verticale"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.calculation.allow-normalization"
-msgstr "Consentire la normalizzazione dei dati"
-
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.calculation.disabled-by-grouped"
 msgstr "La modalità 100% non può essere utilizzata con un layout raggruppato."
@@ -331,6 +327,7 @@ msgstr "Descrizione"
 
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
@@ -358,6 +355,7 @@ msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "È necessario selezionare almeno un filtro."
 
 #: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
@@ -509,6 +507,10 @@ msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Abilitare la scalatura dinamica per regolare la scala del grafico in base all'intervallo di dati, garantendo una visualizzazione ottimale."
 
 #: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-available-temporal-dimensions"
+msgstr "Non ci sono dimensioni temporali disponibili da utilizzare. Modificare alcune delle seguenti codifiche: {fields} per abilitare l'animazione."
+
+#: app/charts/chart-config-ui-options.ts
 msgid "controls.section.animation.no-temporal-dimensions"
 msgstr "Non esiste una dimensione che possa essere animata."
 
@@ -556,6 +558,7 @@ msgstr "Filtri"
 msgid "controls.section.data.filters.none"
 msgstr "Nessun filtro"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Si è verificato un errore durante il recupero dei possibili filtri. Riprova più tardi o aggiorna la pagina."
@@ -622,6 +625,11 @@ msgstr "Aggiungi un titolo o una descrizione"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.segment"
 msgstr "Segmentazione"
+
+#: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.segment.stacked.disabled-by-scale-type"
+msgstr "Il layout impilato può essere abilitato solo se la dimensione mappata sull'asse verticale ha una scala di rapporto."
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.calculation.mode"
@@ -1011,6 +1019,14 @@ msgstr "Prova con un'altra combinazione di filtri."
 #: app/components/hint.tsx
 msgid "hint.nodata.title"
 msgstr "Non ci sono dati corrispondenti ai filtri selezionati"
+
+#: app/components/hint.tsx
+msgid "hint.nogeometries.message"
+msgstr "Provare con un'altra dimensione geografica."
+
+#: app/components/hint.tsx
+msgid "hint.nogeometries.title"
+msgstr "Nessuna geometria disponibile"
 
 #: app/components/hint.tsx
 msgid "hint.only.negative.data.message"

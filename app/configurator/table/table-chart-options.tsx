@@ -3,6 +3,7 @@ import { Alert, Box, Typography } from "@mui/material";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Checkbox } from "@/components/form";
 import {
   ColumnStyle,
@@ -138,15 +139,21 @@ export const TableColumnOptions = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadataWithHierarchies;
 }) => {
-  const { activeField, chartConfig } = state;
+  const { activeField: _activeField, chartConfig } = state;
+  const activeField = _activeField as EncodingFieldType | undefined;
 
   if (!activeField || chartConfig.chartType !== "table") {
     return null;
   }
 
+  // FIXME: table encoding should be added to UI encodings
+  // @ts-ignore
   if (activeField === "table-settings") {
     return <TableSettings />;
   }
+
+  // FIXME: table encoding should be added to UI encodings
+  // @ts-ignore
   if (activeField === "table-sorting") {
     return <TableSortingOptions state={state} dataSetMetadata={metaData} />;
   }
@@ -374,7 +381,7 @@ const ColumnStyleSubOptions = ({
   component,
 }: {
   chartConfig: TableConfig;
-  activeField: string;
+  activeField: EncodingFieldType;
   component: DimensionMetadataFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;

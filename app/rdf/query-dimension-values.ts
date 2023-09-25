@@ -8,6 +8,7 @@ import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
 
@@ -111,14 +112,14 @@ export async function unversionObservation({
 }
 
 const getFilterOrder = (filter: Filters[number]) => {
-  if (filter.type !== "single") {
-    return 0;
-  } else {
+  if (filter.type === "single") {
     // Heuristic to put non discriminant filter at the end
     // Seems like we could also do it based on the column order
     return filter.value.toString().startsWith("https://ld.admin.ch")
       ? Infinity
       : 0;
+  } else {
+    return 0;
   }
 };
 
@@ -143,18 +144,17 @@ export async function loadDimensionValues(
   filters?: Filters
 ): Promise<Array<Literal | NamedNode>> {
   const dimensionIri = dimension.path;
-
-  let allFiltersList = filters ? Object.entries(filters) : [];
-
-  // Consider filters before the current filter to fetch the values for
-  // the current filter
-  const filterList = sortBy(
-    allFiltersList.slice(
-      0,
-      allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
-    ),
-    ([, filterValue]) => getFilterOrder(filterValue)
-  );
+  const allFiltersList = filters ? Object.entries(filters) : [];
+  const filterList =
+    // Consider filters before the current filter to fetch the values for
+    // the current filter
+    sortBy(
+      allFiltersList.slice(
+        0,
+        allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
+      ),
+      ([, filterValue]) => getFilterOrder(filterValue)
+    );
 
   const query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
@@ -167,6 +167,10 @@ export async function loadDimensionValues(
               (d) => d.path?.value === iri
             );
             if (!filterDimension || dimensionIri?.value === iri) {
+              return "";
+            }
+
+            if (value.type === "single" && value.value === FIELD_VALUE_NONE) {
               return "";
             }
 

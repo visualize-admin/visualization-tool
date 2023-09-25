@@ -13,10 +13,12 @@ import React, {
 import { useClient } from "urql";
 
 import { getFieldComponentIri } from "@/charts";
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { ChartConfig, ChartType } from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -80,7 +82,7 @@ const getLeaves = (
 export const useChartFieldField = ({
   field,
 }: {
-  field: string;
+  field: EncodingFieldType;
 }): SelectProps & {
   fetching: boolean;
 } => {
@@ -96,7 +98,7 @@ export const useChartFieldField = ({
     };
   }, []);
 
-  const onChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
+  const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (!state.dataSet) {
       return;
     }
@@ -172,26 +174,25 @@ export const useChartFieldField = ({
   return {
     name: field,
     value,
-    onChange,
+    onChange: handleChange,
     fetching,
   };
 };
 
-export const useChartOptionSelectField = <ValueType extends {} = string>({
-  field,
-  path,
-  getValue,
-  getKey,
-}: {
-  field: string;
+type UseChartOptionSelectFieldProps<V> = {
+  field: EncodingFieldType;
   path: string;
-  getValue?: (key: string) => ValueType | undefined;
-  getKey?: (value: ValueType) => string;
-}): SelectProps => {
+  getValue?: (key: string) => V | undefined;
+  getKey?: (value: V) => string;
+};
+
+export const useChartOptionSelectField = <V extends {} = string>(
+  props: UseChartOptionSelectFieldProps<V>
+): SelectProps => {
+  const { field, path, getValue, getKey } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
-
-  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
+  const handleChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
     (e) => {
       const value = e.target.value as string;
       dispatch({
@@ -204,22 +205,18 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
         },
       });
     },
-    [locale, dispatch, field, path, getValue]
+    [dispatch, locale, field, path, getValue]
   );
 
-  let value: ValueType | undefined;
+  let value: V | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(
-      state,
-      `chartConfig.fields["${field}"].${path}`,
-      FIELD_VALUE_NONE
-    );
+    value = get(state, `chartConfig.fields.${field}.${path}`, FIELD_VALUE_NONE);
   }
+
   return {
     name: path,
     value: getKey ? getKey(value!) : (value as unknown as string),
-    // checked,
-    onChange,
+    onChange: handleChange,
   };
 };
 
@@ -252,7 +249,7 @@ export const useChartOptionSliderField = ({
   max,
   defaultValue,
 }: {
-  field: string | null;
+  field: EncodingFieldType | null;
   path: string;
   min: number;
   max: number;
@@ -290,19 +287,19 @@ export const useChartOptionSliderField = ({
   };
 };
 
-export const useChartOptionRadioField = ({
-  field,
-  path,
-  value,
-}: {
-  field: string | null;
+type UseChartOptionRadioFieldProps<V extends string | number> = {
+  field: EncodingFieldType | null;
   path: string;
-  value: string | number;
-}): FieldProps => {
-  const locale = useLocale();
-  const [state, dispatch] = useConfiguratorState();
+  value: V;
+};
 
-  const onChange = useCallback(() => {
+export const useChartOptionRadioField = <V extends string | number>(
+  props: UseChartOptionRadioFieldProps<V>
+): FieldProps => {
+  const { field, path, value } = props;
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const handleChange = useCallback(() => {
     dispatch({
       type: "CHART_OPTION_CHANGED",
       value: {
@@ -312,7 +309,7 @@ export const useChartOptionRadioField = ({
         value,
       },
     });
-  }, [locale, dispatch, field, path, value]);
+  }, [dispatch, locale, field, path, value]);
   const stateValue =
     state.state === "CONFIGURING_CHART"
       ? getChartOptionField(state, field, path)
@@ -323,7 +320,7 @@ export const useChartOptionRadioField = ({
     name: path,
     value,
     checked,
-    onChange,
+    onChange: handleChange,
   };
 };
 
@@ -333,7 +330,7 @@ export const useChartOptionBooleanField = ({
   defaultValue = "",
 }: {
   path: string;
-  field: string | null;
+  field: EncodingFieldType | null;
   defaultValue: boolean | string;
 }): FieldProps => {
   const locale = useLocale();

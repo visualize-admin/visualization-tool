@@ -11,6 +11,7 @@ import {
   tableObservations,
 } from "@/docs/fixtures";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
 
@@ -18,24 +19,26 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <TableChart
-      observations={tableObservations}
-      dimensions={tableDimensions as DimensionMetadataFragment[]}
-      dimensionsByIri={keyBy(
-        tableDimensions as DimensionMetadataFragment[],
-        (d) => d.iri
-      )}
-      measures={tableMeasures as DimensionMetadataFragment[]}
-      measuresByIri={keyBy(
-        tableMeasures as DimensionMetadataFragment[],
-        (d) => d.iri
-      )}
-      chartConfig={tableConfig}
-    >
-      <ChartContainer>
-        <Table></Table>
-      </ChartContainer>
-    </TableChart>
+    <InteractiveFiltersProvider>
+      <TableChart
+        observations={tableObservations}
+        dimensions={tableDimensions as DimensionMetadataFragment[]}
+        dimensionsByIri={keyBy(
+          tableDimensions as DimensionMetadataFragment[],
+          (d) => d.iri
+        )}
+        measures={tableMeasures as DimensionMetadataFragment[]}
+        measuresByIri={keyBy(
+          tableMeasures as DimensionMetadataFragment[],
+          (d) => d.iri
+        )}
+        chartConfig={tableConfig}
+      >
+        <ChartContainer>
+          <Table />
+        </ChartContainer>
+      </TableChart>
+    </InteractiveFiltersProvider>
   </ReactSpecimen>
 )}
 `;

@@ -204,7 +204,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       fontSize: "inherit",
       color: "inherit",
       textDecoration: "underline",
-      textUnderlineOffset: "4px",
+      textUnderlineOffset: "2px",
       textAlign: "left",
 
       "&:hover": {

@@ -47,7 +47,7 @@ import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 import { useTheme } from "@/themes";
-import { estimateTextWidth } from "@/utils/estimate-text-width";
+import { getTextWidth } from "@/utils/get-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -206,13 +206,14 @@ const useTableState = (
             c.componentType === "NumericalMeasure"
               ? formatNumber(item as number)
               : item;
-          return estimateTextWidth(`${itemAsString}`, 16) + 20;
+
+          return getTextWidth(`${itemAsString}`, { fontSize: 16 }) + 20;
         }),
       ];
 
       const width = Math.max(
         50,
-        estimateTextWidth(headerLabel, 16) + 44,
+        getTextWidth(headerLabel, { fontSize: 16 }) + 44,
         ...columnItemSizes
       );
 
@@ -373,7 +374,7 @@ const useTableState = (
           ];
           const columnItemSizes = columnItems.map((item) => {
             const itemAsString = formatter(item);
-            return estimateTextWidth(`${itemAsString}`, 16) + 80;
+            return getTextWidth(`${itemAsString}`, { fontSize: 16 }) + 80;
           });
           const width =
             Math.max(max(columnItemSizes, (d) => d) || 150, 150) -

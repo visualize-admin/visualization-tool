@@ -53,7 +53,7 @@ import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { sortByIndex } from "@/utils/array";
 import {
   getSortingOrders,
@@ -99,13 +99,20 @@ const useColumnsStackedState = (
     getSegmentAbbreviationOrLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.iri);
-  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    paddingData,
+    allData,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const calculationType = useInteractiveFiltersStore((d) => d.calculation.type);
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
 
   const xKey = fields.x.componentIri;
 
@@ -312,12 +319,12 @@ const useColumnsStackedState = (
     });
   }, [scalesData, normalize, getX, getY, getAnimation]);
 
-  const allYScale = useMemo(() => {
+  const paddingYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the yScale domain, so that the yScale doesn't
     // change when the user toggles between absolute and relative values.
     if (interactiveFiltersConfig?.calculation.active) {
-      const scale = getStackedYScale(allData, {
+      const scale = getStackedYScale(paddingData, {
         normalize: false,
         getX,
         getY,
@@ -331,7 +338,7 @@ const useColumnsStackedState = (
       return scale;
     }
 
-    return getStackedYScale(allData, {
+    return getStackedYScale(paddingData, {
       normalize,
       getX,
       getY,
@@ -339,7 +346,7 @@ const useColumnsStackedState = (
     });
   }, [
     interactiveFiltersConfig?.calculation.active,
-    allData,
+    paddingData,
     normalize,
     getX,
     getY,
@@ -372,15 +379,16 @@ const useColumnsStackedState = (
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
-  const { left, bottom } = useChartPadding(
-    allYScale,
+  const { left, bottom } = useChartPadding({
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
+    animationPresent: !!fields.animation,
     formatNumber,
-    xTimeRangeDomainLabels,
-    normalize
-  );
+    bandDomain: xTimeRangeDomainLabels,
+    normalize,
+  });
   const margins = {
     top: 50,
     right: 40,

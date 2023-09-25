@@ -3,6 +3,7 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
+import { ObservationValue } from "@/domain/data";
 import { DataCubeMetadata } from "@/graphql/types";
 
 const ComponentType = t.union([
@@ -20,35 +21,62 @@ const ComponentType = t.union([
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
-const FilterValueMulti = t.type(
-  {
-    type: t.literal("multi"),
-    values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
-  },
-  "FilterValueMulti"
-);
-
+const FilterValueMulti = t.intersection([
+  t.type(
+    {
+      type: t.literal("multi"),
+      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
+    },
+    "FilterValueMulti"
+  ),
+  t.partial({
+    position: t.number,
+  }),
+]);
 export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
-const FilterValueSingle = t.type(
-  {
-    type: t.literal("single"),
-    value: t.union([t.string, t.number]),
-  },
-  "FilterValueSingle"
-);
+export const makeMultiFilter = (
+  values: ObservationValue[]
+): FilterValueMulti => {
+  return {
+    type: "multi",
+    values: Object.fromEntries(values.map((d) => [d, true])),
+  };
+};
 
+const FilterValueSingle = t.intersection([
+  t.type(
+    {
+      type: t.literal("single"),
+      value: t.union([t.string, t.number]),
+    },
+    "FilterValueSingle"
+  ),
+  t.partial({
+    position: t.number,
+  }),
+]);
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
-const FilterValueRange = t.type(
-  {
-    type: t.literal("range"),
-    from: t.string,
-    to: t.string,
-  },
-  "FilterValueRange"
-);
+export const isFilterValueSingle = (
+  filterValue: FilterValue
+): filterValue is FilterValueSingle => {
+  return filterValue.type === "single";
+};
 
+const FilterValueRange = t.intersection([
+  t.type(
+    {
+      type: t.literal("range"),
+      from: t.string,
+      to: t.string,
+    },
+    "FilterValueRange"
+  ),
+  t.partial({
+    position: t.number,
+  }),
+]);
 export type FilterValueRange = t.TypeOf<typeof FilterValueRange>;
 
 const FilterValue = t.union(
@@ -194,10 +222,13 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
+const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
+export type ChartSubType = t.TypeOf<typeof ChartSubType>;
+
 const ColumnSegmentField = t.intersection([
   GenericSegmentField,
   SortingField,
-  t.type({ type: t.union([t.literal("grouped"), t.literal("stacked")]) }),
+  t.type({ type: ChartSubType }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -358,6 +389,8 @@ const SequentialPaletteType = t.union([
 
 export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
 
+export type PaletteType = DivergingPaletteType | SequentialPaletteType;
+
 const ColorScaleType = t.union([
   t.literal("continuous"),
   t.literal("discrete"),
@@ -507,6 +540,11 @@ const NumericalColorField = t.intersection([
   ]),
 ]);
 export type NumericalColorField = t.TypeOf<typeof NumericalColorField>;
+
+export type ColorField =
+  | FixedColorField
+  | CategoricalColorField
+  | NumericalColorField;
 
 const MapAreaLayer = t.type({
   componentIri: t.string,

@@ -2,9 +2,9 @@
  * Server side methods to connect to the database
  */
 
-import { Prisma, Config, User } from "@prisma/client";
+import { Config, Prisma, User } from "@prisma/client";
 
-import { Config as ConfigType } from "@/configurator";
+import { ChartConfig, Config as ConfigType } from "@/configurator";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
 import { createChartId } from "../utils/create-chart-id";
@@ -26,15 +26,13 @@ export const createConfig = async ({
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
 }): Promise<{ key: string }> => {
-  const result = await prisma.config.create({
+  return await prisma.config.create({
     data: {
       key: createChartId(),
-      data: data,
+      data,
       user_id: userId,
     },
   });
-
-  return result;
 };
 
 const migrateDataSet = (dataSet: string): string => {
@@ -43,6 +41,22 @@ const migrateDataSet = (dataSet: string): string => {
   }
 
   return dataSet;
+};
+
+const ensureFiltersOrder = (chartConfig: ChartConfig) => {
+  return {
+    ...chartConfig,
+    filters: Object.fromEntries(
+      Object.entries(chartConfig.filters)
+        .sort(([, a], [, b]) => {
+          return (a.position ?? 0) - (b.position ?? 0);
+        })
+        .map(([k, v]) => {
+          const { position, ...rest } = v;
+          return [k, rest];
+        })
+    ),
+  };
 };
 
 type ChartJsonConfig = {
@@ -55,7 +69,7 @@ const parseDbConfig = (conf: Config) => {
   const migratedData = {
     ...data,
     dataSet: migrateDataSet(data.dataSet),
-    chartConfig: migrateChartConfig(data.chartConfig),
+    chartConfig: ensureFiltersOrder(migrateChartConfig(data.chartConfig)),
   } as PublishedConfig;
   return {
     ...conf,

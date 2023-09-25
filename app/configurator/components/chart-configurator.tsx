@@ -29,7 +29,7 @@ import {
 } from "react-beautiful-dnd";
 import { useClient } from "urql";
 
-import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import useDisclosure from "@/components/use-disclosure";
@@ -40,6 +40,7 @@ import {
   DataSource,
   isMapConfig,
 } from "@/configurator";
+import { TitleAndDescriptionConfigurator } from "@/configurator/components/chart-annotator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -47,6 +48,7 @@ import {
   SubsectionTitle,
   useControlSectionContext,
 } from "@/configurator/components/chart-controls/section";
+import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
   ControlTabField,
   DataFilterSelect,
@@ -65,15 +67,15 @@ import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filte
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
-  HierarchyValue,
+  DimensionMetadataWithHierarchiesFragment,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
   useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
-  useDimensionHierarchyQuery,
 } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import {
   DataCubeMetadata,
   DataCubeMetadataWithHierarchies,
@@ -82,40 +84,16 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
-import { TitleAndDescriptionConfigurator } from "./chart-annotator";
-import { ChartTypeSelector } from "./chart-type-selector";
-
-const DataFilterSelectGeneric = ({
-  dimension,
-  index,
-  disabled,
-  onRemove,
-}: {
-  dimension: DataCubeMetadata["dimensions"][number];
+type DataFilterSelectGenericProps = {
+  dimension: DimensionMetadataWithHierarchiesFragment;
   index: number;
   disabled?: boolean;
   onRemove: () => void;
-}) => {
-  const [state] = useConfiguratorState(isConfiguring);
-  const locale = useLocale();
-  const [pause, setPause] = useState(true);
-  const [hierarchyResp] = useDimensionHierarchyQuery({
-    variables: {
-      cubeIri: state.dataSet,
-      sourceUrl: state.dataSource.url,
-      sourceType: state.dataSource.type,
-      dimensionIri: dimension?.iri,
-      locale,
-    },
-    pause,
-  });
-  const hierarchy =
-    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
+};
 
-  const handleOpen = useEvent(() => setPause(false));
-
+const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
+  const { dimension, index, disabled, onRemove } = props;
   const values = dimension.values;
-
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -130,17 +108,15 @@ const DataFilterSelectGeneric = ({
   );
 
   const sharedProps = {
-    dimension: dimension,
+    dimension,
     label: (
       <OpenMetadataPanelWrapper dim={dimension}>
-        <span style={{ marginBottom: 4 }}>{`${index + 1}. ${
-          dimension.label
-        }`}</span>
+        <span>{`${index + 1}. ${dimension.label}`}</span>
       </OpenMetadataPanelWrapper>
     ),
-    controls: controls,
+    controls,
     id: `select-single-filter-${index}`,
-    disabled: disabled,
+    disabled,
     isOptional: !dimension.isKeyDimension,
   };
 
@@ -167,15 +143,13 @@ const DataFilterSelectGeneric = ({
     return (
       <DataFilterSelect
         {...sharedProps}
-        hierarchy={hierarchy as HierarchyValue[]}
-        onOpen={handleOpen}
-        loading={hierarchyResp.fetching}
+        hierarchy={dimension.hierarchy as HierarchyValue[] | undefined}
       />
     );
   }
 };
 
-const orderedIsEqual = (
+export const orderedIsEqual = (
   obj1: Record<string, unknown>,
   obj2: Record<string, unknown>
 ) => {
@@ -302,6 +276,7 @@ const useFilterReorder = ({
         ? Object.keys(unmappedFilters).join(", ")
         : undefined,
     };
+
     return omitBy(vars, (x) => x === undefined) as typeof vars;
   }, [
     state.dataSet,
@@ -770,7 +745,6 @@ type ChartFieldsProps = {
 
 const ChartFields = (props: ChartFieldsProps) => {
   const { dataSource, chartConfig, metadata } = props;
-  const { chartType } = chartConfig;
   const { dimensions, measures } = metadata;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
@@ -790,37 +764,39 @@ const ChartFields = (props: ChartFieldsProps) => {
 
   return (
     <>
-      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        const { field, getDisabledState } = encoding;
-        const component = components.find(
-          (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
-        );
-        const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
+      {getChartSpec(chartConfig)
+        .encodings.filter((d) => !d.hide)
+        .map((encoding) => {
+          const { field, getDisabledState } = encoding;
+          const component = components.find(
+            (d) => d.iri === (chartConfig.fields as any)[field]?.componentIri
+          );
+          const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
 
-        return baseLayer ? (
-          <OnOffControlTabField
-            key={field}
-            value={field}
-            icon="baseLayer"
-            label={<Trans id="chart.map.layers.base">Map Display</Trans>}
-            active={chartConfig.baseLayer.show}
-          />
-        ) : (
-          <ControlTabField
-            key={field}
-            component={
-              isMapConfig(chartConfig) && field === "symbolLayer"
-                ? chartConfig.fields.symbolLayer
-                  ? component
-                  : undefined
-                : component
-            }
-            value={field}
-            labelId={`${chartConfig.chartType}.${field}`}
-            {...getDisabledState?.(chartConfig, dimensions, observations)}
-          />
-        );
-      })}
+          return baseLayer ? (
+            <OnOffControlTabField
+              key={field}
+              value={field}
+              icon="baseLayer"
+              label={<Trans id="chart.map.layers.base">Map Display</Trans>}
+              active={chartConfig.baseLayer.show}
+            />
+          ) : (
+            <ControlTabField
+              key={field}
+              component={
+                isMapConfig(chartConfig) && field === "symbolLayer"
+                  ? chartConfig.fields.symbolLayer
+                    ? component
+                    : undefined
+                  : component
+              }
+              value={field}
+              labelId={`${chartConfig.chartType}.${field}`}
+              {...getDisabledState?.(chartConfig, components, observations)}
+            />
+          );
+        })}
     </>
   );
 };

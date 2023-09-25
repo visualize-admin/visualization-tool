@@ -4,7 +4,10 @@ import { useState } from "react";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, InteractiveFiltersConfig } from "@/config-types";
-import { useInteractiveFiltersStore } from "@/stores/interactive-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "@/stores/interactive-filters";
 import fixture from "@/test/__fixtures/config/dev/4YL1p4QTFQS4.json";
 
 const interactiveFiltersConfig: InteractiveFiltersConfig = {
@@ -44,7 +47,13 @@ const setup = ({
   modifiedChartConfig: ChartConfig;
 }) => {
   const Component = () => {
-    const IFState = useInteractiveFiltersStore();
+    const IFState = useInteractiveFilters((d) => ({
+      categories: d.categories,
+      timeRange: d.timeRange,
+      timeSlider: d.timeSlider,
+      dataFilters: d.dataFilters,
+      calculation: d.calculation,
+    }));
     const [useModified, setUseModified] = useState(false);
     useSyncInteractiveFilters(useModified ? modifiedChartConfig : chartConfig);
 
@@ -60,7 +69,11 @@ const setup = ({
       </div>
     );
   };
-  const root = render(<Component />);
+  const root = render(
+    <InteractiveFiltersProvider>
+      <Component />
+    </InteractiveFiltersProvider>
+  );
   const getIFState = () =>
     JSON.parse(root.getByTestId("ifstate-dump").innerHTML);
   const clickUseModified = () =>

@@ -48,10 +48,10 @@ export const useRedirectToVersionedCube = ({
 
       if (resp) {
         router.replace({
-          pathname: `/${locale}/browse`,
+          pathname: "/browse",
           query: {
             ...router.query,
-            dataset: resp.iri,
+            ...(router.query.iri ? { iri: resp.iri } : { dataset: resp.iri }),
           },
         });
       } else {

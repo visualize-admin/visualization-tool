@@ -287,7 +287,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
 }): Promise<DimensionValue[]> => {
   const load = async () => {
     const loaders = [
-      !filters ? () => dimension.in || [] : undefined,
+      filters ? undefined : () => dimension.in ?? [],
       () =>
         loadDimensionValues(
           { datasetIri: cube.term, dimension, cube, sparqlClient },
@@ -538,7 +538,7 @@ export const getCubeObservations = async ({
     }
   }
 
-  let observationFilters = filters
+  const observationFilters = filters
     ? buildFilters({ cube, view: cubeView, filters: dbFilters, locale })
     : [];
 
@@ -740,15 +740,18 @@ const buildFilters = ({
   const lookupSource = LookupSource.fromSource(cube.source);
   lookupSource.queryPrefix = pragmas;
 
-  const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
-    const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
+  return Object.entries(filters).flatMap(([iri, filter]) => {
+    const cubeDimension = cube.dimensions.find((d) => d.path?.value === iri);
+
     if (!cubeDimension) {
-      console.warn(`WARNING: No cube dimension ${dimIri}`);
+      console.warn(`WARNING: No cube dimension ${iri}`);
       return [];
     }
-    const dimension = view.dimension({ cubeDimension: dimIri });
+
+    const dimension = view.dimension({ cubeDimension: iri });
 
     if (!dimension) {
+      console.warn(`WARNING: No dimension ${iri}`);
       return [];
     }
 
@@ -764,7 +767,7 @@ const buildFilters = ({
           source: lookupSource,
           path: ns.schema.sameAs,
           join: dimension,
-          as: labelDimensionIri(dimIri + "/__sameAs__"), // Just a made up dimension name that is used in the generated query but nowhere else
+          as: labelDimensionIri(`${iri}/__sameAs__`), // Just a made up dimension name that is used in the generated query but nowhere else
         })
       : dimension;
 
@@ -777,54 +780,49 @@ const buildFilters = ({
     const { dataType } = parsedCubeDimension.data;
 
     if (ns.rdf.langString.value === dataType) {
-      console.warn(
-        `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
+      throw new Error(
+        `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
       );
     }
 
     const dimensionHasHierarchy = hasHierarchy(cubeDimension);
-    const toRDFValue = (value: string): NamedNode | Literal => {
+    const toRDFValue = (d: string): NamedNode | Literal => {
       return dataType && !dimensionHasHierarchy
         ? parsedCubeDimension.data.hasUndefinedValues &&
-          value === DIMENSION_VALUE_UNDEFINED
+          d === DIMENSION_VALUE_UNDEFINED
           ? rdf.literal("", ns.cube.Undefined)
-          : rdf.literal(value, dataType)
-        : rdf.namedNode(value);
+          : rdf.literal(d, dataType)
+        : rdf.namedNode(d);
     };
 
-    const selectedValues =
-      filter.type === "single"
-        ? [
-            filterDimension.filter.eq(
-              toRDFValue(
-                typeof filter.value === "number"
-                  ? filter.value.toString()
-                  : filter.value
-              )
-            ),
-          ]
-        : filter.type === "multi"
-        ? // If values is an empty object, we filter by something that doesn't exist
-          [
-            filterDimension.filter.in(
-              Object.keys(filter.values).length > 0
-                ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                    selected ? [toRDFValue(value)] : []
-                  )
-                : [rdf.namedNode("EMPTY_VALUE")]
-            ),
-          ]
-        : filter.type === "range"
-        ? [
-            filterDimension.filter.gte(toRDFValue(filter.from)),
-            filterDimension.filter.lte(toRDFValue(filter.to)),
-          ]
-        : [];
-
-    return selectedValues;
+    return filter.type === "single"
+      ? [
+          filterDimension.filter.eq(
+            toRDFValue(
+              typeof filter.value === "number"
+                ? filter.value.toString()
+                : filter.value
+            )
+          ),
+        ]
+      : filter.type === "multi"
+      ? // If values is an empty object, we filter by something that doesn't exist
+        [
+          filterDimension.filter.in(
+            Object.keys(filter.values).length > 0
+              ? Object.entries(filter.values).flatMap(([iri, selected]) =>
+                  selected ? [toRDFValue(iri)] : []
+                )
+              : [rdf.namedNode("EMPTY_VALUE")]
+          ),
+        ]
+      : filter.type === "range"
+      ? [
+          filterDimension.filter.gte(toRDFValue(filter.from)),
+          filterDimension.filter.lte(toRDFValue(filter.to)),
+        ]
+      : [];
   });
-
-  return filterEntries;
 };
 
 async function fetchViewObservations({
@@ -841,17 +839,8 @@ async function fetchViewObservations({
    */
   if (limit !== undefined) {
     // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(
-      ns.cubeView.projection,
-      (projection: $FixMe) => {
-        // const order = projection
-        //   .blankNode()
-        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
-        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
-        // projection.addList(ns.cubeView.orderBy, order)
-        projection.addOut(ns.cubeView.limit, limit);
-        // projection.addOut(ns.cubeView.offset, offset)
-      }
+    observationsView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) =>
+      projection.addOut(ns.cubeView.limit, limit)
     );
   }
 

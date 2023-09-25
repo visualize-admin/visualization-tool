@@ -102,20 +102,17 @@ export const makeDimensionValueSorters = (
   };
 
   const getLabel = (valueOrLabel?: string) => {
-    const label = valueOrLabel ? getByValueOrLabel(valueOrLabel)?.label : "";
-    return label;
+    return valueOrLabel ? getByValueOrLabel(valueOrLabel)?.label : "";
   };
   const getIdentifier = (valueOrLabel?: string) => {
-    const identifier = valueOrLabel
+    return valueOrLabel
       ? maybeInt(getByValueOrLabel(valueOrLabel)?.identifier) ?? Infinity
       : Infinity;
-    return identifier;
   };
   const getPosition = (valueOrLabel?: string) => {
-    const position = valueOrLabel
+    return valueOrLabel
       ? getByValueOrLabel(valueOrLabel)?.position ?? Infinity
       : Infinity;
-    return position;
   };
   const getHierarchy = (value?: string) => {
     const hierarchyValue = value
@@ -128,7 +125,7 @@ export const makeDimensionValueSorters = (
       return Infinity;
     }
 
-    return hierarchyValue?.depth;
+    return hierarchyValue?.depth ?? Infinity;
   };
 
   const getSum = (valueOrLabel?: string) =>

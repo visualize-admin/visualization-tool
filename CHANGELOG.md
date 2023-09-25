@@ -10,9 +10,77 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Fixes
-  - Vertical axis' ticks aren't cut anymore when they have low values (from 0 to 99)
+  - Cube checker now correctly checks if dimensions are present
+
+# [3.22.6] - 2023-09-19
+
+- Features
+  - Animated charts now show latest data as default
+- Fixes
+  - Table docs now work correctly again
+  - Cascading mode now works correctly for hierarchical dimensions used as interactive filters
+  - Changing the locale when previewing a larger cube no longer triggers multiple locale switches
+
+# [3.22.5] - 2023-09-12
+
+- Fixes
+  - It's now again possible to map all colors for hierarchical dimensions used as segmentation
+- Misc
+  - Improved `langString` error message
+
+# [3.22.4] - 2023-09-06
+
+- Docs
+  - Update legal framework
+
+# [3.22.3] - 2023-09-05
+
+- Fixes
+  - Animation field not updating
+  - Infinite loading of homepage chart
+
+# [3.22.2] - 2023-09-05
+
+- Fixes
+  - Fixed sorting of dates in XLSX download
+
+# [3.22.1] - 2023-09-05
+
+- Fixes
+  - Revert removal of `--openssl-legacy-provider``
+
+# [3.22.0] - 2023-09-05
+
+- Features
+  - Interactive filters now work in cascading mode
+  - Date picker is now usable with interactive temporal dimension filters
+  - Downloaded data is now sorted automatically, according to dimension types
+  - XLSX data download now correctly formats values (e.g. numbers are numbers and not strings)
+  - Disabled stacking of non-ratio measures (area and column charts)
+- UI
+  - Error message is now displayed if there are no geometries available for both area and symbol layers (depending on whether one or the other is used)
+  - Introduced a warning message when choosing an Animation while a Temporal dimension is mapped to other field
+  - Slightly reduced distances between color legend items in interactive mode
+- Fixes
+  - Map chart is now again correctly initialized when hierarchy is there
+  - Redirect to versioned cubes now works correctly when using legacy, `/browse/dataset/<iri>` mode
+  - Undefined dates in Temporal dimensions do not break the application anymore
+  - Jenks color legend now correctly calculates thresholds
+  - Numerical color legends now dynamically adjust heights to prevent cutting longer tick labels
+
+# [3.21.1] - 2023-08-22
+
+- Features
+  - Introduced preferred chart type order, which makes the table chart the least preferred option
+- UI
+  - Switched to pixel-perfect text width calculation - axes should now align correctly, without unnecessary padding that was the result of incorrect estimations
+  - Added `text-wrap: balance` to homepage title, to better wrap the text (only supported by Chrome as of now)
+- Fixes
+  - Changing a language in published mode now correctly updates options in hierarchical select element (Interactive Filters)
+- Performance
+  - Vastly improved the performance of fetching geographical shapes when fetching more than 100 at once
 - Maintenance
-  - Updated Node.js to v18
+  - Correctly aligned Sentry environments with deployment environments, which will result in better performance monitoring (`vercel`, `test`, `int`, `prod`)
 
 # [3.21.0] - 2023-08-15
 

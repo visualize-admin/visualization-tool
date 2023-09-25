@@ -311,7 +311,7 @@ const Warning = (props: WarningProps) => {
   const { title } = props;
 
   return (
-    <Tooltip arrow title={title}>
+    <Tooltip arrow title={<Typography variant="body2">{title}</Typography>}>
       <Typography color="warning.main" sx={{ mr: 2 }}>
         <SvgIcExclamation width={18} height={18} />
       </Typography>

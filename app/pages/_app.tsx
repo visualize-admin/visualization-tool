@@ -26,10 +26,9 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const { events: routerEvents, asPath, locale: routerLocale } = useRouter();
+  const locale = parseLocaleString(routerLocale ?? "");
 
   useNProgress();
-
-  const locale = parseLocaleString(routerLocale ?? "");
 
   // Immediately activate locale to avoid re-render
   if (i18n.locale !== locale) {

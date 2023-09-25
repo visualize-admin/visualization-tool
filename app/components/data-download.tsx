@@ -6,6 +6,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
+import { ascending } from "d3";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
@@ -28,8 +29,13 @@ import { OperationResult, useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
-import { DataSource, QueryFilters } from "@/config-types";
+import { DataSource, QueryFilters, SortingField } from "@/config-types";
 import { Observation } from "@/domain/data";
+import {
+  dateFormatterFromDimension,
+  getFormatFullDateAuto,
+  getFormattersForLocale,
+} from "@/formatters";
 import {
   ComponentsDocument,
   ComponentsQuery,
@@ -40,7 +46,9 @@ import {
   DimensionMetadataFragment,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
+import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import { useI18n } from "@/utils/use-i18n";
 
 type DataDownloadState = {
@@ -88,30 +96,65 @@ const makeColumnLabel = (dim: DimensionMetadataFragment) => {
 };
 
 const prepareData = ({
-  dimensions,
-  measures,
+  components,
   observations,
+  dimensionParsers,
 }: {
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  components: DimensionMetadataFragment[];
   observations: Observation[];
+  dimensionParsers: DimensionParsers;
 }) => {
-  const columns = keyBy(getSortedColumns(dimensions, measures), (d) => d.iri);
-  const data = observations.map((obs) =>
-    Object.keys(obs).reduce((acc, key) => {
+  const sortedComponents = getSortedColumns(components);
+  const columns = keyBy(sortedComponents, (d) => d.iri);
+  // Sort the data from left to right, keeping the order of the columns.
+  const sorting: SortingField["sorting"] = {
+    sortingType: "byAuto",
+    sortingOrder: "asc",
+  };
+  const sorters = sortedComponents.map<
+    [string, ReturnType<typeof makeDimensionValueSorters>]
+  >((d) => {
+    return [d.iri, makeDimensionValueSorters(d, { sorting })];
+  });
+  // We need to sort before parsing, to access raw observation values, where
+  // dates are formatted in the format of YYYY-MM-DD, etc.
+  const sortedData = [...observations];
+  sortedData.sort((a, b) => {
+    for (const [iri, dimSorters] of sorters) {
+      for (const sorter of dimSorters) {
+        const sortResult = ascending(
+          sorter(a[iri] as string),
+          sorter(b[iri] as string)
+        );
+
+        if (sortResult !== 0) {
+          return sortResult;
+        }
+      }
+    }
+
+    return 0;
+  });
+
+  const parsedData = sortedData.map((obs) => {
+    return Object.keys(obs).reduce<Observation>((acc, key) => {
       const col = columns[key];
+      const parser = dimensionParsers[key];
+
       return col
         ? {
             ...acc,
-            ...{ [makeColumnLabel(col)]: obs[key] },
+            ...{ [makeColumnLabel(col)]: parser(obs[key] as string) },
           }
         : acc;
-    }, {})
-  );
-
+    }, {});
+  });
   const columnKeys = Object.values(columns).map(makeColumnLabel);
 
-  return { data, columnKeys };
+  return {
+    data: parsedData,
+    columnKeys,
+  };
 };
 
 const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
@@ -206,7 +249,7 @@ const DataDownloadInnerMenu = ({
             subheader={
               <Trans id="button.download.data.visible">Chart dataset</Trans>
             }
-            fileName={fileName}
+            fileName={`${fileName}-filtered`}
             filters={filters}
           />
         )}
@@ -214,7 +257,7 @@ const DataDownloadInnerMenu = ({
           dataSetIri={dataSetIri}
           dataSource={dataSource}
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
-          fileName={fileName}
+          fileName={`${fileName}-full`}
         />
         {state.error && (
           <RawMenuItem>
@@ -281,38 +324,34 @@ const DownloadMenuItem = ({
   const i18n = useI18n();
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
-
   const download = useCallback(
     (
       componentsData: ComponentsQuery,
       observationsData: DataCubeObservationsQuery
     ) => {
-      if (componentsData?.dataCubeByIri && observationsData?.dataCubeByIri) {
-        const { dimensions, measures } = componentsData.dataCubeByIri;
-        const { observations } = observationsData.dataCubeByIri;
-        const preparedData = prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        });
-        const { columnKeys, data } = preparedData;
-
-        return fetch("/api/download", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            columnKeys,
-            data,
-            fileFormat,
-          }),
-        }).then((res) =>
-          res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
-        );
+      if (!(componentsData?.dataCubeByIri && observationsData?.dataCubeByIri)) {
+        return;
       }
+
+      const { dimensions, measures } = componentsData.dataCubeByIri;
+      const components = [...dimensions, ...measures];
+      const dimensionParsers = getDimensionParsers(components, { locale });
+      const observations = observationsData.dataCubeByIri.observations.data;
+      const { columnKeys, data } = prepareData({
+        components,
+        observations,
+        dimensionParsers,
+      });
+
+      return fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ columnKeys, data, fileFormat }),
+      }).then((res) =>
+        res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
+      );
     },
-    [fileFormat, fileName]
+    [fileFormat, fileName, locale]
   );
 
   return (
@@ -388,22 +427,65 @@ const DownloadMenuItem = ({
 
 export const RunSparqlQuery = ({ url }: { url: string }) => {
   return (
-    <>
-      <Button
-        component="a"
-        variant="text"
-        color="primary"
-        size="small"
-        href={url}
-        target="_blank"
-        sx={{ p: 0 }}
-      >
-        <Typography variant="caption">
-          <Trans id="button.download.runsparqlquery.visible">
-            Run SPARQL query (visible)
-          </Trans>
-        </Typography>
-      </Button>
-    </>
+    <Button
+      component="a"
+      variant="text"
+      color="primary"
+      size="small"
+      href={url}
+      target="_blank"
+      sx={{ p: 0 }}
+    >
+      <Typography variant="caption">
+        <Trans id="button.download.runsparqlquery.visible">
+          Run SPARQL query (visible)
+        </Trans>
+      </Typography>
+    </Button>
+  );
+};
+
+type DimensionParsers = {
+  [iri: string]: (d: string) => any;
+};
+
+const getDimensionParsers = (
+  components: DimensionMetadataFragment[],
+  { locale }: { locale: Locale }
+): DimensionParsers => {
+  return Object.fromEntries(
+    components.map((d) => {
+      switch (d.__typename) {
+        case "GeoCoordinatesDimension":
+        case "GeoShapesDimension":
+        case "NominalDimension":
+        case "OrdinalDimension":
+        case "TemporalOrdinalDimension":
+          return [d.iri, (d) => d];
+        case "NumericalMeasure":
+        case "StandardErrorDimension":
+          return [d.iri, (d) => +d];
+        case "OrdinalMeasure":
+          return d.isNumerical ? [d.iri, (d) => +d] : [d.iri, (d) => d];
+        case "TemporalDimension": {
+          if (d.timeUnit === "Year") {
+            return [d.iri, (d) => +d];
+          }
+
+          // We do not want to parse dates as dates, but strings (for easier
+          // handling in Excel).
+          const dateFormatters = getFormattersForLocale(locale);
+          const formatDateAuto = getFormatFullDateAuto(dateFormatters);
+
+          return [
+            d.iri,
+            dateFormatterFromDimension(d, dateFormatters, formatDateAuto),
+          ];
+        }
+        default:
+          const _exhaustiveCheck: never = d;
+          return _exhaustiveCheck;
+      }
+    })
   );
 };

@@ -104,17 +104,25 @@ with aggregation, key dimensions must either be **encoded** or **part of a filte
 | :-------------------------------------- | :----------------------- |
 | `?dimension shacl:datatype xsd:int`     | `dim.isNumerical = true` |
 | `?dimension shacl:datatype xsd:integer` | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:decimal` | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:float`   | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:double`  | `dim.isNumerical = true` |
 
-ℹ️ At the moment, numerical fields are filtered out of encoding fields options.
+ℹ️ At the moment, `isNumerical` property is used when sorting and formatting
+dimension values in some specific cases (e.g. when NominalDimension is numerical).
+Generally, this property is a "last resort property", as numerical dimensions are
+usually treated as `NumericalMeasure`s based on `https://cube.link/MeasureDimension`
+property.
 
 - `isLiteral`
 
-| RDF                                | Visualize               |
-| :--------------------------------- | :---------------------- |
-| `?dimension shacl:datatype ?value` | `dim.isLiteral = false` |
+| RDF                                        | Visualize              |
+| :----------------------------------------- | :--------------------- |
+| `?dimension shacl:nodeKind ?shacl:Literal` | `dim.isLiteral = true` |
 
-`True` when the dimension has no `shacl:datatype`. Non literal dimensions are also
-called _Shared dimensions_, and their values will be fetched outside the cube.
+`True` when the dimension has `shacl:nodeKind` of `shacl:Literal`. Non literal
+dimensions (`shacl:IRI`) are also called _Shared dimensions_, and their values
+will be fetched outside of the cube.
 
 #### Data kind
 
@@ -124,7 +132,7 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 | `?dimension cube:meta/dataKind schema:GeoCoordinates`           | `dim.dataKind = "GeoCoordinates"` |
 | `?dimension cube:meta/dataKind schema:GeoShape`                 | `dim.dataKind = "GeoShape"`       |
 
-ℹ️ Temporal dimensions can be interactively filtered with a _time range slider_. **Important note**: in order to be able to properly parse temporal dimension, make sure it's scale it set to Interval!
+ℹ️ Temporal dimensions can be used to animate the chart. **Important note**: time can also be ordinal if the scale type is set to `Ordinal`!
 
 ℹ️ GeoCoordinates dimensions can be shown on a map as _points_
 
@@ -172,7 +180,9 @@ one after the other.
 
 - **Ordinal Measure** if `isMeasureDimension = true and scaleType = "Ordinal"`, else
 - **Numerical Measure** if `isMeasureDimension = true and scaleType != "Ordinal"`, else
-- **Temporal Dimension** if `dataKind = "Time"`, else
+- **Standard Error Dimension** if any of the related dimensions has `StandardError` type, else
+- **Temporal Ordinal Dimension** if `dataKind = "Time" and scaleType = "Ordinal"`, else
+- **Temporal Dimension** if `dataKind = "Time" and scaleType != "Ordinal"`, else
 - **GeoCoordinates Dimension** if `dataKind = "GeoCoordinates"`, else
 - **GeoShapes Dimension** if `dataKind = "GeoShape"`, else
 - **Ordinal Dimension** if `scaleType = "Ordinal"`, else
@@ -196,7 +206,7 @@ To enable particular chart types the following conditions have to be met:
     {
       "Chart Type": "Column",
       Conditions: `- 1 or more **Numerical Measures**
-- 1 or more **Categorical** or **Geo** or **Temporal Dimensions**`,
+- 1 or more **Categorical** or **Geo** or **Temporal (Ordinal) Dimensions**`,
     },
     {
       "Chart Type": "Lines",
@@ -211,7 +221,7 @@ To enable particular chart types the following conditions have to be met:
     {
       "Chart Type": "Pie",
       Conditions: `- 1 or more **Numerical Measures**
-- 1 or more **Categorical** or **Geo Dimensions**`,
+- 1 or more **Categorical** or **Geo** or **Temporal (Ordinal) Dimensions**`,
     },
     {
       "Chart Type": "Scatterplot",
@@ -219,8 +229,7 @@ To enable particular chart types the following conditions have to be met:
     },
     {
       "Chart Type": "Maps",
-      Conditions: `- 1 or more **Numerical Measures**
-- 1 or more **Ordinal Measures**
+      Conditions: `- 1 or more **Measures**
 - 1 or more **Geo Dimensions**`,
     },
   ]}
