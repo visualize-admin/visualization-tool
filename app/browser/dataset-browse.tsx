@@ -54,8 +54,8 @@ import useEvent from "@/utils/use-event";
 
 import {
   BrowseState,
-  useBrowseContext,
   getBrowseParamsFromQuery,
+  useBrowseContext,
 } from "./context";
 import { BrowseFilter } from "./filters";
 import useDatasetCount from "./use-dataset-count";
