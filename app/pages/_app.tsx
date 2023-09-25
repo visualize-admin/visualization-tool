@@ -2,6 +2,7 @@ import { I18nProvider } from "@lingui/react";
 import "core-js/features/array/flat-map";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -24,7 +25,7 @@ import { useNProgress } from "@/utils/use-nprogress";
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
-}: AppProps) {
+}: AppProps<{ session: Session }>) {
   const { events: routerEvents, asPath, locale: routerLocale } = useRouter();
   const locale = parseLocaleString(routerLocale ?? "");
 

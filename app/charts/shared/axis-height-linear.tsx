@@ -23,8 +23,6 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export const TICK_PADDING = 6;
 
-export const TICK_PADDING = 6;
-
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
