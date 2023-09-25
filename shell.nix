@@ -6,8 +6,5 @@ in pkgs.mkShell {
   buildInputs = [
     pkgs.darwin.apple_sdk.frameworks.CoreServices
     nodejs
-    (pkgs.yarn.override {
-      nodejs = null;
-    })
   ];
 }
