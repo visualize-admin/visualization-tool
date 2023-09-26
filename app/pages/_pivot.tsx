@@ -13,7 +13,7 @@ import clsx from "clsx";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import Inspector from "react-inspector";
+import { Inspector } from "react-inspector";
 import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
@@ -560,25 +560,26 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
             <Typography variant="overline" display="block">
               Columns
             </Typography>
-            <Inspector data={columns} />
+            <Inspector data={columns} table={false} />
             <Typography variant="overline" display="block">
               Pivotted
             </Typography>
-            <Inspector data={pivotted} />
+            <Inspector data={pivotted} table={false} />
             <Typography variant="overline" display="block">
               Pivotted tree
             </Typography>
-            <Inspector data={tree} />
+            <Inspector data={tree} table={false} />
             <Typography variant="overline" display="block">
               Hierarchy
             </Typography>
             <Inspector
               data={hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy}
+              table={false}
             />
             <Typography variant="overline" display="block">
               Hierarchy indexes
             </Typography>
-            <Inspector data={hierarchyIndexes} />
+            <Inspector data={hierarchyIndexes} table={false} />
           </details>
         </Card>
         {fetchingComponents || fetchingObservations ? <Loading /> : null}

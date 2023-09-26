@@ -29,7 +29,7 @@ const DebugInteractiveFilters = () => {
         Interactive Filters State
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={IFState} />
+        <Inspector expandLevel={3} data={IFState} table={false} />
       </Box>
     </>
   );
@@ -75,6 +75,7 @@ const CubeMetadata = ({
                   ...data.dataCubeByIri.measures,
                 ].map((d) => [d.label, d]),
               ])}
+              table={false}
             />
           ) : null}
         </AccordionDetails>
@@ -159,7 +160,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
         </Button>
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={configuratorState} />
+        <Inspector expandLevel={3} data={configuratorState} table={false} />
       </Box>
     </>
   );

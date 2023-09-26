@@ -45,7 +45,6 @@
     "@tpluscode/rdf-string": "^0.2.26",
     "@tpluscode/sparql-builder": "^0.3.24",
     "@types/dotenv": "^8.2.0",
-    "@types/react-inspector": "^4.0.2",
     "@types/topojson-client": "^3.0.0",
     "@urql/devtools": "^2.0.3",
     "@visx/group": "^2.10.0",
@@ -103,7 +102,7 @@
     "rdf-ext": "^1.3.2",
     "react-beautiful-dnd": "^13.0.0",
     "react-error-boundary": "^3.1.3",
-    "react-inspector": "^5.1.1",
+    "react-inspector": "^6.0.2",
     "react-map-gl": "^7.0.10",
     "react-table": "^7.5.1",
     "react-virtual": "^2.3.1",
@@ -180,7 +179,6 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "jest": "^27.3.0",
     "playwright-testing-library": "^4.5.0",
-    "react-inspector": "^5.1.1",
     "ts-jest": "^27.0.7"
   }
 }
