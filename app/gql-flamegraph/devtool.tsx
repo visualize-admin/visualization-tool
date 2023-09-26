@@ -1,39 +1,38 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
-  Typography,
-  Box,
-  Drawer,
   AccordionProps,
-  IconButton,
+  AccordionSummary,
+  Box,
+  Button,
+  Divider,
+  Drawer,
   Grow,
+  IconButton,
   IconButtonProps,
   Link,
   LinkProps,
+  Switch,
+  SwitchProps,
   Tab,
-  Button,
-  Divider,
+  Typography,
 } from "@mui/material";
-import { Switch, SwitchProps } from "@mui/material";
 import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
-import { OperationDefinitionNode } from "graphql";
-import { print } from "graphql";
+import { OperationDefinitionNode, print } from "graphql";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, { useEffect, useRef, useState } from "react";
-import { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/components/use-disclosure";
-import { useFlag, flag, useFlags } from "@/flags";
+import { flag, useFlag, useFlags } from "@/flags";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
@@ -435,8 +434,9 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
 
 const DebugPanel = () => {
   const { isOpen, open, close } = useDisclosure();
-  const [tab, setTab] = useState("graphql" as "graphql" | "flags");
+  const [tab, setTab] = useState<"graphql" | "flags">("graphql");
   const gqlOperationsController = useGraphqlOperationsController();
+
   return (
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>

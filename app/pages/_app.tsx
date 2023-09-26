@@ -5,13 +5,13 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
-import DebugPanel from "@/gql-flamegraph/devtool";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -21,6 +21,10 @@ import { analyticsPageView } from "@/utils/googleAnalytics";
 import AsyncLocalizationProvider from "@/utils/l10n-provider";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
+
+const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
+  ssr: false,
+});
 
 export default function App({
   Component,
@@ -57,9 +61,8 @@ export default function App({
     };
   }, [routerEvents]);
 
-  const shouldShowDebug =
-    typeof window !== "undefined" &&
-    (process.env.NODE_ENV === "development" || flag("debug"));
+  const shouldShowGQLDebug =
+    process.env.NODE_ENV === "development" || flag("debug");
 
   return (
     <>
@@ -86,7 +89,7 @@ export default function App({
               <ThemeProvider theme={federalTheme.theme}>
                 <CssBaseline />
                 <Flashes />
-                {shouldShowDebug ? <DebugPanel /> : null}
+                {shouldShowGQLDebug ? <GQLDebugPanel /> : null}
                 <AsyncLocalizationProvider locale={locale}>
                   <Component {...pageProps} />
                 </AsyncLocalizationProvider>
