@@ -26,7 +26,9 @@ test("should be possible to de-select options from color component in maps", asy
 
   await selectors.chart.loaded();
 
-  const colorControlSection = within(selectors.edition.controlSection("Color"));
+  const colorControlSection = within(
+    selectors.edition.controlSection("Segmentation")
+  );
 
   const filtersButton = await colorControlSection.findByText(
     "Edit filters",
