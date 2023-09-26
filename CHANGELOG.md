@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Cube checker now correctly checks if dimensions are present
+- Performance
+  - Dataset preview should now load quicker as we no longer fetch dimension values along with it
 
 # [3.22.6] - 2023-09-19
 

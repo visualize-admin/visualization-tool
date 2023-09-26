@@ -64,6 +64,7 @@ export type DataCubeDimensionsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -78,6 +79,7 @@ export type DataCubeMeasuresArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 export type DataCubeOrganization = {
@@ -142,6 +144,7 @@ export type DimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -183,6 +186,7 @@ export type GeoCoordinatesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -214,6 +218,7 @@ export type GeoShapesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -258,6 +263,7 @@ export type NominalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -291,6 +297,7 @@ export type NumericalMeasureValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -340,6 +347,7 @@ export type OrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -369,6 +377,7 @@ export type OrdinalMeasureValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -397,6 +406,7 @@ export type QueryDataCubeByIriArgs = {
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -485,6 +495,7 @@ export type StandardErrorDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -516,6 +527,7 @@ export type TemporalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -545,6 +557,7 @@ export type TemporalOrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -834,6 +847,7 @@ export type DataCubePreviewQueryVariables = Exact<{
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -891,6 +905,7 @@ export type ComponentsQueryVariables = Exact<{
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -1153,7 +1168,12 @@ export const DimensionMetadataFragmentDoc = gql`
   dataType
   scaleType
   order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  values(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    filters: $filters
+    disableLoad: $disableValuesLoad
+  )
   unit
   related {
     iri
@@ -1271,22 +1291,31 @@ export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQuery
   return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
-    query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
+    query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $disableValuesLoad: Boolean = true) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
     latest: $latest
+    disableValuesLoad: $disableValuesLoad
   ) {
     iri
     title
     description
     publicationStatus
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      disableValuesLoad: $disableValuesLoad
+    ) {
       ...dimensionMetadata
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      disableValuesLoad: $disableValuesLoad
+    ) {
       ...dimensionMetadata
     }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
@@ -1340,18 +1369,20 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
 export const ComponentsDocument = gql`
-    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!]) {
+    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!], $disableValuesLoad: Boolean = false) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
     latest: $latest
+    disableValuesLoad: $disableValuesLoad
   ) {
     dimensions(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
       componentIris: $componentIris
+      disableValuesLoad: $disableValuesLoad
     ) {
       ...dimensionMetadata
     }
@@ -1359,6 +1390,7 @@ export const ComponentsDocument = gql`
       sourceType: $sourceType
       sourceUrl: $sourceUrl
       componentIris: $componentIris
+      disableValuesLoad: $disableValuesLoad
     ) {
       ...dimensionMetadata
     }

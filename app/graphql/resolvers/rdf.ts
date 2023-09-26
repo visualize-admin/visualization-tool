@@ -333,7 +333,11 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
 
 export const dimensionValues: NonNullable<
   NonNullable<Resolvers["Dimension"]>["values"]
-> = async (parent, { filters }, { setup }, info) => {
+> = async (parent, { filters, disableLoad }, { setup }, info) => {
+  if (disableLoad) {
+    return [];
+  }
+
   const { loaders, sparqlClient, cache } = await setup(info);
   // Different loader if we have filters or not
   const loader = getDimensionValuesLoader(
