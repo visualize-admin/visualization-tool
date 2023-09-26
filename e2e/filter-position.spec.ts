@@ -10,7 +10,7 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   await selectors.edition.drawerLoaded();
 
-  await actions.editor.selectActiveField("Color");
+  await actions.editor.selectActiveField("Segmentation");
 
   const selectorLocator = await selectors.panels
     .drawer()

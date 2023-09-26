@@ -47,7 +47,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   await actions.drawer.close();
 
-  await actions.editor.selectActiveField("Color");
+  await actions.editor.selectActiveField("Segmentation");
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
 
@@ -80,7 +80,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   );
 
   await selectors.edition.drawerLoaded();
-  await actions.editor.selectActiveField("Color");
+  await actions.editor.selectActiveField("Segmentation");
 
   await (await selectors.panels.drawer().within().findByText("None")).click();
 
