@@ -78,7 +78,9 @@ const ProfilePage = (props: Serialized<PageProps>) => {
                         <TableCell>{uc.data.chartConfig.chartType}</TableCell>
                         <TableCell>{uc.data.meta.title.en}</TableCell>
                         <TableCell>
-                          <Link href={`/v/${uc.key}`}>See chart</Link>
+                          <Link href={`/v/${uc.key}`} legacyBehavior>
+                            See chart
+                          </Link>
                         </TableCell>
                       </TableRow>
                     );
@@ -87,7 +89,11 @@ const ProfilePage = (props: Serialized<PageProps>) => {
               </Table>
             ) : (
               <Typography variant="body1">
-                No charts yet, <Link href="/browse">create one</Link>.
+                No charts yet,{" "}
+                <Link href="/browse" legacyBehavior>
+                  create one
+                </Link>
+                .
               </Typography>
             )}
           </Box>

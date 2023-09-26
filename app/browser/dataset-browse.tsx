@@ -358,7 +358,7 @@ const NavItem = ({
 
   const classes = useStyles();
   const removeFilterButton = (
-    <Link href={removeFilterPath} passHref>
+    <Link href={removeFilterPath} passHref legacyBehavior>
       <ButtonBase
         component="a"
         className={classes.removeFilterButton}
@@ -405,7 +405,7 @@ const NavItem = ({
         </>
       ) : (
         <>
-          <Link href={path} passHref>
+          <Link href={path} passHref legacyBehavior>
             <MUILink
               sx={{ flexGrow: 1, py: 1 }}
               underline="none"
@@ -944,8 +944,9 @@ export const DatasetResult = ({
           ? sortBy(themes, (t) => t.label).map((t) => (
               <Link
                 key={t.iri}
-                passHref
                 href={`/browse/theme/${encodeURIComponent(t.iri)}`}
+                passHref
+                legacyBehavior
               >
                 <MUILink
                   color="inherit"
@@ -961,8 +962,9 @@ export const DatasetResult = ({
         {creator ? (
           <Link
             key={creator.iri}
-            passHref
             href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
+            passHref
+            legacyBehavior
           >
             <MUILink
               color="inherit"

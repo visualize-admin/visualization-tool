@@ -49,7 +49,7 @@ const CubeMetadata = ({
       iri: datasetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      locale: locale,
+      locale,
     },
     pause: !expanded,
   });

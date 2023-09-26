@@ -19,9 +19,9 @@ import { DataSetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
+  bannerPresenceProps,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
@@ -213,7 +213,7 @@ const SelectDatasetStepContent = () => {
                 key="dataset-metadata"
                 custom={dataset}
               >
-                <NextLink passHref href={backLink}>
+                <NextLink href={backLink} passHref legacyBehavior>
                   <Button
                     variant="contained"
                     color="secondary"
