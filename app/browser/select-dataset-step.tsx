@@ -204,7 +204,7 @@ const SelectDatasetStepContent = () => {
 
       <PanelLayout className={classes.panelLayout}>
         <PanelLeftWrapper className={classes.panelLeft}>
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
                 {...navPresenceProps}
@@ -236,11 +236,7 @@ const SelectDatasetStepContent = () => {
                 </MotionBox>
               </MotionBox>
             ) : (
-              <MotionBox
-                key="search-filters"
-                {...navPresenceProps}
-                custom={false}
-              >
+              <MotionBox key="search-filters" {...navPresenceProps}>
                 <SearchFilters data={datacubesQuery.data} />
               </MotionBox>
             )}
@@ -248,7 +244,7 @@ const SelectDatasetStepContent = () => {
         </PanelLeftWrapper>
         <PanelMiddleWrapper className={classes.panelMiddle}>
           <Box sx={{ maxWidth: 1040 }}>
-            <AnimatePresence exitBeforeEnter>
+            <AnimatePresence mode="wait">
               {dataset ? (
                 <MotionBox {...navPresenceProps} key="preview">
                   <DataSetPreview
