@@ -58,6 +58,9 @@ import { DimensionValue, isGeoDimension } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
+  ComponentsDocument,
+  ComponentsQuery,
+  ComponentsQueryVariables,
   ComponentsWithHierarchiesDocument,
   ComponentsWithHierarchiesQuery,
   ComponentsWithHierarchiesQueryVariables,
@@ -329,24 +332,26 @@ const getCachedMetadata = (
   draft: ConfiguratorStateConfiguringChart,
   locale: Locale
 ): DataCubeMetadataWithHierarchies | null => {
+  const variables = {
+    iri: draft.dataSet,
+    locale,
+    sourceType: draft.dataSource.type,
+    sourceUrl: draft.dataSource.url,
+  };
   const metadataQuery = client.readQuery<
     DataCubeMetadataQuery,
     DataCubeMetadataQueryVariables
-  >(DataCubeMetadataDocument, {
-    iri: draft.dataSet,
-    locale,
-    sourceType: draft.dataSource.type,
-    sourceUrl: draft.dataSource.url,
-  });
-  const componentsQuery = client.readQuery<
-    ComponentsWithHierarchiesQuery,
-    ComponentsWithHierarchiesQueryVariables
-  >(ComponentsWithHierarchiesDocument, {
-    iri: draft.dataSet,
-    locale,
-    sourceType: draft.dataSource.type,
-    sourceUrl: draft.dataSource.url,
-  });
+  >(DataCubeMetadataDocument, variables);
+  // Some charts use hierarchical query, so we need to check for both.
+  const componentsQuery =
+    client.readQuery<
+      ComponentsWithHierarchiesQuery,
+      ComponentsWithHierarchiesQueryVariables
+    >(ComponentsWithHierarchiesDocument, variables) ??
+    client.readQuery<ComponentsQuery, ComponentsQueryVariables>(
+      ComponentsDocument,
+      variables
+    );
 
   return metadataQuery?.data?.dataCubeByIri &&
     componentsQuery?.data?.dataCubeByIri
