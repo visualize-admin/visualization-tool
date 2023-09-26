@@ -13,7 +13,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
   tracesSampler: (samplingContext) => {
     // Ignore auth calls to prevent 405 Keycloak errors.
-    if (samplingContext?.transactionContext?.name?.includes("api/auth")) {
+    if (samplingContext.transactionContext?.name?.includes("auth")) {
       return 0;
     }
   },
