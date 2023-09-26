@@ -7,7 +7,12 @@ fragment dimensionMetadata on Dimension {
   dataType
   scaleType
   order
-  values(sourceType: $sourceType, sourceUrl: $sourceUrl, filters: $filters)
+  values(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    filters: $filters
+    disableLoad: $disableValuesLoad
+  )
   unit
   related {
     iri
@@ -120,6 +125,7 @@ query DataCubePreview(
   $locale: String!
   $latest: Boolean
   $filters: Filters
+  $disableValuesLoad: Boolean = true
 ) {
   dataCubeByIri(
     iri: $iri
@@ -127,15 +133,24 @@ query DataCubePreview(
     sourceUrl: $sourceUrl
     locale: $locale
     latest: $latest
+    disableValuesLoad: $disableValuesLoad
   ) {
     iri
     title
     description
     publicationStatus
-    dimensions(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    dimensions(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      disableValuesLoad: $disableValuesLoad
+    ) {
       ...dimensionMetadata
     }
-    measures(sourceType: $sourceType, sourceUrl: $sourceUrl) {
+    measures(
+      sourceType: $sourceType
+      sourceUrl: $sourceUrl
+      disableValuesLoad: $disableValuesLoad
+    ) {
       ...dimensionMetadata
     }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
@@ -193,6 +208,7 @@ query Components(
   $latest: Boolean
   $filters: Filters
   $componentIris: [String!]
+  $disableValuesLoad: Boolean = false
 ) {
   dataCubeByIri(
     iri: $iri
@@ -200,11 +216,13 @@ query Components(
     sourceUrl: $sourceUrl
     locale: $locale
     latest: $latest
+    disableValuesLoad: $disableValuesLoad
   ) {
     dimensions(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
       componentIris: $componentIris
+      disableValuesLoad: $disableValuesLoad
     ) {
       ...dimensionMetadata
     }
@@ -212,6 +230,7 @@ query Components(
       sourceType: $sourceType
       sourceUrl: $sourceUrl
       componentIris: $componentIris
+      disableValuesLoad: $disableValuesLoad
     ) {
       ...dimensionMetadata
     }
