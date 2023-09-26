@@ -281,6 +281,21 @@ const SelectDatasetStepContent = () => {
           </Box>
         </PanelMiddleWrapper>
       </PanelLayout>
+      <Box
+        sx={{
+          borderTop: "2px solid rgba(0,0,0,0.05)",
+          mt: 8,
+        }}
+      >
+        <Footer
+          sx={{
+            borderTopWidth: 0,
+            ml: "auto",
+            mr: "auto",
+            width: "100%",
+          }}
+        />
+      </Box>
     </Box>
   );
 };
@@ -306,21 +321,6 @@ export const SelectDatasetStep = () => {
     <BrowseStateProvider>
       <PageTitle />
       <SelectDatasetStepContent />
-      <Box
-        sx={{
-          borderTop: "2px solid rgba(0,0,0,0.05)",
-          mt: 8,
-        }}
-      >
-        <Footer
-          sx={{
-            borderTopWidth: 0,
-            ml: "auto",
-            mr: "auto",
-            width: "100%",
-          }}
-        />
-      </Box>
     </BrowseStateProvider>
   );
 };
