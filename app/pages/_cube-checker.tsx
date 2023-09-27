@@ -6,7 +6,6 @@ import DataLoader from "dataloader";
 import omit from "lodash/omit";
 import { GetServerSideProps, NextPage } from "next";
 import rdf from "rdf-ext";
-import React from "react";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -148,8 +147,17 @@ const checks: Check[] = [
     description: "Should have a number of dimensions",
     run: async ({ cubeIri, loaders }) => {
       const dimensions = await loaders.getCubeDimensions.load(cubeIri);
-      console.log(dimensions);
-      return { ok: true, message: `Has ${dimensions?.length} dimensions` };
+      if (dimensions) {
+        return {
+          ok: true,
+          message: `Has ${dimensions.length} dimensions`,
+        };
+      } else {
+        return {
+          ok: false,
+          message: "No dimensions",
+        };
+      }
     },
   },
   {

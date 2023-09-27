@@ -448,7 +448,7 @@ const defaultSegmentOnChange: OnEncodingChange<
   );
   const colorMapping = mapValueIrisToColor({
     palette,
-    dimensionValues: selectedValues,
+    dimensionValues: component ? component.values : selectedValues,
   });
   const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
 

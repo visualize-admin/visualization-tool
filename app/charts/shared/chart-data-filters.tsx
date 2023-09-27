@@ -380,7 +380,10 @@ const DataFilterHierarchyDimension = (
   const options = React.useMemo(() => {
     let opts = [] as { label: string; value: string; isNoneValue?: boolean }[];
     if (hierarchy) {
-      opts = hierarchyToOptions(hierarchy);
+      opts = hierarchyToOptions(
+        hierarchy,
+        dimensionValues.map((d) => d.value)
+      );
     } else {
       // @ts-ignore
       opts = dimensionValues;

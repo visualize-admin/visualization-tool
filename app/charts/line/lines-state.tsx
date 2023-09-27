@@ -81,7 +81,14 @@ const useLinesState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
   } = variables;
-  const { chartData, scalesData, segmentData, timeRangeData, allData } = data;
+  const {
+    chartData,
+    scalesData,
+    segmentData,
+    timeRangeData,
+    paddingData,
+    allData,
+  } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   const width = useWidth();
@@ -132,10 +139,11 @@ const useLinesState = (
   const yDomain = [minValue, maxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  const allMinValue = Math.min(min(allData, getY) ?? 0, 0);
-  const allMaxValue = max(allData, getY) ?? 0;
-  const allYDomain = [allMinValue, allMaxValue];
-  const allYScale = scaleLinear().domain(allYDomain).nice();
+  const paddingMinValue = Math.min(min(paddingData, getY) ?? 0, 0);
+  const paddingMaxValue = max(paddingData, getY) ?? 0;
+  const paddingYScale = scaleLinear()
+    .domain([paddingMinValue, paddingMaxValue])
+    .nice();
 
   // segments
   const segmentFilter = segmentDimension?.iri
@@ -195,7 +203,7 @@ const useLinesState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
-    allYScale,
+    yScale: paddingYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,

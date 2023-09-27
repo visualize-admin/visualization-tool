@@ -350,6 +350,8 @@ export type ChartStateData = {
   segmentData: Observation[];
   /** Data to be used for interactive time range slider domain. */
   timeRangeData: Observation[];
+  /** Data used to compute the axes padding. */
+  paddingData: Observation[];
   /** Full dataset, needed to show the timeline when using time slider.
    * We can't use `scalesData` here, due to the fact the the `useChartData` hook gets
    * re-rendered and prevents the timeline from working it such case. */
@@ -505,11 +507,20 @@ export const useChartData = (
     return observations.filter(overEvery(timeRangeFilters));
   }, [observations, timeRangeFilters]);
 
+  const paddingData = React.useMemo(() => {
+    if (dynamicScales) {
+      return chartData;
+    } else {
+      return observations.filter(overEvery(interactiveLegendFilters));
+    }
+  }, [dynamicScales, chartData, observations, interactiveLegendFilters]);
+
   return {
     chartData,
     scalesData,
     segmentData,
     timeRangeData,
+    paddingData,
   };
 };
 

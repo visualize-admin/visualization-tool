@@ -9,7 +9,26 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Cube checker now correctly checks if dimensions are present
+  - It's now possible to change the chart type for copied, non-hierarchical charts without having to open an options panel first
+  - Interactive filters are now aligned correctly (y axis)
+
+# [3.22.6] - 2023-09-19
+
+- Features
+  - Animated charts now show latest data as default
+- Fixes
+  - Table docs now work correctly again
+  - Cascading mode now works correctly for hierarchical dimensions used as interactive filters
+  - Changing the locale when previewing a larger cube no longer triggers multiple locale switches
+
+# [3.22.5] - 2023-09-12
+
+- Fixes
+  - It's now again possible to map all colors for hierarchical dimensions used as segmentation
+- Misc
+  - Improved `langString` error message
 
 # [3.22.4] - 2023-09-06
 

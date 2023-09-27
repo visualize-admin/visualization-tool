@@ -780,8 +780,8 @@ const buildFilters = ({
     const { dataType } = parsedCubeDimension.data;
 
     if (ns.rdf.langString.value === dataType) {
-      console.warn(
-        `WARNING: Dimension <${iri}> has dataType 'langString'. Filtering won't work.`
+      throw new Error(
+        `Dimension <${iri}> has dataType 'langString', which is not supported by Visualize. In order to fix it, change the dataType to 'string' in the cube definition.`
       );
     }
 

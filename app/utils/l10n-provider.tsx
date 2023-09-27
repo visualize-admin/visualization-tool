@@ -1,37 +1,52 @@
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDateFns";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const AsyncLocalizationProvider = ({
-  locale,
-  children,
-}: {
-  locale: string;
-  children: React.ReactNode;
-}) => {
-  const [dateFnsModule, setDateFnsModule] = useState<{ default: object }>();
-  useEffect(() => {
+import { Locale } from "@/locales/locales";
+
+type AsyncLocalizationProviderProps = {
+  locale: Locale;
+};
+
+const AsyncLocalizationProvider = (
+  props: React.PropsWithChildren<AsyncLocalizationProviderProps>
+) => {
+  const { locale, children } = props;
+  const [dateFnsLocale, setDateFnsLocale] = React.useState<object>();
+
+  React.useEffect(() => {
     const run = async () => {
-      if (locale === "fr") {
-        setDateFnsModule(await import("date-fns/locale/fr"));
-      } else if (locale === "de") {
-        setDateFnsModule(await import("date-fns/locale/de"));
-      } else if (locale === "it") {
-        setDateFnsModule(await import("date-fns/locale/it"));
-      } else if (locale === "en") {
-        setDateFnsModule(await import("date-fns/locale/en-GB"));
+      switch (locale) {
+        case "en": {
+          const importedLocale = await import("date-fns/locale/en-GB");
+          setDateFnsLocale(importedLocale.default);
+          break;
+        }
+        case "de":
+        case "fr":
+        case "it": {
+          const importedLocale = await import(
+            /* webpackMode: "lazy", webpackChunkName: "date-fns-[index]", webpackExclude: /_lib/ */
+            `date-fns/locale/${locale}/index.js`
+          );
+          setDateFnsLocale(importedLocale.default);
+          break;
+        }
+        default:
+          const _exhaustiveCheck: never = locale;
+          return _exhaustiveCheck;
       }
     };
+
     run();
   }, [locale]);
-  if (!dateFnsModule) {
+
+  if (!dateFnsLocale) {
     return null;
   }
+
   return (
-    <LocalizationProvider
-      dateAdapter={DateAdapter}
-      locale={dateFnsModule.default}
-    >
+    <LocalizationProvider dateAdapter={DateAdapter} locale={dateFnsLocale}>
       {children}
     </LocalizationProvider>
   );
