@@ -587,6 +587,7 @@ const MapFields = t.partial({
   symbolLayer: MapSymbolLayer,
   animation: AnimationField,
 });
+export type MapFields = t.TypeOf<typeof MapFields>;
 
 const MapConfig = t.intersection([
   GenericChartConfig,
@@ -600,17 +601,65 @@ const MapConfig = t.intersection([
     "MapConfig"
   ),
 ]);
-export type MapFields = t.TypeOf<typeof MapFields>;
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
-export type ChartFields =
-  | AreaFields
-  | ColumnFields
-  | LineFields
-  | MapFields
-  | PieFields
-  | ScatterPlotFields
-  | TableFields;
+const ComboLineColumnFields = t.type({
+  x: GenericField,
+  y: t.type({
+    axisMode: t.literal("dual"),
+    lineComponentIri: t.string,
+    lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    columnComponentIri: t.string,
+  }),
+});
+export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
+
+const ComboLineFields = t.intersection([
+  t.type({
+    x: GenericField,
+  }),
+  t.union([
+    t.type({
+      y: t.type({
+        axisMode: t.literal("single"),
+        componentIris: t.array(t.string),
+      }),
+    }),
+    t.type({
+      y: t.type({
+        axisMode: t.literal("dual"),
+        leftAxisComponentIri: t.string,
+        rightAxisComponentIri: t.string,
+      }),
+    }),
+  ]),
+]);
+export type ComboLineFields = t.TypeOf<typeof ComboLineFields>;
+
+const ComboFields = t.union([ComboLineColumnFields, ComboLineFields]);
+export type ComboFields = t.TypeOf<typeof ComboFields>;
+
+const ComboConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("combo"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboConfig"
+  ),
+  t.union([
+    t.type({
+      chartSubtype: t.literal("line-column"),
+      fields: ComboLineColumnFields,
+    }),
+    t.type({
+      chartSubtype: t.literal("line"),
+      fields: ComboLineFields,
+    }),
+  ]),
+]);
+export type ComboConfig = t.TypeOf<typeof ComboConfig>;
 
 export type ChartSegmentField =
   | AreaSegmentField
@@ -622,6 +671,7 @@ export type ChartSegmentField =
 const ChartConfig = t.union([
   AreaConfig,
   ColumnConfig,
+  ComboConfig,
   LineConfig,
   MapConfig,
   PieConfig,
@@ -657,6 +707,12 @@ export const isColumnConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ColumnConfig => {
   return chartConfig.chartType === "column";
+};
+
+export const isComboConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboConfig => {
+  return chartConfig.chartType === "combo";
 };
 
 export const isLineConfig = (
@@ -706,10 +762,11 @@ export const isSegmentInConfig = (
   | AreaConfig
   | ColumnConfig
   | LineConfig
-  | ScatterPlotConfig
   | PieConfig
-  | TableConfig => {
-  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+  | ScatterPlotConfig => {
+  return ["area", "column", "line", "pie", "scatterplot"].includes(
+    chartConfig.chartType
+  );
 };
 
 export const isSortingInConfig = (
@@ -720,7 +777,7 @@ export const isSortingInConfig = (
 
 export const isAnimationInConfig = (
   chartConfig: ChartConfig
-): chartConfig is ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig => {
+): chartConfig is ColumnConfig | MapConfig | PieConfig | ScatterPlotConfig => {
   return ["column", "map", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
@@ -732,8 +789,6 @@ export const getAnimationField = (
   if (isAnimationInConfig(chartConfig)) {
     return chartConfig.fields.animation;
   }
-
-  return undefined;
 };
 
 export const isColorFieldInConfig = (
@@ -748,9 +803,9 @@ export const isSegmentColorMappingInConfig = (
   | AreaConfig
   | ColumnConfig
   | LineConfig
-  | ScatterPlotConfig
-  | PieConfig => {
-  return ["area", "column", "line", "scatterplot", "pie"].includes(
+  | PieConfig
+  | ScatterPlotConfig => {
+  return ["area", "column", "line", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
 };

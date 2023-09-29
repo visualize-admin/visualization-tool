@@ -651,6 +651,37 @@ const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `+ comboChartType`,
+    from: "2.0.0",
+    to: "2.1.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "2.1.0" };
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (draft.chartType === "combo") {
+          draft.chartType = "line";
+          delete draft.chartSubtype;
+          draft.fields = {
+            x: draft.fields.x,
+            y: {
+              componentIri:
+                draft.chartSubtype === "line"
+                  ? draft.fields.y.axisMode === "single"
+                    ? draft.fields.y.componentIris[0]
+                    : draft.fields.y.leftAxisComponentIri
+                  : draft.fields.y.lineComponentIri,
+            },
+          };
+        }
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
