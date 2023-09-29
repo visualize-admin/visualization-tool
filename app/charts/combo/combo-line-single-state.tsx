@@ -34,6 +34,7 @@ export type ComboLineSingleState = CommonChartState &
     xKey: string;
     xScale: d3.ScaleTime<number, number>;
     yScale: d3.ScaleLinear<number, number>;
+    yAxisLabel: string;
     colors: d3.ScaleOrdinal<string, string>;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
@@ -44,7 +45,7 @@ const useComboLineSingleState = (
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
-  const { chartConfig, aspectRatio } = chartProps;
+  const { chartConfig, aspectRatio, measuresByIri } = chartProps;
   const { xDimension, getX, getXAsString } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -110,6 +111,22 @@ const useComboLineSingleState = (
     }) ?? 0;
   const yDomain = [minValue, maxValue];
   const yScale = d3.scaleLinear().domain(yDomain).nice();
+
+  const yUnits = Array.from(
+    new Set(
+      variables.y.lines.map((d) => {
+        return measuresByIri[d.iri].unit;
+      })
+    )
+  );
+
+  if (yUnits.length > 1) {
+    throw new Error(
+      "Multiple units are not supported in ComboLineSingle chart!"
+    );
+  }
+
+  const yAxisLabel = yUnits[0] ?? "";
 
   // padding
   const paddingMinValue =
@@ -179,6 +196,7 @@ const useComboLineSingleState = (
     xScale,
     interactiveXTimeRangeScale,
     yScale,
+    yAxisLabel,
     colors,
     chartWideData,
     getAnnotationInfo,

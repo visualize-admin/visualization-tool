@@ -5,6 +5,7 @@ import type { AreasState } from "@/charts/area/areas-state";
 import type { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import type { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import type { ColumnsState } from "@/charts/column/columns-state";
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -24,31 +25,6 @@ import { getTextWidth } from "@/utils/get-text-width";
 export const TICK_PADDING = 6;
 
 export const AxisHeightLinear = () => {
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const calculationType = useInteractiveFilters((d) => d.calculation.type);
-  const normalized = calculationType === "percent";
-
-  // FIXME: add "NumericalY" chart type here.
-  const { yScale, yAxisLabel, yMeasure, bounds } = useChartState() as
-    | AreasState
-    | ColumnsState
-    | GroupedColumnsState
-    | StackedColumnsState
-    | LinesState
-    | ScatterplotState;
-  const { margins } = bounds;
-
-  const ticks = getTickNumber(bounds.chartHeight);
-  const tickFormat = React.useCallback(
-    (d: NumberValue) => {
-      return normalized ? `${formatNumber(d)}%` : formatNumber(d);
-    },
-    [formatNumber, normalized]
-  );
-
   const {
     labelColor,
     labelFontSize,
@@ -56,16 +32,39 @@ export const AxisHeightLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
-  const titleWidth =
-    getTextWidth(yAxisLabel, {
+  const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const transitionDuration = useTransitionStore((state) => state.duration);
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
+  const normalized = calculationType === "percent";
+  const state = useChartState() as
+    | AreasState
+    | ColumnsState
+    | GroupedColumnsState
+    | StackedColumnsState
+    | LinesState
+    | ScatterplotState
+    | ComboLineSingleState;
+
+  const { margins } = state.bounds;
+  const ticks = getTickNumber(state.bounds.chartHeight);
+  const tickFormat = React.useCallback(
+    (d: NumberValue) => {
+      return normalized ? `${formatNumber(d)}%` : formatNumber(d);
+    },
+    [formatNumber, normalized]
+  );
+  const axisTitleWidth =
+    getTextWidth(state.yAxisLabel, {
       fontSize: axisLabelFontSize,
     }) + TICK_PADDING;
 
   useEffect(() => {
     if (ref.current) {
-      const axis = axisLeft(yScale)
+      const axis = axisLeft(state.yScale)
         .ticks(ticks)
-        .tickSizeInner(-bounds.chartWidth)
+        .tickSizeInner(-state.bounds.chartWidth)
         .tickFormat(tickFormat)
         .tickPadding(TICK_PADDING);
       const g = renderContainer(ref.current, {
@@ -92,7 +91,7 @@ export const AxisHeightLinear = () => {
         .attr("text-anchor", "end");
     }
   }, [
-    bounds.chartWidth,
+    state.bounds.chartWidth,
     enableTransition,
     fontFamily,
     gridColor,
@@ -103,18 +102,29 @@ export const AxisHeightLinear = () => {
     tickFormat,
     ticks,
     transitionDuration,
-    yScale,
+    state.yScale,
   ]);
 
   return (
     <>
-      {/* TODO: at some point it would make sense to allow wrapping */}
-      <foreignObject width={titleWidth} height={axisLabelFontSize * 2}>
-        <OpenMetadataPanelWrapper dim={yMeasure as DimensionMetadataFragment}>
-          <span style={{ fontSize: axisLabelFontSize }}>{yAxisLabel}</span>
-        </OpenMetadataPanelWrapper>
-      </foreignObject>
-
+      {state.chartType === "combo" ? (
+        <text
+          y={axisLabelFontSize}
+          style={{ fontSize: axisLabelFontSize, fill: "black" }}
+        >
+          {state.yAxisLabel}
+        </text>
+      ) : (
+        <foreignObject width={axisTitleWidth} height={axisLabelFontSize * 2}>
+          <OpenMetadataPanelWrapper
+            dim={state.yMeasure as DimensionMetadataFragment}
+          >
+            <span style={{ fontSize: axisLabelFontSize }}>
+              {state.yAxisLabel}
+            </span>
+          </OpenMetadataPanelWrapper>
+        </foreignObject>
+      )}
       <g ref={ref} />
     </>
   );

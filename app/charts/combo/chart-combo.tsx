@@ -6,6 +6,7 @@ import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { ComboConfig, DataSource, QueryFilters } from "@/config-types";
@@ -77,6 +78,7 @@ export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
       <ComboLineSingleChart aspectRatio={0.4} {...props}>
         <ChartContainer>
           <ChartSvg>
+            <AxisHeightLinear />
             <ComboLineSingle />
           </ChartSvg>
         </ChartContainer>
