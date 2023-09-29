@@ -951,6 +951,22 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
   };
 };
 
+type ComboAdjusters = BaseAdjusters<ComboConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboConfig, string> };
+    y: FieldAdjuster<
+      ComboConfig,
+      | AreaFields
+      | ColumnFields
+      | LineFields
+      | MapFields
+      | PieFields
+      | ScatterPlotFields
+      | TableFields
+    >;
+  };
+};
+
 export type ChartConfigsAdjusters = {
   column: ColumnAdjusters;
   line: LineAdjusters;
@@ -959,6 +975,7 @@ export type ChartConfigsAdjusters = {
   pie: PieAdjusters;
   table: TableAdjusters;
   map: MapAdjusters;
+  combo: ComboAdjusters;
 };
 
 const DataSource = t.type({

@@ -1152,6 +1152,43 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
+  combo: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: ({ newChartConfig, measures }) => {
+        const numericalMeasures = measures.filter(isNumericalMeasure);
+        const availableMeasureIris = numericalMeasures.map((d) => d.iri);
+
+        return produce(newChartConfig, (draft) => {
+          // FIXME: handle this properly.
+          draft.fields.y = {
+            axisMode: "single",
+            componentIris: [availableMeasureIris[0]],
+          };
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
 };
 type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
 
@@ -1239,6 +1276,26 @@ const chartConfigsPathOverrides: {
     pie: {
       "fields.x.componentIri": "fields.areaLayer.componentIri",
       "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+    },
+  },
+  combo: {
+    column: {
+      "fields.y": "fields",
+    },
+    line: {
+      "fields.y": "fields",
+    },
+    area: {
+      "fields.y": "fields",
+    },
+    scatterplot: {
+      "fields.y": "fields",
+    },
+    pie: {
+      "fields.y": "fields",
+    },
+    table: {
+      "fields.y": "fields",
     },
   },
 };
