@@ -68,6 +68,7 @@ export type AreasState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
@@ -89,6 +90,7 @@ const useAreasState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.iri);
   const {
@@ -423,6 +425,7 @@ const useAreasState = (
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     chartWideData,
     series,
     getAnnotationInfo,

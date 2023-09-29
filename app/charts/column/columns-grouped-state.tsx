@@ -63,6 +63,7 @@ export type GroupedColumnsState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -89,6 +90,7 @@ const useColumnsGroupedState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const {
     chartData,
@@ -428,6 +430,7 @@ const useColumnsGroupedState = (
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
     ...variables,

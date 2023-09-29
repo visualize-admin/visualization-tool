@@ -58,6 +58,7 @@ export type LinesState = CommonChartState &
     xScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
@@ -80,6 +81,7 @@ const useLinesState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const {
     chartData,
@@ -281,6 +283,7 @@ const useLinesState = (
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     grouped: preparedDataGroupedBySegment,
     chartWideData,
     xKey,

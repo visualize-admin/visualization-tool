@@ -71,6 +71,7 @@ export type StackedColumnsState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (
@@ -97,6 +98,7 @@ const useColumnsStackedState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.iri);
   const {
@@ -483,6 +485,7 @@ const useColumnsStackedState = (
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     chartWideData,
     series,
     getAnnotationInfo,
