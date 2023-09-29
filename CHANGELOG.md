@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.22.8] - 2023-09-29
+
 - Fixes
   - Cube checker now correctly checks if dimensions are present
   - It's now possible to change the chart type for copied, non-hierarchical charts without having to open an options panel first
