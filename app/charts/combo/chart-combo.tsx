@@ -7,13 +7,18 @@ import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
+import { Ruler } from "@/charts/shared/interaction/ruler";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboConfig, DataSource, QueryFilters } from "@/config-types";
 import {
   useComponentsQuery,
@@ -83,9 +88,13 @@ export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
       <ComboLineSingleChart aspectRatio={0.4} {...props}>
         <ChartContainer>
           <ChartSvg>
-            <AxisHeightLinear />
+            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />
+            <InteractionHorizontal />
           </ChartSvg>
+          <HoverDotMultiple />
+          <Ruler />
+          <Tooltip type="multiple" />
         </ChartContainer>
         <ChartControlsContainer>
           <LegendColor chartConfig={chartConfig} symbol="line" />

@@ -122,9 +122,9 @@ const useComboLineSingleState = (
   );
 
   if (yUnits.length > 1) {
-    throw new Error(
-      "Multiple units are not supported in ComboLineSingle chart!"
-    );
+    // throw new Error(
+    //   "Multiple units are not supported in ComboLineSingle chart!"
+    // );
   }
 
   const yAxisLabel = yUnits[0] ?? "";
@@ -171,19 +171,38 @@ const useComboLineSingleState = (
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+    const x = getX(d);
+
     return {
       datum: {
         label: "",
         value: "0",
         color: "#006699",
       },
-      xAnchor: xScale(getX(datum)),
-      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
+      xAnchor: xScale(x),
+      // Center the tooltip vertically.
+      yAnchor: yScale(
+        variables.y.lines
+          .map(({ getY }) => getY(d) ?? 0)
+          .reduce((a, b) => a + b, 0) * 0.5
+      ),
+      xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
-        xAnchor: xScale(getX(datum)),
+        xAnchor: xScale(x),
         topAnchor: false,
+      }),
+      values: variables.y.lines.map(({ getY, label }) => {
+        const y = getY(d) ?? 0;
+
+        return {
+          label,
+          value: `${y}`,
+          color: colors(label),
+          hide: y === null,
+          yPos: yScale(y),
+        };
       }),
     } as TooltipInfo;
   };
