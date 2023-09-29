@@ -505,8 +505,8 @@ export const getInitialConfig = ({
           timeRangeComponentIri: temporalDimensions[0].iri,
         }),
         fields: {
-          x: { componentIri: numericalMeasures[0].iri },
-          y: { axisMode: "single", componentIris: [temporalDimensions[0].iri] },
+          x: { componentIri: temporalDimensions[0].iri },
+          y: { axisMode: "single", componentIris: [numericalMeasures[0].iri] },
         },
       };
 

@@ -19,6 +19,7 @@ import {
   ColorScaleType,
   ColumnConfig,
   ColumnSegmentField,
+  ComboConfig,
   ComponentType,
   GenericField,
   LineConfig,
@@ -256,6 +257,7 @@ interface ChartSpecs {
   pie: ChartSpec<PieConfig>;
   scatterplot: ChartSpec<ScatterPlotConfig>;
   table: ChartSpec<TableConfig>;
+  combo: ChartSpec<ComboConfig>;
 }
 
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
@@ -870,6 +872,18 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     // TODO: Add abbreviations here.
     chartType: "table",
     encodings: [],
+    interactiveFilters: [],
+  },
+  combo: {
+    chartType: "combo",
+    encodings: [
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
     interactiveFilters: [],
   },
 };

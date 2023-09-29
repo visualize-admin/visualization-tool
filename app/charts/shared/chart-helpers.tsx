@@ -172,7 +172,7 @@ export const usePlottableData = (
 ) => {
   const isPlottable = useCallback(
     (d: Observation) => {
-      for (let p of [getX, getY].filter(truthy)) {
+      for (const p of [getX, getY].filter(truthy)) {
         const v = p(d);
         if (v === undefined || v === null) {
           return false;

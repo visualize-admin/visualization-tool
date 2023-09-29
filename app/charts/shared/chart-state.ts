@@ -7,6 +7,7 @@ import { AreasState } from "@/charts/area/areas-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
+import { ComboState } from "@/charts/combo/combo-line-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
@@ -57,6 +58,7 @@ export type ChartState =
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
+  | ComboState
   | LinesState
   | MapState
   | PieState
