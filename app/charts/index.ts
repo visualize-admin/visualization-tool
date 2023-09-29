@@ -78,6 +78,7 @@ export const chartTypes: ChartType[] = [
   "pie",
   "table",
   "map",
+  "combo",
 ];
 
 export const chartTypesOrder: { [k in ChartType]: number } = {
@@ -88,6 +89,7 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
   pie: 4,
   map: 5,
   table: 6,
+  combo: 7,
 };
 
 /**
@@ -310,10 +312,11 @@ export const getInitialConfig = ({
     activeField: undefined,
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
+  const temporalDimensions = getTemporalDimensions(dimensions);
 
   switch (chartType) {
     case "area":
-      const areaXComponentIri = getTemporalDimensions(dimensions)[0].iri;
+      const areaXComponentIri = temporalDimensions[0].iri;
 
       return {
         ...genericConfigProps,
@@ -351,7 +354,7 @@ export const getInitialConfig = ({
         },
       };
     case "line":
-      const lineXComponentIri = getTemporalDimensions(dimensions)[0].iri;
+      const lineXComponentIri = temporalDimensions[0].iri;
 
       return {
         ...genericConfigProps,
@@ -491,6 +494,20 @@ export const getInitialConfig = ({
             },
           ])
         ) as TableFields,
+      };
+    case "combo":
+      return {
+        ...genericConfigProps,
+        chartType: "combo",
+        chartSubtype: "line",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: numericalMeasures[0].iri },
+          y: { axisMode: "single", componentIris: [temporalDimensions[0].iri] },
+        },
       };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked
@@ -1339,6 +1356,7 @@ export const getPossibleChartType = ({
   const categoricalEnabled: ChartType[] = ["column", "pie"];
   const geoEnabled: ChartType[] = ["column", "map", "pie"];
   const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
+  const multipleNumericalMeasuresAndTimeEnabled: ChartType[] = ["combo"];
   const timeEnabled: ChartType[] = ["area", "column", "line"];
 
   const possibles: ChartType[] = ["table"];
@@ -1353,6 +1371,10 @@ export const getPossibleChartType = ({
 
     if (numericalMeasures.length > 1) {
       possibles.push(...multipleNumericalMeasuresEnabled);
+
+      if (temporalDimensions.length > 0) {
+        possibles.push(...multipleNumericalMeasuresAndTimeEnabled);
+      }
     }
 
     if (temporalDimensions.length > 0) {

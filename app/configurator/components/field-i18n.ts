@@ -152,6 +152,10 @@ const fieldLabels = {
     id: "controls.chart.type.map",
     message: "Map",
   }),
+  "controls.chart.type.combo": defineMessage({
+    id: "controls.chart.type.combo",
+    message: "Combo",
+  }),
   "controls.language.english": defineMessage({
     id: "controls.language.english",
     message: "English",
@@ -329,6 +333,8 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.chart.type.table"]);
     case "map":
       return i18n._(fieldLabels["controls.chart.type.map"]);
+    case "combo":
+      return i18n._(fieldLabels["controls.chart.type.combo"]);
 
     // Languages
     case "en":
