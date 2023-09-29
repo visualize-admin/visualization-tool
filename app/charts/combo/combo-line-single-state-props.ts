@@ -1,7 +1,6 @@
 import React from "react";
 
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
-import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
@@ -48,7 +47,7 @@ export const useComboLineSingleStateVariables = (
     y: {
       lines: chartConfig.fields.y.componentIris.map((iri) => ({
         iri,
-        label: getLabelWithUnit(measuresByIri[iri]),
+        label: measuresByIri[iri].label,
         getY: (d) => {
           return d[iri] !== null ? Number(d[iri]) : null;
         },
