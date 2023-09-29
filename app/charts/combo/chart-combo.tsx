@@ -4,8 +4,10 @@ import { memo } from "react";
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
+import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { ComboConfig, DataSource, QueryFilters } from "@/config-types";
 import {
   useComponentsQuery,
@@ -73,7 +75,11 @@ export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
   return chartConfig.chartSubtype === "line" ? (
     chartConfig.fields.y.axisMode === "single" ? (
       <ComboLineSingleChart aspectRatio={0.4} {...props}>
-        <Box>ComboLineSingleChart</Box>
+        <ChartContainer>
+          <ChartSvg>
+            <ComboLineSingle />
+          </ChartSvg>
+        </ChartContainer>
       </ComboLineSingleChart>
     ) : (
       <ComboLineDualChart aspectRatio={0.4} {...props}>
