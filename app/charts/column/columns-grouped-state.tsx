@@ -385,7 +385,7 @@ const useColumnsGroupedState = (
     const placement = getCenteredTooltipPlacement({
       chartWidth,
       xAnchor: xAnchorRaw,
-      segment: !!fields.segment,
+      topAnchor: !fields.segment,
     });
 
     const getError = (d: Observation) => {

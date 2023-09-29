@@ -241,7 +241,7 @@ const useColumnsState = (
       placement: getCenteredTooltipPlacement({
         chartWidth,
         xAnchor,
-        segment: !!fields.segment,
+        topAnchor: !fields.segment,
       }),
       xValue: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {

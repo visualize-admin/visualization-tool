@@ -374,7 +374,7 @@ const useAreasState = (
         placement: getCenteredTooltipPlacement({
           chartWidth,
           xAnchor,
-          segment: !!fields.segment,
+          topAnchor: !fields.segment,
         }),
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {

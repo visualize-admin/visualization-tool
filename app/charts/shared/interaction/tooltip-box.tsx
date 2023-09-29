@@ -72,18 +72,18 @@ const usePosition = () => {
 export const getCenteredTooltipPlacement = (props: {
   chartWidth: number;
   xAnchor: number;
-  segment: boolean;
+  topAnchor: boolean;
 }): TooltipPlacement => {
-  const { chartWidth, xAnchor, segment } = props;
+  const { chartWidth, xAnchor, topAnchor } = props;
 
-  return segment
+  return topAnchor
     ? {
-        x: xAnchor < chartWidth * 0.25 ? "right" : "left",
-        y: "middle",
-      }
-    : {
         x: "center",
         y: "top",
+      }
+    : {
+        x: xAnchor < chartWidth * 0.25 ? "right" : "left",
+        y: "middle",
       };
 };
 

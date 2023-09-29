@@ -432,7 +432,7 @@ const useColumnsStackedState = (
       const placement = getCenteredTooltipPlacement({
         chartWidth,
         xAnchor: xAnchorRaw,
-        segment: !!fields.segment,
+        topAnchor: !fields.segment,
       });
 
       return {

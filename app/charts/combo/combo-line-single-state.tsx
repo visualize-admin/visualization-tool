@@ -183,7 +183,7 @@ const useComboLineSingleState = (
       placement: getCenteredTooltipPlacement({
         chartWidth,
         xAnchor: xScale(getX(datum)),
-        segment: false,
+        topAnchor: false,
       }),
     } as TooltipInfo;
   };

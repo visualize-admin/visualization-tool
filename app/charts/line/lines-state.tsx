@@ -230,7 +230,6 @@ const useLinesState = (
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
     );
-    const yValues = tooltipValues.map(getY);
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -239,6 +238,7 @@ const useLinesState = (
     });
 
     const xAnchor = xScale(x);
+    const yValues = tooltipValues.map(getY);
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
     const yAnchor = yScale((yMin + yMax) * 0.5);
 
@@ -255,7 +255,7 @@ const useLinesState = (
       placement: getCenteredTooltipPlacement({
         chartWidth,
         xAnchor,
-        segment: !!fields.segment,
+        topAnchor: !fields.segment,
       }),
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
