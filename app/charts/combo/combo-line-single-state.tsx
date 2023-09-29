@@ -36,6 +36,7 @@ export type ComboLineSingleState = CommonChartState &
     yScale: d3.ScaleLinear<number, number>;
     yAxisLabel: string;
     colors: d3.ScaleOrdinal<string, string>;
+    getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -198,6 +199,7 @@ const useComboLineSingleState = (
     yScale,
     yAxisLabel,
     colors,
+    getColorLabel: (label) => label,
     chartWideData,
     getAnnotationInfo,
     ...variables,

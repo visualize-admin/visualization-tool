@@ -8,7 +8,12 @@ import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import {
+  ChartContainer,
+  ChartControlsContainer,
+  ChartSvg,
+} from "@/charts/shared/containers";
+import { LegendColor } from "@/charts/shared/legend-color";
 import { ComboConfig, DataSource, QueryFilters } from "@/config-types";
 import {
   useComponentsQuery,
@@ -82,6 +87,9 @@ export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
             <ComboLineSingle />
           </ChartSvg>
         </ChartContainer>
+        <ChartControlsContainer>
+          <LegendColor chartConfig={chartConfig} symbol="line" />
+        </ChartControlsContainer>
       </ComboLineSingleChart>
     ) : (
       <ComboLineDualChart aspectRatio={0.4} {...props}>
