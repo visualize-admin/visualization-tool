@@ -10,7 +10,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "2.0.0";
+export const CHART_CONFIG_VERSION = "2.1.0";
 
 const chartConfigMigrations: Migration[] = [
   {
