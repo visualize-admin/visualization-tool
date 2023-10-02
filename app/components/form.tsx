@@ -318,6 +318,7 @@ export const Select = ({
   onClose,
   onOpen,
   loading,
+  sx,
 }: {
   id: string;
   options: SelectOption[];
@@ -347,7 +348,7 @@ export const Select = ({
 
   return (
     <LoadingMenuPaperContext.Provider value={loading}>
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%", ...sx }}>
         {label && (
           <Label htmlFor={id} smaller sx={{ my: 1 }}>
             {label}

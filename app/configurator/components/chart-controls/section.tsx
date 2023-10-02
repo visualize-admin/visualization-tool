@@ -173,6 +173,7 @@ const useControlSectionContentStyles = makeStyles<
       theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
     padding: ({ px }) =>
       `0 ${theme.spacing(px === "small" ? 2 : 4)} ${theme.spacing(4)}`,
+    minWidth: 0,
   },
 }));
 
