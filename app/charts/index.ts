@@ -1391,9 +1391,11 @@ export const getPossibleChartType = ({
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
-export const getFieldComponentIris = (fields: GenericFields) => {
+export const getFieldComponentIris = (fields: ChartConfig["fields"]) => {
   return new Set(
-    Object.values(fields).flatMap((f) => (f ? [f.componentIri] : []))
+    Object.values(fields).flatMap((f) =>
+      f?.componentIri ? [f.componentIri] : []
+    )
   );
 };
 
