@@ -368,6 +368,10 @@ export const useChartOptionBooleanField = ({
   };
 };
 
+export const overrideChecked = (value: string | undefined): boolean => {
+  return value === "yMulti";
+};
+
 export const useActiveFieldField = ({
   value,
 }: {
@@ -385,7 +389,9 @@ export const useActiveFieldField = ({
     });
   }, [dispatch, value]);
 
-  const checked = chartConfig.activeField === value;
+  const checked = overrideChecked(chartConfig.activeField)
+    ? true
+    : chartConfig.activeField === value;
 
   return {
     value,

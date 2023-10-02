@@ -143,6 +143,7 @@ export const getIconName = (name: string): IconName => {
     case "x":
       return "xAxis";
     case "y":
+    case "yMulti":
       return "yAxis";
     case "segment":
       return "segments";

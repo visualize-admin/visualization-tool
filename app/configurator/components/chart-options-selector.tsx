@@ -240,6 +240,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       id: "controls.select.measure",
       message: "Select a measure",
     }),
+    yMulti: t({
+      id: "controls.select.measure",
+      message: "Select a measure",
+    }),
     segment: t({
       id: "controls.select.dimension",
       message: "Select a dimension",
@@ -321,7 +325,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       tabIndex={-1}
     >
       {/* Only show component select if necessary */}
-      {encoding.componentTypes.length > 0 ? (
+      {encoding.componentTypes.length > 0 && !encoding.customComponent ? (
         <ControlSection hideTopBorder>
           <SectionTitle>{getFieldLabel(encoding.field)}</SectionTitle>
           <ControlSectionContent gap="none">

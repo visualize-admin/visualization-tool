@@ -1413,8 +1413,12 @@ export const getHiddenFieldIris = (fields: GenericFields) => {
   );
 };
 
-export const getFieldComponentIri = (fields: GenericFields, field: string) => {
-  return fields[field]?.componentIri;
+export const getFieldComponentIri = (
+  fields: ChartConfig["fields"],
+  field: string
+): string | undefined => {
+  // Multi axis charts have multiple componentIris in the y field.
+  return (fields as $IntentionalAny)[field]?.componentIri;
 };
 
 const convertTableFieldsToSegmentField = ({

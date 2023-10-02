@@ -54,7 +54,7 @@ import { getDefaultCategoricalPaletteName } from "@/palettes";
 
 type BaseEncodingFieldType = "animation";
 type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
-type XYEncodingFieldType = "x" | "y" | "segment";
+type XYEncodingFieldType = "x" | "y" | "yMulti" | "segment";
 export type EncodingFieldType =
   | BaseEncodingFieldType
   | MapEncodingFieldType
@@ -217,6 +217,8 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
+  /** If true, won't use the ChartFieldOption component, but a custom one. Needs to be handled then in ChartOptionsSelector. */
+  customComponent?: boolean;
   /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
   exclusive?: boolean;
   filters: boolean;
@@ -877,6 +879,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
   combo: {
     chartType: "combo",
     encodings: [
+      {
+        field: "yMulti",
+        optional: false,
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
       {
         field: "x",
         optional: false,

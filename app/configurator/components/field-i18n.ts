@@ -182,6 +182,7 @@ export function getFieldLabel(field: string): string {
     case "area.x":
     case "scatterplot.x":
     case "pie.x":
+    case "combo.x":
     case "x":
       return i18n._(fieldLabels["controls.axis.horizontal"]);
     case "bar.x":
@@ -192,7 +193,9 @@ export function getFieldLabel(field: string): string {
     case "line.y":
     case "area.y":
     case "bar.y":
+    case "combo.yMulti":
     case "y":
+    case "yMulti":
       return i18n._(fieldLabels["controls.axis.vertical"]);
     case "bar.animation":
     case "column.animation":

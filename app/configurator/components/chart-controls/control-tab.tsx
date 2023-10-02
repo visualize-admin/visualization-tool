@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
-import { FieldProps } from "@/configurator";
+import { FieldProps, overrideChecked } from "@/configurator";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -26,7 +26,8 @@ export const ControlTab = (props: ControlTabProps) => {
   const { component, value, onClick, checked, labelId, disabled, warnMessage } =
     props;
   const handleClick = useEvent(() => onClick(value));
-  const isActive = !!component;
+  const isActive = overrideChecked(value) ? true : !!component;
+  const { upperLabel, mainLabel } = getLabels(value, labelId, component?.label);
 
   return (
     <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
@@ -38,13 +39,11 @@ export const ControlTab = (props: ControlTabProps) => {
       >
         <ControlTabButtonInner
           iconName={getIconName(value)}
-          upperLabel={labelId ? getFieldLabel(labelId) : null}
-          mainLabel={
-            component?.label ?? <Trans id="controls.color.add">Add…</Trans>
-          }
+          upperLabel={upperLabel}
+          mainLabel={mainLabel}
           isActive={isActive}
           checked={checked}
-          optional={!component}
+          optional={isOptionalOverride(value) ? false : !component}
           rightIcon={
             <Flex gap={2}>
               {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
@@ -55,6 +54,31 @@ export const ControlTab = (props: ControlTabProps) => {
       </ControlTabButton>
     </Box>
   );
+};
+
+const getLabels = (
+  value: string,
+  labelId: string | null,
+  componentLabel: string | undefined
+) => {
+  switch (value) {
+    case "yMulti":
+      return {
+        upperLabel: null,
+        mainLabel: getFieldLabel("yMulti"),
+      };
+    default:
+      return {
+        upperLabel: labelId ? getFieldLabel(labelId) : null,
+        mainLabel: componentLabel ?? (
+          <Trans id="controls.color.add">Add…</Trans>
+        ),
+      };
+  }
+};
+
+const isOptionalOverride = (value: string) => {
+  return value === "yMulti";
 };
 
 const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
