@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import get from "lodash/get";
-import { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentIri } from "@/charts";
 import {
@@ -21,6 +21,7 @@ import {
   ChartConfig,
   ColorFieldType,
   ColorScaleType,
+  ComboConfig,
   ComponentType,
   ConfiguratorStateConfiguringChart,
   getChartConfig,
@@ -30,6 +31,7 @@ import {
   isConfiguring,
   isTableConfig,
   MapConfig,
+  Option,
   SortingType,
   useConfiguratorState,
 } from "@/configurator";
@@ -56,10 +58,12 @@ import {
   TimeFilter,
 } from "@/configurator/components/filters";
 import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   getDimensionsByDimensionType,
   isDimensionSortable,
+  isNumericalMeasure,
   isStandardErrorDimension,
   isTemporalDimension,
   Observation,
@@ -325,16 +329,18 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       tabIndex={-1}
     >
       {/* Only show component select if necessary */}
-      {encoding.componentTypes.length > 0 && !encoding.customComponent ? (
+      {encoding.componentTypes.length > 0 && (
         <ControlSection hideTopBorder>
           <SectionTitle>{getFieldLabel(encoding.field)}</SectionTitle>
           <ControlSectionContent gap="none">
-            <ChartFieldField
-              field={encoding.field}
-              label={fieldLabelHint[encoding.field]}
-              optional={encoding.optional}
-              options={options}
-            />
+            {!encoding.customComponent && (
+              <ChartFieldField
+                field={encoding.field}
+                label={fieldLabelHint[encoding.field]}
+                optional={encoding.optional}
+                options={options}
+              />
+            )}
 
             {encoding.options?.useAbbreviations && (
               <Box mt={3}>
@@ -346,7 +352,11 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
             )}
           </ControlSectionContent>
         </ControlSection>
-      ) : null}
+      )}
+
+      {chartConfig.chartType === "combo" && encoding.field === "yMulti" && (
+        <ChartComboYField chartConfig={chartConfig} measures={measures} />
+      )}
 
       {fieldDimension &&
         encoding.field === "segment" &&
@@ -514,6 +524,190 @@ const ChartFieldAbbreviations = ({
       path={path ? `${path}.useAbbreviations` : "useAbbreviations"}
       disabled={disabled}
     />
+  );
+};
+
+type ChartComboYFieldProps = {
+  chartConfig: ComboConfig;
+  measures: DimensionMetadataFragment[];
+};
+
+const ChartComboYField = (props: ChartComboYFieldProps) => {
+  const locale = useLocale();
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+  const { chartConfig, measures } = props;
+  const { fields } = chartConfig;
+  const { y } = fields;
+
+  if (y.axisMode !== "single") {
+    throw new Error(
+      "ChartComboYField can only be used with single-axis charts!"
+    );
+  }
+
+  const numericalMeasures = React.useMemo(() => {
+    return measures.filter(isNumericalMeasure);
+  }, [measures]);
+
+  const unit = React.useMemo(() => {
+    const uniqueUnits = Array.from(
+      new Set(
+        y.componentIris.map((iri) => {
+          const measure = numericalMeasures.find((m) => m.iri === iri);
+          return measure?.unit;
+        })
+      )
+    );
+
+    if (uniqueUnits.length > 1) {
+      throw new Error(
+        "ChartYMultiField can only be used with single-unit charts!"
+      );
+    }
+
+    return uniqueUnits[0];
+  }, [numericalMeasures, y.componentIris]);
+
+  const getOptions = React.useCallback(
+    (
+      iri: string | null,
+      {
+        allowNone,
+        enableAllOptions,
+      }: {
+        allowNone?: boolean;
+        enableAllOptions?: boolean;
+      } = {}
+    ) => {
+      const options: Option[] = numericalMeasures
+        .filter((m) => {
+          return enableAllOptions
+            ? true
+            : // We only want to allow selecting measures of the same unit.
+              m.unit === unit &&
+                // We don't want to allow selecting the same measure twice.
+                !(y.componentIris.includes(m.iri) && m.iri !== iri);
+        })
+        .map((m) => {
+          return {
+            value: m.iri,
+            label: m.label,
+          };
+        });
+
+      if (allowNone) {
+        options.unshift({
+          label: t({
+            id: "controls.none",
+            message: "None",
+          }),
+          value: FIELD_VALUE_NONE,
+          isNoneValue: true,
+        });
+      }
+
+      return options;
+    },
+    [numericalMeasures, y.componentIris, unit]
+  );
+
+  const { addNewMeasureOptions, showAddNewMeasureButton } =
+    React.useMemo(() => {
+      const addNewMeasureOptions = getOptions(null, { allowNone: true });
+
+      return {
+        addNewMeasureOptions,
+        showAddNewMeasureButton: addNewMeasureOptions.length > 1,
+      };
+    }, [getOptions]);
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          {/* FIXME: translate */}
+          Common unit: <b>{unit ?? "none"}</b>
+        </Typography>
+        <Typography variant="caption" sx={{ mb: 4 }}>
+          {/* FIXME: translate */}
+          Note that you can only combine measures of the same unit.
+        </Typography>
+
+        {y.componentIris.map((iri, index) => {
+          // If there are multiple measures, we allow the user to remove any measure.
+          const allowNone = y.componentIris.length > 1;
+          // If there is only one measure, we allow the user to select any measure.
+          const enableAllOptions = index === 0 && y.componentIris.length === 1;
+          const options = getOptions(iri, { allowNone, enableAllOptions });
+
+          return (
+            <Select
+              key={iri}
+              id={`mesure-${iri}`}
+              options={options}
+              sortOptions={false}
+              value={iri}
+              onChange={(e) => {
+                const newIri = e.target.value as string;
+                let newComponentIris: string[];
+
+                if (newIri === FIELD_VALUE_NONE) {
+                  newComponentIris = y.componentIris.filter((d) => d !== iri);
+                } else {
+                  newComponentIris = [...y.componentIris];
+                  newComponentIris.splice(index, 1, newIri);
+                }
+
+                dispatch({
+                  type: "CHART_OPTION_CHANGED",
+                  value: {
+                    locale,
+                    field: "y",
+                    path: "componentIris",
+                    value: newComponentIris,
+                  },
+                });
+              }}
+              sx={{ mb: 2 }}
+            />
+          );
+        })}
+        {showAddNewMeasureButton ? (
+          <Select
+            id="measure-add"
+            label={t({
+              id: "controls.sorting.addDimension",
+              message: "Add dimension",
+            })}
+            options={addNewMeasureOptions}
+            sortOptions={false}
+            onChange={(e) => {
+              const iri = e.target.value as string;
+
+              if (iri !== FIELD_VALUE_NONE) {
+                const newComponentIris = [...y.componentIris, iri];
+                dispatch({
+                  type: "CHART_OPTION_CHANGED",
+                  value: {
+                    locale,
+                    field: "y",
+                    path: "componentIris",
+                    value: newComponentIris,
+                  },
+                });
+              }
+            }}
+            value={FIELD_VALUE_NONE}
+          />
+        ) : y.componentIris.length === 1 ? (
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            {/* FIXME: translate */}
+            No compatible measures to combine! 🥲
+          </Typography>
+        ) : null}
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 
