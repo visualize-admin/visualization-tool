@@ -8,6 +8,7 @@ import { ComboLineSingle } from "@/charts/combo/combo-line-single";
 import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
+import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
@@ -82,6 +83,7 @@ export const ChartComboVisualization = (
 
 export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
   const { chartConfig } = props;
+  const { interactiveFiltersConfig } = chartConfig;
 
   return chartConfig.chartSubtype === "line" ? (
     chartConfig.fields.y.axisMode === "single" ? (
@@ -91,6 +93,7 @@ export const ChartCombo = memo((props: ChartProps<ComboConfig>) => {
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <ComboLineSingle />
             <InteractionHorizontal />
+            {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />
           <Ruler />
