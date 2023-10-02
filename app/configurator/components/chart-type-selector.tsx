@@ -179,9 +179,13 @@ export const ChartTypeSelector = ({
                   value={d}
                   checked={type === "edit" ? chartType === d : false}
                   disabled={!possibleChartTypes.includes(d)}
-                  onClick={(e) =>
-                    onChangeChartType(e.currentTarget.value as ChartType)
-                  }
+                  onClick={(e) => {
+                    const newChartType = e.currentTarget.value as ChartType;
+
+                    if (newChartType !== chartType) {
+                      onChangeChartType(e.currentTarget.value as ChartType);
+                    }
+                  }}
                 />
               ))}
             </Box>
