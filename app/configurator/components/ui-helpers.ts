@@ -143,7 +143,6 @@ export const getIconName = (name: string): IconName => {
     case "x":
       return "xAxis";
     case "y":
-    case "yMulti":
       return "yAxis";
     case "segment":
       return "segments";
@@ -165,7 +164,9 @@ export const getIconName = (name: string): IconName => {
       return "chartPie";
     case "map":
       return "chartMap";
-    case "combo":
+    case "comboLineSingle":
+    case "comboLineDual":
+    case "comboLineColumn":
       // FIXME: Use a proper icon.
       return "star";
     case "baseLayer":

@@ -78,7 +78,9 @@ export const chartTypes: ChartType[] = [
   "pie",
   "table",
   "map",
-  "combo",
+  "comboLineSingle",
+  "comboLineDual",
+  "comboLineColumn",
 ];
 
 export const chartTypesOrder: { [k in ChartType]: number } = {
@@ -89,7 +91,9 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
   pie: 4,
   map: 5,
   table: 6,
-  combo: 7,
+  comboLineSingle: 7,
+  comboLineDual: 8,
+  comboLineColumn: 9,
 };
 
 /**
@@ -495,18 +499,50 @@ export const getInitialConfig = ({
           ])
         ) as TableFields,
       };
-    case "combo":
+    case "comboLineSingle":
       return {
         ...genericConfigProps,
-        chartType: "combo",
-        chartSubtype: "line",
+        chartType: "comboLineSingle",
         filters: {},
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentIri: temporalDimensions[0].iri,
         }),
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
-          y: { axisMode: "single", componentIris: [numericalMeasures[0].iri] },
+          y: { componentIris: [numericalMeasures[0].iri] },
+        },
+      };
+    case "comboLineDual":
+      return {
+        ...genericConfigProps,
+        chartType: "comboLineDual",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: temporalDimensions[0].iri },
+          y: {
+            leftAxisComponentIri: numericalMeasures[0].iri,
+            rightAxisComponentIri: numericalMeasures[1].iri,
+          },
+        },
+      };
+    case "comboLineColumn":
+      return {
+        ...genericConfigProps,
+        chartType: "comboLineColumn",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: temporalDimensions[0].iri },
+          y: {
+            lineComponentIri: numericalMeasures[0].iri,
+            lineAxisOrientation: "left",
+            columnComponentIri: numericalMeasures[1].iri,
+          },
         },
       };
 
@@ -1169,7 +1205,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
-  combo: {
+  comboLineSingle: {
     filters: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.filters = oldValue;
@@ -1198,8 +1234,82 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         return produce(newChartConfig, (draft) => {
           // FIXME: handle this properly.
           draft.fields.y = {
-            axisMode: "single",
             componentIris: [availableMeasureIris[0]],
+          };
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
+  comboLineDual: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: ({ newChartConfig, measures }) => {
+        const numericalMeasures = measures.filter(isNumericalMeasure);
+        const availableMeasureIris = numericalMeasures.map((d) => d.iri);
+
+        return produce(newChartConfig, (draft) => {
+          // FIXME: handle this properly.
+          draft.fields.y = {
+            leftAxisComponentIri: availableMeasureIris[0],
+            rightAxisComponentIri: availableMeasureIris[1],
+          };
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
+  comboLineColumn: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: ({ newChartConfig, measures }) => {
+        const numericalMeasures = measures.filter(isNumericalMeasure);
+        const availableMeasureIris = numericalMeasures.map((d) => d.iri);
+
+        return produce(newChartConfig, (draft) => {
+          // FIXME: handle this properly.
+          draft.fields.y = {
+            lineComponentIri: availableMeasureIris[0],
+            lineAxisOrientation: "left",
+            columnComponentIri: availableMeasureIris[1],
           };
         });
       },
@@ -1295,26 +1405,10 @@ const chartConfigsPathOverrides: {
       "fields.y.componentIri": "fields.areaLayer.color.componentIri",
     },
   },
-  combo: {
-    column: {
-      "fields.y": "fields",
-    },
-    line: {
-      "fields.y": "fields",
-    },
-    area: {
-      "fields.y": "fields",
-    },
-    scatterplot: {
-      "fields.y": "fields",
-    },
-    pie: {
-      "fields.y": "fields",
-    },
-    table: {
-      "fields.y": "fields",
-    },
-  },
+  // FIXME: handle this properly.
+  comboLineSingle: {},
+  comboLineDual: {},
+  comboLineColumn: {},
 };
 type ChartConfigPathOverrides =
   typeof chartConfigsPathOverrides[ChartType][ChartType];
@@ -1356,7 +1450,11 @@ export const getPossibleChartType = ({
   const categoricalEnabled: ChartType[] = ["column", "pie"];
   const geoEnabled: ChartType[] = ["column", "map", "pie"];
   const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
-  const multipleNumericalMeasuresAndTimeEnabled: ChartType[] = ["combo"];
+  const multipleNumericalMeasuresAndTimeEnabled: ChartType[] = [
+    "comboLineSingle",
+    "comboLineDual",
+    "comboLineColumn",
+  ];
   const timeEnabled: ChartType[] = ["area", "column", "line"];
 
   const possibles: ChartType[] = ["table"];

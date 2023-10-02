@@ -603,10 +603,52 @@ const MapConfig = t.intersection([
 ]);
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
+const ComboLineSingleFields = t.type({
+  x: GenericField,
+  y: t.type({
+    componentIris: t.array(t.string),
+  }),
+});
+export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
+
+const ComboLineSingleConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineSingle"),
+      fields: ComboLineSingleFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineSingleConfig"
+  ),
+]);
+export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
+
+const ComboLineDualFields = t.type({
+  x: GenericField,
+  y: t.type({
+    leftAxisComponentIri: t.string,
+    rightAxisComponentIri: t.string,
+  }),
+});
+export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
+
+const ComboLineDualConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineDual"),
+      fields: ComboLineDualFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineDualConfig"
+  ),
+]);
+export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
+
 const ComboLineColumnFields = t.type({
   x: GenericField,
   y: t.type({
-    axisMode: t.literal("dual"),
     lineComponentIri: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
     columnComponentIri: t.string,
@@ -614,52 +656,18 @@ const ComboLineColumnFields = t.type({
 });
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
 
-const ComboLineFields = t.intersection([
-  t.type({
-    x: GenericField,
-  }),
-  t.union([
-    t.type({
-      y: t.type({
-        axisMode: t.literal("single"),
-        componentIris: t.array(t.string),
-      }),
-    }),
-    t.type({
-      y: t.type({
-        axisMode: t.literal("dual"),
-        leftAxisComponentIri: t.string,
-        rightAxisComponentIri: t.string,
-      }),
-    }),
-  ]),
-]);
-export type ComboLineFields = t.TypeOf<typeof ComboLineFields>;
-
-const ComboFields = t.union([ComboLineColumnFields, ComboLineFields]);
-export type ComboFields = t.TypeOf<typeof ComboFields>;
-
-const ComboConfig = t.intersection([
+const ComboLineColumnConfig = t.intersection([
   GenericChartConfig,
   t.type(
     {
-      chartType: t.literal("combo"),
+      chartType: t.literal("comboLineColumn"),
+      fields: ComboLineColumnFields,
       interactiveFiltersConfig: InteractiveFiltersConfig,
     },
-    "ComboConfig"
+    "ComboLineColumnConfig"
   ),
-  t.union([
-    t.type({
-      chartSubtype: t.literal("line-column"),
-      fields: ComboLineColumnFields,
-    }),
-    t.type({
-      chartSubtype: t.literal("line"),
-      fields: ComboLineFields,
-    }),
-  ]),
 ]);
-export type ComboConfig = t.TypeOf<typeof ComboConfig>;
+export type ComboLineColumnConfig = t.TypeOf<typeof ComboLineColumnConfig>;
 
 export type ChartSegmentField =
   | AreaSegmentField
@@ -668,16 +676,25 @@ export type ChartSegmentField =
   | PieSegmentField
   | ScatterPlotSegmentField;
 
-const ChartConfig = t.union([
+const RegularChartConfig = t.union([
   AreaConfig,
   ColumnConfig,
-  ComboConfig,
   LineConfig,
   MapConfig,
   PieConfig,
   ScatterPlotConfig,
   TableConfig,
 ]);
+export type RegularChartConfig = t.TypeOf<typeof RegularChartConfig>;
+
+const ComboChartConfig = t.union([
+  ComboLineSingleConfig,
+  ComboLineDualConfig,
+  ComboLineColumnConfig,
+]);
+export type ComboChartConfig = t.TypeOf<typeof ComboChartConfig>;
+
+const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export const decodeChartConfig = (
@@ -697,6 +714,30 @@ export const decodeChartConfig = (
 
 export type ChartType = ChartConfig["chartType"];
 
+export const isRegularChartConfig = (
+  chartConfig: ChartConfig
+): chartConfig is RegularChartConfig => {
+  return (
+    isAreaConfig(chartConfig) ||
+    isColumnConfig(chartConfig) ||
+    isLineConfig(chartConfig) ||
+    isMapConfig(chartConfig) ||
+    isPieConfig(chartConfig) ||
+    isScatterPlotConfig(chartConfig) ||
+    isTableConfig(chartConfig)
+  );
+};
+
+export const isComboChartConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboChartConfig => {
+  return (
+    isComboLineSingleConfig(chartConfig) ||
+    isComboLineDualConfig(chartConfig) ||
+    isComboLineColumnConfig(chartConfig)
+  );
+};
+
 export const isAreaConfig = (
   chartConfig: ChartConfig
 ): chartConfig is AreaConfig => {
@@ -709,10 +750,22 @@ export const isColumnConfig = (
   return chartConfig.chartType === "column";
 };
 
-export const isComboConfig = (
+export const isComboLineSingleConfig = (
   chartConfig: ChartConfig
-): chartConfig is ComboConfig => {
-  return chartConfig.chartType === "combo";
+): chartConfig is ComboLineSingleConfig => {
+  return chartConfig.chartType === "comboLineSingle";
+};
+
+export const isComboLineDualConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboLineDualConfig => {
+  return chartConfig.chartType === "comboLineDual";
+};
+
+export const isComboLineColumnConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboLineColumnConfig => {
+  return chartConfig.chartType === "comboLineColumn";
 };
 
 export const isLineConfig = (
@@ -951,11 +1004,11 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
   };
 };
 
-type ComboAdjusters = BaseAdjusters<ComboConfig> & {
+type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
-    x: { componentIri: FieldAdjuster<ComboConfig, string> };
+    x: { componentIri: FieldAdjuster<ComboLineSingleConfig, string> };
     y: FieldAdjuster<
-      ComboConfig,
+      ComboLineSingleConfig,
       | AreaFields
       | ColumnFields
       | LineFields
@@ -963,6 +1016,44 @@ type ComboAdjusters = BaseAdjusters<ComboConfig> & {
       | PieFields
       | ScatterPlotFields
       | TableFields
+      | ComboLineDualFields
+      | ComboLineColumnFields
+    >;
+  };
+};
+
+type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboLineDualConfig, string> };
+    y: FieldAdjuster<
+      ComboLineDualConfig,
+      | AreaFields
+      | ColumnFields
+      | LineFields
+      | MapFields
+      | PieFields
+      | ScatterPlotFields
+      | TableFields
+      | ComboLineSingleFields
+      | ComboLineColumnFields
+    >;
+  };
+};
+
+type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboLineColumnConfig, string> };
+    y: FieldAdjuster<
+      ComboLineColumnConfig,
+      | AreaFields
+      | ColumnFields
+      | LineFields
+      | MapFields
+      | PieFields
+      | ScatterPlotFields
+      | TableFields
+      | ComboLineSingleFields
+      | ComboLineDualFields
     >;
   };
 };
@@ -975,7 +1066,9 @@ export type ChartConfigsAdjusters = {
   pie: PieAdjusters;
   table: TableAdjusters;
   map: MapAdjusters;
-  combo: ComboAdjusters;
+  comboLineSingle: ComboLineSingleAdjusters;
+  comboLineDual: ComboLineDualAdjusters;
+  comboLineColumn: ComboLineColumnAdjusters;
 };
 
 const DataSource = t.type({

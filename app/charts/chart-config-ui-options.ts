@@ -19,7 +19,9 @@ import {
   ColorScaleType,
   ColumnConfig,
   ColumnSegmentField,
-  ComboConfig,
+  ComboLineColumnConfig,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
   ComponentType,
   GenericField,
   LineConfig,
@@ -54,7 +56,7 @@ import { getDefaultCategoricalPaletteName } from "@/palettes";
 
 type BaseEncodingFieldType = "animation";
 type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
-type XYEncodingFieldType = "x" | "y" | "yMulti" | "segment";
+type XYEncodingFieldType = "x" | "y" | "segment";
 export type EncodingFieldType =
   | BaseEncodingFieldType
   | MapEncodingFieldType
@@ -259,7 +261,9 @@ interface ChartSpecs {
   pie: ChartSpec<PieConfig>;
   scatterplot: ChartSpec<ScatterPlotConfig>;
   table: ChartSpec<TableConfig>;
-  combo: ChartSpec<ComboConfig>;
+  comboLineSingle: ChartSpec<ComboLineSingleConfig>;
+  comboLineDual: ChartSpec<ComboLineDualConfig>;
+  comboLineColumn: ChartSpec<ComboLineColumnConfig>;
 }
 
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
@@ -876,11 +880,49 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [],
     interactiveFilters: [],
   },
-  combo: {
-    chartType: "combo",
+  comboLineSingle: {
+    chartType: "comboLineSingle",
     encodings: [
       {
-        field: "yMulti",
+        field: "y",
+        optional: false,
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
+    interactiveFilters: [],
+  },
+  comboLineDual: {
+    chartType: "comboLineDual",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
+    interactiveFilters: [],
+  },
+  comboLineColumn: {
+    chartType: "comboLineColumn",
+    encodings: [
+      {
+        field: "y",
         optional: false,
         customComponent: true,
         componentTypes: ["NumericalMeasure"],

@@ -73,6 +73,7 @@ export const InteractiveFiltersConfigurator = ({
         <ControlSectionContent px="small" gap="none">
           {/* Animation is technically a field, so we need to use an appropriate component. */}
           <ControlTabField
+            chartConfig={chartConfig}
             component={animationComponent}
             value="animation"
             labelId={null}

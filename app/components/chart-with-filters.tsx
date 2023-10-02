@@ -21,9 +21,9 @@ const ChartColumnsVisualization = dynamic(
     () => null as never
   )
 );
-const ChartComboVisualization = dynamic(
-  import("@/charts/combo/chart-combo").then(
-    (mod) => mod.ChartComboVisualization,
+const ChartComboLineSingleVisualization = dynamic(
+  import("@/charts/combo/chart-combo-line-single").then(
+    (mod) => mod.ChartComboLineSingleVisualization,
     () => null as never
   )
 );
@@ -107,10 +107,16 @@ const GenericChart = (props: GenericChartProps) => {
       return (
         <ChartMapVisualization {...commonProps} chartConfig={chartConfig} />
       );
-    case "combo":
+    case "comboLineSingle":
       return (
-        <ChartComboVisualization {...commonProps} chartConfig={chartConfig} />
+        <ChartComboLineSingleVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
       );
+    case "comboLineDual":
+    case "comboLineColumn":
+      throw new Error("Not implemented!");
 
     default:
       const _exhaustiveCheck: never = chartConfig;

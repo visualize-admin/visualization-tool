@@ -107,7 +107,7 @@ export const AxisHeightLinear = () => {
 
   return (
     <>
-      {state.chartType === "combo" ? (
+      {state.chartType === "comboLineSingle" ? (
         <text
           y={axisLabelFontSize}
           style={{ fontSize: axisLabelFontSize, fill: "black" }}

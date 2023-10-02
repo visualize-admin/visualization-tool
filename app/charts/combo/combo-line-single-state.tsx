@@ -20,7 +20,7 @@ import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
-import { ComboConfig } from "@/configurator";
+import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
@@ -30,7 +30,7 @@ import { ChartProps } from "../shared/ChartProps";
 export type ComboLineSingleState = CommonChartState &
   ComboLineSingleStateVariables &
   InteractiveXTimeRangeState & {
-    chartType: "combo";
+    chartType: "comboLineSingle";
     xKey: string;
     xScale: d3.ScaleTime<number, number>;
     yScale: d3.ScaleLinear<number, number>;
@@ -42,7 +42,7 @@ export type ComboLineSingleState = CommonChartState &
   };
 
 const useComboLineSingleState = (
-  chartProps: ChartProps<ComboConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineSingleConfig> & { aspectRatio: number },
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
@@ -185,7 +185,7 @@ const useComboLineSingleState = (
       yAnchor: yScale(
         variables.y.lines
           .map(({ getY }) => getY(d) ?? 0)
-          .reduce((a, b) => a + b, 0) * 0.5
+          .reduce((a, b) => a + b, 0) * (variables.y.lines.length > 1 ? 0.5 : 1)
       ),
       xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
@@ -208,7 +208,7 @@ const useComboLineSingleState = (
   };
 
   return {
-    chartType: "combo",
+    chartType: "comboLineSingle",
     xKey,
     bounds,
     chartData,
@@ -227,7 +227,7 @@ const useComboLineSingleState = (
 
 const ComboLineSingleChartProvider = (
   props: React.PropsWithChildren<
-    ChartProps<ComboConfig> & { aspectRatio: number }
+    ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
   >
 ) => {
   const { children, ...chartProps } = props;
@@ -242,7 +242,7 @@ const ComboLineSingleChartProvider = (
 
 export const ComboLineSingleChart = (
   props: React.PropsWithChildren<
-    ChartProps<ComboConfig> & { aspectRatio: number }
+    ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
   >
 ) => {
   return (

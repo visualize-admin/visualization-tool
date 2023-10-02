@@ -4,7 +4,12 @@ import { makeStyles } from "@mui/styles";
 import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
-import { FieldProps, overrideChecked } from "@/configurator";
+import {
+  ChartConfig,
+  FieldProps,
+  isComboChartConfig,
+  overrideChecked,
+} from "@/configurator";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -14,6 +19,7 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import useEvent from "@/utils/use-event";
 
 type ControlTabProps = {
+  chartConfig: ChartConfig;
   component?: DimensionMetadataFragment;
   value: string;
   onClick: (x: string) => void;
@@ -23,11 +29,24 @@ type ControlTabProps = {
 } & FieldProps;
 
 export const ControlTab = (props: ControlTabProps) => {
-  const { component, value, onClick, checked, labelId, disabled, warnMessage } =
-    props;
+  const {
+    chartConfig,
+    component,
+    value,
+    onClick,
+    checked,
+    labelId,
+    disabled,
+    warnMessage,
+  } = props;
   const handleClick = useEvent(() => onClick(value));
-  const isActive = overrideChecked(value) ? true : !!component;
-  const { upperLabel, mainLabel } = getLabels(value, labelId, component?.label);
+  const isActive = overrideChecked(chartConfig, value) ? true : !!component;
+  const { upperLabel, mainLabel } = getLabels(
+    chartConfig,
+    value,
+    labelId,
+    component?.label
+  );
 
   return (
     <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
@@ -43,7 +62,7 @@ export const ControlTab = (props: ControlTabProps) => {
           mainLabel={mainLabel}
           isActive={isActive}
           checked={checked}
-          optional={isOptionalOverride(value) ? false : !component}
+          optional={overrideChecked(chartConfig, value) ? false : !component}
           rightIcon={
             <Flex gap={2}>
               {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
@@ -57,16 +76,20 @@ export const ControlTab = (props: ControlTabProps) => {
 };
 
 const getLabels = (
+  chartConfig: ChartConfig,
   value: string,
   labelId: string | null,
   componentLabel: string | undefined
 ) => {
+  console.log("getLabels", chartConfig);
   switch (value) {
-    case "yMulti":
-      return {
-        upperLabel: null,
-        mainLabel: getFieldLabel("yMulti"),
-      };
+    case "y":
+      if (isComboChartConfig(chartConfig)) {
+        return {
+          upperLabel: null,
+          mainLabel: getFieldLabel("y"),
+        };
+      }
     default:
       return {
         upperLabel: labelId ? getFieldLabel(labelId) : null,
@@ -75,10 +98,6 @@ const getLabels = (
         ),
       };
   }
-};
-
-const isOptionalOverride = (value: string) => {
-  return value === "yMulti";
 };
 
 const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({

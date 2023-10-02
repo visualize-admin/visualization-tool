@@ -790,6 +790,7 @@ const ChartFields = (props: ChartFieldsProps) => {
           ) : (
             <ControlTabField
               key={field}
+              chartConfig={chartConfig}
               component={
                 isMapConfig(chartConfig) && field === "symbolLayer"
                   ? chartConfig.fields.symbolLayer

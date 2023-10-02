@@ -21,13 +21,15 @@ import {
   ChartConfig,
   ColorFieldType,
   ColorScaleType,
-  ComboConfig,
+  ComboChartConfig,
+  ComboLineSingleConfig,
   ComponentType,
   ConfiguratorStateConfiguringChart,
   getChartConfig,
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
+  isComboChartConfig,
   isConfiguring,
   isTableConfig,
   MapConfig,
@@ -244,10 +246,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       id: "controls.select.measure",
       message: "Select a measure",
     }),
-    yMulti: t({
-      id: "controls.select.measure",
-      message: "Select a measure",
-    }),
     segment: t({
       id: "controls.select.dimension",
       message: "Select a dimension",
@@ -273,6 +271,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   const otherFieldsIris = otherFields.map(
     (f) => (fields as any)[f].componentIri
   );
+  console.log(encoding);
 
   const options = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -354,7 +353,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         </ControlSection>
       )}
 
-      {chartConfig.chartType === "combo" && encoding.field === "yMulti" && (
+      {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
 
@@ -527,23 +526,34 @@ const ChartFieldAbbreviations = ({
   );
 };
 
-type ChartComboYFieldProps = {
-  chartConfig: ComboConfig;
+type ChartComboYFieldProps<T extends ComboChartConfig> = {
+  chartConfig: T;
   measures: DimensionMetadataFragment[];
 };
 
-const ChartComboYField = (props: ChartComboYFieldProps) => {
+const ChartComboYField = (props: ChartComboYFieldProps<ComboChartConfig>) => {
+  switch (props.chartConfig.chartType) {
+    case "comboLineSingle": {
+      const { chartConfig, ...rest } = props;
+      return <ChartComboLineSingleYField chartConfig={chartConfig} {...rest} />;
+    }
+    case "comboLineDual":
+    case "comboLineColumn":
+      throw new Error("Not implemented!");
+    default:
+      const _exhaustiveCheck: never = props.chartConfig;
+      return _exhaustiveCheck;
+  }
+};
+
+const ChartComboLineSingleYField = (
+  props: ChartComboYFieldProps<ComboLineSingleConfig>
+) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
   const { chartConfig, measures } = props;
   const { fields } = chartConfig;
   const { y } = fields;
-
-  if (y.axisMode !== "single") {
-    throw new Error(
-      "ChartComboYField can only be used with single-axis charts!"
-    );
-  }
 
   const numericalMeasures = React.useMemo(() => {
     return measures.filter(isNumericalMeasure);
@@ -561,7 +571,7 @@ const ChartComboYField = (props: ChartComboYFieldProps) => {
 
     if (uniqueUnits.length > 1) {
       throw new Error(
-        "ChartYMultiField can only be used with single-unit charts!"
+        "ChartComboYField can only be used with single-unit charts!"
       );
     }
 

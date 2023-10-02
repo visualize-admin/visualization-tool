@@ -9,7 +9,7 @@ import {
   useChartData,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
-import { ComboConfig } from "@/configurator";
+import { ComboLineSingleConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -24,7 +24,7 @@ export type ComboLineSingleStateVariables = BaseVariables &
   NumericalYComboLineSingleVariables;
 
 export const useComboLineSingleStateVariables = (
-  props: ChartProps<ComboConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineSingleConfig> & { aspectRatio: number }
 ): ComboLineSingleStateVariables => {
   const { chartConfig, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -34,14 +34,6 @@ export const useComboLineSingleStateVariables = (
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsByIri,
   });
-
-  if (chartConfig.chartSubtype !== "line") {
-    throw new Error("This hook is only for line charts!");
-  }
-
-  if (chartConfig.fields.y.axisMode !== "single") {
-    throw new Error("This hook is only for single axis line charts!");
-  }
 
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
@@ -63,7 +55,7 @@ export const useComboLineSingleStateVariables = (
 };
 
 export const useComboLineSingleStateData = (
-  chartProps: ChartProps<ComboConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineSingleConfig> & { aspectRatio: number },
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
