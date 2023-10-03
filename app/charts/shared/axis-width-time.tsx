@@ -2,6 +2,7 @@ import { axisBottom } from "d3";
 import { useEffect, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -25,7 +26,8 @@ export const AxisTime = () => {
   const { xScale, yScale, bounds } = useChartState() as
     | LinesState
     | AreasState
-    | ComboLineSingleState;
+    | ComboLineSingleState
+    | ComboLineDualState;
   const { chartHeight, margins } = bounds;
   const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
     useChartTheme();
@@ -94,7 +96,8 @@ export const AxisTimeDomain = () => {
   const { xScale, yScale, bounds } = useChartState() as
     | LinesState
     | AreasState
-    | ComboLineSingleState;
+    | ComboLineSingleState
+    | ComboLineDualState;
   const { chartHeight, margins } = bounds;
   const { domainColor } = useChartTheme();
 

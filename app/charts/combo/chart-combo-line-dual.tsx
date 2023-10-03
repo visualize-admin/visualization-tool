@@ -1,21 +1,16 @@
 import React from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { AxisHeightLinearDual } from "@/charts/combo/axes-height-linear-dual";
 import { ComboLineDual } from "@/charts/combo/combo-line-dual";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
-import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
-import {
-  ChartContainer,
-  ChartControlsContainer,
-  ChartSvg,
-} from "@/charts/shared/containers";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { ComboLineDualConfig, DataSource, QueryFilters } from "@/config-types";
 import {
@@ -87,7 +82,9 @@ export const ChartComboLineDual = React.memo(
       <ComboLineDualChart aspectRatio={0.4} {...props}>
         <ChartContainer>
           <ChartSvg>
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+            <AxisHeightLinearDual orientation="left" />
+            <AxisHeightLinearDual orientation="right" /> <AxisTime />
+            <AxisTimeDomain />
             <ComboLineDual />
             <InteractionHorizontal />
             {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
@@ -96,9 +93,6 @@ export const ChartComboLineDual = React.memo(
           <Ruler />
           <Tooltip type="multiple" />
         </ChartContainer>
-        <ChartControlsContainer>
-          <LegendColor chartConfig={chartConfig} symbol="line" />
-        </ChartControlsContainer>
       </ComboLineDualChart>
     );
   }

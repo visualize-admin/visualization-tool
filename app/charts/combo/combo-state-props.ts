@@ -2,8 +2,10 @@ import { ascending } from "d3";
 
 import { TemporalValueGetter } from "@/charts/shared/chart-state";
 import { Observation } from "@/domain/data";
+import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 
 export type BaseYGetter = {
+  dimension: DimensionMetadataFragment;
   iri: string;
   label: string;
   getY: (d: Observation) => number | null;

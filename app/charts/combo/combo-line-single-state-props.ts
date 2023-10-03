@@ -38,6 +38,7 @@ export const useComboLineSingleStateVariables = (
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
       lines: chartConfig.fields.y.componentIris.map((iri) => ({
+        dimension: dimensionsByIri[iri],
         iri,
         label: measuresByIri[iri].label,
         getY: (d) => {

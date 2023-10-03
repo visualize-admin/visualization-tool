@@ -34,6 +34,10 @@ export type ComboLineDualState = CommonChartState &
     xKey: string;
     xScale: d3.ScaleTime<number, number>;
     yScale: d3.ScaleLinear<number, number>;
+    yOrientationScales: {
+      left: d3.ScaleLinear<number, number>;
+      right: d3.ScaleLinear<number, number>;
+    };
     colors: d3.ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
@@ -100,36 +104,41 @@ const useComboLineDualState = (
     .domain(interactiveXTimeRangeDomain);
 
   // y
-  const minValue =
+  const minLeftValue =
     d3.min(scalesData, (o) => {
-      return d3.min([variables.y.lineLeft, variables.y.lineRight], (d) =>
-        d.getY(o)
-      );
+      return variables.y.lineLeft.getY(o);
     }) ?? 0;
-  const maxValue =
+  const minRightValue =
+    d3.min(scalesData, (o) => {
+      return variables.y.lineRight.getY(o);
+    }) ?? 0;
+  const minValue = d3.min([minLeftValue, minRightValue]) ?? 0;
+  const maxLeftValue =
     d3.max(scalesData, (o) => {
-      return d3.max([variables.y.lineLeft, variables.y.lineRight], (d) =>
-        d.getY(o)
-      );
+      return variables.y.lineLeft.getY(o);
     }) ?? 0;
-  const yDomain = [minValue, maxValue];
-  const yScale = d3.scaleLinear().domain(yDomain).nice();
+  const maxRightValue =
+    d3.max(scalesData, (o) => {
+      return variables.y.lineRight.getY(o);
+    }) ?? 0;
+  const maxValue = d3.max([maxLeftValue, maxRightValue]) ?? 0;
+  const yScale = d3.scaleLinear().domain([minValue, maxValue]).nice();
+  const yOrientationScales = {
+    left: d3.scaleLinear().domain([minLeftValue, maxLeftValue]).nice(),
+    right: d3.scaleLinear().domain([minRightValue, maxRightValue]).nice(),
+  };
 
-  const paddingMinValue =
+  const paddingLeftMinValue =
     d3.min(paddingData, (o) => {
-      return d3.min([variables.y.lineLeft, variables.y.lineRight], (d) =>
-        d.getY(o)
-      );
+      return variables.y.lineLeft.getY(o);
     }) ?? 0;
-  const paddingMaxValue =
+  const paddingLeftMaxValue =
     d3.max(paddingData, (o) => {
-      return d3.max([variables.y.lineLeft, variables.y.lineRight], (d) =>
-        d.getY(o)
-      );
+      return variables.y.lineLeft.getY(o);
     }) ?? 0;
-  const paddingYScale = d3
+  const paddingLeftYScale = d3
     .scaleLinear()
-    .domain([paddingMinValue, paddingMaxValue])
+    .domain([paddingLeftMinValue, paddingLeftMaxValue])
     .nice();
 
   const colors = d3
@@ -138,8 +147,9 @@ const useComboLineDualState = (
     .range(getPalette());
 
   // Dimensions
+  // FIXME: add padding for the right axis
   const { left, bottom } = useChartPadding({
-    yScale: paddingYScale,
+    yScale: paddingLeftYScale,
     width,
     aspectRatio,
     interactiveFiltersConfig,
@@ -157,6 +167,8 @@ const useComboLineDualState = (
   xScale.range([0, chartWidth]);
   interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
+  yOrientationScales.left.range([chartHeight, 0]);
+  yOrientationScales.right.range([chartHeight, 0]);
 
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
@@ -170,11 +182,12 @@ const useComboLineDualState = (
       },
       xAnchor: xScale(x),
       // Center the tooltip vertically.
-      yAnchor: yScale(
+      yAnchor:
         [variables.y.lineLeft, variables.y.lineRight]
-          .map(({ getY }) => getY(d) ?? 0)
-          .reduce((a, b) => a + b, 0) * 0.5
-      ),
+          .map(({ orientation, getY }) =>
+            yOrientationScales[orientation](getY(d) ?? 0)
+          )
+          .reduce((a, b) => a + b, 0) * 0.5,
       xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
@@ -182,7 +195,7 @@ const useComboLineDualState = (
         topAnchor: false,
       }),
       values: [variables.y.lineLeft, variables.y.lineRight].map(
-        ({ getY, label }) => {
+        ({ orientation, getY, label }) => {
           const y = getY(d) ?? 0;
 
           return {
@@ -190,7 +203,7 @@ const useComboLineDualState = (
             value: `${y}`,
             color: colors(label),
             hide: y === null,
-            yPos: yScale(y),
+            yPos: yOrientationScales[orientation](y),
           };
         }
       ),
@@ -206,6 +219,7 @@ const useComboLineDualState = (
     xScale,
     interactiveXTimeRangeScale,
     yScale,
+    yOrientationScales,
     colors,
     getColorLabel: (label) => label,
     chartWideData,

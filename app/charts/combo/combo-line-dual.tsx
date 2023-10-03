@@ -6,18 +6,17 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { Observation } from "@/domain/data";
 
 export const ComboLineDual = () => {
-  const { chartData, xScale, getX, yScale, y, colors, bounds } =
+  const { chartData, xScale, getX, yOrientationScales, y, colors, bounds } =
     useChartState() as ComboLineDualState;
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {[y.lineLeft, y.lineRight].map(({ iri, label, getY }) => {
+      {[y.lineLeft, y.lineRight].map(({ orientation, iri, label, getY }) => {
         const line = d3
           .line<Observation>()
           .defined((d) => getY(d) !== null)
           .x((d) => xScale(getX(d)))
-          .y((d) => yScale(getY(d) as number));
-        console.log(colors(label));
+          .y((d) => yOrientationScales[orientation](getY(d) as number));
 
         return (
           <Line
