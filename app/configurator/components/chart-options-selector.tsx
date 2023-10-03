@@ -588,37 +588,45 @@ const ChartComboLineSingleYField = (
       iri: string | null,
       {
         allowNone,
-        enableAllOptions,
+        enableAll,
       }: {
         allowNone?: boolean;
-        enableAllOptions?: boolean;
+        enableAll?: boolean;
       } = {}
     ) => {
-      const options: Option[] = numericalMeasures
-        .filter((m) => {
-          return enableAllOptions
-            ? true
-            : // We only want to allow selecting measures of the same unit.
-              m.unit === unit &&
-                // We don't want to allow selecting the same measure twice.
-                !(y.componentIris.includes(m.iri) && m.iri !== iri);
-        })
-        .map((m) => {
-          return {
-            value: m.iri,
-            label: m.label,
-          };
-        });
+      // FIXME: translate
+      const options = groups(numericalMeasures, (d) => d.unit ?? "No unit").map(
+        ([k, v]) => {
+          return [
+            { label: k, value: k },
+            v.map((m) => {
+              return {
+                value: m.iri,
+                label: m.label,
+                disabled: enableAll
+                  ? false
+                  : m.unit !== unit ||
+                    (y.componentIris.includes(m.iri) && m.iri !== iri),
+              };
+            }),
+          ];
+        }
+      ) as [Option, Option[]][];
 
       if (allowNone) {
-        options.unshift({
-          label: t({
-            id: "controls.none",
-            message: "None",
-          }),
-          value: FIELD_VALUE_NONE,
-          isNoneValue: true,
-        });
+        options.unshift([
+          { label: "", value: "" },
+          [
+            {
+              label: t({
+                id: "controls.none",
+                message: "None",
+              }),
+              value: FIELD_VALUE_NONE,
+              isNoneValue: true,
+            },
+          ],
+        ]);
       }
 
       return options;
@@ -632,7 +640,9 @@ const ChartComboLineSingleYField = (
 
       return {
         addNewMeasureOptions,
-        showAddNewMeasureButton: addNewMeasureOptions.length > 1,
+        showAddNewMeasureButton:
+          addNewMeasureOptions.flatMap(([_, v]) => v).filter((d) => !d.disabled)
+            .length > 1,
       };
     }, [getOptions]);
 
@@ -653,14 +663,15 @@ const ChartComboLineSingleYField = (
           // If there are multiple measures, we allow the user to remove any measure.
           const allowNone = y.componentIris.length > 1;
           // If there is only one measure, we allow the user to select any measure.
-          const enableAllOptions = index === 0 && y.componentIris.length === 1;
-          const options = getOptions(iri, { allowNone, enableAllOptions });
+          const enableAll = index === 0 && y.componentIris.length === 1;
+          const options = getOptions(iri, { allowNone, enableAll });
 
           return (
             <Select
               key={iri}
               id={`mesure-${iri}`}
-              options={options}
+              options={[]}
+              optionGroups={options}
               sortOptions={false}
               value={iri}
               onChange={(e) => {
@@ -695,7 +706,8 @@ const ChartComboLineSingleYField = (
               id: "controls.sorting.addDimension",
               message: "Add dimension",
             })}
-            options={addNewMeasureOptions}
+            options={[]}
+            optionGroups={addNewMeasureOptions}
             sortOptions={false}
             onChange={(e) => {
               const iri = e.target.value as string;
