@@ -1,6 +1,7 @@
 import React from "react";
 
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
+import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
@@ -44,7 +45,7 @@ export const useComboLineDualStateVariables = (
         orientation: "left",
         dimension: dimensionsByIri[rightIri],
         iri: leftIri,
-        label: measuresByIri[leftIri].label,
+        label: getLabelWithUnit(measuresByIri[leftIri]),
         getY: (d) => {
           return d[leftIri] !== null ? Number(d[leftIri]) : null;
         },
@@ -53,7 +54,7 @@ export const useComboLineDualStateVariables = (
         orientation: "right",
         dimension: dimensionsByIri[rightIri],
         iri: rightIri,
-        label: measuresByIri[rightIri].label,
+        label: getLabelWithUnit(measuresByIri[rightIri]),
         getY: (d) => {
           return d[rightIri] !== null ? Number(d[rightIri]) : null;
         },
