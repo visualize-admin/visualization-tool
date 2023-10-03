@@ -1,7 +1,6 @@
 import React from "react";
 
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
-import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
@@ -10,7 +9,7 @@ import {
   useChartData,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
-import { ComboConfig } from "@/configurator";
+import { ComboLineDualConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -26,7 +25,7 @@ export type ComboLineDualStateVariables = BaseVariables &
   NumericalYComboLineDualVariables;
 
 export const useComboLineDualStateVariables = (
-  props: ChartProps<ComboConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineDualConfig> & { aspectRatio: number }
 ): ComboLineDualStateVariables => {
   const { chartConfig, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -37,28 +36,20 @@ export const useComboLineDualStateVariables = (
     dimensionsByIri,
   });
 
-  if (chartConfig.chartSubtype !== "line") {
-    throw new Error("This hook is only for line charts!");
-  }
-
-  if (chartConfig.fields.y.axisMode !== "dual") {
-    throw new Error("This hook is only for dual axis line charts!");
-  }
-
   const leftIri = chartConfig.fields.y.leftAxisComponentIri;
   const rightIri = chartConfig.fields.y.rightAxisComponentIri;
   const numericalYVariables: NumericalYComboLineDualVariables = {
     y: {
       lineLeft: {
         iri: leftIri,
-        label: getLabelWithUnit(measuresByIri[leftIri]),
+        label: measuresByIri[leftIri].label,
         getY: (d) => {
           return d[leftIri] !== null ? Number(d[leftIri]) : null;
         },
       },
       lineRight: {
         iri: rightIri,
-        label: getLabelWithUnit(measuresByIri[rightIri]),
+        label: measuresByIri[rightIri].label,
         getY: (d) => {
           return d[rightIri] !== null ? Number(d[rightIri]) : null;
         },
@@ -74,7 +65,7 @@ export const useComboLineDualStateVariables = (
 };
 
 export const useComboLineDualStateData = (
-  chartProps: ChartProps<ComboConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineDualConfig> & { aspectRatio: number },
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;

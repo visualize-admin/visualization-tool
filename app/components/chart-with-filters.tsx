@@ -27,6 +27,12 @@ const ChartComboLineSingleVisualization = dynamic(
     () => null as never
   )
 );
+const ChartComboLineDualVisualization = dynamic(
+  import("@/charts/combo/chart-combo-line-dual").then(
+    (mod) => mod.ChartComboLineDualVisualization,
+    () => null as never
+  )
+);
 const ChartLinesVisualization = dynamic(
   import("@/charts/line/chart-lines").then(
     (mod) => mod.ChartLinesVisualization,
@@ -115,6 +121,12 @@ const GenericChart = (props: GenericChartProps) => {
         />
       );
     case "comboLineDual":
+      return (
+        <ChartComboLineDualVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
+      );
     case "comboLineColumn":
       throw new Error("Not implemented!");
 
