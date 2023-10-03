@@ -11,6 +11,7 @@ import {
   TooltipMultiple,
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
+import { LegendSymbol } from "@/charts/shared/legend-color";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
@@ -30,6 +31,7 @@ export interface TooltipValue {
   error?: string;
   color: string;
   yPos?: number;
+  symbol?: LegendSymbol;
 }
 export interface TooltipInfo {
   xAnchor: number;

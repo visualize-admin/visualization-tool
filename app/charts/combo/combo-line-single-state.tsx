@@ -201,6 +201,7 @@ const useComboLineSingleState = (
           color: colors(label),
           hide: y === null,
           yPos: yScale(y),
+          symbol: "line",
         };
       }),
     } as TooltipInfo;

@@ -231,6 +231,7 @@ const useComboLineDualState = (
             color: colors(label),
             hide: y === null,
             yPos: yOrientationScales[orientation](y),
+            symbol: "line",
           };
         }
       ),

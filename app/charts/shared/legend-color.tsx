@@ -31,7 +31,7 @@ import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-type LegendSymbol = "square" | "line" | "circle";
+export type LegendSymbol = "square" | "line" | "circle";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {

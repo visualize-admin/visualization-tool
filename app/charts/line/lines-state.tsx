@@ -269,6 +269,7 @@ const useLinesState = (
         value: yValueFormatter(getY(td)),
         color: colors(getSegment(td)) as string,
         yPos: yScale(getY(td) ?? 0),
+        symbol: "line",
       })),
     };
   };
