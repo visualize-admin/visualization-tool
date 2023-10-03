@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { ComboLineSingle } from "@/charts/combo/combo-line-single";
@@ -82,7 +82,7 @@ export const ChartComboLineSingleVisualization = (
   );
 };
 
-export const ChartComboLineSingle = memo(
+export const ChartComboLineSingle = React.memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
     const { chartConfig } = props;
     const { interactiveFiltersConfig } = chartConfig;

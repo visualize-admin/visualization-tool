@@ -81,7 +81,6 @@ const getLabels = (
   labelId: string | null,
   componentLabel: string | undefined
 ) => {
-  console.log("getLabels", chartConfig);
   switch (value) {
     case "y":
       if (isComboChartConfig(chartConfig)) {

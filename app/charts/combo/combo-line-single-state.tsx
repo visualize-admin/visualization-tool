@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import React, { useMemo } from "react";
+import React from "react";
 
 import {
   ComboLineSingleStateVariables,
@@ -54,10 +54,9 @@ const useComboLineSingleState = (
   const width = useWidth();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const timeFormatUnit = useTimeFormatUnit();
-  // const formatters = useChartFormatters(chartProps);
 
   const xKey = fields.x.componentIri;
-  const dataGroupedByX = useMemo(() => {
+  const dataGroupedByX = React.useMemo(() => {
     return d3.group(chartData, getXAsString);
   }, [chartData, getXAsString]);
 
