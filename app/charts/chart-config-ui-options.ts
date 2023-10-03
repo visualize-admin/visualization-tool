@@ -886,6 +886,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
+        // TODO: maybe we should even create the components here?
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
