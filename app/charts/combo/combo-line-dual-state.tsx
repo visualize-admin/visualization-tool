@@ -6,6 +6,7 @@ import {
   useComboLineDualStateData,
   useComboLineDualStateVariables,
 } from "@/charts/combo/combo-line-dual-state-props";
+import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
   getChartBounds,
   useChartPadding,
@@ -18,12 +19,15 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
+import { getTickNumber } from "@/charts/shared/ticks";
+import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 import { getPalette } from "@/palettes";
+import { getTextWidth } from "@/utils/get-text-width";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -42,6 +46,7 @@ export type ComboLineDualState = CommonChartState &
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    maxRightTickWidth: number;
   };
 
 const useComboLineDualState = (
@@ -132,13 +137,25 @@ const useComboLineDualState = (
     d3.min(paddingData, (o) => {
       return variables.y.lineLeft.getY(o);
     }) ?? 0;
+  const paddingRightMinValue =
+    d3.min(paddingData, (o) => {
+      return variables.y.lineRight.getY(o);
+    }) ?? 0;
   const paddingLeftMaxValue =
     d3.max(paddingData, (o) => {
       return variables.y.lineLeft.getY(o);
     }) ?? 0;
+  const paddingRightMaxValue =
+    d3.max(paddingData, (o) => {
+      return variables.y.lineRight.getY(o);
+    }) ?? 0;
   const paddingLeftYScale = d3
     .scaleLinear()
     .domain([paddingLeftMinValue, paddingLeftMaxValue])
+    .nice();
+  const paddingRightYScale = d3
+    .scaleLinear()
+    .domain([paddingRightMinValue, paddingRightMaxValue])
     .nice();
 
   const colors = d3
@@ -147,7 +164,6 @@ const useComboLineDualState = (
     .range(getPalette());
 
   // Dimensions
-  // FIXME: add padding for the right axis
   const { left, bottom } = useChartPadding({
     yScale: paddingLeftYScale,
     width,
@@ -155,9 +171,20 @@ const useComboLineDualState = (
     interactiveFiltersConfig,
     formatNumber,
   });
+  const fakeRightTicks = paddingRightYScale.ticks(
+    getTickNumber(width * aspectRatio)
+  );
+  const maxRightTickWidth = Math.max(
+    ...fakeRightTicks.map(
+      (d) =>
+        getTextWidth(formatNumber(d), { fontSize: TICK_FONT_SIZE }) +
+        TICK_PADDING
+    )
+  );
+  const right = Math.max(maxRightTickWidth, 40);
   const margins = {
     top: 50,
-    right: 40,
+    right,
     bottom,
     left,
   };
@@ -214,6 +241,7 @@ const useComboLineDualState = (
     chartType: "comboLineDual",
     xKey,
     bounds,
+    maxRightTickWidth,
     chartData,
     allData,
     xScale,

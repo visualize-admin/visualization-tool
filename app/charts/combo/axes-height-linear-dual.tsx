@@ -27,17 +27,14 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
-  const { y, yOrientationScales, colors, bounds } =
+  const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
     useChartState() as ComboLineDualState;
   const { margins } = bounds;
   const ticks = getTickNumber(bounds.chartHeight);
-
+  const axisTitle = (leftAligned ? y.lineLeft : y.lineRight).label;
   const axisTitleWidth =
-    getTextWidth(leftAligned ? y.lineLeft.label : y.lineRight.label, {
-      fontSize: axisLabelFontSize,
-    }) + TICK_PADDING;
-
-  const color = colors(leftAligned ? y.lineLeft.label : y.lineRight.label);
+    getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
+  const color = colors(axisTitle);
 
   useEffect(() => {
     if (ref.current) {
@@ -91,17 +88,24 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   return (
     <>
       <foreignObject
-        x={leftAligned ? 0 : bounds.chartWidth - margins.right}
+        x={
+          leftAligned
+            ? 0
+            : bounds.chartWidth +
+              margins.left -
+              axisTitleWidth +
+              // Align the title with the rightmost tick.
+              maxRightTickWidth +
+              TICK_PADDING
+        }
         width={axisTitleWidth}
         height={axisLabelFontSize * 2}
         color={color}
       >
         <OpenMetadataPanelWrapper
-          dim={leftAligned ? y.lineLeft.dimension : y.lineRight.dimension}
+          dim={(leftAligned ? y.lineLeft : y.lineRight).dimension}
         >
-          <span style={{ fontSize: axisLabelFontSize }}>
-            {leftAligned ? y.lineLeft.label : y.lineRight.label}
-          </span>
+          <span style={{ fontSize: axisLabelFontSize }}>{axisTitle}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
 
