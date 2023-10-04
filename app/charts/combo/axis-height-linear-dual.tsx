@@ -29,7 +29,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
-    useChartState() as ComboLineDualState | ComboLineColumnState
+    useChartState() as ComboLineDualState | ComboLineColumnState;
   const { margins } = bounds;
   const ticks = getTickNumber(bounds.chartHeight);
   const axisTitle = y[orientation].label;

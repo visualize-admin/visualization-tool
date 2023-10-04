@@ -43,7 +43,7 @@ export const useComboLineDualStateVariables = (
     y: {
       left: {
         orientation: "left",
-        dimension: dimensionsByIri[rightIri],
+        dimension: measuresByIri[leftIri],
         iri: leftIri,
         label: getLabelWithUnit(measuresByIri[leftIri]),
         getY: (d) => {
@@ -52,7 +52,7 @@ export const useComboLineDualStateVariables = (
       },
       right: {
         orientation: "right",
-        dimension: dimensionsByIri[rightIri],
+        dimension: measuresByIri[rightIri],
         iri: rightIri,
         label: getLabelWithUnit(measuresByIri[rightIri]),
         getY: (d) => {

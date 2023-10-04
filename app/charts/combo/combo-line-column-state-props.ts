@@ -50,7 +50,7 @@ export const useComboLineColumnStateVariables = (
   const lineYGetter: YGetter = {
     chartType: "line",
     orientation: lineAxisOrientation,
-    dimension: dimensionsByIri[lineIri],
+    dimension: measuresByIri[lineIri],
     iri: lineIri,
     label: getLabelWithUnit(measuresByIri[lineIri]),
     getY: (d) => {
@@ -60,7 +60,7 @@ export const useComboLineColumnStateVariables = (
   const columnYGetter: YGetter = {
     chartType: "column",
     orientation: lineAxisOrientation === "left" ? "right" : "left",
-    dimension: dimensionsByIri[columnIri],
+    dimension: measuresByIri[columnIri],
     iri: columnIri,
     label: getLabelWithUnit(measuresByIri[columnIri]),
     getY: (d) => {
