@@ -23,6 +23,7 @@ import {
   ColorFieldType,
   ColorScaleType,
   ComboChartConfig,
+  ComboLineColumnConfig,
   ComboLineDualConfig,
   ComboLineSingleConfig,
   ComponentType,
@@ -273,7 +274,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   const otherFieldsIris = otherFields.map(
     (f) => (fields as any)[f].componentIri
   );
-  console.log(encoding);
 
   const options = useMemo(() => {
     return getDimensionsByDimensionType({
@@ -544,7 +544,8 @@ const ChartComboYField = (props: ChartComboYFieldProps<ComboChartConfig>) => {
       return <ChartComboLineDualYField chartConfig={chartConfig} {...rest} />;
     }
     case "comboLineColumn":
-      throw new Error("Not implemented!");
+      const { chartConfig, ...rest } = props;
+      return <ChartComboLineColumnYField chartConfig={chartConfig} {...rest} />;
     default:
       const _exhaustiveCheck: never = props.chartConfig;
       return _exhaustiveCheck;
@@ -843,6 +844,140 @@ const ChartComboLineDualYField = (
                 locale,
                 field: "y",
                 path: "rightAxisComponentIri",
+                value: newIri,
+              },
+            });
+          }}
+          sx={{ mb: 2 }}
+        />
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartComboLineColumnYField = (
+  props: ChartComboYFieldProps<ComboLineColumnConfig>
+) => {
+  const locale = useLocale();
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+  const { chartConfig, measures } = props;
+  const { fields } = chartConfig;
+  const { y } = fields;
+
+  const numericalMeasures = React.useMemo(() => {
+    return measures.filter(isNumericalMeasure);
+  }, [measures]);
+
+  const { lineMeasure, columnMeasure } = React.useMemo(() => {
+    const lineMeasure = numericalMeasures.find(
+      (m) => m.iri === y.lineComponentIri
+    ) as DimensionMetadataFragment;
+    const columnMeasure = numericalMeasures.find(
+      (m) => m.iri === y.columnComponentIri
+    ) as DimensionMetadataFragment;
+
+    return {
+      lineMeasure,
+      columnMeasure,
+    };
+  }, [numericalMeasures, y.columnComponentIri, y.lineComponentIri]);
+
+  // FIXME: handle properly in getPossibleChartTypes, then uncomment
+  // if (leftAxisMeasure.unit !== rightAxisMeasure.unit) {
+  //   throw new Error(
+  //     "ChartComboYField can only be used with dual-unit charts!"
+  //   );
+  // }
+
+  const getOptions = React.useCallback(
+    (type: "line" | "column") => {
+      return groups(numericalMeasures, (d) => d.unit ?? "None").map(
+        ([k, v]) => {
+          return [
+            { label: k, value: k },
+            v.map((m) => {
+              return {
+                value: m.iri,
+                label: m.label,
+                disabled:
+                  type === "line"
+                    ? m.unit === columnMeasure.unit
+                    : m.unit === lineMeasure.unit,
+              };
+            }),
+          ];
+        }
+      ) as [Option, Option[]][];
+    },
+    [columnMeasure.unit, lineMeasure.unit, numericalMeasures]
+  );
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+        <Typography variant="caption" sx={{ mb: 4 }}>
+          {/* FIXME: translate */}
+          Note that you can only combine measures of different units.
+        </Typography>
+
+        <Select
+          id={`mesure-${y.columnComponentIri}`}
+          options={[]}
+          optionGroups={getOptions("column")}
+          sortOptions={false}
+          // FIXME: translate
+          label="Column measure"
+          value={y.columnComponentIri}
+          onChange={(e) => {
+            const newIri = e.target.value as string;
+            dispatch({
+              type: "CHART_OPTION_CHANGED",
+              value: {
+                locale,
+                field: "y",
+                path: "columnComponentIri",
+                value: newIri,
+              },
+            });
+          }}
+        />
+
+        {/* FIXME: translate */}
+        <Box component="fieldset" mt={2} mb={4}>
+          <FieldSetLegend legendTitle={<Trans id="">Axis orientation</Trans>} />
+          <Flex sx={{ justifyContent: "flex-start" }}>
+            {[
+              { value: "right", label: "Left" },
+              { value: "left", label: "Right" },
+            ].map((d) => (
+              <ChartOptionRadioField
+                key={d.value}
+                label={d.label}
+                field="y"
+                path="lineAxisOrientation"
+                value={d.value}
+              />
+            ))}
+          </Flex>
+        </Box>
+
+        <Select
+          id={`mesure-${y.lineComponentIri}`}
+          options={[]}
+          optionGroups={getOptions("line")}
+          sortOptions={false}
+          // FIXME: translate
+          label="Line measure"
+          value={y.lineComponentIri}
+          onChange={(e) => {
+            const newIri = e.target.value as string;
+            dispatch({
+              type: "CHART_OPTION_CHANGED",
+              value: {
+                locale,
+                field: "y",
+                path: "lineComponentIri",
                 value: newIri,
               },
             });
