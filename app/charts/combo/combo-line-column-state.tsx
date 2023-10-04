@@ -251,7 +251,7 @@ const useComboLineColumnState = (
         topAnchor: false,
       }),
       values: [variables.y.left, variables.y.right].map(
-        ({ orientation, getY, label }) => {
+        ({ orientation, getY, label, chartType }) => {
           const y = getY(d) ?? 0;
 
           return {
@@ -260,7 +260,7 @@ const useComboLineColumnState = (
             color: colors(label),
             hide: y === null,
             yPos: yOrientationScales[orientation](y),
-            symbol: "line",
+            symbol: chartType === "line" ? "line" : "square",
           };
         }
       ),
