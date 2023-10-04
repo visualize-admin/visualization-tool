@@ -1434,7 +1434,7 @@ const adjustSegmentSorting = ({
 };
 
 // Helpers
-export const getPossibleChartType = ({
+export const getPossibleChartTypes = ({
   dimensions,
   measures,
 }: {

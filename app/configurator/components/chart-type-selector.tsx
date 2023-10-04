@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { SyntheticEvent } from "react";
 
-import { chartTypes, getPossibleChartType } from "@/charts";
+import { chartTypes, getPossibleChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
@@ -129,7 +129,7 @@ export const ChartTypeSelector = ({
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartType({
+  const possibleChartTypes = getPossibleChartTypes({
     dimensions: data.dataCubeByIri.dimensions,
     measures: data.dataCubeByIri.measures,
   });

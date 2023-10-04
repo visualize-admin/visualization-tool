@@ -22,7 +22,7 @@ import {
   getGroupedFieldIris,
   getHiddenFieldIris,
   getInitialConfig,
-  getPossibleChartType,
+  getPossibleChartTypes,
 } from "@/charts";
 import {
   EncodingFieldType,
@@ -614,7 +614,7 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (draft.dataSet) {
-        const possibleChartTypes = getPossibleChartType({
+        const possibleChartTypes = getPossibleChartTypes({
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
         });
