@@ -30,49 +30,56 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
   const [state, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
+  const hideTooltip = () => {
+    dispatch({
+      type: "INTERACTION_HIDE",
+    });
+  };
+
   const findDatum = (e: MouseEvent) => {
     const [x, y] = pointer(e, ref.current!);
     const bisectDate = bisector(
-      (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      (d: Observation, date: Date) => getX(d).getTime() - date.getTime()
     ).left;
     const thisDate = xScale.invert(x);
     const i = bisectDate(chartWideData, thisDate, 1);
     const dLeft = chartWideData[i - 1];
-    const dRight = chartWideData[i] || dLeft;
+    const dRight = chartWideData[i] ?? dLeft;
     const closestDatum =
       thisDate.getTime() - getX(dLeft).getTime() >
       getX(dRight).getTime() - thisDate.getTime()
         ? dRight
         : dLeft;
 
-    if (closestDatum) {
-      const closestDatumTime = getX(closestDatum).getTime();
-      const datumToUpdate = chartData.find(
-        (d) => closestDatumTime === getX(d).getTime()
-      ) as Observation;
-
-      if (
-        !state.interaction.d ||
-        closestDatumTime !== getX(state.interaction.d).getTime()
-      ) {
-        dispatch({
-          type: "INTERACTION_UPDATE",
-          value: {
-            interaction: {
-              visible: true,
-              mouse: { x, y },
-              d: datumToUpdate,
-            },
-          },
-        });
+    if (!closestDatum) {
+      if (state.interaction.visible) {
+        hideTooltip();
       }
-    }
-  };
 
-  const hideTooltip = () => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
+      return;
+    }
+
+    const closestDatumTime = getX(closestDatum).getTime();
+    const datumToUpdate = chartData.find(
+      (d) => closestDatumTime === getX(d).getTime()
+    ) as Observation;
+
+    if (
+      !state.interaction.d ||
+      closestDatumTime !== getX(state.interaction.d).getTime() ||
+      !state.interaction.visible
+    ) {
+      dispatch({
+        type: "INTERACTION_UPDATE",
+        value: {
+          interaction: {
+            visible: true,
+            mouse: { x, y },
+            d: datumToUpdate,
+          },
+        },
+      });
+    }
   };
 
   return (
