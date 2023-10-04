@@ -184,7 +184,7 @@ const useComboLineSingleState = (
       yAnchor: yScale(
         variables.y.lines
           .map(({ getY }) => getY(d) ?? 0)
-          .reduce((a, b) => a + b, 0) * (variables.y.lines.length > 1 ? 0.5 : 1)
+          .reduce((a, b) => a + b, 0) / variables.y.lines.length
       ),
       xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
