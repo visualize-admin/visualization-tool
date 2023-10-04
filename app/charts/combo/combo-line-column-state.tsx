@@ -197,6 +197,7 @@ const useComboLineColumnState = (
     aspectRatio,
     interactiveFiltersConfig,
     formatNumber,
+    bandDomain: xDomain,
   });
   const fakeRightTicks = paddingRightYScale.ticks(
     getTickNumber(width * aspectRatio)
