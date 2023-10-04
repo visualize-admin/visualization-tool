@@ -1,7 +1,7 @@
 import React from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { AxisHeightLinearDual } from "@/charts/combo/axes-height-linear-dual";
+import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineDual } from "@/charts/combo/combo-line-dual";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
