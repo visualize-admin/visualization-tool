@@ -45,6 +45,7 @@ export type ComboLineColumnState = CommonChartState &
     xKey: string;
     xScale: d3.ScaleBand<string>;
     xScaleTime: d3.ScaleTime<number, number>;
+    xScaleInteraction: d3.ScaleBand<string>;
     yScale: d3.ScaleLinear<number, number>;
     yOrientationScales: {
       left: d3.ScaleLinear<number, number>;
@@ -275,6 +276,7 @@ const useComboLineColumnState = (
     chartData,
     allData,
     xScale,
+    xScaleInteraction: xScale.copy().padding(0),
     xScaleTime,
     interactiveXTimeRangeScale,
     yScale,

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
+import { InteractionColumns } from "@/charts/column/overlay-columns";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineColumn } from "@/charts/combo/combo-line-column";
 import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
@@ -11,7 +12,6 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
-import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import {
   ComboLineColumnConfig,
   DataSource,
@@ -90,7 +90,7 @@ export const ChartComboLineColumn = React.memo(
             <AxisHeightLinearDual orientation="right" />
             <AxisWidthBand />
             <ComboLineColumn />
-            <InteractionHorizontal />
+            <InteractionColumns />
             {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />
