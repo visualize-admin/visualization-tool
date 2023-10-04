@@ -358,6 +358,7 @@ ${(
   <ReactSpecimen span={2}>
     <div style={{ width: 200, height: 450, position: "relative" }}>
       <RulerContent
+        rotate={false}
         xValue={"2014"}
         values={[
           { label: "Zürich", value: "450", color: "Orchid", yPos: 450 - 450 },
