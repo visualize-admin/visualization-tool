@@ -4,15 +4,6 @@ import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { sortHierarchy } from "@/rdf/tree-utils";
 
-const asGroup = (
-  parents: Omit<HierarchyValue, "depth" | "__typename" | "children">[]
-) => {
-  return {
-    label: parents.map((p) => p.label).join(" > "),
-    value: parents.map((p) => p.value).join("$"),
-  };
-};
-
 export const hierarchyToOptions = (
   hierarchy: HierarchyValue[],
   possibleValues: DimensionValue["value"][]
