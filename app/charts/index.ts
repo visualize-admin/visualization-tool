@@ -310,17 +310,17 @@ const META: Meta = {
   },
 };
 
-export const getInitialConfig = ({
-  key,
-  chartType,
-  dimensions,
-  measures,
-}: {
+type GetInitialConfigOptions = {
   key?: string;
   chartType: ChartType;
   dimensions: DataCubeMetadataWithHierarchies["dimensions"];
   measures: DataCubeMetadataWithHierarchies["measures"];
-}): ChartConfig => {
+};
+
+export const getInitialConfig = (
+  options: GetInitialConfigOptions
+): ChartConfig => {
+  const { key, chartType, dimensions, measures } = options;
   const genericConfigProps: {
     key: string;
     version: string;
