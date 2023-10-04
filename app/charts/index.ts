@@ -1522,6 +1522,8 @@ export const getPossibleChartTypes = ({
 
         if (uniqueUnits.length > 1) {
           possibles.push(...comboChartTypes);
+        } else {
+          possibles.push("comboLineSingle");
         }
       }
     }
