@@ -540,7 +540,7 @@ export const getInitialConfig = ({
           x: { componentIri: temporalDimensions[0].iri },
           y: {
             lineComponentIri: numericalMeasures[0].iri,
-            lineAxisOrientation: "left",
+            lineAxisOrientation: "right",
             columnComponentIri: numericalMeasures[1].iri,
           },
         },
