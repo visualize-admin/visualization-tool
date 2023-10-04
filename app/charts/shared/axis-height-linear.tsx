@@ -1,4 +1,4 @@
-import { axisLeft, NumberValue } from "d3";
+import { axisLeft, axisRight, NumberValue, ScaleLinear } from "d3";
 import React, { useEffect, useRef } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
@@ -25,19 +25,8 @@ import { getTextWidth } from "@/utils/get-text-width";
 export const TICK_PADDING = 6;
 
 export const AxisHeightLinear = () => {
-  const {
-    labelColor,
-    labelFontSize,
-    axisLabelFontSize,
-    gridColor,
-    fontFamily,
-  } = useChartTheme();
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const calculationType = useInteractiveFilters((d) => d.calculation.type);
-  const normalized = calculationType === "percent";
+  const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
+  const [ref, setRef] = React.useState<SVGGElement | null>(null);
   const state = useChartState() as
     | AreasState
     | ColumnsState
@@ -46,64 +35,21 @@ export const AxisHeightLinear = () => {
     | LinesState
     | ScatterplotState
     | ComboLineSingleState;
-
-  const { margins } = state.bounds;
-  const ticks = getTickNumber(state.bounds.chartHeight);
-  const tickFormat = React.useCallback(
-    (d: NumberValue) => {
-      return normalized ? `${formatNumber(d)}%` : formatNumber(d);
-    },
-    [formatNumber, normalized]
-  );
   const axisTitleWidth =
     getTextWidth(state.yAxisLabel, {
       fontSize: axisLabelFontSize,
     }) + TICK_PADDING;
 
-  useEffect(() => {
-    if (ref.current) {
-      const axis = axisLeft(state.yScale)
-        .ticks(ticks)
-        .tickSizeInner(-state.bounds.chartWidth)
-        .tickFormat(tickFormat)
-        .tickPadding(TICK_PADDING);
-      const g = renderContainer(ref.current, {
-        id: "axis-height-linear",
-        transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g) => g.call(axis),
-        renderUpdate: (g, opts) =>
-          maybeTransition(g, {
-            transition: opts.transition,
-            s: (g) => g.call(axis),
-          }),
-      });
-
-      g.select(".domain").remove();
-      g.selectAll(".tick line")
-        .attr("stroke", gridColor)
-        .attr("stroke-width", 1);
-      g.selectAll(".tick text")
-        .attr("dy", 3)
-        .attr("fill", labelColor)
-        .attr("font-family", fontFamily)
-        .style("font-size", labelFontSize)
-        .attr("text-anchor", "end");
-    }
-  }, [
-    state.bounds.chartWidth,
-    enableTransition,
-    fontFamily,
-    gridColor,
-    labelColor,
-    labelFontSize,
-    margins.left,
-    margins.top,
-    tickFormat,
-    ticks,
-    transitionDuration,
-    state.yScale,
-  ]);
+  useRenderAxisHeightLinear(ref, {
+    id: "axis-height-linear",
+    orientation: "left",
+    scale: state.yScale,
+    width: state.bounds.chartWidth,
+    height: state.bounds.chartHeight,
+    margins: state.bounds.margins,
+    lineColor: gridColor,
+    textColor: labelColor,
+  });
 
   return (
     <>
@@ -125,9 +71,95 @@ export const AxisHeightLinear = () => {
           </OpenMetadataPanelWrapper>
         </foreignObject>
       )}
-      <g ref={ref} />
+      <g ref={(newRef) => setRef(newRef)} />
     </>
   );
+};
+
+export const useRenderAxisHeightLinear = (
+  container: SVGGElement | null,
+  {
+    id,
+    orientation,
+    scale,
+    width,
+    height,
+    margins,
+    lineColor,
+    textColor,
+  }: {
+    id: string;
+    orientation: "left" | "right";
+    scale: ScaleLinear<number, number>;
+    width: number;
+    height: number;
+    margins: { left: number; top: number };
+    lineColor: string;
+    textColor: string;
+  }
+) => {
+  const leftAligned = orientation === "left";
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const transitionDuration = useTransitionStore((state) => state.duration);
+  const { labelFontSize, fontFamily } = useChartTheme();
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const calculationType = useInteractiveFilters((d) => d.calculation.type);
+  const normalized = calculationType === "percent";
+  const ticks = getTickNumber(height);
+  const tickFormat = React.useCallback(
+    (d: NumberValue) => {
+      return normalized ? `${formatNumber(d)}%` : formatNumber(d);
+    },
+    [formatNumber, normalized]
+  );
+
+  React.useEffect(() => {
+    if (!container) {
+      return;
+    }
+
+    const axis = (leftAligned ? axisLeft : axisRight)(scale)
+      .ticks(ticks)
+      .tickSizeInner((leftAligned ? -1 : 1) * width)
+      .tickFormat(tickFormat)
+      .tickPadding(TICK_PADDING);
+    const g = renderContainer(container, {
+      id,
+      transform: `translate(${margins.left}, ${margins.top})`,
+      transition: { enable: enableTransition, duration: transitionDuration },
+      render: (g) => g.call(axis),
+      renderUpdate: (g, opts) =>
+        maybeTransition(g, {
+          transition: opts.transition,
+          s: (g) => g.call(axis),
+        }),
+    });
+
+    g.select(".domain").remove();
+    g.selectAll(".tick line").attr("stroke", lineColor).attr("stroke-width", 1);
+    g.selectAll(".tick text")
+      .attr("dy", 3)
+      .attr("fill", textColor)
+      .attr("font-family", fontFamily)
+      .style("font-size", labelFontSize)
+      .attr("text-anchor", leftAligned ? "end" : "start");
+  }, [
+    container,
+    enableTransition,
+    fontFamily,
+    id,
+    labelFontSize,
+    leftAligned,
+    lineColor,
+    margins.left,
+    margins.top,
+    scale,
+    textColor,
+    tickFormat,
+    ticks,
+    transitionDuration,
+    width,
+  ]);
 };
 
 export const AxisHeightLinearDomain = () => {

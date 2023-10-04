@@ -1,90 +1,45 @@
-import { axisLeft, axisRight } from "d3";
-import { useEffect, useRef } from "react";
+import { alpha } from "@mui/material";
+import React from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
-import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
-import { useChartState } from "@/charts/shared/chart-state";
 import {
-  maybeTransition,
-  renderContainer,
-} from "@/charts/shared/rendering-utils";
-import { getTickNumber } from "@/charts/shared/ticks";
+  TICK_PADDING,
+  useRenderAxisHeightLinear,
+} from "@/charts/shared/axis-height-linear";
+import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { useFormatNumber } from "@/formatters";
-import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type AxisHeightLinearDualProps = {
-  orientation: "left" | "right";
+  orientation?: "left" | "right";
 };
 
 export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
-  const { orientation } = props;
+  const { orientation = "left" } = props;
   const leftAligned = orientation === "left";
-  const { labelFontSize, axisLabelFontSize, fontFamily } = useChartTheme();
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const { axisLabelFontSize } = useChartTheme();
+  const [ref, setRef] = React.useState<SVGGElement | null>(null);
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
     useChartState() as ComboLineDualState | ComboLineColumnState;
+  const yScale = yOrientationScales[orientation];
   const { margins } = bounds;
-  const ticks = getTickNumber(bounds.chartHeight);
   const axisTitle = y[orientation].label;
   const axisTitleWidth =
     getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const color = colors(axisTitle);
 
-  useEffect(() => {
-    if (ref.current) {
-      const makeAxis = (leftAligned ? axisLeft : axisRight)(
-        yOrientationScales[orientation]
-      )
-        .ticks(ticks)
-        .tickSizeInner(leftAligned ? -bounds.chartWidth : bounds.chartWidth)
-        .tickFormat(formatNumber)
-        .tickPadding(TICK_PADDING);
-      const g = renderContainer(ref.current, {
-        id: `axis-height-linear-${orientation}`,
-        transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g) => g.call(makeAxis),
-        renderUpdate: (g, opts) =>
-          maybeTransition(g, {
-            transition: opts.transition,
-            s: (g) => g.call(makeAxis),
-          }),
-      });
-
-      g.select(".domain").remove();
-      g.selectAll(".tick line")
-        .attr("stroke", color)
-        .attr("stroke-width", 1)
-        .attr("stroke-opacity", 0.1);
-      g.selectAll(".tick text")
-        .attr("dy", 3)
-        .attr("fill", color)
-        .attr("font-family", fontFamily)
-        .style("font-size", labelFontSize)
-        .attr("text-anchor", leftAligned ? "end" : "start");
-    }
-  }, [
-    bounds.chartWidth,
-    enableTransition,
-    fontFamily,
-    labelFontSize,
-    margins.left,
-    margins.top,
-    ticks,
-    transitionDuration,
-    orientation,
-    yOrientationScales,
-    color,
-    formatNumber,
-    leftAligned,
-  ]);
+  useRenderAxisHeightLinear(ref, {
+    id: `axis-height-linear-${orientation}`,
+    orientation: orientation,
+    scale: yScale,
+    width: bounds.chartWidth,
+    height: bounds.chartHeight,
+    margins: bounds.margins,
+    lineColor: alpha(color, 0.1),
+    textColor: color,
+  });
 
   return (
     <>
@@ -107,8 +62,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
           <span style={{ fontSize: axisLabelFontSize }}>{axisTitle}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
-
-      <g ref={ref} />
+      <g ref={(newRef) => setRef(newRef)} />
     </>
   );
 };
