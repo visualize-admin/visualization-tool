@@ -83,6 +83,22 @@ export const chartTypes: ChartType[] = [
   "comboLineColumn",
 ];
 
+export const regularChartTypes: ChartType[] = [
+  "column",
+  "line",
+  "area",
+  "scatterplot",
+  "pie",
+  "table",
+  "map",
+];
+
+export const comboChartTypes: ChartType[] = [
+  "comboLineSingle",
+  "comboLineDual",
+  "comboLineColumn",
+];
+
 export const chartTypesOrder: { [k in ChartType]: number } = {
   column: 0,
   line: 1,

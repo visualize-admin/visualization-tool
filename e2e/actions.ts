@@ -78,7 +78,7 @@ export const createActions = ({
         | "Areas"
         | "Columns"
     ) => {
-      const btns = await selectors.edition.chartTypeSelector();
+      const btns = await selectors.edition.chartTypeSelectorRegular();
       await btns.locator("button", { hasText: type }).click();
     },
     selectActiveField: selectActiveEditorField({
