@@ -1,4 +1,4 @@
-import { ascending, group } from "d3";
+import { ascending, descending, group, rollups } from "d3";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
@@ -516,7 +516,14 @@ export const getInitialConfig = ({
           ])
         ) as TableFields,
       };
-    case "comboLineSingle":
+    case "comboLineSingle": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const mostCommonUnit = rollups(
+        numericalMeasures,
+        (v) => v.length,
+        (d) => d.unit
+      ).sort((a, b) => descending(a[1], b[1]))[0][0];
+
       return {
         ...genericConfigProps,
         chartType: "comboLineSingle",
@@ -526,10 +533,21 @@ export const getInitialConfig = ({
         }),
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
-          y: { componentIris: [numericalMeasures[0].iri] },
+          // Use all measures with the most common unit.
+          y: {
+            componentIris: numericalMeasures
+              .filter((d) => d.unit === mostCommonUnit)
+              .map((d) => d.iri),
+          },
         },
       };
-    case "comboLineDual":
+    }
+    case "comboLineDual": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const [firstUnit, secondUnit] = Array.from(
+        new Set(numericalMeasures.map((d) => d.unit))
+      );
+
       return {
         ...genericConfigProps,
         chartType: "comboLineDual",
@@ -540,12 +558,22 @@ export const getInitialConfig = ({
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
           y: {
-            leftAxisComponentIri: numericalMeasures[0].iri,
-            rightAxisComponentIri: numericalMeasures[1].iri,
+            leftAxisComponentIri: numericalMeasures.find(
+              (d) => d.unit === firstUnit
+            )!.iri,
+            rightAxisComponentIri: numericalMeasures.find(
+              (d) => d.unit === secondUnit
+            )!.iri,
           },
         },
       };
-    case "comboLineColumn":
+    }
+    case "comboLineColumn": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const [firstUnit, secondUnit] = Array.from(
+        new Set(numericalMeasures.map((d) => d.unit))
+      );
+
       return {
         ...genericConfigProps,
         chartType: "comboLineColumn",
@@ -556,12 +584,17 @@ export const getInitialConfig = ({
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
           y: {
-            lineComponentIri: numericalMeasures[0].iri,
+            lineComponentIri: numericalMeasures.find(
+              (d) => d.unit === firstUnit
+            )!.iri,
             lineAxisOrientation: "right",
-            columnComponentIri: numericalMeasures[1].iri,
+            columnComponentIri: numericalMeasures.find(
+              (d) => d.unit === secondUnit
+            )!.iri,
           },
         },
       };
+    }
 
     // This code *should* be unreachable! If it's not, it means we haven't checked
     // all cases (and we should get a TS error).
