@@ -1,6 +1,7 @@
 import { axisLeft, axisRight } from "d3";
 import { useEffect, useRef } from "react";
 
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -28,10 +29,10 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
-    useChartState() as ComboLineDualState;
+    useChartState() as ComboLineDualState | ComboLineColumnState
   const { margins } = bounds;
   const ticks = getTickNumber(bounds.chartHeight);
-  const axisTitle = (leftAligned ? y.lineLeft : y.lineRight).label;
+  const axisTitle = y[orientation].label;
   const axisTitleWidth =
     getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
   const color = colors(axisTitle);
@@ -102,9 +103,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
         height={axisLabelFontSize * 2}
         color={color}
       >
-        <OpenMetadataPanelWrapper
-          dim={(leftAligned ? y.lineLeft : y.lineRight).dimension}
-        >
+        <OpenMetadataPanelWrapper dim={y[orientation].dimension}>
           <span style={{ fontSize: axisLabelFontSize }}>{axisTitle}</span>
         </OpenMetadataPanelWrapper>
       </foreignObject>

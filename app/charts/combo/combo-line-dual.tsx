@@ -11,7 +11,7 @@ export const ComboLineDual = () => {
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {[y.lineLeft, y.lineRight].map(({ orientation, iri, label, getY }) => {
+      {[y.left, y.right].map(({ orientation, iri, label, getY }) => {
         const line = d3
           .line<Observation>()
           .defined((d) => getY(d) !== null)

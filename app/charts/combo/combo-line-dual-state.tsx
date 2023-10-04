@@ -83,7 +83,7 @@ const useComboLineDualState = (
           total: 0,
         },
         ...observations.flatMap((o) => {
-          return [variables.y.lineLeft, variables.y.lineRight].map((d) => {
+          return [variables.y.left, variables.y.right].map((d) => {
             return {
               [d.label]: d.getY(o),
             };
@@ -95,7 +95,7 @@ const useComboLineDualState = (
     }
 
     return chartWideData;
-  }, [dataGroupedByX, variables.y.lineLeft, , variables.y.lineRight, xKey]);
+  }, [dataGroupedByX, variables.y.left, , variables.y.right, xKey]);
 
   // x
   const xDomain = d3.extent(chartData, (d) => getX(d)) as [Date, Date];
@@ -111,20 +111,20 @@ const useComboLineDualState = (
   // y
   const minLeftValue =
     d3.min(scalesData, (o) => {
-      return variables.y.lineLeft.getY(o);
+      return variables.y.left.getY(o);
     }) ?? 0;
   const minRightValue =
     d3.min(scalesData, (o) => {
-      return variables.y.lineRight.getY(o);
+      return variables.y.right.getY(o);
     }) ?? 0;
   const minValue = d3.min([minLeftValue, minRightValue]) ?? 0;
   const maxLeftValue =
     d3.max(scalesData, (o) => {
-      return variables.y.lineLeft.getY(o);
+      return variables.y.left.getY(o);
     }) ?? 0;
   const maxRightValue =
     d3.max(scalesData, (o) => {
-      return variables.y.lineRight.getY(o);
+      return variables.y.right.getY(o);
     }) ?? 0;
   const maxValue = d3.max([maxLeftValue, maxRightValue]) ?? 0;
   const yScale = d3.scaleLinear().domain([minValue, maxValue]).nice();
@@ -135,19 +135,19 @@ const useComboLineDualState = (
 
   const paddingLeftMinValue =
     d3.min(paddingData, (o) => {
-      return variables.y.lineLeft.getY(o);
+      return variables.y.left.getY(o);
     }) ?? 0;
   const paddingRightMinValue =
     d3.min(paddingData, (o) => {
-      return variables.y.lineRight.getY(o);
+      return variables.y.right.getY(o);
     }) ?? 0;
   const paddingLeftMaxValue =
     d3.max(paddingData, (o) => {
-      return variables.y.lineLeft.getY(o);
+      return variables.y.left.getY(o);
     }) ?? 0;
   const paddingRightMaxValue =
     d3.max(paddingData, (o) => {
-      return variables.y.lineRight.getY(o);
+      return variables.y.right.getY(o);
     }) ?? 0;
   const paddingLeftYScale = d3
     .scaleLinear()
@@ -160,7 +160,7 @@ const useComboLineDualState = (
 
   const colors = d3
     .scaleOrdinal<string, string>()
-    .domain([variables.y.lineLeft, variables.y.lineRight].map((d) => d.label))
+    .domain([variables.y.left, variables.y.right].map((d) => d.label))
     .range(getPalette());
 
   // Dimensions
@@ -210,7 +210,7 @@ const useComboLineDualState = (
       xAnchor: xScale(x),
       // Center the tooltip vertically.
       yAnchor:
-        [variables.y.lineLeft, variables.y.lineRight]
+        [variables.y.left, variables.y.right]
           .map(({ orientation, getY }) =>
             yOrientationScales[orientation](getY(d) ?? 0)
           )
@@ -221,7 +221,7 @@ const useComboLineDualState = (
         xAnchor: xScale(x),
         topAnchor: false,
       }),
-      values: [variables.y.lineLeft, variables.y.lineRight].map(
+      values: [variables.y.left, variables.y.right].map(
         ({ orientation, getY, label }) => {
           const y = getY(d) ?? 0;
 

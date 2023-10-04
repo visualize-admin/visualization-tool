@@ -16,8 +16,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 type NumericalYComboLineDualVariables = {
   y: {
-    lineLeft: BaseYGetter & { orientation: "left" };
-    lineRight: BaseYGetter & { orientation: "right" };
+    left: BaseYGetter & { orientation: "left" };
+    right: BaseYGetter & { orientation: "right" };
   };
 };
 
@@ -41,7 +41,7 @@ export const useComboLineDualStateVariables = (
   const rightIri = chartConfig.fields.y.rightAxisComponentIri;
   const numericalYVariables: NumericalYComboLineDualVariables = {
     y: {
-      lineLeft: {
+      left: {
         orientation: "left",
         dimension: dimensionsByIri[rightIri],
         iri: leftIri,
@@ -50,7 +50,7 @@ export const useComboLineDualStateVariables = (
           return d[leftIri] !== null ? Number(d[leftIri]) : null;
         },
       },
-      lineRight: {
+      right: {
         orientation: "right",
         dimension: dimensionsByIri[rightIri],
         iri: rightIri,
