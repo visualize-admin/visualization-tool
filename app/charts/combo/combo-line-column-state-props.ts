@@ -10,20 +10,20 @@ import {
   useChartData,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
-import { ComboConfig } from "@/configurator";
+import { ComboLineColumnConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
 
 type NumericalYComboLineColumnVariables = {
   y: {
-    axisMode: "dual";
-    line: BaseYGetter & {
-      orientation: "left" | "right";
-    };
-    column: BaseYGetter & {
-      orientation: "left" | "right";
-    };
+    left: YGetter;
+    right: YGetter;
   };
+};
+
+type YGetter = BaseYGetter & {
+  chartType: "line" | "column";
+  orientation: "left" | "right";
 };
 
 export type ComboLineColumnStateVariables = BaseVariables &
@@ -31,7 +31,7 @@ export type ComboLineColumnStateVariables = BaseVariables &
   NumericalYComboLineColumnVariables;
 
 export const useComboLineColumnStateVariables = (
-  props: ChartProps<ComboConfig> & { aspectRatio: number }
+  props: ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
 ): ComboLineColumnStateVariables => {
   const { chartConfig, dimensionsByIri, measuresByIri } = props;
   const { fields } = chartConfig;
@@ -42,34 +42,46 @@ export const useComboLineColumnStateVariables = (
     dimensionsByIri,
   });
 
-  if (chartConfig.chartSubtype !== "line-column") {
-    throw new Error("This hook is only for line-column charts!");
-  }
-
   const lineIri = chartConfig.fields.y.lineComponentIri;
   const lineAxisOrientation = chartConfig.fields.y.lineAxisOrientation;
   const columnIri = chartConfig.fields.y.columnComponentIri;
-  const numericalYVariables: NumericalYComboLineColumnVariables = {
-    y: {
-      axisMode: "dual",
-      line: {
-        iri: lineIri,
-        label: getLabelWithUnit(measuresByIri[lineIri]),
-        orientation: lineAxisOrientation,
-        getY: (d) => {
-          return d[lineIri] !== null ? Number(d[lineIri]) : null;
-        },
-      },
-      column: {
-        iri: columnIri,
-        label: getLabelWithUnit(measuresByIri[columnIri]),
-        orientation: lineAxisOrientation === "left" ? "right" : "left",
-        getY: (d) => {
-          return d[columnIri] !== null ? Number(d[columnIri]) : null;
-        },
-      },
+  let numericalYVariables: NumericalYComboLineColumnVariables;
+  const lineYGetter: YGetter = {
+    chartType: "line",
+    orientation: lineAxisOrientation,
+    dimension: dimensionsByIri[lineIri],
+    iri: lineIri,
+    label: getLabelWithUnit(measuresByIri[lineIri]),
+    getY: (d) => {
+      return d[lineIri] !== null ? Number(d[lineIri]) : null;
     },
   };
+  const columnYGetter: YGetter = {
+    chartType: "column",
+    orientation: lineAxisOrientation === "left" ? "right" : "left",
+    dimension: dimensionsByIri[columnIri],
+    iri: columnIri,
+    label: getLabelWithUnit(measuresByIri[columnIri]),
+    getY: (d) => {
+      return d[columnIri] !== null ? Number(d[columnIri]) : null;
+    },
+  };
+
+  if (lineAxisOrientation === "left") {
+    numericalYVariables = {
+      y: {
+        left: lineYGetter,
+        right: columnYGetter,
+      },
+    };
+  } else {
+    numericalYVariables = {
+      y: {
+        left: columnYGetter,
+        right: lineYGetter,
+      },
+    };
+  }
 
   return {
     ...baseVariables,
@@ -79,7 +91,7 @@ export const useComboLineColumnStateVariables = (
 };
 
 export const useComboLineColumnStateData = (
-  chartProps: ChartProps<ComboConfig> & { aspectRatio: number },
+  chartProps: ChartProps<ComboLineColumnConfig> & { aspectRatio: number },
   variables: ComboLineColumnStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
