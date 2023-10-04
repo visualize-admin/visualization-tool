@@ -85,6 +85,8 @@ const Lines = () => {
       : yOrientationScales.right;
   const line = d3
     .line<Observation>()
+    // FIXME: add missing observations basing on the time interval, so we can
+    // properly indicate the missing data.
     .defined((d) => yLine.getY(d) !== null)
     .x((d) => (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5)
     .y((d) => yScale(yLine.getY(d) as number));
