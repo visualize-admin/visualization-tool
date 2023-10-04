@@ -3,12 +3,12 @@ import React from "react";
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
 import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
 import {
+  BandXVariables,
   BaseVariables,
   ChartStateData,
-  TemporalXVariables,
+  useBandXVariables,
   useBaseVariables,
   useChartData,
-  useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { ComboLineColumnConfig } from "@/configurator";
 
@@ -27,19 +27,20 @@ type YGetter = BaseYGetter & {
 };
 
 export type ComboLineColumnStateVariables = BaseVariables &
-  TemporalXVariables &
+  BandXVariables &
   NumericalYComboLineColumnVariables;
 
 export const useComboLineColumnStateVariables = (
   props: ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
 ): ComboLineColumnStateVariables => {
-  const { chartConfig, dimensionsByIri, measuresByIri } = props;
+  const { chartConfig, dimensionsByIri, measuresByIri, observations } = props;
   const { fields } = chartConfig;
   const { x } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
-  const temporalXVariables = useTemporalXVariables(x, {
+  const bandXVariables = useBandXVariables(x, {
     dimensionsByIri,
+    observations,
   });
 
   const lineIri = chartConfig.fields.y.lineComponentIri;
@@ -85,7 +86,7 @@ export const useComboLineColumnStateVariables = (
 
   return {
     ...baseVariables,
-    ...temporalXVariables,
+    ...bandXVariables,
     ...numericalYVariables,
   };
 };
@@ -95,16 +96,17 @@ export const useComboLineColumnStateData = (
   variables: ComboLineColumnStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
+  const { getXAsDate } = variables;
   // FIXME: handle properly.
   const plottableData = observations;
   const sortedPlottableData = React.useMemo(() => {
     return sortData(plottableData, {
-      getX: variables.getX,
+      getX: getXAsDate,
     });
-  }, [plottableData, variables.getX]);
+  }, [plottableData, getXAsDate]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    getXAsDate: variables.getX,
+    getXAsDate,
   });
 
   return {

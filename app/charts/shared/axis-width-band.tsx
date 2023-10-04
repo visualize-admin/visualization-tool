@@ -2,6 +2,7 @@ import { axisBottom } from "d3";
 import { useEffect, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -13,8 +14,8 @@ import { useTransitionStore } from "@/stores/transition";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, yScale, bounds, xTimeUnit, getXLabel } =
-    useChartState() as ColumnsState;
+  const state = useChartState() as ColumnsState | ComboLineColumnState;
+  const { xScale, getXLabel, xTimeUnit, yScale, bounds } = state;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();

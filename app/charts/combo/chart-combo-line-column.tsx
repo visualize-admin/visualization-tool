@@ -1,10 +1,10 @@
 import React from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { AxisHeightLinearDual } from "@/charts/combo/axes-height-linear-dual";
+import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
+import { ComboLineColumn } from "@/charts/combo/combo-line-column";
 import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
-import { ComboLineDual } from "@/charts/combo/combo-line-dual";
-import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
+import { AxisWidthBand } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
 import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
@@ -87,9 +87,9 @@ export const ChartComboLineColumn = React.memo(
         <ChartContainer>
           <ChartSvg>
             <AxisHeightLinearDual orientation="left" />
-            <AxisHeightLinearDual orientation="right" /> <AxisTime />
-            <AxisTimeDomain />
-            <ComboLineDual />
+            <AxisHeightLinearDual orientation="right" />
+            <AxisWidthBand />
+            <ComboLineColumn />
             <InteractionHorizontal />
             {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
           </ChartSvg>

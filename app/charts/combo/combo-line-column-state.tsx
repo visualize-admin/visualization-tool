@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import React, { useMemo } from "react";
 
+import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
   ComboLineColumnStateVariables,
   useComboLineColumnStateData,
@@ -25,7 +26,13 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { ComboLineColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
+import {
+  useFormatFullDateAuto,
+  useFormatNumber,
+  useTimeFormatUnit,
+} from "@/formatters";
+import { TimeUnit } from "@/graphql/resolver-types";
+import { getTimeInterval } from "@/intervals";
 import { getPalette } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -36,7 +43,8 @@ export type ComboLineColumnState = CommonChartState &
   InteractiveXTimeRangeState & {
     chartType: "comboLineColumn";
     xKey: string;
-    xScale: d3.ScaleTime<number, number>;
+    xScale: d3.ScaleBand<string>;
+    xScaleTime: d3.ScaleTime<number, number>;
     yScale: d3.ScaleLinear<number, number>;
     yOrientationScales: {
       left: d3.ScaleLinear<number, number>;
@@ -55,7 +63,7 @@ const useComboLineColumnState = (
   data: ChartStateData
 ): ComboLineColumnState => {
   const { chartConfig, aspectRatio } = chartProps;
-  const { xDimension, getX, getXAsString } = variables;
+  const { getX, getXAsDate } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
@@ -65,8 +73,8 @@ const useComboLineColumnState = (
 
   const xKey = fields.x.componentIri;
   const dataGroupedByX = React.useMemo(() => {
-    return d3.group(chartData, getXAsString);
-  }, [chartData, getXAsString]);
+    return d3.group(chartData, getX);
+  }, [chartData, getX]);
 
   const chartWideData = React.useMemo(() => {
     const chartWideData: Observation[] = [];
@@ -98,25 +106,44 @@ const useComboLineColumnState = (
   }, [dataGroupedByX, xKey, variables.y.left, variables.y.right]);
 
   // x
-  const xDomain = d3.extent(chartData, (d) => getX(d)) as [Date, Date];
-  const xScale = d3.scaleTime().domain(xDomain);
+  const xDomainTime = d3.extent(chartData, (d) => getXAsDate(d)) as [
+    Date,
+    Date
+  ];
+  const xScaleTime = d3.scaleTime().domain(xDomainTime);
+  // We can only use TemporalDimension in ComboLineColumn chart (see ui encodings).
+  const interval = getTimeInterval(variables.xTimeUnit as TimeUnit);
+  const formatDate = useFormatFullDateAuto();
+  const xDomain = interval
+    .range(xDomainTime[0], xDomainTime[1])
+    .concat(xDomainTime[1])
+    .map(formatDate);
+  const xScale = d3
+    .scaleBand()
+    .domain(xDomain)
+    .paddingInner(PADDING_INNER)
+    .paddingOuter(PADDING_OUTER);
 
   const interactiveXTimeRangeDomain = useMemo(() => {
-    return d3.extent(timeRangeData, (d) => getX(d)) as [Date, Date];
-  }, [timeRangeData, getX]);
+    return d3.extent(timeRangeData, (d) => getXAsDate(d)) as [Date, Date];
+  }, [timeRangeData, getXAsDate]);
   const interactiveXTimeRangeScale = d3
     .scaleTime()
     .domain(interactiveXTimeRangeDomain);
 
   // y
   const minLeftValue =
-    d3.min(scalesData, (o) => {
-      return variables.y.left.getY(o);
-    }) ?? 0;
+    variables.y.left.chartType === "column"
+      ? 0
+      : d3.min(scalesData, (o) => {
+          return variables.y.left.getY(o);
+        }) ?? 0;
   const minRightValue =
-    d3.min(scalesData, (o) => {
-      return variables.y.right.getY(o);
-    }) ?? 0;
+    variables.y.right.chartType === "column"
+      ? 0
+      : d3.min(scalesData, (o) => {
+          return variables.y.right.getY(o);
+        }) ?? 0;
   const minValue = d3.min([minLeftValue, minRightValue]) ?? 0;
   const maxLeftValue =
     d3.max(scalesData, (o) => {
@@ -192,6 +219,7 @@ const useComboLineColumnState = (
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
+  xScaleTime.range([0, chartWidth]);
   interactiveXTimeRangeScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
   yOrientationScales.left.range([chartHeight, 0]);
@@ -207,7 +235,7 @@ const useComboLineColumnState = (
         value: "0",
         color: "#006699",
       },
-      xAnchor: xScale(x),
+      xAnchor: (xScale(x) as number) + xScale.bandwidth() * 0.5,
       // Center the tooltip vertically.
       yAnchor:
         [variables.y.left, variables.y.right]
@@ -215,10 +243,10 @@ const useComboLineColumnState = (
             yOrientationScales[orientation](getY(d) ?? 0)
           )
           .reduce((a, b) => a + b, 0) * 0.5,
-      xValue: timeFormatUnit(x, xDimension.timeUnit),
+      xValue: timeFormatUnit(x, variables.xTimeUnit as TimeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
-        xAnchor: xScale(x),
+        xAnchor: (xScale(x) as number) + xScale.bandwidth() * 0.5,
         topAnchor: false,
       }),
       values: [variables.y.left, variables.y.right].map(
@@ -246,6 +274,7 @@ const useComboLineColumnState = (
     chartData,
     allData,
     xScale,
+    xScaleTime,
     interactiveXTimeRangeScale,
     yScale,
     yOrientationScales,

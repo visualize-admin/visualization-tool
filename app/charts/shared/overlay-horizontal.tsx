@@ -2,6 +2,8 @@ import { bisector, pointer } from "d3";
 import { MouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -9,11 +11,22 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const InteractionHorizontal = memo(function InteractionHorizontal() {
-  const { chartData, bounds, getX, xScale, chartWideData } = useChartState() as
+  const chartState = useChartState() as
     | AreasState
     | LinesState
-    | ComboLineSingleState;
-  const { chartWidth, chartHeight, margins } = bounds;
+    | ComboLineSingleState
+    | ComboLineDualState
+    | ComboLineColumnState;
+  const { chartData, chartWideData, xScale, getX } =
+    chartState.chartType === "comboLineColumn"
+      ? {
+          chartData: chartState.chartData,
+          chartWideData: chartState.chartWideData,
+          xScale: chartState.xScaleTime,
+          getX: chartState.getXAsDate,
+        }
+      : chartState;
+  const { chartWidth, chartHeight, margins } = chartState.bounds;
   const [state, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
@@ -55,6 +68,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       }
     }
   };
+
   const hideTooltip = () => {
     dispatch({
       type: "INTERACTION_HIDE",
