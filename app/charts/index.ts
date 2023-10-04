@@ -19,6 +19,7 @@ import {
   ChartSegmentField,
   ChartType,
   ColumnSegmentField,
+  ComboChartType,
   FieldAdjuster,
   GenericFields,
   GenericSegmentField,
@@ -31,21 +32,15 @@ import {
   MapSymbolLayer,
   Meta,
   PieSegmentField,
+  RegularChartType,
   ScatterPlotSegmentField,
   SortingOrder,
   SortingType,
   TableColumn,
   TableFields,
 } from "@/config-types";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import { getDefaultCategoricalPaletteName } from "@/palettes";
-import { bfs } from "@/utils/bfs";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
-import { createChartId } from "@/utils/create-chart-id";
-import { isMultiHierarchyNode } from "@/utils/hierarchy";
-
-import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
   getGeoDimensions,
@@ -56,19 +51,25 @@ import {
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
-} from "../domain/data";
+} from "@/domain/data";
 import {
   DimensionMetadataFragment,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NumericalMeasure,
   OrdinalMeasure,
-} from "../graphql/query-hooks";
+} from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import {
   DataCubeMetadata,
   DataCubeMetadataWithHierarchies,
-} from "../graphql/types";
-import { unreachableError } from "../utils/unreachable";
+} from "@/graphql/types";
+import { getDefaultCategoricalPaletteName } from "@/palettes";
+import { bfs } from "@/utils/bfs";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { createChartId } from "@/utils/create-chart-id";
+import { isMultiHierarchyNode } from "@/utils/hierarchy";
+import { unreachableError } from "@/utils/unreachable";
 
 export const chartTypes: ChartType[] = [
   "column",
@@ -83,7 +84,7 @@ export const chartTypes: ChartType[] = [
   "comboLineColumn",
 ];
 
-export const regularChartTypes: ChartType[] = [
+export const regularChartTypes: RegularChartType[] = [
   "column",
   "line",
   "area",
@@ -93,7 +94,7 @@ export const regularChartTypes: ChartType[] = [
   "map",
 ];
 
-export const comboChartTypes: ChartType[] = [
+export const comboChartTypes: ComboChartType[] = [
   "comboLineSingle",
   "comboLineDual",
   "comboLineColumn",
@@ -1463,15 +1464,10 @@ export const getPossibleChartTypes = ({
   const geoDimensions = getGeoDimensions(dimensions);
   const temporalDimensions = getTemporalDimensions(dimensions);
 
-  const categoricalEnabled: ChartType[] = ["column", "pie"];
-  const geoEnabled: ChartType[] = ["column", "map", "pie"];
-  const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
-  const multipleNumericalMeasuresAndTimeEnabled: ChartType[] = [
-    "comboLineSingle",
-    "comboLineDual",
-    "comboLineColumn",
-  ];
-  const timeEnabled: ChartType[] = ["area", "column", "line"];
+  const categoricalEnabled: RegularChartType[] = ["column", "pie"];
+  const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
+  const multipleNumericalMeasuresEnabled: RegularChartType[] = ["scatterplot"];
+  const timeEnabled: RegularChartType[] = ["area", "column", "line"];
 
   const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
@@ -1487,7 +1483,13 @@ export const getPossibleChartTypes = ({
       possibles.push(...multipleNumericalMeasuresEnabled);
 
       if (temporalDimensions.length > 0) {
-        possibles.push(...multipleNumericalMeasuresAndTimeEnabled);
+        const uniqueUnits = Array.from(
+          new Set(numericalMeasures.map((d) => d.unit))
+        );
+
+        if (uniqueUnits.length > 1) {
+          possibles.push(...comboChartTypes);
+        }
       }
     }
 

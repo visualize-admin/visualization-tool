@@ -713,6 +713,8 @@ export const decodeChartConfig = (
 };
 
 export type ChartType = ChartConfig["chartType"];
+export type RegularChartType = RegularChartConfig["chartType"];
+export type ComboChartType = ComboChartConfig["chartType"];
 
 export const isRegularChartConfig = (
   chartConfig: ChartConfig
