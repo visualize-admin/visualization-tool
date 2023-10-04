@@ -1,6 +1,9 @@
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
@@ -11,18 +14,35 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Margins } from "@/charts/shared/use-width";
 import { Observation } from "@/domain/data";
 
-export const Ruler = () => {
-  const [state] = useInteraction();
-  const { visible, d } = state.interaction;
-  return <>{visible && d && <RulerInner d={d} />}</>;
+type RulerProps = {
+  rotate?: boolean;
 };
 
-const RulerInner = ({ d }: { d: Observation }) => {
-  const { getAnnotationInfo, bounds } = useChartState() as LinesState;
+export const Ruler = (props: RulerProps) => {
+  const { rotate = false } = props;
+  const [state] = useInteraction();
+  const { visible, d } = state.interaction;
+
+  return <>{visible && d && <RulerInner d={d} rotate={rotate} />}</>;
+};
+
+type RulerInnerProps = {
+  d: Observation;
+  rotate: boolean;
+};
+
+const RulerInner = (props: RulerInnerProps) => {
+  const { d, rotate } = props;
+  const { getAnnotationInfo, bounds } = useChartState() as
+    | LinesState
+    | ComboLineSingleState
+    | ComboLineDualState
+    | ComboLineColumnState;
   const { xAnchor, xValue, datum, placement, values } = getAnnotationInfo(d);
 
   return (
     <RulerContent
+      rotate={rotate}
       xValue={xValue}
       values={values}
       chartHeight={bounds.chartHeight}
@@ -34,7 +54,8 @@ const RulerInner = ({ d }: { d: Observation }) => {
   );
 };
 
-interface RulerContentProps {
+type RulerContentProps = {
+  rotate: boolean;
   xValue: string;
   values: TooltipValue[] | undefined;
   chartHeight: number;
@@ -42,9 +63,9 @@ interface RulerContentProps {
   xAnchor: number;
   datum: TooltipValue;
   placement: TooltipPlacement;
-}
+};
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
   left: {
     width: 0,
     position: "absolute",
@@ -58,7 +79,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     fontWeight: "bold",
     backgroundColor: theme.palette.grey[100],
-    transform: "translateX(-50%)",
+    transform: ({ rotate }) =>
+      rotate
+        ? "translateX(-50%) translateY(50%) rotate(90deg)"
+        : "translateX(-50%)",
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     fontSize: "0.875rem",
@@ -66,13 +90,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const RulerContent = ({
-  xValue,
-  chartHeight,
-  margins,
-  xAnchor,
-}: RulerContentProps) => {
-  const classes = useStyles();
+export const RulerContent = (props: RulerContentProps) => {
+  const { rotate, xValue, chartHeight, margins, xAnchor } = props;
+  const classes = useStyles({ rotate });
+
   return (
     <>
       <Box

@@ -94,7 +94,7 @@ export const ChartComboLineColumn = React.memo(
             {interactiveFiltersConfig?.timeRange.active && <BrushTime />}
           </ChartSvg>
           <HoverDotMultiple />
-          <Ruler />
+          <Ruler rotate />
           <Tooltip type="multiple" />
         </ChartContainer>
       </ComboLineColumnChart>
