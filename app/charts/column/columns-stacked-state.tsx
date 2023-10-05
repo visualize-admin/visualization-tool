@@ -212,7 +212,7 @@ const useColumnsStackedState = (
     xScale,
     xTimeRangeDomainLabels,
     xScaleInteraction,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
@@ -273,18 +273,16 @@ const useColumnsStackedState = (
       .paddingInner(0)
       .paddingOuter(0);
 
-    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+    const xScaleTimeRangeDomain = extent(timeRangeData, (d) =>
       getXAsDate(d)
     ) as [Date, Date];
-    const interactiveXTimeRangeScale = scaleTime().domain(
-      interactiveXTimeRangeDomain
-    );
+    const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     return {
       colors,
       xScale,
       xTimeRangeDomainLabels,
-      interactiveXTimeRangeScale,
+      xScaleTimeRange,
       xScaleInteraction,
     };
   }, [
@@ -402,7 +400,7 @@ const useColumnsStackedState = (
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltips
@@ -481,7 +479,7 @@ const useColumnsStackedState = (
     allData,
     xScale,
     xScaleInteraction,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     segments,
     colors,

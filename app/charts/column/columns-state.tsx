@@ -100,7 +100,7 @@ const useColumnsState = (
     xScale,
     yScale,
     paddingYScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     xScaleInteraction,
     xTimeRangeDomainLabels,
   } = useMemo(() => {
@@ -129,13 +129,11 @@ const useColumnsState = (
       .paddingInner(0)
       .paddingOuter(0);
 
-    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+    const xScaleTimeRangeDomain = extent(timeRangeData, (d) =>
       getXAsDate(d)
     ) as [Date, Date];
 
-    const interactiveXTimeRangeScale = scaleTime().domain(
-      interactiveXTimeRangeDomain
-    );
+    const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     const minValue = Math.min(
       min(scalesData, (d) =>
@@ -171,7 +169,7 @@ const useColumnsState = (
       xScale,
       yScale,
       paddingYScale,
-      interactiveXTimeRangeScale,
+      xScaleTimeRange,
       xScaleInteraction,
       xTimeRangeDomainLabels,
     };
@@ -211,7 +209,7 @@ const useColumnsState = (
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -260,7 +258,7 @@ const useColumnsState = (
     chartData,
     allData,
     xScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     xScaleInteraction,
     yScale,
     getAnnotationInfo,

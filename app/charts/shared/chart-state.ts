@@ -532,5 +532,5 @@ export const useChartData = (
 
 // TODO: base this on UI encodings?
 export type InteractiveXTimeRangeState = {
-  interactiveXTimeRangeScale: ScaleTime<number, number>;
+  xScaleTimeRange: ScaleTime<number, number>;
 };

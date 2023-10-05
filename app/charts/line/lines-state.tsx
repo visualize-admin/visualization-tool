@@ -128,12 +128,10 @@ const useLinesState = (
   const xDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
-  const interactiveXTimeRangeDomain = useMemo(() => {
+  const xScaleTimeRangeDomain = useMemo(() => {
     return extent(timeRangeData, (d) => getX(d)) as [Date, Date];
   }, [timeRangeData, getX]);
-  const interactiveXTimeRangeScale = scaleTime().domain(
-    interactiveXTimeRangeDomain
-  );
+  const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
   const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
@@ -221,7 +219,7 @@ const useLinesState = (
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -280,7 +278,7 @@ const useLinesState = (
     chartData,
     allData,
     xScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     segments,
     colors,

@@ -7,6 +7,12 @@ import {
   useComboLineSingleStateVariables,
 } from "@/charts/combo/combo-line-single-state-props";
 import {
+  adjustScales,
+  getMargins,
+  useCommonComboState,
+  useYScales,
+} from "@/charts/combo/combo-state";
+import {
   getChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -19,11 +25,9 @@ import {
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { getCenteredTooltipPlacement } from "@/charts/shared/interaction/tooltip-box";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
-import { Observer, useWidth } from "@/charts/shared/use-width";
+import { Observer } from "@/charts/shared/use-width";
 import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
-import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
-import { getPalette } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -51,67 +55,6 @@ const useComboLineSingleState = (
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
-  const width = useWidth();
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const timeFormatUnit = useTimeFormatUnit();
-
-  const xKey = fields.x.componentIri;
-  const dataGroupedByX = React.useMemo(() => {
-    return d3.group(chartData, getXAsString);
-  }, [chartData, getXAsString]);
-
-  const chartWideData = React.useMemo(() => {
-    const chartWideData: Observation[] = [];
-    // We can safely sort, as X is always a date.
-    const entries = [...dataGroupedByX.entries()].sort();
-
-    for (let i = 0; i < dataGroupedByX.size; i++) {
-      const [date, observations] = entries[i];
-      const observation: Observation = Object.assign(
-        {
-          [xKey]: date,
-          [`${xKey}/__iri__`]: observations[0][`${xKey}/__iri__`],
-          total: d3.sum(observations, (o) => {
-            return d3.sum(variables.y.lines.map((d) => d.getY(o)));
-          }),
-        },
-        ...observations.flatMap((o) => {
-          return variables.y.lines.map((d) => {
-            return {
-              [d.label]: d.getY(o),
-            };
-          });
-        })
-      );
-
-      chartWideData.push(observation);
-    }
-
-    return chartWideData;
-  }, [dataGroupedByX, variables.y.lines, xKey]);
-
-  // x
-  const xDomain = d3.extent(chartData, (d) => getX(d)) as [Date, Date];
-  const xScale = d3.scaleTime().domain(xDomain);
-  const interactiveXTimeRangeDomain = d3.extent(timeRangeData, (d) =>
-    getX(d)
-  ) as [Date, Date];
-  const interactiveXTimeRangeScale = d3
-    .scaleTime()
-    .domain(interactiveXTimeRangeDomain);
-
-  // y
-  const minValue =
-    d3.min(scalesData, (o) => {
-      return d3.min(variables.y.lines, (d) => d.getY(o));
-    }) ?? 0;
-  const maxValue =
-    d3.max(scalesData, (o) => {
-      return d3.max(variables.y.lines, (d) => d.getY(o));
-    }) ?? 0;
-  const yDomain = [minValue, maxValue];
-  const yScale = d3.scaleLinear().domain(yDomain).nice();
-
   const yUnits = Array.from(
     new Set(
       variables.y.lines.map((d) => {
@@ -121,32 +64,38 @@ const useComboLineSingleState = (
   );
 
   if (yUnits.length > 1) {
-    // throw new Error(
-    //   "Multiple units are not supported in ComboLineSingle chart!"
-    // );
+    throw new Error(
+      "Multiple units are not supported in ComboLineSingle chart!"
+    );
   }
 
   const yAxisLabel = yUnits[0] ?? "";
 
-  // padding
-  const paddingMinValue =
-    d3.min(paddingData, (o) => {
-      return d3.min(variables.y.lines, (d) => d.getY(o));
-    }) ?? 0;
-  const paddingMaxValue =
-    d3.max(paddingData, (o) => {
-      return d3.max(variables.y.lines, (d) => d.getY(o));
-    }) ?? 0;
-  const paddingYScale = d3
-    .scaleLinear()
-    .domain([paddingMinValue, paddingMaxValue])
-    .nice();
+  const xKey = fields.x.componentIri;
+  const {
+    width,
+    formatNumber,
+    timeFormatUnit,
+    chartWideData,
+    xScaleTime: xScale,
+    xScaleTimeRange,
+    colors,
+  } = useCommonComboState({
+    chartData,
+    timeRangeData,
+    xKey,
+    getXAsDate: getX,
+    getXAsString,
+    yGetters: variables.y.lines,
+    computeTotal: true,
+  });
 
-  // colors
-  const colors = d3
-    .scaleOrdinal<string, string>()
-    .domain(variables.y.lines.map((d) => d.label))
-    .range(getPalette());
+  // y
+  const { yScale, paddingYScale } = useYScales({
+    scalesData,
+    paddingData,
+    getY: variables.y.lines.map((d) => d.getY),
+  });
 
   // Dimensions
   const { left, bottom } = useChartPadding({
@@ -156,31 +105,21 @@ const useComboLineSingleState = (
     interactiveFiltersConfig,
     formatNumber,
   });
-  const margins = {
-    top: 50,
-    right: 40,
-    bottom,
-    left,
-  };
+  const margins = getMargins({ left, bottom });
   const bounds = getChartBounds(width, margins, aspectRatio);
   const { chartWidth, chartHeight } = bounds;
-
-  xScale.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
-  yScale.range([chartHeight, 0]);
+  const xScales = [xScale, xScaleTimeRange];
+  const yScales = [yScale];
+  adjustScales(xScales, yScales, { chartWidth, chartHeight });
 
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
+    const xScaled = xScale(x);
 
     return {
-      datum: {
-        label: "",
-        value: "0",
-        color: "#006699",
-      },
-      xAnchor: xScale(x),
-      // Center the tooltip vertically.
+      datum: { label: "", value: "0", color: "#006699" },
+      xAnchor: xScaled,
       yAnchor: yScale(
         variables.y.lines
           .map(({ getY }) => getY(d) ?? 0)
@@ -189,18 +128,18 @@ const useComboLineSingleState = (
       xValue: timeFormatUnit(x, xDimension.timeUnit),
       placement: getCenteredTooltipPlacement({
         chartWidth,
-        xAnchor: xScale(x),
+        xAnchor: xScaled,
         topAnchor: false,
       }),
       values: variables.y.lines.map(({ getY, label }) => {
-        const y = getY(d) ?? 0;
+        const y = getY(d);
 
         return {
           label,
           value: `${y}`,
           color: colors(label),
           hide: y === null,
-          yPos: yScale(y),
+          yPos: yScale(y ?? 0),
           symbol: "line",
         };
       }),
@@ -214,7 +153,7 @@ const useComboLineSingleState = (
     chartData,
     allData,
     xScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     yAxisLabel,
     colors,

@@ -68,21 +68,20 @@ export const useComboLineColumnStateVariables = (
     },
   };
 
-  if (lineAxisOrientation === "left") {
-    numericalYVariables = {
-      y: {
-        left: lineYGetter,
-        right: columnYGetter,
-      },
-    };
-  } else {
-    numericalYVariables = {
-      y: {
-        left: columnYGetter,
-        right: lineYGetter,
-      },
-    };
-  }
+  numericalYVariables =
+    lineAxisOrientation === "left"
+      ? {
+          y: {
+            left: lineYGetter,
+            right: columnYGetter,
+          },
+        }
+      : {
+          y: {
+            left: columnYGetter,
+            right: lineYGetter,
+          },
+        };
 
   return {
     ...baseVariables,
