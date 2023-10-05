@@ -9,10 +9,12 @@ import {
   BandXVariables,
   BaseVariables,
   ChartStateData,
+  RenderingVariables,
   useBandXVariables,
   useBaseVariables,
   useChartData,
 } from "@/charts/shared/chart-state";
+import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { ComboLineColumnConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -31,13 +33,20 @@ type YGetter = BaseYGetter & {
 
 export type ComboLineColumnStateVariables = BaseVariables &
   BandXVariables &
-  NumericalYComboLineColumnVariables;
+  NumericalYComboLineColumnVariables &
+  RenderingVariables;
 
 export const useComboLineColumnStateVariables = (
   props: ChartProps<ComboLineColumnConfig> & { aspectRatio: number }
 ): ComboLineColumnStateVariables => {
-  const { chartConfig, dimensionsByIri, measuresByIri, observations } = props;
-  const { fields } = chartConfig;
+  const {
+    chartConfig,
+    dimensions,
+    dimensionsByIri,
+    measuresByIri,
+    observations,
+  } = props;
+  const { fields, filters, interactiveFiltersConfig } = chartConfig;
   const { x } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
@@ -86,10 +95,18 @@ export const useComboLineColumnStateVariables = (
           },
         };
 
+  const getRenderingKey = useRenderingKeyVariable(
+    dimensions,
+    filters,
+    interactiveFiltersConfig,
+    undefined
+  );
+
   return {
     ...baseVariables,
     ...bandXVariables,
     ...numericalYVariables,
+    getRenderingKey,
   };
 };
 

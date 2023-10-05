@@ -20,7 +20,7 @@ const Columns = () => {
     y,
     yOrientationScales,
     colors,
-    // getRenderingKey,
+    getRenderingKey,
   } = useChartState() as ComboLineColumnState;
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
@@ -34,8 +34,8 @@ const Columns = () => {
       : yOrientationScales.right;
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = React.useMemo(() => {
-    return chartData.map((d, i) => {
-      const key = `${i}`; // FIXME: use getRenderingKey(d);
+    return chartData.map((d) => {
+      const key = getRenderingKey(d);
       const xScaled = xScale(getX(d)) as number;
       const y = yColumn.getY(d) ?? NaN;
       const yScaled = yScale(y);
@@ -52,7 +52,17 @@ const Columns = () => {
         color,
       };
     });
-  }, [chartData, xScale, getX, yColumn, yScale, y0, colors, bandwidth]);
+  }, [
+    chartData,
+    getRenderingKey,
+    xScale,
+    getX,
+    yColumn,
+    yScale,
+    y0,
+    colors,
+    bandwidth,
+  ]);
 
   React.useEffect(() => {
     if (ref.current) {
