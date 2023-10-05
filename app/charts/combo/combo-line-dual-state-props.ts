@@ -1,7 +1,10 @@
 import React from "react";
 
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
-import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  usePlottableData,
+} from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
@@ -74,16 +77,27 @@ export const useComboLineDualStateData = (
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  // FIXME: handle properly.
-  const plottableData = observations;
+  const { getX, y } = variables;
+  const plottableData = usePlottableData(observations, {
+    getX,
+    getY: (d) => {
+      for (const { getY } of [y.left, y.right]) {
+        const y = getY(d);
+
+        if (y !== null) {
+          return y;
+        }
+      }
+    },
+  });
   const sortedPlottableData = React.useMemo(() => {
     return sortData(plottableData, {
-      getX: variables.getX,
+      getX,
     });
-  }, [plottableData, variables.getX]);
+  }, [plottableData, getX]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    getXAsDate: variables.getX,
+    getXAsDate: getX,
   });
 
   return {

@@ -12,6 +12,7 @@ import {
 import { ComboLineSingleConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
+import { usePlottableData } from "../shared/chart-helpers";
 
 type NumericalYComboLineSingleVariables = {
   y: {
@@ -60,16 +61,27 @@ export const useComboLineSingleStateData = (
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  // FIXME: handle properly.
-  const plottableData = observations;
+  const { getX, y } = variables;
+  const plottableData = usePlottableData(observations, {
+    getX,
+    getY: (d) => {
+      for (const { getY } of y.lines) {
+        const y = getY(d);
+
+        if (y !== null) {
+          return y;
+        }
+      }
+    },
+  });
   const sortedPlottableData = React.useMemo(() => {
     return sortData(plottableData, {
-      getX: variables.getX,
+      getX,
     });
-  }, [plottableData, variables.getX]);
+  }, [plottableData, getX]);
   const data = useChartData(sortedPlottableData, {
     chartConfig,
-    getXAsDate: variables.getX,
+    getXAsDate: getX,
   });
 
   return {

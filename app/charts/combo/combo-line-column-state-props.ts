@@ -1,7 +1,10 @@
 import React from "react";
 
 import { BaseYGetter, sortData } from "@/charts/combo/combo-state-props";
-import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  usePlottableData,
+} from "@/charts/shared/chart-helpers";
 import {
   BandXVariables,
   BaseVariables,
@@ -95,9 +98,19 @@ export const useComboLineColumnStateData = (
   variables: ComboLineColumnStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
-  const { getXAsDate } = variables;
-  // FIXME: handle properly.
-  const plottableData = observations;
+  const { getX, getXAsDate, y } = variables;
+  const plottableData = usePlottableData(observations, {
+    getX,
+    getY: (d) => {
+      for (const { getY } of [y.left, y.right]) {
+        const y = getY(d);
+
+        if (y !== null) {
+          return y;
+        }
+      }
+    },
+  });
   const sortedPlottableData = React.useMemo(() => {
     return sortData(plottableData, {
       getX: getXAsDate,
