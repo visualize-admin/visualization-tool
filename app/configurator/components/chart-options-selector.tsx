@@ -79,6 +79,7 @@ import {
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
 } from "@/graphql/query-hooks";
+import { NumericalMeasure } from "@/graphql/resolver-types";
 import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
@@ -552,6 +553,25 @@ const ChartComboYField = (props: ChartComboYFieldProps<ComboChartConfig>) => {
   }
 };
 
+const getComboOptionGroups = (
+  measures: NumericalMeasure[],
+  disable: (m: NumericalMeasure) => boolean
+) => {
+  // FIXME: translate
+  return groups(measures, (d) => d.unit ?? "No unit").map(([k, v]) => {
+    return [
+      { label: k, value: k },
+      v.map((m) => {
+        return {
+          value: m.iri,
+          label: m.label,
+          disabled: disable(m),
+        };
+      }),
+    ];
+  }) as [Option, Option[]][];
+};
+
 const ChartComboLineSingleYField = (
   props: ChartComboYFieldProps<ComboLineSingleConfig>
 ) => {
@@ -584,7 +604,7 @@ const ChartComboLineSingleYField = (
     return uniqueUnits[0];
   }, [numericalMeasures, y.componentIris]);
 
-  const getOptions = React.useCallback(
+  const getOptionGroups = React.useCallback(
     (
       iri: string | null,
       {
@@ -595,24 +615,12 @@ const ChartComboLineSingleYField = (
         enableAll?: boolean;
       } = {}
     ) => {
-      // FIXME: translate
-      const options = groups(numericalMeasures, (d) => d.unit ?? "No unit").map(
-        ([k, v]) => {
-          return [
-            { label: k, value: k },
-            v.map((m) => {
-              return {
-                value: m.iri,
-                label: m.label,
-                disabled: enableAll
-                  ? false
-                  : m.unit !== unit ||
-                    (y.componentIris.includes(m.iri) && m.iri !== iri),
-              };
-            }),
-          ];
-        }
-      ) as [Option, Option[]][];
+      const options = getComboOptionGroups(numericalMeasures, (m) => {
+        return enableAll
+          ? false
+          : m.unit !== unit ||
+              (y.componentIris.includes(m.iri) && m.iri !== iri);
+      });
 
       if (allowNone) {
         options.unshift([
@@ -637,7 +645,7 @@ const ChartComboLineSingleYField = (
 
   const { addNewMeasureOptions, showAddNewMeasureButton } =
     React.useMemo(() => {
-      const addNewMeasureOptions = getOptions(null, { allowNone: true });
+      const addNewMeasureOptions = getOptionGroups(null, { allowNone: true });
 
       return {
         addNewMeasureOptions,
@@ -645,7 +653,7 @@ const ChartComboLineSingleYField = (
           addNewMeasureOptions.flatMap(([_, v]) => v).filter((d) => !d.disabled)
             .length > 1,
       };
-    }, [getOptions]);
+    }, [getOptionGroups]);
 
   return (
     <ControlSection collapse>
@@ -665,7 +673,7 @@ const ChartComboLineSingleYField = (
           const allowNone = y.componentIris.length > 1;
           // If there is only one measure, we allow the user to select any measure.
           const enableAll = index === 0 && y.componentIris.length === 1;
-          const options = getOptions(iri, { allowNone, enableAll });
+          const options = getOptionGroups(iri, { allowNone, enableAll });
 
           return (
             <Select
@@ -766,32 +774,17 @@ const ChartComboLineDualYField = (
     };
   }, [numericalMeasures, y.leftAxisComponentIri, y.rightAxisComponentIri]);
 
-  // FIXME: handle properly in getPossibleChartTypes, then uncomment
-  // if (leftAxisMeasure.unit !== rightAxisMeasure.unit) {
-  //   throw new Error(
-  //     "ChartComboYField can only be used with dual-unit charts!"
-  //   );
-  // }
+  if (leftAxisMeasure.unit === rightAxisMeasure.unit) {
+    throw new Error("ChartComboYField can only be used with dual-unit charts!");
+  }
 
-  const getOptions = React.useCallback(
+  const getOptionGroups = React.useCallback(
     (orientation: "left" | "right") => {
-      return groups(numericalMeasures, (d) => d.unit ?? "None").map(
-        ([k, v]) => {
-          return [
-            { label: k, value: k },
-            v.map((m) => {
-              return {
-                value: m.iri,
-                label: m.label,
-                disabled:
-                  orientation === "left"
-                    ? m.unit === rightAxisMeasure.unit
-                    : m.unit === leftAxisMeasure.unit,
-              };
-            }),
-          ];
-        }
-      ) as [Option, Option[]][];
+      return getComboOptionGroups(numericalMeasures, (m) => {
+        return orientation === "left"
+          ? m.unit === rightAxisMeasure.unit
+          : m.unit === leftAxisMeasure.unit;
+      });
     },
     [leftAxisMeasure.unit, numericalMeasures, rightAxisMeasure.unit]
   );
@@ -808,7 +801,7 @@ const ChartComboLineDualYField = (
         <Select
           id={`mesure-${y.leftAxisComponentIri}`}
           options={[]}
-          optionGroups={getOptions("left")}
+          optionGroups={getOptionGroups("left")}
           sortOptions={false}
           // FIXME: translate
           label="Left axis measure"
@@ -831,7 +824,7 @@ const ChartComboLineDualYField = (
         <Select
           id={`mesure-${y.rightAxisComponentIri}`}
           options={[]}
-          optionGroups={getOptions("right")}
+          optionGroups={getOptionGroups("right")}
           sortOptions={false}
           // FIXME: translate
           label="Right axis measure"
@@ -882,32 +875,17 @@ const ChartComboLineColumnYField = (
     };
   }, [numericalMeasures, y.columnComponentIri, y.lineComponentIri]);
 
-  // FIXME: handle properly in getPossibleChartTypes, then uncomment
-  // if (leftAxisMeasure.unit !== rightAxisMeasure.unit) {
-  //   throw new Error(
-  //     "ChartComboYField can only be used with dual-unit charts!"
-  //   );
-  // }
+  if (lineMeasure.unit === columnMeasure.unit) {
+    throw new Error("ChartComboYField can only be used with dual-unit charts!");
+  }
 
-  const getOptions = React.useCallback(
+  const getOptionGroups = React.useCallback(
     (type: "line" | "column") => {
-      return groups(numericalMeasures, (d) => d.unit ?? "None").map(
-        ([k, v]) => {
-          return [
-            { label: k, value: k },
-            v.map((m) => {
-              return {
-                value: m.iri,
-                label: m.label,
-                disabled:
-                  type === "line"
-                    ? m.unit === columnMeasure.unit
-                    : m.unit === lineMeasure.unit,
-              };
-            }),
-          ];
-        }
-      ) as [Option, Option[]][];
+      return getComboOptionGroups(numericalMeasures, (m) => {
+        return type === "line"
+          ? m.unit === columnMeasure.unit
+          : m.unit === lineMeasure.unit;
+      });
     },
     [columnMeasure.unit, lineMeasure.unit, numericalMeasures]
   );
@@ -924,7 +902,7 @@ const ChartComboLineColumnYField = (
         <Select
           id={`mesure-${y.columnComponentIri}`}
           options={[]}
-          optionGroups={getOptions("column")}
+          optionGroups={getOptionGroups("column")}
           sortOptions={false}
           // FIXME: translate
           label="Column measure"
@@ -943,8 +921,8 @@ const ChartComboLineColumnYField = (
           }}
         />
 
-        {/* FIXME: translate */}
         <Box component="fieldset" mt={2} mb={4}>
+          {/* FIXME: translate */}
           <FieldSetLegend legendTitle={<Trans id="">Axis orientation</Trans>} />
           <Flex sx={{ justifyContent: "flex-start" }}>
             {[
@@ -965,7 +943,7 @@ const ChartComboLineColumnYField = (
         <Select
           id={`mesure-${y.lineComponentIri}`}
           options={[]}
-          optionGroups={getOptions("line")}
+          optionGroups={getOptionGroups("line")}
           sortOptions={false}
           // FIXME: translate
           label="Line measure"
