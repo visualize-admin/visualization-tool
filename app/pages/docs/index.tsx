@@ -92,6 +92,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("@/docs/rdf-to-visualize.mdx"),
       },
       {
+        path: "/charts/preview-via-api",
+        title: "Preview via API",
+        content: require("@/docs/chart-preview-via-api.mdx"),
+      },
+      {
         path: "/charts/annotations",
         title: "Annotations",
         content: require("@/docs/annotations.docs"),

@@ -2,12 +2,24 @@ import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-const LazyDebugPanel = dynamic(() => import("./DebugPanel"));
+import { flag } from "@/flags";
 
-export default process.env.NODE_ENV === "development"
-  ? (props: React.ComponentProps<typeof LazyDebugPanel>) => (
-      <Suspense fallback={<CircularProgress />}>
-        <LazyDebugPanel {...props} />
-      </Suspense>
-    )
-  : () => null;
+import { DebugPanelProps } from "./DebugPanel";
+
+const LazyDebugPanel = dynamic(() => import("./DebugPanel"), { ssr: false });
+
+const DebugPanel = (props: DebugPanelProps) => {
+  const shouldShow = flag("debug") || process.env.NODE_ENV === "development";
+
+  if (!shouldShow) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <LazyDebugPanel {...props} />
+    </Suspense>
+  );
+};
+
+export default DebugPanel;
