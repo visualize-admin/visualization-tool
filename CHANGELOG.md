@@ -11,6 +11,9 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Features
   - Added a new group of charts – Combo charts – that includes multi-measure line, dual-axis line and column-line charts
+
+# [3.22.8] - 2023-09-29
+
 - Fixes
   - Cube checker now correctly checks if dimensions are present
   - It's now possible to change the chart type for copied, non-hierarchical charts without having to open an options panel first
