@@ -187,6 +187,7 @@ export const ChartTypeSelector = ({
             <Divider />
             <ChartTypeSelectorMenu
               type={type}
+              // FIXME: translate
               title="Regular"
               chartType={chartType}
               chartTypes={regularChartTypes}

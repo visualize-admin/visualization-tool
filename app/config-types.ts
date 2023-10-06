@@ -361,7 +361,6 @@ export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 const PieFields = t.intersection([
   t.type({
     y: GenericField,
-    // FIXME: "segment" should be "x" for consistency
     segment: PieSegmentField,
   }),
   t.partial({ animation: AnimationField }),
