@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Fixes
   - Cascading filters are not stuck anymore in the loading mode in some cases
+- Maintenance
+  - GQL debug panel now includes queries fired through SPARQLClientStream (e.g. hierarchies) and CONSTRUCT queries
 
 # [3.22.8] - 2023-09-29
 
