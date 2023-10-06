@@ -48,6 +48,7 @@ import {
   useInteractiveFiltersRaw,
 } from "@/stores/interactive-filters";
 import { hierarchyToOptions } from "@/utils/hierarchy";
+import useEvent from "@/utils/use-event";
 
 type ChartDataFiltersProps = {
   dataSet: string;
@@ -227,11 +228,11 @@ const DataFilter = (props: DataFilterProps) => {
   const dimension = data?.dataCubeByIri?.dimensionByIri;
   const hierarchy = data?.dataCubeByIri?.dimensionByIri?.hierarchy;
 
-  const setDataFilter = (
-    e: SelectChangeEvent<unknown> | { target: { value: string } }
-  ) => {
-    updateDataFilter(dimensionIri, e.target.value as string);
-  };
+  const setDataFilter = useEvent(
+    (e: SelectChangeEvent<unknown> | { target: { value: string } }) => {
+      updateDataFilter(dimensionIri, e.target.value as string);
+    }
+  );
 
   const configFilter = dimension
     ? chartConfig.filters[dimension.iri]
@@ -263,9 +264,9 @@ const DataFilter = (props: DataFilterProps) => {
     dimension?.values,
     dimensionIri,
     fetching,
-    updateDataFilter,
-    // Also reload when the config value changes.
+    setDataFilter,
     configFilterValue,
+    updateDataFilter,
   ]);
 
   return dimension ? (
@@ -603,7 +604,7 @@ const useEnsurePossibleInteractiveFilters = (
 
       // We need to get the values dynamically, as they can get updated by
       // useSyncInteractiveFilters and this callback runs with old value.
-      const dataFilters = IFRaw.getState().dataFilters;
+      const dataFilters = { ...IFRaw.getState().dataFilters };
 
       if (!isEqual(filters, interactiveFilters) && !isEmpty(filters)) {
         for (const [k, v] of Object.entries(filters)) {
