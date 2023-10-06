@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Maintenance
+  - GQL debug panel now includes queries fired through SPARQLClientStream (e.g. hierarchies) and CONSTRUCT queries
 
 # [3.22.8] - 2023-09-29
 
