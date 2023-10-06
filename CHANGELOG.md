@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Cascading filters are not stuck anymore in the loading mode in some cases
 
 # [3.22.8] - 2023-09-29
 
