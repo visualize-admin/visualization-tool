@@ -1009,18 +1009,7 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
     x: { componentIri: FieldAdjuster<ComboLineSingleConfig, string> };
-    y: FieldAdjuster<
-      ComboLineSingleConfig,
-      | AreaFields
-      | ColumnFields
-      | LineFields
-      | MapFields
-      | PieFields
-      | ScatterPlotFields
-      | TableFields
-      | ComboLineDualFields
-      | ComboLineColumnFields
-    >;
+    y: { componentIris: FieldAdjuster<ComboLineSingleConfig, string> };
   };
 };
 
