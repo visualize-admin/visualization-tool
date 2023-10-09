@@ -66,6 +66,7 @@ export type DataCubeDimensionsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -80,6 +81,7 @@ export type DataCubeMeasuresArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 export type DataCubeOrganization = {
@@ -144,6 +146,7 @@ export type DimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -185,6 +188,7 @@ export type GeoCoordinatesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -216,6 +220,7 @@ export type GeoShapesDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -260,6 +265,7 @@ export type NominalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -293,6 +299,7 @@ export type NumericalMeasureValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -342,6 +349,7 @@ export type OrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -371,6 +379,7 @@ export type OrdinalMeasureValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -399,6 +408,7 @@ export type QueryDataCubeByIriArgs = {
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
   componentIris?: Maybe<Array<Scalars['String']>>;
+  disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -487,6 +497,7 @@ export type StandardErrorDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -518,6 +529,7 @@ export type TemporalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -547,6 +559,7 @@ export type TemporalOrdinalDimensionValuesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  disableLoad?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -636,6 +649,7 @@ export type ResolversTypes = ResolversObject<{
   DataCube: ResolverTypeWrapper<ResolvedDataCube>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeResult: ResolverTypeWrapper<Omit<DataCubeResult, 'dataCube'> & { dataCube: ResolversTypes['DataCube'] }>;
@@ -645,7 +659,6 @@ export type ResolversTypes = ResolversObject<{
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   DatasetCount: ResolverTypeWrapper<DatasetCount>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
@@ -679,6 +692,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCube: ResolvedDataCube;
   String: Scalars['String'];
   Int: Scalars['Int'];
+  Boolean: Scalars['Boolean'];
   DataCubeOrganization: DataCubeOrganization;
   DataCubeResult: Omit<DataCubeResult, 'dataCube'> & { dataCube: ResolversParentTypes['DataCube'] };
   Float: Scalars['Float'];
@@ -686,7 +700,6 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeTheme: DataCubeTheme;
   DatasetCount: DatasetCount;
   Dimension: ResolvedDimension;
-  Boolean: Scalars['Boolean'];
   DimensionValue: Scalars['DimensionValue'];
   FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];

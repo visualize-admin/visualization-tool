@@ -1,0 +1,160 @@
+<style>{`
+  table:not([class]) {
+     margin-top: 1rem;
+     font-size: 0.875rem;
+     cell-spacing: none;
+     border-spacing: 0;
+     border-collapse: collapse;
+  }
+
+  table:not([class]) tr:nth-child(2n) {
+    background: #eee;
+  }
+
+  table:not([class]) td, table:not([class]) th {
+    border-bottom: #ccc 1px solid;
+    margin-top: 0;
+    padding: 0.25rem 0.5rem;
+  }
+
+  table:not([class]) tr {
+    margin-bottom: 0;
+  }
+
+  li > code {
+    font-size: 0.875rem;
+  }
+`}</style>
+
+While usually you'll want to publish your chart, sometimes you might want to simply preview it, without going through the publishing process.
+This could be especially helpful to programatically generate charts based on many different configuration options.
+Visualize offers a way to preview charts without publishing them, by using a custom API.
+
+## iframe
+
+**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a page with an iframe containing a chart preview.
+
+This method works by pointing an iframe to the `/preview` page, and posting a message with the chart state to the iframe window on load.
+
+<CodeSpecimen
+  lang="js"
+  raw
+  rawBody={`const iframe = document.getElementById("chart");
+iframe.onload = () => {
+  const iframeWindow = iframe?.contentWindow;
+  if (iframeWindow) {
+    iframeWindow.postMessage(chartState, "*");
+  }
+};
+`}
+/>
+
+## POST request
+
+**Demo**: Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to see a page with two buttons that open a new page with a chart preview after clicking.
+
+This method works by sending a POST request to `/preview_post` page with chart state when clicking on a form button.
+The `/preview_post` page retrieves the content of a request in `getServerSideProps` and renders a preview of a chart.
+
+It's important to only use one input inside a form (as we split the string by `=`).
+
+<CodeSpecimen
+  lang="css"
+  raw
+  rawBody={`<form method="post" action="/preview_post" target="_blank">
+  <input
+    type="hidden"
+    name="chartState"
+    value={JSON.stringify(photovoltaikanlagenState)}
+  />
+  <input type="submit" value="☀️ Preview a Photovoltaikanlagen chart" />
+</form>`}
+/>
+
+### Chart config schema
+
+As the application constantly evolves, the chart config schema might change.
+You can find the latest version of the schema in the [config-types.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/config-types.ts) file.
+
+An example chart config is shown below.
+
+<CodeSpecimen
+  lang="json"
+  raw
+  rawBody={`{
+  state: "CONFIGURING_CHART",
+  dataSet:
+    "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/7",
+  dataSource: {
+    type: "sparql",
+    url: "https://lindas.admin.ch/query",
+  },
+  meta: {
+    title: {
+      de: "",
+      fr: "",
+      it: "",
+      en: "",
+    },
+    description: {
+      de: "",
+      fr: "",
+      it: "",
+      en: "",
+    },
+  },
+  chartConfig: {
+    version: "1.4.2",
+    chartType: "column",
+    filters: {
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":
+        {
+          type: "single",
+          value: "https://ld.admin.ch/canton/1",
+        },
+    },
+    interactiveFiltersConfig: {
+      legend: {
+        active: false,
+        componentIri: "",
+      },
+      timeRange: {
+        active: false,
+        componentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        presets: {
+          type: "range",
+          from: "",
+          to: "",
+        },
+      },
+      dataFilters: {
+        active: false,
+        componentIris: [],
+      },
+      calculation: {
+        active: false,
+        type: "identity",
+      },
+    },
+    fields: {
+      x: {
+        componentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        sorting: {
+          sortingType: "byAuto",
+          sortingOrder: "asc",
+        },
+      },
+      y: {
+        componentIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
+      },
+    },
+  },
+}`}
+/>
+
+Note that it's encouraged to visit the Visualize application with &flag\_\_debug==true added to the URL to enable
+the debug mode, which will show the chart config directly below the chart that is being edited. It also enables
+the "Dump to console" button, which will log the chart config to the browser console, for easier re-use.

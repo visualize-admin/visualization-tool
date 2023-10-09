@@ -9,8 +9,26 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.22.9] - 2023-10-06
+
+- Fixes
+  - Cascading filters are not stuck anymore in the loading mode in some cases
+- Maintenance
+  - GQL debug panel now includes queries fired through SPARQLClientStream (e.g. hierarchies) and CONSTRUCT queries
+  - Configurator and interactive filters debug panel is now displayed if `flag__debug` is set to true
+- Docs
+  - Added chart preview via API section to the documentation
+
+# [3.22.8] - 2023-09-29
+
 - Fixes
   - Cube checker now correctly checks if dimensions are present
+  - It's now possible to change the chart type for copied, non-hierarchical charts without having to open an options panel first
+  - Interactive filters are now aligned correctly (y axis)
+- Performance
+  - Dataset preview should now load quicker as we no longer fetch dimension values along with it
 
 # [3.22.6] - 2023-09-19
 

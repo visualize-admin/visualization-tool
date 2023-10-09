@@ -112,8 +112,28 @@ const setupSparqlClients = (
     saveTimingToContext
   );
 
+  sparqlClient.query.construct = timed(
+    sparqlClient.query.construct,
+    saveTimingToContext
+  );
+
+  sparqlClientStream.query.select = timed(
+    sparqlClientStream.query.select,
+    saveTimingToContext
+  );
+
+  sparqlClientStream.query.construct = timed(
+    sparqlClientStream.query.construct,
+    saveTimingToContext
+  );
+
   geoSparqlClient.query.select = timed(
     geoSparqlClient.query.select,
+    saveTimingToContext
+  );
+
+  geoSparqlClient.query.construct = timed(
+    geoSparqlClient.query.construct,
     saveTimingToContext
   );
 

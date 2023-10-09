@@ -19,9 +19,9 @@ import { ResolvedDimension } from "@/graphql/shared-types";
 import * as ns from "./namespace";
 import { getCubeDimensionValuesWithMetadata } from "./queries";
 import {
-  pruneTree,
-  mapTree,
   getOptionsFromTree,
+  mapTree,
+  pruneTree,
   regroupTrees,
 } from "./tree-utils";
 
@@ -118,6 +118,7 @@ export const queryHierarchy = async (
   if (hierarchies.length === 0) {
     return null;
   }
+
   const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
     cube: rdimension.cube,
     dimension: rdimension.dimension,

@@ -32,11 +32,11 @@ test("Segment sorting", async ({
   for (const chartType of ["Columns", "Lines", "Areas", "Pie"] as const) {
     await selectors.edition.drawerLoaded();
     await actions.editor.changeChartType(chartType);
-    await actions.editor.selectActiveField("Color");
+    await actions.editor.selectActiveField("Segmentation");
 
     // Switch color on the first chart
     if (chartType === "Columns") {
-      await within(selectors.edition.controlSection("Color"))
+      await within(selectors.edition.controlSection("Segmentation"))
         .getByText("None")
         .click();
 
@@ -92,11 +92,11 @@ test("Segment sorting with hierarchy", async ({
   );
 
   await selectors.edition.drawerLoaded();
-  await actions.editor.selectActiveField("Color");
+  await actions.editor.selectActiveField("Segmentation");
 
   await sleep(3_000);
 
-  const colorSection = selectors.edition.controlSection("Color");
+  const colorSection = selectors.edition.controlSection("Segmentation");
   await within(colorSection).getByText("None").click();
 
   await actions.mui.selectOption("Region");

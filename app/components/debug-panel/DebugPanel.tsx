@@ -166,13 +166,14 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
   );
 };
 
-const DebugPanel = ({
-  configurator = false,
-  interactiveFilters = false,
-}: {
+export type DebugPanelProps = {
   configurator?: Boolean;
   interactiveFilters?: Boolean;
-}) => {
+};
+
+const DebugPanel = (props: DebugPanelProps) => {
+  const { configurator = false, interactiveFilters = false } = props;
+
   return (
     <Box
       sx={{
@@ -199,9 +200,4 @@ const DebugPanel = ({
   );
 };
 
-const DebugPanelNull = () => null;
-
-const ExportedDebugPanel =
-  process.env.NODE_ENV === "development" ? DebugPanel : DebugPanelNull;
-
-export default ExportedDebugPanel;
+export default DebugPanel;
