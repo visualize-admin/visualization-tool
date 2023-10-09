@@ -18,13 +18,14 @@ const useProviders = () => {
       const providers = await getProviders();
       setState({ status: "loaded", data: providers });
     };
+
     run();
   }, []);
 
   return state;
 };
 
-function LoginMenu() {
+export const LoginMenu = () => {
   const { data: session, status: sessionStatus } = useSession();
   const { data: providers, status: providersStatus } = useProviders();
 
@@ -56,6 +57,4 @@ function LoginMenu() {
       )}
     </Box>
   );
-}
-
-export default LoginMenu;
+};
