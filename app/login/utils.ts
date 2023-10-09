@@ -6,7 +6,6 @@ import { HEADER_HEIGHT } from "@/components/header";
 export const useRootStyles = makeStyles<Theme>((theme) => ({
   root: {
     marginTop: `${HEADER_HEIGHT}px`,
-    minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
     backgroundColor: theme.palette.muted.main,
   },
   section: {
