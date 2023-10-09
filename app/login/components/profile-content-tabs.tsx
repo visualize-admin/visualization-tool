@@ -23,6 +23,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
   tabPanel: {
     padding: 0,
   },
+  tabPanelContent: {
+    padding: theme.spacing(6),
+  },
   tab: {
     height: 48,
     minHeight: 0,
@@ -60,17 +63,23 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         </Box>
       </Box>
       <TabPanel className={classes.tabPanel} value="Home">
-        <Box sx={{ p: 6 }}>
+        <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable userConfigs={userConfigs} />
         </Box>
       </TabPanel>
       <TabPanel className={classes.tabPanel} value="My visualizations">
-        <Box sx={{ bgcolor: "background.paper", p: 6 }}>
+        <Box
+          className={classes.tabPanelContent}
+          sx={{ bgcolor: "background.paper" }}
+        >
           <ProfileVisualizationsTable userConfigs={userConfigs} />
         </Box>
       </TabPanel>
       <TabPanel className={classes.tabPanel} value="My favorite datasets">
-        <Box sx={{ bgcolor: "background.paper", p: 6 }}>
+        <Box
+          className={classes.tabPanelContent}
+          sx={{ bgcolor: "background.paper" }}
+        >
           <Typography variant="h2">My favorite datasets</Typography>
         </Box>
       </TabPanel>
