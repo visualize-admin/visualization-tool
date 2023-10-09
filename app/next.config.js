@@ -108,5 +108,5 @@ module.exports = withPreconstruct(
 module.exports = withSentryConfig(
   module.exports,
   { silent: true },
-  { hideSourcemaps: true, autoInstrumentServerFunctions: false }
+  { hideSourcemaps: true }
 );
