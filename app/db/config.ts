@@ -96,9 +96,7 @@ const parseDbConfig = (
   user_id: number | null;
 } => {
   const data = d.data as ConfiguratorStatePublished;
-  const migratedData = migrateConfiguratorState(data, {
-    migrationProps: { key: d.key },
-  });
+  const migratedData = migrateConfiguratorState(data);
 
   return {
     ...d,

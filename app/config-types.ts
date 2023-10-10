@@ -1069,7 +1069,6 @@ export type DataSource = t.TypeOf<typeof DataSource>;
 
 const Config = t.type(
   {
-    key: t.string,
     version: t.string,
     dataSet: t.string,
     dataSource: DataSource,
@@ -1090,7 +1089,6 @@ export const decodeConfig = (config: unknown) => {
 };
 
 const ConfiguratorStateInitial = t.type({
-  key: t.string,
   version: t.string,
   state: t.literal("INITIAL"),
   dataSet: t.undefined,
@@ -1101,7 +1099,6 @@ export type ConfiguratorStateInitial = t.TypeOf<
 >;
 
 const ConfiguratorStateSelectingDataSet = t.type({
-  key: t.string,
   version: t.string,
   state: t.literal("SELECTING_DATASET"),
   dataSet: t.union([t.string, t.undefined]),

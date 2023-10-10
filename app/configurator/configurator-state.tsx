@@ -340,7 +340,6 @@ const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
 };
 
 const INITIAL_STATE: ConfiguratorState = {
-  key: createChartId(),
   version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
   dataSet: undefined,
@@ -636,7 +635,6 @@ const transitionStepNext = (
         );
 
         return {
-          key: draft.key,
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
@@ -1330,20 +1328,12 @@ export const initChartStateFromChart = async (
   from: ChartId
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
-  const newId = createChartId();
 
   if (config?.data) {
-    return {
-      ...migrateConfiguratorState(
-        {
-          ...config.data,
-          state: "CONFIGURING_CHART",
-        },
-        // We create a new key for the chart, in order to create a new chart.
-        { migrationProps: { key: newId } }
-      ),
-      key: newId,
-    };
+    return migrateConfiguratorState({
+      ...config.data,
+      state: "CONFIGURING_CHART",
+    });
   }
 };
 
@@ -1353,14 +1343,10 @@ export const initChartStateFromChartEdit = async (
   const config = await fetchChartConfig(from);
 
   if (config?.data) {
-    return migrateConfiguratorState(
-      {
-        ...config.data,
-        state: "CONFIGURING_CHART",
-      },
-      // We keep the same key as the original chart, in order to update it.
-      { migrationProps: { key: config.key } }
-    );
+    return migrateConfiguratorState({
+      ...config.data,
+      state: "CONFIGURING_CHART",
+    });
   }
 };
 
@@ -1415,9 +1401,7 @@ export const initChartStateFromLocalStorage = async (
     let parsedState;
     try {
       const rawParsedState = JSON.parse(storedState);
-      const migratedState = migrateConfiguratorState(rawParsedState, {
-        migrationProps: { key: chartId },
-      });
+      const migratedState = migrateConfiguratorState(rawParsedState);
       parsedState = decodeConfiguratorState(migratedState);
     } catch (e) {
       console.error("Error while parsing stored state", e);
@@ -1516,12 +1500,20 @@ const ConfiguratorStateProviderInternal = ({
       switch (state.state) {
         case "CONFIGURING_CHART":
           if (chartId === "new") {
-            const newChartId = state.key ?? createChartId();
-            window.localStorage.setItem(
-              getLocalStorageKey(newChartId),
-              JSON.stringify(state)
-            );
-            replace(`/create/${newChartId}`);
+            if (query.edit && typeof query.edit === "string") {
+              replace(`/create/${query.edit}`);
+              window.localStorage.setItem(
+                getLocalStorageKey(query.edit),
+                JSON.stringify(state)
+              );
+            } else {
+              const newChartId = createChartId();
+              window.localStorage.setItem(
+                getLocalStorageKey(newChartId),
+                JSON.stringify(state)
+              );
+              replace(`/create/${newChartId}`);
+            }
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
@@ -1535,9 +1527,10 @@ const ConfiguratorStateProviderInternal = ({
           (async () => {
             try {
               let dbConfig: ParsedConfig | undefined;
+              const key = asPath.split("?")[0].split("/").pop();
 
-              if (user) {
-                const config = await fetchChartConfig(state.key);
+              if (key && user) {
+                const config = await fetchChartConfig(key);
 
                 if (config && config.user_id === user.id) {
                   dbConfig = config;
@@ -1617,6 +1610,7 @@ const ConfiguratorStateProviderInternal = ({
     query.from,
     replace,
     user,
+    query.edit,
   ]);
 
   return (

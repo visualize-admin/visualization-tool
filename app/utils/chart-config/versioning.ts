@@ -691,7 +691,7 @@ export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
   defaultToVersion: CHART_CONFIG_VERSION,
 });
 
-export const CONFIGURATOR_STATE_VERSION = "2.1.0";
+export const CONFIGURATOR_STATE_VERSION = "2.0.0";
 
 const configuratorStateMigrations: Migration[] = [
   {
@@ -725,23 +725,6 @@ const configuratorStateMigrations: Migration[] = [
           toVersion: "1.4.2",
         });
         draft.chartConfig = migratedChartConfig;
-      });
-    },
-  },
-  {
-    description: "ALL + key",
-    from: "2.0.0",
-    to: "2.1.0",
-    up: (config: any, props: { key: string }) => {
-      const newConfig = { ...config, key: props.key, version: "2.1.0" };
-
-      return newConfig;
-    },
-    down: (config: any) => {
-      const newConfig = { ...config, version: "2.0.0" };
-
-      return produce(newConfig, (draft: any) => {
-        delete draft.key;
       });
     },
   },

@@ -35,9 +35,7 @@ const Page: NextPage = () => {
       ).default;
       setConfig({
         ...importedConfig,
-        data: migrateConfiguratorState(importedConfig.data, {
-          migrationProps: { key: importedConfig.key },
-        }),
+        data: migrateConfiguratorState(importedConfig.data),
       });
     };
 

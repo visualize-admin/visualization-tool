@@ -72,6 +72,8 @@ const Row = (props: RowProps) => {
     },
   });
 
+  console.log(config);
+
   return (
     <TableRow>
       <TableCell>
