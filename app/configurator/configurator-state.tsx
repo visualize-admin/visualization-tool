@@ -96,6 +96,7 @@ import {
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
+import { getRouterChartId } from "@/utils/router/helpers";
 import { unreachableError } from "@/utils/unreachable";
 
 export type ConfiguratorStateAction =
@@ -1527,7 +1528,7 @@ const ConfiguratorStateProviderInternal = ({
           (async () => {
             try {
               let dbConfig: ParsedConfig | undefined;
-              const key = asPath.split("?")[0].split("/").pop();
+              const key = getRouterChartId(asPath);
 
               if (key && user) {
                 const config = await fetchChartConfig(key);

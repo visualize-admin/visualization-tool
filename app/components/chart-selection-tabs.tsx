@@ -1,6 +1,8 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Popover, Tab, Tabs, Theme } from "@mui/material";
+import { Trans, t } from "@lingui/macro";
+import { Box, Button, Popover, Tab, Tabs, Theme, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -23,7 +25,9 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
+import { fetchChartConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
+import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
 
 type TabsState = {
@@ -277,16 +281,58 @@ const PublishChartButton = () => {
     }
   });
 
-  return (
+  const [editingPublishedChart, setEditingPublishedChart] =
+    React.useState(false);
+  const [loaded, setLoaded] = React.useState(false);
+  const { asPath } = useRouter();
+  const session = useSession();
+  const chartId = getRouterChartId(asPath);
+
+  React.useEffect(() => {
+    const run = async () => {
+      if (session.data?.user && chartId) {
+        const config = await fetchChartConfig(chartId);
+
+        if (config?.user_id === session.data.user.id) {
+          setEditingPublishedChart(true);
+        }
+      }
+
+      if (session.status !== "loading") {
+        setLoaded(true);
+      }
+    };
+
+    run();
+  }, [chartId, session]);
+
+  return loaded ? (
     <Button
       color="primary"
       variant="contained"
       onClick={metadata && components ? goNext : undefined}
       sx={{ minWidth: "fit-content" }}
     >
-      <Trans id="button.publish">Publish this visualization</Trans>
+      {editingPublishedChart ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Tooltip
+            title={t({
+              id: "button.update.warning",
+              message:
+                "Keep in mind that updating this visualization will affect all the places where it might be already embedded!",
+            })}
+          >
+            <div>
+              <Icon name="hintWarning" />
+            </div>
+          </Tooltip>
+          <Trans id="button.update">Update this visualization</Trans>
+        </Box>
+      ) : (
+        <Trans id="button.publish">Publish this visualization</Trans>
+      )}
     </Button>
-  );
+  ) : null;
 };
 
 type TabsInnerProps = {

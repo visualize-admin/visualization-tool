@@ -31,3 +31,7 @@ export const setURLParam = (param: string, value: string) => {
     newUrl
   );
 };
+
+export const getRouterChartId = (asPath: string) => {
+  return asPath.split("?")[0].split("/").pop();
+};
