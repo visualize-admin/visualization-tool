@@ -42,6 +42,7 @@ import {
   migrateChartConfig,
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
+import { createChartId } from "@/utils/create-chart-id";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -113,7 +114,9 @@ describe("initChartStateFromChart", () => {
       activeChartKey: migratedActiveChartKey,
       chartConfigs: migratedChartsConfigs,
       ...migratedRest
-    } = migrateConfiguratorState(fakeVizFixture);
+    } = migrateConfiguratorState(fakeVizFixture, {
+      migrationProps: { key: createChartId() },
+    });
     const { key: migratedChartConfigKey, ...migratedChartConfig } =
       migratedChartsConfigs[0];
 

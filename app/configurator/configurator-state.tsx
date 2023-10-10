@@ -334,13 +334,15 @@ const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
 };
 
 const INITIAL_STATE: ConfiguratorState = {
+  key: createChartId(),
   version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
   dataSet: undefined,
   dataSource: DEFAULT_DATA_SOURCE,
 };
 
-const emptyState: ConfiguratorStateSelectingDataSet = {
+const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
+  ...INITIAL_STATE,
   version: CONFIGURATOR_STATE_VERSION,
   state: "SELECTING_DATASET",
   dataSet: undefined,
@@ -628,6 +630,7 @@ const transitionStepNext = (
         );
 
         return {
+          key: draft.key,
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
@@ -917,7 +920,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL"
-        ? getStateWithCurrentDataSource(emptyState)
+        ? getStateWithCurrentDataSource(EMPTY_STATE)
         : action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
@@ -1323,10 +1326,13 @@ export const initChartStateFromChart = async (
   const config = await fetchChartConfig(from);
 
   if (config?.data) {
-    return migrateConfiguratorState({
-      ...config.data,
-      state: "CONFIGURING_CHART",
-    });
+    return migrateConfiguratorState(
+      {
+        ...config.data,
+        state: "CONFIGURING_CHART",
+      },
+      { migrationProps: { key: config.key } }
+    );
   }
 };
 
@@ -1361,7 +1367,7 @@ export const initChartStateFromCube = async (
 
   if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
     return transitionStepNext(
-      getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
+      getStateWithCurrentDataSource({ ...EMPTY_STATE, dataSet: datasetIri }),
       { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
     );
   }
@@ -1381,7 +1387,9 @@ export const initChartStateFromLocalStorage = async (
     let parsedState;
     try {
       const rawParsedState = JSON.parse(storedState);
-      const migratedState = migrateConfiguratorState(rawParsedState);
+      const migratedState = migrateConfiguratorState(rawParsedState, {
+        migrationProps: { key: chartId },
+      });
       parsedState = decodeConfiguratorState(migratedState);
     } catch (e) {
       console.error("Error while parsing stored state", e);

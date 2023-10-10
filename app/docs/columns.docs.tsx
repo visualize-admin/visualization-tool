@@ -15,6 +15,7 @@ import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { createChartId } from "@/utils/create-chart-id";
 
 export const Docs = () => markdown`
 
@@ -25,7 +26,8 @@ ${(
     <ConfiguratorStateProvider
       chartId="published"
       initialState={{
-        version: "2.0.0",
+        key: createChartId(),
+        version: "2.1.0",
         state: "PUBLISHED",
         meta: {
           title: { en: "", de: "", fr: "", it: "" },

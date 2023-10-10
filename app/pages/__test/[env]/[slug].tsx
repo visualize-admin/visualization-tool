@@ -14,6 +14,7 @@ import { EmbedOptionsProvider } from "@/utils/embed";
 
 // FIXME: keep this in sync with configurator types.
 type DbConfig = {
+  key: string;
   version: string;
   dataSet: string;
   dataSource: DataSource;
@@ -34,7 +35,9 @@ const Page: NextPage = () => {
       ).default;
       setConfig({
         ...importedConfig,
-        data: migrateConfiguratorState(importedConfig.data),
+        data: migrateConfiguratorState(importedConfig.data, {
+          migrationProps: { key: importedConfig.key },
+        }),
       });
     };
 
