@@ -30,7 +30,7 @@ import {
 } from "@/components/form";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { getChartConfig } from "@/config-types";
+import { ChartConfig, getChartConfig } from "@/config-types";
 import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -85,6 +85,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 }));
 
 type ControlTabFieldProps = {
+  chartConfig: ChartConfig;
   component?: DimensionMetadataFragment;
   value: string;
   labelId: string | null;
@@ -93,11 +94,13 @@ type ControlTabFieldProps = {
 };
 
 export const ControlTabField = (props: ControlTabFieldProps) => {
-  const { component, value, labelId, disabled, warnMessage } = props;
+  const { chartConfig, component, value, labelId, disabled, warnMessage } =
+    props;
   const field = useActiveFieldField({ value });
 
   return (
     <ControlTab
+      chartConfig={chartConfig}
       component={component}
       value={`${field.value}`}
       labelId={labelId}

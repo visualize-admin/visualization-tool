@@ -31,7 +31,7 @@ import { MaybeTooltip } from "@/utils/maybe-tooltip";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-type LegendSymbol = "square" | "line" | "circle";
+export type LegendSymbol = "square" | "line" | "circle";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
@@ -207,7 +207,7 @@ type LegendColorProps = {
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
   const { chartConfig, symbol, interactive } = props;
-  const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
+  const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ chartConfig, values });
 
@@ -215,7 +215,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
     <LegendColorContent
       groups={groups}
       getColor={(v) => colors(v)}
-      getLabel={getSegmentLabel}
+      getLabel={getColorLabel}
       symbol={symbol}
       interactive={interactive}
       numberOfOptions={values.length}

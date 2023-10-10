@@ -63,6 +63,7 @@ export type GroupedColumnsState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
@@ -89,6 +90,7 @@ const useColumnsGroupedState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const {
     chartData,
@@ -178,7 +180,7 @@ const useColumnsGroupedState = (
     colors,
     yScale,
     paddingYScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     xScale,
     xScaleIn,
     xScaleInteraction,
@@ -232,12 +234,10 @@ const useColumnsGroupedState = (
       .paddingOuter(0);
     const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
-    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
+    const xScaleTimeRangeDomain = extent(timeRangeData, (d) =>
       getXAsDate(d)
     ) as [Date, Date];
-    const interactiveXTimeRangeScale = scaleTime().domain(
-      interactiveXTimeRangeDomain
-    );
+    const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     // y
     const minValue = Math.min(
@@ -274,7 +274,7 @@ const useColumnsGroupedState = (
       colors,
       yScale,
       paddingYScale,
-      interactiveXTimeRangeScale,
+      xScaleTimeRange,
       xScale,
       xScaleIn,
       xScaleInteraction,
@@ -352,7 +352,7 @@ const useColumnsGroupedState = (
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -383,7 +383,7 @@ const useColumnsGroupedState = (
     const placement = getCenteredTooltipPlacement({
       chartWidth,
       xAnchor: xAnchorRaw,
-      segment: !!fields.segment,
+      topAnchor: !fields.segment,
     });
 
     const getError = (d: Observation) => {
@@ -424,10 +424,11 @@ const useColumnsGroupedState = (
     xScale,
     xScaleInteraction,
     xScaleIn,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
     ...variables,

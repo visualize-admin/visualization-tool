@@ -59,14 +59,12 @@ export const TooltipMultiple = ({
           {xValue}
         </Typography>
       )}
-      {segmentValues.map((segment, i) => (
+      {segmentValues.map((d, i) => (
         <LegendItem
           key={i}
-          item={`${segment.label}: ${segment.value}${
-            segment.error ? ` ± ${segment.error}` : ""
-          }`}
-          color={segment.color}
-          symbol="square"
+          item={`${d.label}: ${d.value}${d.error ? ` ± ${d.error}` : ""}`}
+          color={d.color}
+          symbol={d.symbol ?? "square"}
           usage="tooltip"
         />
       ))}

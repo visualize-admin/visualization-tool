@@ -14,7 +14,12 @@ import { useClient } from "urql";
 
 import { getFieldComponentIri, getInitialConfig } from "@/charts";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
-import { ChartConfig, ChartType, getChartConfig } from "@/config-types";
+import {
+  ChartConfig,
+  ChartType,
+  getChartConfig,
+  isComboChartConfig,
+} from "@/config-types";
 import {
   getChartOptionField,
   getFilterValue,
@@ -366,6 +371,13 @@ export const useChartOptionBooleanField = ({
     checked,
     onChange,
   };
+};
+
+export const overrideChecked = (
+  chartConfig: ChartConfig,
+  field: string
+): boolean => {
+  return isComboChartConfig(chartConfig) && field === "y";
 };
 
 export const useActiveFieldField = ({

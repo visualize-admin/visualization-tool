@@ -1,12 +1,28 @@
 import { Trans } from "@lingui/macro";
-import { Box, BoxProps, ButtonBase, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  BoxProps,
+  ButtonBase,
+  Divider,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { SyntheticEvent } from "react";
+import React, { SyntheticEvent } from "react";
 
-import { chartTypes, getPossibleChartType } from "@/charts";
+import {
+  comboChartTypes,
+  getPossibleChartTypes,
+  regularChartTypes,
+} from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
+import {
+  ChartType,
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublishing,
+} from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
@@ -14,12 +30,6 @@ import { FieldProps, useChartType } from "@/configurator/config-form";
 import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-
-import {
-  ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
-} from "../../config-types";
 
 const useSelectionButtonStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -125,11 +135,22 @@ export const ChartTypeSelector = ({
     data?.dataCubeByIri?.measures ?? []
   );
 
+  const onClick = React.useCallback(
+    (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
+      const newChartType = e.currentTarget.value as ChartType;
+
+      if (newChartType !== chartType) {
+        onChangeChartType(newChartType);
+      }
+    },
+    [chartType, onChangeChartType]
+  );
+
   if (!data?.dataCubeByIri) {
     return <ControlSectionSkeleton />;
   }
 
-  const possibleChartTypes = getPossibleChartType({
+  const possibleChartTypes = getPossibleChartTypes({
     dimensions: data.dataCubeByIri.dimensions,
     measures: data.dataCubeByIri.measures,
   });
@@ -162,32 +183,72 @@ export const ChartTypeSelector = ({
             </Trans>
           </Hint>
         ) : (
-          <Flex sx={{ flexDirection: "column", gap: 5 }}>
-            <Box
-              data-testid="chart-type-selector"
-              display="grid"
-              sx={{
-                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-                gridGap: "0.75rem",
-                mx: 2,
-              }}
-            >
-              {chartTypes.map((d) => (
-                <ChartTypeSelectionButton
-                  key={d}
-                  label={d}
-                  value={d}
-                  checked={type === "edit" ? chartType === d : false}
-                  disabled={!possibleChartTypes.includes(d)}
-                  onClick={(e) =>
-                    onChangeChartType(e.currentTarget.value as ChartType)
-                  }
-                />
-              ))}
-            </Box>
+          <Flex sx={{ flexDirection: "column", gap: 3 }}>
+            <Divider />
+            <ChartTypeSelectorMenu
+              type={type}
+              // FIXME: translate
+              title="Regular"
+              chartType={chartType}
+              chartTypes={regularChartTypes}
+              possibleChartTypes={possibleChartTypes}
+              onClick={onClick}
+            />
+            <Divider />
+            <ChartTypeSelectorMenu
+              type={type}
+              // FIXME: translate
+              title="Combo"
+              chartType={chartType}
+              chartTypes={comboChartTypes}
+              possibleChartTypes={possibleChartTypes}
+              onClick={onClick}
+            />
           </Flex>
         )}
       </div>
     </Box>
+  );
+};
+
+type ChartTypeSelectorMenuProps = {
+  type: "add" | "edit";
+  title: string;
+  chartType: ChartType;
+  chartTypes: ChartType[];
+  possibleChartTypes: ChartType[];
+  onClick: (e: React.SyntheticEvent<HTMLButtonElement, Event>) => void;
+};
+
+const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
+  const { type, title, chartType, chartTypes, possibleChartTypes, onClick } =
+    props;
+
+  return (
+    <Flex sx={{ flexDirection: "column", gap: 3 }}>
+      <Typography variant="body2" sx={{ mx: "auto", fontWeight: "bold" }}>
+        {title}
+      </Typography>
+      <Box
+        data-testid="chart-type-selector-combo"
+        sx={{
+          display: "grid",
+          gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+          gridGap: "0.75rem",
+          mx: 2,
+        }}
+      >
+        {chartTypes.map((d) => (
+          <ChartTypeSelectionButton
+            key={d}
+            label={d}
+            value={d}
+            checked={type === "edit" ? chartType === d : false}
+            disabled={!possibleChartTypes.includes(d)}
+            onClick={onClick}
+          />
+        ))}
+      </Box>
+    </Flex>
   );
 };

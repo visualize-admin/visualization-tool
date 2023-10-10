@@ -152,6 +152,18 @@ const fieldLabels = {
     id: "controls.chart.type.map",
     message: "Map",
   }),
+  "controls.chart.type.comboLineSingle": defineMessage({
+    id: "controls.chart.type.comboLineSingle",
+    message: "Multi-line",
+  }),
+  "controls.chart.type.comboLineDual": defineMessage({
+    id: "controls.chart.type.comboLineDual",
+    message: "Dual-axis line",
+  }),
+  "controls.chart.type.comboLineColumn": defineMessage({
+    id: "controls.chart.type.comboLineColumn",
+    message: "Column-line",
+  }),
   "controls.language.english": defineMessage({
     id: "controls.language.english",
     message: "English",
@@ -178,6 +190,9 @@ export function getFieldLabel(field: string): string {
     case "area.x":
     case "scatterplot.x":
     case "pie.x":
+    case "comboLineSingle.x":
+    case "comboLineDual.x":
+    case "comboLineColumn.x":
     case "x":
       return i18n._(fieldLabels["controls.axis.horizontal"]);
     case "bar.x":
@@ -188,6 +203,9 @@ export function getFieldLabel(field: string): string {
     case "line.y":
     case "area.y":
     case "bar.y":
+    case "comboLineSingle.y":
+    case "comboLineDual.y":
+    case "comboLineColumn.y":
     case "y":
       return i18n._(fieldLabels["controls.axis.vertical"]);
     case "bar.animation":
@@ -329,6 +347,12 @@ export function getFieldLabel(field: string): string {
       return i18n._(fieldLabels["controls.chart.type.table"]);
     case "map":
       return i18n._(fieldLabels["controls.chart.type.map"]);
+    case "comboLineSingle":
+      return i18n._(fieldLabels["controls.chart.type.comboLineSingle"]);
+    case "comboLineDual":
+      return i18n._(fieldLabels["controls.chart.type.comboLineDual"]);
+    case "comboLineColumn":
+      return i18n._(fieldLabels["controls.chart.type.comboLineColumn"]);
 
     // Languages
     case "en":

@@ -1,4 +1,5 @@
 import { ColumnsState } from "@/charts/column/columns-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
@@ -6,8 +7,9 @@ import { Observation } from "@/domain/data";
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
 
-  const { chartData, bounds, getX, xScaleInteraction } =
-    useChartState() as ColumnsState;
+  const { chartData, bounds, getX, xScaleInteraction } = useChartState() as
+    | ColumnsState
+    | ComboLineColumnState;
   const { margins, chartHeight } = bounds;
 
   const showTooltip = (d: Observation) => {

@@ -7,6 +7,9 @@ import { AreasState } from "@/charts/area/areas-state";
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
@@ -57,6 +60,9 @@ export type ChartState =
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
+  | ComboLineSingleState
+  | ComboLineColumnState
+  | ComboLineDualState
   | LinesState
   | MapState
   | PieState
@@ -526,5 +532,5 @@ export const useChartData = (
 
 // TODO: base this on UI encodings?
 export type InteractiveXTimeRangeState = {
-  interactiveXTimeRangeScale: ScaleTime<number, number>;
+  xScaleTimeRange: ScaleTime<number, number>;
 };

@@ -43,6 +43,7 @@ export type PieState = CommonChartState &
     chartType: "pie";
     getPieData: Pie<$IntentionalAny, Observation>;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
   };
 
@@ -59,6 +60,7 @@ const usePieState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
   const segmentDimension = _segmentDimension as DimensionMetadataFragment;
@@ -258,6 +260,7 @@ const usePieState = (
     allData,
     getPieData,
     colors,
+    getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     ...variables,
   };

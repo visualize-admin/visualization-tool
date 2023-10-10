@@ -10,7 +10,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "2.0.0";
+export const CHART_CONFIG_VERSION = "2.1.0";
 
 const chartConfigMigrations: Migration[] = [
   {
@@ -648,6 +648,40 @@ const chartConfigMigrations: Migration[] = [
 
       return produce(newConfig, (draft: any) => {
         delete draft.key;
+      });
+    },
+  },
+  {
+    description: `+ combo charts`,
+    from: "2.0.0",
+    to: "2.1.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "2.1.0" };
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
+            draft.chartType
+          )
+        ) {
+          draft.chartType = "line";
+          draft.fields = {
+            x: draft.fields.x,
+            y: {
+              componentIri:
+                draft.chartType === "comboLineSingle"
+                  ? draft.fields.y.componentIris[0]
+                  : draft.chartType === "comboLineDual"
+                  ? draft.fields.y.leftAxisComponentIri
+                  : draft.fields.y.lineComponentIri,
+            },
+          };
+        }
       });
     },
   },

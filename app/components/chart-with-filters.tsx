@@ -21,6 +21,24 @@ const ChartColumnsVisualization = dynamic(
     () => null as never
   )
 );
+const ChartComboLineSingleVisualization = dynamic(
+  import("@/charts/combo/chart-combo-line-single").then(
+    (mod) => mod.ChartComboLineSingleVisualization,
+    () => null as never
+  )
+);
+const ChartComboLineDualVisualization = dynamic(
+  import("@/charts/combo/chart-combo-line-dual").then(
+    (mod) => mod.ChartComboLineDualVisualization,
+    () => null as never
+  )
+);
+const ChartComboLineColumnVisualization = dynamic(
+  import("@/charts/combo/chart-combo-line-column").then(
+    (mod) => mod.ChartComboLineColumnVisualization,
+    () => null as never
+  )
+);
 const ChartLinesVisualization = dynamic(
   import("@/charts/line/chart-lines").then(
     (mod) => mod.ChartLinesVisualization,
@@ -101,6 +119,28 @@ const GenericChart = (props: GenericChartProps) => {
       return (
         <ChartMapVisualization {...commonProps} chartConfig={chartConfig} />
       );
+    case "comboLineSingle":
+      return (
+        <ChartComboLineSingleVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
+      );
+    case "comboLineDual":
+      return (
+        <ChartComboLineDualVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
+      );
+    case "comboLineColumn":
+      return (
+        <ChartComboLineColumnVisualization
+          {...commonProps}
+          chartConfig={chartConfig}
+        />
+      );
+
     default:
       const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;

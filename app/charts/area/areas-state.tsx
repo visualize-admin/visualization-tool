@@ -68,6 +68,7 @@ export type AreasState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
@@ -89,6 +90,7 @@ const useAreasState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.iri);
   const {
@@ -230,15 +232,14 @@ const useAreasState = (
   }, [chartWideData, segmentSortingOrder, segmentSortingType, segments]);
 
   /** Scales */
-  const { colors, xScale, interactiveXTimeRangeScale } = useMemo(() => {
+  const { colors, xScale, xScaleTimeRange } = useMemo(() => {
     const xDomain = extent(scalesData, (d) => getX(d)) as [Date, Date];
     const xScale = scaleTime().domain(xDomain);
-    const interactiveXTimeRangeDomain = extent(timeRangeData, (d) =>
-      getX(d)
-    ) as [Date, Date];
-    const interactiveXTimeRangeScale = scaleTime().domain(
-      interactiveXTimeRangeDomain
-    );
+    const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
+      Date,
+      Date
+    ];
+    const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
     const colors = scaleOrdinal<string, string>();
 
     if (segmentDimension && fields.segment?.colorMapping) {
@@ -266,7 +267,7 @@ const useAreasState = (
     return {
       colors,
       xScale,
-      interactiveXTimeRangeScale,
+      xScaleTimeRange,
     };
   }, [
     fields.segment?.palette,
@@ -339,7 +340,7 @@ const useAreasState = (
 
   /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   /** Tooltip */
@@ -372,7 +373,7 @@ const useAreasState = (
         placement: getCenteredTooltipPlacement({
           chartWidth,
           xAnchor,
-          segment: !!fields.segment,
+          topAnchor: !fields.segment,
         }),
         xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
         datum: {
@@ -419,10 +420,11 @@ const useAreasState = (
     chartData,
     allData,
     xScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     chartWideData,
     series,
     getAnnotationInfo,

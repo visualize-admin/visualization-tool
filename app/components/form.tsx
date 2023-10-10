@@ -318,6 +318,7 @@ export const Select = ({
   onClose,
   onOpen,
   loading,
+  sx,
 }: {
   id: string;
   options: SelectOption[];
@@ -347,7 +348,7 @@ export const Select = ({
 
   return (
     <LoadingMenuPaperContext.Provider value={loading}>
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%", ...sx }}>
         {label && (
           <Label htmlFor={id} smaller sx={{ my: 1 }}>
             {label}
@@ -372,12 +373,14 @@ export const Select = ({
           }}
         >
           {sortedOptions.map((opt) => {
-            if (!opt.value) {
+            if (!opt.value && opt.type !== "group") {
               return null;
             }
 
             return opt.type === "group" ? (
-              <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
+              opt.label && (
+                <ListSubheader key={opt.label}>{opt.label}</ListSubheader>
+              )
             ) : (
               <MenuItem
                 key={opt.value}

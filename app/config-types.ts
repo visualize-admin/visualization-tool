@@ -361,7 +361,6 @@ export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 const PieFields = t.intersection([
   t.type({
     y: GenericField,
-    // FIXME: "segment" should be "x" for consistency
     segment: PieSegmentField,
   }),
   t.partial({ animation: AnimationField }),
@@ -587,6 +586,7 @@ const MapFields = t.partial({
   symbolLayer: MapSymbolLayer,
   animation: AnimationField,
 });
+export type MapFields = t.TypeOf<typeof MapFields>;
 
 const MapConfig = t.intersection([
   GenericChartConfig,
@@ -600,17 +600,73 @@ const MapConfig = t.intersection([
     "MapConfig"
   ),
 ]);
-export type MapFields = t.TypeOf<typeof MapFields>;
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
-export type ChartFields =
-  | AreaFields
-  | ColumnFields
-  | LineFields
-  | MapFields
-  | PieFields
-  | ScatterPlotFields
-  | TableFields;
+const ComboLineSingleFields = t.type({
+  x: GenericField,
+  y: t.type({
+    componentIris: t.array(t.string),
+  }),
+});
+export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
+
+const ComboLineSingleConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineSingle"),
+      fields: ComboLineSingleFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineSingleConfig"
+  ),
+]);
+export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
+
+const ComboLineDualFields = t.type({
+  x: GenericField,
+  y: t.type({
+    leftAxisComponentIri: t.string,
+    rightAxisComponentIri: t.string,
+  }),
+});
+export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
+
+const ComboLineDualConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineDual"),
+      fields: ComboLineDualFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineDualConfig"
+  ),
+]);
+export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
+
+const ComboLineColumnFields = t.type({
+  x: GenericField,
+  y: t.type({
+    lineComponentIri: t.string,
+    lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    columnComponentIri: t.string,
+  }),
+});
+export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
+
+const ComboLineColumnConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("comboLineColumn"),
+      fields: ComboLineColumnFields,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+    },
+    "ComboLineColumnConfig"
+  ),
+]);
+export type ComboLineColumnConfig = t.TypeOf<typeof ComboLineColumnConfig>;
 
 export type ChartSegmentField =
   | AreaSegmentField
@@ -619,7 +675,7 @@ export type ChartSegmentField =
   | PieSegmentField
   | ScatterPlotSegmentField;
 
-const ChartConfig = t.union([
+const RegularChartConfig = t.union([
   AreaConfig,
   ColumnConfig,
   LineConfig,
@@ -628,6 +684,16 @@ const ChartConfig = t.union([
   ScatterPlotConfig,
   TableConfig,
 ]);
+export type RegularChartConfig = t.TypeOf<typeof RegularChartConfig>;
+
+const ComboChartConfig = t.union([
+  ComboLineSingleConfig,
+  ComboLineDualConfig,
+  ComboLineColumnConfig,
+]);
+export type ComboChartConfig = t.TypeOf<typeof ComboChartConfig>;
+
+const ChartConfig = t.union([RegularChartConfig, ComboChartConfig]);
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export const decodeChartConfig = (
@@ -646,6 +712,32 @@ export const decodeChartConfig = (
 };
 
 export type ChartType = ChartConfig["chartType"];
+export type RegularChartType = RegularChartConfig["chartType"];
+export type ComboChartType = ComboChartConfig["chartType"];
+
+export const isRegularChartConfig = (
+  chartConfig: ChartConfig
+): chartConfig is RegularChartConfig => {
+  return (
+    isAreaConfig(chartConfig) ||
+    isColumnConfig(chartConfig) ||
+    isLineConfig(chartConfig) ||
+    isMapConfig(chartConfig) ||
+    isPieConfig(chartConfig) ||
+    isScatterPlotConfig(chartConfig) ||
+    isTableConfig(chartConfig)
+  );
+};
+
+export const isComboChartConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboChartConfig => {
+  return (
+    isComboLineSingleConfig(chartConfig) ||
+    isComboLineDualConfig(chartConfig) ||
+    isComboLineColumnConfig(chartConfig)
+  );
+};
 
 export const isAreaConfig = (
   chartConfig: ChartConfig
@@ -657,6 +749,24 @@ export const isColumnConfig = (
   chartConfig: ChartConfig
 ): chartConfig is ColumnConfig => {
   return chartConfig.chartType === "column";
+};
+
+export const isComboLineSingleConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboLineSingleConfig => {
+  return chartConfig.chartType === "comboLineSingle";
+};
+
+export const isComboLineDualConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboLineDualConfig => {
+  return chartConfig.chartType === "comboLineDual";
+};
+
+export const isComboLineColumnConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ComboLineColumnConfig => {
+  return chartConfig.chartType === "comboLineColumn";
 };
 
 export const isLineConfig = (
@@ -706,10 +816,11 @@ export const isSegmentInConfig = (
   | AreaConfig
   | ColumnConfig
   | LineConfig
-  | ScatterPlotConfig
   | PieConfig
-  | TableConfig => {
-  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+  | ScatterPlotConfig => {
+  return ["area", "column", "line", "pie", "scatterplot"].includes(
+    chartConfig.chartType
+  );
 };
 
 export const isSortingInConfig = (
@@ -720,7 +831,7 @@ export const isSortingInConfig = (
 
 export const isAnimationInConfig = (
   chartConfig: ChartConfig
-): chartConfig is ColumnConfig | MapConfig | ScatterPlotConfig | PieConfig => {
+): chartConfig is ColumnConfig | MapConfig | PieConfig | ScatterPlotConfig => {
   return ["column", "map", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
@@ -732,8 +843,6 @@ export const getAnimationField = (
   if (isAnimationInConfig(chartConfig)) {
     return chartConfig.fields.animation;
   }
-
-  return undefined;
 };
 
 export const isColorFieldInConfig = (
@@ -748,9 +857,9 @@ export const isSegmentColorMappingInConfig = (
   | AreaConfig
   | ColumnConfig
   | LineConfig
-  | ScatterPlotConfig
-  | PieConfig => {
-  return ["area", "column", "line", "scatterplot", "pie"].includes(
+  | PieConfig
+  | ScatterPlotConfig => {
+  return ["area", "column", "line", "pie", "scatterplot"].includes(
     chartConfig.chartType
   );
 };
@@ -896,6 +1005,49 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
   };
 };
 
+type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboLineSingleConfig, string> };
+    y: { componentIris: FieldAdjuster<ComboLineSingleConfig, string> };
+  };
+};
+
+type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboLineDualConfig, string> };
+    y: FieldAdjuster<
+      ComboLineDualConfig,
+      | AreaFields
+      | ColumnFields
+      | LineFields
+      | MapFields
+      | PieFields
+      | ScatterPlotFields
+      | TableFields
+      | ComboLineSingleFields
+      | ComboLineColumnFields
+    >;
+  };
+};
+
+type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ComboLineColumnConfig, string> };
+    y: FieldAdjuster<
+      ComboLineColumnConfig,
+      | AreaFields
+      | ColumnFields
+      | LineFields
+      | MapFields
+      | PieFields
+      | ScatterPlotFields
+      | TableFields
+      | ComboLineSingleFields
+      | ComboLineDualFields
+    >;
+  };
+};
+
 export type ChartConfigsAdjusters = {
   column: ColumnAdjusters;
   line: LineAdjusters;
@@ -904,6 +1056,9 @@ export type ChartConfigsAdjusters = {
   pie: PieAdjusters;
   table: TableAdjusters;
   map: MapAdjusters;
+  comboLineSingle: ComboLineSingleAdjusters;
+  comboLineDual: ComboLineDualAdjusters;
+  comboLineColumn: ComboLineColumnAdjusters;
 };
 
 const DataSource = t.type({

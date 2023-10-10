@@ -8,7 +8,7 @@ import forestAreaData from "../test/__fixtures/data/forest-area-by-production-re
 import {
   getChartConfigAdjustedToChartType,
   getInitialConfig,
-  getPossibleChartType,
+  getPossibleChartTypes,
 } from "./index";
 
 describe("initial config", () => {
@@ -44,7 +44,7 @@ describe("initial config", () => {
 describe("possible chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
-    const possibleChartTypes = getPossibleChartType({
+    const possibleChartTypes = getPossibleChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri.dimensions as NonNullable<
         ComponentsQuery["dataCubeByIri"]
       >["dimensions"],
@@ -57,7 +57,7 @@ describe("possible chart types", () => {
   });
 
   it("should only allow table if there are only measures available", () => {
-    const possibleChartTypes = getPossibleChartType({
+    const possibleChartTypes = getPossibleChartTypes({
       dimensions: [],
       measures: [{ __typename: "NumericalMeasure" }] as any,
     });
@@ -66,7 +66,7 @@ describe("possible chart types", () => {
   });
 
   it("should only allow column, map, pie and table if only geo dimensions are available", () => {
-    const possibleChartTypes = getPossibleChartType({
+    const possibleChartTypes = getPossibleChartTypes({
       dimensions: [{ __typename: "GeoShapesDimension" }] as any,
       measures: [{ __typename: "NumericalMeasure" }] as any,
     }).sort();

@@ -2,6 +2,7 @@ import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Fragment } from "react";
 
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -30,8 +31,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const HoverDots = ({ d }: { d: Observation }) => {
-  const { getAnnotationInfo, bounds } = useChartState() as LinesState;
-
+  const { getAnnotationInfo, bounds } = useChartState() as
+    | LinesState
+    | ComboLineSingleState;
   const { xAnchor, values } = getAnnotationInfo(d);
   const classes = useStyles();
 

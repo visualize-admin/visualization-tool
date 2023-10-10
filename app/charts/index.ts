@@ -1,4 +1,4 @@
-import { ascending, group } from "d3";
+import { ascending, descending, group, rollups } from "d3";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
@@ -19,11 +19,23 @@ import {
   ChartSegmentField,
   ChartType,
   ColumnSegmentField,
+  ComboChartType,
+  ComboLineColumnFields,
+  ComboLineSingleFields,
   FieldAdjuster,
   GenericFields,
   GenericSegmentField,
   InteractiveFiltersAdjusters,
   InteractiveFiltersConfig,
+  isAreaConfig,
+  isColumnConfig,
+  isComboLineColumnConfig,
+  isComboLineDualConfig,
+  isComboLineSingleConfig,
+  isLineConfig,
+  isMapConfig,
+  isPieConfig,
+  isScatterPlotConfig,
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
@@ -31,21 +43,15 @@ import {
   MapSymbolLayer,
   Meta,
   PieSegmentField,
+  RegularChartType,
   ScatterPlotSegmentField,
   SortingOrder,
   SortingType,
   TableColumn,
   TableFields,
 } from "@/config-types";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import { getDefaultCategoricalPaletteName } from "@/palettes";
-import { bfs } from "@/utils/bfs";
-import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
-import { createChartId } from "@/utils/create-chart-id";
-import { isMultiHierarchyNode } from "@/utils/hierarchy";
-
-import { mapValueIrisToColor } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
   getGeoDimensions,
@@ -56,19 +62,25 @@ import {
   isNumericalMeasure,
   isOrdinalMeasure,
   isTemporalDimension,
-} from "../domain/data";
+} from "@/domain/data";
 import {
   DimensionMetadataFragment,
   GeoCoordinatesDimension,
   GeoShapesDimension,
   NumericalMeasure,
   OrdinalMeasure,
-} from "../graphql/query-hooks";
+} from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/graphql/resolver-types";
 import {
   DataCubeMetadata,
   DataCubeMetadataWithHierarchies,
-} from "../graphql/types";
-import { unreachableError } from "../utils/unreachable";
+} from "@/graphql/types";
+import { getDefaultCategoricalPaletteName } from "@/palettes";
+import { bfs } from "@/utils/bfs";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
+import { createChartId } from "@/utils/create-chart-id";
+import { isMultiHierarchyNode } from "@/utils/hierarchy";
+import { unreachableError } from "@/utils/unreachable";
 
 export const chartTypes: ChartType[] = [
   "column",
@@ -78,6 +90,25 @@ export const chartTypes: ChartType[] = [
   "pie",
   "table",
   "map",
+  "comboLineSingle",
+  "comboLineDual",
+  "comboLineColumn",
+];
+
+export const regularChartTypes: RegularChartType[] = [
+  "column",
+  "line",
+  "area",
+  "scatterplot",
+  "pie",
+  "table",
+  "map",
+];
+
+export const comboChartTypes: ComboChartType[] = [
+  "comboLineSingle",
+  "comboLineDual",
+  "comboLineColumn",
 ];
 
 export const chartTypesOrder: { [k in ChartType]: number } = {
@@ -88,6 +119,9 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
   pie: 4,
   map: 5,
   table: 6,
+  comboLineSingle: 7,
+  comboLineDual: 8,
+  comboLineColumn: 9,
 };
 
 /**
@@ -287,17 +321,17 @@ const META: Meta = {
   },
 };
 
-export const getInitialConfig = ({
-  key,
-  chartType,
-  dimensions,
-  measures,
-}: {
+type GetInitialConfigOptions = {
   key?: string;
   chartType: ChartType;
   dimensions: DataCubeMetadataWithHierarchies["dimensions"];
   measures: DataCubeMetadataWithHierarchies["measures"];
-}): ChartConfig => {
+};
+
+export const getInitialConfig = (
+  options: GetInitialConfigOptions
+): ChartConfig => {
+  const { key, chartType, dimensions, measures } = options;
   const genericConfigProps: {
     key: string;
     version: string;
@@ -310,10 +344,11 @@ export const getInitialConfig = ({
     activeField: undefined,
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
+  const temporalDimensions = getTemporalDimensions(dimensions);
 
   switch (chartType) {
     case "area":
-      const areaXComponentIri = getTemporalDimensions(dimensions)[0].iri;
+      const areaXComponentIri = temporalDimensions[0].iri;
 
       return {
         ...genericConfigProps,
@@ -351,7 +386,7 @@ export const getInitialConfig = ({
         },
       };
     case "line":
-      const lineXComponentIri = getTemporalDimensions(dimensions)[0].iri;
+      const lineXComponentIri = temporalDimensions[0].iri;
 
       return {
         ...genericConfigProps,
@@ -492,6 +527,85 @@ export const getInitialConfig = ({
           ])
         ) as TableFields,
       };
+    case "comboLineSingle": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const mostCommonUnit = rollups(
+        numericalMeasures,
+        (v) => v.length,
+        (d) => d.unit
+      ).sort((a, b) => descending(a[1], b[1]))[0][0];
+
+      return {
+        ...genericConfigProps,
+        chartType: "comboLineSingle",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: temporalDimensions[0].iri },
+          // Use all measures with the most common unit.
+          y: {
+            componentIris: numericalMeasures
+              .filter((d) => d.unit === mostCommonUnit)
+              .map((d) => d.iri),
+          },
+        },
+      };
+    }
+    case "comboLineDual": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const [firstUnit, secondUnit] = Array.from(
+        new Set(numericalMeasures.map((d) => d.unit))
+      );
+
+      return {
+        ...genericConfigProps,
+        chartType: "comboLineDual",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: temporalDimensions[0].iri },
+          y: {
+            leftAxisComponentIri: numericalMeasures.find(
+              (d) => d.unit === firstUnit
+            )!.iri,
+            rightAxisComponentIri: numericalMeasures.find(
+              (d) => d.unit === secondUnit
+            )!.iri,
+          },
+        },
+      };
+    }
+    case "comboLineColumn": {
+      // It's guaranteed by getPossibleChartTypes that there are at least two units.
+      const [firstUnit, secondUnit] = Array.from(
+        new Set(numericalMeasures.map((d) => d.unit))
+      );
+
+      return {
+        ...genericConfigProps,
+        chartType: "comboLineColumn",
+        filters: {},
+        interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
+          timeRangeComponentIri: temporalDimensions[0].iri,
+        }),
+        fields: {
+          x: { componentIri: temporalDimensions[0].iri },
+          y: {
+            lineComponentIri: numericalMeasures.find(
+              (d) => d.unit === firstUnit
+            )!.iri,
+            lineAxisOrientation: "right",
+            columnComponentIri: numericalMeasures.find(
+              (d) => d.unit === secondUnit
+            )!.iri,
+          },
+        },
+      };
+    }
 
     // This code *should* be unreachable! If it's not, it means we haven't checked
     // all cases (and we should get a TS error).
@@ -587,17 +701,19 @@ const getAdjustedChartConfig = ({
       const newPath = path === "" ? k : `${path}.${k}`;
 
       if (v !== undefined) {
-        if (isConfigLeaf(newPath, v)) {
+        const override = pathOverrides?.[newPath];
+
+        if (isConfigLeaf(newPath, v) || override) {
           const getChartConfigWithAdjustedField: FieldAdjuster<
             ChartConfig,
             unknown
           > =
-            (pathOverrides && get(adjusters, pathOverrides[newPath])) ||
+            (override?.path && get(adjusters, override.path)) ||
             get(adjusters, newPath);
 
           if (getChartConfigWithAdjustedField) {
             newChartConfig = getChartConfigWithAdjustedField({
-              oldValue: v,
+              oldValue: override?.oldValue ? override.oldValue(v) : v,
               newChartConfig,
               oldChartConfig,
               dimensions,
@@ -1152,6 +1268,204 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
+  comboLineSingle: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: {
+        componentIris: ({ oldValue, newChartConfig, measures }) => {
+          const numericalMeasures = measures.filter(isNumericalMeasure);
+          const availableMeasureIris = numericalMeasures.map((d) => d.iri);
+          const measure = numericalMeasures.find(
+            (d) => d.iri === (oldValue ?? availableMeasureIris[0])
+          ) as NumericalMeasure;
+
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y = {
+              componentIris: numericalMeasures
+                .filter((d) => d.unit === measure.unit)
+                .map((d) => d.iri),
+            };
+          });
+        },
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
+  comboLineDual: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: ({ newChartConfig, oldChartConfig, measures }) => {
+        const numericalMeasures = measures.filter(isNumericalMeasure);
+        const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
+        let leftMeasure = numericalMeasures.find(
+          (d) => d.iri === numericalMeasureIris[0]
+        ) as NumericalMeasure;
+        let rightMeasureIri: string | undefined;
+        const getMeasure = (iri: string) => {
+          return numericalMeasures.find(
+            (d) => d.iri === iri
+          ) as NumericalMeasure;
+        };
+
+        if (isComboLineColumnConfig(oldChartConfig)) {
+          const {
+            lineComponentIri: lineIri,
+            lineAxisOrientation: lineOrientation,
+            columnComponentIri: columnIri,
+          } = oldChartConfig.fields.y;
+          const leftAxisIri = lineOrientation === "left" ? lineIri : columnIri;
+          leftMeasure = getMeasure(leftAxisIri);
+          rightMeasureIri = lineOrientation === "left" ? columnIri : lineIri;
+        } else if (isComboLineSingleConfig(oldChartConfig)) {
+          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIris[0]);
+        } else if (
+          isAreaConfig(oldChartConfig) ||
+          isColumnConfig(oldChartConfig) ||
+          isLineConfig(oldChartConfig) ||
+          isPieConfig(oldChartConfig) ||
+          isScatterPlotConfig(oldChartConfig)
+        ) {
+          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIri);
+        } else if (isMapConfig(oldChartConfig)) {
+          const { areaLayer, symbolLayer } = oldChartConfig.fields;
+          const leftAxisIri =
+            areaLayer?.color.componentIri ?? symbolLayer?.measureIri;
+
+          if (leftAxisIri) {
+            leftMeasure = getMeasure(leftAxisIri);
+          }
+        }
+
+        return produce(newChartConfig, (draft) => {
+          draft.fields.y = {
+            leftAxisComponentIri: leftMeasure.iri,
+            rightAxisComponentIri: (
+              numericalMeasures.find((d) =>
+                rightMeasureIri
+                  ? d.iri === rightMeasureIri
+                  : d.unit !== leftMeasure.unit
+              ) as NumericalMeasure
+            ).iri,
+          };
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
+  comboLineColumn: {
+    filters: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
+    },
+    fields: {
+      x: {
+        componentIri: ({ oldValue, newChartConfig, dimensions }) => {
+          const ok = dimensions.find(
+            (d) => isTemporalDimension(d) && d.iri === oldValue
+          );
+
+          if (ok) {
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
+          }
+
+          return newChartConfig;
+        },
+      },
+      y: ({ newChartConfig, oldChartConfig, measures }) => {
+        const numericalMeasures = measures.filter(isNumericalMeasure);
+        const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
+        let leftMeasure = numericalMeasures.find(
+          (d) => d.iri === numericalMeasureIris[0]
+        ) as NumericalMeasure;
+        let rightAxisMeasureIri: string | undefined;
+        const getMeasure = (iri: string) => {
+          return numericalMeasures.find(
+            (d) => d.iri === iri
+          ) as NumericalMeasure;
+        };
+
+        if (isComboLineDualConfig(oldChartConfig)) {
+          const leftAxisIri = oldChartConfig.fields.y.leftAxisComponentIri;
+          leftMeasure = getMeasure(leftAxisIri);
+          rightAxisMeasureIri = oldChartConfig.fields.y.rightAxisComponentIri;
+        } else if (isComboLineSingleConfig(oldChartConfig)) {
+          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIris[0]);
+        } else if (
+          isAreaConfig(oldChartConfig) ||
+          isColumnConfig(oldChartConfig) ||
+          isLineConfig(oldChartConfig) ||
+          isPieConfig(oldChartConfig) ||
+          isScatterPlotConfig(oldChartConfig)
+        ) {
+          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIri);
+        } else if (isMapConfig(oldChartConfig)) {
+          const { areaLayer, symbolLayer } = oldChartConfig.fields;
+          const leftAxisIri =
+            areaLayer?.color.componentIri ?? symbolLayer?.measureIri;
+
+          if (leftAxisIri) {
+            leftMeasure = getMeasure(leftAxisIri);
+          }
+        }
+
+        return produce(newChartConfig, (draft) => {
+          draft.fields.y = {
+            columnComponentIri: leftMeasure.iri,
+            lineComponentIri: (
+              numericalMeasures.find((d) =>
+                rightAxisMeasureIri
+                  ? d.iri === rightAxisMeasureIri
+                  : d.unit !== leftMeasure.unit
+              ) as NumericalMeasure
+            ).iri,
+            lineAxisOrientation: "right",
+          };
+        });
+      },
+    },
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
+  },
 };
 type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
 
@@ -1159,86 +1473,287 @@ type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
 const chartConfigsPathOverrides: {
   [newChartType in ChartType]: {
     [oldChartType in ChartType]?: {
-      [oldFieldToOverride: string]: string;
+      [oldFieldToOverride: string]: {
+        path: string;
+        oldValue?: (d: any) => any;
+      };
     };
   };
 } = {
   column: {
     map: {
-      "fields.areaLayer.componentIri": "fields.x.componentIri",
-      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
+      "fields.areaLayer.componentIri": { path: "fields.x.componentIri" },
+      "fields.areaLayer.color.componentIri": { path: "fields.y.componentIri" },
     },
     table: {
-      fields: "fields.segment",
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": { path: "fields.y.componentIri" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
     },
   },
   line: {
     map: {
-      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": { path: "fields.y.componentIri" },
     },
     table: {
-      fields: "fields.segment",
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": { path: "fields.y.componentIri" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
     },
   },
   area: {
     map: {
-      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": { path: "fields.y.componentIri" },
     },
     table: {
-      fields: "fields.segment",
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": { path: "fields.y.componentIri" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
     },
   },
   scatterplot: {
     map: {
-      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
+      "fields.areaLayer.color.componentIri": { path: "fields.y.componentIri" },
     },
     table: {
-      fields: "fields.segment",
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": { path: "fields.y.componentIri" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
     },
   },
   pie: {
     map: {
-      "fields.areaLayer.componentIri": "fields.x.componentIri",
-      "fields.areaLayer.color.componentIri": "fields.y.componentIri",
+      "fields.areaLayer.componentIri": { path: "fields.x.componentIri" },
+      "fields.areaLayer.color.componentIri": { path: "fields.y.componentIri" },
     },
     table: {
-      fields: "fields.segment",
+      fields: { path: "fields.segment" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": { path: "fields.y.componentIri" },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.y.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
     },
   },
   table: {
     column: {
-      "fields.segment": "fields",
+      "fields.segment": { path: "fields" },
     },
     line: {
-      "fields.segment": "fields",
+      "fields.segment": { path: "fields" },
     },
     area: {
-      "fields.segment": "fields",
+      "fields.segment": { path: "fields" },
     },
     scatterplot: {
-      "fields.segment": "fields",
+      "fields.segment": { path: "fields" },
     },
     pie: {
-      "fields.segment": "fields",
+      "fields.segment": { path: "fields" },
     },
   },
   map: {
     column: {
-      "fields.x.componentIri": "fields.areaLayer.componentIri",
-      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+      "fields.x.componentIri": { path: "fields.areaLayer.componentIri" },
+      "fields.y.componentIri": { path: "fields.areaLayer.color.componentIri" },
     },
     line: {
-      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+      "fields.y.componentIri": { path: "fields.areaLayer.color.componentIri" },
     },
     area: {
-      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+      "fields.y.componentIri": { path: "fields.areaLayer.color.componentIri" },
     },
     scatterplot: {
-      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+      "fields.y.componentIri": { path: "fields.areaLayer.color.componentIri" },
     },
     pie: {
-      "fields.x.componentIri": "fields.areaLayer.componentIri",
-      "fields.y.componentIri": "fields.areaLayer.color.componentIri",
+      "fields.x.componentIri": { path: "fields.areaLayer.componentIri" },
+      "fields.y.componentIri": { path: "fields.areaLayer.color.componentIri" },
+    },
+    comboLineSingle: {
+      "fields.y.componentIris": {
+        path: "fields.areaLayer.color.componentIri",
+        oldValue: (d: ComboLineSingleFields["y"]["componentIris"]) => d[0],
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": {
+        path: "fields.areaLayer.color.componentIri",
+      },
+    },
+    comboLineColumn: {
+      "fields.y": {
+        path: "fields.areaLayer.color.componentIri",
+        oldValue: (d: ComboLineColumnFields["y"]) => {
+          return d.lineAxisOrientation === "left"
+            ? d.lineComponentIri
+            : d.columnComponentIri;
+        },
+      },
+    },
+  },
+  comboLineSingle: {
+    column: {
+      "fields.y.componentIri": { path: "fields.y.componentIris" },
+    },
+    line: {
+      "fields.y.componentIri": { path: "fields.y.componentIris" },
+    },
+    area: {
+      "fields.y.componentIri": { path: "fields.y.componentIris" },
+    },
+    scatterplot: {
+      "fields.y.componentIri": { path: "fields.y.componentIris" },
+    },
+    pie: {
+      "fields.y.componentIri": { path: "fields.y.componentIris" },
+    },
+    map: {
+      "fields.areaLayer.color.componentIri": {
+        path: "fields.y.componentIris",
+      },
+    },
+    comboLineDual: {
+      "fields.y.leftAxisComponentIri": {
+        path: "fields.y.componentIris",
+      },
+    },
+    comboLineColumn: {
+      "fields.y.lineComponentIri": { path: "fields.y.componentIris" },
+    },
+  },
+  comboLineDual: {
+    column: {
+      "fields.y": { path: "fields.y" },
+    },
+    line: {
+      "fields.y": { path: "fields.y" },
+    },
+    area: {
+      "fields.y": { path: "fields.y" },
+    },
+    scatterplot: {
+      "fields.y": { path: "fields.y" },
+    },
+    pie: {
+      "fields.y": { path: "fields.y" },
+    },
+    map: {
+      "fields.areaLayer": { path: "fields.y" },
+    },
+    comboLineSingle: {
+      "fields.y": { path: "fields.y" },
+    },
+    comboLineColumn: {
+      "fields.y": { path: "fields.y" },
+    },
+  },
+  comboLineColumn: {
+    column: {
+      "fields.y": { path: "fields.y" },
+    },
+    line: {
+      "fields.y": { path: "fields.y" },
+    },
+    area: {
+      "fields.y": { path: "fields.y" },
+    },
+    scatterplot: {
+      "fields.y": { path: "fields.y" },
+    },
+    pie: {
+      "fields.y": { path: "fields.y" },
+    },
+    map: {
+      "fields.areaLayer": { path: "fields.y" },
+    },
+    comboLineSingle: {
+      "fields.y": { path: "fields.y" },
+    },
+    comboLineDual: {
+      "fields.y": { path: "fields.y" },
     },
   },
 };
@@ -1266,7 +1781,7 @@ const adjustSegmentSorting = ({
 };
 
 // Helpers
-export const getPossibleChartType = ({
+export const getPossibleChartTypes = ({
   dimensions,
   measures,
 }: {
@@ -1279,10 +1794,10 @@ export const getPossibleChartType = ({
   const geoDimensions = getGeoDimensions(dimensions);
   const temporalDimensions = getTemporalDimensions(dimensions);
 
-  const categoricalEnabled: ChartType[] = ["column", "pie"];
-  const geoEnabled: ChartType[] = ["column", "map", "pie"];
-  const multipleNumericalMeasuresEnabled: ChartType[] = ["scatterplot"];
-  const timeEnabled: ChartType[] = ["area", "column", "line"];
+  const categoricalEnabled: RegularChartType[] = ["column", "pie"];
+  const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
+  const multipleNumericalMeasuresEnabled: RegularChartType[] = ["scatterplot"];
+  const timeEnabled: RegularChartType[] = ["area", "column", "line"];
 
   const possibles: ChartType[] = ["table"];
   if (numericalMeasures.length > 0) {
@@ -1296,6 +1811,18 @@ export const getPossibleChartType = ({
 
     if (numericalMeasures.length > 1) {
       possibles.push(...multipleNumericalMeasuresEnabled);
+
+      if (temporalDimensions.length > 0) {
+        const uniqueUnits = Array.from(
+          new Set(numericalMeasures.map((d) => d.unit))
+        );
+
+        if (uniqueUnits.length > 1) {
+          possibles.push(...comboChartTypes);
+        } else {
+          possibles.push("comboLineSingle");
+        }
+      }
     }
 
     if (temporalDimensions.length > 0) {
@@ -1312,9 +1839,11 @@ export const getPossibleChartType = ({
     .sort((a, b) => chartTypesOrder[a] - chartTypesOrder[b]);
 };
 
-export const getFieldComponentIris = (fields: GenericFields) => {
+export const getFieldComponentIris = (fields: ChartConfig["fields"]) => {
   return new Set(
-    Object.values(fields).flatMap((f) => (f ? [f.componentIri] : []))
+    Object.values(fields).flatMap((f) =>
+      f?.componentIri ? [f.componentIri] : []
+    )
   );
 };
 
@@ -1334,8 +1863,12 @@ export const getHiddenFieldIris = (fields: GenericFields) => {
   );
 };
 
-export const getFieldComponentIri = (fields: GenericFields, field: string) => {
-  return fields[field]?.componentIri;
+export const getFieldComponentIri = (
+  fields: ChartConfig["fields"],
+  field: string
+): string | undefined => {
+  // Multi axis charts have multiple componentIris in the y field.
+  return (fields as $IntentionalAny)[field]?.componentIri;
 };
 
 const convertTableFieldsToSegmentField = ({

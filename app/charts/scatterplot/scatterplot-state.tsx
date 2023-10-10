@@ -45,6 +45,7 @@ export type ScatterplotState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     hasSegment: boolean;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
   };
 
@@ -63,6 +64,7 @@ const useScatterplotState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, segmentData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -215,6 +217,7 @@ const useScatterplotState = (
     yScale,
     hasSegment,
     colors,
+    getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     ...variables,
   };

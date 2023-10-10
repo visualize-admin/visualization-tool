@@ -55,7 +55,7 @@ export const BrushTime = () => {
     brushHandleFillColor,
     labelFontSize,
   } = useChartTheme();
-  const { chartType, bounds, interactiveXTimeRangeScale } =
+  const { chartType, bounds, xScaleTimeRange } =
     useChartState() as ChartWithInteractiveXTimeRangeState;
   const { getX } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
@@ -65,13 +65,13 @@ export const BrushTime = () => {
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
-    getTextWidth(formatDateAuto(interactiveXTimeRangeScale.domain()[0]), {
+    getTextWidth(formatDateAuto(xScaleTimeRange.domain()[0]), {
       fontSize: labelFontSize,
     }) *
       2 +
     20;
   const brushWidth = width - brushLabelsWidth - margins.right;
-  const brushWidthScale = interactiveXTimeRangeScale.copy();
+  const brushWidthScale = xScaleTimeRange.copy();
 
   brushWidthScale.range([0, brushWidth]);
 

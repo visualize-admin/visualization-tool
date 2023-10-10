@@ -58,6 +58,7 @@ export type LinesState = CommonChartState &
     xScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
@@ -80,6 +81,7 @@ const useLinesState = (
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
+    getSegmentLabel,
   } = variables;
   const {
     chartData,
@@ -126,12 +128,10 @@ const useLinesState = (
   const xDomain = extent(chartData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
-  const interactiveXTimeRangeDomain = useMemo(() => {
+  const xScaleTimeRangeDomain = useMemo(() => {
     return extent(timeRangeData, (d) => getX(d)) as [Date, Date];
   }, [timeRangeData, getX]);
-  const interactiveXTimeRangeScale = scaleTime().domain(
-    interactiveXTimeRangeDomain
-  );
+  const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
   const minValue = Math.min(min(scalesData, getY) ?? 0, 0);
@@ -219,7 +219,7 @@ const useLinesState = (
   const { chartWidth, chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
-  interactiveXTimeRangeScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -228,7 +228,6 @@ const useLinesState = (
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
     );
-    const yValues = tooltipValues.map(getY);
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -237,6 +236,7 @@ const useLinesState = (
     });
 
     const xAnchor = xScale(x);
+    const yValues = tooltipValues.map(getY);
     const [yMin, yMax] = extent(yValues, (d) => d ?? 0) as [number, number];
     const yAnchor = yScale((yMin + yMax) * 0.5);
 
@@ -253,7 +253,7 @@ const useLinesState = (
       placement: getCenteredTooltipPlacement({
         chartWidth,
         xAnchor,
-        segment: !!fields.segment,
+        topAnchor: !fields.segment,
       }),
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
@@ -267,6 +267,7 @@ const useLinesState = (
         value: yValueFormatter(getY(td)),
         color: colors(getSegment(td)) as string,
         yPos: yScale(getY(td) ?? 0),
+        symbol: "line",
       })),
     };
   };
@@ -277,10 +278,11 @@ const useLinesState = (
     chartData,
     allData,
     xScale,
-    interactiveXTimeRangeScale,
+    xScaleTimeRange,
     yScale,
     segments,
     colors,
+    getColorLabel: getSegmentLabel,
     grouped: preparedDataGroupedBySegment,
     chartWideData,
     xKey,

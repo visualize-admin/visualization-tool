@@ -19,6 +19,9 @@ import {
   ColorScaleType,
   ColumnConfig,
   ColumnSegmentField,
+  ComboLineColumnConfig,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
   ComponentType,
   GenericField,
   LineConfig,
@@ -216,6 +219,8 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
+  /** If true, won't use the ChartFieldOption component, but a custom one. Needs to be handled then in ChartOptionsSelector. */
+  customComponent?: boolean;
   /** If false, using a dimension in this encoding will not prevent it to be used in an other encoding. Default: true */
   exclusive?: boolean;
   filters: boolean;
@@ -256,6 +261,9 @@ interface ChartSpecs {
   pie: ChartSpec<PieConfig>;
   scatterplot: ChartSpec<ScatterPlotConfig>;
   table: ChartSpec<TableConfig>;
+  comboLineSingle: ChartSpec<ComboLineSingleConfig>;
+  comboLineDual: ChartSpec<ComboLineDualConfig>;
+  comboLineColumn: ChartSpec<ComboLineColumnConfig>;
 }
 
 const SEGMENT_COMPONENT_TYPES: ComponentType[] = [
@@ -870,6 +878,64 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     // TODO: Add abbreviations here.
     chartType: "table",
     encodings: [],
+    interactiveFilters: [],
+  },
+  comboLineSingle: {
+    chartType: "comboLineSingle",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        // TODO: maybe we should even create the components here?
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
+    interactiveFilters: [],
+  },
+  comboLineDual: {
+    chartType: "comboLineDual",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
+    interactiveFilters: [],
+  },
+  comboLineColumn: {
+    chartType: "comboLineColumn",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        customComponent: true,
+        componentTypes: ["NumericalMeasure"],
+        filters: false,
+      },
+      {
+        field: "x",
+        optional: false,
+        componentTypes: ["TemporalDimension"],
+        filters: true,
+      },
+    ],
     interactiveFilters: [],
   },
 };

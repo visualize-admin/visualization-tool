@@ -2,66 +2,84 @@ import { bisector, pointer } from "d3";
 import { MouseEvent, memo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const InteractionHorizontal = memo(function InteractionHorizontal() {
+  const chartState = useChartState() as
+    | AreasState
+    | LinesState
+    | ComboLineSingleState
+    | ComboLineDualState
+    | ComboLineColumnState;
+  const { chartData, chartWideData, xScale, getX } =
+    chartState.chartType === "comboLineColumn"
+      ? {
+          chartData: chartState.chartData,
+          chartWideData: chartState.chartWideData,
+          xScale: chartState.xScaleTime,
+          getX: chartState.getXAsDate,
+        }
+      : chartState;
+  const { chartWidth, chartHeight, margins } = chartState.bounds;
   const [state, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
-  const { chartData, bounds, getX, xScale, chartWideData } = useChartState() as
-    | AreasState
-    | LinesState;
-
-  const { chartWidth, chartHeight, margins } = bounds;
+  const hideTooltip = () => {
+    dispatch({
+      type: "INTERACTION_HIDE",
+    });
+  };
 
   const findDatum = (e: MouseEvent) => {
     const [x, y] = pointer(e, ref.current!);
-
     const bisectDate = bisector(
-      (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      (d: Observation, date: Date) => getX(d).getTime() - date.getTime()
     ).left;
-
     const thisDate = xScale.invert(x);
     const i = bisectDate(chartWideData, thisDate, 1);
     const dLeft = chartWideData[i - 1];
-    const dRight = chartWideData[i] || dLeft;
-
+    const dRight = chartWideData[i] ?? dLeft;
     const closestDatum =
       thisDate.getTime() - getX(dLeft).getTime() >
       getX(dRight).getTime() - thisDate.getTime()
         ? dRight
         : dLeft;
 
-    if (closestDatum) {
-      const closestDatumTime = getX(closestDatum).getTime();
-      const datumToUpdate = chartData.find(
-        (d) => closestDatumTime === getX(d).getTime()
-      ) as Observation;
-
-      if (
-        !state.interaction.d ||
-        closestDatumTime !== getX(state.interaction.d).getTime()
-      ) {
-        dispatch({
-          type: "INTERACTION_UPDATE",
-          value: {
-            interaction: {
-              visible: true,
-              mouse: { x, y },
-              d: datumToUpdate,
-            },
-          },
-        });
+    if (!closestDatum) {
+      if (state.interaction.visible) {
+        hideTooltip();
       }
+
+      return;
     }
-  };
-  const hideTooltip = () => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
+
+    const closestDatumTime = getX(closestDatum).getTime();
+    const datumToUpdate = chartData.find(
+      (d) => closestDatumTime === getX(d).getTime()
+    ) as Observation;
+
+    if (
+      !state.interaction.d ||
+      closestDatumTime !== getX(state.interaction.d).getTime() ||
+      !state.interaction.visible
+    ) {
+      dispatch({
+        type: "INTERACTION_UPDATE",
+        value: {
+          interaction: {
+            visible: true,
+            mouse: { x, y },
+            d: datumToUpdate,
+          },
+        },
+      });
+    }
   };
 
   return (
