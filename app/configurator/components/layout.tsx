@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React from "react";
 
+import { HEADER_HEIGHT } from "@/components/header";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -28,10 +29,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   panelLayout: {
     position: "fixed",
-    // FIXME replace 96px with actual header size
-    top: 96,
+    top: HEADER_HEIGHT,
     width: "100%",
-    height: "calc(100vh - 96px)",
+    height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     display: "grid",
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
     gridTemplateRows: "auto minmax(0, 1fr)",

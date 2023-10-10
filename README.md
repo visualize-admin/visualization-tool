@@ -219,3 +219,5 @@ To configure Keycloak:
   - KEYCLOAK_ISSUER: http://localhost:8080/realms/master
 
 [keycloak-admin]: http://localhost:8080/admin/master/console/#/
+
+Remember to add NEXTAUTH_SECRET variable to your .env file!

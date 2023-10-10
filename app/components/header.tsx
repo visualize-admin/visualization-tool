@@ -15,8 +15,7 @@ import { DataSourceMenu } from "@/components/data-source-menu";
 import Flex from "@/components/flex";
 import { LanguageMenu } from "@/components/language-menu";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
-
-import LoginMenu from "./login-menu";
+import { LoginMenu } from "@/login/components/login-menu";
 
 const DEFAULT_HEADER_PROGRESS = 100;
 
