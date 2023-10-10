@@ -106,6 +106,7 @@ export const ChartPie = memo(
             />
           )}
           <LegendColor
+            chartConfig={chartConfig}
             symbol="square"
             interactive={
               fields.segment && interactiveFiltersConfig?.legend.active

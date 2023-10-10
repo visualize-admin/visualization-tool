@@ -38,6 +38,7 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   DataSource,
+  getChartConfig,
   isMapConfig,
 } from "@/configurator";
 import { TitleAndDescriptionConfigurator } from "@/configurator/components/chart-annotator";
@@ -166,6 +167,7 @@ const useEnsurePossibleFilters = ({
   state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
 }) => {
   const [, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
   const lastFilters = useRef<ChartConfig["filters"]>();
@@ -173,9 +175,8 @@ const useEnsurePossibleFilters = ({
 
   useEffect(() => {
     const run = async () => {
-      const { mappedFilters, unmappedFilters } = getFiltersByMappingStatus(
-        state.chartConfig
-      );
+      const { mappedFilters, unmappedFilters } =
+        getFiltersByMappingStatus(chartConfig);
       if (
         lastFilters.current &&
         orderedIsEqual(lastFilters.current, unmappedFilters)
@@ -218,7 +219,7 @@ const useEnsurePossibleFilters = ({
         mappedFilters
       );
 
-      if (!isEqual(filters, state.chartConfig.filters) && !isEmpty(filters)) {
+      if (!isEqual(filters, chartConfig.filters) && !isEmpty(filters)) {
         dispatch({
           type: "CHART_CONFIG_FILTERS_UPDATE",
           value: {
@@ -232,9 +233,7 @@ const useEnsurePossibleFilters = ({
   }, [
     client,
     dispatch,
-    state,
-    state.chartConfig.fields,
-    state.chartConfig.filters,
+    chartConfig,
     state.dataSet,
     state.dataSource.type,
     state.dataSource.url,
@@ -253,12 +252,13 @@ const useFilterReorder = ({
   onAddDimensionFilter?: () => void;
 }) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const locale = useLocale();
 
-  const { filters } = state.chartConfig;
+  const { filters } = chartConfig;
   const { unmappedFilters, mappedFiltersIris } = useMemo(() => {
-    return getFiltersByMappingStatus(state.chartConfig);
-  }, [state.chartConfig]);
+    return getFiltersByMappingStatus(chartConfig);
+  }, [chartConfig]);
 
   const variables = useMemo(() => {
     const hasUnmappedFilters = Object.keys(unmappedFilters).length > 0;
@@ -328,7 +328,7 @@ const useFilterReorder = ({
     }
 
     const dimension = dimensions.find((d) => d.iri === dimensionIri);
-    const chartConfig = moveFilterField(state.chartConfig, {
+    const newChartConfig = moveFilterField(chartConfig, {
       dimensionIri,
       delta,
       possibleValues: dimension ? dimension.values : [],
@@ -337,7 +337,7 @@ const useFilterReorder = ({
     dispatch({
       type: "CHART_CONFIG_REPLACED",
       value: {
-        chartConfig,
+        chartConfig: newChartConfig,
         dataSetMetadata: data,
       },
     });
@@ -514,14 +514,14 @@ const InteractiveDataFilterCheckbox = ({
 const FiltersBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const ctx = useControlSectionContext();
   const [state] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
 
   return (
     <Badge
       invisible={ctx.isOpen}
       badgeContent={
-        Object.values(state.chartConfig.filters).filter(
-          (d) => d.type === "single"
-        ).length
+        Object.values(chartConfig.filters).filter((d) => d.type === "single")
+          .length
       }
       color="secondary"
       sx={{ display: "block", ...sx }}
@@ -534,6 +534,7 @@ export const ChartConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
+  const chartConfig = getChartConfig(state);
   const {
     isOpen: isFilterMenuOpen,
     open: openFilterMenu,
@@ -577,7 +578,12 @@ export const ChartConfigurator = ({
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SubsectionTitle>
         <ControlSectionContent px="small">
-          <ChartTypeSelector showHelp={false} state={state} sx={{ mt: 2 }} />
+          <ChartTypeSelector
+            showHelp={false}
+            chartKey={chartConfig.key}
+            state={state}
+            sx={{ mt: 2 }}
+          />
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
@@ -592,7 +598,7 @@ export const ChartConfigurator = ({
         >
           <ChartFields
             dataSource={state.dataSource}
-            chartConfig={state.chartConfig}
+            chartConfig={chartConfig}
             metadata={data}
           />
         </ControlSectionContent>
@@ -730,7 +736,7 @@ export const ChartConfigurator = ({
         </ControlSection>
       )}
       <TitleAndDescriptionConfigurator />
-      {state.chartConfig.chartType !== "table" && (
+      {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
     </>

@@ -6,16 +6,21 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { ChartPanelPublished } from "@/components/chart-panel";
+import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
-import { Config } from "@/configurator";
+import {
+  Config,
+  ConfiguratorStateProvider,
+  ConfiguratorStatePublished,
+  getChartConfig,
+} from "@/configurator";
 import { getConfig } from "@/db/config";
-import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
+import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import { EmbedOptionsProvider } from "@/utils/embed";
@@ -28,7 +33,7 @@ type PageProps =
       status: "found";
       config: {
         key: string;
-        data: Omit<Config, "activeField">;
+        data: Config;
       };
     };
 
@@ -72,9 +77,26 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status } = deserializeProps(props);
 
-  const { dataSource, setDataSource } = useDataSourceStore();
+  const { key, state } = React.useMemo(() => {
+    if (props.status === "found") {
+      return {
+        key: props.config.key,
+        state: {
+          state: "PUBLISHED",
+          ...props.config.data,
+        } as ConfiguratorStatePublished,
+      };
+    }
 
-  useEffect(() => {
+    return {
+      key: "",
+      state: undefined,
+    };
+  }, [props]);
+  const chartConfig = state ? getChartConfig(state) : undefined;
+
+  const { dataSource, setDataSource } = useDataSourceStore();
+  React.useEffect(() => {
     // Remove publishSuccess from URL so that when reloading of sharing the link
     // to someone, there is no publishSuccess mention
     if (query.publishSuccess) {
@@ -90,21 +112,24 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSource.url, setDataSource, props]);
 
-  if (status === "notfound") {
+  if (
+    status === "notfound" ||
+    state === undefined ||
+    chartConfig === undefined
+  ) {
     return <ErrorPage statusCode={404} />;
   }
-
-  const { key, data } = (props as Exclude<PageProps, { status: "notfound" }>)
-    .config;
 
   return (
     <EmbedOptionsProvider>
       <Head>
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="og:title" content={data.meta.title[locale]} />
+        {/* FIXME: possibly we'll need to copy the content of first chart when migrating / saving to db
+        or have additional annotator for dashboards / compositions. */}
+        <meta property="og:title" content={state.meta.title[locale]} />
         <meta
           property="og:description"
-          content={data.meta.description[locale]}
+          content={state.meta.description[locale]}
         />
         {/* og:url is set in _app.tsx */}
       </Head>
@@ -127,15 +152,11 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               </Box>
             )}
 
-            <ChartPanelPublished chartType={data.chartConfig.chartType}>
-              <ChartPublished
-                dataSet={data.dataSet}
-                dataSource={data.dataSource}
-                chartConfig={data.chartConfig}
-                meta={data.meta}
-                configKey={key}
-              />
-            </ChartPanelPublished>
+            <ConfiguratorStateProvider chartId="published" initialState={state}>
+              <ChartPanel>
+                <ChartPublished configKey={key} />
+              </ChartPanel>
+            </ConfiguratorStateProvider>
 
             <Typography component="div" my={4}>
               {publishSuccess ? (

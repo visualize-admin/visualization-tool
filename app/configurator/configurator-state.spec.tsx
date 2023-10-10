@@ -11,6 +11,7 @@ import {
   DataSource,
   MapConfig,
   TableConfig,
+  getChartConfig,
 } from "@/config-types";
 import {
   applyNonTableDimensionToFilters,
@@ -37,7 +38,10 @@ import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.jso
 import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
 import * as api from "@/utils/chart-config/api";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import {
+  migrateChartConfig,
+  migrateConfiguratorState,
+} from "@/utils/chart-config/versioning";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -100,8 +104,23 @@ describe("initChartStateFromChart", () => {
         data: fakeVizFixture,
       },
     });
-    const state = await initChartStateFromChart("abcde");
-    expect(state).toEqual(expect.objectContaining(fakeVizFixture));
+    // @ts-ignore
+    const { key, activeChartKey, chartConfigs, ...rest } =
+      await initChartStateFromChart("abcde");
+    const { key: chartConfigKey, ...chartConfig } = chartConfigs[0];
+    const {
+      key: migratedKey,
+      activeChartKey: migratedActiveChartKey,
+      chartConfigs: migratedChartsConfigs,
+      ...migratedRest
+    } = migrateConfiguratorState(fakeVizFixture);
+    const { key: migratedChartConfigKey, ...migratedChartConfig } =
+      migratedChartsConfigs[0];
+
+    expect(rest).toEqual(
+      expect.objectContaining(migrateConfiguratorState(migratedRest))
+    );
+    expect(chartConfig).toEqual(migratedChartConfig);
   });
 
   it("should return undefined if chart is invalid", async () => {
@@ -708,7 +727,12 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
   };
 
   it("should retain appropriate x & y fields and discard the others", () => {
-    runChecks(migrateChartConfig(covid19ColumnChartConfig), xyChecks);
+    runChecks(
+      migrateChartConfig(covid19ColumnChartConfig, {
+        migrationProps: { meta: {} },
+      }),
+      xyChecks
+    );
   });
 
   it("should retain appropriate segment fields and discard the others", () => {
@@ -744,26 +768,30 @@ describe("colorMapping", () => {
   it("should correctly reset color mapping", () => {
     const state = {
       state: "CONFIGURING_CHART",
-      chartConfig: {
-        fields: {
-          areaLayer: {
-            componentIri: "areaLayerIri",
-            color: {
-              type: "categorical",
-              componentIri: "areaLayerColorIri",
-              palette: "dimension",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
+      chartConfigs: [
+        {
+          key: "abc",
+          fields: {
+            areaLayer: {
+              componentIri: "areaLayerIri",
+              color: {
+                type: "categorical",
+                componentIri: "areaLayerColorIri",
+                palette: "dimension",
+                colorMapping: {
+                  red: "green",
+                  green: "blue",
+                  blue: "red",
+                },
               },
             },
           },
         },
-      },
-    };
+      ],
+      activeChartKey: "abc",
+    } as unknown as ConfiguratorStateConfiguringChart;
 
-    updateColorMapping(state as unknown as ConfiguratorStateConfiguringChart, {
+    updateColorMapping(state, {
       type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
       value: {
         field: "areaLayer",
@@ -778,7 +806,9 @@ describe("colorMapping", () => {
       },
     });
 
-    expect(state.chartConfig.fields.areaLayer.color.colorMapping).toEqual({
+    expect(
+      (getChartConfig(state).fields as any).areaLayer.color.colorMapping
+    ).toEqual({
       red: "red",
       green: "green",
       blue: "blue",
@@ -792,30 +822,31 @@ describe("colorMapping", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "column",
-        fields: {
-          y: {
-            componentIri: "measure",
+      chartConfigs: [
+        {
+          key: "abc",
+          chartType: "column",
+          fields: {
+            y: {
+              componentIri: "measure",
+            },
           },
+          filters: {},
         },
-        filters: {},
-      },
+      ],
+      activeChartKey: "abc",
     } as ConfiguratorStateConfiguringChart;
 
-    handleChartFieldChanged(
-      state as unknown as ConfiguratorStateConfiguringChart,
-      {
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale: "en",
-          field: "segment",
-          componentIri: "newAreaLayerColorIri",
-        },
-      }
-    );
+    handleChartFieldChanged(state, {
+      type: "CHART_FIELD_CHANGED",
+      value: {
+        locale: "en",
+        field: "segment",
+        componentIri: "newAreaLayerColorIri",
+      },
+    });
 
-    const chartConfig = state.chartConfig as ColumnConfig;
+    const chartConfig = state.chartConfigs[0] as ColumnConfig;
 
     expect(chartConfig.fields.segment?.componentIri === "newAreaLayerColorIri");
     expect(chartConfig.fields.segment?.palette === "dimension");
@@ -834,40 +865,43 @@ describe("handleChartFieldChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          symbolLayer: {
-            componentIri: "symbolLayerIri",
-            color: {
-              type: "categorical",
-              componentIri: "symbolLayerColorIri",
-              palette: "oranges",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
+      chartConfigs: [
+        {
+          key: "cba",
+          chartType: "map",
+          fields: {
+            symbolLayer: {
+              componentIri: "symbolLayerIri",
+              color: {
+                type: "categorical",
+                componentIri: "symbolLayerColorIri",
+                palette: "oranges",
+                colorMapping: {
+                  red: "green",
+                  green: "blue",
+                  blue: "red",
+                },
               },
             },
           },
+          filters: {},
         },
-        filters: {},
+      ],
+      activeChartKey: "cba",
+    } as unknown as ConfiguratorStateConfiguringChart;
+
+    handleChartFieldChanged(state, {
+      type: "CHART_FIELD_CHANGED",
+      value: {
+        locale: "en",
+        field: "symbolLayer",
+        componentIri: "symbolLayerIri",
       },
-    };
+    });
 
-    handleChartFieldChanged(
-      state as unknown as ConfiguratorStateConfiguringChart,
-      {
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale: "en",
-          field: "symbolLayer",
-          componentIri: "symbolLayerIri",
-        },
-      }
-    );
-
-    expect(state.chartConfig.fields.symbolLayer.color).toBeDefined();
+    expect(
+      (state.chartConfigs[0] as any).fields.symbolLayer.color
+    ).toBeDefined();
   });
 });
 
@@ -880,22 +914,26 @@ describe("handleChartOptionChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          areaLayer: {
-            componentIri: "areaLayerIri",
-            color: {
-              type: "numerical",
-              componentIri: "areaLayerColorIri",
-              palette: "oranges",
-              scaleType: "continuous",
-              interpolationType: "linear",
+      chartConfigs: [
+        {
+          key: "bac",
+          chartType: "map",
+          fields: {
+            areaLayer: {
+              componentIri: "areaLayerIri",
+              color: {
+                type: "numerical",
+                componentIri: "areaLayerColorIri",
+                palette: "oranges",
+                scaleType: "continuous",
+                interpolationType: "linear",
+              },
             },
           },
+          filters: {},
         },
-        filters: {},
-      },
+      ],
+      activeChartKey: "bac",
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
@@ -909,7 +947,7 @@ describe("handleChartOptionChanged", () => {
     });
 
     expect(
-      (state.chartConfig as any).fields.areaLayer.color.nbClass
+      (state.chartConfigs[0] as any).fields.areaLayer.color.nbClass
     ).toBeTruthy();
   });
 
@@ -921,33 +959,37 @@ describe("handleChartOptionChanged", () => {
         type: "sparql",
         url: "fakeUrl",
       },
-      chartConfig: {
-        chartType: "map",
-        fields: {
-          areaLayer: {
-            componentIri: "areaLayerIri",
-            color: {
-              type: "categorical",
-              componentIri: "areaLayerColorIri",
-              palette: "dimension",
-              colorMapping: {
-                red: "green",
-                green: "blue",
-                blue: "red",
+      chartConfigs: [
+        {
+          key: "cab",
+          chartType: "map",
+          fields: {
+            areaLayer: {
+              componentIri: "areaLayerIri",
+              color: {
+                type: "categorical",
+                componentIri: "areaLayerColorIri",
+                palette: "dimension",
+                colorMapping: {
+                  red: "green",
+                  green: "blue",
+                  blue: "red",
+                },
+              },
+            },
+          },
+          filters: {
+            areaLayerColorIri: {
+              type: "multi",
+              values: {
+                red: true,
+                green: true,
               },
             },
           },
         },
-        filters: {
-          areaLayerColorIri: {
-            type: "multi",
-            values: {
-              red: true,
-              green: true,
-            },
-          },
-        },
-      },
+      ],
+      activeChartKey: "cab",
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
@@ -960,7 +1002,7 @@ describe("handleChartOptionChanged", () => {
       },
     });
 
-    expect(Object.keys(state.chartConfig.filters)).not.toContain(
+    expect(Object.keys(state.chartConfigs[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
   });

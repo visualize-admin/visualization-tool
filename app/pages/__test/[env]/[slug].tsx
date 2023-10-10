@@ -3,15 +3,23 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { ChartConfig, DataSource, Meta } from "@/configurator";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import {
+  ChartConfig,
+  ConfiguratorStateProvider,
+  DataSource,
+  Meta,
+} from "@/configurator";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { EmbedOptionsProvider } from "@/utils/embed";
 
+// FIXME: keep this in sync with configurator types.
 type DbConfig = {
+  version: string;
   dataSet: string;
   dataSource: DataSource;
-  chartConfig: ChartConfig;
   meta: Meta;
+  chartConfigs: ChartConfig[];
+  activeChartKey: string;
 };
 
 const Page: NextPage = () => {
@@ -24,24 +32,24 @@ const Page: NextPage = () => {
       const importedConfig = (
         await import(`../../../test/__fixtures/config/${env}/${slug}`)
       ).default;
-      setConfig(importedConfig);
+      setConfig({
+        ...importedConfig,
+        data: migrateConfiguratorState(importedConfig.data),
+      });
     };
+
     run();
   }, [env, slug]);
 
   if (config) {
-    const { dataSet, dataSource, meta, chartConfig } = config.data;
-    const migratedConfig = migrateChartConfig(chartConfig);
-
     return (
       <EmbedOptionsProvider>
-        <ChartPublished
-          dataSet={dataSet}
-          dataSource={dataSource}
-          chartConfig={migratedConfig}
-          meta={meta}
-          configKey={config.key}
-        />
+        <ConfiguratorStateProvider
+          chartId="published"
+          initialState={{ ...config.data, state: "PUBLISHED" }}
+        >
+          <ChartPublished />
+        </ConfiguratorStateProvider>
       </EmbedOptionsProvider>
     );
   }

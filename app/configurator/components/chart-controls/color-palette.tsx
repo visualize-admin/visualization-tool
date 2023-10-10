@@ -2,11 +2,11 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  Typography,
-  Select,
   MenuItem,
+  Select,
   SelectProps,
   Theme,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import get from "lodash/get";
@@ -17,14 +17,16 @@ import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import {
   ConfiguratorStateConfiguringChart,
+  getChartConfig,
+  isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { isNumericalMeasure } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
-  categoricalPalettes,
   DEFAULT_CATEGORICAL_PALETTE_NAME,
+  categoricalPalettes,
   divergingSteppedPalettes,
   getDefaultCategoricalPalette,
   getPalette,
@@ -58,7 +60,8 @@ export const ColorPalette = ({
   colorConfigPath,
   component,
 }: Props) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
   const classes = useStyles();
   const hasColors = hasDimensionColors(component);
   const defaultPalette =
@@ -75,8 +78,8 @@ export const ColorPalette = ({
     : categoricalPalettes;
 
   const currentPaletteName = get(
-    state,
-    `chartConfig.fields["${state.activeField}"].${
+    chartConfig,
+    `fields["${chartConfig.activeField}"].${
       colorConfigPath ? `${colorConfigPath}.` : ""
     }palette`
   );
@@ -206,18 +209,17 @@ const ColorPaletteReset = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
 
   const palette = get(
-    state,
-    `chartConfig.fields["${field}"].${
-      colorConfigPath ? `${colorConfigPath}.` : ""
-    }palette`,
+    chartConfig,
+    `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}palette`,
     DEFAULT_CATEGORICAL_PALETTE_NAME
   ) as string;
 
   const colorMapping = get(
-    state,
-    `chartConfig.fields["${field}"].${
+    chartConfig,
+    `fields["${field}"].${
       colorConfigPath ? `${colorConfigPath}.` : ""
     }colorMapping`
   ) as Record<string, string> | undefined;

@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import React from "react";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
-import { ChartPanelConfigurator } from "@/components/chart-panel";
+import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT } from "@/components/header";
 import { Loading } from "@/components/hint";
-import { useConfiguratorState } from "@/configurator";
+import { getChartConfig, useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
@@ -110,6 +110,8 @@ const ConfigureChartStep = () => {
     return null;
   }
 
+  const chartConfig = getChartConfig(state);
+
   return (
     <InteractiveFiltersProvider>
       <PanelLeftWrapper
@@ -125,23 +127,23 @@ const ConfigureChartStep = () => {
             <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
           </BackButton>
         </BackContainer>
-        {state.chartConfig.chartType === "table" ? (
+        {chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
           <ChartConfigurator state={state} />
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
-        <ChartPanelConfigurator>
+        <ChartPanel>
           <ChartPreview
             dataSetIri={state.dataSet}
             dataSource={state.dataSource}
           />
-        </ChartPanelConfigurator>
+        </ChartPanel>
       </PanelMiddleWrapper>
       <ConfiguratorDrawer
         anchor="left"
-        open={!!state.activeField}
+        open={!!chartConfig.activeField}
         hideBackdrop
         onClose={handleClosePanel}
       >
@@ -158,7 +160,7 @@ const ConfigureChartStep = () => {
               <Trans id="controls.nav.back-to-main">Back to main</Trans>
             </Button>
           </BackContainer>
-          {isAnnotationField(state.activeField) ? (
+          {isAnnotationField(chartConfig.activeField) ? (
             <ChartAnnotationsSelector state={state} />
           ) : (
             <ChartOptionsSelector state={state} />
@@ -178,14 +180,14 @@ const PublishStep = () => {
 
   return (
     <PanelMiddleWrapper>
-      <ChartPanelConfigurator>
+      <ChartPanel>
         <InteractiveFiltersProvider>
           <ChartPreview
             dataSetIri={state.dataSet}
             dataSource={state.dataSource}
           />
         </InteractiveFiltersProvider>
-      </ChartPanelConfigurator>
+      </ChartPanel>
     </PanelMiddleWrapper>
   );
 };

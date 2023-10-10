@@ -19,11 +19,11 @@ import { GenericField } from "@/config-types";
 import {
   AnimationField,
   ChartConfig,
-  ChartType,
   ColorFieldType,
   ColorScaleType,
   ComponentType,
   ConfiguratorStateConfiguringChart,
+  getChartConfig,
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
@@ -81,7 +81,9 @@ export const ChartOptionsSelector = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { activeField, chartConfig, dataSet, dataSource } = state;
+  const chartConfig = getChartConfig(state);
+  const { dataSet, dataSource } = state;
+  const { activeField } = chartConfig;
   const locale = useLocale();
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
     variables: {
@@ -134,6 +136,7 @@ export const ChartOptionsSelector = ({
         ) : (
           <ActiveFieldSwitch
             state={state}
+            chartConfig={chartConfig}
             metadata={metadata}
             observations={observations}
           />
@@ -150,25 +153,26 @@ export const ChartOptionsSelector = ({
 
 type ActiveFieldSwitchProps = {
   state: ConfiguratorStateConfiguringChart;
+  chartConfig: ChartConfig;
   metadata: DataCubeMetadataWithHierarchies;
   observations: Observation[];
 };
 
 const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
-  const { state, metadata, observations } = props;
+  const { state, metadata, chartConfig, observations } = props;
   const { dimensions, measures } = metadata;
-  const activeField = state.activeField as EncodingFieldType | undefined;
+  const activeField = chartConfig.activeField as EncodingFieldType | undefined;
 
   if (!activeField) {
     return null;
   }
 
-  const chartSpec = getChartSpec(state.chartConfig);
+  const chartSpec = getChartSpec(chartConfig);
 
   // Animation field is a special field that is not part of the encodings,
   // but rather is selected from interactive filters menu.
   const animatable =
-    isAnimationInConfig(state.chartConfig) &&
+    isAnimationInConfig(chartConfig) &&
     chartSpec.interactiveFilters.includes("animation");
   const baseEncodings = chartSpec.encodings;
   const encodings = animatable
@@ -179,7 +183,7 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
   ) as EncodingSpec;
 
   const activeFieldComponentIri = getFieldComponentIri(
-    state.chartConfig.fields,
+    chartConfig.fields,
     activeField
   );
 
@@ -190,8 +194,8 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
     <EncodingOptionsPanel
       encoding={encoding}
       state={state}
+      chartConfig={chartConfig}
       field={activeField}
-      chartType={state.chartConfig.chartType}
       component={component}
       dimensions={dimensions}
       measures={measures}
@@ -203,8 +207,8 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
 type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
+  chartConfig: ChartConfig;
   field: EncodingFieldType;
-  chartType: ChartType;
   component: DimensionMetadataFragment | undefined;
   dimensions: DimensionMetadataFragment[];
   measures: DimensionMetadataFragment[];
@@ -216,12 +220,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     encoding,
     state,
     field,
-    chartType,
+    chartConfig,
     component,
     dimensions,
     measures,
     observations,
   } = props;
+  const { chartType } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
       id: "controls.select.dimension",
@@ -253,7 +258,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     }),
   };
 
-  const { fields } = state.chartConfig;
+  const { fields } = chartConfig;
   const otherFields = Object.keys(fields).filter(
     (f) => (fields as any)[f].hasOwnProperty("componentIri") && field !== f
   );
@@ -266,13 +271,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       dimensionTypes: encoding.componentTypes,
       dimensions,
       measures,
-    }).map((dimension) => ({
-      value: dimension.iri,
-      label: dimension.label,
+    }).map((d) => ({
+      value: d.iri,
+      label: d.label,
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
-          otherFieldsIris.includes(dimension.iri)) ||
-        isStandardErrorDimension(dimension),
+          otherFieldsIris.includes(d.iri)) ||
+        isStandardErrorDimension(d),
     }));
   }, [
     dimensions,
@@ -345,32 +350,31 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartLayoutOptions
             encoding={encoding}
             component={component}
-            chartConfig={state.chartConfig}
+            chartConfig={chartConfig}
             components={allComponents}
             hasColorPalette={hasColorPalette}
             hasSubOptions={hasSubOptions}
           />
         )}
 
-      {encoding.options?.imputation?.shouldShow(
-        state.chartConfig,
-        observations
-      ) && <ChartImputation state={state} />}
+      {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
+        <ChartImputation chartConfig={chartConfig} />
+      )}
 
       {encoding.options?.calculation && get(fields, "segment") && (
         <ChartFieldCalculation
-          {...encoding.options.calculation.getDisabledState?.(
-            state.chartConfig
-          )}
+          {...encoding.options.calculation.getDisabledState?.(chartConfig)}
         />
       )}
 
       {/* FIXME: should be generic or shouldn't be a field at all */}
-      {field === "baseLayer" && <ChartMapBaseLayerSettings state={state} />}
+      {field === "baseLayer" && (
+        <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+      )}
 
       {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
-          state={state}
+          chartConfig={chartConfig}
           field={field}
           encodingSortingOptions={encoding.sorting}
         />
@@ -389,7 +393,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
           state={state}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
           encoding={encoding}
           component={component}
           componentTypes={encoding.options.colorComponent.componentTypes}
@@ -422,6 +426,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
       <ChartFieldMultiFilter
         state={state}
+        chartConfig={chartConfig}
         component={component}
         encoding={encoding}
         field={field}
@@ -431,9 +436,9 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
       {fieldDimension &&
         field === "animation" &&
-        isAnimationInConfig(state.chartConfig) &&
-        state.chartConfig.fields.animation && (
-          <ChartFieldAnimation field={state.chartConfig.fields.animation} />
+        isAnimationInConfig(chartConfig) &&
+        chartConfig.fields.animation && (
+          <ChartFieldAnimation field={chartConfig.fields.animation} />
         )}
     </div>
   );
@@ -633,6 +638,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
 
 const ChartFieldMultiFilter = ({
   state,
+  chartConfig,
   component,
   encoding,
   field,
@@ -640,6 +646,7 @@ const ChartFieldMultiFilter = ({
   measures,
 }: {
   state: ConfiguratorStateConfiguringChart;
+  chartConfig: ChartConfig;
   component: DimensionMetadataFragment | undefined;
   encoding: EncodingSpec;
   field: string;
@@ -647,13 +654,13 @@ const ChartFieldMultiFilter = ({
   measures: DimensionMetadataFragment[];
 }) => {
   const colorComponentIri = get(
-    state.chartConfig,
+    chartConfig,
     `fields.${field}.color.componentIri`
   );
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.iri === colorComponentIri
   );
-  const colorType = get(state.chartConfig, `fields.${field}.color.type`) as
+  const colorType = get(chartConfig, `fields.${field}.color.type`) as
     | ColorFieldType
     | undefined;
 
@@ -797,12 +804,12 @@ const ChartFieldCalculation = (props: ChartFieldCalculationProps) => {
 };
 
 const ChartFieldSorting = ({
-  state,
+  chartConfig,
   field,
   encodingSortingOptions,
   disabled = false,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  chartConfig: ChartConfig;
   field: EncodingFieldType;
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
@@ -849,8 +856,8 @@ const ChartFieldSorting = ({
   );
 
   const activeSortingType = get(
-    state,
-    ["chartConfig", "fields", field, "sorting", "sortingType"],
+    chartConfig,
+    ["fields", field, "sorting", "sortingType"],
     DEFAULT_SORTING["sortingType"]
   );
 
@@ -859,8 +866,8 @@ const ChartFieldSorting = ({
     (o) => o.sortingType === activeSortingType
   )?.sortingOrder;
   const activeSortingOrder = get(
-    state,
-    ["chartConfig", "fields", field, "sorting", "sortingOrder"],
+    chartConfig,
+    ["fields", field, "sorting", "sortingOrder"],
     sortingOrderOptions?.[0] ?? "asc"
   );
 
@@ -875,7 +882,7 @@ const ChartFieldSorting = ({
             id="sort-by"
             label={getFieldLabel("sortBy")}
             options={encodingSortingOptions?.map((d) => {
-              const disabledState = d.getDisabledState?.(state.chartConfig);
+              const disabledState = d.getDisabledState?.(chartConfig);
 
               return {
                 value: d.sortingType,
@@ -898,11 +905,11 @@ const ChartFieldSorting = ({
           {sortingOrderOptions &&
             sortingOrderOptions.map((sortingOrder) => {
               const subType = get(
-                state,
-                ["chartConfig", "fields", "segment", "type"],
+                chartConfig,
+                ["fields", "segment", "type"],
                 ""
               );
-              const chartSubType = `${state.chartConfig.chartType}.${subType}`;
+              const chartSubType = `${chartConfig.chartType}.${subType}`;
 
               return (
                 <Radio
@@ -1194,11 +1201,11 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
 };
 
 type ChartImputationProps = {
-  state: ConfiguratorStateConfiguringChart;
+  chartConfig: ChartConfig;
 };
 
 const ChartImputation = (props: ChartImputationProps) => {
-  const { state } = props;
+  const { chartConfig } = props;
   const [, dispatch] = useConfiguratorState();
   const getImputationTypeLabel = (type: ImputationType) => {
     switch (type) {
@@ -1235,8 +1242,8 @@ const ChartImputation = (props: ChartImputationProps) => {
   );
 
   const imputationType: ImputationType = get(
-    state,
-    ["chartConfig", "fields", "y", "imputationType"],
+    chartConfig,
+    ["fields", "y", "imputationType"],
     "none"
   );
 
@@ -1275,11 +1282,10 @@ const ChartImputation = (props: ChartImputationProps) => {
 };
 
 const ChartMapBaseLayerSettings = ({
-  state,
+  chartConfig,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  chartConfig: MapConfig;
 }) => {
-  const chartConfig = state.chartConfig as MapConfig;
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
 

@@ -113,6 +113,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              chartConfig={chartConfig}
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
@@ -143,6 +144,7 @@ export const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              chartConfig={chartConfig}
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active

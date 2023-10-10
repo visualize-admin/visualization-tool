@@ -11,6 +11,7 @@ import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import {
+  ChartConfig,
   DataSource,
   GenericSegmentField,
   MapConfig,
@@ -130,10 +131,13 @@ const useDimension = ({
 };
 
 const emptyObj = {};
+
 const useLegendGroups = ({
+  chartConfig,
   title,
   values,
 }: {
+  chartConfig: ChartConfig;
   title?: string;
   values: string[];
 }) => {
@@ -152,13 +156,11 @@ const useLegendGroups = ({
 
   // FIXME: should color field also be included here?
   const segmentField = (
-    isSegmentInConfig(configState.chartConfig)
-      ? configState.chartConfig.fields.segment
-      : null
+    isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
 
   const segmentFilters = segmentField?.componentIri
-    ? configState.chartConfig.filters[segmentField.componentIri]
+    ? chartConfig.filters[segmentField.componentIri]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
@@ -198,15 +200,16 @@ const useLegendGroups = ({
 };
 
 type LegendColorProps = {
+  chartConfig: ChartConfig;
   symbol: LegendSymbol;
   interactive?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const { symbol, interactive } = props;
+  const { chartConfig, symbol, interactive } = props;
   const { colors, getSegmentLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
-  const groups = useLegendGroups({ values });
+  const groups = useLegendGroups({ chartConfig, values });
 
   return (
     <LegendColorContent
@@ -255,6 +258,7 @@ export const MapLegendColor = memo(function LegendColor({
         return component.values.find((v) => v.value === d)?.label as string;
       };
   const groups = useLegendGroups({
+    chartConfig,
     title: component.label,
     values: sortedValues.map((d) => `${d.value}`),
   });

@@ -5,7 +5,7 @@
 export { I18nProvider } from "@lingui/react";
 export {
   Configurator,
-  EditorConfiguratorStateProvider,
+  ConfiguratorStateProvider,
   useConfiguratorState,
 } from "../configurator";
 export {

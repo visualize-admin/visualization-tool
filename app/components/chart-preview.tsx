@@ -16,7 +16,11 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintYellow } from "@/components/hint";
 import { MetadataPanel } from "@/components/metadata-panel";
-import { DataSource, useConfiguratorState } from "@/configurator";
+import {
+  DataSource,
+  getChartConfig,
+  useConfiguratorState,
+} from "@/configurator";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,
@@ -60,6 +64,7 @@ const useStyles = makeStyles<Theme>({
 export const ChartPreviewInner = (props: ChartPreviewProps) => {
   const { dataSetIri, dataSource } = props;
   const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const locale = useLocale();
   const classes = useStyles();
   const [{ data: metadata }] = useDataCubeMetadataQuery({
@@ -137,7 +142,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   variant="h2"
                   sx={{
                     color:
-                      state.meta.title[locale] === "" ? "grey.500" : "text",
+                      chartConfig.meta.title[locale] === ""
+                        ? "grey.500"
+                        : "text",
                   }}
                   className={classes.title}
                   onClick={() =>
@@ -147,10 +154,10 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                     })
                   }
                 >
-                  {state.meta.title[locale] === "" ? (
+                  {chartConfig.meta.title[locale] === "" ? (
                     <Trans id="annotation.add.title">[ Title ]</Trans>
                   ) : (
-                    state.meta.title[locale]
+                    chartConfig.meta.title[locale]
                   )}
                 </Typography>
 
@@ -163,9 +170,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
               </Flex>
               <Head>
                 <title key="title">
-                  {state.meta.title[locale] === ""
+                  {chartConfig.meta.title[locale] === ""
                     ? metadata?.dataCubeByIri?.title
-                    : state.meta.title[locale]}{" "}
+                    : chartConfig.meta.title[locale]}{" "}
                   - visualize.admin.ch
                 </title>
               </Head>
@@ -174,7 +181,9 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                 className={classes.description}
                 sx={{
                   color:
-                    state.meta.description[locale] === "" ? "grey.500" : "text",
+                    chartConfig.meta.description[locale] === ""
+                      ? "grey.500"
+                      : "text",
                 }}
                 onClick={() =>
                   dispatch({
@@ -183,10 +192,10 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   })
                 }
               >
-                {state.meta.description[locale] === "" ? (
+                {chartConfig.meta.description[locale] === "" ? (
                   <Trans id="annotation.add.description">[ Description ]</Trans>
                 ) : (
-                  state.meta.description[locale]
+                  chartConfig.meta.description[locale]
                 )}
               </Typography>
             </>
@@ -199,22 +208,22 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                   }}
                   dataSetIri={dataSetIri}
                   dataSource={dataSource}
-                  chartConfig={state.chartConfig}
+                  chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithFilters
                   dataSet={dataSetIri}
                   dataSource={dataSource}
-                  chartConfig={state.chartConfig}
+                  chartConfig={chartConfig}
                   published={false}
                 />
               )}
             </Box>
-            {state.chartConfig && (
+            {chartConfig && (
               <ChartFootnotes
                 dataSetIri={dataSetIri}
                 dataSource={dataSource}
-                chartConfig={state.chartConfig}
+                chartConfig={chartConfig}
                 onToggleTableView={handleToggleTableView}
               />
             )}

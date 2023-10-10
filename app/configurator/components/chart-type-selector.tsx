@@ -11,7 +11,7 @@ import { ControlSectionSkeleton } from "@/configurator/components/chart-controls
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps, useChartType } from "@/configurator/config-form";
-import { useComponentsQuery } from "@/graphql/query-hooks";
+import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -99,17 +99,18 @@ export const ChartTypeSelectionButton = ({
 
 export const ChartTypeSelector = ({
   state,
+  type = "edit",
   showHelp,
-  sx,
+  chartKey,
   ...props
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing;
+  type?: "add" | "edit";
   showHelp?: boolean;
-  sx?: BoxProps["sx"];
+  chartKey: string;
 } & BoxProps) => {
   const locale = useLocale();
-  const { value: chartType, onChange: onChangeChartType } = useChartType();
-  const [{ data }] = useComponentsQuery({
+  const [{ data }] = useComponentsWithHierarchiesQuery({
     variables: {
       iri: state.dataSet,
       sourceType: state.dataSource.type,
@@ -117,6 +118,12 @@ export const ChartTypeSelector = ({
       locale,
     },
   });
+  const { value: chartType, onChange: onChangeChartType } = useChartType(
+    chartKey,
+    type,
+    data?.dataCubeByIri?.dimensions ?? [],
+    data?.dataCubeByIri?.measures ?? []
+  );
 
   if (!data?.dataCubeByIri) {
     return <ControlSectionSkeleton />;
@@ -128,21 +135,23 @@ export const ChartTypeSelector = ({
   });
 
   return (
-    <Box sx={sx} {...props}>
+    <Box {...props}>
       <legend style={{ display: "none" }}>
         <Trans id="controls.select.chart.type">Chart Type</Trans>
       </legend>
-      {showHelp !== false ? (
+      {showHelp === false ? null : (
         <Box sx={{ m: 4, textAlign: "center" }}>
           <Typography variant="body2">
-            <Trans id="controls.switch.chart.type">
-              Switch to another chart type while maintaining most filter
-              settings.
-            </Trans>
+            {type === "add" ? (
+              <Trans id="controls.add.chart">Add another chart.</Trans>
+            ) : (
+              <Trans id="controls.switch.chart.type">
+                Switch to another chart type while maintaining most filter
+                settings.
+              </Trans>
+            )}
           </Typography>
         </Box>
-      ) : (
-        false
       )}
 
       <div>
@@ -168,7 +177,7 @@ export const ChartTypeSelector = ({
                   key={d}
                   label={d}
                   value={d}
-                  checked={chartType === d}
+                  checked={type === "edit" ? chartType === d : false}
                   disabled={!possibleChartTypes.includes(d)}
                   onClick={(e) =>
                     onChangeChartType(e.currentTarget.value as ChartType)
@@ -176,12 +185,6 @@ export const ChartTypeSelector = ({
                 />
               ))}
             </Box>
-            {/* TODO: Handle properly when chart composition is implemented */}
-            {/* <Button disabled sx={{ mx: 4, mb: 2, justifyContent: "center" }}>
-                <Trans id="controls.remove.visualization">
-                  Remove this visualization
-                </Trans>
-              </Button> */}
           </Flex>
         )}
       </div>

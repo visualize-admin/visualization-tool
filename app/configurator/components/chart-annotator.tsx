@@ -1,6 +1,7 @@
 import { Trans, t } from "@lingui/macro";
 import * as React from "react";
 
+import { getChartConfig } from "@/config-types";
 import {
   ControlSection,
   ControlSectionContent,
@@ -14,7 +15,8 @@ import { isConfiguring } from "../configurator-state";
 
 export const TitleAndDescriptionConfigurator = () => {
   const [state] = useConfiguratorState(isConfiguring);
-  const { title, description } = state.meta;
+  const chartConfig = getChartConfig(state);
+  const { title, description } = chartConfig.meta;
   const locale = useLocale();
   const disabled = React.useMemo(() => {
     return !(title[locale] !== "" && description[locale] !== "");
@@ -44,7 +46,7 @@ export const TitleAndDescriptionConfigurator = () => {
       </SubsectionTitle>
       <ControlSectionContent px="small" gap="none">
         <AnnotatorTabField
-          value={"title"}
+          value="title"
           icon="text"
           emptyValueWarning={
             <Trans id="controls.annotator.add-title-warning">
@@ -54,7 +56,7 @@ export const TitleAndDescriptionConfigurator = () => {
           mainLabel={getFieldLabel("title")}
         />
         <AnnotatorTabField
-          value={"description"}
+          value="description"
           icon="description"
           emptyValueWarning={
             <Trans id="controls.annotator.add-description-warning">

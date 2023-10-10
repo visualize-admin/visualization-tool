@@ -96,6 +96,7 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
           />

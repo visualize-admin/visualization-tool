@@ -16,9 +16,10 @@ import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
-import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -26,15 +27,19 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
+    <ConfiguratorStateProvider
+      chartId="published"
       initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
+        version: "2.0.0",
+        state: "PUBLISHED",
+        meta: {
+          title: { en: "", de: "", fr: "", it: "" },
+          description: { en: "", de: "", fr: "", it: "" },
+        },
         dataSource: { type: "sparql", url: "" },
         dataSet: "",
-        chartConfig,
+        chartConfigs: [chartConfig],
+        activeChartKey: "scatterplot",
       }}
     >
       <InteractiveFiltersProvider>
@@ -59,11 +64,15 @@ ${(
             <Tooltip type="single" />
           </ChartContainer>
           {scatterplotFields.segment && (
-            <LegendColor symbol="square" interactive />
+            <LegendColor
+              chartConfig={chartConfig}
+              symbol="square"
+              interactive
+            />
           )}
         </ScatterplotChart>
       </InteractiveFiltersProvider>
-    </PublishedConfiguratorStateProvider>
+    </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;
@@ -120,11 +129,27 @@ const scatterplotFields = {
 };
 
 const chartConfig: ScatterPlotConfig = {
+  key: "scatterplot",
+  version: CHART_CONFIG_VERSION,
+  meta: {
+    title: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+  },
   chartType: "scatterplot",
   filters: {},
-  version: "1.4.2",
   interactiveFiltersConfig,
   fields: scatterplotFields,
+  activeField: undefined,
 };
 
 const scatterplotMeasures = [

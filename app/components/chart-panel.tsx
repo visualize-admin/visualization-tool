@@ -1,80 +1,38 @@
-import { BoxProps, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReactNode } from "react";
+import React from "react";
 
+import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import Flex from "@/components/flex";
-import {
-  ChartType,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStatePublishing,
-} from "@/configurator";
-import { useConfiguratorState } from "@/src";
 
-import { ChartSelectionTabs } from "./chart-selection-tabs";
-
-type ChartPanelProps = { children: ReactNode } & BoxProps;
-
-export const ChartPanelConfigurator = (props: ChartPanelProps) => {
-  // This type of chart panel can only appear for below steps.
-  const [state] = useConfiguratorState() as unknown as [
-    ConfiguratorStateConfiguringChart | ConfiguratorStatePublishing
-  ];
+export const ChartPanel = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
 
   return (
     <>
-      <ChartSelectionTabs
-        editable={true}
-        chartType={state.chartConfig.chartType}
-      />
-      <ChartPanelInner showTabs {...props} />
+      <ChartSelectionTabs />
+      <ChartPanelInner>{children}</ChartPanelInner>
     </>
   );
 };
 
-export const ChartPanelPublished = (
-  props: ChartPanelProps & { chartType: ChartType }
-) => {
-  const { chartType, ...rest } = props;
+const useChartPanelInnerStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    flexDirection: "column",
+    backgroundColor: theme.palette.grey[100],
+    border: "1px solid",
+    borderColor: theme.palette.divider,
+    overflow: "hidden",
+    width: "auto",
+  },
+}));
+
+const ChartPanelInner = (props: React.PropsWithChildren<{}>) => {
+  const { children } = props;
+  const classes = useChartPanelInnerStyles();
 
   return (
-    <>
-      {/* TODO: Re-enable in the future, when chart composition is implemented */}
-      {/* <ChartSelectionTabs editable={false} chartType={chartType} /> */}
-      <ChartPanelInner showTabs={false} {...rest} />
-    </>
-  );
-};
-
-const useChartPanelInnerStyles = makeStyles<Theme, { showTabs: boolean }>(
-  (theme: Theme) => ({
-    root: {
-      flexDirection: "column",
-      backgroundColor: theme.palette.grey[100],
-      border: "1px solid",
-      borderColor: theme.palette.divider,
-      // TODO: Handle properly when chart composition is implemented (enable when
-      // ChartSelectionTabs becomes scrollable)
-      overflow: "hidden",
-      width: "auto",
-    },
-  })
-);
-
-const ChartPanelInner = ({
-  children,
-  showTabs = true,
-  ...boxProps
-}: ChartPanelProps & { showTabs: boolean }) => {
-  const classes = useChartPanelInnerStyles({ showTabs });
-  return (
-    <Flex
-      {...boxProps}
-      className={classes.root}
-      sx={{
-        ...boxProps.sx,
-        minHeight: [150, 300, 500],
-      }}
-    >
+    <Flex className={classes.root} sx={{ minHeight: [150, 300, 500] }}>
       {children}
     </Flex>
   );

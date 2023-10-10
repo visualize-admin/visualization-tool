@@ -179,6 +179,10 @@ msgstr "Regular"
 msgid "controls.abbreviations"
 msgstr "Usa abbreviazioni"
 
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.add.chart"
+msgstr "Aggiungere un altro grafico."
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animazione"
@@ -334,6 +338,10 @@ msgstr "Descrizione"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "controls.duplicate.visualization"
+msgstr "Duplicare questa visualizzazione"
+
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
@@ -477,6 +485,10 @@ msgstr "Attivo"
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "controls.remove.visualization"
+msgstr "Rimuovere questa visualizzazione"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.scale.type"

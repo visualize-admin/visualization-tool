@@ -102,6 +102,7 @@ export const ChartLines = memo((props: ChartProps<LineConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            chartConfig={chartConfig}
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
           />
