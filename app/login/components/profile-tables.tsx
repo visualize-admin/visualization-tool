@@ -36,7 +36,11 @@ export const ProfileVisualizationsTable = (
             {userConfigs.map((d) => {
               return (
                 <TableRow key={d.id}>
-                  <TableCell>{d.data.chartConfig.chartType}</TableCell>
+                  <TableCell>
+                    {d.data.chartConfigs.length > 1
+                      ? "multi"
+                      : d.data.chartConfigs[0].chartType}
+                  </TableCell>
                   <TableCell>{d.data.meta.title.en}</TableCell>
                   <TableCell>
                     <NextLink href={`/v/${d.key}`} legacyBehavior>
