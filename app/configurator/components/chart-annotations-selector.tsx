@@ -11,14 +11,18 @@ import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { locales } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 
-import { ConfiguratorStateConfiguringChart } from "../../config-types";
+import {
+  ConfiguratorStateConfiguringChart,
+  getChartConfig,
+} from "../../config-types";
 
 const TitleAndDescriptionOptions = ({
   state,
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { activeField, meta } = state;
+  const chartConfig = getChartConfig(state);
+  const { activeField, meta } = chartConfig;
 
   const locale = useLocale();
   // Reorder locales so the input field for
@@ -56,7 +60,8 @@ export const ChartAnnotationsSelector = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { activeField } = state;
+  const chartConfig = getChartConfig(state);
+  const { activeField } = chartConfig;
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

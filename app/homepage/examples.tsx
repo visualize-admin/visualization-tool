@@ -5,7 +5,8 @@ import { ReactNode } from "react";
 import { ChartPublished } from "@/components/chart-published";
 import Flex from "@/components/flex";
 import { HomepageSection } from "@/homepage/generic";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import { ConfiguratorStateProvider } from "@/src";
+import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 export const Examples = ({
   headline,
@@ -30,11 +31,16 @@ export const Examples = ({
       }}
     >
       <HomepageSection>{headline}</HomepageSection>
-      <Example headline={example1Headline} description={example1Description}>
-        <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
-          dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
-          meta={{
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={migrateConfiguratorState({
+          state: "PUBLISHED",
+          dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
+          dataSource: {
+            type: "sparql",
+            url: "https://lindas.admin.ch/query",
+          },
+          meta: {
             title: {
               de: "Lärmbelastung durch Verkehr",
               en: "Traffic noise pollution",
@@ -47,8 +53,8 @@ export const Examples = ({
               fr: "",
               it: "",
             },
-          }}
-          chartConfig={migrateChartConfig({
+          },
+          chartConfig: {
             version: "1.2.1",
             fields: {
               x: {
@@ -121,19 +127,25 @@ export const Examples = ({
                 ],
               },
             },
-          })}
-          configKey=""
-        />
-      </Example>
-      <Example
-        headline={example2Headline}
-        description={example2Description}
-        reverse
+          },
+          activeField: undefined,
+        })}
       >
-        <ChartPublished
-          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
-          dataSource={{ type: "sparql", url: "https://lindas.admin.ch/query" }}
-          meta={{
+        <Example headline={example1Headline} description={example1Description}>
+          <ChartPublished />
+        </Example>
+      </ConfiguratorStateProvider>
+
+      <ConfiguratorStateProvider
+        chartId="published"
+        initialState={migrateConfiguratorState({
+          state: "PUBLISHED",
+          dataSet: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
+          dataSource: {
+            type: "sparql",
+            url: "https://lindas.admin.ch/query",
+          },
+          meta: {
             title: {
               de: "Verteilung der Ausgaben und Einnahmen nach Ämtern",
               en: "Distribution of expenses and income by office",
@@ -146,8 +158,8 @@ export const Examples = ({
               fr: "",
               it: "",
             },
-          }}
-          chartConfig={migrateChartConfig({
+          },
+          chartConfig: {
             version: "1.2.1",
             fields: {
               x: {
@@ -201,10 +213,17 @@ export const Examples = ({
                 ],
               },
             },
-          })}
-          configKey=""
-        />
-      </Example>
+          },
+        })}
+      >
+        <Example
+          headline={example2Headline}
+          description={example2Description}
+          reverse
+        >
+          <ChartPublished />
+        </Example>
+      </ConfiguratorStateProvider>
     </Box>
   );
 };

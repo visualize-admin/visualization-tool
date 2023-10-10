@@ -11,11 +11,11 @@ const route = api({
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
     const { data } = req.body;
-    const result = await createConfig({
+
+    return await createConfig({
       data,
       userId,
     });
-    return result;
   },
 });
 

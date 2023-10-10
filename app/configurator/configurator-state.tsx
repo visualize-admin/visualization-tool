@@ -1,4 +1,4 @@
-import { current, produce } from "immer";
+import produce, { current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import setWith from "lodash/setWith";
@@ -36,6 +36,8 @@ import {
   ColumnStyleCategory,
   ConfiguratorState,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStatePublished,
+  ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   DataSource,
   FilterValue,
@@ -46,6 +48,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   decodeConfiguratorState,
+  getChartConfig,
   isAreaConfig,
   isColorFieldInConfig,
   isTableConfig,
@@ -82,7 +85,10 @@ import {
   useDataSourceStore,
 } from "@/stores/data-source";
 import { createConfig, fetchChartConfig } from "@/utils/chart-config/api";
-import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import {
+  CONFIGURATOR_STATE_VERSION,
+  migrateConfiguratorState,
+} from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
 import { unreachableError } from "@/utils/unreachable";
 
@@ -97,7 +103,10 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "STEP_PREVIOUS";
-      to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
+      to?: Exclude<
+        ConfiguratorState["state"],
+        "INITIAL" | "PUBLISHING" | "PUBLISHED"
+      >;
     }
   | {
       type: "DATASET_SELECTED";
@@ -111,6 +120,7 @@ export type ConfiguratorStateAction =
       type: "CHART_TYPE_CHANGED";
       value: {
         locale: Locale;
+        chartKey: string;
         chartType: ChartType;
       };
     }
@@ -284,6 +294,30 @@ export type ConfiguratorStateAction =
   | {
       type: "PUBLISHED";
       value: string;
+    }
+  | {
+      type: "CHART_CONFIG_ADD";
+      value: {
+        chartConfig: ChartConfig;
+        locale: Locale;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_REMOVE";
+      value: {
+        chartKey: string;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_REORDER";
+      value: {
+        oldIndex: number;
+        newIndex: number;
+      };
+    }
+  | {
+      type: "SWITCH_ACTIVE_CHART";
+      value: string;
     };
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
@@ -300,17 +334,18 @@ const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
 };
 
 const INITIAL_STATE: ConfiguratorState = {
+  version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
   dataSet: undefined,
   dataSource: DEFAULT_DATA_SOURCE,
-  activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
+  version: CONFIGURATOR_STATE_VERSION,
   state: "SELECTING_DATASET",
   dataSet: undefined,
   dataSource: DEFAULT_DATA_SOURCE,
-  chartConfig: undefined,
+  chartConfigs: undefined,
   meta: {
     title: {
       de: "",
@@ -325,7 +360,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
       en: "",
     },
   },
-  activeField: undefined,
+  activeChartKey: undefined,
 };
 
 const getCachedMetadata = (
@@ -367,7 +402,7 @@ export const getFilterValue = (
   dimensionIri: string
 ): FilterValue | undefined => {
   return state.state !== "INITIAL" && state.state !== "SELECTING_DATASET"
-    ? state.chartConfig.filters[dimensionIri]
+    ? getChartConfig(state).filters[dimensionIri]
     : undefined;
 };
 
@@ -378,28 +413,34 @@ export const moveFilterField = produce(
     // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
     const keys = Object.getOwnPropertyNames(chartConfig.filters);
     const fieldIndex = Object.keys(chartConfig.filters).indexOf(dimensionIri);
+
     if (fieldIndex === 0 && delta === -1) {
       return;
     }
+
     if (fieldIndex === keys.length - 1 && delta === 1) {
       return;
     }
+
     if (fieldIndex === -1 && delta !== -1) {
       return;
     }
+
     const replacedIndex =
       fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
     const replaced = keys[replacedIndex];
     keys[replacedIndex] = dimensionIri;
+
     if (fieldIndex === -1) {
       keys.push(replaced);
     } else {
       keys[fieldIndex] = replaced;
     }
+
     chartConfig.filters = Object.fromEntries(
       keys.map((k) => [
         k,
-        chartConfig.filters[k] || { type: "single", value: possibleValues[0] },
+        chartConfig.filters[k] ?? { type: "single", value: possibleValues[0] },
       ])
     );
   }
@@ -577,7 +618,6 @@ const transitionStepNext = (
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
         });
-
         const chartConfig = deriveFiltersFromFields(
           getInitialConfig({
             chartType: possibleChartTypes[0],
@@ -588,28 +628,30 @@ const transitionStepNext = (
         );
 
         return {
+          version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
           dataSource: draft.dataSource,
           meta: draft.meta,
-          activeField: undefined,
-          chartConfig,
+          chartConfigs: [chartConfig],
+          activeChartKey: chartConfig.key,
         };
       }
       break;
     case "CONFIGURING_CHART":
       return {
         ...draft,
-        activeField: undefined,
         state: "PUBLISHING",
       };
 
     case "INITIAL":
     case "PUBLISHING":
+    case "PUBLISHED":
       break;
     default:
       throw unreachableError(draft);
   }
+
   return draft;
 };
 
@@ -643,19 +685,18 @@ const transitionStepPrevious = (
     case "SELECTING_DATASET":
       return {
         ...draft,
-        activeField: undefined,
-        chartConfig: undefined,
+        chartConfigs: undefined,
+        activeChartKey: undefined,
         state: stepTo,
       };
     case "CONFIGURING_CHART":
       return {
         ...draft,
-        activeField: undefined,
         state: stepTo,
       };
-    default:
-      return draft;
   }
+
+  return draft;
 };
 
 // FIXME: should by handled better, as color is a subfield and not actual field.
@@ -705,11 +746,11 @@ export const getChartOptionField = (
   path: string,
   defaultValue: string | boolean = ""
 ) => {
+  const chartConfig = getChartConfig(state);
+
   return get(
-    state,
-    field === null
-      ? `chartConfig.${path}`
-      : `chartConfig.fields["${field}"].${path}`,
+    chartConfig,
+    field === null ? path : `fields["${field}"].${path}`,
     defaultValue
   );
 };
@@ -722,13 +763,14 @@ export const handleChartFieldChanged = (
     return draft;
   }
 
+  const chartConfig = getChartConfig(draft);
   const {
     locale,
     field,
     componentIri,
     selectedValues: actionSelectedValues,
   } = action.value;
-  const f = get(draft.chartConfig.fields, field);
+  const f = get(chartConfig.fields, field);
   const { dimensions = [], measures = [] } =
     getCachedMetadata(draft, locale) ?? {};
   const components = [...dimensions, ...measures];
@@ -737,12 +779,12 @@ export const handleChartFieldChanged = (
 
   if (f) {
     // Reset field properties, excluding componentIri.
-    (draft.chartConfig.fields as GenericFields)[field] = { componentIri };
+    (chartConfig.fields as GenericFields)[field] = { componentIri };
   }
 
-  const sideEffect = getChartFieldChangeSideEffect(draft.chartConfig, field);
+  const sideEffect = getChartFieldChangeSideEffect(chartConfig, field);
   sideEffect?.(componentIri, {
-    draft,
+    chartConfig,
     dimensions,
     measures,
     initializing: !f,
@@ -751,18 +793,21 @@ export const handleChartFieldChanged = (
   });
 
   // Remove the component from interactive data filters.
-  if (draft.chartConfig.interactiveFiltersConfig?.dataFilters) {
+  if (chartConfig.interactiveFiltersConfig?.dataFilters) {
     const componentIris =
-      draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+      chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
         (d) => d !== componentIri
       );
     const active = componentIris.length > 0;
-    draft.chartConfig.interactiveFiltersConfig.dataFilters = {
+    chartConfig.interactiveFiltersConfig.dataFilters = {
       active,
       componentIris,
     };
   }
-  draft.chartConfig = deriveFiltersFromFields(draft.chartConfig, dimensions);
+
+  const newConfig = deriveFiltersFromFields(chartConfig, dimensions);
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  draft.chartConfigs[index] = newConfig;
 
   return draft;
 };
@@ -773,27 +818,25 @@ export const handleChartOptionChanged = (
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
     const { locale, path, field, value } = action.value;
-    const updatePath =
-      field === null
-        ? `chartConfig.${path}`
-        : `chartConfig.fields["${field}"].${path}`;
+    const chartConfig = getChartConfig(draft);
+    const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const { dimensions = [], measures = [] } =
       getCachedMetadata(draft, locale) ?? {};
 
     if (field) {
       const sideEffect = getChartFieldOptionChangeSideEffect(
-        draft.chartConfig,
+        chartConfig,
         field,
         path
       );
-      sideEffect?.(value, { draft, dimensions, measures, field });
+      sideEffect?.(value, { chartConfig, dimensions, measures, field });
     }
 
     if (value === FIELD_VALUE_NONE) {
-      unset(draft, updatePath);
+      unset(chartConfig, updatePath);
     }
 
-    setWith(draft, updatePath, value, Object);
+    setWith(chartConfig, updatePath, value, Object);
   }
 
   return draft;
@@ -809,14 +852,15 @@ export const updateColorMapping = (
   if (draft.state === "CONFIGURING_CHART") {
     const { field, colorConfigPath, dimensionIri, values, random } =
       action.value;
+    const chartConfig = getChartConfig(draft);
     const path = colorConfigPath
       ? ["fields", field, colorConfigPath]
       : ["fields", field];
     let colorMapping: ColorMapping | undefined;
 
-    if (isTableConfig(draft.chartConfig)) {
+    if (isTableConfig(chartConfig)) {
       const fieldValue: ColumnStyleCategory | undefined = get(
-        draft.chartConfig,
+        chartConfig,
         path
       );
 
@@ -829,7 +873,7 @@ export const updateColorMapping = (
       }
     } else {
       const fieldValue: (GenericField & { palette: string }) | undefined = get(
-        draft.chartConfig,
+        chartConfig,
         path
       );
 
@@ -843,7 +887,7 @@ export const updateColorMapping = (
     }
 
     if (colorMapping) {
-      setWith(draft.chartConfig, path.concat("colorMapping"), colorMapping);
+      setWith(chartConfig, path.concat("colorMapping"), colorMapping, Object);
     }
   }
 
@@ -858,12 +902,8 @@ const handleInteractiveFilterChanged = (
   >
 ) => {
   if (draft.state === "CONFIGURING_CHART") {
-    setWith(
-      draft,
-      "chartConfig.interactiveFiltersConfig",
-      action.value,
-      Object
-    );
+    const chartConfig = getChartConfig(draft);
+    setWith(chartConfig, "interactiveFiltersConfig", action.value, Object);
   }
 
   return draft;
@@ -886,26 +926,31 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
     case "DATASOURCE_CHANGED":
       draft.dataSource = action.value;
+
       return draft;
+
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        const { locale, chartType } = action.value;
+        const { locale, chartKey, chartType } = action.value;
         const metadata = getCachedMetadata(draft, locale);
 
         if (metadata) {
           const { dimensions, measures } = metadata;
-          const previousConfig = current(draft.chartConfig);
-          draft.chartConfig = getChartConfigAdjustedToChartType({
-            chartConfig: previousConfig,
-            newChartType: chartType,
-            dimensions,
-            measures,
-          });
-          draft.activeField = undefined;
-          draft.chartConfig = deriveFiltersFromFields(
-            draft.chartConfig,
-            metadata.dimensions
+          const chartConfig = getChartConfig(draft, chartKey);
+          const newConfig = deriveFiltersFromFields(
+            getChartConfigAdjustedToChartType({
+              chartConfig: current(chartConfig),
+              newChartType: chartType,
+              dimensions,
+              measures,
+            }),
+            dimensions
           );
+
+          const index = draft.chartConfigs.findIndex(
+            (d) => d.key === chartConfig.key
+          );
+          draft.chartConfigs[index] = newConfig;
         }
       }
 
@@ -913,8 +958,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "ACTIVE_FIELD_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        draft.activeField = action.value;
+        const chartConfig = getChartConfig(draft);
+        chartConfig.activeField = action.value;
       }
+
       return draft;
 
     case "CHART_FIELD_CHANGED":
@@ -922,30 +969,20 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELD_DELETED":
       if (draft.state === "CONFIGURING_CHART") {
-        delete (draft.chartConfig.fields as GenericFields)[action.value.field];
+        const chartConfig = getChartConfig(draft);
+        delete (chartConfig.fields as GenericFields)[action.value.field];
 
         const metadata = getCachedMetadata(draft, action.value.locale);
         const dimensions = metadata?.dimensions ?? [];
 
-        draft.chartConfig = deriveFiltersFromFields(
-          draft.chartConfig,
-          dimensions
-        );
+        deriveFiltersFromFields(chartConfig, dimensions);
 
         if (
           action.value.field === "segment" &&
-          draft.chartConfig.interactiveFiltersConfig
+          chartConfig.interactiveFiltersConfig
         ) {
-          draft.chartConfig = {
-            ...draft.chartConfig,
-            interactiveFiltersConfig: {
-              ...draft.chartConfig.interactiveFiltersConfig,
-              calculation: {
-                active: false,
-                type: "identity",
-              },
-            },
-          };
+          chartConfig.interactiveFiltersConfig.calculation.active = false;
+          chartConfig.interactiveFiltersConfig.calculation.type = "identity";
         }
       }
 
@@ -956,9 +993,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_PALETTE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
+        const chartConfig = getChartConfig(draft);
         setWith(
-          draft,
-          `chartConfig.fields["${action.value.field}"].${
+          chartConfig,
+          `fields["${action.value.field}"].${
             action.value.colorConfigPath
               ? `${action.value.colorConfigPath}.`
               : ""
@@ -967,8 +1005,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           Object
         );
         setWith(
-          draft,
-          `chartConfig.fields["${action.value.field}"].${
+          chartConfig,
+          `fields["${action.value.field}"].${
             action.value.colorConfigPath
               ? `${action.value.colorConfigPath}.`
               : ""
@@ -977,12 +1015,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           Object
         );
       }
+
       return draft;
+
     case "CHART_PALETTE_RESET":
       if (draft.state === "CONFIGURING_CHART") {
+        const chartConfig = getChartConfig(draft);
         setWith(
-          draft,
-          `chartConfig.fields["${action.value.field}"].${
+          chartConfig,
+          `fields["${action.value.field}"].${
             action.value.colorConfigPath
               ? `${action.value.colorConfigPath}.`
               : ""
@@ -991,13 +1032,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           Object
         );
       }
+
       return draft;
 
     case "CHART_COLOR_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
+        const chartConfig = getChartConfig(draft);
         setWith(
-          draft,
-          `chartConfig.fields["${action.value.field}"].${
+          chartConfig,
+          `fields["${action.value.field}"].${
             action.value.colorConfigPath
               ? `${action.value.colorConfigPath}.`
               : ""
@@ -1010,8 +1053,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_DESCRIPTION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
+        const chartConfig = getChartConfig(draft);
+        setWith(
+          chartConfig,
+          `meta.${action.value.path}`,
+          action.value.value,
+          Object
+        );
       }
+
       return draft;
 
     case "INTERACTIVE_FILTER_CHANGED":
@@ -1019,7 +1069,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig = deriveFiltersFromFields(
+        const chartConfig = getChartConfig(draft);
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === chartConfig.key
+        );
+        draft.chartConfigs[index] = deriveFiltersFromFields(
           action.value.chartConfig,
           action.value.dataSetMetadata.dimensions
         );
@@ -1030,25 +1084,28 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
-
-        draft.chartConfig.filters[dimensionIri] = {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.filters[dimensionIri] = {
           type: "single",
           value,
         };
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_REMOVE_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
-        delete draft.chartConfig.filters[dimensionIri];
+        const chartConfig = getChartConfig(draft);
+        delete chartConfig.filters[dimensionIri];
         const newIFConfig = toggleInteractiveFilterDataDimension(
-          draft.chartConfig.interactiveFiltersConfig,
+          chartConfig.interactiveFiltersConfig,
           dimensionIri,
           false
         );
-        draft.chartConfig.interactiveFiltersConfig = newIFConfig;
+        chartConfig.interactiveFiltersConfig = newIFConfig;
       }
+
       return draft;
 
     case "CHART_CONFIG_UPDATE_COLOR_MAPPING":
@@ -1057,14 +1114,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values } = action.value;
-        draft.chartConfig.filters[dimensionIri] = makeMultiFilter(values);
+        const chartConfig = getChartConfig(draft);
+        chartConfig.filters[dimensionIri] = makeMultiFilter(values);
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_ADD_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values, allValues } = action.value;
-        const f = draft.chartConfig.filters[dimensionIri];
+        const chartConfig = getChartConfig(draft);
+        const f = chartConfig.filters[dimensionIri];
         const newFilter = makeMultiFilter(values);
         if (f && f.type === "multi") {
           f.values = {
@@ -1073,18 +1133,20 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           };
           // If all values are selected, we remove the filter again!
           if (allValues.every((v) => v in f.values)) {
-            delete draft.chartConfig.filters[dimensionIri];
+            delete chartConfig.filters[dimensionIri];
           }
         } else {
-          draft.chartConfig.filters[dimensionIri] = newFilter;
+          chartConfig.filters[dimensionIri] = newFilter;
         }
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_REMOVE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values, allValues } = action.value;
-        const f = draft.chartConfig.filters[dimensionIri];
+        const chartConfig = getChartConfig(draft);
+        const f = chartConfig.filters[dimensionIri];
 
         if (f && f.type === "multi" && Object.keys(f.values).length > 0) {
           // If there are existing object keys, we just remove the current one
@@ -1103,45 +1165,51 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             },
             {}
           );
-          draft.chartConfig.filters[dimensionIri] = {
+          chartConfig.filters[dimensionIri] = {
             type: "multi",
             values: updatedValues,
           };
         }
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_RESET_MULTI":
     case "CHART_CONFIG_FILTER_RESET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
-        delete draft.chartConfig.filters[dimensionIri];
+        const chartConfig = getChartConfig(draft);
+        delete chartConfig.filters[dimensionIri];
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_NONE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.filters[dimensionIri] = {
           type: "multi",
           values: {},
         };
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, from, to } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.filters[dimensionIri] = {
           type: "range",
           from,
           to,
         };
 
-        if (draft.chartConfig.interactiveFiltersConfig) {
-          draft.chartConfig.interactiveFiltersConfig.timeRange = {
+        if (chartConfig.interactiveFiltersConfig) {
+          chartConfig.interactiveFiltersConfig.timeRange = {
             componentIri: dimensionIri,
-            active: draft.chartConfig.interactiveFiltersConfig.timeRange.active,
+            active: chartConfig.interactiveFiltersConfig.timeRange.active,
             presets: {
               type: "range",
               from,
@@ -1150,19 +1218,23 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           };
         }
       }
+
       return draft;
 
     case "CHART_CONFIG_FILTERS_UPDATE":
       if (draft.state === "CONFIGURING_CHART") {
         const { filters } = action.value;
-        draft.chartConfig.filters = filters;
+        const chartConfig = getChartConfig(draft);
+        chartConfig.filters = filters;
       }
+
       return draft;
 
     case "IMPUTATION_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        if (isAreaConfig(draft.chartConfig)) {
-          draft.chartConfig.fields.y.imputationType = action.value.type;
+        const chartConfig = getChartConfig(draft);
+        if (isAreaConfig(chartConfig)) {
+          chartConfig.fields.y.imputationType = action.value.type;
         }
       }
 
@@ -1185,6 +1257,54 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "PUBLISHED":
       return draft;
 
+    case "CHART_CONFIG_ADD":
+      if (draft.state === "CONFIGURING_CHART") {
+        const metadata = getCachedMetadata(draft, action.value.locale);
+
+        if (metadata) {
+          draft.chartConfigs.push(
+            deriveFiltersFromFields(
+              action.value.chartConfig,
+              metadata.dimensions
+            )
+          );
+          draft.activeChartKey = action.value.chartConfig.key;
+        }
+      }
+
+      return draft;
+
+    case "CHART_CONFIG_REMOVE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const index = draft.chartConfigs.findIndex(
+          (d) => d.key === action.value.chartKey
+        );
+        const removedKey = draft.chartConfigs[index].key;
+        draft.chartConfigs.splice(index, 1);
+
+        if (removedKey === draft.activeChartKey) {
+          draft.activeChartKey = draft.chartConfigs[Math.max(index - 1, 0)].key;
+        }
+      }
+
+      return draft;
+
+    case "CHART_CONFIG_REORDER":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { oldIndex, newIndex } = action.value;
+        const [removed] = draft.chartConfigs.splice(oldIndex, 1);
+        draft.chartConfigs.splice(newIndex, 0, removed);
+      }
+
+      return draft;
+
+    case "SWITCH_ACTIVE_CHART":
+      if (draft.state === "CONFIGURING_CHART" || draft.state === "PUBLISHED") {
+        draft.activeChartKey = action.value;
+      }
+
+      return draft;
+
     default:
       throw unreachableError(action);
   }
@@ -1199,26 +1319,14 @@ type DatasetIri = string;
 
 export const initChartStateFromChart = async (
   from: ChartId
-): Promise<ConfiguratorState | undefined> => {
+): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
 
   if (config?.data) {
-    const {
-      dataSet,
-      dataSource = DEFAULT_DATA_SOURCE,
-      meta,
-      chartConfig,
-    } = config.data;
-    const migratedChartConfig = migrateChartConfig(chartConfig);
-
-    return {
+    return migrateConfiguratorState({
+      ...config.data,
       state: "CONFIGURING_CHART",
-      dataSet,
-      dataSource,
-      meta,
-      chartConfig: migratedChartConfig,
-      activeField: undefined,
-    };
+    });
   }
 };
 
@@ -1273,12 +1381,8 @@ export const initChartStateFromLocalStorage = async (
     let parsedState;
     try {
       const rawParsedState = JSON.parse(storedState);
-      const chartConfig = rawParsedState.chartConfig;
-      const migratedChartConfig = migrateChartConfig(chartConfig);
-      parsedState = decodeConfiguratorState({
-        ...rawParsedState,
-        chartConfig: migratedChartConfig,
-      });
+      const migratedState = migrateConfiguratorState(rawParsedState);
+      parsedState = decodeConfiguratorState(migratedState);
     } catch (e) {
       console.error("Error while parsing stored state", e);
       // Ignore errors since we are returning undefined and removing bad state from localStorage
@@ -1318,13 +1422,14 @@ const ConfiguratorStateProviderInternal = ({
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
 
-  // Re-initialize state on page load
+  // Initialize state on page load.
   useEffect(() => {
     let stateToInitialize = initialStateWithDataSource;
 
     const initialize = async () => {
       try {
         let newChartState;
+
         if (chartId === "new") {
           if (query.from && typeof query.from === "string") {
             newChartState = await initChartStateFromChart(query.from);
@@ -1336,18 +1441,17 @@ const ConfiguratorStateProviderInternal = ({
               locale
             );
           }
-        } else {
+        } else if (chartId !== "published") {
           newChartState = await initChartStateFromLocalStorage(chartId);
-          if (!newChartState) {
-            if (allowDefaultRedirect) replace(`/create/new`);
-          }
+          if (!newChartState && allowDefaultRedirect) replace(`/create/new`);
         }
 
-        stateToInitialize = newChartState || stateToInitialize;
+        stateToInitialize = newChartState ?? stateToInitialize;
       } finally {
         dispatch({ type: "INITIALIZED", value: stateToInitialize });
       }
     };
+
     initialize();
   }, [
     dataSource,
@@ -1386,25 +1490,36 @@ const ConfiguratorStateProviderInternal = ({
               JSON.stringify(state)
             );
           }
+
           return;
         case "PUBLISHING":
           (async () => {
             try {
               const result = await createConfig({
                 ...state,
-                chartConfig: {
-                  ...state.chartConfig,
-                  // Ensure that the filters are in the correct order, as JSON
-                  // does not guarantee order (and we need this as interactive
-                  // filters are dependent on the order of the filters).
-                  filters: Object.fromEntries(
-                    Object.entries(state.chartConfig.filters).map(
-                      ([k, v], i) => {
-                        return [k, { ...v, position: i }];
-                      }
-                    )
-                  ),
-                },
+                chartConfigs: [
+                  ...state.chartConfigs.map((d) => {
+                    return {
+                      ...d,
+                      // Ensure that the filters are in the correct order, as JSON
+                      // does not guarantee order (and we need this as interactive
+                      // filters are dependent on the order of the filters).
+                      filters: Object.fromEntries(
+                        Object.entries(d.filters).map(([k, v], i) => {
+                          return [k, { ...v, position: i }];
+                        })
+                      ),
+                    };
+                  }),
+                ],
+                // Technically, we do not need to store the active chart key, as
+                // it's only used in the edit mode, but it makes it easier to manage
+                // the state when retrieving the chart from the database. Potentially,
+                // it might also be useful for other things in the future (e.g. when we
+                // have multiple charts in the "stepper mode", and we'd like to start
+                // the story from a specific point and e.g. toggle back and forth between
+                // the different charts).
+                activeChartKey: state.chartConfigs[0].key,
               });
 
               /**
@@ -1430,6 +1545,7 @@ const ConfiguratorStateProviderInternal = ({
               dispatch({ type: "PUBLISH_FAILED" });
             }
           })();
+
           return;
       }
     } catch (e) {
@@ -1444,34 +1560,7 @@ const ConfiguratorStateProviderInternal = ({
   );
 };
 
-export const PublishedConfiguratorStateProvider = ({
-  children,
-  initialState,
-}: {
-  children?: ReactNode;
-  initialState?: ConfiguratorState;
-}) => {
-  const stateAndDispatch = useMemo(() => {
-    return [
-      initialState,
-      () => {
-        throw new Error(
-          "Should not call dispatch on config statefor publishers"
-        );
-      },
-    ] as React.ComponentProps<
-      typeof ConfiguratorStateContext.Provider
-    >["value"];
-  }, [initialState]);
-
-  return (
-    <ConfiguratorStateContext.Provider value={stateAndDispatch}>
-      {children}
-    </ConfiguratorStateContext.Provider>
-  );
-};
-
-export const EditorConfiguratorStateProvider = ({
+export const ConfiguratorStateProvider = ({
   chartId,
   children,
   initialState,
@@ -1539,4 +1628,25 @@ export const isConfiguring = (
   s: ConfiguratorState
 ): s is ConfiguratorStateConfiguringChart => {
   return s.state === "CONFIGURING_CHART";
+};
+
+export const isPublishing = (
+  s: ConfiguratorState
+): s is ConfiguratorStatePublishing => {
+  return s.state === "PUBLISHING";
+};
+
+export const isPublished = (
+  s: ConfiguratorState
+): s is ConfiguratorStatePublished => {
+  return s.state === "PUBLISHED";
+};
+
+export const hasChartConfigs = (
+  s: ConfiguratorState
+): s is
+  | ConfiguratorStateConfiguringChart
+  | ConfiguratorStatePublishing
+  | ConfiguratorStatePublished => {
+  return isConfiguring(s) || isPublishing(s) || isPublished(s);
 };

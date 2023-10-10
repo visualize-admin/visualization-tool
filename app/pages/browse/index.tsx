@@ -1,6 +1,6 @@
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { AppLayout } from "@/components/layout";
-import { EditorConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DataCubeResultOrder } from "@/graphql/query-hooks";
 
 export type BrowseParams = {
@@ -18,12 +18,9 @@ export type BrowseParams = {
 export function DatasetBrowser() {
   return (
     <AppLayout>
-      <EditorConfiguratorStateProvider
-        chartId="new"
-        allowDefaultRedirect={false}
-      >
+      <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
         <SelectDatasetStep />
-      </EditorConfiguratorStateProvider>
+      </ConfiguratorStateProvider>
     </AppLayout>
   );
 }

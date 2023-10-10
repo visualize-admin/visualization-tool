@@ -13,9 +13,10 @@ import {
   LineConfig,
   SortingField,
 } from "@/configurator";
-import { PublishedConfiguratorStateProvider } from "@/configurator/configurator-state";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export const Docs = () => markdown`
 
@@ -23,15 +24,19 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <PublishedConfiguratorStateProvider
+    <ConfiguratorStateProvider
+      chartId="published"
       initialState={{
-        state: "PUBLISHING",
-        activeField: undefined,
-        // @ts-ignore
-        meta: { title: {}, description: {} },
+        version: "2.0.0",
+        state: "PUBLISHED",
+        meta: {
+          title: { en: "", de: "", fr: "", it: "" },
+          description: { en: "", de: "", fr: "", it: "" },
+        },
         dataSource: { type: "sparql", url: "" },
         dataSet: "",
-        chartConfig,
+        chartConfigs: [chartConfig],
+        activeChartKey: "line",
       }}
     >
       <InteractiveFiltersProvider>
@@ -52,10 +57,12 @@ ${(
             </ChartSvg>
           </ChartContainer>
 
-          {fields.segment && <LegendColor symbol="line" interactive />}
+          {fields.segment && (
+            <LegendColor chartConfig={chartConfig} symbol="line" interactive />
+          )}
         </LineChart>
       </InteractiveFiltersProvider>
-    </PublishedConfiguratorStateProvider>
+    </ConfiguratorStateProvider>
   </ReactSpecimen>
 )}
 `;
@@ -121,11 +128,27 @@ const fields = {
 };
 
 const chartConfig: LineConfig = {
+  key: "line",
+  version: CHART_CONFIG_VERSION,
+  meta: {
+    title: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+    description: {
+      en: "",
+      de: "",
+      fr: "",
+      it: "",
+    },
+  },
   chartType: "line",
-  filters: {},
-  version: "1.4.2",
   interactiveFiltersConfig,
   fields,
+  filters: {},
+  activeField: undefined,
 };
 
 const measures = [

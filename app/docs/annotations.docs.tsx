@@ -20,6 +20,7 @@ import {
   observations,
 } from "@/docs/fixtures";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
+import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
 export default () => markdown`
 
@@ -40,7 +41,22 @@ ${(
         dimensions={dimensions}
         dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={{
-          version: "1.4.2",
+          key: "column-chart",
+          version: CHART_CONFIG_VERSION,
+          meta: {
+            title: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+            description: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+          },
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -54,6 +70,7 @@ ${(
             calculation: { active: false, type: "identity" },
           },
           filters: {},
+          activeField: undefined,
         }}
         aspectRatio={0.4}
       >
@@ -188,7 +205,22 @@ ${(
         dimensions={dimensions}
         dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={{
-          version: "1.4.2",
+          key: "column-chart",
+          version: CHART_CONFIG_VERSION,
+          meta: {
+            title: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+            description: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+          },
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -202,6 +234,7 @@ ${(
             calculation: { active: false, type: "identity" },
           },
           filters: {},
+          activeField: undefined,
         }}
         aspectRatio={0.4}
       >
@@ -235,7 +268,22 @@ ${(
         dimensions={dimensions}
         dimensionsByIri={keyBy(dimensions, (d) => d.iri)}
         chartConfig={{
-          version: "1.4.2",
+          key: "column-chart",
+          version: CHART_CONFIG_VERSION,
+          meta: {
+            title: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+            description: {
+              en: "",
+              de: "",
+              fr: "",
+              it: "",
+            },
+          },
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -249,6 +297,7 @@ ${(
             calculation: { active: false, type: "identity" },
           },
           filters: {},
+          activeField: undefined,
         }}
         aspectRatio={0.4}
       >
@@ -279,7 +328,6 @@ ${(
 ### How to use
 
 ~~~
-import { TooltipBox, Tooltip } from "../components/charts-generic/annotations";
 
 <TooltipBox
   x={100}

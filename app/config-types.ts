@@ -222,6 +222,15 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
+const GenericChartConfig = t.type({
+  key: t.string,
+  version: t.string,
+  meta: Meta,
+  filters: Filters,
+  activeField: t.union([t.string, t.undefined]),
+});
+export type GenericChartConfig = t.TypeOf<typeof GenericChartConfig>;
+
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
@@ -242,16 +251,17 @@ const ColumnFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
-const ColumnConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("column"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: ColumnFields,
-  },
-  "ColumnConfig"
-);
+const ColumnConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("column"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: ColumnFields,
+    },
+    "ColumnConfig"
+  ),
+]);
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
@@ -267,16 +277,17 @@ const LineFields = t.intersection([
     segment: LineSegmentField,
   }),
 ]);
-const LineConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("line"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: LineFields,
-  },
-  "LineConfig"
-);
+const LineConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("line"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: LineFields,
+    },
+    "LineConfig"
+  ),
+]);
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
@@ -303,16 +314,17 @@ const AreaFields = t.intersection([
     segment: AreaSegmentField,
   }),
 ]);
-const AreaConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("area"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: AreaFields,
-  },
-  "AreaConfig"
-);
+const AreaConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("area"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: AreaFields,
+    },
+    "AreaConfig"
+  ),
+]);
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
@@ -329,16 +341,17 @@ const ScatterPlotFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
-const ScatterPlotConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("scatterplot"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: ScatterPlotFields,
-  },
-  "ScatterPlotConfig"
-);
+const ScatterPlotConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("scatterplot"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: ScatterPlotFields,
+    },
+    "ScatterPlotConfig"
+  ),
+]);
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
@@ -353,16 +366,17 @@ const PieFields = t.intersection([
   }),
   t.partial({ animation: AnimationField }),
 ]);
-const PieConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("pie"),
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    filters: Filters,
-    fields: PieFields,
-  },
-  "PieConfig"
-);
+const PieConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("pie"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: PieFields,
+    },
+    "PieConfig"
+  ),
+]);
 export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
@@ -470,18 +484,19 @@ const TableSortingOption = t.type({
 });
 export type TableSortingOption = t.TypeOf<typeof TableSortingOption>;
 
-const TableConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("table"),
-    fields: TableFields,
-    filters: Filters,
-    settings: TableSettings,
-    sorting: t.array(TableSortingOption),
-    interactiveFiltersConfig: t.undefined,
-  },
-  "TableConfig"
-);
+const TableConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("table"),
+      fields: TableFields,
+      settings: TableSettings,
+      sorting: t.array(TableSortingOption),
+      interactiveFiltersConfig: t.undefined,
+    },
+    "TableConfig"
+  ),
+]);
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
@@ -573,17 +588,18 @@ const MapFields = t.partial({
   animation: AnimationField,
 });
 
-const MapConfig = t.type(
-  {
-    version: t.string,
-    chartType: t.literal("map"),
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    filters: Filters,
-    fields: MapFields,
-    baseLayer: BaseLayer,
-  },
-  "MapConfig"
-);
+const MapConfig = t.intersection([
+  GenericChartConfig,
+  t.type(
+    {
+      chartType: t.literal("map"),
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: MapFields,
+      baseLayer: BaseLayer,
+    },
+    "MapConfig"
+  ),
+]);
 export type MapFields = t.TypeOf<typeof MapFields>;
 export type MapConfig = t.TypeOf<typeof MapConfig>;
 
@@ -894,70 +910,89 @@ const DataSource = t.type({
   type: t.union([t.literal("sql"), t.literal("sparql")]),
   url: t.string,
 });
-
 export type DataSource = t.TypeOf<typeof DataSource>;
 
 const Config = t.type(
   {
+    version: t.string,
     dataSet: t.string,
     dataSource: DataSource,
-    activeField: t.union([t.string, t.undefined]),
     meta: Meta,
-    chartConfig: ChartConfig,
+    chartConfigs: t.array(ChartConfig),
+    activeChartKey: t.string,
   },
   "Config"
 );
-
 export type Config = t.TypeOf<typeof Config>;
 
-export const isValidConfig = (config: unknown): config is Config =>
-  Config.is(config);
+export const isValidConfig = (config: unknown): config is Config => {
+  return Config.is(config);
+};
 
-export const decodeConfig = (config: unknown) => Config.decode(config);
+export const decodeConfig = (config: unknown) => {
+  return Config.decode(config);
+};
 
 const ConfiguratorStateInitial = t.type({
+  version: t.string,
   state: t.literal("INITIAL"),
-  activeField: t.undefined,
   dataSet: t.undefined,
   dataSource: DataSource,
 });
+export type ConfiguratorStateInitial = t.TypeOf<
+  typeof ConfiguratorStateInitial
+>;
+
 const ConfiguratorStateSelectingDataSet = t.type({
+  version: t.string,
   state: t.literal("SELECTING_DATASET"),
-  activeField: t.undefined,
-  meta: Meta,
   dataSet: t.union([t.string, t.undefined]),
   dataSource: DataSource,
-  chartConfig: t.undefined,
+  meta: Meta,
+  chartConfigs: t.undefined,
+  activeChartKey: t.undefined,
 });
+export type ConfiguratorStateSelectingDataSet = t.TypeOf<
+  typeof ConfiguratorStateSelectingDataSet
+>;
+
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART"),
   }),
   Config,
 ]);
+export type ConfiguratorStateConfiguringChart = t.TypeOf<
+  typeof ConfiguratorStateConfiguringChart
+>;
+
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
     state: t.literal("PUBLISHING"),
   }),
   Config,
 ]);
-
-export type ConfiguratorStateSelectingDataSet = t.TypeOf<
-  typeof ConfiguratorStateSelectingDataSet
->;
-export type ConfiguratorStateConfiguringChart = t.TypeOf<
-  typeof ConfiguratorStateConfiguringChart
->;
 export type ConfiguratorStatePublishing = t.TypeOf<
   typeof ConfiguratorStatePublishing
 >;
+
+const ConfiguratorStatePublished = t.intersection([
+  t.type({
+    state: t.literal("PUBLISHED"),
+  }),
+  Config,
+]);
+export type ConfiguratorStatePublished = t.TypeOf<
+  typeof ConfiguratorStatePublished
+>;
+
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  ConfiguratorStatePublished,
 ]);
-
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;
 
 export const decodeConfiguratorState = (
@@ -973,4 +1008,25 @@ export const decodeConfiguratorState = (
       (d) => d
     )
   );
+};
+
+/** Use to extract the chart config from configurator state. Handy in the editor mode,
+ * where the is a need to edit the active chart config.
+ *
+ * @param state configurator state
+ * @param chartKey optional chart key. If not provided, the active chart config will be returned.
+ *
+ */
+export const getChartConfig = (
+  state: ConfiguratorState,
+  chartKey?: string
+): ChartConfig => {
+  if (state.state === "INITIAL" || state.state === "SELECTING_DATASET") {
+    throw new Error("No chart config available!");
+  }
+
+  const { chartConfigs, activeChartKey } = state;
+  const key = chartKey ?? activeChartKey;
+
+  return chartConfigs.find((d) => d.key === key) ?? chartConfigs[0];
 };

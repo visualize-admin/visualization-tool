@@ -1,6 +1,28 @@
-import { decodeChartConfig, LineConfig, MapConfig } from "@/config-types";
+import {
+  ConfiguratorStateConfiguringChart,
+  decodeChartConfig,
+  LineConfig,
+  MapConfig,
+} from "@/config-types";
 
 import { migrateChartConfig } from "./versioning";
+
+const CONFIGURATOR_STATE = {
+  meta: {
+    title: {
+      de: "",
+      fr: "",
+      it: "",
+      en: "",
+    },
+    description: {
+      de: "",
+      fr: "",
+      it: "",
+      en: "",
+    },
+  },
+} as unknown as ConfiguratorStateConfiguringChart;
 
 describe("config migrations", () => {
   const oldMapConfig = {
@@ -81,7 +103,9 @@ describe("config migrations", () => {
   };
 
   it("should migrate to newest config and back (but might lost some info for major version changes", () => {
-    const migratedConfig = migrateChartConfig(oldMapConfig);
+    const migratedConfig = migrateChartConfig(oldMapConfig, {
+      migrationProps: CONFIGURATOR_STATE,
+    });
     const decodedConfig = decodeChartConfig(migratedConfig);
 
     expect(decodedConfig).toBeDefined();
@@ -115,7 +139,9 @@ describe("config migrations", () => {
   });
 
   it("should correctly migrate interactiveFiltersConfig", () => {
-    const migratedConfig = migrateChartConfig(oldLineConfig);
+    const migratedConfig = migrateChartConfig(oldLineConfig, {
+      migrationProps: CONFIGURATOR_STATE,
+    });
     const decodedConfig = decodeChartConfig(migratedConfig);
 
     expect(decodedConfig).toBeDefined();
