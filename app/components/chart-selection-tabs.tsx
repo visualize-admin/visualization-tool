@@ -17,7 +17,6 @@ import {
 } from "@/configurator";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { flag } from "@/flags";
 import {
   useComponentsQuery,
   useDataCubeMetadataQuery,
@@ -368,8 +367,8 @@ const TabsInner = (props: TabsInnerProps) => {
                           <TabContent
                             iconName={getIconName(d.chartType)}
                             chartKey={d.key}
-                            editable={editable && flag("dashboards")}
-                            draggable={draggable && flag("dashboards")}
+                            editable={editable}
+                            draggable={draggable}
                             active={d.active}
                             dragging={snapshot.isDragging}
                             onEditClick={(e) => {
@@ -387,7 +386,7 @@ const TabsInner = (props: TabsInnerProps) => {
               ))}
               <div style={{ opacity: 0 }}>{provided.placeholder}</div>
 
-              {editable && flag("dashboards") && (
+              {editable && (
                 <Tab
                   sx={{
                     ml: (theme) => `-${theme.spacing(2)}`,
