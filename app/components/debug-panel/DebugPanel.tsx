@@ -29,7 +29,7 @@ const DebugInteractiveFilters = () => {
         Interactive Filters State
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={IFState} />
+        <Inspector expandLevel={3} data={IFState} table={false} />
       </Box>
     </>
   );
@@ -49,7 +49,7 @@ const CubeMetadata = ({
       iri: datasetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
-      locale: locale,
+      locale,
     },
     pause: !expanded,
   });
@@ -75,6 +75,7 @@ const CubeMetadata = ({
                   ...data.dataCubeByIri.measures,
                 ].map((d) => [d.label, d]),
               ])}
+              table={false}
             />
           ) : null}
         </AccordionDetails>
@@ -159,19 +160,20 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
         </Button>
       </Typography>
       <Box sx={{ p: 5 }}>
-        <Inspector expandLevel={3} data={configuratorState} />
+        <Inspector expandLevel={3} data={configuratorState} table={false} />
       </Box>
     </>
   );
 };
 
-const DebugPanel = ({
-  configurator = false,
-  interactiveFilters = false,
-}: {
+export type DebugPanelProps = {
   configurator?: Boolean;
   interactiveFilters?: Boolean;
-}) => {
+};
+
+const DebugPanel = (props: DebugPanelProps) => {
+  const { configurator = false, interactiveFilters = false } = props;
+
   return (
     <Box
       sx={{
@@ -198,9 +200,4 @@ const DebugPanel = ({
   );
 };
 
-const DebugPanelNull = () => null;
-
-const ExportedDebugPanel =
-  process.env.NODE_ENV === "development" ? DebugPanel : DebugPanelNull;
-
-export default ExportedDebugPanel;
+export default DebugPanel;

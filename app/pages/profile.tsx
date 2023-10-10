@@ -1,14 +1,15 @@
 import {
-  Typography,
+  Box,
   Table,
   TableBody,
-  TableRow,
   TableCell,
   TableHead,
-  Box,
+  TableRow,
+  Typography,
 } from "@mui/material";
 import { User } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 
 import { AppLayout } from "@/components/layout";
@@ -16,11 +17,11 @@ import {
   PanelLayout,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { getUserConfigs, ParsedConfig } from "@/db/config";
-import { deserializeProps, serializeProps, Serialized } from "@/db/serialize";
+import { ParsedConfig, getUserConfigs } from "@/db/config";
+import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
 import { findBySub } from "@/db/user";
 
-import { getServerSideSession } from "./api/session";
+import { nextAuthOptions } from "./api/auth/[...nextauth]";
 
 type PageProps = {
   user: User;
@@ -28,9 +29,9 @@ type PageProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
+  ctx
 ) => {
-  const session = await getServerSideSession(context.req, context.res);
+  const session = await getServerSession(ctx.req, ctx.res, nextAuthOptions);
   const userSub = session?.user.sub;
   if (userSub) {
     const user = await findBySub(userSub);
@@ -77,7 +78,9 @@ const ProfilePage = (props: Serialized<PageProps>) => {
                         <TableCell>{uc.data.chartConfig.chartType}</TableCell>
                         <TableCell>{uc.data.meta.title.en}</TableCell>
                         <TableCell>
-                          <Link href={`/v/${uc.key}`}>See chart</Link>
+                          <Link href={`/v/${uc.key}`} legacyBehavior>
+                            See chart
+                          </Link>
                         </TableCell>
                       </TableRow>
                     );
@@ -86,7 +89,11 @@ const ProfilePage = (props: Serialized<PageProps>) => {
               </Table>
             ) : (
               <Typography variant="body1">
-                No charts yet, <Link href="/browse">create one</Link>.
+                No charts yet,{" "}
+                <Link href="/browse" legacyBehavior>
+                  create one
+                </Link>
+                .
               </Typography>
             )}
           </Box>

@@ -1,8 +1,7 @@
-import { Link, Typography, Theme } from "@mui/material";
+import { Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import * as React from "react";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
@@ -46,7 +45,7 @@ export const HomeLink = ({
   locale: Locale;
   children: ReactNode;
 }) => (
-  <NextLink href={`/`} locale={locale} passHref>
+  <NextLink href="/" locale={locale} passHref legacyBehavior>
     <Link
       sx={{
         backgroundColor: "transparent",

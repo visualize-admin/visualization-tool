@@ -116,7 +116,11 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       typography="caption"
                     >
                       Id: {config.key} -{" "}
-                      <NextLink href={`/v/${config.key}`} passHref>
+                      <NextLink
+                        href={`/v/${config.key}`}
+                        passHref
+                        legacyBehavior
+                      >
                         <Link color="primary">Open</Link>
                       </NextLink>{" "}
                     </Box>

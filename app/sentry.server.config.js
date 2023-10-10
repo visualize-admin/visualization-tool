@@ -11,4 +11,14 @@ Sentry.init({
   environment: SENTRY_ENV,
   release: `visualization-tool@${BUILD_VERSION}`,
   tracesSampleRate: 1.0,
+  instrumenter: {
+    patch: (mod, path, logger) => {
+      // Ignore auth calls to prevent 405 Keycloak errors.
+      if (path?.includes("auth")) {
+        return null;
+      }
+
+      return mod;
+    },
+  },
 });

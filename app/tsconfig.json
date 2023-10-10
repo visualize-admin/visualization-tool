@@ -20,14 +20,9 @@
     },
     "noImplicitAny": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "incremental": true
   },
   "exclude": ["node_modules"],
-  "include": [
-    "next-env.d.ts",
-    "flexsearch/index.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "components/data-table"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"]
 }

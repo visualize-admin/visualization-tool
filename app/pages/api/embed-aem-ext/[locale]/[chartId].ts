@@ -25,7 +25,7 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET":
       try {
         const chartId = query.chartId as string;
-        const locale = parseLocaleString(query.locale.toString());
+        const locale = parseLocaleString(query.locale?.toString());
 
         res.setHeader("Content-Type", "text/html; charset=UTF-8");
         res

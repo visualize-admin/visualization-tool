@@ -51,7 +51,7 @@ const usePosition = () => {
   const [bcr, setBcr] = useState<[number, number]>();
   const [bcrX, bcrY] = bcr || [0, 0];
   const handleRef = useCallback(
-    (node) => {
+    (node: HTMLDivElement) => {
       if (bcr || !node) {
         return;
       }

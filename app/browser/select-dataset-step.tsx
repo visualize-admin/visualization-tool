@@ -19,9 +19,9 @@ import { DataSetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
+  bannerPresenceProps,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
@@ -204,7 +204,7 @@ const SelectDatasetStepContent = () => {
 
       <PanelLayout className={classes.panelLayout}>
         <PanelLeftWrapper className={classes.panelLeft}>
-          <AnimatePresence exitBeforeEnter>
+          <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
                 {...navPresenceProps}
@@ -213,7 +213,7 @@ const SelectDatasetStepContent = () => {
                 key="dataset-metadata"
                 custom={dataset}
               >
-                <NextLink passHref href={backLink}>
+                <NextLink href={backLink} passHref legacyBehavior>
                   <Button
                     variant="contained"
                     color="secondary"
@@ -236,11 +236,7 @@ const SelectDatasetStepContent = () => {
                 </MotionBox>
               </MotionBox>
             ) : (
-              <MotionBox
-                key="search-filters"
-                {...navPresenceProps}
-                custom={false}
-              >
+              <MotionBox key="search-filters" {...navPresenceProps}>
                 <SearchFilters data={datacubesQuery.data} />
               </MotionBox>
             )}
@@ -248,7 +244,7 @@ const SelectDatasetStepContent = () => {
         </PanelLeftWrapper>
         <PanelMiddleWrapper className={classes.panelMiddle}>
           <Box sx={{ maxWidth: 1040 }}>
-            <AnimatePresence exitBeforeEnter>
+            <AnimatePresence mode="wait">
               {dataset ? (
                 <MotionBox {...navPresenceProps} key="preview">
                   <DataSetPreview
@@ -285,6 +281,21 @@ const SelectDatasetStepContent = () => {
           </Box>
         </PanelMiddleWrapper>
       </PanelLayout>
+      <Box
+        sx={{
+          borderTop: "2px solid rgba(0,0,0,0.05)",
+          mt: 8,
+        }}
+      >
+        <Footer
+          sx={{
+            borderTopWidth: 0,
+            ml: "auto",
+            mr: "auto",
+            width: "100%",
+          }}
+        />
+      </Box>
     </Box>
   );
 };
@@ -310,21 +321,6 @@ export const SelectDatasetStep = () => {
     <BrowseStateProvider>
       <PageTitle />
       <SelectDatasetStepContent />
-      <Box
-        sx={{
-          borderTop: "2px solid rgba(0,0,0,0.05)",
-          mt: 8,
-        }}
-      >
-        <Footer
-          sx={{
-            borderTopWidth: 0,
-            ml: "auto",
-            mr: "auto",
-            width: "100%",
-          }}
-        />
-      </Box>
     </BrowseStateProvider>
   );
 };

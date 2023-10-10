@@ -140,7 +140,11 @@ export const DataSetPreview = ({
           <Typography className={classes.title} component="div" variant="h1">
             {dataCubeByIri.title}
           </Typography>
-          <Link passHref href={`/create/new?cube=${dataCubeByIri.iri}`}>
+          <Link
+            href={`/create/new?cube=${dataCubeByIri.iri}`}
+            passHref
+            legacyBehavior
+          >
             <Button className={classes.createChartButton} component="a">
               <Trans id="browse.dataset.create-visualization">
                 Create visualization from dataset

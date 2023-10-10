@@ -43,7 +43,7 @@ export const Intro = ({
         >
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
-          <NextLink href="/browse" passHref>
+          <NextLink href="/browse" passHref legacyBehavior>
             <Button
               size="large"
               component="a"

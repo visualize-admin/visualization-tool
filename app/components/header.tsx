@@ -153,7 +153,7 @@ const MetadataMenu = ({ contentId }: { contentId?: string }) => {
 export const Logo = () => {
   return (
     <Flex sx={{ order: [2, 1], alignItems: ["center", "flex-start"] }}>
-      <NextLink href="/" passHref>
+      <NextLink href="/" passHref legacyBehavior>
         <Box
           component="a"
           role="figure"
@@ -164,7 +164,7 @@ export const Logo = () => {
         </Box>
       </NextLink>
 
-      <NextLink href="/" passHref>
+      <NextLink href="/" passHref legacyBehavior>
         <Box
           component="a"
           role="figure"
@@ -183,7 +183,7 @@ export const Logo = () => {
       </NextLink>
 
       <Flex sx={{ flexDirection: "column", pl: [0, 6] }}>
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref legacyBehavior>
           <Box component="a" sx={{ textDecoration: "none" }}>
             <Typography
               component="h1"

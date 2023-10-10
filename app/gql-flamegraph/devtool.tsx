@@ -1,43 +1,42 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
-  Typography,
-  Box,
-  Drawer,
   AccordionProps,
-  IconButton,
+  AccordionSummary,
+  Box,
+  Button,
+  Divider,
+  Drawer,
   Grow,
+  IconButton,
   IconButtonProps,
   Link,
   LinkProps,
+  Switch,
+  SwitchProps,
   Tab,
-  Button,
-  Divider,
+  Typography,
 } from "@mui/material";
-import { Switch, SwitchProps } from "@mui/material";
 import { Group } from "@visx/group";
 import { Text } from "@visx/text";
 import { scaleLinear } from "d3-scale";
-import { OperationDefinitionNode } from "graphql";
-import { print } from "graphql";
+import { OperationDefinitionNode, print } from "graphql";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, { useEffect, useRef, useState } from "react";
-import { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/components/use-disclosure";
-import { useFlag, flag, useFlags } from "@/flags";
+import { flag, useFlag, useFlags } from "@/flags";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 
-export type Timings = Record<
+type Timings = Record<
   string,
   { start: number; end: number; children?: Timings }
 >;
@@ -115,35 +114,34 @@ const Flamegraph = ({
   }, [timings]);
 
   const barHeight = 15;
+
   return (
-    <>
-      <Box
-        sx={{
-          position: "relative",
-          "& svg text": { fontSize: "10px" },
-        }}
-      >
-        <svg width={900} height={50 + rects.length * barHeight}>
-          <g>
-            {rects.map((r, i) => (
-              <Group left={r.x0} top={i * barHeight} key={i}>
-                <rect
-                  x={0}
-                  y={0}
-                  height={barHeight}
-                  width={r.x1 - r.x0}
-                  fill="#ccc"
-                />
-                <Text verticalAnchor="start" y={2}>
-                  {`${r.duration}ms - ${r.path.join(">")}
+    <Box
+      sx={{
+        position: "relative",
+        "& svg text": { fontSize: "10px" },
+      }}
+    >
+      <svg width={900} height={50 + rects.length * barHeight}>
+        <g>
+          {rects.map((r, i) => (
+            <Group left={r.x0} top={i * barHeight} key={i}>
+              <rect
+                x={0}
+                y={0}
+                height={barHeight}
+                width={r.x1 - r.x0}
+                fill="#ccc"
+              />
+              <Text verticalAnchor="start" y={2}>
+                {`${r.duration}ms - ${r.path.join(">")}
           `}
-                </Text>
-              </Group>
-            ))}
-          </g>{" "}
-        </svg>
-      </Box>
-    </>
+              </Text>
+            </Group>
+          ))}
+        </g>{" "}
+      </svg>
+    </Box>
   );
 };
 
@@ -200,6 +198,7 @@ const AccordionOperation = ({
     }
     return maxBy(all, (x) => x.end)?.end! - minBy(all, (x) => x.start)?.start!;
   }, [result?.extensions?.timings]);
+
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary>
@@ -269,7 +268,7 @@ const AccordionOperation = ({
                 SPARQL queries ({result?.extensions?.queries.length})
               </Typography>
               <Queries
-                queries={sortBy(result?.extensions?.queries, (q) => {
+                queries={sortBy(result?.extensions.queries, (q) => {
                   return -(q.endTime - q.startTime);
                 })}
               />
@@ -281,11 +280,7 @@ const AccordionOperation = ({
   );
 };
 
-const Queries = ({
-  queries,
-}: {
-  queries: { startTime: number; endTime: number; text: string }[];
-}) => {
+const Queries = ({ queries }: { queries: RequestQueryMeta[] }) => {
   return (
     <div>
       {queries.map((q, i) => {
@@ -435,8 +430,9 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
 
 const DebugPanel = () => {
   const { isOpen, open, close } = useDisclosure();
-  const [tab, setTab] = useState("graphql" as "graphql" | "flags");
+  const [tab, setTab] = useState<"graphql" | "flags">("graphql");
   const gqlOperationsController = useGraphqlOperationsController();
+
   return (
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>

@@ -16,7 +16,6 @@
     "import/order": [
       2,
       {
-        "alphabetize": { "order": "asc" },
         "newlines-between": "always",
         "groups": [
           "builtin",
