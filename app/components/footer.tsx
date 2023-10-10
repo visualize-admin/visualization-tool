@@ -137,6 +137,7 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
             href={contentRoutes.legal[locale].path}
             passHref
             locale={false}
+            legacyBehavior
           >
             <FooterLinkBottom>
               {contentRoutes.legal[locale].title}
@@ -146,6 +147,7 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
             href={contentRoutes.imprint[locale].path}
             passHref
             locale={false}
+            legacyBehavior
           >
             <FooterLinkBottom>
               {contentRoutes.imprint[locale].title}

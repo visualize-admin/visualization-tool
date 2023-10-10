@@ -1,4 +1,4 @@
-import { Typography, Button, Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -36,7 +36,10 @@ function LoginMenu() {
       {session ? (
         <>
           <Typography variant="body2">
-            Signed in as <Link href="/profile">{session.user?.name}</Link>{" "}
+            Signed in as{" "}
+            <Link href="/profile" legacyBehavior>
+              {session.user?.name}
+            </Link>{" "}
             {" - "}
           </Typography>
           <Button

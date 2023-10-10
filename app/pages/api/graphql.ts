@@ -1,10 +1,11 @@
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "@apollo/server-plugin-landing-page-graphql-playground";
 import { ApolloServer } from "apollo-server-micro";
 import configureCors from "cors";
 import "global-agent/bootstrap";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { setupFlamegraph } from "../../gql-flamegraph/resolvers";
-import sentryPlugin from "../../graphql/apollo-sentry-plugin";
+import { SentryPlugin } from "../../graphql/apollo-sentry-plugin";
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -18,7 +19,6 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   formatError: (err) => {
-    console.log(err.source);
     console.error(err, err?.extensions?.exception?.stacktrace);
     return err;
   },
@@ -35,10 +35,8 @@ const server = new ApolloServer({
     return response;
   },
   context: createContext,
-  // Enable playground in production
   introspection: true,
-  playground: true,
-  plugins: [sentryPlugin],
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground, SentryPlugin],
 });
 
 export const config = {
@@ -47,10 +45,12 @@ export const config = {
   },
 };
 
-const handler = server.createHandler({ path: "/api/graphql" });
+const start = server.start();
 
 const GraphQLPage = async (req: NextApiRequest, res: NextApiResponse) => {
+  await start;
   await runMiddleware(req, res, cors);
+  const handler = server.createHandler({ path: "/api/graphql" });
   return handler(req, res);
 };
 

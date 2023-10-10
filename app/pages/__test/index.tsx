@@ -57,7 +57,11 @@ const Page: NextPage<PageProps> = ({ configs }) => {
               <ul>
                 {configs.map(({ name, chartId, slug }) => (
                   <li key={chartId}>
-                    <Link href={`/__test/${env}/${slug}`}>
+                    <Link
+                      href={`/__test/${env}/${slug}`}
+                      passHref
+                      legacyBehavior
+                    >
                       <a>{name}</a>
                     </Link>
                     <br />

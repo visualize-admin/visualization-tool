@@ -18,7 +18,14 @@ const CurrentPageLink = ({
 }) => {
   const { pathname, query } = useRouter();
 
-  return <NextLink {...rest} href={{ pathname, query }} locale={locale} />;
+  return (
+    <NextLink
+      {...rest}
+      href={{ pathname, query }}
+      locale={locale}
+      legacyBehavior
+    />
+  );
 };
 
 export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
@@ -84,7 +91,12 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         return (
           <Box component="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
-              <NextLink href={alternate.path} passHref locale={false}>
+              <NextLink
+                href={alternate.path}
+                passHref
+                locale={false}
+                legacyBehavior
+              >
                 {linkEl}
               </NextLink>
             ) : (

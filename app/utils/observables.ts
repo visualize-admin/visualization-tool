@@ -75,7 +75,7 @@ export class Timeline extends Observable {
   private msRelativeValues: number[];
   // Formatting utils (msValue => Date). Useful for rendering.
   private formatValue: (d: number) => string;
-  private formattedMsExtent: [min: string, max: string];
+  private formattedMsExtent: [string, string];
 
   constructor(props: TimelineProps) {
     super();

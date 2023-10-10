@@ -1,3 +1,4 @@
+import { GraphQLScalarType } from "graphql";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
@@ -126,11 +127,21 @@ const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
   },
 });
 
+// With an update of apollo-server-micro to 3.0.0, we can no longer use resolvers
+// with the same names (in case of JSONObject resolver, the name was always "JSONObject"),
+// so we need to make a new resolver for each type.
+const makeJSONObjectResolver = (name: string) => {
+  return {
+    ...GraphQLJSONObject,
+    name,
+  } as GraphQLScalarType;
+};
+
 export const resolvers: Resolvers = {
-  Filters: GraphQLJSONObject,
-  Observation: GraphQLJSONObject,
-  DimensionValue: GraphQLJSONObject,
-  RawObservation: GraphQLJSONObject,
+  Filters: makeJSONObjectResolver("Filters"),
+  Observation: makeJSONObjectResolver("Observation"),
+  DimensionValue: makeJSONObjectResolver("DimensionValue"),
+  RawObservation: makeJSONObjectResolver("RawObservation"),
   Query,
   DataCube,
   DataCubeTheme: {

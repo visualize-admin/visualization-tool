@@ -432,7 +432,7 @@ const TabPanelData = ({
 
   return (
     <TabPanel className={classes.tabPanel} value="data">
-      <AnimatePresence exitBeforeEnter={true}>
+      <AnimatePresence mode="wait">
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
             <BackButton

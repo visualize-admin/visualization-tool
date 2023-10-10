@@ -3,11 +3,11 @@ import {
   Box,
   Link,
   LinkProps,
+  Link as MUILink,
+  Stack,
   Typography,
   TypographyProps,
 } from "@mui/material";
-import { Stack } from "@mui/material";
-import { Link as MUILink } from "@mui/material";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 
@@ -189,6 +189,7 @@ const DatasetTags = ({
               t.__typename === "DataCubeTheme" ? "theme" : "organization"
             }/${encodeURIComponent(t.iri)}`}
             passHref
+            legacyBehavior
           >
             <Tag
               component={MUILink}

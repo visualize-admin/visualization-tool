@@ -430,8 +430,9 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
 
 const DebugPanel = () => {
   const { isOpen, open, close } = useDisclosure();
-  const [tab, setTab] = useState("graphql" as "graphql" | "flags");
+  const [tab, setTab] = useState<"graphql" | "flags">("graphql");
   const gqlOperationsController = useGraphqlOperationsController();
+
   return (
     <>
       <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>

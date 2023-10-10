@@ -119,7 +119,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                         typography="caption"
                       >
                         Id: {key} -{" "}
-                        <NextLink href={`/v/${key}`} passHref>
+                        <NextLink href={`/v/${key}`} passHref legacyBehavior>
                           <Link color="primary">Open</Link>
                         </NextLink>{" "}
                       </Box>
