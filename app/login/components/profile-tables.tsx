@@ -88,7 +88,11 @@ const Row = (props: RowProps) => {
               <Icon name="linkExternal" size={14} />
             </Link>
           </NextLink>
-          <NextLink href={`/create/${config.key}`} passHref legacyBehavior>
+          <NextLink
+            href={`/create/new?edit=${config.key}`}
+            passHref
+            legacyBehavior
+          >
             <Link target="_blank">
               <Icon name="edit" size={14} />
             </Link>

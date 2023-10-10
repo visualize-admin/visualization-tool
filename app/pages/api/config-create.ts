@@ -13,6 +13,7 @@ const route = api({
     const { data } = req.body;
 
     return await createConfig({
+      key: data.key,
       data,
       userId,
     });

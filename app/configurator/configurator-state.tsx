@@ -57,6 +57,7 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { ParsedConfig } from "@/db/config";
 import { DimensionValue, isGeoDimension } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -79,12 +80,17 @@ import {
 } from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
+import { useUser } from "@/login/utils";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
-import { createConfig, fetchChartConfig } from "@/utils/chart-config/api";
+import {
+  createConfig,
+  fetchChartConfig,
+  updateConfig,
+} from "@/utils/chart-config/api";
 import {
   CONFIGURATOR_STATE_VERSION,
   migrateConfiguratorState,
@@ -1324,6 +1330,27 @@ export const initChartStateFromChart = async (
   from: ChartId
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
+  const newId = createChartId();
+
+  if (config?.data) {
+    return {
+      ...migrateConfiguratorState(
+        {
+          ...config.data,
+          state: "CONFIGURING_CHART",
+        },
+        // We create a new key for the chart, in order to create a new chart.
+        { migrationProps: { key: newId } }
+      ),
+      key: newId,
+    };
+  }
+};
+
+export const initChartStateFromChartEdit = async (
+  from: ChartId
+): Promise<ConfiguratorStateConfiguringChart | undefined> => {
+  const config = await fetchChartConfig(from);
 
   if (config?.data) {
     return migrateConfiguratorState(
@@ -1331,6 +1358,7 @@ export const initChartStateFromChart = async (
         ...config.data,
         state: "CONFIGURING_CHART",
       },
+      // We keep the same key as the original chart, in order to update it.
       { migrationProps: { key: config.key } }
     );
   }
@@ -1429,6 +1457,7 @@ const ConfiguratorStateProviderInternal = ({
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
+  const user = useUser();
 
   // Initialize state on page load.
   useEffect(() => {
@@ -1441,6 +1470,8 @@ const ConfiguratorStateProviderInternal = ({
         if (chartId === "new") {
           if (query.from && typeof query.from === "string") {
             newChartState = await initChartStateFromChart(query.from);
+          } else if (query.edit && typeof query.edit === "string") {
+            newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
               client,
@@ -1485,7 +1516,7 @@ const ConfiguratorStateProviderInternal = ({
       switch (state.state) {
         case "CONFIGURING_CHART":
           if (chartId === "new") {
-            const newChartId = createChartId();
+            const newChartId = state.key ?? createChartId();
             window.localStorage.setItem(
               getLocalStorageKey(newChartId),
               JSON.stringify(state)
@@ -1503,7 +1534,17 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await createConfig({
+              let dbConfig: ParsedConfig | undefined;
+
+              if (user) {
+                const config = await fetchChartConfig(state.key);
+
+                if (config && config.user_id === user.id) {
+                  dbConfig = config;
+                }
+              }
+
+              const preparedConfig: ConfiguratorStatePublishing = {
                 ...state,
                 chartConfigs: [
                   ...state.chartConfigs.map((d) => {
@@ -1528,7 +1569,14 @@ const ConfiguratorStateProviderInternal = ({
                 // the story from a specific point and e.g. toggle back and forth between
                 // the different charts).
                 activeChartKey: state.chartConfigs[0].key,
-              });
+              };
+
+              const result = await (dbConfig && user
+                ? updateConfig(preparedConfig, {
+                    key: dbConfig.key,
+                    userId: user.id,
+                  })
+                : createConfig(preparedConfig));
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
@@ -1559,7 +1607,17 @@ const ConfiguratorStateProviderInternal = ({
     } catch (e) {
       console.error(e);
     }
-  }, [state, dispatch, chartId, push, asPath, locale, query.from, replace]);
+  }, [
+    state,
+    dispatch,
+    chartId,
+    push,
+    asPath,
+    locale,
+    query.from,
+    replace,
+    user,
+  ]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>

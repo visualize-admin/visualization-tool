@@ -7,26 +7,55 @@ import { Config, Prisma, User } from "@prisma/client";
 import { ChartConfig, ConfiguratorStatePublished } from "@/configurator";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
-import { createChartId } from "../utils/create-chart-id";
-
 import prisma from "./client";
 
 /**
  * Store data in the DB.
  * If the user is logged, the chart is linked to the user.
  *
+ * @param key Key of the config to be stored
  * @param data Data to be stored as configuration
  */
 export const createConfig = async ({
+  key,
   data,
   userId,
 }: {
+  key: string;
   data: Prisma.ConfigCreateInput["data"];
   userId?: User["id"] | undefined;
 }): Promise<{ key: string }> => {
   return await prisma.config.create({
     data: {
-      key: createChartId(),
+      key,
+      data,
+      user_id: userId,
+    },
+  });
+};
+
+/**
+ * Update config in the DB.
+ * Only valid for logged in users.
+ *
+ * @param key Key of the config to be updated
+ * @param data Data to be stored as configuration
+ */
+export const updateConfig = async ({
+  key,
+  data,
+  userId,
+}: {
+  key: string;
+  data: Prisma.ConfigCreateInput["data"];
+  userId: User["id"];
+}): Promise<{ key: string }> => {
+  return await prisma.config.update({
+    where: {
+      key,
+    },
+    data: {
+      key,
       data,
       user_id: userId,
     },
