@@ -4,7 +4,7 @@
 
 import { Config, Prisma, User } from "@prisma/client";
 
-import { ChartConfig } from "@/configurator";
+import { ChartConfig, ConfiguratorStatePublished } from "@/configurator";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 import { createChartId } from "../utils/create-chart-id";
@@ -57,13 +57,16 @@ const ensureFiltersOrder = (chartConfig: ChartConfig) => {
   };
 };
 
-type ChartJsonConfig = {
-  dataSet: string;
-  chartConfig: Prisma.JsonObject;
-};
-
-const parseDbConfig = (d: Config) => {
-  const data = d.data as ChartJsonConfig;
+const parseDbConfig = (
+  d: Config
+): {
+  id: number;
+  key: string;
+  data: ConfiguratorStatePublished;
+  created_at: Date;
+  user_id: number | null;
+} => {
+  const data = d.data as ConfiguratorStatePublished;
   const migratedData = migrateConfiguratorState(data);
 
   return {
@@ -84,7 +87,7 @@ const parseDbConfig = (d: Config) => {
 export const getConfig = async (key: string) => {
   const config = await prisma.config.findFirst({
     where: {
-      key: key,
+      key,
     },
   });
 
