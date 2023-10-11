@@ -36,6 +36,7 @@ export const ProfileVisualizationsTable = (
             <TableCell>Chart type</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Dataset</TableCell>
+            <TableCell>Published</TableCell>
             <TableCell>Actions</TableCell>
           </TableHead>
           <TableBody>
@@ -95,6 +96,9 @@ const Row = (props: RowProps) => {
             {data?.dataCubeByIri?.title ?? ""}
           </Typography>
         )}
+      </TableCell>
+      <TableCell width={120}>
+        {config.created_at.toLocaleDateString("de")}
       </TableCell>
       <TableCell width={80}>
         <Box sx={{ display: "flex", gap: 2 }}>
