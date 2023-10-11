@@ -24,6 +24,37 @@ import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 
+type ProfileTableProps = React.PropsWithChildren<{
+  title: string;
+  preview?: boolean;
+  onShowAll?: () => void;
+}>;
+
+const ProfileTable = (props: ProfileTableProps) => {
+  const { title, preview, onShowAll, children } = props;
+  const rootClasses = useRootStyles();
+
+  return (
+    <Box className={rootClasses.sectionContent}>
+      <Typography variant="h2" sx={{ mb: 4 }}>
+        {title}
+      </Typography>
+      <Table>{children}</Table>
+      {preview && (
+        <Button
+          variant="text"
+          color="primary"
+          size="small"
+          onClick={onShowAll}
+          sx={{ ml: 1, mt: 2 }}
+        >
+          <Typography variant="body2">Show all</Typography>
+        </Button>
+      )}
+    </Box>
+  );
+};
+
 type ProfileVisualizationsTableProps = {
   userConfigs: ParsedConfig[];
   preview?: boolean;
@@ -34,15 +65,15 @@ export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
   const { userConfigs, preview, onShowAll } = props;
-  const rootClasses = useRootStyles();
 
   return (
-    <Box className={rootClasses.sectionContent}>
-      <Typography variant="h2" sx={{ mb: 4 }}>
-        My visualizations
-      </Typography>
+    <ProfileTable
+      title="My visualizations"
+      preview={preview && userConfigs.length > 0}
+      onShowAll={onShowAll}
+    >
       {userConfigs.length > 0 ? (
-        <Table>
+        <>
           <TableHead
             sx={{
               "& > .MuiTableCell-root": {
@@ -62,7 +93,7 @@ export const ProfileVisualizationsTable = (
               <ProfileVisualizationsRow key={d.key} config={d} />
             ))}
           </TableBody>
-        </Table>
+        </>
       ) : (
         <Typography variant="body1">
           No charts yet,{" "}
@@ -72,18 +103,7 @@ export const ProfileVisualizationsTable = (
           .
         </Typography>
       )}
-      {preview && (
-        <Button
-          variant="text"
-          color="primary"
-          size="small"
-          onClick={onShowAll}
-          sx={{ ml: 1, mt: 2 }}
-        >
-          <Typography variant="body2">Show all</Typography>
-        </Button>
-      )}
-    </Box>
+    </ProfileTable>
   );
 };
 
