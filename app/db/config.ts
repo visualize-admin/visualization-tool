@@ -62,6 +62,24 @@ export const updateConfig = async ({
   });
 };
 
+/**
+ * Remove config from the DB.
+ * Only valid for logged in users.
+ *
+ * @param key Key of the config to be updated
+ */
+export const removeConfig = async ({
+  key,
+}: {
+  key: string;
+}): Promise<{ key: string }> => {
+  return await prisma.config.delete({
+    where: {
+      key,
+    },
+  });
+};
+
 const migrateDataSet = (dataSet: string): string => {
   if (dataSet.includes("https://environment.ld.admin.ch/foen/nfi")) {
     return dataSet.replace(/None-None-/, "");
