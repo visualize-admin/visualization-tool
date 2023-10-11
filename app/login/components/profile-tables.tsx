@@ -17,6 +17,7 @@ import React from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
+import { sourceToLabel } from "@/domain/datasource";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
@@ -97,9 +98,19 @@ const Row = (props: RowProps) => {
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : (
-          <Typography variant="body2">
-            {data?.dataCubeByIri?.title ?? ""}
-          </Typography>
+          <NextLink
+            href={`/browse?dataset=${
+              config.data.dataSet
+            }&dataSource=${sourceToLabel(config.data.dataSource)}`}
+            passHref
+            legacyBehavior
+          >
+            <Link target="_blank" color="primary">
+              <Typography variant="body2">
+                {data?.dataCubeByIri?.title ?? ""}
+              </Typography>
+            </Link>
+          </NextLink>
         )}
       </TableCell>
       <TableCell width={120}>
