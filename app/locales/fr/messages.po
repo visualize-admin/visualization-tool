@@ -115,6 +115,14 @@ msgstr "Publier cette visualisation"
 msgid "button.share"
 msgstr "Partager"
 
+#: app/components/chart-selection-tabs.tsx
+msgid "button.update"
+msgstr "Actualiser cette visualisation"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "button.update.warning"
+msgstr "Gardez à l'esprit que la mise à jour de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"
 msgstr "Zones"

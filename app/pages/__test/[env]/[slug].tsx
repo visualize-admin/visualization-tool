@@ -14,6 +14,7 @@ import { EmbedOptionsProvider } from "@/utils/embed";
 
 // FIXME: keep this in sync with configurator types.
 type DbConfig = {
+  key: string;
   version: string;
   dataSet: string;
   dataSource: DataSource;

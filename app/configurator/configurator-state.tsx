@@ -57,6 +57,7 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
+import { ParsedConfig } from "@/db/config";
 import { DimensionValue, isGeoDimension } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -79,17 +80,23 @@ import {
 } from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
+import { useUser } from "@/login/utils";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import {
   getDataSourceFromLocalStorage,
   useDataSourceStore,
 } from "@/stores/data-source";
-import { createConfig, fetchChartConfig } from "@/utils/chart-config/api";
+import {
+  createConfig,
+  fetchChartConfig,
+  updateConfig,
+} from "@/utils/chart-config/api";
 import {
   CONFIGURATOR_STATE_VERSION,
   migrateConfiguratorState,
 } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
+import { getRouterChartId } from "@/utils/router/helpers";
 import { unreachableError } from "@/utils/unreachable";
 
 export type ConfiguratorStateAction =
@@ -340,7 +347,8 @@ const INITIAL_STATE: ConfiguratorState = {
   dataSource: DEFAULT_DATA_SOURCE,
 };
 
-const emptyState: ConfiguratorStateSelectingDataSet = {
+const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
+  ...INITIAL_STATE,
   version: CONFIGURATOR_STATE_VERSION,
   state: "SELECTING_DATASET",
   dataSet: undefined,
@@ -917,7 +925,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL"
-        ? getStateWithCurrentDataSource(emptyState)
+        ? getStateWithCurrentDataSource(EMPTY_STATE)
         : action.value;
     case "DATASET_SELECTED":
       if (draft.state === "SELECTING_DATASET") {
@@ -1330,6 +1338,19 @@ export const initChartStateFromChart = async (
   }
 };
 
+export const initChartStateFromChartEdit = async (
+  from: ChartId
+): Promise<ConfiguratorStateConfiguringChart | undefined> => {
+  const config = await fetchChartConfig(from);
+
+  if (config?.data) {
+    return migrateConfiguratorState({
+      ...config.data,
+      state: "CONFIGURING_CHART",
+    });
+  }
+};
+
 export const initChartStateFromCube = async (
   client: Client,
   datasetIri: DatasetIri,
@@ -1361,7 +1382,7 @@ export const initChartStateFromCube = async (
 
   if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
     return transitionStepNext(
-      getStateWithCurrentDataSource({ ...emptyState, dataSet: datasetIri }),
+      getStateWithCurrentDataSource({ ...EMPTY_STATE, dataSet: datasetIri }),
       { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
     );
   }
@@ -1421,6 +1442,7 @@ const ConfiguratorStateProviderInternal = ({
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
   const client = useClient();
+  const user = useUser();
 
   // Initialize state on page load.
   useEffect(() => {
@@ -1433,6 +1455,8 @@ const ConfiguratorStateProviderInternal = ({
         if (chartId === "new") {
           if (query.from && typeof query.from === "string") {
             newChartState = await initChartStateFromChart(query.from);
+          } else if (query.edit && typeof query.edit === "string") {
+            newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
             newChartState = await initChartStateFromCube(
               client,
@@ -1477,12 +1501,20 @@ const ConfiguratorStateProviderInternal = ({
       switch (state.state) {
         case "CONFIGURING_CHART":
           if (chartId === "new") {
-            const newChartId = createChartId();
-            window.localStorage.setItem(
-              getLocalStorageKey(newChartId),
-              JSON.stringify(state)
-            );
-            replace(`/create/${newChartId}`);
+            if (query.edit && typeof query.edit === "string") {
+              replace(`/create/${query.edit}`);
+              window.localStorage.setItem(
+                getLocalStorageKey(query.edit),
+                JSON.stringify(state)
+              );
+            } else {
+              const newChartId = createChartId();
+              window.localStorage.setItem(
+                getLocalStorageKey(newChartId),
+                JSON.stringify(state)
+              );
+              replace(`/create/${newChartId}`);
+            }
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
@@ -1495,7 +1527,18 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await createConfig({
+              let dbConfig: ParsedConfig | undefined;
+              const key = getRouterChartId(asPath);
+
+              if (key && user) {
+                const config = await fetchChartConfig(key);
+
+                if (config && config.user_id === user.id) {
+                  dbConfig = config;
+                }
+              }
+
+              const preparedConfig: ConfiguratorStatePublishing = {
                 ...state,
                 chartConfigs: [
                   ...state.chartConfigs.map((d) => {
@@ -1520,7 +1563,14 @@ const ConfiguratorStateProviderInternal = ({
                 // the story from a specific point and e.g. toggle back and forth between
                 // the different charts).
                 activeChartKey: state.chartConfigs[0].key,
-              });
+              };
+
+              const result = await (dbConfig && user
+                ? updateConfig(preparedConfig, {
+                    key: dbConfig.key,
+                    userId: user.id,
+                  })
+                : createConfig(preparedConfig));
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
@@ -1551,7 +1601,18 @@ const ConfiguratorStateProviderInternal = ({
     } catch (e) {
       console.error(e);
     }
-  }, [state, dispatch, chartId, push, asPath, locale, query.from, replace]);
+  }, [
+    state,
+    dispatch,
+    chartId,
+    push,
+    asPath,
+    locale,
+    query.from,
+    replace,
+    user,
+    query.edit,
+  ]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>

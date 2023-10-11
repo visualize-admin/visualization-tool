@@ -1,6 +1,8 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Popover, Tab, Tabs, Theme } from "@mui/material";
+import { Trans, t } from "@lingui/macro";
+import { Box, Button, Popover, Tab, Tabs, Theme, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -23,8 +25,11 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
+import { fetchChartConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
+import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
+import { useFetchData } from "@/utils/use-fetch-data";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -277,14 +282,46 @@ const PublishChartButton = () => {
     }
   });
 
-  return (
+  const { asPath } = useRouter();
+  const session = useSession();
+  const chartId = getRouterChartId(asPath);
+  const queryFn = React.useCallback(
+    () => fetchChartConfig(chartId ?? ""),
+    [chartId]
+  );
+  const { data: config, status } = useFetchData(queryFn, {
+    enable: !!(session.data?.user && chartId),
+    initialStatus: "fetching",
+  });
+
+  const editingPublishedChart =
+    session.data?.user.id && config?.user_id === session.data.user.id;
+
+  return status === "fetching" ? null : (
     <Button
       color="primary"
       variant="contained"
       onClick={metadata && components ? goNext : undefined}
       sx={{ minWidth: "fit-content" }}
     >
-      <Trans id="button.publish">Publish this visualization</Trans>
+      {editingPublishedChart ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Tooltip
+            title={t({
+              id: "button.update.warning",
+              message:
+                "Keep in mind that updating this visualization will affect all the places where it might be already embedded!",
+            })}
+          >
+            <div>
+              <Icon name="hintWarning" />
+            </div>
+          </Tooltip>
+          <Trans id="button.update">Update this visualization</Trans>
+        </Box>
+      ) : (
+        <Trans id="button.publish">Publish this visualization</Trans>
+      )}
     </Button>
   );
 };
