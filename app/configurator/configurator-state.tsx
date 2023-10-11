@@ -5,14 +5,7 @@ import setWith from "lodash/setWith";
 import sortBy from "lodash/sortBy";
 import unset from "lodash/unset";
 import { useRouter } from "next/router";
-import {
-  Dispatch,
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import { Dispatch, createContext, useContext, useEffect, useMemo } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 
@@ -1421,21 +1414,18 @@ export const initChartStateFromLocalStorage = async (
   }
 };
 
-const ConfiguratorStateProviderInternal = ({
-  chartId,
-  children,
-  initialState = INITIAL_STATE,
-  allowDefaultRedirect = true,
-}: {
-  key: string;
-  chartId: string;
-  children?: ReactNode;
-  initialState?: ConfiguratorState;
-  allowDefaultRedirect?: boolean;
-}) => {
+const ConfiguratorStateProviderInternal = (
+  props: ConfiguratorStateProviderProps
+) => {
+  const {
+    chartId,
+    initialState,
+    allowDefaultRedirect = true,
+    children,
+  } = props;
   const { dataSource } = useDataSourceStore();
   const initialStateWithDataSource = useMemo(() => {
-    return { ...initialState, dataSource };
+    return initialState ? initialState : { ...INITIAL_STATE, dataSource };
   }, [initialState, dataSource]);
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialStateWithDataSource);
@@ -1488,13 +1478,6 @@ const ConfiguratorStateProviderInternal = ({
     locale,
     client,
   ]);
-
-  useEffect(() => {
-    dispatch({
-      type: "DATASOURCE_CHANGED",
-      value: dataSource,
-    });
-  }, [dispatch, dataSource]);
 
   useEffect(() => {
     try {
@@ -1621,17 +1604,16 @@ const ConfiguratorStateProviderInternal = ({
   );
 };
 
-export const ConfiguratorStateProvider = ({
-  chartId,
-  children,
-  initialState,
-  allowDefaultRedirect,
-}: {
+type ConfiguratorStateProviderProps = React.PropsWithChildren<{
   chartId: string;
-  children?: ReactNode;
   initialState?: ConfiguratorState;
   allowDefaultRedirect?: boolean;
-}) => {
+}>;
+
+export const ConfiguratorStateProvider = (
+  props: ConfiguratorStateProviderProps
+) => {
+  const { chartId, initialState, allowDefaultRedirect, children } = props;
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
     <ConfiguratorStateProviderInternal
