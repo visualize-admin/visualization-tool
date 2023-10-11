@@ -35,10 +35,22 @@ export const ProfileVisualizationsTable = (
 
   return (
     <Box className={rootClasses.sectionContent}>
-      <Typography variant="h2">My visualizations</Typography>
+      <Typography variant="h2" sx={{ mb: 4 }}>
+        My visualizations
+      </Typography>
+      <Typography variant="h3" sx={{ mb: 2 }}>
+        My published visualizations
+      </Typography>
       {userConfigs.length > 0 ? (
         <Table>
-          <TableHead>
+          <TableHead
+            sx={{
+              "& > .MuiTableCell-root": {
+                borderBottomColor: "divider",
+                color: "secondary.main",
+              },
+            }}
+          >
             <TableCell>Type</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Dataset</TableCell>
@@ -81,12 +93,18 @@ const Row = (props: RowProps) => {
   });
 
   return (
-    <TableRow sx={{ verticalAlign: "middle", height: 64 }}>
+    <TableRow
+      sx={{
+        verticalAlign: "middle",
+        height: 56,
+        "& > .MuiTableCell-root": {
+          borderBottomColor: "divider",
+        },
+      }}
+    >
       <TableCell width={80}>
         <Typography variant="body2">
-          {config.data.chartConfigs.length > 1
-            ? "multi"
-            : config.data.chartConfigs[0].chartType}
+          {config.data.chartConfigs.length > 1 ? "multi" : "single"}
         </Typography>
       </TableCell>
       <TableCell width="auto">
@@ -142,14 +160,19 @@ const Actions = (props: ActionsProps) => {
         title={
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <ActionsLink
-              href={`/v/${configKey}`}
-              label="Open"
-              iconName="linkExternal"
+              href={`/create/new?copy=${configKey}`}
+              label="Copy"
+              iconName="copy"
             />
             <ActionsLink
               href={`/create/new?edit=${configKey}`}
               label="Edit"
               iconName="edit"
+            />
+            <ActionsLink
+              href={`/v/${configKey}`}
+              label="Share"
+              iconName="linkExternal"
             />
           </Box>
         }
