@@ -21,7 +21,7 @@ import {
   getLocalStorageKey,
   handleChartFieldChanged,
   handleChartOptionChanged,
-  initChartStateFromChart,
+  initChartStateFromChartCopy,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
@@ -106,7 +106,7 @@ describe("initChartStateFromChart", () => {
     });
     // @ts-ignore
     const { key, activeChartKey, chartConfigs, ...rest } =
-      await initChartStateFromChart("abcde");
+      await initChartStateFromChartCopy("abcde");
     const { key: chartConfigKey, ...chartConfig } = chartConfigs[0];
     const {
       key: migratedKey,
@@ -132,7 +132,7 @@ describe("initChartStateFromChart", () => {
         isBadState: true,
       },
     });
-    const state = await initChartStateFromChart("abcde");
+    const state = await initChartStateFromChartCopy("abcde");
     expect(state).toEqual(undefined);
   });
 });
