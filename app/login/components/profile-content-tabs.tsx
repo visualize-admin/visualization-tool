@@ -64,7 +64,11 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
       </Box>
       <TabPanel className={classes.tabPanel} value="Home">
         <Box className={classes.tabPanelContent}>
-          <ProfileVisualizationsTable userConfigs={userConfigs} />
+          <ProfileVisualizationsTable
+            userConfigs={userConfigs}
+            preview
+            onShowAll={() => setValue("My visualizations")}
+          />
         </Box>
       </TabPanel>
       <TabPanel className={classes.tabPanel} value="My visualizations">

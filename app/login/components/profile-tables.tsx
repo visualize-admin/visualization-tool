@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   ClickAwayListener,
   IconButton,
   Link,
@@ -25,12 +26,14 @@ import { useLocale } from "@/src";
 
 type ProfileVisualizationsTableProps = {
   userConfigs: ParsedConfig[];
+  preview?: boolean;
+  onShowAll?: () => void;
 };
 
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
-  const { userConfigs } = props;
+  const { userConfigs, preview, onShowAll } = props;
   const rootClasses = useRootStyles();
 
   return (
@@ -58,7 +61,7 @@ export const ProfileVisualizationsTable = (
             <TableCell align="right">Actions</TableCell>
           </TableHead>
           <TableBody>
-            {userConfigs.map((d) => (
+            {(preview ? userConfigs.slice(0, 3) : userConfigs).map((d) => (
               <Row key={d.key} config={d} />
             ))}
           </TableBody>
@@ -71,6 +74,17 @@ export const ProfileVisualizationsTable = (
           </NextLink>
           .
         </Typography>
+      )}
+      {preview && (
+        <Button
+          variant="text"
+          color="primary"
+          size="small"
+          onClick={onShowAll}
+          sx={{ ml: 1, mt: 2 }}
+        >
+          <Typography variant="body2">Show all</Typography>
+        </Button>
       )}
     </Box>
   );
