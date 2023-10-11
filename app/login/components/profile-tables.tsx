@@ -1,5 +1,7 @@
 import {
   Box,
+  ClickAwayListener,
+  IconButton,
   Link,
   Skeleton,
   Table,
@@ -7,13 +9,16 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
+import React from "react";
 
+import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
-import { Icon } from "@/icons";
+import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 
@@ -33,11 +38,11 @@ export const ProfileVisualizationsTable = (
       {userConfigs.length > 0 ? (
         <Table>
           <TableHead>
-            <TableCell>Chart type</TableCell>
+            <TableCell>Type</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Dataset</TableCell>
             <TableCell>Published</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableHead>
           <TableBody>
             {userConfigs.map((d) => (
@@ -75,7 +80,7 @@ const Row = (props: RowProps) => {
   });
 
   return (
-    <TableRow>
+    <TableRow sx={{ verticalAlign: "middle", height: 64 }}>
       <TableCell width={80}>
         <Typography variant="body2">
           {config.data.chartConfigs.length > 1
@@ -90,7 +95,7 @@ const Row = (props: RowProps) => {
       </TableCell>
       <TableCell width="40%">
         {fetching ? (
-          <Skeleton variant="rectangular" width="100%" height={10} />
+          <Skeleton width="50%" height={32} />
         ) : (
           <Typography variant="body2">
             {data?.dataCubeByIri?.title ?? ""}
@@ -98,26 +103,79 @@ const Row = (props: RowProps) => {
         )}
       </TableCell>
       <TableCell width={120}>
-        {config.created_at.toLocaleDateString("de")}
+        <Typography variant="body2">
+          {config.created_at.toLocaleDateString("de")}
+        </Typography>
       </TableCell>
-      <TableCell width={80}>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-            <Link target="_blank">
-              <Icon name="linkExternal" size={14} />
-            </Link>
-          </NextLink>
-          <NextLink
-            href={`/create/new?edit=${config.key}`}
-            passHref
-            legacyBehavior
-          >
-            <Link target="_blank">
-              <Icon name="edit" size={14} />
-            </Link>
-          </NextLink>
-        </Box>
+      <TableCell width={80} align="right">
+        <Actions configKey={config.key} />
       </TableCell>
     </TableRow>
+  );
+};
+
+type ActionsProps = {
+  configKey: string;
+};
+
+const Actions = (props: ActionsProps) => {
+  const { configKey } = props;
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const { isOpen, open, close } = useDisclosure();
+
+  return (
+    <ClickAwayListener onClickAway={close}>
+      <Tooltip
+        arrow
+        open={isOpen}
+        title={
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <ActionsLink
+              href={`/v/${configKey}`}
+              label="Open"
+              iconName="linkExternal"
+            />
+            <ActionsLink
+              href={`/create/new?edit=${configKey}`}
+              label="Edit"
+              iconName="edit"
+            />
+          </Box>
+        }
+        sx={{ p: 2 }}
+        componentsProps={{ tooltip: { sx: { p: 3, pb: 2 } } }}
+      >
+        <IconButton ref={buttonRef} onClick={isOpen ? close : open}>
+          <Icon name="more" size={16} />
+        </IconButton>
+      </Tooltip>
+    </ClickAwayListener>
+  );
+};
+
+type ActionsLinkProps = {
+  href: string;
+  label: string;
+  iconName: IconName;
+};
+
+const ActionsLink = (props: ActionsLinkProps) => {
+  const { href, label, iconName } = props;
+
+  return (
+    <NextLink href={href} passHref legacyBehavior>
+      <Link
+        target="_blank"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          color: "primary.main",
+        }}
+      >
+        <Icon name={iconName} size={16} />
+        <Typography variant="body2">{label}</Typography>
+      </Link>
+    </NextLink>
   );
 };
