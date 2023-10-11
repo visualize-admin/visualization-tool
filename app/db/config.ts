@@ -143,7 +143,11 @@ export const getUserConfigs = async (userId: number) => {
     where: {
       user_id: userId,
     },
+    orderBy: {
+      created_at: "desc",
+    },
   });
+
   return configs.map((c) => parseDbConfig(c));
 };
 
