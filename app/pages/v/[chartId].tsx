@@ -190,7 +190,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 </Button>
               </NextLink>
               <NextLink
-                href={{ pathname: "/create/new", query: { from: key } }}
+                href={{ pathname: "/create/new", query: { copy: key } }}
                 passHref
                 legacyBehavior
               >

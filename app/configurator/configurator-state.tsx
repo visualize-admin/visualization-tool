@@ -1318,7 +1318,7 @@ const ConfiguratorStateContext = createContext<
 type ChartId = string;
 type DatasetIri = string;
 
-export const initChartStateFromChart = async (
+export const initChartStateFromChartCopy = async (
   from: ChartId
 ): Promise<ConfiguratorStateConfiguringChart | undefined> => {
   const config = await fetchChartConfig(from);
@@ -1443,8 +1443,8 @@ const ConfiguratorStateProviderInternal = (
         let newChartState;
 
         if (chartId === "new") {
-          if (query.from && typeof query.from === "string") {
-            newChartState = await initChartStateFromChart(query.from);
+          if (query.copy && typeof query.copy === "string") {
+            newChartState = await initChartStateFromChartCopy(query.copy);
           } else if (query.edit && typeof query.edit === "string") {
             newChartState = await initChartStateFromChartEdit(query.edit);
           } else if (query.cube && typeof query.cube === "string") {
