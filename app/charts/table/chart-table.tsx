@@ -1,7 +1,6 @@
 import { memo } from "react";
 
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
@@ -17,18 +16,15 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartTableVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: TableConfig;
-  published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

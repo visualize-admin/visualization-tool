@@ -2,7 +2,7 @@ import { InternMap } from "d3";
 import merge from "lodash/merge";
 
 import {
-  extractComponentIris,
+  extractChartConfigComponentIris,
   getWideData,
   prepareQueryFilters,
 } from "@/charts/shared/chart-helpers";
@@ -156,7 +156,7 @@ describe("getChartConfigComponentIris", () => {
   const mapConfig = map1Fixture.data.chartConfig as unknown as MapConfig;
 
   it("should return correct componentIris for line chart", () => {
-    const componentsIris = extractComponentIris(lineConfig);
+    const componentsIris = extractChartConfigComponentIris(lineConfig);
     expect(componentsIris).toEqual([
       "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
@@ -168,7 +168,7 @@ describe("getChartConfigComponentIris", () => {
   });
 
   it("should return correct componentIris for map chart", () => {
-    const componentsIris = extractComponentIris(mapConfig);
+    const componentsIris = extractChartConfigComponentIris(mapConfig);
     expect(componentsIris).toEqual([
       "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
       "https://environment.ld.admin.ch/foen/nfi/Topic/3r",

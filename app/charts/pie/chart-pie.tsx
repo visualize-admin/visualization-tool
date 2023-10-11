@@ -3,7 +3,6 @@ import { memo } from "react";
 import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -26,20 +25,17 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartPieVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
   queryFilters,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: PieConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,
@@ -70,9 +66,6 @@ export const ChartPieVisualization = ({
       observationsQuery={observationsQuery}
       chartConfig={chartConfig}
       Component={ChartPie}
-      ComponentProps={{
-        published,
-      }}
     />
   );
 };

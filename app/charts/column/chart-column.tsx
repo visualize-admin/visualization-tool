@@ -17,7 +17,6 @@ import {
   AxisWidthBandDomain,
 } from "@/charts/shared/axis-width-band";
 import { BrushTime } from "@/charts/shared/brush";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -39,20 +38,17 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartColumnsVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
   queryFilters,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ColumnConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

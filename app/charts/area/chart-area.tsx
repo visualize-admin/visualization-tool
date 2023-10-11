@@ -6,7 +6,6 @@ import { ChartLoadingWrapper } from "@/charts/chart-loading-wrapper";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -31,18 +30,15 @@ export const ChartAreasVisualization = ({
   dataSource,
   chartConfig,
   queryFilters,
-  published,
+  componentIris,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   chartConfig: AreaConfig;
   queryFilters: QueryFilters;
-  published: boolean;
+  componentIris: string[] | undefined;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

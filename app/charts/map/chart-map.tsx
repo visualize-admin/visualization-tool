@@ -5,7 +5,6 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -29,15 +28,15 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartMapVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
   queryFilters,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 }) => {
   const locale = useLocale();
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
@@ -48,9 +47,6 @@ export const ChartMapVisualization = ({
     sourceUrl: dataSource.url,
     locale,
   };
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const [metadataQuery] = useDataCubeMetadataQuery({
     variables: commonQueryVariables,
   });

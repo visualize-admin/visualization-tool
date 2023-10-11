@@ -214,8 +214,8 @@ export const ChartPreviewInner = (props: ChartPreviewProps) => {
                 <ChartWithFilters
                   dataSet={dataSetIri}
                   dataSource={dataSource}
+                  componentIris={undefined}
                   chartConfig={chartConfig}
-                  published={false}
                 />
               )}
             </Box>
