@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { User } from "@prisma/client";
 import clsx from "clsx";
 import { signOut } from "next-auth/react";
+import NextLink from "next/link";
 
 import { useRootStyles } from "@/login/utils";
 
@@ -35,8 +36,8 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
       <Box className={rootClasses.sectionContent}>
         <Box className={classes.topRow}>
           <Typography variant="h1">{user.name}</Typography>
-          <Button component={Link} href="/browse">
-            Browse all datasets
+          <Button>
+            <BrowseLink />
           </Button>
         </Box>
         <Button
@@ -50,5 +51,21 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
         </Button>
       </Box>
     </Box>
+  );
+};
+
+const BrowseLink = () => {
+  return (
+    <NextLink href="/browse" passHref legacyBehavior>
+      <Link
+        sx={{
+          "&:hover": {
+            textDecoration: "none",
+          },
+        }}
+      >
+        Browse all datasets
+      </Link>
+    </NextLink>
   );
 };
