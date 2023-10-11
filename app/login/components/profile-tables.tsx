@@ -41,9 +41,6 @@ export const ProfileVisualizationsTable = (
       <Typography variant="h2" sx={{ mb: 4 }}>
         My visualizations
       </Typography>
-      <Typography variant="h3" sx={{ mb: 2 }}>
-        My published visualizations
-      </Typography>
       {userConfigs.length > 0 ? (
         <Table>
           <TableHead
@@ -62,7 +59,7 @@ export const ProfileVisualizationsTable = (
           </TableHead>
           <TableBody>
             {(preview ? userConfigs.slice(0, 3) : userConfigs).map((d) => (
-              <Row key={d.key} config={d} />
+              <ProfileVisualizationsRow key={d.key} config={d} />
             ))}
           </TableBody>
         </Table>
@@ -90,11 +87,11 @@ export const ProfileVisualizationsTable = (
   );
 };
 
-type RowProps = {
+type ProfileVisualizationsRowProps = {
   config: ParsedConfig;
 };
 
-const Row = (props: RowProps) => {
+const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { config } = props;
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeMetadataQuery({
@@ -105,6 +102,25 @@ const Row = (props: RowProps) => {
       locale,
     },
   });
+  const links: ActionsLinkProps[] = React.useMemo(() => {
+    return [
+      {
+        href: `/create/new?copy=${config.key}`,
+        label: "Copy",
+        iconName: "copy",
+      },
+      {
+        href: `/create/new?edit=${config.key}`,
+        label: "Edit",
+        iconName: "edit",
+      },
+      {
+        href: `/v/${config.key}`,
+        label: "Share",
+        iconName: "linkExternal",
+      },
+    ];
+  }, [config.key]);
 
   return (
     <TableRow
@@ -151,18 +167,18 @@ const Row = (props: RowProps) => {
         </Typography>
       </TableCell>
       <TableCell width={80} align="right">
-        <Actions configKey={config.key} />
+        <Actions links={links} />
       </TableCell>
     </TableRow>
   );
 };
 
 type ActionsProps = {
-  configKey: string;
+  links: ActionsLinkProps[];
 };
 
 const Actions = (props: ActionsProps) => {
-  const { configKey } = props;
+  const { links } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const { isOpen, open, close } = useDisclosure();
 
@@ -173,21 +189,9 @@ const Actions = (props: ActionsProps) => {
         open={isOpen}
         title={
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <ActionsLink
-              href={`/create/new?copy=${configKey}`}
-              label="Copy"
-              iconName="copy"
-            />
-            <ActionsLink
-              href={`/create/new?edit=${configKey}`}
-              label="Edit"
-              iconName="edit"
-            />
-            <ActionsLink
-              href={`/v/${configKey}`}
-              label="Share"
-              iconName="linkExternal"
-            />
+            {links.map((props) => (
+              <ActionsLink key={props.href} {...props} />
+            ))}
           </Box>
         }
         sx={{ p: 2 }}
