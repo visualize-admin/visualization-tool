@@ -29,6 +29,7 @@ import { fetchChartConfig } from "@/utils/chart-config/api";
 import { createChartId } from "@/utils/create-chart-id";
 import { getRouterChartId } from "@/utils/router/helpers";
 import useEvent from "@/utils/use-event";
+import { useFetchData } from "@/utils/use-fetch-data";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -281,32 +282,22 @@ const PublishChartButton = () => {
     }
   });
 
-  const [editingPublishedChart, setEditingPublishedChart] =
-    React.useState(false);
-  const [loaded, setLoaded] = React.useState(false);
   const { asPath } = useRouter();
   const session = useSession();
   const chartId = getRouterChartId(asPath);
+  const queryFn = React.useCallback(
+    () => fetchChartConfig(chartId ?? ""),
+    [chartId]
+  );
+  const { data: config, status } = useFetchData(queryFn, {
+    enable: !!(session.data?.user && chartId),
+    initialStatus: "fetching",
+  });
 
-  React.useEffect(() => {
-    const run = async () => {
-      if (session.data?.user && chartId) {
-        const config = await fetchChartConfig(chartId);
+  const editingPublishedChart =
+    session.data?.user.id && config?.user_id === session.data.user.id;
 
-        if (config?.user_id === session.data.user.id) {
-          setEditingPublishedChart(true);
-        }
-      }
-
-      if (session.status !== "loading") {
-        setLoaded(true);
-      }
-    };
-
-    run();
-  }, [chartId, session]);
-
-  return loaded ? (
+  return status === "fetching" ? null : (
     <Button
       color="primary"
       variant="contained"
@@ -332,7 +323,7 @@ const PublishChartButton = () => {
         <Trans id="button.publish">Publish this visualization</Trans>
       )}
     </Button>
-  ) : null;
+  );
 };
 
 type TabsInnerProps = {
