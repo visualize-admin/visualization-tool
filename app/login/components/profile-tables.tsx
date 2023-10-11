@@ -1,6 +1,7 @@
 import {
   Box,
   Link,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -63,7 +64,7 @@ type RowProps = {
 const Row = (props: RowProps) => {
   const { config } = props;
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataQuery({
+  const [{ data, fetching }] = useDataCubeMetadataQuery({
     variables: {
       iri: config.data.dataSet,
       sourceType: config.data.dataSource.type,
@@ -72,18 +73,30 @@ const Row = (props: RowProps) => {
     },
   });
 
-  console.log(config);
-
   return (
     <TableRow>
-      <TableCell>
-        {config.data.chartConfigs.length > 1
-          ? "multi"
-          : config.data.chartConfigs[0].chartType}
+      <TableCell width={80}>
+        <Typography variant="body2">
+          {config.data.chartConfigs.length > 1
+            ? "multi"
+            : config.data.chartConfigs[0].chartType}
+        </Typography>
       </TableCell>
-      <TableCell>{config.data.meta.title[locale]}</TableCell>
-      <TableCell>{data?.dataCubeByIri?.title ?? ""}</TableCell>
-      <TableCell>
+      <TableCell width="auto">
+        <Typography variant="body2">
+          {config.data.meta.title[locale]}
+        </Typography>
+      </TableCell>
+      <TableCell width="40%">
+        {fetching ? (
+          <Skeleton variant="rectangular" width="100%" height={10} />
+        ) : (
+          <Typography variant="body2">
+            {data?.dataCubeByIri?.title ?? ""}
+          </Typography>
+        )}
+      </TableCell>
+      <TableCell width={80}>
         <Box sx={{ display: "flex", gap: 2 }}>
           <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
             <Link target="_blank">

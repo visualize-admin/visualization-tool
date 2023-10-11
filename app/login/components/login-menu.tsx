@@ -13,7 +13,7 @@ export const LoginMenu = () => {
         <Typography variant="body2">
           <Link href="/profile" legacyBehavior>
             {user.name}
-          </Link>{" "}
+          </Link>
         </Typography>
       ) : (
         <Button
