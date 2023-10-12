@@ -275,10 +275,9 @@ const Actions = (props: ActionsProps) => {
   const { actions } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const { isOpen, open, close } = useDisclosure();
-  const clickAwayListenerRef = React.useRef<HTMLElement>(null);
 
   return (
-    <ClickAwayListener ref={clickAwayListenerRef} onClickAway={close}>
+    <ClickAwayListener onClickAway={close}>
       <Tooltip
         arrow
         open={isOpen}
