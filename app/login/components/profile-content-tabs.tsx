@@ -53,11 +53,9 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         <Box className={rootClasses.sectionContent}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList className={classes.tabList} onChange={handleChange}>
-              {["Home", "My visualizations", "My favorite datasets"].map(
-                (d) => (
-                  <Tab key={d} className={classes.tab} label={d} value={d} />
-                )
-              )}
+              {["Home", "My visualizations"].map((d) => (
+                <Tab key={d} className={classes.tab} label={d} value={d} />
+              ))}
             </TabList>
           </Box>
         </Box>
@@ -80,14 +78,6 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           sx={{ bgcolor: "background.paper" }}
         >
           <ProfileVisualizationsTable userConfigs={userConfigs} />
-        </Box>
-      </TabPanel>
-      <TabPanel className={classes.tabPanel} value="My favorite datasets">
-        <Box
-          className={classes.tabPanelContent}
-          sx={{ bgcolor: "background.paper" }}
-        >
-          <Typography variant="h2">My favorite datasets</Typography>
         </Box>
       </TabPanel>
     </TabContext>
