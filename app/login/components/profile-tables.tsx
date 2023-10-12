@@ -1,7 +1,13 @@
 import {
   Box,
   Button,
+  CircularProgress,
   ClickAwayListener,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Link,
   Skeleton,
@@ -23,6 +29,9 @@ import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
+import { removeConfig } from "@/utils/chart-config/api";
+
+const PREVIEW_LIMIT = 3;
 
 type ProfileTableProps = React.PropsWithChildren<{
   title: string;
@@ -56,7 +65,9 @@ const ProfileTable = (props: ProfileTableProps) => {
 };
 
 type ProfileVisualizationsTableProps = {
+  userId: number;
   userConfigs: ParsedConfig[];
+  setUserConfigs: React.Dispatch<React.SetStateAction<ParsedConfig[]>>;
   preview?: boolean;
   onShowAll?: () => void;
 };
@@ -64,12 +75,19 @@ type ProfileVisualizationsTableProps = {
 export const ProfileVisualizationsTable = (
   props: ProfileVisualizationsTableProps
 ) => {
-  const { userConfigs, preview, onShowAll } = props;
+  const { userId, userConfigs, setUserConfigs, preview, onShowAll } = props;
+  const onRemoveSuccess = React.useCallback(
+    (key: string) => {
+      setUserConfigs((prev) => prev.filter((d) => d.key !== key));
+    },
+    [setUserConfigs]
+  );
 
   return (
     <ProfileTable
-      title="My visualizations"
-      preview={preview && userConfigs.length > 0}
+      // TODO: translate
+      title={"My visualizations"}
+      preview={preview && userConfigs.length > PREVIEW_LIMIT}
       onShowAll={onShowAll}
     >
       {userConfigs.length > 0 ? (
@@ -82,6 +100,7 @@ export const ProfileVisualizationsTable = (
               },
             }}
           >
+            {/* TODO: translate */}
             <TableCell>Type</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Dataset</TableCell>
@@ -89,13 +108,21 @@ export const ProfileVisualizationsTable = (
             <TableCell align="right">Actions</TableCell>
           </TableHead>
           <TableBody>
-            {(preview ? userConfigs.slice(0, 3) : userConfigs).map((d) => (
-              <ProfileVisualizationsRow key={d.key} config={d} />
-            ))}
+            {userConfigs
+              .slice(0, preview ? PREVIEW_LIMIT : undefined)
+              .map((config) => (
+                <ProfileVisualizationsRow
+                  key={config.key}
+                  userId={userId}
+                  config={config}
+                  onRemoveSuccess={onRemoveSuccess}
+                />
+              ))}
           </TableBody>
         </>
       ) : (
         <Typography variant="body1">
+          {/* TODO: translate */}
           No charts yet,{" "}
           <NextLink href="/browse" legacyBehavior>
             create one
@@ -108,39 +135,63 @@ export const ProfileVisualizationsTable = (
 };
 
 type ProfileVisualizationsRowProps = {
+  userId: number;
   config: ParsedConfig;
+  onRemoveSuccess: (key: string) => void;
 };
 
 const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
-  const { config } = props;
+  const { userId, config, onRemoveSuccess } = props;
+  const { dataSet, dataSource } = config.data;
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeMetadataQuery({
     variables: {
-      iri: config.data.dataSet,
-      sourceType: config.data.dataSource.type,
-      sourceUrl: config.data.dataSource.url,
+      iri: dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
     },
   });
-  const links: ActionsLinkProps[] = React.useMemo(() => {
-    return [
+  const actions = React.useMemo(() => {
+    const actions: ActionProps[] = [
       {
+        type: "link",
         href: `/create/new?copy=${config.key}`,
+        // TODO: translate
         label: "Copy",
         iconName: "copy",
       },
       {
+        type: "button",
+        // TODO: translate
+        label: "Delete",
+        iconName: "trash",
+        requireConfirmation: true,
+        // TODO: translate
+        confirmationText: "Are you sure you want to delete this chart?",
+        onClick: async () => {
+          await removeConfig({ key: config.key, userId });
+        },
+        onSuccess: () => {
+          onRemoveSuccess(config.key);
+        },
+      },
+      {
+        type: "link",
         href: `/create/new?edit=${config.key}`,
         label: "Edit",
         iconName: "edit",
       },
       {
+        type: "link",
         href: `/v/${config.key}`,
         label: "Share",
         iconName: "linkExternal",
       },
     ];
-  }, [config.key]);
+
+    return actions;
+  }, [config.key, onRemoveSuccess, userId]);
 
   return (
     <TableRow
@@ -187,30 +238,35 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         </Typography>
       </TableCell>
       <TableCell width={80} align="right">
-        <Actions links={links} />
+        <Actions actions={actions} />
       </TableCell>
     </TableRow>
   );
 };
 
 type ActionsProps = {
-  links: ActionsLinkProps[];
+  actions: ActionProps[];
 };
 
 const Actions = (props: ActionsProps) => {
-  const { links } = props;
+  const { actions } = props;
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const { isOpen, open, close } = useDisclosure();
+  const clickAwayListenerRef = React.useRef<HTMLElement>(null);
 
   return (
-    <ClickAwayListener onClickAway={close}>
+    <ClickAwayListener ref={clickAwayListenerRef} onClickAway={close}>
       <Tooltip
         arrow
         open={isOpen}
         title={
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {links.map((props) => (
-              <ActionsLink key={props.href} {...props} />
+            {actions.map((props, i) => (
+              <Action
+                key={i}
+                {...props}
+                {...(props.type === "button" ? { onDialogClose: close } : {})}
+              />
             ))}
           </Box>
         }
@@ -225,13 +281,28 @@ const Actions = (props: ActionsProps) => {
   );
 };
 
-type ActionsLinkProps = {
+type ActionProps = ActionLinkProps | ActionButtonProps;
+
+const Action = (props: ActionProps) => {
+  switch (props.type) {
+    case "link":
+      return <ActionLink {...props} />;
+    case "button":
+      return <ActionButton {...props} />;
+    default:
+      const _exhaustiveCheck: never = props;
+      return _exhaustiveCheck;
+  }
+};
+
+type ActionLinkProps = {
+  type: "link";
   href: string;
   label: string;
   iconName: IconName;
 };
 
-const ActionsLink = (props: ActionsLinkProps) => {
+const ActionLink = (props: ActionLinkProps) => {
   const { href, label, iconName } = props;
 
   return (
@@ -249,5 +320,109 @@ const ActionsLink = (props: ActionsLinkProps) => {
         <Typography variant="body2">{label}</Typography>
       </Link>
     </NextLink>
+  );
+};
+
+type ActionButtonProps = {
+  type: "button";
+  label: string;
+  iconName: IconName;
+  requireConfirmation?: boolean;
+  confirmationText?: string;
+  onClick: () => Promise<void>;
+  onDialogClose?: () => void;
+  onSuccess?: () => void;
+};
+
+const ActionButton = (props: ActionButtonProps) => {
+  const {
+    label,
+    iconName,
+    requireConfirmation,
+    confirmationText,
+    onClick,
+    onDialogClose,
+    onSuccess,
+  } = props;
+  const { isOpen, open, close } = useDisclosure();
+  const [loading, setLoading] = React.useState(false);
+
+  return (
+    <>
+      <Link
+        onClick={(e) => {
+          // To prevent the click away listener from closing the dialog.
+          e.stopPropagation();
+
+          if (requireConfirmation) {
+            open();
+          } else {
+            onClick();
+          }
+        }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          color: "primary.main",
+          cursor: "pointer",
+        }}
+      >
+        <Icon name={iconName} size={16} style={{ margin: 0 }} />
+        <Typography variant="body2">{label}</Typography>
+      </Link>
+      {requireConfirmation && (
+        <Dialog
+          open={isOpen}
+          // To prevent the click away listener from closing the dialog.
+          onClick={(e) => e.stopPropagation()}
+          onClose={close}
+          maxWidth="xs"
+        >
+          <DialogTitle>
+            <Typography variant="h3">
+              {/* TODO: translate */}
+              {confirmationText ??
+                "Are you sure you want to perform this action?"}
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {/* TODO: translate */}
+              Keep in mind that removing this visualization will affect all the
+              places where it might be already embedded!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              "& > .MuiButton-root": {
+                justifyContent: "center",
+                pointerEvents: loading ? "none" : "auto",
+              },
+            }}
+          >
+            <Button variant="text" onClick={close}>
+              No
+            </Button>
+            <Button
+              variant="text"
+              onClick={async (e) => {
+                e.stopPropagation();
+                setLoading(true);
+
+                await onClick();
+                close();
+                await new Promise((r) => setTimeout(r, 100));
+
+                onDialogClose?.();
+                onSuccess?.();
+              }}
+            >
+              {loading ? <CircularProgress /> : "Yes"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </>
   );
 };

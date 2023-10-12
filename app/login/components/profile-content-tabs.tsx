@@ -68,7 +68,9 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           sx={{ display: "flex", flexDirection: "column", gap: 6 }}
         >
           <ProfileVisualizationsTable
+            userId={userId}
             userConfigs={userConfigs}
+            setUserConfigs={setUserConfigs}
             preview
             onShowAll={() => setValue("My visualizations")}
           />
@@ -79,7 +81,11 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           className={classes.tabPanelContent}
           sx={{ bgcolor: "background.paper" }}
         >
-          <ProfileVisualizationsTable userConfigs={userConfigs} />
+          <ProfileVisualizationsTable
+            userId={userId}
+            userConfigs={userConfigs}
+            setUserConfigs={setUserConfigs}
+          />
         </Box>
       </TabPanel>
     </TabContext>
