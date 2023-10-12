@@ -14,6 +14,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Added a way to edit and remove charts for logged in users
   - Improved user profile page
 - Fixes
+  - Big datasets should now be possible to download (disabled API route size limit)
   - It's now again possible to enable interactive segment filters
 
 # [3.22.9] - 2023-10-06
