@@ -182,33 +182,35 @@ const DatasetTags = ({
         <Trans id="dataset-preview.keywords">Keywords</Trans>
       </DatasetMetadataTitle>
       <Stack spacing={1} direction="column" sx={{ mt: 3 }}>
-        {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
-          <NextLink
-            key={t.iri}
-            href={`/browse/${
-              t.__typename === "DataCubeTheme" ? "theme" : "organization"
-            }/${encodeURIComponent(t.iri)}`}
-            passHref
-            legacyBehavior
-          >
-            <Tag
-              component={MUILink}
-              // @ts-ignore
-              underline="none"
-              type={t.__typename}
-              title={t.label || undefined}
-              sx={{
-                maxWidth: "100%",
-                display: "flex",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-              }}
+        {[cube.creator, ...cube.themes].filter(truthy).map((t) =>
+          t.label ? (
+            <NextLink
+              key={t.iri}
+              href={`/browse/${
+                t.__typename === "DataCubeTheme" ? "theme" : "organization"
+              }/${encodeURIComponent(t.iri)}`}
+              passHref
+              legacyBehavior
             >
-              {t.label}
-            </Tag>
-          </NextLink>
-        ))}
+              <Tag
+                component={MUILink}
+                // @ts-ignore
+                underline="none"
+                type={t.__typename}
+                title={t.label || undefined}
+                sx={{
+                  maxWidth: "100%",
+                  display: "flex",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                }}
+              >
+                {t.label}
+              </Tag>
+            </NextLink>
+          ) : null
+        )}
       </Stack>
     </>
   );
