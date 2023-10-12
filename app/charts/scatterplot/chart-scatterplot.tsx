@@ -11,7 +11,6 @@ import {
   AxisWidthLinear,
   AxisWidthLinearDomain,
 } from "@/charts/shared/axis-width-linear";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -34,20 +33,17 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartScatterplotVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
   queryFilters,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ScatterPlotConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,
@@ -77,9 +73,6 @@ export const ChartScatterplotVisualization = ({
       componentsQuery={componentsQuery}
       observationsQuery={observationsQuery}
       Component={ChartScatterplot}
-      ComponentProps={{
-        published,
-      }}
       chartConfig={chartConfig}
     />
   );

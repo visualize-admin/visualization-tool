@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import {
-  extractComponentIris,
+  extractChartConfigComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { useChartTablePreview } from "@/components/chart-table-preview";
@@ -81,7 +81,7 @@ export const ChartFootnotes = ({
 
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
-  const componentIris = extractComponentIris(chartConfig);
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
     variables: {
       ...commonQueryVariables,

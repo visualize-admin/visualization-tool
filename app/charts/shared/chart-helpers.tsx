@@ -23,8 +23,10 @@ import {
 } from "@/config-types";
 import {
   CategoricalColorField,
+  ComboChartConfig,
   GenericField,
   NumericalColorField,
+  isComboChartConfig,
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -118,12 +120,40 @@ const getMapChartConfigAdditionalFields = ({ fields }: MapConfig) => {
   return additionalFields;
 };
 
-export const extractComponentIris = (chartConfig: ChartConfig) => {
+const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
+  switch (chartConfig.chartType) {
+    case "comboLineSingle":
+      return chartConfig.fields.y.componentIris;
+    case "comboLineDual":
+      return [
+        chartConfig.fields.y.leftAxisComponentIri,
+        chartConfig.fields.y.rightAxisComponentIri,
+      ];
+    case "comboLineColumn":
+      return [
+        chartConfig.fields.y.columnComponentIri,
+        chartConfig.fields.y.lineComponentIri,
+      ];
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
+};
+
+export const extractChartConfigsComponentIris = (
+  chartConfigs: ChartConfig[]
+) => {
+  return uniq(chartConfigs.map(extractChartConfigComponentIris).flat());
+};
+
+export const extractChartConfigComponentIris = (chartConfig: ChartConfig) => {
   const { fields, interactiveFiltersConfig: IFConfig } = chartConfig;
   const fieldIris = Object.values(fields).map((d) => d.componentIri);
   const additionalFieldIris =
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFields(chartConfig)
+      : isComboChartConfig(chartConfig)
+      ? getComboChartConfigAdditionalFields(chartConfig)
       : [];
   const filterIris = getChartConfigFilterComponentIris(chartConfig);
   const IFKeys = IFConfig ? (Object.keys(IFConfig) as IFKey[]) : [];

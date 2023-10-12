@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
 import { DataSetTable } from "@/browse/datatable";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
+import { extractChartConfigsComponentIris } from "@/charts/shared/chart-helpers";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
@@ -23,6 +23,7 @@ import {
 } from "@/components/metadata-panel";
 import {
   ChartConfig,
+  ConfiguratorStatePublished,
   DataSource,
   getChartConfig,
   isPublished,
@@ -58,6 +59,7 @@ export const ChartPublished = (props: ChartPublishedProps) => {
       <ChartPublishedInner
         dataSet={dataSet}
         dataSource={dataSource}
+        state={state}
         chartConfig={chartConfig}
         configKey={configKey}
       />
@@ -83,6 +85,7 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
 type ChartPublishInnerProps = {
   dataSet: string;
   dataSource: DataSource | undefined;
+  state: ConfiguratorStatePublished;
   chartConfig: ChartConfig;
   configKey: string | undefined;
 };
@@ -91,6 +94,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const {
     dataSet,
     dataSource = DEFAULT_DATA_SOURCE,
+    state,
     chartConfig,
     configKey,
   } = props;
@@ -141,10 +145,11 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const [{ data: metadata }] = useDataCubeMetadataQuery({
     variables: commonQueryVariables,
   });
+  const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
   const [{ data: components }] = useComponentsQuery({
     variables: {
       ...commonQueryVariables,
-      componentIris: extractComponentIris(chartConfig),
+      componentIris,
     },
   });
   const handleToggleTableView = useEvent(() => setIsTablePreview((c) => !c));
@@ -250,8 +255,8 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
                 <ChartWithFilters
                   dataSet={dataSet}
                   dataSource={dataSource}
+                  componentIris={componentIris}
                   chartConfig={chartConfig}
-                  published
                 />
               )}
             </Flex>

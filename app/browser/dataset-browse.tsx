@@ -592,7 +592,7 @@ const NavSection = ({
                 color="inherit"
                 onClick={open}
               >
-                Show all
+                <Trans id="show.all">Show all</Trans>
               </Button>
             )}
           </Box>

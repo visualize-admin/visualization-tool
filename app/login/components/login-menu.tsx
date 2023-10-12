@@ -1,6 +1,6 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
+import NextLink from "next/link";
 
 import { useUser } from "@/login/utils";
 
@@ -11,9 +11,11 @@ export const LoginMenu = () => {
     <Box sx={{ alignItems: "center", display: "flex" }}>
       {user ? (
         <Typography variant="body2">
-          <Link href="/profile" legacyBehavior>
-            {user.name}
-          </Link>{" "}
+          <NextLink href="/profile" passHref legacyBehavior>
+            <Link sx={{ textDecoration: "none", color: "primary.main" }}>
+              {user.name}
+            </Link>
+          </NextLink>
         </Typography>
       ) : (
         <Button

@@ -6,7 +6,6 @@ import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -30,20 +29,17 @@ import { ChartProps } from "../shared/ChartProps";
 export const ChartLinesVisualization = ({
   dataSetIri,
   dataSource,
+  componentIris,
   chartConfig,
   queryFilters,
-  published,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: LineConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 }) => {
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

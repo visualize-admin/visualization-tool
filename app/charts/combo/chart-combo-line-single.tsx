@@ -6,7 +6,6 @@ import { ComboLineSingleChart } from "@/charts/combo/combo-line-single-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -34,20 +33,17 @@ import { ChartProps } from "../shared/ChartProps";
 type ChartComboLineSingleVisualizationProps = {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ComboLineSingleConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 };
 
 export const ChartComboLineSingleVisualization = (
   props: ChartComboLineSingleVisualizationProps
 ) => {
-  const { dataSetIri, dataSource, chartConfig, queryFilters, published } =
+  const { dataSetIri, dataSource, componentIris, chartConfig, queryFilters } =
     props;
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

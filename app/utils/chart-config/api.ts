@@ -62,6 +62,21 @@ export const updateConfig = async (
   );
 };
 
+export const removeConfig = async (options: UpdateConfigOptions) => {
+  const { key, userId } = options;
+
+  return apiFetch<InferAPIResponse<typeof apiConfigUpdate, "POST">>(
+    "/api/config-remove",
+    {
+      method: "POST",
+      data: {
+        key,
+        userId,
+      },
+    }
+  );
+};
+
 export const fetchChartConfig = async (id: string) => {
   return await apiFetch<InferAPIResponse<typeof apiConfig, "GET">>(
     `/api/config/${id}`

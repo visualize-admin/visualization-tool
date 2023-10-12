@@ -17,6 +17,10 @@ msgstr ""
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "Axis orientation"
+msgstr "Orientamento dell'asse"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
@@ -49,6 +53,10 @@ msgstr "Organizzazioni"
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.themes"
 msgstr "Categorie"
+
+#: app/login/components/profile-header.tsx
+msgid "browse.dataset.all"
+msgstr "Sfoglia tutti i set di dati"
 
 #: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
@@ -238,6 +246,18 @@ msgstr "Barre"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.column"
 msgstr "Colonne"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineColumn"
+msgstr "Column-line"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineDual"
+msgstr "Dual-axis line"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineSingle"
+msgstr "Multi-line"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.line"
@@ -481,6 +501,7 @@ msgstr "Torna alle impostazioni generali"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -735,6 +756,7 @@ msgstr "Appliquer les filtres"
 msgid "controls.size"
 msgstr "Grandezza"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.addDimension"
 msgstr "Aggiungi una dimensione"
@@ -1068,6 +1090,69 @@ msgstr "Nascondi i filtri"
 msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.copy"
+msgstr "Copia"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete"
+msgstr "Cancellare"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete.confirmation"
+msgstr "Sei sicuro di voler cancellare questo grafico?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.edit"
+msgstr "Modifica"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.share"
+msgstr "Condividi"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.create-chart"
+msgstr "creane uno"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.no-charts"
+msgstr "Non ci sono ancora grafici"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.confirmation.default"
+msgstr "Siete sicuri di voler eseguire questa azione?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete.warning"
+msgstr "Tenete presente che la rimozione di questa visualizzazione avrà effetto su tutti i luoghi in cui potrebbe essere già incorporata!"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations"
+msgstr "Le mie visualizzazioni"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-actions"
+msgstr "Azioni"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-name"
+msgstr "Nome"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-published-date"
+msgstr "Pubblicato"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-type"
+msgstr "Tipo"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.dataset-name"
+msgstr "Set di dati"
+
 #: app/components/header.tsx
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
@@ -1092,6 +1177,10 @@ msgstr "Passare alla visualizzazione del grafico"
 #: app/components/chart-footnotes.tsx
 msgid "metadata.switch.table"
 msgstr "Passare alla vista tabella"
+
+#: app/login/components/profile-tables.tsx
+msgid "no"
+msgstr "No"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.AEM"
@@ -1162,6 +1251,11 @@ msgstr "Cerca"
 msgid "select.controls.metadata.search"
 msgstr "Salta a..."
 
+#: app/browser/dataset-browse.tsx
+#: app/login/components/profile-tables.tsx
+msgid "show.all"
+msgstr "Mostra tutti"
+
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Colonna {0}"
@@ -1171,3 +1265,7 @@ msgstr "Colonna {0}"
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr ": "
+
+#: app/login/components/profile-tables.tsx
+msgid "yes"
+msgstr "Sì"

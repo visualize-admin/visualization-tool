@@ -73,18 +73,18 @@ const ChartTableVisualization = dynamic(
 type GenericChartProps = {
   dataSet: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  published: boolean;
 };
 
 const GenericChart = (props: GenericChartProps) => {
-  const { dataSet, dataSource, chartConfig, published } = props;
+  const { dataSet, dataSource, componentIris, chartConfig } = props;
   const queryFilters = useQueryFilters({ chartConfig });
   const commonProps = {
     dataSetIri: dataSet,
     dataSource,
     queryFilters,
-    published,
+    componentIris,
   };
 
   switch (chartConfig.chartType) {
@@ -150,8 +150,8 @@ const GenericChart = (props: GenericChartProps) => {
 type ChartWithFiltersProps = {
   dataSet: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ChartConfig;
-  published: boolean;
 };
 
 export const ChartWithFilters = React.forwardRef<

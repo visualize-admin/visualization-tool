@@ -6,7 +6,6 @@ import { ComboLineDual } from "@/charts/combo/combo-line-dual";
 import { ComboLineDualChart } from "@/charts/combo/combo-line-dual-state";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
-import { extractComponentIris } from "@/charts/shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "@/charts/shared/interaction/ruler";
@@ -25,20 +24,17 @@ import { ChartProps } from "../shared/ChartProps";
 type ChartComboLineDualVisualizationProps = {
   dataSetIri: string;
   dataSource: DataSource;
+  componentIris: string[] | undefined;
   chartConfig: ComboLineDualConfig;
   queryFilters: QueryFilters;
-  published: boolean;
 };
 
 export const ChartComboLineDualVisualization = (
   props: ChartComboLineDualVisualizationProps
 ) => {
-  const { dataSetIri, dataSource, chartConfig, queryFilters, published } =
+  const { dataSetIri, dataSource, componentIris, chartConfig, queryFilters } =
     props;
   const locale = useLocale();
-  const componentIris = published
-    ? extractComponentIris(chartConfig)
-    : undefined;
   const commonQueryVariables = {
     iri: dataSetIri,
     sourceType: dataSource.type,

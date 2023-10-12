@@ -15,7 +15,7 @@ import { ascending, descending } from "d3";
 import { useMemo, useRef, useState } from "react";
 
 import {
-  extractComponentIris,
+  extractChartConfigComponentIris,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
@@ -246,7 +246,7 @@ export const DataSetTable = ({
   sx?: SxProps<Theme>;
 }) => {
   const locale = useLocale();
-  const componentIris = extractComponentIris(chartConfig);
+  const componentIris = extractChartConfigComponentIris(chartConfig);
   const filters = useQueryFilters({ chartConfig });
   const commonQueryVariables = {
     iri: dataSetIri,
