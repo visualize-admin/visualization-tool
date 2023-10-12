@@ -54,6 +54,10 @@ msgstr "Organisationen"
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
+#: app/login/components/profile-header.tsx
+msgid "browse.dataset.all"
+msgstr "Alle Datensätze durchsuchen"
+
 #: app/browser/dataset-preview.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Visualisierung von diesem Datensatz erstellen"
@@ -1122,6 +1126,9 @@ msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
 msgid "login.profile.chart.delete.warning"
 msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle Stellen auswirkt, an denen sie möglicherweise bereits eingebettet ist!"
 
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations"
 msgstr "Meine Visualisierungen"

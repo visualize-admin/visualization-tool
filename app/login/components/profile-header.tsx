@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { User } from "@prisma/client";
@@ -36,9 +37,7 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
       <Box className={rootClasses.sectionContent}>
         <Box className={classes.topRow}>
           <Typography variant="h1">{user.name}</Typography>
-          <Button>
-            <BrowseLink />
-          </Button>
+          <BrowseButton />
         </Box>
         <Button
           className={classes.browseButton}
@@ -54,18 +53,20 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
   );
 };
 
-const BrowseLink = () => {
+const BrowseButton = () => {
   return (
-    <NextLink href="/browse" passHref legacyBehavior>
-      <Link
-        sx={{
-          "&:hover": {
-            textDecoration: "none",
-          },
-        }}
-      >
-        Browse all datasets
-      </Link>
-    </NextLink>
+    <Button>
+      <NextLink href="/browse" passHref legacyBehavior>
+        <Link
+          sx={{
+            "&:hover": {
+              textDecoration: "none",
+            },
+          }}
+        >
+          <Trans id="browse.dataset.all">Browse all datasets</Trans>
+        </Link>
+      </NextLink>
+    </Button>
   );
 };
