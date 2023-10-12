@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Tab, Theme, Typography } from "@mui/material";
+import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React from "react";
@@ -35,11 +35,13 @@ const useStyles = makeStyles<Theme>((theme) => ({
 }));
 
 type ProfileContentTabsProps = {
+  userId: number;
   userConfigs: ParsedConfig[];
 };
 
 export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
-  const { userConfigs } = props;
+  const { userId, userConfigs: _userConfigs } = props;
+  const [userConfigs, setUserConfigs] = React.useState(_userConfigs);
   const [value, setValue] = React.useState("Home");
   const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
     setValue(v);

@@ -53,7 +53,7 @@ const ProfilePage = (props: Serialized<PageProps>) => {
     <AppLayout>
       <Box className={rootClasses.root}>
         <ProfileHeader user={user} />
-        <ProfileContentTabs userConfigs={userConfigs} />
+        <ProfileContentTabs userId={user.id} userConfigs={userConfigs} />
       </Box>
     </AppLayout>
   );
