@@ -217,6 +217,7 @@ To configure Keycloak:
   - KEYCLOAK_ID: "visualize"
   - KEYCLOAK_SECRET: From [Keycloak][keycloak-admin] > Clients > visualize > Credentials > Client secret
   - KEYCLOAK_ISSUER: http://localhost:8080/realms/master
+  - NEXTAUTH_SECRET: Any string, can be "secret" locally
 
 [keycloak-admin]: http://localhost:8080/admin/master/console/#/
 
