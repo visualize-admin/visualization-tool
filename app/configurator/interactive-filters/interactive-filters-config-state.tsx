@@ -15,14 +15,18 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
   const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     if (chartConfig.interactiveFiltersConfig?.[target]) {
-      chartConfig.interactiveFiltersConfig[target].active =
-        e.currentTarget.checked;
-    }
+      const newConfig = produce(
+        chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          draft[target].active = e.currentTarget.checked;
+        }
+      );
 
-    dispatch({
-      type: "INTERACTIVE_FILTER_CHANGED",
-      value: chartConfig.interactiveFiltersConfig,
-    });
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newConfig,
+      });
+    }
   });
 
   const stateValue = get(
