@@ -63,7 +63,10 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         </Box>
       </Box>
       <TabPanel className={classes.tabPanel} value="Home">
-        <Box className={classes.tabPanelContent}>
+        <Box
+          className={classes.tabPanelContent}
+          sx={{ display: "flex", flexDirection: "column", gap: 6 }}
+        >
           <ProfileVisualizationsTable
             userConfigs={userConfigs}
             preview
