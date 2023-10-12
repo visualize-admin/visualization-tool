@@ -17,6 +17,10 @@ msgstr ""
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "Axis orientation"
+msgstr "Orientation de l'axe"
+
 #: app/configurator/components/chart-configurator.tsx
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
@@ -238,6 +242,18 @@ msgstr "Barres"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.column"
 msgstr "Colonnes"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineColumn"
+msgstr "Column-line"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineDual"
+msgstr "Dual-axis line"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineSingle"
+msgstr "Multi-line"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.line"
@@ -481,6 +497,7 @@ msgstr "Retour aux paramètres généraux"
 msgid "controls.nav.back-to-preview"
 msgstr "Retour à l'aperçu"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -735,6 +752,7 @@ msgstr "Appliquer les filtres"
 msgid "controls.size"
 msgstr "Taille"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.addDimension"
 msgstr "Ajouter une dimension"
@@ -1068,6 +1086,66 @@ msgstr "Masquer les filtres"
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.copy"
+msgstr "Copie"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete"
+msgstr "Supprimer"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete.confirmation"
+msgstr "Êtes-vous sûr de vouloir supprimer cette carte ?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.edit"
+msgstr "Editer"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.share"
+msgstr "Partager"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.create-chart"
+msgstr "créez-en un"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.no-charts"
+msgstr "Pas encore de graphiques"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.confirmation.default"
+msgstr "Êtes-vous sûr de vouloir effectuer cette action ?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete.warning"
+msgstr "Gardez à l'esprit que la suppression de cette visualisation affectera tous les endroits où elle est déjà intégrée !"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations"
+msgstr "Mes visualisations"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-actions"
+msgstr "Actions"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-name"
+msgstr "Nom"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-published-date"
+msgstr "Publié"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-type"
+msgstr "Type"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.dataset-name"
+msgstr "Ensemble de données"
+
 #: app/components/header.tsx
 #: app/components/header.tsx
 msgid "logo.swiss.confederation"
@@ -1092,6 +1170,10 @@ msgstr "Passer à la vue graphique"
 #: app/components/chart-footnotes.tsx
 msgid "metadata.switch.table"
 msgstr "Passer à la vue en tableau"
+
+#: app/login/components/profile-tables.tsx
+msgid "no"
+msgstr "Non"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.AEM"
@@ -1162,6 +1244,11 @@ msgstr "Chercher"
 msgid "select.controls.metadata.search"
 msgstr "Sauter à..."
 
+#: app/browser/dataset-browse.tsx
+#: app/login/components/profile-tables.tsx
+msgid "show.all"
+msgstr "Tout afficher"
+
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Colonne {0}"
@@ -1171,3 +1258,7 @@ msgstr "Colonne {0}"
 #: app/components/chart-footnotes.tsx
 msgid "typography.colon"
 msgstr " : "
+
+#: app/login/components/profile-tables.tsx
+msgid "yes"
+msgstr "Oui"

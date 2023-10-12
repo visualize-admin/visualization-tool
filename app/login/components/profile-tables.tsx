@@ -1,3 +1,4 @@
+import { Trans, t } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -57,7 +58,9 @@ const ProfileTable = (props: ProfileTableProps) => {
           onClick={onShowAll}
           sx={{ ml: 1, mt: 2 }}
         >
-          <Typography variant="body2">Show all</Typography>
+          <Typography variant="body2">
+            <Trans id="show.all">Show all</Trans>
+          </Typography>
         </Button>
       )}
     </Box>
@@ -85,8 +88,10 @@ export const ProfileVisualizationsTable = (
 
   return (
     <ProfileTable
-      // TODO: translate
-      title={"My visualizations"}
+      title={t({
+        id: "login.profile.my-visualizations",
+        message: "My visualizations",
+      })}
       preview={preview && userConfigs.length > PREVIEW_LIMIT}
       onShowAll={onShowAll}
     >
@@ -100,12 +105,31 @@ export const ProfileVisualizationsTable = (
               },
             }}
           >
-            {/* TODO: translate */}
-            <TableCell>Type</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Dataset</TableCell>
-            <TableCell>Published</TableCell>
-            <TableCell align="right">Actions</TableCell>
+            <TableCell>
+              <Trans id="login.profile.my-visualizations.chart-type">
+                Type
+              </Trans>
+            </TableCell>
+            <TableCell>
+              <Trans id="login.profile.my-visualizations.chart-name">
+                Name
+              </Trans>
+            </TableCell>
+            <TableCell>
+              <Trans id="login.profile.my-visualizations.dataset-name">
+                Dataset
+              </Trans>
+            </TableCell>
+            <TableCell>
+              <Trans id="login.profile.my-visualizations.chart-published-date">
+                Published
+              </Trans>
+            </TableCell>
+            <TableCell align="right">
+              <Trans id="login.profile.my-visualizations.chart-actions">
+                Actions
+              </Trans>
+            </TableCell>
           </TableHead>
           <TableBody>
             {userConfigs
@@ -122,10 +146,9 @@ export const ProfileVisualizationsTable = (
         </>
       ) : (
         <Typography variant="body1">
-          {/* TODO: translate */}
-          No charts yet,{" "}
+          <Trans id="login.no-charts">No charts yet</Trans>,{" "}
           <NextLink href="/browse" legacyBehavior>
-            create one
+            <Trans id="login.create-chart">create one</Trans>
           </NextLink>
           .
         </Typography>
@@ -157,36 +180,36 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       {
         type: "link",
         href: `/create/new?copy=${config.key}`,
-        // TODO: translate
-        label: "Copy",
+        label: t({ id: "login.chart.copy", message: "Copy" }),
         iconName: "copy",
       },
       {
+        type: "link",
+        href: `/create/new?edit=${config.key}`,
+        label: t({ id: "login.chart.edit", message: "Edit" }),
+        iconName: "edit",
+      },
+      {
+        type: "link",
+        href: `/v/${config.key}`,
+        label: t({ id: "login.chart.share", message: "Share" }),
+        iconName: "linkExternal",
+      },
+      {
         type: "button",
-        // TODO: translate
-        label: "Delete",
+        label: t({ id: "login.chart.delete", message: "Delete" }),
         iconName: "trash",
         requireConfirmation: true,
-        // TODO: translate
-        confirmationText: "Are you sure you want to delete this chart?",
+        confirmationText: t({
+          id: "login.chart.delete.confirmation",
+          message: "Are you sure you want to delete this chart?",
+        }),
         onClick: async () => {
           await removeConfig({ key: config.key, userId });
         },
         onSuccess: () => {
           onRemoveSuccess(config.key);
         },
-      },
-      {
-        type: "link",
-        href: `/create/new?edit=${config.key}`,
-        label: "Edit",
-        iconName: "edit",
-      },
-      {
-        type: "link",
-        href: `/v/${config.key}`,
-        label: "Share",
-        iconName: "linkExternal",
       },
     ];
 
@@ -381,16 +404,19 @@ const ActionButton = (props: ActionButtonProps) => {
         >
           <DialogTitle>
             <Typography variant="h3">
-              {/* TODO: translate */}
               {confirmationText ??
-                "Are you sure you want to perform this action?"}
+                t({
+                  id: "login.profile.chart.confirmation.default",
+                  message: "Are you sure you want to perform this action?",
+                })}
             </Typography>
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {/* TODO: translate */}
-              Keep in mind that removing this visualization will affect all the
-              places where it might be already embedded!
+              <Trans id="login.profile.chart.delete.warning">
+                Keep in mind that removing this visualization will affect all
+                the places where it might be already embedded!
+              </Trans>
             </DialogContentText>
           </DialogContent>
           <DialogActions
@@ -402,7 +428,7 @@ const ActionButton = (props: ActionButtonProps) => {
             }}
           >
             <Button variant="text" onClick={close}>
-              No
+              <Trans id="no">No</Trans>
             </Button>
             <Button
               variant="text"
@@ -418,7 +444,7 @@ const ActionButton = (props: ActionButtonProps) => {
                 onSuccess?.();
               }}
             >
-              {loading ? <CircularProgress /> : "Yes"}
+              {loading ? <CircularProgress /> : <Trans id="yes">Yes</Trans>}
             </Button>
           </DialogActions>
         </Dialog>

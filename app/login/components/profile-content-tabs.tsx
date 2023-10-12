@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -55,7 +56,13 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
         <Box className={rootClasses.sectionContent}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList className={classes.tabList} onChange={handleChange}>
-              {["Home", "My visualizations"].map((d) => (
+              {[
+                "Home",
+                t({
+                  id: "login.profile.my-visualizations",
+                  message: "My visualizations",
+                }),
+              ].map((d) => (
                 <Tab key={d} className={classes.tab} label={d} value={d} />
               ))}
             </TabList>
@@ -72,11 +79,24 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
             userConfigs={userConfigs}
             setUserConfigs={setUserConfigs}
             preview
-            onShowAll={() => setValue("My visualizations")}
+            onShowAll={() =>
+              setValue(
+                t({
+                  id: "login.profile.my-visualizations",
+                  message: "My visualizations",
+                })
+              )
+            }
           />
         </Box>
       </TabPanel>
-      <TabPanel className={classes.tabPanel} value="My visualizations">
+      <TabPanel
+        className={classes.tabPanel}
+        value={t({
+          id: "login.profile.my-visualizations",
+          message: "My visualizations",
+        })}
+      >
         <Box
           className={classes.tabPanelContent}
           sx={{ bgcolor: "background.paper" }}
