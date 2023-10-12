@@ -200,9 +200,14 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         label: t({ id: "login.chart.delete", message: "Delete" }),
         iconName: "trash",
         requireConfirmation: true,
-        confirmationText: t({
+        confirmationTitle: t({
           id: "login.chart.delete.confirmation",
           message: "Are you sure you want to delete this chart?",
+        }),
+        confirmationText: t({
+          id: "login.profile.chart.delete.warning",
+          message:
+            "Keep in mind that removing this visualization will affect all the places where it might be already embedded!",
         }),
         onClick: async () => {
           await removeConfig({ key: config.key, userId });
@@ -350,6 +355,7 @@ type ActionButtonProps = {
   label: string;
   iconName: IconName;
   requireConfirmation?: boolean;
+  confirmationTitle?: string;
   confirmationText?: string;
   onClick: () => Promise<void>;
   onDialogClose?: () => void;
@@ -361,6 +367,7 @@ const ActionButton = (props: ActionButtonProps) => {
     label,
     iconName,
     requireConfirmation,
+    confirmationTitle,
     confirmationText,
     onClick,
     onDialogClose,
@@ -403,21 +410,18 @@ const ActionButton = (props: ActionButtonProps) => {
         >
           <DialogTitle>
             <Typography variant="h3">
-              {confirmationText ??
+              {confirmationTitle ??
                 t({
                   id: "login.profile.chart.confirmation.default",
                   message: "Are you sure you want to perform this action?",
                 })}
             </Typography>
           </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <Trans id="login.profile.chart.delete.warning">
-                Keep in mind that removing this visualization will affect all
-                the places where it might be already embedded!
-              </Trans>
-            </DialogContentText>
-          </DialogContent>
+          {confirmationText && (
+            <DialogContent>
+              <DialogContentText>{confirmationText}</DialogContentText>
+            </DialogContent>
+          )}
           <DialogActions
             sx={{
               "& > .MuiButton-root": {
