@@ -146,7 +146,6 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     variables: commonQueryVariables,
   });
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
-  console.log(componentIris);
   const [{ data: components }] = useComponentsQuery({
     variables: {
       ...commonQueryVariables,

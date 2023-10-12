@@ -11,7 +11,6 @@ const route = api({
     const session = await getServerSession(req, res, nextAuthOptions);
     const serverUserId = session?.user?.id;
     const { key, userId } = req.body;
-    console.log(key, userId, serverUserId);
 
     if (serverUserId !== userId) {
       throw new Error("Unauthorized!");
