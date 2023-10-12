@@ -237,9 +237,23 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         </Typography>
       </TableCell>
       <TableCell width="auto">
-        <Typography variant="body2">
-          {config.data.meta.title[locale]}
-        </Typography>
+        <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
+          <Link target="_blank" color="primary">
+            {config.data.chartConfigs.length === 1 ? (
+              <Typography variant="body2">
+                {config.data.chartConfigs[0].meta.title[locale]}
+              </Typography>
+            ) : (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {config.data.chartConfigs.map((d, i) => (
+                  <Typography key={i} variant="body2">
+                    {i + 1}. {d.meta.title[locale]}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+          </Link>
+        </NextLink>
       </TableCell>
       <TableCell width="40%">
         {fetching ? (
