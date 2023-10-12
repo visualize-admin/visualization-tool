@@ -220,5 +220,3 @@ To configure Keycloak:
   - NEXTAUTH_SECRET: Any string, can be "secret" locally
 
 [keycloak-admin]: http://localhost:8080/admin/master/console/#/
-
-Remember to add NEXTAUTH_SECRET variable to your .env file!

@@ -11,7 +11,8 @@ WORKDIR /usr/src/app
 #   --build-arg KEYCLOAK_ID=<keycloak client id> \
 #   --build-arg KEYCLOAK_SECRET=<keycloak secret> \
 #   --build-arg KEYCLOAK_ISSUER=<keycloak issuer> \
-#   --build-arg NEXTAUTH_SECRET=<nextauth secret>
+#   --build-arg NEXTAUTH_SECRET=<nextauth secret> \
+#   --build-arg NEXTAUTH_URL=<nextauth url>
 ARG COMMIT
 ARG VECTOR_TILE_URL
 ARG MAPTILER_STYLE_KEY
@@ -19,6 +20,7 @@ ARG KEYCLOAK_ID
 ARG KEYCLOAK_SECRET
 ARG KEYCLOAK_ISSUER
 ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
 
 # Build app
 COPY package.json yarn.lock ./

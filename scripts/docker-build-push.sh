@@ -23,6 +23,7 @@ docker build \
     --build-arg KEYCLOAK_SECRET=$KEYCLOAK_SECRET \
     --build-arg KEYCLOAK_ISSUER=$KEYCLOAK_ISSUER \
     --build-arg NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+    --build-arg NEXTAUTH_URL=$NEXTAUTH_URL \
     $(echo $DOCKER_IMAGE_TAGS | tr ' ' '\n' | xargs -n 1 -I {} echo "-t {}" ) .
 
 # Push all the tags
