@@ -54,7 +54,8 @@ export default async function Download(
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: false,
+      sizeLimit: "1024mb",
     },
+    reponseLimit: false,
   },
 };
