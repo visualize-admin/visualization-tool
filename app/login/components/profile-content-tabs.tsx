@@ -26,6 +26,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   tabPanelContent: {
     padding: theme.spacing(6),
+    backgroundColor: theme.palette.background.paper,
   },
   tab: {
     height: 48,
@@ -97,10 +98,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           message: "My visualizations",
         })}
       >
-        <Box
-          className={classes.tabPanelContent}
-          sx={{ bgcolor: "background.paper" }}
-        >
+        <Box className={classes.tabPanelContent}>
           <ProfileVisualizationsTable
             userId={userId}
             userConfigs={userConfigs}

@@ -236,26 +236,18 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           {config.data.chartConfigs.length > 1 ? "multi" : "single"}
         </Typography>
       </TableCell>
-      <TableCell width="auto">
+      <TableCell width="auto" sx={{ maxWidth: 320 }}>
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
           <Link target="_blank" color="primary">
-            {config.data.chartConfigs.length === 1 ? (
-              <Typography variant="body2">
-                {config.data.chartConfigs[0].meta.title[locale]}
-              </Typography>
-            ) : (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {config.data.chartConfigs.map((d, i) => (
-                  <Typography key={i} variant="body2">
-                    {i + 1}. {d.meta.title[locale]}
-                  </Typography>
-                ))}
-              </Box>
-            )}
+            <Typography variant="body2" noWrap>
+              {config.data.chartConfigs
+                .map((d) => d.meta.title[locale])
+                .join(", ")}
+            </Typography>
           </Link>
         </NextLink>
       </TableCell>
-      <TableCell width="40%">
+      <TableCell width="auto" sx={{ maxWidth: 320 }}>
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : (
@@ -267,7 +259,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
             legacyBehavior
           >
             <Link target="_blank" color="primary">
-              <Typography variant="body2">
+              <Typography variant="body2" noWrap>
                 {data?.dataCubeByIri?.title ?? ""}
               </Typography>
             </Link>
@@ -279,7 +271,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           {config.created_at.toLocaleDateString("de")}
         </Typography>
       </TableCell>
-      <TableCell width={80} align="right">
+      <TableCell width="auto" align="right">
         <Actions actions={actions} />
       </TableCell>
     </TableRow>
