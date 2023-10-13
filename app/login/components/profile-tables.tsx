@@ -26,6 +26,7 @@ import React from "react";
 import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
+import { truthy } from "@/domain/types";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
@@ -221,6 +222,17 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
     return actions;
   }, [config.key, onRemoveSuccess, userId]);
 
+  const chartTitle = React.useMemo(() => {
+    const title = config.data.chartConfigs
+      .map((d) => d.meta.title[locale])
+      .filter(truthy)
+      .join(", ");
+
+    return title
+      ? title
+      : t({ id: "annotation.add.title", message: "[ No Title ]" });
+  }, [config.data.chartConfigs, locale]);
+
   return (
     <TableRow
       sx={{
@@ -240,9 +252,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
         <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
           <Link target="_blank" color="primary">
             <Typography variant="body2" noWrap>
-              {config.data.chartConfigs
-                .map((d) => d.meta.title[locale])
-                .join(", ")}
+              {chartTitle}
             </Typography>
           </Link>
         </NextLink>
