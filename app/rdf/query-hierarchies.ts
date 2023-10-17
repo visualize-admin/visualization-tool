@@ -119,21 +119,20 @@ export const queryHierarchy = async (
     return null;
   }
 
-  const dimensionValuesWithLabels = await getCubeDimensionValuesWithMetadata({
-    cube: rdimension.cube,
-    dimension: rdimension.dimension,
-    sparqlClient,
-    locale,
-    cache,
-  });
-
-  const allHierarchies = await Promise.all(
-    hierarchies?.map(async (h) => ({
+  const [dimensionValuesWithLabels, ...allHierarchies] = await Promise.all([
+    getCubeDimensionValuesWithMetadata({
+      cube: rdimension.cube,
+      dimension: rdimension.dimension,
+      sparqlClient,
+      locale,
+      cache,
+    }),
+    ...hierarchies?.map(async (h) => ({
       // @ts-ignore
       nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
       hierarchyName: getName(h.out(ns.cubeMeta.nextInHierarchy), locale),
-    }))
-  );
+    })),
+  ]);
 
   const trees = allHierarchies.map((h) => {
     const tree: (HierarchyValue & { hierarchyName?: string })[] = toTree(
