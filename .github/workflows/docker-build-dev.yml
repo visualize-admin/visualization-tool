@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
+        env:
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
         with:
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
