@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Style
+  - Map now outlines shapes on hover, instead of changing their colors
 
 # [3.23.0] - 2023-10-17
 
