@@ -225,8 +225,8 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
     props;
 
   return (
-    <Flex sx={{ flexDirection: "column", gap: 3 }}>
-      <Typography variant="body2" sx={{ mx: "auto", fontWeight: "bold" }}>
+    <Flex sx={{ flexDirection: "column", gap: 2 }}>
+      <Typography variant="caption" sx={{ mx: "auto", color: "grey.800" }}>
         {title}
       </Typography>
       <Box

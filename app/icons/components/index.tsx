@@ -18,8 +18,11 @@ import { default as Categories } from "@/icons/components/IcCategories";
 import { default as ChartArea } from "@/icons/components/IcChartArea";
 import { default as ChartBar } from "@/icons/components/IcChartBar";
 import { default as ChartColumn } from "@/icons/components/IcChartColumn";
+import { default as ChartColumnLine } from "@/icons/components/IcChartColumnLine";
+import { default as ChartDualAxisLine } from "@/icons/components/IcChartDualAxisLine";
 import { default as ChartLine } from "@/icons/components/IcChartLine";
 import { default as ChartMap } from "@/icons/components/IcChartMap";
+import { default as ChartMultiLine } from "@/icons/components/IcChartMultiLine";
 import { default as ChartPie } from "@/icons/components/IcChartPie";
 import { default as ChartScatterplot } from "@/icons/components/IcChartScatterplot";
 import { default as Check } from "@/icons/components/IcCheck";
@@ -49,6 +52,7 @@ import { default as Dragndrop } from "@/icons/components/IcDragndrop";
 import { default as Edit } from "@/icons/components/IcEdit";
 import { default as Embed } from "@/icons/components/IcEmbed";
 import { default as Excel } from "@/icons/components/IcExcel";
+import { default as Exclamation } from "@/icons/components/IcExclamation";
 import { default as Eye } from "@/icons/components/IcEye";
 import { default as Facebook } from "@/icons/components/IcFacebook";
 import { default as Feed } from "@/icons/components/IcFeed";
@@ -156,9 +160,12 @@ export const Icons = {
   categories: Categories,
   chartArea: ChartArea,
   chartBar: ChartBar,
+  chartColumnLine: ChartColumnLine,
   chartColumn: ChartColumn,
+  chartDualAxisLine: ChartDualAxisLine,
   chartLine: ChartLine,
   chartMap: ChartMap,
+  chartMultiLine: ChartMultiLine,
   chartPie: ChartPie,
   chartScatterplot: ChartScatterplot,
   check: Check,
@@ -188,6 +195,7 @@ export const Icons = {
   edit: Edit,
   embed: Embed,
   excel: Excel,
+  exclamation: Exclamation,
   eye: Eye,
   facebook: Facebook,
   feed: Feed,
