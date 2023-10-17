@@ -1,9 +1,6 @@
 name: Docker Build (Dev)
 
-on:
-  push:
-    branches:
-      - main
+on: [workflow_dispatch]
 
 jobs:
   docker-build:
@@ -11,8 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
-        env:
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
         with:
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
