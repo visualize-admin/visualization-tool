@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.23.0] - 2023-10-17
+
 - Features
   - Added a new group of charts – Combo charts – that includes multi-measure line, dual-axis line and column-line charts
   - Added a way to edit and remove charts for logged in users
