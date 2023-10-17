@@ -165,10 +165,11 @@ export const getIconName = (name: string): IconName => {
     case "map":
       return "chartMap";
     case "comboLineSingle":
+      return "chartMultiLine";
     case "comboLineDual":
+      return "chartDualAxisLine";
     case "comboLineColumn":
-      // FIXME: Use a proper icon.
-      return "star";
+      return "chartColumnLine";
     case "baseLayer":
       return "mapMaptype";
     case "areaLayer":

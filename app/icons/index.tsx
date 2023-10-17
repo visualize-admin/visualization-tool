@@ -51,11 +51,12 @@ export const getChartIcon = (chartType: ChartType): IconName => {
       return "chartScatterplot";
     case "table":
       return "table";
-    // FIXME: use proper icons
     case "comboLineSingle":
+      return "chartMultiLine";
     case "comboLineDual":
+      return "chartDualAxisLine";
     case "comboLineColumn":
-      return "star";
+      return "chartColumnLine";
     default:
       const _exhaustiveCheck: never = chartType;
       return _exhaustiveCheck;
