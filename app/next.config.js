@@ -99,6 +99,11 @@ module.exports = withPreconstruct(
           new IgnorePlugin({ resourceRegExp: /^(pg-native|vue)$/ })
         );
 
+        config.resolve.fallback = {
+          ...config.resolve.fallback,
+          fs: false,
+        };
+
         return config;
       },
     })
