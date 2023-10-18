@@ -1,4 +1,5 @@
-import { descending, group, index } from "d3";
+import { CONSTRUCT } from "@tpluscode/sparql-builder";
+import { descending, group, index, rollups } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import {
@@ -9,7 +10,7 @@ import {
   View,
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
-import { Literal, NamedNode } from "rdf-js";
+import { Literal, NamedNode, Quad } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
@@ -270,6 +271,31 @@ export const getCubeDimensionValues = async ({
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
+type DimensionPredicate = keyof DimensionValue | "sameAs";
+
+const getDimensionPredicate = (predicate: string): DimensionPredicate => {
+  switch (predicate) {
+    case "value":
+      return "value";
+    case ns.schema.identifier.value:
+      return "identifier";
+    case ns.schema.name.value:
+      return "label";
+    case ns.schema.alternateName.value:
+      return "alternateName";
+    case ns.schema.description.value:
+      return "description";
+    case ns.schema.position.value:
+      return "position";
+    case ns.schema.color.value:
+      return "color";
+    case ns.schema.sameAs.value:
+      return "sameAs";
+    default:
+      throw new Error(`Unknown predicate: ${predicate}`);
+  }
+};
+
 export const getCubeDimensionValuesWithMetadata = async ({
   dimension,
   cube,
@@ -335,112 +361,86 @@ export const getCubeDimensionValuesWithMetadata = async ({
     return [];
   }
 
+  const result: DimensionValue[] = [];
+
   /**
    * If the dimension is versioned, we're loading the "unversioned" values to store in the config,
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
 
-  const result: DimensionValue[] = [];
-
   if (namedNodes.length > 0) {
-    const scaleType = getScaleType(dimension);
-    const [labels, descriptions, literals, unversioned] = await Promise.all([
-      loadResourceLabels({
-        ids: namedNodes,
-        locale,
-        sparqlClient,
-        labelTerm: schema.name,
-        cache,
-      }),
-      scaleType === "Ordinal" || scaleType === "Nominal"
-        ? loadResourceLabels({
-            ids: namedNodes,
-            locale,
-            sparqlClient,
-            labelTerm: schema.description,
-            cache,
-          })
-        : [],
-      loadResourceLiterals({
-        ids: namedNodes,
-        sparqlClient,
-        predicates: {
-          identifier:
-            scaleType === "Ordinal" || scaleType === "Nominal"
-              ? {
-                  predicate: schema.identifier,
-                }
-              : null,
-          position:
-            scaleType === "Ordinal"
-              ? {
-                  predicate: schema.position,
-                }
-              : null,
-          color:
-            scaleType === "Nominal" || scaleType === "Ordinal"
-              ? { predicate: schema.color }
-              : null,
-          alternateName: {
-            predicate: schema.alternateName,
-            locale: locale,
-          },
-        },
-        cache,
-      }),
-      dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: namedNodes, sparqlClient, cache })
-        : [],
-    ]);
+    const query: any = CONSTRUCT`
+    ?s ${ns.schema.identifier} ?identifier .
+    ?s ${ns.schema.name} ?name .
+    ?s ${ns.schema.alternateName} ?alternateName .
+    ?s ${ns.schema.description} ?description .
+    ?s ${ns.schema.position} ?position .
+    ?s ${ns.schema.color} ?color .
+    ?s ${ns.schema.sameAs} ?sameAs .
+  `.WHERE`
+    VALUES ?s {
+      ${namedNodes.map((d) => `<${d.value}>`).join(`\n`)}
+    }
+    {
+      ?s schema:identifier ?identifier .
+    }
+    UNION {
+      ?s schema:name ?name .
+      FILTER(LANG(?name) = "${locale}" || LANG(?name) = "")
+    }
+    UNION {
+      ?s schema:alternateName ?alternateName .
+      FILTER(LANG(?alternateName) = "${locale}" || LANG(?alternateName) = "")
+    }
+    UNION {
+      ?s schema:description ?description .
+      FILTER(LANG(?description) = "${locale}" || LANG(?description) = "")
+    }
+    UNION {
+      ?s schema:position ?position .
+    }
+    UNION {
+      ?s schema:color ?color .
+    }
+    UNION {
+      ?s schema:sameAs ?sameAs .
+    }`;
 
-    const lookup = new Map(
-      literals.map(({ iri, alternateName, identifier, position, color }) => [
-        iri.value,
-        {
-          alternateName: alternateName
-            ? parseRDFLiteral<string>(alternateName)
-            : undefined,
-          identifier: identifier
-            ? parseRDFLiteral<number>(identifier)
-            : undefined,
-          position: position ? parseRDFLiteral<number>(position) : undefined,
-          color: color ? parseRDFLiteral<string>(color) : undefined,
-        },
-      ])
-    );
+    await executeWithCache(sparqlClient, query, cache, (queryResult) => {
+      const parsed: Record<DimensionPredicate, ObservationValue>[] =
+        queryResult.map((d: Quad) => {
+          const key = getDimensionPredicate(d.predicate.value);
 
-    const labelsLookup = new Map(
-      labels.map(({ iri, label }) => [iri.value, label?.value])
-    );
+          return {
+            value: d.subject.value,
+            [key]:
+              d.object.termType === "Literal"
+                ? parseRDFLiteral(d.object)
+                : d.object.value,
+          };
+        });
 
-    const descriptionsLookup = new Map(
-      descriptions.map(({ iri, label }) => [iri.value, label?.value])
-    );
+      const grouped = rollups(
+        parsed,
+        (v) => Object.assign({}, ...v),
+        (d) => d.value
+      ) as [ObservationValue, Record<DimensionPredicate, ObservationValue>][];
 
-    const unversionedLookup = new Map(
-      unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
-    );
-
-    namedNodes.forEach((iri) => {
-      const lookupValue = lookup.get(iri.value);
-
-      result.push({
-        value: unversionedLookup.get(iri.value) ?? iri.value,
-        label: labelsLookup.get(iri.value) ?? "",
-        description: descriptionsLookup.get(iri.value),
-        position: lookupValue?.position,
-        identifier: lookupValue?.identifier,
-        color: lookupValue?.color,
-        alternateName: lookupValue?.alternateName,
-      });
+      for (const [_, { sameAs, value, ...rest }] of grouped) {
+        result.push({
+          ...rest,
+          value: sameAs ?? value,
+        } as DimensionValue);
+      }
     });
+
   } else if (literals.length > 0) {
-    literals.forEach((v) => {
+    literals.forEach(({ value }) =>
       result.push({
-        value: v.value,
-        label: v.value,
-      });
-    });
+        value,
+        label: value,
+      })
+    );
   }
 
   if (undValues.length > 0) {
