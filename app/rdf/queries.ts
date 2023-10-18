@@ -29,21 +29,18 @@ import {
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
-import { schema } from "./namespace";
 import {
   getQueryLocales,
-  getScaleType,
   isCubePublished,
   parseCube,
   parseCubeDimension,
   parseRelatedDimensions,
 } from "./parse";
+import { executeWithCache } from "./query-cache";
 import {
   loadDimensionValues,
   loadMinMaxDimensionValues,
 } from "./query-dimension-values";
-import { loadResourceLabels } from "./query-labels";
-import { loadResourceLiterals } from "./query-literals";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnits } from "./query-unit-labels";
 
@@ -433,7 +430,6 @@ export const getCubeDimensionValuesWithMetadata = async ({
         } as DimensionValue);
       }
     });
-
   } else if (literals.length > 0) {
     literals.forEach(({ value }) =>
       result.push({
