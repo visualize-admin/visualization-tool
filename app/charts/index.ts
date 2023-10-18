@@ -530,7 +530,7 @@ export const getInitialConfig = (
     case "comboLineSingle": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const mostCommonUnit = rollups(
-        numericalMeasures,
+        numericalMeasures.filter((d) => d.unit),
         (v) => v.length,
         (d) => d.unit
       ).sort((a, b) => descending(a[1], b[1]))[0][0];
@@ -556,7 +556,7 @@ export const getInitialConfig = (
     case "comboLineDual": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
-        new Set(numericalMeasures.map((d) => d.unit))
+        new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
 
       return {
@@ -582,7 +582,7 @@ export const getInitialConfig = (
     case "comboLineColumn": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
-        new Set(numericalMeasures.map((d) => d.unit))
+        new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
 
       return {
@@ -1292,16 +1292,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       y: {
         componentIris: ({ oldValue, newChartConfig, measures }) => {
-          const numericalMeasures = measures.filter(isNumericalMeasure);
-          const availableMeasureIris = numericalMeasures.map((d) => d.iri);
-          const measure = numericalMeasures.find(
-            (d) => d.iri === (oldValue ?? availableMeasureIris[0])
-          ) as NumericalMeasure;
+          const numericalMeasures = measures.filter(
+            (d) => isNumericalMeasure(d) && d.unit
+          );
+          const { unit } =
+            numericalMeasures.find((d) => d.iri === oldValue) ??
+            numericalMeasures[0];
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
               componentIris: numericalMeasures
-                .filter((d) => d.unit === measure.unit)
+                .filter((d) => d.unit === unit)
                 .map((d) => d.iri),
             };
           });
@@ -1814,12 +1815,12 @@ export const getPossibleChartTypes = ({
 
       if (temporalDimensions.length > 0) {
         const uniqueUnits = Array.from(
-          new Set(numericalMeasures.map((d) => d.unit))
+          new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
         );
 
         if (uniqueUnits.length > 1) {
           possibles.push(...comboChartTypes);
-        } else {
+        } else if (uniqueUnits.length > 0) {
           possibles.push("comboLineSingle");
         }
       }
