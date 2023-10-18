@@ -7,11 +7,11 @@ import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
-import { StreamClient } from "sparql-http-client";
+import { Quad } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
+import { StreamClient } from "sparql-http-client/StreamClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
@@ -35,8 +35,7 @@ const getName = (pointer: AnyPointer, language: string) => {
 
 const toTree = (
   results: HierarchyNode[],
-  dimensionIri: string,
-  locale: string
+  dimensionIri: string
 ): HierarchyValue[] => {
   const sortChildren = (children: HierarchyValue[]) =>
     orderBy(children, ["position", "identifier"]);
@@ -44,27 +43,26 @@ const toTree = (
     node: HierarchyNode,
     depth: number
   ): HierarchyValue | undefined => {
-    const name = getName(node.resource, locale);
+    const resource = node.resource;
     // TODO Find out why some hierachy nodes have no label. We filter
     // them out at the moment
     // @see https://zulip.zazuko.com/#narrow/stream/40-bafu-ext/topic/labels.20for.20each.20hierarchy.20level/near/312845
-
-    const identifier = parseTerm(node.resource.out(ns.schema.identifier)?.term);
+    const name = resource.out(ns.schema.name).value;
     const res: HierarchyValue | undefined = name
       ? {
+          dimensionIri,
+          depth,
           label: name || "-",
-          alternateName: node.resource.out(ns.schema.alternateName).term?.value,
-          value: node.resource.value,
+          alternateName: resource.out(ns.schema.alternateName).value,
+          value: resource.value,
           children: sortChildren(
             node.nextInHierarchy
               .map((childNode) => serializeNode(childNode, depth + 1))
               .filter(truthy)
               .filter((d) => d.label)
           ),
-          position: parseTerm(node.resource.out(ns.schema.position).term),
-          identifier: identifier,
-          depth,
-          dimensionIri: dimensionIri,
+          position: resource.out(ns.schema.position).value,
+          identifier: resource.out(ns.schema.identifier).value,
         }
       : undefined;
     return res;
@@ -87,18 +85,22 @@ const findHierarchiesForDimension = (
       .toArray(),
     (x) => getName(x, locale)
   );
+
   if (newHierarchies) {
     return newHierarchies;
   }
+
   const legacyHierarchies = cube.ptr
     .any()
     .has(ns.sh.path, rdf.namedNode(dimensionIri))
     .has(ns.cubeMeta.hasHierarchy)
     .out(ns.cubeMeta.hasHierarchy)
     .toArray();
+
   if (legacyHierarchies) {
     return legacyHierarchies;
   }
+
   return [];
 };
 
@@ -106,7 +108,7 @@ export const queryHierarchy = async (
   rdimension: ResolvedDimension,
   locale: string,
   sparqlClient: ParsingClient,
-  sparqlClientStream: StreamClient,
+  sparqlClientStream: StreamClient<Quad>,
   cache: LRUCache | undefined
 ): Promise<HierarchyValue[] | null> => {
   const hierarchies = findHierarchiesForDimension(
@@ -127,18 +129,30 @@ export const queryHierarchy = async (
       locale,
       cache,
     }),
-    ...hierarchies?.map(async (h) => ({
-      // @ts-ignore
-      nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
-      hierarchyName: getName(h.out(ns.cubeMeta.nextInHierarchy), locale),
+    ...hierarchies?.map(async (hierarchy) => ({
+      nodes:
+        // @ts-ignore
+        (await getHierarchy(hierarchy, {
+          properties: [
+            ns.schema.identifier,
+            [ns.schema.name, { language: locale }],
+            [ns.schema.description, { language: locale }],
+            ns.schema.position,
+            [ns.schema.alternateName, { language: locale }],
+          ],
+          // @ts-ignore
+        }).execute(sparqlClientStream, rdf)) || [],
+      hierarchyName: getName(
+        hierarchy.out(ns.cubeMeta.nextInHierarchy),
+        locale
+      ),
     })),
   ]);
 
   const trees = allHierarchies.map((h) => {
     const tree: (HierarchyValue & { hierarchyName?: string })[] = toTree(
       h.nodes,
-      rdimension.data.iri,
-      locale
+      rdimension.data.iri
     );
 
     if (tree.length > 0) {
