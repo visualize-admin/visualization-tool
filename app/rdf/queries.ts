@@ -232,23 +232,33 @@ export const getCubeDimensionValues = async ({
       ];
     }
 
-    const listPointer = dimension
-      .out(ns.sh.or)
-      .out([ns.rdf.first, ns.rdf.rest]);
-    const listMin = listPointer.out(ns.sh.minInclusive);
-    const listMax = listPointer.out(ns.sh.maxInclusive);
+    // Try to get min/max values from a list of values.
+    let listItemPointer = dimension.out(ns.sh.or);
 
-    if (
-      typeof listMin.value !== "undefined" &&
-      typeof listMax.value !== "undefined"
+    while (
+      listItemPointer.out(ns.rdf.rest).value &&
+      // Only try until we reach the end of the list.
+      !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
     ) {
-      const min = +listMin.value;
-      const max = +listMax.value;
+      const item = listItemPointer.out(ns.rdf.first);
+      const itemMin = item.out(ns.sh.minInclusive);
+      const itemMax = item.out(ns.sh.maxInclusive);
 
-      return [
-        { value: min, label: `${min}` },
-        { value: max, label: `${max}` },
-      ];
+      if (
+        typeof itemMin.value !== "undefined" &&
+        typeof itemMax.value !== "undefined"
+      ) {
+        const min = +itemMin.value;
+        const max = +itemMax.value;
+
+        return [
+          { value: min, label: `${min}` },
+          { value: max, label: `${max}` },
+        ];
+      }
+
+      // Move to next list item.
+      listItemPointer = listItemPointer.out(ns.rdf.rest);
     }
   }
 
