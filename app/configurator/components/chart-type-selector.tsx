@@ -139,11 +139,14 @@ export const ChartTypeSelector = ({
     (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
       const newChartType = e.currentTarget.value as ChartType;
 
-      if (newChartType !== chartType) {
+      // Disable triggering the change event if the chart type is the same,
+      // only in edit mode; we should be able to add any possible chart type
+      // in add mode.
+      if (type === "edit" ? newChartType !== chartType : true) {
         onChangeChartType(newChartType);
       }
     },
-    [chartType, onChangeChartType]
+    [chartType, onChangeChartType, type]
   );
 
   if (!data?.dataCubeByIri) {
