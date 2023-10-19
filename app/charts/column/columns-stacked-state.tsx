@@ -9,6 +9,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
   scaleTime,
+  schemeCategory10,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
@@ -236,7 +237,7 @@ const useColumnsStackedState = (
 
         return {
           label: segment,
-          color: fields.segment?.colorMapping![dvIri] || "#006699",
+          color: fields.segment?.colorMapping![dvIri] ?? schemeCategory10[0],
         };
       });
 

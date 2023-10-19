@@ -1,8 +1,10 @@
+import { schemeCategory10 } from "d3";
+
 import { FixedColorField } from "@/config-types";
 
 export const DEFAULT_FIXED_COLOR_FIELD: FixedColorField = {
   type: "fixed",
-  value: "#1f77b4",
+  value: schemeCategory10[0],
   opacity: 80,
 };
 

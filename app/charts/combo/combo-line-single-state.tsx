@@ -118,7 +118,7 @@ const useComboLineSingleState = (
     const xScaled = xScale(x);
 
     return {
-      datum: { label: "", value: "0", color: "#006699" },
+      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor: yScale(
         variables.y.lines

@@ -157,7 +157,7 @@ const useComboLineColumnState = (
     const xScaled = (xScale(x) as number) + xScale.bandwidth() * 0.5;
 
     return {
-      datum: { label: "", value: "0", color: "#006699" },
+      datum: { label: "", value: "0", color: d3.schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor:
         [variables.y.left, variables.y.right]
