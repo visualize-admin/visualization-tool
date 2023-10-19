@@ -78,7 +78,6 @@ export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
     case "string":
     case "boolean":
       return v as T;
-    // return v === "true" ? true : false;
     case "float":
     case "integer":
     case "long":
@@ -96,13 +95,6 @@ export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
     case "unsignedShort":
     case "unsignedByte":
       return +v as T;
-    // TODO: Figure out how to preserve granularity of date (maybe include interval?)
-    // case "date":
-    // case "time":
-    // case "dateTime":
-    // case "gYear":
-    // case "gYearMonth":
-    //   return new Date(v);
     default:
       return v as T;
   }

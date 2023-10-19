@@ -218,19 +218,36 @@ export const getCubeDimensionValues = async ({
 }): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
 
-  if (
-    typeof dimension.minInclusive !== "undefined" &&
-    typeof dimension.maxInclusive !== "undefined" &&
-    data.dataKind !== "Time" &&
-    data.scaleType !== "Ordinal"
-  ) {
-    const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
-    const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
+  if (data.dataKind !== "Time" && data.scaleType !== "Ordinal") {
+    if (
+      typeof dimension.minInclusive !== "undefined" &&
+      typeof dimension.maxInclusive !== "undefined"
+    ) {
+      const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
+      const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
 
-    return [
-      { value: min, label: `${min}` },
-      { value: max, label: `${max}` },
-    ];
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
+    }
+
+    const firstPointer = dimension.out(ns.sh.or).out(ns.rdf.first);
+    const firstMin = firstPointer.out(ns.sh.minInclusive);
+    const firstMax = firstPointer.out(ns.sh.maxInclusive);
+
+    if (
+      typeof firstMin.value !== "undefined" &&
+      typeof firstMax.value !== "undefined"
+    ) {
+      const min = +firstMin.value;
+      const max = +firstMax.value;
+
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
+    }
   }
 
   if (shouldLoadMinMaxValues(rdimension)) {
