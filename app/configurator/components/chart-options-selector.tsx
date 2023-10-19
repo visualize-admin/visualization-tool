@@ -616,10 +616,12 @@ const ChartComboLineSingleYField = (
       } = {}
     ) => {
       const options = getComboOptionGroups(numericalMeasures, (m) => {
-        return enableAll
+        return !m.unit
+          ? true
+          : enableAll
           ? false
           : m.unit !== unit ||
-              (y.componentIris.includes(m.iri) && m.iri !== iri);
+            (y.componentIris.includes(m.iri) && m.iri !== iri);
       });
 
       if (allowNone) {
