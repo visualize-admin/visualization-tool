@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Style
   - Map now outlines shapes on hover, instead of changing their colors
+- Maintenance
+  - Added retrieval of dimension units via `qudt:hasUnit` (but kept `qudt:unit` for backward compatibility)
 
 # [3.23.0] - 2023-10-17
 
