@@ -232,16 +232,18 @@ export const getCubeDimensionValues = async ({
       ];
     }
 
-    const firstPointer = dimension.out(ns.sh.or).out(ns.rdf.first);
-    const firstMin = firstPointer.out(ns.sh.minInclusive);
-    const firstMax = firstPointer.out(ns.sh.maxInclusive);
+    const listPointer = dimension
+      .out(ns.sh.or)
+      .out([ns.rdf.first, ns.rdf.rest]);
+    const listMin = listPointer.out(ns.sh.minInclusive);
+    const listMax = listPointer.out(ns.sh.maxInclusive);
 
     if (
-      typeof firstMin.value !== "undefined" &&
-      typeof firstMax.value !== "undefined"
+      typeof listMin.value !== "undefined" &&
+      typeof listMax.value !== "undefined"
     ) {
-      const min = +firstMin.value;
-      const max = +firstMax.value;
+      const min = +listMin.value;
+      const max = +listMax.value;
 
       return [
         { value: min, label: `${min}` },
