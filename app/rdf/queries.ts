@@ -123,7 +123,9 @@ export const getResolvedCube = async ({
 };
 
 const getDimensionUnits = (d: CubeDimension) => {
-  const t = d.out(ns.qudt.unit).term;
+  // Keeping qudt:unit format for backwards compatibility.
+  const t = d.out(ns.qudt.unit).term ?? d.out(ns.qudt.hasUnit).term;
+
   return t ? [t] : [];
 };
 
