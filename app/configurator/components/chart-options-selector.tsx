@@ -661,13 +661,13 @@ const ChartComboLineSingleYField = (
     <ControlSection collapse>
       <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="body2" sx={{ mb: 2 }}>
-          {/* FIXME: translate */}
-          Common unit: <b>{unit ?? "none"}</b>
-        </Typography>
-        <Typography variant="caption" sx={{ mb: 4 }}>
+        <Typography variant="caption" sx={{ mb: 2 }}>
           {/* FIXME: translate */}
           Note that you can only combine measures of the same unit.
+        </Typography>
+        <Typography variant="caption" sx={{ mb: 2 }}>
+          {/* FIXME: translate */}
+          Common unit: <b>{unit ?? "none"}</b>
         </Typography>
 
         {y.componentIris.map((iri, index) => {
@@ -681,6 +681,14 @@ const ChartComboLineSingleYField = (
             <Select
               key={iri}
               id={`mesure-${iri}`}
+              hint={
+                !showAddNewMeasureButton && y.componentIris.length === 1
+                  ? t({
+                      id: "controls.chart.combo.y.no-compatible-measures",
+                      message: "No compatible measures to combine!",
+                    })
+                  : undefined
+              }
               options={[]}
               optionGroups={options}
               sortOptions={false}
@@ -710,7 +718,7 @@ const ChartComboLineSingleYField = (
             />
           );
         })}
-        {showAddNewMeasureButton ? (
+        {showAddNewMeasureButton && (
           <Select
             id="measure-add"
             label={t({
@@ -738,12 +746,7 @@ const ChartComboLineSingleYField = (
             }}
             value={FIELD_VALUE_NONE}
           />
-        ) : y.componentIris.length === 1 ? (
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            {/* FIXME: translate */}
-            No compatible measures to combine! 🥲
-          </Typography>
-        ) : null}
+        )}
       </ControlSectionContent>
     </ControlSection>
   );

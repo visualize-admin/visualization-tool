@@ -248,6 +248,10 @@ msgstr "Comparison chart types combine several measures in a chart, helping to v
 msgid "controls.chart.category.regular"
 msgstr "Regular"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "No compatible measures to combine!"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Areas"

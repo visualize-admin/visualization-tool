@@ -449,7 +449,13 @@ const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
   return (
     <Tooltip
       arrow
-      title={message}
+      title={
+        <Typography variant="caption" color="secondary">
+          {message}
+        </Typography>
+      }
+      placement="top"
+      componentsProps={{ tooltip: { sx: { width: 140, px: 2, py: 1 } } }}
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
       <Typography color="warning.main">

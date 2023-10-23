@@ -248,6 +248,10 @@ msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm 
 msgid "controls.chart.category.regular"
 msgstr "Normal"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "Keine kompatiblen Messungen zu kombinieren!"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Flächen"

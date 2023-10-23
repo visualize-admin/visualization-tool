@@ -248,6 +248,10 @@ msgstr "Les types de graphiques comparatifs combinent plusieurs mesures dans un 
 msgid "controls.chart.category.regular"
 msgstr "Normal"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "Aucune mesure compatible à combiner !"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Surfaces"

@@ -248,6 +248,10 @@ msgstr "I tipi di grafico di confronto combinano diverse misure in un grafico, a
 msgid "controls.chart.category.regular"
 msgstr "Normale"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "Nessuna misura compatibile da combinare!"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
 msgstr "Aree"
