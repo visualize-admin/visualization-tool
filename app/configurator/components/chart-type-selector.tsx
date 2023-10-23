@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import {
   Box,
   BoxProps,
@@ -190,8 +190,10 @@ export const ChartTypeSelector = ({
             <Divider />
             <ChartTypeSelectorMenu
               type={type}
-              // FIXME: translate
-              title="Regular"
+              title={t({
+                id: "controls.chart.category.regular",
+                message: "Regular",
+              })}
               chartType={chartType}
               chartTypes={regularChartTypes}
               possibleChartTypes={possibleChartTypes}
@@ -200,8 +202,10 @@ export const ChartTypeSelector = ({
             <Divider />
             <ChartTypeSelectorMenu
               type={type}
-              // FIXME: translate
-              title="Combo"
+              title={t({
+                id: "controls.chart.category.combo",
+                message: "Comparison",
+              })}
               chartType={chartType}
               chartTypes={comboChartTypes}
               possibleChartTypes={possibleChartTypes}

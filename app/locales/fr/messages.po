@@ -43,6 +43,7 @@ msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
 
 #: app/components/chart-preview.tsx
+#: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
@@ -234,6 +235,14 @@ msgstr "100%"
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
 msgstr "Afficher en %"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo"
+msgstr "Comparaison"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.regular"
+msgstr "Normal"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
