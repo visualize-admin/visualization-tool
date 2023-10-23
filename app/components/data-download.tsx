@@ -26,7 +26,7 @@ import {
   useContext,
   useState,
 } from "react";
-import { OperationResult, useClient } from "urql";
+import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
@@ -380,8 +380,8 @@ const DownloadMenuItem = ({
         dispatch({ isDownloading: true });
 
         try {
-          const componentsResult: OperationResult<ComponentsQuery> =
-            await urqlClient
+          const [componentsResult, observationsResult] = await Promise.all([
+            urqlClient
               .query<ComponentsQuery, ComponentsQueryVariables>(
                 ComponentsDocument,
                 {
@@ -392,9 +392,8 @@ const DownloadMenuItem = ({
                   componentIris: undefined,
                 }
               )
-              .toPromise();
-          const observationsResult: OperationResult<DataCubeObservationsQuery> =
-            await urqlClient
+              .toPromise(),
+            urqlClient
               .query<
                 DataCubeObservationsQuery,
                 DataCubeObservationsQueryVariables
@@ -406,7 +405,8 @@ const DownloadMenuItem = ({
                 componentIris: undefined,
                 filters,
               })
-              .toPromise();
+              .toPromise(),
+          ]);
 
           if (componentsResult.data && observationsResult.data) {
             await download(componentsResult.data, observationsResult.data);
