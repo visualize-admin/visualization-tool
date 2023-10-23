@@ -241,6 +241,10 @@ msgid "controls.chart.category.combo"
 msgstr "Comparaison"
 
 #: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo.hint"
+msgstr "Les types de graphiques comparatifs combinent plusieurs mesures dans un graphique, ce qui permet de visualiser leurs relations ou corrélations, même si elles ont des unités ou des échelles différentes."
+
+#: app/configurator/components/chart-type-selector.tsx
 msgid "controls.chart.category.regular"
 msgstr "Normal"
 

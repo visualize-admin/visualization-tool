@@ -241,6 +241,10 @@ msgid "controls.chart.category.combo"
 msgstr "Comparison"
 
 #: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo.hint"
+msgstr "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales."
+
+#: app/configurator/components/chart-type-selector.tsx
 msgid "controls.chart.category.regular"
 msgstr "Regular"
 

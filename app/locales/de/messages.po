@@ -241,6 +241,10 @@ msgid "controls.chart.category.combo"
 msgstr "Vergleich"
 
 #: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo.hint"
+msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm und helfen, ihre Beziehungen oder Korrelationen zu visualisieren, selbst wenn sie unterschiedliche Einheiten oder Skalen haben."
+
+#: app/configurator/components/chart-type-selector.tsx
 msgid "controls.chart.category.regular"
 msgstr "Normal"
 
