@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ascending } from "d3";
+import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import keyBy from "lodash/keyBy";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
@@ -325,7 +326,7 @@ const DownloadMenuItem = ({
   const urqlClient = useClient();
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
-    (
+    async (
       componentsData: ComponentsQuery,
       observationsData: DataCubeObservationsQuery
     ) => {
@@ -343,13 +344,29 @@ const DownloadMenuItem = ({
         dimensionParsers,
       });
 
-      return fetch("/api/download", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ columnKeys, data, fileFormat }),
-      }).then((res) =>
-        res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
-      );
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet("data");
+      worksheet.columns = columnKeys.map((d) => ({
+        header: d,
+        key: d,
+      }));
+      worksheet.addRows(data);
+
+      switch (fileFormat) {
+        case "csv":
+          const csv = await workbook.csv.writeBuffer();
+          saveAs(new Blob([csv], { type: "text/csv" }), `${fileName}.csv`);
+          break;
+        case "xlsx":
+          const xlsx = await workbook.xlsx.writeBuffer();
+          saveAs(
+            new Blob([xlsx], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            }),
+            `${fileName}.xlsx`
+          );
+          break;
+      }
     },
     [fileFormat, fileName, locale]
   );
