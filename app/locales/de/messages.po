@@ -17,10 +17,6 @@ msgstr ""
 msgid "Add filter"
 msgstr "Filter hinzufügen"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "Axis orientation"
-msgstr "Achsenausrichtung"
-
 #: app/configurator/components/chart-configurator.tsx
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
@@ -249,8 +245,45 @@ msgid "controls.chart.category.regular"
 msgstr "Normal"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.axis-orientation"
+msgstr "Achsenausrichtung"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.column-measure"
+msgstr "Säule Messung"
+
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.combine-different-unit"
+msgstr "Beachten Sie, dass Sie nur Messungen mit unterschiedlichen Einheiten kombinieren können."
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.combine-same-unit"
+msgstr "Beachten Sie, dass Sie nur Messungen mit der gleichen Einheit kombinieren können."
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.common-unit"
+msgstr "Gemeinsame Einheit"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.left-axis-measure"
+msgstr "Messung der linken Achse"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.line-measure"
+msgstr "Linie Messung"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"
 msgstr "Keine kompatiblen Messungen zu kombinieren!"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-unit"
+msgstr "Keine Einheit"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.right-axis-measure"
+msgstr "Messung der rechten Achse"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -518,6 +551,7 @@ msgstr "Zurück zur Übersicht"
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
@@ -1107,6 +1141,10 @@ msgstr "Filter ausblenden"
 msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "left"
+msgstr "Links"
+
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
 msgstr "Kopieren"
@@ -1258,6 +1296,10 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "right"
+msgstr "Rechts"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx

@@ -557,8 +557,11 @@ const getComboOptionGroups = (
   measures: NumericalMeasure[],
   disable: (m: NumericalMeasure) => boolean
 ) => {
-  // FIXME: translate
-  return groups(measures, (d) => d.unit ?? "No unit").map(([k, v]) => {
+  return groups(
+    measures,
+    (d) =>
+      d.unit ?? t({ id: "controls.chart.combo.y.no-unit", message: "No unit" })
+  ).map(([k, v]) => {
     return [
       { label: k, value: k },
       v.map((m) => {
@@ -662,12 +665,13 @@ const ChartComboLineSingleYField = (
       <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <Typography variant="caption" sx={{ mb: 2 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of the same unit.
+          <Trans id="controls.chart.combo.y.combine-same-unit">
+            Note that you can only combine measures of the same unit.
+          </Trans>
         </Typography>
         <Typography variant="caption" sx={{ mb: 2 }}>
-          {/* FIXME: translate */}
-          Common unit: <b>{unit ?? "none"}</b>
+          <Trans id="controls.chart.combo.y.common-unit">Common unit</Trans>:{" "}
+          <b>{unit ?? t({ id: "controls.none", message: "None" })}</b>
         </Typography>
 
         {y.componentIris.map((iri, index) => {
@@ -799,8 +803,9 @@ const ChartComboLineDualYField = (
       <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <Typography variant="caption" sx={{ mb: 4 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of different units.
+          <Trans id="controls.chart.combo.y.combine-different-unit">
+            Note that you can only combine measures of different units.
+          </Trans>
         </Typography>
 
         <Select
@@ -808,8 +813,10 @@ const ChartComboLineDualYField = (
           options={[]}
           optionGroups={getOptionGroups("left")}
           sortOptions={false}
-          // FIXME: translate
-          label="Left axis measure"
+          label={t({
+            id: "controls.chart.combo.y.left-axis-measure",
+            message: "Left axis measure",
+          })}
           value={y.leftAxisComponentIri}
           onChange={(e) => {
             const newIri = e.target.value as string;
@@ -831,8 +838,10 @@ const ChartComboLineDualYField = (
           options={[]}
           optionGroups={getOptionGroups("right")}
           sortOptions={false}
-          // FIXME: translate
-          label="Right axis measure"
+          label={t({
+            id: "controls.chart.combo.y.right-axis-measure",
+            message: "Right axis measure",
+          })}
           value={y.rightAxisComponentIri}
           onChange={(e) => {
             const newIri = e.target.value as string;
@@ -900,8 +909,9 @@ const ChartComboLineColumnYField = (
       <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <Typography variant="caption" sx={{ mb: 4 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of different units.
+          <Trans id="controls.chart.combo.y.combine-different-unit">
+            Note that you can only combine measures of different units.
+          </Trans>
         </Typography>
 
         <Select
@@ -909,8 +919,10 @@ const ChartComboLineColumnYField = (
           options={[]}
           optionGroups={getOptionGroups("column")}
           sortOptions={false}
-          // FIXME: translate
-          label="Column measure"
+          label={t({
+            id: "controls.chart.combo.y.column-measure",
+            message: "Column measure",
+          })}
           value={y.columnComponentIri}
           onChange={(e) => {
             const newIri = e.target.value as string;
@@ -927,12 +939,17 @@ const ChartComboLineColumnYField = (
         />
 
         <Box component="fieldset" mt={2} mb={4}>
-          {/* FIXME: translate */}
-          <FieldSetLegend legendTitle={<Trans id="">Axis orientation</Trans>} />
+          <FieldSetLegend
+            legendTitle={
+              <Trans id="controls.chart.combo.y.axis-orientation">
+                Axis orientation
+              </Trans>
+            }
+          />
           <Flex sx={{ justifyContent: "flex-start" }}>
             {[
-              { value: "right", label: "Left" },
-              { value: "left", label: "Right" },
+              { value: "right", label: t({ id: "left", message: "Left" }) },
+              { value: "left", label: t({ id: "right", message: "Right" }) },
             ].map((d) => (
               <ChartOptionRadioField
                 key={d.value}
@@ -950,8 +967,10 @@ const ChartComboLineColumnYField = (
           options={[]}
           optionGroups={getOptionGroups("line")}
           sortOptions={false}
-          // FIXME: translate
-          label="Line measure"
+          label={t({
+            id: "controls.chart.combo.y.line-measure",
+            message: "Line measure",
+          })}
           value={y.lineComponentIri}
           onChange={(e) => {
             const newIri = e.target.value as string;
@@ -1758,8 +1777,7 @@ const ChartMapBaseLayerSettings = ({
           value: {
             locale,
             field: null,
-            // FIXME: shouldn't be a field if not mapped
-            // to a component
+            // FIXME: shouldn't be a field if not mapped to a component
             path: "baseLayer.bbox",
             value: map.getBounds().toArray(),
           },
