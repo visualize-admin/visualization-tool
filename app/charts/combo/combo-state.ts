@@ -4,7 +4,6 @@ import React from "react";
 import { useWidth } from "@/charts/shared/use-width";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
-import { getPalette } from "@/palettes";
 
 type UseCommonComboStateOptions = {
   chartData: Observation[];
@@ -15,6 +14,7 @@ type UseCommonComboStateOptions = {
   yGetters: {
     label: string;
     getY: (d: Observation) => number | null;
+    color: string;
   }[];
   computeTotal: boolean;
 };
@@ -74,7 +74,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
 
   const colors = React.useMemo(() => {
     const domain = yGetters.map((d) => d.label);
-    const range = getPalette();
+    const range = yGetters.map((d) => d.color);
 
     return d3.scaleOrdinal<string, string>().domain(domain).range(range);
   }, [yGetters]);

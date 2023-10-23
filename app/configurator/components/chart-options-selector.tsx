@@ -661,98 +661,122 @@ const ChartComboLineSingleYField = (
     }, [getOptionGroups]);
 
   return (
-    <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
-      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ mb: 2 }}>
-          <Trans id="controls.chart.combo.y.combine-same-unit">
-            Note that you can only combine measures of the same unit.
-          </Trans>
-        </Typography>
-        <Typography variant="caption" sx={{ mb: 2 }}>
-          <Trans id="controls.chart.combo.y.common-unit">Common unit</Trans>:{" "}
-          <b>{unit ?? t({ id: "controls.none", message: "None" })}</b>
-        </Typography>
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 2 }}>
+            <Trans id="controls.chart.combo.y.combine-same-unit">
+              Note that you can only combine measures of the same unit.
+            </Trans>
+          </Typography>
+          <Typography variant="caption" sx={{ mb: 2 }}>
+            <Trans id="controls.chart.combo.y.common-unit">Common unit</Trans>:{" "}
+            <b>{unit ?? t({ id: "controls.none", message: "None" })}</b>
+          </Typography>
 
-        {y.componentIris.map((iri, index) => {
-          // If there are multiple measures, we allow the user to remove any measure.
-          const allowNone = y.componentIris.length > 1;
-          // If there is only one measure, we allow the user to select any measure.
-          const enableAll = index === 0 && y.componentIris.length === 1;
-          const options = getOptionGroups(iri, { allowNone, enableAll });
+          {y.componentIris.map((iri, index) => {
+            // If there are multiple measures, we allow the user to remove any measure.
+            const allowNone = y.componentIris.length > 1;
+            // If there is only one measure, we allow the user to select any measure.
+            const enableAll = index === 0 && y.componentIris.length === 1;
+            const options = getOptionGroups(iri, { allowNone, enableAll });
 
-          return (
-            <Select
-              key={iri}
-              id={`mesure-${iri}`}
-              hint={
-                !showAddNewMeasureButton && y.componentIris.length === 1
-                  ? t({
-                      id: "controls.chart.combo.y.no-compatible-measures",
-                      message: "No compatible measures to combine!",
-                    })
-                  : undefined
-              }
-              options={[]}
-              optionGroups={options}
-              sortOptions={false}
-              value={iri}
-              onChange={(e) => {
-                const newIri = e.target.value as string;
-                let newComponentIris: string[];
-
-                if (newIri === FIELD_VALUE_NONE) {
-                  newComponentIris = y.componentIris.filter((d) => d !== iri);
-                } else {
-                  newComponentIris = [...y.componentIris];
-                  newComponentIris.splice(index, 1, newIri);
+            return (
+              <Select
+                key={iri}
+                id={`mesure-${iri}`}
+                hint={
+                  !showAddNewMeasureButton && y.componentIris.length === 1
+                    ? t({
+                        id: "controls.chart.combo.y.no-compatible-measures",
+                        message: "No compatible measures to combine!",
+                      })
+                    : undefined
                 }
+                options={[]}
+                optionGroups={options}
+                sortOptions={false}
+                value={iri}
+                onChange={(e) => {
+                  const newIri = e.target.value as string;
+                  let newComponentIris: string[];
 
-                dispatch({
-                  type: "CHART_OPTION_CHANGED",
-                  value: {
-                    locale,
-                    field: "y",
-                    path: "componentIris",
-                    value: newComponentIris,
-                  },
-                });
+                  if (newIri === FIELD_VALUE_NONE) {
+                    newComponentIris = y.componentIris.filter((d) => d !== iri);
+                  } else {
+                    newComponentIris = [...y.componentIris];
+                    newComponentIris.splice(index, 1, newIri);
+                  }
+
+                  dispatch({
+                    type: "CHART_OPTION_CHANGED",
+                    value: {
+                      locale,
+                      field: "y",
+                      path: "componentIris",
+                      value: newComponentIris,
+                    },
+                  });
+                }}
+                sx={{ mb: 2 }}
+              />
+            );
+          })}
+          {showAddNewMeasureButton && (
+            <Select
+              id="measure-add"
+              label={t({
+                id: "controls.sorting.addDimension",
+                message: "Add dimension",
+              })}
+              options={[]}
+              optionGroups={addNewMeasureOptions}
+              sortOptions={false}
+              onChange={(e) => {
+                const iri = e.target.value as string;
+
+                if (iri !== FIELD_VALUE_NONE) {
+                  const newComponentIris = [...y.componentIris, iri];
+                  dispatch({
+                    type: "CHART_OPTION_CHANGED",
+                    value: {
+                      locale,
+                      field: "y",
+                      path: "componentIris",
+                      value: newComponentIris,
+                    },
+                  });
+                }
               }}
-              sx={{ mb: 2 }}
+              value={FIELD_VALUE_NONE}
             />
-          );
-        })}
-        {showAddNewMeasureButton && (
-          <Select
-            id="measure-add"
-            label={t({
-              id: "controls.sorting.addDimension",
-              message: "Add dimension",
-            })}
-            options={[]}
-            optionGroups={addNewMeasureOptions}
-            sortOptions={false}
-            onChange={(e) => {
-              const iri = e.target.value as string;
-
-              if (iri !== FIELD_VALUE_NONE) {
-                const newComponentIris = [...y.componentIris, iri];
-                dispatch({
-                  type: "CHART_OPTION_CHANGED",
-                  value: {
-                    locale,
-                    field: "y",
-                    path: "componentIris",
-                    value: newComponentIris,
-                  },
-                });
-              }
-            }}
-            value={FIELD_VALUE_NONE}
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="color">
+          <Trans id="controls.section.layout-options">Layout options</Trans>
+        </SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <ColorPalette
+            field="y"
+            // Faking a component here, because we don't have a real one.
+            // We use measure iris as dimension values, because that's how
+            // the color mapping is done.
+            component={
+              {
+                __typename: "",
+                values: y.componentIris.map((iri) => ({
+                  value: iri,
+                  label: iri,
+                })),
+              } as any as DimensionMetadataFragment
+            }
           />
-        )}
-      </ControlSectionContent>
-    </ControlSection>
+        </ControlSectionContent>
+      </ControlSection>
+    </>
   );
 };
 
@@ -799,66 +823,92 @@ const ChartComboLineDualYField = (
   );
 
   return (
-    <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
-      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ mb: 4 }}>
-          <Trans id="controls.chart.combo.y.combine-different-unit">
-            Note that you can only combine measures of different units.
-          </Trans>
-        </Typography>
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 4 }}>
+            <Trans id="controls.chart.combo.y.combine-different-unit">
+              Note that you can only combine measures of different units.
+            </Trans>
+          </Typography>
 
-        <Select
-          id={`mesure-${y.leftAxisComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("left")}
-          sortOptions={false}
-          label={t({
-            id: "controls.chart.combo.y.left-axis-measure",
-            message: "Left axis measure",
-          })}
-          value={y.leftAxisComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "leftAxisComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
+          <Select
+            id={`mesure-${y.leftAxisComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("left")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.left-axis-measure",
+              message: "Left axis measure",
+            })}
+            value={y.leftAxisComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "leftAxisComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
 
-        <Select
-          id={`mesure-${y.rightAxisComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("right")}
-          sortOptions={false}
-          label={t({
-            id: "controls.chart.combo.y.right-axis-measure",
-            message: "Right axis measure",
-          })}
-          value={y.rightAxisComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "rightAxisComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
-      </ControlSectionContent>
-    </ControlSection>
+          <Select
+            id={`mesure-${y.rightAxisComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("right")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.right-axis-measure",
+              message: "Right axis measure",
+            })}
+            value={y.rightAxisComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "rightAxisComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="color">
+          <Trans id="controls.section.layout-options">Layout options</Trans>
+        </SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <ColorPalette
+            field="y"
+            // Faking a component here, because we don't have a real one.
+            // We use measure iris as dimension values, because that's how
+            // the color mapping is done.
+            component={
+              {
+                __typename: "",
+                values: [y.leftAxisComponentIri, y.rightAxisComponentIri].map(
+                  (iri) => ({
+                    value: iri,
+                    label: iri,
+                  })
+                ),
+              } as any as DimensionMetadataFragment
+            }
+          />
+        </ControlSectionContent>
+      </ControlSection>
+    </>
   );
 };
 
@@ -905,89 +955,116 @@ const ChartComboLineColumnYField = (
   );
 
   return (
-    <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
-      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ mb: 4 }}>
-          <Trans id="controls.chart.combo.y.combine-different-unit">
-            Note that you can only combine measures of different units.
-          </Trans>
-        </Typography>
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 4 }}>
+            <Trans id="controls.chart.combo.y.combine-different-unit">
+              Note that you can only combine measures of different units.
+            </Trans>
+          </Typography>
 
-        <Select
-          id={`mesure-${y.columnComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("column")}
-          sortOptions={false}
-          label={t({
-            id: "controls.chart.combo.y.column-measure",
-            message: "Column measure",
-          })}
-          value={y.columnComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "columnComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-        />
+          <Select
+            id={`mesure-${y.columnComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("column")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.column-measure",
+              message: "Column measure",
+            })}
+            value={y.columnComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "columnComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+          />
 
-        <Box component="fieldset" mt={2} mb={4}>
-          <FieldSetLegend
-            legendTitle={
-              <Trans id="controls.chart.combo.y.axis-orientation">
-                Axis orientation
-              </Trans>
+          <Box component="fieldset" mt={2} mb={4}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.chart.combo.y.axis-orientation">
+                  Axis orientation
+                </Trans>
+              }
+            />
+            <Flex sx={{ justifyContent: "flex-start" }}>
+              {[
+                { value: "right", label: t({ id: "left", message: "Left" }) },
+                { value: "left", label: t({ id: "right", message: "Right" }) },
+              ].map((d) => (
+                <ChartOptionRadioField
+                  key={d.value}
+                  label={d.label}
+                  field="y"
+                  path="lineAxisOrientation"
+                  value={d.value}
+                />
+              ))}
+            </Flex>
+          </Box>
+
+          <Select
+            id={`mesure-${y.lineComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("line")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.line-measure",
+              message: "Line measure",
+            })}
+            value={y.lineComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "lineComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="color">
+          <Trans id="controls.section.layout-options">Layout options</Trans>
+        </SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <ColorPalette
+            field="y"
+            // Faking a component here, because we don't have a real one.
+            // We use measure iris as dimension values, because that's how
+            // the color mapping is done.
+            component={
+              {
+                __typename: "",
+                values: (y.lineAxisOrientation === "left"
+                  ? [y.lineComponentIri, y.columnComponentIri]
+                  : [y.columnComponentIri, y.lineComponentIri]
+                ).map((iri) => ({
+                  value: iri,
+                  label: iri,
+                })),
+              } as any as DimensionMetadataFragment
             }
           />
-          <Flex sx={{ justifyContent: "flex-start" }}>
-            {[
-              { value: "right", label: t({ id: "left", message: "Left" }) },
-              { value: "left", label: t({ id: "right", message: "Right" }) },
-            ].map((d) => (
-              <ChartOptionRadioField
-                key={d.value}
-                label={d.label}
-                field="y"
-                path="lineAxisOrientation"
-                value={d.value}
-              />
-            ))}
-          </Flex>
-        </Box>
-
-        <Select
-          id={`mesure-${y.lineComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("line")}
-          sortOptions={false}
-          label={t({
-            id: "controls.chart.combo.y.line-measure",
-            message: "Line measure",
-          })}
-          value={y.lineComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "lineComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
-      </ControlSectionContent>
-    </ControlSection>
+        </ControlSectionContent>
+      </ControlSection>
+    </>
   );
 };
 

@@ -112,6 +112,10 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
     }
   | {
       field: "useAbbreviations";
+    }
+  | {
+      field: "lineAxisOrientation";
+      onChange: OnEncodingOptionChange<"left" | "right", ComboLineColumnConfig>;
     };
 
 const onColorComponentScaleTypeChange: OnEncodingOptionChange<
@@ -928,6 +932,27 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          lineAxisOrientation: {
+            onChange: (_, options) => {
+              const { chartConfig } = options;
+              // Need the correct order to not enable "Reset color palette" button.
+              const firstIri =
+                chartConfig.fields.y.lineAxisOrientation === "left"
+                  ? chartConfig.fields.y.columnComponentIri
+                  : chartConfig.fields.y.lineComponentIri;
+              const secondIri =
+                chartConfig.fields.y.lineAxisOrientation === "left"
+                  ? chartConfig.fields.y.lineComponentIri
+                  : chartConfig.fields.y.columnComponentIri;
+
+              chartConfig.fields.y.colorMapping = {
+                [firstIri]: chartConfig.fields.y.colorMapping[secondIri],
+                [secondIri]: chartConfig.fields.y.colorMapping[firstIri],
+              };
+            },
+          },
+        },
       },
       {
         field: "x",
@@ -967,5 +992,7 @@ export const getChartFieldOptionChangeSideEffect = (
     case "areaLayer.color.scaleType":
     case "symbolLayer.color.scaleType":
       return get(encoding, "options.colorComponent.onScaleTypeChange");
+    case "y.lineAxisOrientation":
+      return get(encoding, "options.lineAxisOrientation.onChange");
   }
 };
