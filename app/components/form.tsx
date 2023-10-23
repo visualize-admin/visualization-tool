@@ -374,7 +374,6 @@ export const Select = ({
             },
           }}
           renderValue={(value) => {
-            // add icon to selected value
             const selectedOption = sortedOptions.find(
               (opt) => opt.value === value
             );
