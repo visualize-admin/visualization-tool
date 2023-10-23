@@ -9,6 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Performance
+  - Improved performance of data download
 - Style
   - Map now outlines shapes on hover, instead of changing their colors
 - Maintenance
