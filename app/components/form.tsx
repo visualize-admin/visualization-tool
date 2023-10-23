@@ -318,6 +318,7 @@ export const Select = ({
   onClose,
   onOpen,
   loading,
+  hint,
   sx,
 }: {
   id: string;
@@ -328,6 +329,7 @@ export const Select = ({
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, SelectOption[]][];
   loading?: boolean;
+  hint?: string;
 } & SelectProps) => {
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
@@ -370,6 +372,30 @@ export const Select = ({
               // @ts-ignore - It works
               component: LoadingMenuPaper,
             },
+          }}
+          renderValue={(value) => {
+            // add icon to selected value
+            const selectedOption = sortedOptions.find(
+              (opt) => opt.value === value
+            );
+
+            if (!selectedOption) {
+              return "";
+            }
+
+            return (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <span>{selectedOption.label}</span>
+                {hint && <DisabledMessageIcon message={hint} />}
+              </Box>
+            );
           }}
         >
           {sortedOptions.map((opt) => {
