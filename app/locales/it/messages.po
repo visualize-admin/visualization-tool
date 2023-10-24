@@ -17,10 +17,6 @@ msgstr ""
 msgid "Add filter"
 msgstr "Aggiungi filtro"
 
-#: app/configurator/components/chart-options-selector.tsx
-msgid "Axis orientation"
-msgstr "Orientamento dell'asse"
-
 #: app/configurator/components/chart-configurator.tsx
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
@@ -43,6 +39,7 @@ msgid "annotation.add.description"
 msgstr "[ Nessuna descrizione ]"
 
 #: app/components/chart-preview.tsx
+#: app/login/components/profile-tables.tsx
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
@@ -234,6 +231,59 @@ msgstr "100%"
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
 msgstr "Mostra in %"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo"
+msgstr "Confronto"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo.hint"
+msgstr "I tipi di grafico di confronto combinano diverse misure in un grafico, aiutando a visualizzare le loro relazioni o correlazioni, anche quando hanno unità o scale diverse."
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.regular"
+msgstr "Normale"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.axis-orientation"
+msgstr "Orientamento dell'asse"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.column-measure"
+msgstr "Misura della colonna"
+
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.combine-different-unit"
+msgstr "Si noti che è possibile combinare solo misure di unità diverse."
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.combine-same-unit"
+msgstr "Si noti che è possibile combinare solo misure della stessa unità."
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.common-unit"
+msgstr "Unità comune"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.left-axis-measure"
+msgstr "Misura dell'asse sinistro"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.line-measure"
+msgstr "Misura della linea"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "Nessuna misura compatibile da combinare!"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.no-unit"
+msgstr "Nessuna unità"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.chart.combo.y.right-axis-measure"
+msgstr "Misura dell'asse destro"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.area"
@@ -501,6 +551,7 @@ msgstr "Torna alle impostazioni generali"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
+#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
@@ -1090,6 +1141,10 @@ msgstr "Nascondi i filtri"
 msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "left"
+msgstr "Sinistra"
+
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.copy"
 msgstr "Copia"
@@ -1241,6 +1296,10 @@ msgstr "Ecco una visualizzazione che ho creato usando visualize.admin.ch"
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "right"
+msgstr "Diritto"
 
 #: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx

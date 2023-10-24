@@ -206,9 +206,12 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       textDecoration: "underline",
       textUnderlineOffset: "2px",
       textAlign: "left",
+      transition: "opacity 0.2s ease-in-out",
 
       "&:hover": {
         textDecoration: "underline",
+        color: "inherit",
+        opacity: 0.9,
       },
     },
   };

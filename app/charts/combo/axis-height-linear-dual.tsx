@@ -1,4 +1,3 @@
-import { alpha } from "@mui/material";
 import React from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
@@ -10,7 +9,11 @@ import {
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { theme } from "@/themes/federal";
 import { getTextWidth } from "@/utils/get-text-width";
+
+const TITLE_HPADDING = 8;
+const TITLE_VPADDING = 4;
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";
@@ -19,7 +22,7 @@ type AxisHeightLinearDualProps = {
 export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   const { orientation = "left" } = props;
   const leftAligned = orientation === "left";
-  const { axisLabelFontSize } = useChartTheme();
+  const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
   const [ref, setRef] = React.useState<SVGGElement | null>(null);
   const { y, yOrientationScales, colors, bounds, maxRightTickWidth } =
     useChartState() as ComboLineDualState | ComboLineColumnState;
@@ -32,13 +35,13 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
 
   useRenderAxisHeightLinear(ref, {
     id: `axis-height-linear-${orientation}`,
-    orientation: orientation,
+    orientation,
     scale: yScale,
     width: bounds.chartWidth,
     height: bounds.chartHeight,
-    margins: bounds.margins,
-    lineColor: alpha(color, 0.1),
-    textColor: color,
+    margins,
+    lineColor: gridColor,
+    textColor: labelColor,
   });
 
   return (
@@ -52,14 +55,27 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
               axisTitleWidth +
               // Align the title with the rightmost tick.
               maxRightTickWidth +
-              TICK_PADDING
+              TICK_PADDING -
+              TITLE_HPADDING * 2
         }
-        width={axisTitleWidth}
-        height={axisLabelFontSize * 2}
-        color={color}
+        width={axisTitleWidth + TITLE_HPADDING * 2}
+        height={(axisLabelFontSize + TITLE_VPADDING) * 2}
+        color={theme.palette.getContrastText(color)}
       >
         <OpenMetadataPanelWrapper dim={y[orientation].dimension}>
-          <span style={{ fontSize: axisLabelFontSize }}>{axisTitle}</span>
+          <span
+            style={{
+              fontSize: axisLabelFontSize,
+              backgroundColor: color,
+              paddingTop: TITLE_VPADDING,
+              paddingBottom: TITLE_VPADDING,
+              paddingLeft: TITLE_HPADDING,
+              paddingRight: TITLE_HPADDING,
+              borderRadius: 4,
+            }}
+          >
+            {axisTitle}
+          </span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
       <g ref={(newRef) => setRef(newRef)} />

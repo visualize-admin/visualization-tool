@@ -1,10 +1,11 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import {
   Box,
   BoxProps,
   ButtonBase,
   Divider,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -139,11 +140,14 @@ export const ChartTypeSelector = ({
     (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
       const newChartType = e.currentTarget.value as ChartType;
 
-      if (newChartType !== chartType) {
+      // Disable triggering the change event if the chart type is the same,
+      // only in edit mode; we should be able to add any possible chart type
+      // in add mode.
+      if (type === "edit" ? newChartType !== chartType : true) {
         onChangeChartType(newChartType);
       }
     },
-    [chartType, onChangeChartType]
+    [chartType, onChangeChartType, type]
   );
 
   if (!data?.dataCubeByIri) {
@@ -187,8 +191,10 @@ export const ChartTypeSelector = ({
             <Divider />
             <ChartTypeSelectorMenu
               type={type}
-              // FIXME: translate
-              title="Regular"
+              title={t({
+                id: "controls.chart.category.regular",
+                message: "Regular",
+              })}
               chartType={chartType}
               chartTypes={regularChartTypes}
               possibleChartTypes={possibleChartTypes}
@@ -197,8 +203,15 @@ export const ChartTypeSelector = ({
             <Divider />
             <ChartTypeSelectorMenu
               type={type}
-              // FIXME: translate
-              title="Combo"
+              title={t({
+                id: "controls.chart.category.combo",
+                message: "Comparison",
+              })}
+              titleHint={t({
+                id: "controls.chart.category.combo.hint",
+                message:
+                  "Comparison chart types combine several measures in a chart, helping to visualize their relationships or correlations, even when they have different units or scales.",
+              })}
               chartType={chartType}
               chartTypes={comboChartTypes}
               possibleChartTypes={possibleChartTypes}
@@ -214,6 +227,7 @@ export const ChartTypeSelector = ({
 type ChartTypeSelectorMenuProps = {
   type: "add" | "edit";
   title: string;
+  titleHint?: string;
   chartType: ChartType;
   chartTypes: ChartType[];
   possibleChartTypes: ChartType[];
@@ -221,13 +235,30 @@ type ChartTypeSelectorMenuProps = {
 };
 
 const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
-  const { type, title, chartType, chartTypes, possibleChartTypes, onClick } =
-    props;
+  const {
+    type,
+    title,
+    titleHint,
+    chartType,
+    chartTypes,
+    possibleChartTypes,
+    onClick,
+  } = props;
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 2 }}>
-      <Typography variant="caption" sx={{ mx: "auto", color: "grey.800" }}>
+      <Typography
+        variant="caption"
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 1,
+          mx: "auto",
+          color: "grey.800",
+        }}
+      >
         {title}
+        {titleHint && <WarnIconTooltip title={titleHint} />}
       </Typography>
       <Box
         data-testid="chart-type-selector-combo"
@@ -250,5 +281,45 @@ const ChartTypeSelectorMenu = (props: ChartTypeSelectorMenuProps) => {
         ))}
       </Box>
     </Flex>
+  );
+};
+
+const useWarnIconStyles = makeStyles<Theme>((theme) => ({
+  icon: {
+    color: theme.palette.primary.main,
+    pointerEvents: "auto",
+  },
+}));
+
+type WarnIconTooltipProps = {
+  title: NonNullable<React.ReactNode>;
+};
+
+const WarnIconTooltip = (props: WarnIconTooltipProps) => {
+  const { title } = props;
+  const iconStyles = useWarnIconStyles();
+
+  return (
+    <Tooltip
+      arrow
+      placement="top"
+      title={
+        <Typography variant="caption" color="secondary">
+          {title}
+        </Typography>
+      }
+      componentsProps={{
+        tooltip: { sx: { width: 180, px: 2, py: 1, lineHeight: "18px" } },
+      }}
+    >
+      <Typography>
+        <Icon
+          name="exclamation"
+          size={16}
+          viewBox="0, 0, 18, 18"
+          className={iconStyles.icon}
+        />
+      </Typography>
+    </Tooltip>
   );
 };

@@ -49,6 +49,7 @@ export const useComboLineDualStateVariables = (
         dimension: measuresByIri[leftIri],
         iri: leftIri,
         label: getLabelWithUnit(measuresByIri[leftIri]),
+        color: fields.y.colorMapping[leftIri],
         getY: (d) => {
           return d[leftIri] !== null ? Number(d[leftIri]) : null;
         },
@@ -58,6 +59,7 @@ export const useComboLineDualStateVariables = (
         dimension: measuresByIri[rightIri],
         iri: rightIri,
         label: getLabelWithUnit(measuresByIri[rightIri]),
+        color: fields.y.colorMapping[rightIri],
         getY: (d) => {
           return d[rightIri] !== null ? Number(d[rightIri]) : null;
         },

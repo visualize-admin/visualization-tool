@@ -10,6 +10,7 @@ import {
   scaleDiverging,
   scaleLinear,
   scaleOrdinal,
+  schemeCategory10,
 } from "d3";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
@@ -46,7 +47,6 @@ import { Observation } from "@/domain/data";
 import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
-import { useTheme } from "@/themes";
 import { getTextWidth } from "@/utils/get-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
@@ -115,7 +115,6 @@ const useTableState = (
 ): TableChartState => {
   const { chartConfig, dimensions, measures } = chartProps;
   const { chartData, allData } = data;
-  const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
@@ -332,8 +331,7 @@ const useTableState = (
 
               return {
                 label: dvLabel,
-                color:
-                  colorMapping![colorMappingIri] || theme.palette.primary.main,
+                color: colorMapping![colorMappingIri] ?? schemeCategory10[0],
               };
             }
           );
@@ -389,14 +387,7 @@ const useTableState = (
       }),
       (v) => v.slugifiedIri
     );
-  }, [
-    chartData,
-    dimensions,
-    fields,
-    formatters,
-    measures,
-    theme.palette.primary.main,
-  ]);
+  }, [chartData, dimensions, fields, formatters, measures]);
 
   return {
     chartType: "table",

@@ -606,6 +606,8 @@ const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
     componentIris: t.array(t.string),
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
@@ -628,6 +630,8 @@ const ComboLineDualFields = t.type({
   y: t.type({
     leftAxisComponentIri: t.string,
     rightAxisComponentIri: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
@@ -651,6 +655,8 @@ const ComboLineColumnFields = t.type({
     lineComponentIri: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
     columnComponentIri: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;

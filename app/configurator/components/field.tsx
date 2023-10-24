@@ -18,11 +18,11 @@ import React, {
 } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
+import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
   Input,
-  Label,
   Radio,
   Select,
   Slider,
@@ -583,7 +583,9 @@ const useMultiFilterColorPicker = (value: string) => {
     return getPalette(
       get(
         chartConfig,
-        `fields["${activeField}"].${colorConfigPath ?? ""}.palette`
+        `fields["${activeField}"].${
+          colorConfigPath ? `${colorConfigPath}.` : ""
+        }palette`
       )
     );
   }, [chartConfig, colorConfigPath, activeField]);
@@ -603,16 +605,38 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 };
 
-export const MultiFilterFieldColorPicker = ({ value }: { value: string }) => {
+export const MultiFilterFieldColorPicker = ({
+  value,
+  label,
+  symbol,
+}: {
+  value: string;
+  label: string;
+  symbol: LegendSymbol;
+}) => {
   const { color, checked, palette, onChange } =
     useMultiFilterColorPicker(value);
 
   return color && checked ? (
-    <ColorPickerMenu
-      colors={palette}
-      selectedColor={color}
-      onChange={onChange}
-    />
+    <Flex
+      sx={{
+        width: "100%",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <LegendItem
+        symbol={symbol}
+        item={label}
+        color={color}
+        usage="colorPicker"
+      />
+      <ColorPickerMenu
+        colors={palette}
+        selectedColor={color}
+        onChange={onChange}
+      />
+    </Flex>
   ) : null;
 };
 
@@ -636,14 +660,16 @@ export const SingleFilterField = ({
 };
 
 export const ColorPickerField = ({
+  symbol = "square",
   field,
   path,
   label,
   disabled,
 }: {
+  symbol?: LegendSymbol;
   field: EncodingFieldType;
   path: string;
-  label: ReactNode;
+  label: string;
   disabled?: boolean;
 }) => {
   const locale = useLocale();
@@ -665,6 +691,7 @@ export const ColorPickerField = ({
   );
 
   const color = get(chartConfig, `fields["${field}"].${path}`);
+  const palette = getPalette(get(chartConfig, `fields["${field}"].palette`));
 
   return (
     <Flex
@@ -674,11 +701,16 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <Label htmlFor="xyz">{label}</Label>
+      <LegendItem
+        item={label}
+        color={color}
+        symbol={symbol}
+        usage="colorPicker"
+      />
       <ColorPickerMenu
-        colors={getPalette()}
+        colors={palette}
         selectedColor={color}
-        onChange={(c) => updateColor(c)}
+        onChange={updateColor}
         disabled={disabled}
       />
     </Flex>

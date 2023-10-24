@@ -1,5 +1,7 @@
 import produce from "immer";
 
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
+import { DEFAULT_CATEGORICAL_PALETTE_NAME } from "@/palettes";
 import { createChartId } from "@/utils/create-chart-id";
 
 type Migration = {
@@ -10,7 +12,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "2.1.0";
+export const CHART_CONFIG_VERSION = "2.2.0";
 
 const chartConfigMigrations: Migration[] = [
   {
@@ -681,6 +683,69 @@ const chartConfigMigrations: Migration[] = [
                   : draft.fields.y.lineComponentIri,
             },
           };
+        }
+      });
+    },
+  },
+  {
+    description: `combo charts {
+      y {
+        + palette
+        + colorMapping
+      }
+    }`,
+    from: "2.1.0",
+    to: "2.2.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "2.2.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (draft.chartType === "comboLineSingle") {
+          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+          draft.fields.y.colorMapping = mapValueIrisToColor({
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            dimensionValues: draft.fields.y.componentIris.map(
+              (iri: string) => ({ value: iri, label: iri })
+            ),
+          });
+        } else if (draft.chartType === "comboLineDual") {
+          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+          draft.fields.y.colorMapping = mapValueIrisToColor({
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            dimensionValues: [
+              draft.fields.y.leftAxisComponentIri,
+              draft.fields.y.rightAxisComponentIri,
+            ].map((iri) => ({
+              value: iri,
+              label: iri,
+            })),
+          });
+        } else if (draft.chartType === "comboLineColumn") {
+          draft.fields.y.palette = DEFAULT_CATEGORICAL_PALETTE_NAME;
+          draft.fields.y.colorMapping = mapValueIrisToColor({
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            dimensionValues: [
+              draft.fields.y.lineComponentIri,
+              draft.fields.y.columnComponentIri,
+            ].map((iri) => ({
+              value: iri,
+              label: iri,
+            })),
+          });
+        }
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.1.0" };
+
+      return produce(newConfig, (draft: any) => {
+        if (
+          ["comboLineSingle", "comboLineDual", "comboLineColumn"].includes(
+            draft.chartType
+          )
+        ) {
+          delete draft.fields.y.palette;
+          delete draft.fields.y.colorMapping;
         }
       });
     },
