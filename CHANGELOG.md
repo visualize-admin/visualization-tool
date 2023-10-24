@@ -10,7 +10,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Performance
-  - Improved performance of data download
+  - Improved the performance of data download
+  - (min|max)Inclusive values stored in `sh:or` are now also retrieved
 - Style
   - Map now outlines shapes on hover, instead of changing their colors
 - Maintenance
