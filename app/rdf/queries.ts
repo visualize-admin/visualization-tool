@@ -220,19 +220,48 @@ export const getCubeDimensionValues = async ({
 }): Promise<DimensionValue[]> => {
   const { dimension, cube, locale, data } = rdimension;
 
-  if (
-    typeof dimension.minInclusive !== "undefined" &&
-    typeof dimension.maxInclusive !== "undefined" &&
-    data.dataKind !== "Time" &&
-    data.scaleType !== "Ordinal"
-  ) {
-    const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
-    const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
+  if (data.dataKind !== "Time" && data.scaleType !== "Ordinal") {
+    if (
+      typeof dimension.minInclusive !== "undefined" &&
+      typeof dimension.maxInclusive !== "undefined"
+    ) {
+      const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
+      const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
 
-    return [
-      { value: min, label: `${min}` },
-      { value: max, label: `${max}` },
-    ];
+      return [
+        { value: min, label: `${min}` },
+        { value: max, label: `${max}` },
+      ];
+    }
+
+    // Try to get min/max values from a list of values.
+    let listItemPointer = dimension.out(ns.sh.or);
+
+    while (
+      listItemPointer.out(ns.rdf.rest).value &&
+      // Only try until we reach the end of the list.
+      !listItemPointer.out(ns.rdf.rest).term?.equals(ns.rdf.nil)
+    ) {
+      const item = listItemPointer.out(ns.rdf.first);
+      const itemMin = item.out(ns.sh.minInclusive);
+      const itemMax = item.out(ns.sh.maxInclusive);
+
+      if (
+        typeof itemMin.value !== "undefined" &&
+        typeof itemMax.value !== "undefined"
+      ) {
+        const min = +itemMin.value;
+        const max = +itemMax.value;
+
+        return [
+          { value: min, label: `${min}` },
+          { value: max, label: `${max}` },
+        ];
+      }
+
+      // Move to next list item.
+      listItemPointer = listItemPointer.out(ns.rdf.rest);
+    }
   }
 
   if (shouldLoadMinMaxValues(rdimension)) {
