@@ -959,7 +959,7 @@ export const DatasetResult = ({
               </Link>
             ))
           : null}
-        {creator ? (
+        {creator && creator.label ? (
           <Link
             key={creator.iri}
             href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
