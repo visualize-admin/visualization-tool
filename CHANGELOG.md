@@ -9,7 +9,12 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - It's now possible to adjust Combo charts colors 🧑‍🎨
+- Fixes
+  - Color picker in now in sync with selected color palette
 - Style
+  - Color picker's design has been adjusted to be more user-friendly
   - Map now outlines shapes on hover, instead of changing their colors
 - Maintenance
   - Added retrieval of dimension units via `qudt:hasUnit` (but kept `qudt:unit` for backward compatibility)
