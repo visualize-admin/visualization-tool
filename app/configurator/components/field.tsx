@@ -583,7 +583,9 @@ const useMultiFilterColorPicker = (value: string) => {
     return getPalette(
       get(
         chartConfig,
-        `fields["${activeField}"].${colorConfigPath ?? ""}.palette`
+        `fields["${activeField}"].${
+          colorConfigPath ? `${colorConfigPath}.` : ""
+        }palette`
       )
     );
   }, [chartConfig, colorConfigPath, activeField]);
