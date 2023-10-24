@@ -2005,3 +2005,26 @@ const convertTableFieldsToSegmentField = ({
     };
   }
 };
+
+export const getChartSymbol = (
+  chartType: ChartType
+): "square" | "line" | "circle" => {
+  switch (chartType) {
+    case "area":
+    case "column":
+    case "comboLineColumn":
+    case "pie":
+    case "map":
+    case "table":
+      return "square";
+    case "comboLineDual":
+    case "comboLineSingle":
+    case "line":
+      return "line";
+    case "scatterplot":
+      return "circle";
+    default:
+      const _exhaustiveCheck: never = chartType;
+      return _exhaustiveCheck;
+  }
+};

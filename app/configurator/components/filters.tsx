@@ -38,6 +38,7 @@ import React, {
   useState,
 } from "react";
 
+import { getChartSymbol } from "@/charts";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
@@ -355,6 +356,7 @@ const MultiFilterContent = ({
   }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -454,20 +456,27 @@ const MultiFilterContent = ({
                 <BreadcrumbChevron key={i} />
               ))}
             </Typography>
-            {children.map((v) => {
+            {children.map(({ value, label }) => {
               return (
                 <Flex
-                  key={v.value}
+                  key={value}
                   className={classes.selectedValueRow}
                   data-testid="chart-filters-value"
                 >
                   {hasColorMapping ? (
-                    <MultiFilterFieldColorPicker value={v.value} />
-                  ) : null}
-                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                    {v?.label}
-                  </Typography>
-                  {hasColorMapping ? null : <SvgIcCheck />}
+                    <MultiFilterFieldColorPicker
+                      value={value}
+                      label={label}
+                      symbol={chartSymbol}
+                    />
+                  ) : (
+                    <>
+                      <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                        {label}
+                      </Typography>
+                      <SvgIcCheck />
+                    </>
+                  )}
                 </Flex>
               );
             })}

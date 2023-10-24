@@ -66,7 +66,7 @@ export const Label = ({
       component="label"
       htmlFor={htmlFor}
       variant={smaller ? "caption" : "body2"}
-      color="secondary"
+      color="secondary.active"
       display="flex"
       sx={sx}
     >

@@ -14,6 +14,7 @@ import {
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
+import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import { GenericField } from "@/config-types";
@@ -754,28 +755,10 @@ const ChartComboLineSingleYField = (
           )}
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SubsectionTitle iconName="color">
-          <Trans id="controls.section.layout-options">Layout options</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: y.componentIris.map((iri) => ({
-                  value: iri,
-                  label: iri,
-                })),
-              } as any as DimensionMetadataFragment
-            }
-          />
-        </ControlSectionContent>
-      </ControlSection>
+      <ComboChartYColorSection
+        values={y.componentIris.map((iri) => ({ iri, symbol: "line" }))}
+        measures={measures}
+      />
     </>
   );
 };
@@ -884,30 +867,13 @@ const ChartComboLineDualYField = (
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SubsectionTitle iconName="color">
-          <Trans id="controls.section.layout-options">Layout options</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: [y.leftAxisComponentIri, y.rightAxisComponentIri].map(
-                  (iri) => ({
-                    value: iri,
-                    label: iri,
-                  })
-                ),
-              } as any as DimensionMetadataFragment
-            }
-          />
-        </ControlSectionContent>
-      </ControlSection>
+      <ComboChartYColorSection
+        values={[
+          { iri: y.leftAxisComponentIri, symbol: "line" },
+          { iri: y.rightAxisComponentIri, symbol: "line" },
+        ]}
+        measures={measures}
+      />
     </>
   );
 };
@@ -1039,32 +1005,69 @@ const ChartComboLineColumnYField = (
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SubsectionTitle iconName="color">
-          <Trans id="controls.section.layout-options">Layout options</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: (y.lineAxisOrientation === "left"
-                  ? [y.lineComponentIri, y.columnComponentIri]
-                  : [y.columnComponentIri, y.lineComponentIri]
-                ).map((iri) => ({
-                  value: iri,
-                  label: iri,
-                })),
-              } as any as DimensionMetadataFragment
-            }
-          />
-        </ControlSectionContent>
-      </ControlSection>
+      <ComboChartYColorSection
+        values={
+          y.lineAxisOrientation === "left"
+            ? [
+                { iri: y.lineComponentIri, symbol: "line" },
+                { iri: y.columnComponentIri, symbol: "square" },
+              ]
+            : [
+                { iri: y.columnComponentIri, symbol: "square" },
+                { iri: y.lineComponentIri, symbol: "line" },
+              ]
+        }
+        measures={measures}
+      />
     </>
+  );
+};
+
+type ComboChartYColorSectionProps = {
+  values: { iri: string; symbol: LegendSymbol }[];
+  measures: DimensionMetadataFragment[];
+};
+
+const ComboChartYColorSection = (props: ComboChartYColorSectionProps) => {
+  const { values, measures } = props;
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="color">
+        <Trans id="controls.section.layout-options">Layout options</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+        <ColorPalette
+          field="y"
+          // Faking a component here, because we don't have a real one.
+          // We use measure iris as dimension values, because that's how
+          // the color mapping is done.
+          component={
+            {
+              __typename: "",
+              values: values.map(({ iri }) => ({
+                value: iri,
+                label: iri,
+              })),
+            } as any as DimensionMetadataFragment
+          }
+        />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}>
+          {values.map(({ iri, symbol }) => {
+            return (
+              <Box key={iri}>
+                <ColorPickerField
+                  field="y"
+                  path={`colorMapping["${iri}"]`}
+                  label={measures.find((d) => d.iri === iri)!.label}
+                  symbol={symbol}
+                />
+              </Box>
+            );
+          })}
+        </Box>
+      </ControlSectionContent>
+    </ControlSection>
   );
 };
 

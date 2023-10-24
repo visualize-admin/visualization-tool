@@ -33,6 +33,8 @@ import useEvent from "@/utils/use-event";
 
 export type LegendSymbol = "square" | "line" | "circle";
 
+export type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
+
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
     position: "relative",
@@ -66,7 +68,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 type ItemStyleProps = {
   symbol: LegendSymbol;
   color: string;
-  usage: "legend" | "tooltip";
+  usage: LegendItemUsage;
 };
 
 const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
@@ -74,25 +76,29 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
     position: "relative",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    fontWeight: theme.typography.fontWeightRegular,
-    color: theme.palette.grey[700],
     fontSize: ({ usage }) =>
-      usage === "legend"
+      ["legend", "colorPicker"].includes(usage)
         ? theme.typography.body2.fontSize
         : theme.typography.caption.fontSize,
+    fontWeight: theme.typography.fontWeightRegular,
+    color: theme.palette.grey[700],
 
     "&::before": {
       content: "''",
       position: "relative",
       display: "block",
-      width: ".5rem",
-      marginTop: ({ symbol }: ItemStyleProps) =>
-        symbol === "line" ? "0.75rem" : "0.5rem",
+      width: ({ usage }) => (usage === "colorPicker" ? "0.75rem" : "0.5rem"),
+      height: ({ symbol, usage }: ItemStyleProps) =>
+        `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${
+          usage === "colorPicker" ? 1.5 : 1
+        })`,
+      marginTop: ({ symbol, usage }: ItemStyleProps) =>
+        `calc(0.75rem - calc(${
+          ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
+        } * ${usage === "colorPicker" ? 1.5 : 1}) * 0.5)`,
       marginRight: "0.5rem",
       flexShrink: 0,
       backgroundColor: ({ color }: ItemStyleProps) => color,
-      height: ({ symbol }: ItemStyleProps) =>
-        symbol === "square" || symbol === "circle" ? `.5rem` : 2,
       borderRadius: ({ symbol }: ItemStyleProps) =>
         symbol === "circle" ? "50%" : 0,
     },
@@ -376,7 +382,7 @@ type LegendItemProps = {
   onToggle?: CheckboxProps["onChange"];
   checked?: boolean;
   disabled?: boolean;
-  usage?: "legend" | "tooltip";
+  usage?: LegendItemUsage;
 };
 
 export const LegendItem = (props: LegendItemProps) => {
@@ -392,37 +398,33 @@ export const LegendItem = (props: LegendItemProps) => {
   } = props;
   const classes = useItemStyles({ symbol, color, usage });
 
-  return (
-    <>
-      {interactive && onToggle ? (
-        <MaybeTooltip
-          text={
-            disabled
-              ? t({
-                  id: "controls.filters.interactive.color.min-1-filter",
-                  message: "At least one filter must be selected.",
-                })
-              : undefined
-          }
-        >
-          <div>
-            <Checkbox
-              label={item}
-              name={item}
-              value={item}
-              checked={checked !== undefined ? checked : true}
-              onChange={onToggle}
-              key={item}
-              color={color}
-              className={classes.legendCheckbox}
-            />
-          </div>
-        </MaybeTooltip>
-      ) : (
-        <Flex data-testid="legendItem" className={classes.legendItem}>
-          {item}
-        </Flex>
-      )}
-    </>
+  return interactive && onToggle ? (
+    <MaybeTooltip
+      text={
+        disabled
+          ? t({
+              id: "controls.filters.interactive.color.min-1-filter",
+              message: "At least one filter must be selected.",
+            })
+          : undefined
+      }
+    >
+      <div>
+        <Checkbox
+          label={item}
+          name={item}
+          value={item}
+          checked={checked !== undefined ? checked : true}
+          onChange={onToggle}
+          key={item}
+          color={color}
+          className={classes.legendCheckbox}
+        />
+      </div>
+    </MaybeTooltip>
+  ) : (
+    <Flex data-testid="legendItem" className={classes.legendItem}>
+      {item}
+    </Flex>
   );
 };
