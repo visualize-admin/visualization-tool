@@ -475,24 +475,3 @@ query DimensionHierarchy(
     }
   }
 }
-
-query DatasetCount(
-  $sourceType: String!
-  $sourceUrl: String!
-  $theme: String
-  $organization: String
-  $subtheme: String
-  $includeDrafts: Boolean
-) {
-  datasetcount(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    theme: $theme
-    organization: $organization
-    subtheme: $subtheme
-    includeDrafts: $includeDrafts
-  ) {
-    count
-    iri
-  }
-}

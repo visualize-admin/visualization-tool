@@ -351,11 +351,6 @@ enum DataCubeResultOrder {
   CREATED_DESC
 }
 
-type DatasetCount {
-  iri: String!
-  count: Int!
-}
-
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
@@ -400,12 +395,4 @@ type Query {
     sourceUrl: String!
     locale: String!
   ): [DataCubeOrganization!]!
-  datasetcount(
-    sourceType: String!
-    sourceUrl: String!
-    theme: String
-    organization: String
-    subtheme: String
-    includeDrafts: Boolean
-  ): [DatasetCount!]
 }

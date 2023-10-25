@@ -58,7 +58,6 @@ import {
   useBrowseContext,
 } from "./context";
 import { BrowseFilter } from "./filters";
-import useDatasetCount from "./use-dataset-count";
 
 export const SearchDatasetInput = ({
   browseState,
@@ -433,7 +432,7 @@ export const Subthemes = ({
 }: {
   organization: DataCubeOrganization;
   filters: BrowseFilter[];
-  counts: ReturnType<typeof useDatasetCount>;
+  counts: Record<string, number>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
   const { dataSource } = useDataSourceStore();
@@ -606,7 +605,7 @@ const NavSection = ({
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
-  const { filters, search, includeDrafts } = useBrowseContext();
+  const { filters } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: {
       sourceType: dataSource.type,
@@ -622,29 +621,23 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     },
   });
 
-  const allCounts = useDatasetCount(filters, includeDrafts);
-  const resultsCounts = useMemo(() => {
+  const counts = useMemo(() => {
     if (!data?.dataCubes) {
       return {};
-    } else {
-      const res = {} as Record<string, number>;
-      for (const cube of data.dataCubes) {
-        const countables = [
-          ...cube.dataCube.themes,
-          cube.dataCube.creator,
-        ].filter(truthy);
-        for (const item of countables) {
-          res[item.iri] = res[item.iri] || 0;
-          res[item.iri] += 1;
-        }
-      }
-      return res;
     }
-  }, [data]);
-  const total = Object.values(resultsCounts).reduce((acc, n) => acc + n, 0);
 
-  const counts =
-    search && search != "" && total > 0 ? resultsCounts : allCounts;
+    const result: Record<string, number> = {};
+
+    for (const { dataCube } of data.dataCubes) {
+      const countables = [...dataCube.themes, dataCube.creator].filter(truthy);
+
+      for (const { iri } of countables) {
+        result[iri] = (result[iri] ?? 0) + 1;
+      }
+    }
+
+    return result;
+  }, [data?.dataCubes]);
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -662,12 +655,15 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     if (!theme.label) {
       return false;
     }
+
     if (!counts[theme.iri]) {
       return false;
     }
+
     if (themeFilter && themeFilter !== theme) {
       return false;
     }
+
     return true;
   });
 
@@ -675,12 +671,15 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     if (!org.label) {
       return false;
     }
+
     if (!counts[org.iri] && orgFilter !== org) {
       return false;
     }
+
     if (orgFilter && orgFilter !== org) {
       return false;
     }
+
     return true;
   });
 
@@ -727,7 +726,9 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         }
       />
     ) : null;
+
   let navs = [themeNav, orgNav];
+
   if (filters[0]?.__typename === "DataCubeTheme") {
     navs = [themeNav, orgNav];
   } else if (filters[0]?.__typename === "DataCubeOrganization") {
@@ -745,7 +746,6 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       role="search"
       key={filters.length}
     >
-      {/* Theme tree */}
       <Stack spacing={5}>
         {navs[0]}
         {navs[1]}
@@ -762,6 +762,7 @@ export const DatasetResults = ({
   query: UseQueryState<DataCubesQuery>;
 }) => {
   const { fetching, data, error } = query;
+
   if (fetching) {
     return (
       <Box sx={{ alignItems: "center" }}>

@@ -24,9 +24,6 @@ import {
   loadOrganizations,
   loadSubthemes,
   loadThemes,
-  queryDatasetCountByOrganization,
-  queryDatasetCountBySubTheme,
-  queryDatasetCountByTheme,
 } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
@@ -69,7 +66,6 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
   info
 ) => {
   const { sparqlClient, sparqlClientStream } = await setup(info);
-
   const { candidates, meta } = await searchCubes({
     locale,
     includeDrafts,
@@ -79,11 +75,12 @@ export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
     sparqlClientStream,
   });
 
-  for (let query of meta.queries) {
+  for (const query of meta.queries) {
     queries.push(query);
   }
 
   sortResults(candidates, order, locale);
+
   return candidates;
 };
 
@@ -171,32 +168,6 @@ export const organizations: NonNullable<QueryResolvers["organizations"]> =
     const { sparqlClient } = await setup(info);
     return (await loadOrganizations({ locale, sparqlClient })).filter(truthy);
   };
-
-export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> = async (
-  _,
-  { organization, theme, includeDrafts },
-  { setup },
-  info
-) => {
-  const { sparqlClient } = await setup(info);
-  const byOrg = await queryDatasetCountByOrganization({
-    theme: theme || undefined,
-    includeDrafts: includeDrafts ?? undefined,
-    sparqlClient,
-  });
-  const byTheme = await queryDatasetCountByTheme({
-    organization: organization || undefined,
-    includeDrafts: includeDrafts ?? undefined,
-    sparqlClient,
-  });
-  const bySubTheme = await queryDatasetCountBySubTheme({
-    theme: theme || undefined,
-    organization: organization || undefined,
-    includeDrafts: includeDrafts ?? undefined,
-    sparqlClient,
-  });
-  return [...byOrg, ...byTheme, ...bySubTheme];
-};
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {

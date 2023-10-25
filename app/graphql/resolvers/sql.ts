@@ -175,11 +175,6 @@ export const organizations: NonNullable<QueryResolvers["organizations"]> =
     return [];
   };
 
-export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> =
-  async () => {
-    return [];
-  };
-
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube }) => {
     // FIXME: type of cube should be different for RDF and SQL.

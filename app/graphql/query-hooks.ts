@@ -118,12 +118,6 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
-export type DatasetCount = {
-  __typename: 'DatasetCount';
-  iri: Scalars['String'];
-  count: Scalars['Int'];
-};
-
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -394,7 +388,6 @@ export type Query = {
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
-  datasetcount?: Maybe<Array<DatasetCount>>;
 };
 
 
@@ -448,16 +441,6 @@ export type QueryOrganizationsArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
-};
-
-
-export type QueryDatasetcountArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  theme?: Maybe<Scalars['String']>;
-  organization?: Maybe<Scalars['String']>;
-  subtheme?: Maybe<Scalars['String']>;
-  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1146,18 +1129,6 @@ export type DimensionHierarchyQuery = { __typename: 'Query', dataCubeByIri?: May
       & HierarchyMetadata_TemporalOrdinalDimension_Fragment
     )> }> };
 
-export type DatasetCountQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  theme?: Maybe<Scalars['String']>;
-  organization?: Maybe<Scalars['String']>;
-  subtheme?: Maybe<Scalars['String']>;
-  includeDrafts?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type DatasetCountQuery = { __typename: 'Query', datasetcount?: Maybe<Array<{ __typename: 'DatasetCount', count: number, iri: string }>> };
-
 export const DimensionMetadataFragmentDoc = gql`
     fragment dimensionMetadata on Dimension {
   iri
@@ -1615,23 +1586,4 @@ export const DimensionHierarchyDocument = gql`
 
 export function useDimensionHierarchyQuery(options: Omit<Urql.UseQueryArgs<DimensionHierarchyQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DimensionHierarchyQuery>({ query: DimensionHierarchyDocument, ...options });
-};
-export const DatasetCountDocument = gql`
-    query DatasetCount($sourceType: String!, $sourceUrl: String!, $theme: String, $organization: String, $subtheme: String, $includeDrafts: Boolean) {
-  datasetcount(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    theme: $theme
-    organization: $organization
-    subtheme: $subtheme
-    includeDrafts: $includeDrafts
-  ) {
-    count
-    iri
-  }
-}
-    `;
-
-export function useDatasetCountQuery(options: Omit<Urql.UseQueryArgs<DatasetCountQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DatasetCountQuery>({ query: DatasetCountDocument, ...options });
 };

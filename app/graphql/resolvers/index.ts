@@ -43,10 +43,6 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.organizations(parent, args, context, info);
   },
-  datasetcount: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.datasetcount(parent, args, context, info);
-  },
 };
 
 const DataCube: DataCubeResolvers = {

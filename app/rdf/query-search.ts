@@ -103,14 +103,14 @@ export const searchCubes = async ({
 
   // Search cubeIris along with their score
   const themeValues =
-    filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ||
+    filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ??
     [];
   const creatorValues =
     filters
       ?.filter((x) => x.type === "DataCubeOrganization")
-      .map((v) => v.value) || [];
+      .map((v) => v.value) ?? [];
   const aboutValues =
-    filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ||
+    filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ??
     [];
 
   const scoresQuery = SELECT.DISTINCT`?lang ?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
