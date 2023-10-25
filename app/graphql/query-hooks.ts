@@ -2,6 +2,8 @@ import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
+import { SearchCubeCreator } from '../domain/data';
+import { SearchCubeThemes } from '../domain/data';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -22,6 +24,8 @@ export type Scalars = {
   GeoShapes: any;
   Observation: Observation;
   RawObservation: RawObservation;
+  SearchCubeCreator: SearchCubeCreator;
+  SearchCubeThemes: SearchCubeThemes;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -443,11 +447,12 @@ export type SearchCube = {
   iri: Scalars['String'];
   title: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  creator?: Maybe<DataCubeOrganization>;
+  creator?: Maybe<Scalars['SearchCubeCreator']>;
   publicationStatus: DataCubePublicationStatus;
   datePublished?: Maybe<Scalars['String']>;
-  themes: Array<DataCubeTheme>;
+  themes: Scalars['SearchCubeThemes'];
 };
+
 
 export type SearchCubeFilter = {
   type: Scalars['String'];
@@ -467,6 +472,7 @@ export enum SearchCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
 
 export type StandardErrorDimension = Dimension & {
   __typename: 'StandardErrorDimension';
@@ -832,7 +838,7 @@ export type SearchCubesQueryVariables = Exact<{
 }>;
 
 
-export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: { __typename: 'SearchCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
+export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: { __typename: 'SearchCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<SearchCubeCreator>, themes: SearchCubeThemes } }> };
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1255,14 +1261,8 @@ export const SearchCubesDocument = gql`
       description
       publicationStatus
       datePublished
-      creator {
-        iri
-        label
-      }
-      themes {
-        iri
-        label
-      }
+      creator
+      themes
     }
   }
 }

@@ -323,14 +323,17 @@ type OrdinalMeasure implements Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
+scalar SearchCubeCreator
+scalar SearchCubeThemes
+
 type SearchCube {
   iri: String!
   title: String!
   description: String
-  creator: DataCubeOrganization
+  creator: SearchCubeCreator
   publicationStatus: DataCubePublicationStatus!
   datePublished: String
-  themes: [DataCubeTheme!]!
+  themes: SearchCubeThemes!
 }
 
 type SearchCubeResult {

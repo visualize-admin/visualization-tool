@@ -105,14 +105,8 @@ query SearchCubes(
       description
       publicationStatus
       datePublished
-      creator {
-        iri
-        label
-      }
-      themes {
-        iri
-        label
-      }
+      creator
+      themes
     }
   }
 }

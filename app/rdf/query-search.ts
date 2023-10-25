@@ -5,6 +5,7 @@ import { Literal, NamedNode } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
+import { SearchCubeCreator, SearchCubeThemes } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
@@ -307,10 +308,12 @@ export const searchCubes = async ({
         }
 
         if (!parsedCube.creator && cube.creator) {
-          parsedCube.creator = {
+          const creator: SearchCubeCreator = {
             iri: cube.creator,
             label: cube.creatorLabel,
           };
+
+          parsedCube.creator = creator;
         }
 
         if (!parsedCube.datePublished) {
@@ -326,9 +329,9 @@ export const searchCubes = async ({
         }
 
         if (cube.theme || cube.themeName) {
-          parsedCube.themes.push({
+          (parsedCube.themes as SearchCubeThemes).push({
             iri: cube.theme,
-            name: cube.themeName,
+            label: cube.themeName,
           });
         }
       }

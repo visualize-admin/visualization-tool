@@ -70,6 +70,17 @@ export type GeoData = {
   symbolLayer: SymbolLayer | undefined;
 };
 
+// Extracted for performance reasons.
+export type SearchCubeCreator = {
+  iri: string;
+  label: string;
+};
+
+export type SearchCubeThemes = {
+  iri: string;
+  label: string;
+}[];
+
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;

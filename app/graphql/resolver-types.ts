@@ -2,6 +2,8 @@ import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
+import { SearchCubeCreator } from '../domain/data';
+import { SearchCubeThemes } from '../domain/data';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { ResolvedDataCube, ResolvedObservationsQuery, ResolvedMeasure, ResolvedDimension } from './shared-types';
 import { VisualizeGraphQLContext } from './context';
@@ -23,6 +25,8 @@ export type Scalars = {
   GeoShapes: any;
   Observation: Observation;
   RawObservation: RawObservation;
+  SearchCubeCreator: SearchCubeCreator;
+  SearchCubeThemes: SearchCubeThemes;
   ValueIdentifier: any;
   ValuePosition: any;
 };
@@ -444,11 +448,12 @@ export type SearchCube = {
   iri: Scalars['String'];
   title: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  creator?: Maybe<DataCubeOrganization>;
+  creator?: Maybe<Scalars['SearchCubeCreator']>;
   publicationStatus: DataCubePublicationStatus;
   datePublished?: Maybe<Scalars['String']>;
-  themes: Array<DataCubeTheme>;
+  themes: Scalars['SearchCubeThemes'];
 };
+
 
 export type SearchCubeFilter = {
   type: Scalars['String'];
@@ -468,6 +473,7 @@ export enum SearchCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
 
 export type StandardErrorDimension = Dimension & {
   __typename?: 'StandardErrorDimension';
@@ -669,9 +675,11 @@ export type ResolversTypes = ResolversObject<{
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
   ScaleType: ScaleType;
   SearchCube: ResolverTypeWrapper<SearchCube>;
+  SearchCubeCreator: ResolverTypeWrapper<Scalars['SearchCubeCreator']>;
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
   SearchCubeResultOrder: SearchCubeResultOrder;
+  SearchCubeThemes: ResolverTypeWrapper<Scalars['SearchCubeThemes']>;
   StandardErrorDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TemporalOrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -710,8 +718,10 @@ export type ResolversParentTypes = ResolversObject<{
   RawObservation: Scalars['RawObservation'];
   RelatedDimension: RelatedDimension;
   SearchCube: SearchCube;
+  SearchCubeCreator: Scalars['SearchCubeCreator'];
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: SearchCubeResult;
+  SearchCubeThemes: Scalars['SearchCubeThemes'];
   StandardErrorDimension: ResolvedDimension;
   TemporalDimension: ResolvedDimension;
   TemporalOrdinalDimension: ResolvedDimension;
@@ -956,12 +966,16 @@ export type SearchCubeResolvers<ContextType = VisualizeGraphQLContext, ParentTyp
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  creator?: Resolver<Maybe<ResolversTypes['DataCubeOrganization']>, ParentType, ContextType>;
+  creator?: Resolver<Maybe<ResolversTypes['SearchCubeCreator']>, ParentType, ContextType>;
   publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType>;
+  themes?: Resolver<ResolversTypes['SearchCubeThemes'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
+
+export interface SearchCubeCreatorScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SearchCubeCreator'], any> {
+  name: 'SearchCubeCreator';
+}
 
 export type SearchCubeResultResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['SearchCubeResult'] = ResolversParentTypes['SearchCubeResult']> = ResolversObject<{
   score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -970,6 +984,10 @@ export type SearchCubeResultResolvers<ContextType = VisualizeGraphQLContext, Par
   highlightedDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
+
+export interface SearchCubeThemesScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SearchCubeThemes'], any> {
+  name: 'SearchCubeThemes';
+}
 
 export type StandardErrorDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['StandardErrorDimension'] = ResolversParentTypes['StandardErrorDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1054,7 +1072,9 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   RawObservation?: GraphQLScalarType;
   RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   SearchCube?: SearchCubeResolvers<ContextType>;
+  SearchCubeCreator?: GraphQLScalarType;
   SearchCubeResult?: SearchCubeResultResolvers<ContextType>;
+  SearchCubeThemes?: GraphQLScalarType;
   StandardErrorDimension?: StandardErrorDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
   TemporalOrdinalDimension?: TemporalOrdinalDimensionResolvers<ContextType>;
