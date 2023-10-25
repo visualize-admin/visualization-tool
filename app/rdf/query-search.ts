@@ -5,7 +5,7 @@ import { Literal, NamedNode } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { Awaited, truthy } from "@/domain/types";
+import { truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
   DataCubePublicationStatus,
@@ -178,13 +178,6 @@ export const searchCubes = async ({
       ?theme ${ns.schema.name} ?themeName.
     `)}
     
-    ${(creatorValues.length > 0 ? identity : optional)(
-      sparql`
-      ?iri ${ns.dcterms.creator} ?creator.
-      ?creator ${ns.schema.name} ?creatorLabel. 
-      `
-    )}
-    
     ${makeVisualizeDatasetFilter({
       includeDrafts: !!includeDrafts,
       cubeIriVar: "?iri",
@@ -195,8 +188,19 @@ export const searchCubes = async ({
     ${makeInFilter("creator", creatorValues)}
 
     FILTER(!BOUND(?description) || ?lang = LANG(?description))
-    FILTER(!BOUND(?creatorLabel) || ?lang = LANG(?creatorLabel))
     FILTER(!BOUND(?themeName) || ?lang = LANG(?themeName))
+
+    ${(creatorValues.length > 0 ? identity : optional)(sparql`
+      ?iri ${ns.dcterms.creator} ?creator .
+      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        ?creator a ${ns.schema.Organization} ;
+          ${ns.schema.inDefinedTermSet} <https://register.ld.admin.ch/opendataswiss/org> .
+        OPTIONAL {
+          ?creator ${ns.schema.name} ?creatorLabel .
+          FILTER(!BOUND(?creatorLabel) || LANG(?creatorLabel) = ?lang)
+        }
+      }
+    `)}
 
       ${
         query
