@@ -1,21 +1,19 @@
+import { ParsedRawSearchCube } from "./query-search";
+
 export const parseFloatZeroed = (s: string) => {
   const n = parseFloat(s);
-  if (Number.isNaN(n)) {
-    return 0;
-  } else {
-    return n;
-  }
+  return Number.isNaN(n) ? 0 : n;
 };
 
 export const weights = {
-  name: 5,
+  title: 5,
   description: 2,
   themeName: 1,
   publisher: 1,
   creatorLabel: 1,
 };
 export const langMultiplier = 1.5;
-export const exactMatchPoints = weights["name"] * 2;
+export const exactMatchPoints = weights.title * 2;
 
 const isStopword = (d: string) => {
   return d.length < 3 && d.toLowerCase() === d;
@@ -25,63 +23,67 @@ const isStopword = (d: string) => {
  * From a list of cube rows containing weighted fields
  */
 export const computeScores = (
-  scoresRaw: any[],
+  cubes: ParsedRawSearchCube[],
   {
     query,
-    identifierName,
-    lang,
+    locale,
   }: {
     query?: string | null;
-    identifierName: string;
-    lang?: string | null;
+    locale?: string | null;
   }
 ) => {
-  const infoPerCube = {} as Record<string, { score: number }>;
-  if (query) {
-    for (let scoreRow of scoresRaw) {
-      let score = 0;
-      for (let [field, weight] of Object.entries(weights)) {
-        const val = scoreRow[field]?.toLowerCase();
+  const infoPerCube: Record<string, { score: number }> = {};
 
-        if (!val) {
+  if (query) {
+    for (const cube of cubes) {
+      let score = 0;
+
+      for (const [field, weight] of Object.entries(weights) as [
+        keyof typeof weights,
+        number
+      ][]) {
+        const value = cube[field]?.toLowerCase();
+
+        if (!value) {
           continue;
         }
 
-        for (let tok of query.split(" ").filter((d) => !isStopword(d))) {
-          if (val.includes(tok.toLowerCase())) {
+        for (const token of query.split(" ").filter((d) => !isStopword(d))) {
+          if (value.includes(token.toLowerCase())) {
             score += weight;
           }
         }
 
         // Bonus points for exact match.
-        if (val.includes(query.toLowerCase())) {
+        if (value.includes(query.toLowerCase())) {
           score += exactMatchPoints;
         }
       }
 
       // Cubes with properties in the current language get a bonus,
       // as generally we expect the user to be interested in those.
-      if (scoreRow["lang"] === lang) {
+      if (cube.lang === locale) {
         score *= langMultiplier;
       }
 
       if (
-        infoPerCube[scoreRow[identifierName]] === undefined ||
-        score > infoPerCube[scoreRow[identifierName]].score
+        infoPerCube[cube.iri] === undefined ||
+        score > infoPerCube[cube.iri].score
       ) {
-        infoPerCube[scoreRow[identifierName]] = { score };
+        infoPerCube[cube.iri] = { score };
       }
     }
-    for (let k of Object.keys(infoPerCube)) {
+    for (const k of Object.keys(infoPerCube)) {
       if (infoPerCube[k]?.score === 0) {
         delete infoPerCube[k];
       }
     }
   } else {
-    for (let scoreRow of scoresRaw) {
-      infoPerCube[scoreRow[identifierName]] = { score: 1 };
+    for (const cube of cubes) {
+      infoPerCube[cube.iri] = { score: 1 };
     }
   }
+
   return infoPerCube;
 };
 

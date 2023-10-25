@@ -10,14 +10,9 @@ import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  KeyboardEventHandler,
-} from "react";
+import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
-import { DataCubeSearchFilter, useDataCubesQuery } from "@/graphql/query-hooks";
+import { SearchCubeFilter, useSearchCubesQuery } from "@/graphql/query-hooks";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 
 const territoryTheme = {
@@ -56,7 +51,7 @@ const Search = ({
 }: {
   query: string;
   locale: string;
-  filters: (DataCubeSearchFilter & { name: string })[];
+  filters: (SearchCubeFilter & { name: string })[];
   includeDrafts: boolean;
   sourceUrl: string;
 }) => {
@@ -67,10 +62,10 @@ const Search = ({
     startTimeRef.current = Date.now();
   }, [query, locale, includeDrafts]);
 
-  const [cubes] = useDataCubesQuery({
+  const [cubes] = useSearchCubesQuery({
     variables: {
-      locale: locale,
-      query: query,
+      locale,
+      query,
       filters: filters.map(({ type, value }) => ({ type, value })),
       includeDrafts,
       sourceUrl,
@@ -108,9 +103,9 @@ const Search = ({
         <div>
           <Typography
             variant="caption"
-            color={cubes.data?.dataCubes.length === 0 ? "error" : undefined}
+            color={cubes.data?.searchCubes.length === 0 ? "error" : undefined}
           >
-            {cubes.data?.dataCubes.length} results |{" "}
+            {cubes.data?.searchCubes.length} results |{" "}
           </Typography>
           <Typography
             variant="caption"
@@ -125,31 +120,32 @@ const Search = ({
       ) : null}
 
       <Stack spacing={4}>
-        {cubes.data?.dataCubes.map((c) => {
-          return (
-            <div key={c.dataCube.iri}>
-              <Typography
-                variant="h6"
-                dangerouslySetInnerHTML={{ __html: c.highlightedTitle! }}
-              />
-              <Typography
-                variant="caption"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    c?.highlightedDescription?.slice(0, 100) ?? "" + "...",
-                }}
-              />
-              <br />
-              <Typography variant="caption">{c?.dataCube?.iri}</Typography>
-              <Stack spacing={2} direction="row">
-                {c?.dataCube.themes.map((t) => (
-                  <Chip key={t.iri} size="small" label={t.label} />
-                ))}
-                <Chip size="small" label={c?.dataCube.publicationStatus} />
-              </Stack>
-            </div>
-          );
-        })}
+        {cubes.data?.searchCubes.map(
+          ({ cube, highlightedTitle, highlightedDescription }) => {
+            return (
+              <div key={cube.iri}>
+                <Typography
+                  variant="h6"
+                  dangerouslySetInnerHTML={{ __html: highlightedTitle! }}
+                />
+                <Typography
+                  variant="caption"
+                  dangerouslySetInnerHTML={{
+                    __html: highlightedDescription?.slice(0, 100) ?? "" + "...",
+                  }}
+                />
+                <br />
+                <Typography variant="caption">{cube.iri}</Typography>
+                <Stack spacing={2} direction="row">
+                  {cube.themes.map((t) => (
+                    <Chip key={t.iri} size="small" label={t.label} />
+                  ))}
+                  <Chip size="small" label={cube.publicationStatus} />
+                </Stack>
+              </div>
+            );
+          }
+        )}
       </Stack>
       <Accordion sx={{ mt: 2, borderTop: 0 }}>
         <AccordionSummary sx={{ typography: "h4" }}>queries</AccordionSummary>

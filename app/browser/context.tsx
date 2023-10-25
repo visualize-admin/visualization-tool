@@ -8,7 +8,7 @@ import { Router, useRouter } from "next/router";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  DataCubeResultOrder,
+  SearchCubeResultOrder,
   useOrganizationsQuery,
   useThemesQuery,
 } from "@/graphql/query-hooks";
@@ -156,13 +156,13 @@ export const useBrowseState = () => {
   const setIncludeDrafts = useEvent((v: boolean) =>
     setParams({ includeDrafts: v })
   );
-  const setOrder = useEvent((v: DataCubeResultOrder) =>
+  const setOrder = useEvent((v: SearchCubeResultOrder) =>
     setParams({ order: v })
   );
   const setDataset = useEvent((v: string) => setParams({ dataset: v }));
 
-  const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.Score
+  const previousOrderRef = useRef<SearchCubeResultOrder>(
+    SearchCubeResultOrder.Score
   );
 
   return useMemo(
@@ -171,20 +171,20 @@ export const useBrowseState = () => {
       includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
-        setParams({ search: "", order: DataCubeResultOrder.CreatedDesc });
+        setParams({ search: "", order: SearchCubeResultOrder.CreatedDesc });
       },
       onSubmitSearch: (newSearch: string) => {
         setParams({
           search: newSearch,
           order:
             newSearch === ""
-              ? DataCubeResultOrder.CreatedDesc
+              ? SearchCubeResultOrder.CreatedDesc
               : previousOrderRef.current,
         });
       },
       search,
       order,
-      onSetOrder: (order: DataCubeResultOrder) => {
+      onSetOrder: (order: SearchCubeResultOrder) => {
         previousOrderRef.current = order;
         setOrder(order);
       },

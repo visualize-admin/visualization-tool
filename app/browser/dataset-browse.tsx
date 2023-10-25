@@ -36,9 +36,9 @@ import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
-  DataCubeResultOrder,
-  DataCubesQuery,
   DataCubeTheme,
+  SearchCubeResultOrder,
+  SearchCubesQuery,
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
@@ -119,7 +119,7 @@ export const SearchDatasetControls = ({
   searchResult,
 }: {
   browseState: BrowseState;
-  searchResult: Maybe<DataCubesQuery>;
+  searchResult: Maybe<SearchCubesQuery>;
 }) => {
   const {
     inputRef,
@@ -131,18 +131,18 @@ export const SearchDatasetControls = ({
     onSetOrder,
   } = browseState;
 
-  const order = stateOrder || DataCubeResultOrder.CreatedDesc;
+  const order = stateOrder || SearchCubeResultOrder.CreatedDesc;
   const options = [
     {
-      value: DataCubeResultOrder.Score,
+      value: SearchCubeResultOrder.Score,
       label: t({ id: "dataset.order.relevance", message: `Relevance` }),
     },
     {
-      value: DataCubeResultOrder.TitleAsc,
+      value: SearchCubeResultOrder.TitleAsc,
       label: t({ id: "dataset.order.title", message: `Title` }),
     },
     {
-      value: DataCubeResultOrder.CreatedDesc,
+      value: SearchCubeResultOrder.CreatedDesc,
       label: t({ id: "dataset.order.newest", message: `Newest` }),
     },
   ];
@@ -166,10 +166,10 @@ export const SearchDatasetControls = ({
         aria-live="polite"
         data-testid="search-results-count"
       >
-        {searchResult && searchResult.dataCubes.length > 0 && (
+        {searchResult && searchResult.searchCubes.length > 0 && (
           <Plural
             id="dataset.results"
-            value={searchResult.dataCubes.length}
+            value={searchResult.searchCubes.length}
             zero="No datasets"
             one="# dataset"
             other="# datasets"
@@ -203,7 +203,7 @@ export const SearchDatasetControls = ({
           data-testid="datasetSort"
           options={isSearching ? options : options.slice(1)}
           onChange={(e) => {
-            onSetOrder(e.target.value as DataCubeResultOrder);
+            onSetOrder(e.target.value as SearchCubeResultOrder);
           }}
         />
       </Flex>
@@ -602,7 +602,7 @@ const NavSection = ({
   );
 };
 
-export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
+export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const { filters } = useBrowseContext();
@@ -622,22 +622,24 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   });
 
   const counts = useMemo(() => {
-    if (!data?.dataCubes) {
+    if (!data?.searchCubes) {
       return {};
     }
 
     const result: Record<string, number> = {};
 
-    for (const { dataCube } of data.dataCubes) {
-      const countables = [...dataCube.themes, dataCube.creator].filter(truthy);
+    for (const { cube } of data.searchCubes) {
+      const countables = [...cube.themes, cube.creator].filter(truthy);
 
       for (const { iri } of countables) {
-        result[iri] = (result[iri] ?? 0) + 1;
+        if (iri) {
+          result[iri] = (result[iri] ?? 0) + 1;
+        }
       }
     }
 
     return result;
-  }, [data?.dataCubes]);
+  }, [data?.searchCubes]);
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -755,11 +757,9 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
 };
 
 export const DatasetResults = ({
-  resultProps,
   query,
 }: {
-  resultProps?: Partial<ResultProps>;
-  query: UseQueryState<DataCubesQuery>;
+  query: UseQueryState<SearchCubesQuery>;
 }) => {
   const { fetching, data, error } = query;
 
@@ -779,7 +779,7 @@ export const DatasetResults = ({
     );
   }
 
-  if ((data && data.dataCubes.length === 0) || !data) {
+  if ((data && data.searchCubes.length === 0) || !data) {
     return (
       <Typography
         variant="h2"
@@ -792,12 +792,11 @@ export const DatasetResults = ({
 
   return (
     <>
-      {data.dataCubes.map(
-        ({ dataCube, highlightedTitle, highlightedDescription }) => (
+      {data.searchCubes.map(
+        ({ cube, highlightedTitle, highlightedDescription }) => (
           <DatasetResult
-            {...resultProps}
-            key={dataCube.iri}
-            dataCube={dataCube}
+            key={cube.iri}
+            dataCube={cube}
             highlightedTitle={highlightedTitle}
             highlightedDescription={highlightedDescription}
           />
@@ -838,7 +837,7 @@ export const DateFormat = ({ date }: { date: string }) => {
 
 type ResultProps = {
   dataCube: Pick<
-    DataCubesQuery["dataCubes"][0]["dataCube"],
+    SearchCubesQuery["searchCubes"][0]["cube"],
     | "iri"
     | "publicationStatus"
     | "title"

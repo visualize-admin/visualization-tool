@@ -79,16 +79,16 @@ fragment hierarchyMetadata on Dimension {
   }
 }
 
-query DataCubes(
+query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
   $query: String
-  $order: DataCubeResultOrder
+  $order: SearchCubeResultOrder
   $includeDrafts: Boolean
-  $filters: [DataCubeSearchFilter!]
+  $filters: [SearchCubeFilter!]
 ) {
-  dataCubes(
+  searchCubes(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
@@ -99,17 +99,16 @@ query DataCubes(
   ) {
     highlightedTitle
     highlightedDescription
-    dataCube {
+    cube {
       iri
       title
-      workExamples
+      description
+      publicationStatus
+      datePublished
       creator {
         iri
         label
       }
-      description
-      publicationStatus
-      datePublished
       themes {
         iri
         label

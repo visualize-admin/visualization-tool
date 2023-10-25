@@ -323,11 +323,21 @@ type OrdinalMeasure implements Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
-type DataCubeResult {
+type SearchCube {
+  iri: String!
+  title: String!
+  description: String
+  creator: DataCubeOrganization
+  publicationStatus: DataCubePublicationStatus!
+  datePublished: String
+  themes: [DataCubeTheme!]!
+}
+
+type SearchCubeResult {
   score: Float
+  cube: SearchCube!
   highlightedTitle: String
   highlightedDescription: String
-  dataCube: DataCube!
 }
 
 type DataCubeTheme {
@@ -340,12 +350,12 @@ type DataCubeOrganization {
   label: String
 }
 
-input DataCubeSearchFilter {
+input SearchCubeFilter {
   type: String!
   value: String!
 }
 
-enum DataCubeResultOrder {
+enum SearchCubeResultOrder {
   SCORE
   TITLE_ASC
   CREATED_DESC
@@ -370,15 +380,15 @@ type Query {
     sourceUrl: String!
     filters: Filters!
   ): [ObservationFilter!]!
-  dataCubes(
+  searchCubes(
     sourceType: String!
     sourceUrl: String!
     locale: String
     query: String
-    order: DataCubeResultOrder
+    order: SearchCubeResultOrder
     includeDrafts: Boolean
-    filters: [DataCubeSearchFilter!]
-  ): [DataCubeResult!]!
+    filters: [SearchCubeFilter!]
+  ): [SearchCubeResult!]!
   themes(
     sourceType: String!
     sourceUrl: String!

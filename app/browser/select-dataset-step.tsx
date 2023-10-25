@@ -31,7 +31,7 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { useDataCubesQuery } from "@/graphql/query-hooks";
+import { useSearchCubesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
@@ -142,7 +142,7 @@ const SelectDatasetStepContent = () => {
     return formatBackLink(router.query);
   }, [router.query]);
   // Use the debounced query value here only!
-  const [datacubesQuery] = useDataCubesQuery({
+  const [datacubesQuery] = useSearchCubesQuery({
     variables: {
       sourceType: configState.dataSource.type,
       sourceUrl: configState.dataSource.url,

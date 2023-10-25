@@ -1,20 +1,19 @@
 import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
 import { DESCRIBE, SELECT, sparql } from "@tpluscode/sparql-builder";
-import clownface from "clownface";
-import { descending } from "d3";
-import { Cube } from "rdf-cube-view-query";
-import rdf from "rdf-ext";
-import { Quad, Stream } from "rdf-js";
+import { descending, group, rollup } from "d3";
+import { Literal, NamedNode } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { Awaited, truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
-import { DataCubeSearchFilter } from "@/graphql/resolver-types";
-import { ResolvedDataCube } from "@/graphql/shared-types";
+import {
+  DataCubePublicationStatus,
+  SearchCubeFilter,
+} from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
-import { parseCube, parseIri } from "@/rdf/parse";
 import { fromStream } from "@/rdf/sparql-client";
+import { locales } from "@/src";
 
 import { pragmas } from "./create-source";
 import { computeScores, highlight } from "./query-search-score-utils";
@@ -68,20 +67,64 @@ const icontains = (left: string, right: string) => {
   return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
 };
 
-type ResultRow = Record<string, { value: unknown }>;
-const parseResultRow = (row: ResultRow) =>
-  Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v.value]));
+// Keep in sync with the query.
+type RawSearchCube = {
+  iri: NamedNode;
+  title: Literal;
+  description: Literal;
+  versionHistory: NamedNode;
+  publicationStatus: NamedNode;
+  datePublished: Literal;
+  creator: NamedNode;
+  creatorLabel: Literal;
+  publisher: NamedNode;
+  theme: NamedNode;
+  themeName: Literal;
+  lang: Literal;
+};
+
+export type ParsedRawSearchCube = {
+  [k in keyof RawSearchCube]: string;
+};
+
+const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
+  return {
+    iri: cube.iri.value,
+    title: cube.title.value,
+    description: cube.description?.value,
+    versionHistory: cube.versionHistory?.value,
+    publicationStatus:
+      cube.publicationStatus.value ===
+      ns.adminVocabulary("CreativeWorkStatus/Published").value
+        ? DataCubePublicationStatus.Published
+        : DataCubePublicationStatus.Draft,
+    datePublished: cube.datePublished?.value,
+    creator: cube.creator?.value,
+    creatorLabel: cube.creatorLabel?.value,
+    publisher: cube.publisher?.value,
+    theme: cube.theme?.value,
+    themeName: cube.themeName?.value,
+    lang: cube.lang.value,
+  };
+};
 
 const identity = <T>(str: TemplateResult<T>) => str;
 const optional = <T>(str: TemplateResult<T>) => sparql`OPTIONAL { ${str} }`;
 
-const extractCubesFromStream = async (cubeStream: Stream<Quad>) => {
-  const cubeDataset = await fromStream(rdf.dataset(), cubeStream);
-  const cf = clownface({ dataset: cubeDataset });
-  return cf.has(
-    cf.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-    ns.cube.Cube
-  );
+const getCubesByLocale = (
+  rawGroupedCubesByLocale: Map<string, ParsedRawSearchCube[]>,
+  locale: string
+) => {
+  const rest = locales.filter((d) => d !== locale);
+  const orderedLocales = [locale, ...rest];
+
+  for (const orderedLocale of orderedLocales) {
+    const cubes = rawGroupedCubesByLocale.get(orderedLocale);
+
+    if (cubes) {
+      return cubes;
+    }
+  }
 };
 
 export const searchCubes = async ({
@@ -90,14 +133,12 @@ export const searchCubes = async ({
   filters,
   includeDrafts,
   sparqlClient,
-  sparqlClientStream,
 }: {
   query?: string | null;
   locale?: string | null;
-  filters?: DataCubeSearchFilter[] | null;
+  filters?: SearchCubeFilter[] | null;
   includeDrafts?: Boolean | null;
   sparqlClient: ParsingClient;
-  sparqlClientStream: StreamClient;
 }) => {
   const queries = [] as RequestQueryMeta[];
 
@@ -113,42 +154,40 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ??
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?lang ?cube ?versionHistory ?name ?description  ?publisher ?themeName ?creatorLabel`
+  const scoresQuery = SELECT.DISTINCT`?lang ?iri ?title ?publicationStatus ?datePublished ?versionHistory ?description ?publisher ?theme ?themeName ?creator ?creatorLabel`
     .WHERE`
-    ?cube a ${ns.cube.Cube}.
-    ?cube ${ns.schema.name} ?name.
+    ?iri a ${ns.cube.Cube} .
+    ?iri ${ns.schema.name} ?title .
 
-    BIND(LANG(?name) as ?lang)
+    BIND(LANG(?title) as ?lang)
 
-    OPTIONAL {
-      ?cube ${ns.schema.description} ?description.
-    }
+    OPTIONAL { ?iri ${ns.schema.description} ?description . }
     
-    OPTIONAL {
-      ?cube ${ns.schema.about} ?about.
-    }
+    OPTIONAL { ?iri ${ns.schema.about} ?about .}
 
-    OPTIONAL {
-      ?versionHistory ${ns.schema.hasPart} ?cube.
-    }
+    OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
 
-    OPTIONAL { ?cube ${ns.dcterms.publisher} ?publisher. }
+    OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
+
+    OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?publicationStatus . }
+
+    OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
     
     ${(themeValues.length > 0 ? identity : optional)(sparql`
-      ?cube ${ns.dcat.theme} ?theme.
+      ?iri ${ns.dcat.theme} ?theme.
       ?theme ${ns.schema.name} ?themeName.
-      `)}
+    `)}
     
     ${(creatorValues.length > 0 ? identity : optional)(
       sparql`
-      ?cube ${ns.dcterms.creator} ?creator.
+      ?iri ${ns.dcterms.creator} ?creator.
       ?creator ${ns.schema.name} ?creatorLabel. 
       `
     )}
     
     ${makeVisualizeDatasetFilter({
       includeDrafts: !!includeDrafts,
-      cubeIriVar: "?cube",
+      cubeIriVar: "?iri",
     })}
 
     ${makeInFilter("about", aboutValues)}
@@ -166,7 +205,8 @@ export const searchCubes = async ({
           ?.split(" ")
           .slice(0, 1)
           .map(
-            (x) => `${icontains("?name", x)} || ${icontains("?description", x)}`
+            (x) =>
+              `${icontains("?title", x)} || ${icontains("?description", x)}`
           )
           .join(" || ")}
 
@@ -183,9 +223,8 @@ export const searchCubes = async ({
       ||  (bound(?creatorLabel) && ${query
         .split(" ")
         .map((x) => icontains("?creatorLabel", x))
-        .join(" || ")})  
-
-          )`
+        .join(" || ")})
+      )`
           : ""
       }
   `.prologue`${pragmas}`;
@@ -196,78 +235,118 @@ export const searchCubes = async ({
     label: "scores1",
   });
 
-  const data = scoreResults.data.map((x) => parseResultRow(x as ResultRow));
+  const rawCubes = (scoreResults.data as RawSearchCube[]).map(
+    parseRawSearchCube
+  );
+  const rawCubesByIriAndLang = rollup(
+    rawCubes,
+    (v) => group(v, (d) => d.lang),
+    (d) => d.iri
+  );
   const versionHistoryPerCube = Object.fromEntries(
-    data.map((d) => [d.cube, d.versionHistory])
+    rawCubes.map((d) => [d.iri, d.versionHistory])
   );
-  const infoPerCube = computeScores(data, {
+  const infoByCube = computeScores(rawCubes, {
     query,
-    identifierName: "cube",
-    lang: locale,
+    locale,
   });
-
-  // Find information on cubes
-  // Potential optimisation: filter out cubes that are below some threshold
-  // under the maximum score and only retrieve those cubes
-  // The query could also dedup directly the version of the cubes
-  const cubeIris = Object.keys(infoPerCube);
-
-  const sortedCubeIris = cubeIris.sort((a, b) =>
-    descending(infoPerCube[a].score, infoPerCube[b].score)
-  );
-
-  const cubesQuery = DESCRIBE`${sortedCubeIris.map((x) => `<${x}>`).join(" ")}`;
 
   if (!locale) {
     throw new Error("Must pass locale");
   }
 
-  const { data: cubeStream, meta: cubesMeta } =
-    sortedCubeIris.length > 0
-      ? await executeAndMeasure(sparqlClientStream, cubesQuery)
-      : { data: undefined, meta: undefined };
+  const seen = new Set<string>();
+  const cubes = rawCubes
+    .map((cube) => {
+      const versionHistory = versionHistoryPerCube[cube.iri];
+      const dedupIdentifier = versionHistory ?? cube.iri;
 
-  if (cubesMeta) {
-    queries.push({
-      ...cubesMeta,
-      label: "cubes",
-    });
-  }
-  const cubeNodes = cubeStream ? await extractCubesFromStream(cubeStream) : [];
-  const seen = new Set();
-  const cubes = cubeNodes
-    .map((cubeNode) => {
-      const cube = cubeNode as unknown as Cube;
-      const iri = parseIri(cube);
-      const versionHistory = versionHistoryPerCube[iri];
-      const dedupIdentifier = versionHistory || iri;
       if (seen.has(dedupIdentifier)) {
         return null;
       }
+
       seen.add(dedupIdentifier);
-      return parseCube({ cube: cube, locale });
+
+      const rawCubeByLang = rawCubesByIriAndLang.get(cube.iri);
+
+      if (!rawCubeByLang) {
+        return null;
+      }
+
+      const localizedCubes = getCubesByLocale(rawCubeByLang, locale);
+
+      if (!localizedCubes) {
+        return null;
+      }
+
+      const parsedCube: any = {
+        iri: null,
+        title: null,
+        description: null,
+        creator: null,
+        publicationStatus: null,
+        datePublished: null,
+        themes: [],
+      };
+
+      for (const cube of localizedCubes) {
+        if (!parsedCube.iri) {
+          parsedCube.iri = cube.iri;
+        }
+
+        if (!parsedCube.title) {
+          parsedCube.title = cube.title;
+        }
+
+        if (!parsedCube.description) {
+          parsedCube.description = cube.description;
+        }
+
+        if (!parsedCube.creator && cube.creator) {
+          parsedCube.creator = {
+            iri: cube.creator,
+            label: cube.creatorLabel,
+          };
+        }
+
+        if (!parsedCube.datePublished) {
+          parsedCube.datePublished = cube.datePublished;
+        }
+
+        if (!parsedCube.publisher) {
+          parsedCube.publisher = cube.publisher;
+        }
+
+        if (!parsedCube.publicationStatus) {
+          parsedCube.publicationStatus = cube.publicationStatus;
+        }
+
+        if (cube.theme || cube.themeName) {
+          parsedCube.themes.push({
+            iri: cube.theme,
+            name: cube.themeName,
+          });
+        }
+      }
+
+      return parsedCube;
     })
     .filter(truthy);
 
-  // Sort the cubes per score using previously queries scores
-  const results = cubes
-    .filter((c): c is ResolvedDataCube => !!c?.data)
+  const candidates = cubes
     .sort((a, b) =>
-      descending(
-        infoPerCube[a?.data.iri!].score,
-        infoPerCube[b?.data.iri!].score
-      )
+      descending(infoByCube[a.iri].score, infoByCube[b.iri].score)
     )
-    .map((c) => ({
-      dataCube: c,
-      highlightedTitle: query ? highlight(c.data.title, query) : c.data.title,
+    .map((cube) => ({
+      cube,
+      highlightedTitle: query ? highlight(cube.title, query) : cube.title,
       highlightedDescription: query
-        ? highlight(c.data.description, query)
-        : c.data.description,
+        ? highlight(cube.description, query)
+        : cube.description,
     }));
 
   return {
-    candidates: results,
+    candidates,
     meta: {
       queries,
     },

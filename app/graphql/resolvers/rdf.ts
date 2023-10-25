@@ -9,10 +9,10 @@ import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
-  DataCubeResultOrder,
   DimensionResolvers,
   QueryResolvers,
   Resolvers,
+  SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import {
   createCubeDimensionValuesLoader,
@@ -27,30 +27,30 @@ import {
 } from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
-import { SearchResult, searchCubes } from "@/rdf/query-search";
+import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
 
 const sortResults = (
   results: SearchResult[],
-  order: DataCubeResultOrder | undefined | null,
+  order: SearchCubeResultOrder | undefined | null,
   locale: string | undefined | null
 ): SearchResult[] => {
-  const getCube = (r: SearchResult) => r.dataCube.data;
   switch (order) {
-    case DataCubeResultOrder.TitleAsc:
+    case SearchCubeResultOrder.TitleAsc:
       results.sort((a, b) =>
-        getCube(a).title.localeCompare(getCube(b).title, locale ?? undefined)
+        a.cube.title.localeCompare(b.cube.title, locale ?? undefined)
       );
       break;
-    case DataCubeResultOrder.CreatedDesc:
+    case SearchCubeResultOrder.CreatedDesc:
     case undefined:
     case null:
       results.sort((a, b) => {
-        const ra = getCube(a).datePublished || "0";
-        const rb = getCube(b).datePublished || "0";
+        const ra = a.cube.datePublished ?? "0";
+        const rb = b.cube.datePublished ?? "0";
+
         return descending(ra, rb);
       });
       break;
-    case DataCubeResultOrder.Score:
+    case SearchCubeResultOrder.Score:
       break;
     default:
       const exhaustCheck = order;
@@ -59,20 +59,19 @@ const sortResults = (
   return results;
 };
 
-export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async (
+export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   _,
   { locale, query, order, includeDrafts, filters },
   { setup, queries },
   info
 ) => {
-  const { sparqlClient, sparqlClientStream } = await setup(info);
-  const { candidates, meta } = await searchCubes({
+  const { sparqlClient } = await setup(info);
+  const { candidates, meta } = await _searchCubes({
     locale,
     includeDrafts,
     filters,
-    sparqlClient,
     query,
-    sparqlClientStream,
+    sparqlClient,
   });
 
   for (const query of meta.queries) {

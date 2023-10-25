@@ -93,25 +93,6 @@ export enum DataCubePublicationStatus {
   Published = 'PUBLISHED'
 }
 
-export type DataCubeResult = {
-  __typename: 'DataCubeResult';
-  score?: Maybe<Scalars['Float']>;
-  highlightedTitle?: Maybe<Scalars['String']>;
-  highlightedDescription?: Maybe<Scalars['String']>;
-  dataCube: DataCube;
-};
-
-export enum DataCubeResultOrder {
-  Score = 'SCORE',
-  TitleAsc = 'TITLE_ASC',
-  CreatedDesc = 'CREATED_DESC'
-}
-
-export type DataCubeSearchFilter = {
-  type: Scalars['String'];
-  value: Scalars['String'];
-};
-
 export type DataCubeTheme = {
   __typename: 'DataCubeTheme';
   iri: Scalars['String'];
@@ -384,7 +365,7 @@ export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
-  dataCubes: Array<DataCubeResult>;
+  searchCubes: Array<SearchCubeResult>;
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
@@ -411,14 +392,14 @@ export type QueryPossibleFiltersArgs = {
 };
 
 
-export type QueryDataCubesArgs = {
+export type QuerySearchCubesArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
-  order?: Maybe<DataCubeResultOrder>;
+  order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Array<DataCubeSearchFilter>>;
+  filters?: Maybe<Array<SearchCubeFilter>>;
 };
 
 
@@ -455,6 +436,36 @@ export enum ScaleType {
   Nominal = 'Nominal',
   Interval = 'Interval',
   Ratio = 'Ratio'
+}
+
+export type SearchCube = {
+  __typename: 'SearchCube';
+  iri: Scalars['String'];
+  title: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  creator?: Maybe<DataCubeOrganization>;
+  publicationStatus: DataCubePublicationStatus;
+  datePublished?: Maybe<Scalars['String']>;
+  themes: Array<DataCubeTheme>;
+};
+
+export type SearchCubeFilter = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type SearchCubeResult = {
+  __typename: 'SearchCubeResult';
+  score?: Maybe<Scalars['Float']>;
+  cube: SearchCube;
+  highlightedTitle?: Maybe<Scalars['String']>;
+  highlightedDescription?: Maybe<Scalars['String']>;
+};
+
+export enum SearchCubeResultOrder {
+  Score = 'SCORE',
+  TitleAsc = 'TITLE_ASC',
+  CreatedDesc = 'CREATED_DESC'
 }
 
 export type StandardErrorDimension = Dimension & {
@@ -810,18 +821,18 @@ type HierarchyMetadata_TemporalOrdinalDimension_Fragment = { __typename: 'Tempor
 
 export type HierarchyMetadataFragment = HierarchyMetadata_GeoCoordinatesDimension_Fragment | HierarchyMetadata_GeoShapesDimension_Fragment | HierarchyMetadata_NominalDimension_Fragment | HierarchyMetadata_NumericalMeasure_Fragment | HierarchyMetadata_OrdinalDimension_Fragment | HierarchyMetadata_OrdinalMeasure_Fragment | HierarchyMetadata_StandardErrorDimension_Fragment | HierarchyMetadata_TemporalDimension_Fragment | HierarchyMetadata_TemporalOrdinalDimension_Fragment;
 
-export type DataCubesQueryVariables = Exact<{
+export type SearchCubesQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   query?: Maybe<Scalars['String']>;
-  order?: Maybe<DataCubeResultOrder>;
+  order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Array<DataCubeSearchFilter> | DataCubeSearchFilter>;
+  filters?: Maybe<Array<SearchCubeFilter> | SearchCubeFilter>;
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, workExamples?: Maybe<Array<Maybe<string>>>, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
+export type SearchCubesQuery = { __typename: 'Query', searchCubes: Array<{ __typename: 'SearchCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, cube: { __typename: 'SearchCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1225,9 +1236,9 @@ export const DimensionMetadataWithHierarchiesFragmentDoc = gql`
   ...hierarchyMetadata
 }
     ${HierarchyMetadataFragmentDoc}`;
-export const DataCubesDocument = gql`
-    query DataCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
-  dataCubes(
+export const SearchCubesDocument = gql`
+    query SearchCubes($sourceType: String!, $sourceUrl: String!, $locale: String!, $query: String, $order: SearchCubeResultOrder, $includeDrafts: Boolean, $filters: [SearchCubeFilter!]) {
+  searchCubes(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
@@ -1238,17 +1249,16 @@ export const DataCubesDocument = gql`
   ) {
     highlightedTitle
     highlightedDescription
-    dataCube {
+    cube {
       iri
       title
-      workExamples
+      description
+      publicationStatus
+      datePublished
       creator {
         iri
         label
       }
-      description
-      publicationStatus
-      datePublished
       themes {
         iri
         label
@@ -1258,8 +1268,8 @@ export const DataCubesDocument = gql`
 }
     `;
 
-export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
+export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
     query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $disableValuesLoad: Boolean = true) {

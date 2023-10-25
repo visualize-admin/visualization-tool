@@ -19,9 +19,9 @@ const getSource = (dataSourceType: string) => {
 };
 
 export const Query: QueryResolvers = {
-  dataCubes: async (parent, args, context, info) => {
+  searchCubes: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubes(parent, args, context, info);
+    return await source.searchCubes(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
