@@ -5,6 +5,7 @@ import {
   ButtonBase,
   FormControlLabel,
   FormControlLabelProps,
+  InputLabel,
   InputProps,
   ListSubheader,
   Checkbox as MUICheckbox,
@@ -391,7 +392,15 @@ export const Select = ({
                   width: "100%",
                 }}
               >
-                <span>{selectedOption.label}</span>
+                <InputLabel
+                  sx={{
+                    typography: "body2",
+                    color: "secondary.active",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {selectedOption.label}
+                </InputLabel>
                 {hint && <DisabledMessageIcon message={hint} />}
               </Box>
             );
