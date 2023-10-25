@@ -1,4 +1,4 @@
-import { Typography, styled, BoxProps, TypographyProps } from "@mui/material";
+import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
 import React from "react";
 
 import { DataCubeOrganization, DataCubeTheme } from "@/graphql/resolver-types";

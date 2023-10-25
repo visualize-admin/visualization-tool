@@ -939,7 +939,7 @@ export const DatasetResult = ({
           )}
         </Typography>
       </Stack>
-      <Stack spacing={1} direction="row">
+      <Flex sx={{ flexWrap: "wrap", gap: "6px" }}>
         {themes && showTags
           ? sortBy(themes, (t) => t.label).map((t) => (
               <Link
@@ -976,7 +976,7 @@ export const DatasetResult = ({
             </MUILink>
           </Link>
         ) : null}
-      </Stack>
+      </Flex>
     </MotionCard>
   );
 };
