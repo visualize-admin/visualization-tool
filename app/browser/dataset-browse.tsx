@@ -94,6 +94,7 @@ export const SearchDatasetInput = ({
   return (
     <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
       <SearchField
+        key={search}
         inputRef={inputRef}
         id="datasetSearch"
         label={searchLabel}
