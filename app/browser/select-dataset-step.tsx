@@ -177,7 +177,7 @@ const SelectDatasetStepContent = () => {
   });
 
   const { allCubes, cubes } = React.useMemo(() => {
-    if (fetching || error || (data && data.searchCubes.length === 0) || !data) {
+    if ((data && data.searchCubes.length === 0) || !data) {
       return {
         allCubes: [],
         cubes: [],
@@ -203,7 +203,7 @@ const SelectDatasetStepContent = () => {
         return d.cube.subthemes.some((d) => subthemes.includes(d.iri));
       }),
     };
-  }, [data, error, fetching, filters]);
+  }, [data, filters]);
 
   if (configState.state !== "SELECTING_DATASET") {
     return null;
