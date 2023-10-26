@@ -142,7 +142,7 @@ const SelectDatasetStepContent = () => {
     return formatBackLink(router.query);
   }, [router.query]);
   // Use the debounced query value here only!
-  const [datacubesQuery] = useSearchCubesQuery({
+  const [{ data, fetching, error }] = useSearchCubesQuery({
     variables: {
       sourceType: configState.dataSource.type,
       sourceUrl: configState.dataSource.url,
@@ -151,9 +151,12 @@ const SelectDatasetStepContent = () => {
       order,
       includeDrafts,
       filters: filters
-        ? filters.map((filter) => {
-            return { type: filter.__typename, value: filter.iri };
-          })
+        ? filters
+            // Subtheme filters are used on the client side.
+            .filter((d) => d.__typename !== "DataCubeAbout")
+            .map((filter) => {
+              return { type: filter.__typename, value: filter.iri };
+            })
         : [],
     },
   });
@@ -162,6 +165,35 @@ const SelectDatasetStepContent = () => {
     dataSource: configState.dataSource,
     datasetIri: dataset,
   });
+
+  const { allCubes, cubes } = React.useMemo(() => {
+    if (fetching || error || (data && data.searchCubes.length === 0) || !data) {
+      return {
+        allCubes: [],
+        cubes: [],
+      };
+    }
+
+    const subthemeFilters = filters.filter(
+      (d) => d.__typename === "DataCubeAbout"
+    );
+
+    if (subthemeFilters.length === 0) {
+      return {
+        allCubes: data.searchCubes,
+        cubes: data.searchCubes,
+      };
+    }
+
+    const subthemes = subthemeFilters.map((d) => d.iri);
+
+    return {
+      allCubes: data.searchCubes,
+      cubes: data.searchCubes.filter((d) => {
+        return d.cube.subthemes.some((d) => subthemes.includes(d.iri));
+      }),
+    };
+  }, [data, error, fetching, filters]);
 
   if (configState.state !== "SELECTING_DATASET") {
     return null;
@@ -237,7 +269,7 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             ) : (
               <MotionBox key="search-filters" {...navPresenceProps}>
-                <SearchFilters data={datacubesQuery.data} />
+                <SearchFilters cubes={allCubes} />
               </MotionBox>
             )}
           </AnimatePresence>
@@ -272,9 +304,13 @@ const SelectDatasetStepContent = () => {
 
                   <SearchDatasetControls
                     browseState={browseState}
-                    searchResult={datacubesQuery.data}
+                    cubes={cubes}
                   />
-                  <DatasetResults key="results" query={datacubesQuery} />
+                  <DatasetResults
+                    fetching={fetching}
+                    error={error}
+                    cubes={cubes}
+                  />
                 </MotionBox>
               )}
             </AnimatePresence>

@@ -20,13 +20,14 @@ import { makeVisualizeDatasetFilter } from "./query-utils";
 const toNamedNode = (x: string) => {
   return `<${x}>`;
 };
+
 const makeInFilter = (varName: string, values: string[]) => {
   return `
     ${
       values.length > 0
-        ? `FILTER (bound(?${varName}) &&
-    ?${varName} IN (${values.map(toNamedNode)})
-  )`
+        ? `FILTER (bound(?${varName}) && ?${varName} IN (${values.map(
+            toNamedNode
+          )}))`
         : ""
     }`;
 };
@@ -48,6 +49,8 @@ type RawSearchCube = {
   publisher: NamedNode;
   themeIri: NamedNode;
   themeLabel: Literal;
+  subthemeIri: NamedNode;
+  subthemeLabel: Literal;
 };
 
 export type ParsedRawSearchCube = {
@@ -71,6 +74,8 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
     publisher: cube.publisher?.value,
     themeIri: cube.themeIri?.value,
     themeLabel: cube.themeLabel?.value,
+    subthemeIri: cube.subthemeIri?.value,
+    subthemeLabel: cube.subthemeLabel?.value,
   };
 };
 
@@ -124,12 +129,10 @@ export const searchCubes = async ({
     filters
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
-  const aboutValues =
-    filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ??
-    [];
 
-  const scoresQuery = SELECT.DISTINCT`?iri ?title ?status ?datePublished ?versionHistory ?description ?publisher ?themeIri ?themeLabel ?creatorIri ?creatorLabel`
-    .WHERE`
+  const scoresQuery = SELECT.DISTINCT`
+    ?iri ?title ?status ?datePublished ?versionHistory ?description ?publisher ?creatorIri ?creatorLabel ?themeIri ?themeLabel ?subthemeIri ?subthemeLabel
+    `.WHERE`
       ?iri a ${ns.cube.Cube} .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
         locale,
@@ -138,7 +141,6 @@ export const searchCubes = async ({
         locale,
       })}
       OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
-      OPTIONAL { ?iri ${ns.schema.about} ?aboutIri . }
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
       OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?status . }
       OPTIONAL {
@@ -151,13 +153,26 @@ export const searchCubes = async ({
           locale,
         })}
       }
+      OPTIONAL {
+        ?iri ${ns.schema.about} ?subthemeIri .
+        OPTIONAL {
+          ?subthemeIri ${
+            ns.schema.inDefinedTermSet
+          } <https://register.ld.admin.ch/foen/theme> .
+        }
+        ${buildLocalizedSubQuery(
+          "subthemeIri",
+          "schema:name",
+          "subthemeLabel",
+          { locale }
+        )}
+      }
       ${makeVisualizeDatasetFilter({
         includeDrafts: !!includeDrafts,
         cubeIriVar: "?iri",
       })}
-      ${makeInFilter("aboutIri", aboutValues)}
-      ${makeInFilter("themeIri", themeValues)}
       ${makeInFilter("creatorIri", creatorValues)}
+      ${makeInFilter("themeIri", themeValues)}
       OPTIONAL {
         ?iri ${ns.dcterms.creator} ?creatorIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
@@ -189,12 +204,17 @@ export const searchCubes = async ({
         .split(" ")
         .map((x) => icontains("?publisher", x))
         .join(" || ")})
-        
+
       ||  (bound(?themeLabel) && ${query
         .split(" ")
         .map((x) => icontains("?themeLabel", x))
         .join(" || ")})
-        
+
+      ||  (bound(?subthemeLabel) && ${query
+        .split(" ")
+        .map((x) => icontains("?subthemeLabel", x))
+        .join(" || ")})
+
       ||  (bound(?creatorLabel) && ${query
         .split(" ")
         .map((x) => icontains("?creatorLabel", x))
@@ -206,6 +226,7 @@ export const searchCubes = async ({
     .ORDER()
     // Important for the latter part of the query, to return the latest cube per unversioned iri.
     .BY(RDF.variable("versionHistory"))
+    .THEN.BY(RDF.variable("datePublished"), true)
     .THEN.BY(RDF.variable("iri"), true).prologue`${pragmas}`;
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
@@ -244,6 +265,7 @@ export const searchCubes = async ({
         publicationStatus: rawCubes[0].status as DataCubePublicationStatus,
         datePublished: null,
         themes: [],
+        subthemes: [],
       };
 
       for (const cube of rawCubes) {
@@ -275,10 +297,25 @@ export const searchCubes = async ({
             cube.status as DataCubePublicationStatus;
         }
 
-        if (cube.themeIri && cube.themeLabel) {
+        if (
+          cube.themeIri &&
+          cube.themeLabel &&
+          !parsedCube.themes.some((d) => d.iri === cube.themeIri)
+        ) {
           parsedCube.themes.push({
             iri: cube.themeIri,
             label: cube.themeLabel,
+          });
+        }
+
+        if (
+          cube.subthemeIri &&
+          cube.subthemeLabel &&
+          !parsedCube.subthemes.some((d) => d.iri === cube.subthemeIri)
+        ) {
+          parsedCube.subthemes.push({
+            iri: cube.subthemeIri,
+            label: cube.subthemeLabel,
           });
         }
       }

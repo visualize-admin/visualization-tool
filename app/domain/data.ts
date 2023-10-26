@@ -86,6 +86,10 @@ export type SearchCube = {
     iri: string;
     label: string;
   }[];
+  subthemes: {
+    iri: string;
+    label: string;
+  }[];
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";

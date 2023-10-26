@@ -1,4 +1,3 @@
-import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
 import {
   Box,
@@ -15,11 +14,11 @@ import { Reorder } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
 import React, { useMemo, useState } from "react";
-import { UseQueryState } from "urql";
 
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
@@ -32,6 +31,7 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
@@ -40,10 +40,12 @@ import {
   SearchCubeResultOrder,
   SearchCubesQuery,
   useOrganizationsQuery,
-  useSubthemesQuery,
   useThemesQuery,
 } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import {
+  DataCubePublicationStatus,
+  SearchCubeResult,
+} from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
@@ -116,10 +118,10 @@ export const SearchDatasetInput = ({
 
 export const SearchDatasetControls = ({
   browseState,
-  searchResult,
+  cubes,
 }: {
   browseState: BrowseState;
-  searchResult: Maybe<SearchCubesQuery>;
+  cubes: SearchCubeResult[];
 }) => {
   const {
     inputRef,
@@ -166,10 +168,10 @@ export const SearchDatasetControls = ({
         aria-live="polite"
         data-testid="search-results-count"
       >
-        {searchResult && searchResult.searchCubes.length > 0 && (
+        {cubes.length > 0 && (
           <Plural
             id="dataset.results"
-            value={searchResult.searchCubes.length}
+            value={cubes.length}
             zero="No datasets"
             one="# dataset"
             other="# datasets"
@@ -330,9 +332,11 @@ const NavItem = ({
     const newFilters = [...filters].filter((f) =>
       level === 1 ? f.__typename !== next.__typename : true
     );
+
     if (level === 1) {
       newFilters.push(next);
     }
+
     return (
       "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
     );
@@ -350,12 +354,14 @@ const NavItem = ({
     );
     const nextIndex = filters.findIndex((f) => f.iri === next.iri);
     const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
+
     return (
       "/browse?" + newFilters.map(encodeFilter).join("&") + `&${extraURLParams}`
     );
   }, [includeDrafts, search, filters, next.iri]);
 
   const classes = useStyles();
+
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref legacyBehavior>
       <ButtonBase
@@ -370,12 +376,14 @@ const NavItem = ({
       </ButtonBase>
     </Link>
   );
+
   const countChip =
     count !== undefined ? (
       <NavChip color={theme.countColor} backgroundColor={theme.countBg}>
         {count}
       </NavChip>
     ) : null;
+
   return (
     <MotionBox
       {...accordionPresenceProps}
@@ -420,54 +428,44 @@ const NavItem = ({
   );
 };
 
-const organizationIriToTermsetParentIri = {
-  "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu":
-    "https://register.ld.admin.ch/foen/theme",
-} as Record<string, string>;
-
 export const Subthemes = ({
-  organization,
+  subthemes,
   filters,
   counts,
 }: {
-  organization: DataCubeOrganization;
+  subthemes: SearchCube["subthemes"];
   filters: BrowseFilter[];
   counts: Record<string, number>;
 }) => {
-  const termsetIri = organizationIriToTermsetParentIri[organization.iri];
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
-  const [{ data: subthemes }] = useSubthemesQuery({
-    variables: {
-      parentIri: termsetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !termsetIri,
-  });
-  const alphaSubthemes = useMemo(
-    () => sortBy(subthemes?.subthemes, (x) => x.label),
-    [subthemes]
-  );
+  const sortedSubthemes = useMemo(() => {
+    return sortBy(subthemes, (d) => d.label);
+  }, [subthemes]);
+
   return (
     <>
-      {alphaSubthemes.map((x) => {
-        const count = counts[x.iri];
+      {sortedSubthemes.map((d) => {
+        const count = counts[d.iri];
+
         if (!count) {
           return null;
         }
+
+        const filter: BrowseFilter = {
+          __typename: "DataCubeAbout",
+          ...d,
+        };
+
         return (
           <NavItem
-            key={x.iri}
-            next={x}
+            key={d.iri}
+            next={filter}
             filters={filters}
             theme={organizationNavItemTheme}
-            active={filters[filters.length - 1]?.iri === x.iri}
+            active={filters[filters.length - 1]?.iri === d.iri}
             level={2}
             count={count}
           >
-            {x.label}
+            {d.label}
           </NavItem>
         );
       })}
@@ -602,7 +600,7 @@ const NavSection = ({
   );
 };
 
-export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
+export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const { filters } = useBrowseContext();
@@ -622,14 +620,14 @@ export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
   });
 
   const counts = useMemo(() => {
-    if (!data?.searchCubes) {
-      return {};
-    }
-
     const result: Record<string, number> = {};
 
-    for (const { cube } of data.searchCubes) {
-      const countables = [...cube.themes, cube.creator].filter(truthy);
+    for (const { cube } of cubes) {
+      const countables = [
+        ...cube.themes,
+        ...cube.subthemes,
+        cube.creator,
+      ].filter(truthy);
 
       for (const { iri } of countables) {
         if (iri) {
@@ -639,7 +637,7 @@ export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
     }
 
     return result;
-  }, [data?.searchCubes]);
+  }, [cubes]);
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -703,6 +701,13 @@ export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
       />
     ) : null;
 
+  const subthemes = React.useMemo(() => {
+    return uniqBy(
+      cubes.flatMap((d) => d.cube.subthemes),
+      (d) => d.iri
+    );
+  }, [cubes]);
+
   const orgNav =
     displayedOrgs && displayedOrgs.length > 0 ? (
       <NavSection
@@ -720,7 +725,7 @@ export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
         extra={
           orgFilter && filters[0] === orgFilter ? (
             <Subthemes
-              organization={orgFilter}
+              subthemes={subthemes}
               filters={filters}
               counts={counts}
             />
@@ -757,12 +762,14 @@ export const SearchFilters = ({ data }: { data?: SearchCubesQuery }) => {
 };
 
 export const DatasetResults = ({
-  query,
+  fetching,
+  error,
+  cubes,
 }: {
-  query: UseQueryState<SearchCubesQuery>;
+  fetching: boolean;
+  error: any;
+  cubes: SearchCubeResult[];
 }) => {
-  const { fetching, data, error } = query;
-
   if (fetching) {
     return (
       <Box sx={{ alignItems: "center" }}>
@@ -779,7 +786,7 @@ export const DatasetResults = ({
     );
   }
 
-  if ((data && data.searchCubes.length === 0) || !data) {
+  if (cubes.length === 0) {
     return (
       <Typography
         variant="h2"
@@ -792,16 +799,14 @@ export const DatasetResults = ({
 
   return (
     <>
-      {data.searchCubes.map(
-        ({ cube, highlightedTitle, highlightedDescription }) => (
-          <DatasetResult
-            key={cube.iri}
-            dataCube={cube}
-            highlightedTitle={highlightedTitle}
-            highlightedDescription={highlightedDescription}
-          />
-        )
-      )}
+      {cubes.map(({ cube, highlightedTitle, highlightedDescription }) => (
+        <DatasetResult
+          key={cube.iri}
+          dataCube={cube}
+          highlightedTitle={highlightedTitle}
+          highlightedDescription={highlightedDescription}
+        />
+      ))}
     </>
   );
 };
