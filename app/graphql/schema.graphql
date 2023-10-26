@@ -344,6 +344,7 @@ type DataCubeOrganization {
 
 input SearchCubeFilter {
   type: String!
+  label: String
   value: String!
 }
 

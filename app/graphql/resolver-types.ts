@@ -444,6 +444,7 @@ export enum ScaleType {
 
 export type SearchCubeFilter = {
   type: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
   value: Scalars['String'];
 };
 
