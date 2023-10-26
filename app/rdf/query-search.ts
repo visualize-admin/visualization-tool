@@ -1,6 +1,5 @@
-import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
-import { SELECT, sparql } from "@tpluscode/sparql-builder";
-import { descending, group, rollup } from "d3";
+import { SELECT } from "@tpluscode/sparql-builder";
+import { descending, group } from "d3";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
@@ -41,14 +40,13 @@ type RawSearchCube = {
   title: Literal;
   description: Literal;
   versionHistory: NamedNode;
-  publicationStatus: NamedNode;
+  status: NamedNode;
   datePublished: Literal;
-  creator: NamedNode;
+  creatorIri: NamedNode;
   creatorLabel: Literal;
   publisher: NamedNode;
-  theme: NamedNode;
-  themeName: Literal;
-  lang: Literal;
+  themeIri: NamedNode;
+  themeLabel: Literal;
 };
 
 export type ParsedRawSearchCube = {
@@ -61,43 +59,51 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
     title: cube.title.value,
     description: cube.description?.value,
     versionHistory: cube.versionHistory?.value,
-    publicationStatus:
-      cube.publicationStatus.value ===
+    status:
+      cube.status.value ===
       ns.adminVocabulary("CreativeWorkStatus/Published").value
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
     datePublished: cube.datePublished?.value,
-    creator: cube.creator?.value,
+    creatorIri: cube.creatorIri?.value,
     creatorLabel: cube.creatorLabel?.value,
     publisher: cube.publisher?.value,
-    theme: cube.theme?.value,
-    themeName: cube.themeName?.value,
-    lang: cube.lang.value,
+    themeIri: cube.themeIri?.value,
+    themeLabel: cube.themeLabel?.value,
   };
 };
 
-const identity = <T>(str: TemplateResult<T>) => str;
-const optional = <T>(str: TemplateResult<T>) => sparql`OPTIONAL { ${str} }`;
-
-const getCubesByLocale = (
-  rawGroupedCubesByLocale: Map<string, ParsedRawSearchCube[]>,
-  locale: string
-) => {
+const getOrderedLocales = (locale: string) => {
   const rest = locales.filter((d) => d !== locale);
-  const orderedLocales = [locale, ...rest];
+  return [locale, ...rest];
+};
 
-  for (const orderedLocale of orderedLocales) {
-    const cubes = rawGroupedCubesByLocale.get(orderedLocale);
+const buildLocalizedSubQuery = (
+  s: string,
+  p: string,
+  o: string,
+  { locale }: { locale: string }
+) => {
+  // Include the empty locale as well.
+  const locales = getOrderedLocales(locale).concat("");
 
-    if (cubes) {
-      return cubes;
-    }
-  }
+  return `${locales
+    .map(
+      (locale) => `OPTIONAL {
+          ?${s} ${p} ?${o}_${locale} .
+          FILTER(LANG(?${o}_${locale}) = "${locale}")
+        }`
+    )
+    .join("\n")}
+      BIND(COALESCE(${locales
+        .map((locale) => `?${o}_${locale}`)
+        .join(", ")}) AS ?${o})
+  `;
 };
 
 export const searchCubes = async ({
   query,
-  locale,
+  locale: _locale,
   filters,
   includeDrafts,
   sparqlClient,
@@ -108,6 +114,7 @@ export const searchCubes = async ({
   includeDrafts?: Boolean | null;
   sparqlClient: ParsingClient;
 }) => {
+  const locale = _locale ?? "de";
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ??
@@ -120,54 +127,51 @@ export const searchCubes = async ({
     filters?.filter((x) => x.type === "DataCubeAbout").map((v) => v.value) ??
     [];
 
-  const scoresQuery = SELECT.DISTINCT`?lang ?iri ?title ?publicationStatus ?datePublished ?versionHistory ?description ?publisher ?theme ?themeName ?creator ?creatorLabel`
+  const scoresQuery = SELECT.DISTINCT`?iri ?title ?status ?datePublished ?versionHistory ?description ?publisher ?themeIri ?themeLabel ?creatorIri ?creatorLabel`
     .WHERE`
-    ?iri a ${ns.cube.Cube} .
-    ?iri ${ns.schema.name} ?title .
-
-    BIND(LANG(?title) as ?lang)
-
-    OPTIONAL { ?iri ${ns.schema.description} ?description . }
-    
-    OPTIONAL { ?iri ${ns.schema.about} ?about .}
-
-    OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
-
-    OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
-
-    OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?publicationStatus . }
-
-    OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
-    
-    ${(themeValues.length > 0 ? identity : optional)(sparql`
-      ?iri ${ns.dcat.theme} ?theme.
-      ?theme ${ns.schema.name} ?themeName.
-    `)}
-    
-    ${makeVisualizeDatasetFilter({
-      includeDrafts: !!includeDrafts,
-      cubeIriVar: "?iri",
-    })}
-
-    ${makeInFilter("about", aboutValues)}
-    ${makeInFilter("theme", themeValues)}
-    ${makeInFilter("creator", creatorValues)}
-
-    FILTER(!BOUND(?description) || ?lang = LANG(?description))
-    FILTER(!BOUND(?themeName) || ?lang = LANG(?themeName))
-
-    ${(creatorValues.length > 0 ? identity : optional)(sparql`
-      ?iri ${ns.dcterms.creator} ?creator .
-      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-        ?creator a ${ns.schema.Organization} ;
-          ${ns.schema.inDefinedTermSet} <https://register.ld.admin.ch/opendataswiss/org> .
-        OPTIONAL {
-          ?creator ${ns.schema.name} ?creatorLabel .
-          FILTER(!BOUND(?creatorLabel) || LANG(?creatorLabel) = ?lang)
+      ?iri a ${ns.cube.Cube} .
+      ${buildLocalizedSubQuery("iri", "schema:name", "title", {
+        locale,
+      })}
+      ${buildLocalizedSubQuery("iri", "schema:description", "description", {
+        locale,
+      })}
+      OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
+      OPTIONAL { ?iri ${ns.schema.about} ?aboutIri . }
+      OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
+      OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?status . }
+      OPTIONAL {
+        ?iri ${ns.schema.datePublished} ?datePublished .
+        FILTER(DATATYPE(?datePublished) = ${ns.xsd.date})
+      }
+      OPTIONAL {
+        ?iri ${ns.dcat.theme} ?themeIri .
+        ${buildLocalizedSubQuery("themeIri", "schema:name", "themeLabel", {
+          locale,
+        })}
+      }
+      ${makeVisualizeDatasetFilter({
+        includeDrafts: !!includeDrafts,
+        cubeIriVar: "?iri",
+      })}
+      ${makeInFilter("aboutIri", aboutValues)}
+      ${makeInFilter("themeIri", themeValues)}
+      ${makeInFilter("creatorIri", creatorValues)}
+      OPTIONAL {
+        ?iri ${ns.dcterms.creator} ?creatorIri .
+        GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+          ?creatorIri a ${ns.schema.Organization} ;
+            ${
+              ns.schema.inDefinedTermSet
+            } <https://register.ld.admin.ch/opendataswiss/org> .
+            ${buildLocalizedSubQuery(
+              "creatorIri",
+              "schema:name",
+              "creatorLabel",
+              { locale }
+            )}
         }
       }
-    `)}
-
       ${
         query
           ? `FILTER(
@@ -185,9 +189,9 @@ export const searchCubes = async ({
         .map((x) => icontains("?publisher", x))
         .join(" || ")})
         
-      ||  (bound(?themeName) && ${query
+      ||  (bound(?themeLabel) && ${query
         .split(" ")
-        .map((x) => icontains("?themeName", x))
+        .map((x) => icontains("?themeLabel", x))
         .join(" || ")})
         
       ||  (bound(?creatorLabel) && ${query
@@ -203,11 +207,7 @@ export const searchCubes = async ({
     operation: "postUrlencoded",
   });
   const rawCubes = (scoreResults as RawSearchCube[]).map(parseRawSearchCube);
-  const rawCubesByIriAndLang = rollup(
-    rawCubes,
-    (v) => group(v, (d) => d.lang),
-    (d) => d.iri
-  );
+  const rawCubesByIri = group(rawCubes, (d) => d.iri);
   const versionHistoryPerCube = Object.fromEntries(
     rawCubes.map((d) => [d.iri, d.versionHistory])
   );
@@ -232,30 +232,23 @@ export const searchCubes = async ({
 
       seen.add(dedupIdentifier);
 
-      const rawCubeByLang = rawCubesByIriAndLang.get(cube.iri);
+      const rawCubes = rawCubesByIri.get(cube.iri);
 
-      if (!rawCubeByLang) {
-        return null;
-      }
-
-      const localizedCubes = getCubesByLocale(rawCubeByLang, locale);
-
-      if (!localizedCubes?.length) {
+      if (!rawCubes?.length) {
         return null;
       }
 
       const parsedCube: SearchCube = {
-        iri: localizedCubes[0].iri,
-        title: localizedCubes[0].title,
+        iri: rawCubes[0].iri,
+        title: rawCubes[0].title,
         description: null,
         creator: null,
-        publicationStatus: localizedCubes[0]
-          .publicationStatus as DataCubePublicationStatus,
+        publicationStatus: rawCubes[0].status as DataCubePublicationStatus,
         datePublished: null,
         themes: [],
       };
 
-      for (const cube of localizedCubes) {
+      for (const cube of rawCubes) {
         if (!parsedCube.iri) {
           parsedCube.iri = cube.iri;
         }
@@ -268,9 +261,9 @@ export const searchCubes = async ({
           parsedCube.description = cube.description;
         }
 
-        if (!parsedCube.creator && cube.creator) {
+        if (!parsedCube.creator && cube.creatorIri) {
           parsedCube.creator = {
-            iri: cube.creator,
+            iri: cube.creatorIri,
             label: cube.creatorLabel,
           };
         }
@@ -281,13 +274,13 @@ export const searchCubes = async ({
 
         if (!parsedCube.publicationStatus) {
           parsedCube.publicationStatus =
-            cube.publicationStatus as DataCubePublicationStatus;
+            cube.status as DataCubePublicationStatus;
         }
 
-        if (cube.theme || cube.themeName) {
+        if (cube.themeIri && cube.themeLabel) {
           parsedCube.themes.push({
-            iri: cube.theme,
-            label: cube.themeName,
+            iri: cube.themeIri,
+            label: cube.themeLabel,
           });
         }
       }
