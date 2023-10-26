@@ -1,3 +1,4 @@
+import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { descending, group } from "d3";
 import { Literal, NamedNode } from "rdf-js";
@@ -201,7 +202,11 @@ export const searchCubes = async ({
       )`
           : ""
       }
-  `.prologue`${pragmas}`;
+  `
+    .ORDER()
+    // Important for the latter part of the query, to return the latest cube per unversioned iri.
+    .BY(RDF.variable("versionHistory"))
+    .THEN.BY(RDF.variable("iri"), true).prologue`${pragmas}`;
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
