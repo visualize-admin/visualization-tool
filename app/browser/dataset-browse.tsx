@@ -437,28 +437,19 @@ export const Subthemes = ({
   filters: BrowseFilter[];
   counts: Record<string, number>;
 }) => {
-  const sortedSubthemes = useMemo(() => {
-    return sortBy(subthemes, (d) => d.label);
-  }, [subthemes]);
-
   return (
     <>
-      {sortedSubthemes.map((d) => {
+      {subthemes.map((d) => {
         const count = counts[d.iri];
 
         if (!count) {
           return null;
         }
 
-        const filter: BrowseFilter = {
-          __typename: "DataCubeAbout",
-          ...d,
-        };
-
         return (
           <NavItem
             key={d.iri}
-            next={filter}
+            next={{ __typename: "DataCubeAbout", ...d }}
             filters={filters}
             theme={organizationNavItemTheme}
             active={filters[filters.length - 1]?.iri === d.iri}
@@ -702,9 +693,12 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
     ) : null;
 
   const subthemes = React.useMemo(() => {
-    return uniqBy(
-      cubes.flatMap((d) => d.cube.subthemes),
-      (d) => d.iri
+    return sortBy(
+      uniqBy(
+        cubes.flatMap((d) => d.cube.subthemes),
+        (d) => d.iri
+      ),
+      (d) => d.label
     );
   }, [cubes]);
 

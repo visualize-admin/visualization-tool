@@ -42,7 +42,7 @@ import {
   buildURLFromBrowseState,
   useBrowseContext,
 } from "./context";
-import { DataCubeAbout } from "./filters";
+import { BrowseFilter, DataCubeAbout } from "./filters";
 
 const softJSONParse = (v: string) => {
   try {
@@ -126,6 +126,18 @@ export const formatBackLink = (
   return buildURLFromBrowseState(backParameters);
 };
 
+const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
+  return (
+    filters
+      // Subthemes are filtered on client side.
+      .filter(
+        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
+          d.__typename !== "DataCubeAbout"
+      )
+      .map((d) => ({ type: d.__typename, label: d.label, value: d.iri }))
+  );
+};
+
 const SelectDatasetStepContent = () => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
@@ -141,6 +153,11 @@ const SelectDatasetStepContent = () => {
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
+
+  const queryFilters = useMemo(() => {
+    return filters ? prepareSearchQueryFilters(filters) : [];
+  }, [filters]);
+
   // Use the debounced query value here only!
   const [{ data, fetching, error }] = useSearchCubesQuery({
     variables: {
@@ -150,14 +167,7 @@ const SelectDatasetStepContent = () => {
       query: debouncedQuery,
       order,
       includeDrafts,
-      filters: filters
-        ? filters
-            // Subtheme filters are used on the client side.
-            .filter((d) => d.__typename !== "DataCubeAbout")
-            .map((filter) => {
-              return { type: filter.__typename, value: filter.iri };
-            })
-        : [],
+      filters: queryFilters,
     },
   });
 
@@ -292,13 +302,7 @@ const SelectDatasetStepContent = () => {
                       className={classes.filters}
                       variant="h1"
                     >
-                      {filters
-                        .filter(
-                          (f): f is Exclude<typeof f, DataCubeAbout> =>
-                            f.__typename !== "DataCubeAbout"
-                        )
-                        .map((f) => f.label)
-                        .join(", ")}
+                      {queryFilters.map((d) => d.label).join(", ")}
                     </Typography>
                   )}
 

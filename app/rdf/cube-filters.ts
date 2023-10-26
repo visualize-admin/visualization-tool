@@ -38,15 +38,15 @@ export const makeCubeFilters = ({
 }) => {
   const themeQueryFilter = makeInQueryFilter(
     ns.dcat.theme,
-    filters?.filter(isAttrEqual("type", "DataCubeTheme")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeTheme")) ?? []
   );
   const orgQueryFilter = makeInQueryFilter(
     ns.dcterms.creator,
-    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) ?? []
   );
   const aboutQueryFilter = makeInQueryFilter(
     ns.schema.about,
-    filters?.filter(isAttrEqual("type", "DataCubeAbout")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeAbout")) ?? []
   );
 
   const res = [
