@@ -87,15 +87,19 @@ const useQueryParamsState = <T extends object>(
         : undefined;
     const dataset = extractParamFromPath(router.asPath, "dataset");
     const query = sp ? Object.fromEntries(sp.entries()) : undefined;
+
     if (dataset && query && !query.dataset) {
       query.dataset = dataset[0];
     }
+
     return query ? parse(query) : initialState;
   });
 
   useEffect(() => {
-    rawSetState(parse(router.query));
-  }, [parse, router.query]);
+    if (router.isReady) {
+      rawSetState(parse(router.query));
+    }
+  }, [parse, router.isReady, router.query]);
 
   const setState = useEvent((stateUpdate: T) => {
     rawSetState((curState) => {
