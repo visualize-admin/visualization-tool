@@ -887,7 +887,14 @@ export const DatasetResult = ({
   return (
     <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
       <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
-        <Flex sx={{ justifyContent: "space-between", width: "100%" }}>
+        <Flex
+          sx={{
+            justifyContent: "space-between",
+            width: "100%",
+            // To account for the space taken by the draft tag
+            minHeight: 24,
+          }}
+        >
           <Typography variant="body2" fontWeight={700} gutterBottom={false}>
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
