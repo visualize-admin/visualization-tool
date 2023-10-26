@@ -8,7 +8,7 @@ export const parseFloatZeroed = (s: string) => {
 export const weights = {
   title: 5,
   description: 2,
-  themeName: 1,
+  themeLabel: 1,
   publisher: 1,
   creatorLabel: 1,
 };
@@ -24,13 +24,7 @@ const isStopword = (d: string) => {
  */
 export const computeScores = (
   cubes: ParsedRawSearchCube[],
-  {
-    query,
-    locale,
-  }: {
-    query?: string | null;
-    locale?: string | null;
-  }
+  { query }: { query?: string | null }
 ) => {
   const infoPerCube: Record<string, { score: number }> = {};
 
@@ -58,12 +52,6 @@ export const computeScores = (
         if (value.includes(query.toLowerCase())) {
           score += exactMatchPoints;
         }
-      }
-
-      // Cubes with properties in the current language get a bonus,
-      // as generally we expect the user to be interested in those.
-      if (cube.lang === locale) {
-        score *= langMultiplier;
       }
 
       if (

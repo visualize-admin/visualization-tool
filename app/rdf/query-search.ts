@@ -216,26 +216,19 @@ export const searchCubes = async ({
   const versionHistoryPerCube = Object.fromEntries(
     rawCubes.map((d) => [d.iri, d.versionHistory])
   );
-  const infoByCube = computeScores(rawCubes, {
-    query,
-    locale,
-  });
+  const infoByCube = computeScores(rawCubes, { query });
 
-  if (!locale) {
-    throw new Error("Must pass locale");
-  }
-
-  const seen = new Set<string>();
+  const seenCubes = new Set<string>();
   const cubes = rawCubes
     .map((cube) => {
       const versionHistory = versionHistoryPerCube[cube.iri];
       const dedupIdentifier = versionHistory ?? cube.iri;
 
-      if (seen.has(dedupIdentifier)) {
+      if (seenCubes.has(dedupIdentifier)) {
         return null;
       }
 
-      seen.add(dedupIdentifier);
+      seenCubes.add(dedupIdentifier);
 
       const rawCubes = rawCubesByIri.get(cube.iri);
 
