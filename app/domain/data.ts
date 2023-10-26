@@ -12,6 +12,7 @@ import {
   TemporalDimension,
   TemporalOrdinalDimension,
 } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -71,15 +72,21 @@ export type GeoData = {
 };
 
 // Extracted for performance reasons.
-export type SearchCubeCreator = {
+export type SearchCube = {
   iri: string;
-  label: string;
+  title: string;
+  description: string | null;
+  publicationStatus: DataCubePublicationStatus;
+  datePublished: string | null;
+  creator: {
+    iri: string;
+    label: string;
+  } | null;
+  themes: {
+    iri: string;
+    label: string;
+  }[];
 };
-
-export type SearchCubeThemes = {
-  iri: string;
-  label: string;
-}[];
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {

@@ -591,6 +591,7 @@ export const SearchField = ({
     },
     [inputRef, onReset]
   );
+
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}

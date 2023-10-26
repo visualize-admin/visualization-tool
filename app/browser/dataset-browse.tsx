@@ -69,7 +69,7 @@ export const SearchDatasetInput = ({
 
   const searchLabel = t({
     id: "dataset.search.label",
-    message: `Search datasets`,
+    message: "Search datasets",
   });
 
   const placeholderLabel = t({
@@ -95,13 +95,13 @@ export const SearchDatasetInput = ({
         inputRef={inputRef}
         id="datasetSearch"
         label={searchLabel}
-        defaultValue={search || ""}
+        defaultValue={search ?? ""}
         InputProps={{
           inputProps: {
             "data-testid": "datasetSearch",
           },
           onKeyPress: handleKeyPress,
-          onReset: onReset,
+          onReset,
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}

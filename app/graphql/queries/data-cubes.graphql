@@ -99,15 +99,7 @@ query SearchCubes(
   ) {
     highlightedTitle
     highlightedDescription
-    cube {
-      iri
-      title
-      description
-      publicationStatus
-      datePublished
-      creator
-      themes
-    }
+    cube
   }
 }
 

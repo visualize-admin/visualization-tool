@@ -5,7 +5,7 @@ import { Literal, NamedNode } from "rdf-js";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
-import { SearchCubeCreator, SearchCubeThemes } from "@/domain/data";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
@@ -280,16 +280,17 @@ export const searchCubes = async ({
 
       const localizedCubes = getCubesByLocale(rawCubeByLang, locale);
 
-      if (!localizedCubes) {
+      if (!localizedCubes?.length) {
         return null;
       }
 
-      const parsedCube: any = {
-        iri: null,
-        title: null,
+      const parsedCube: SearchCube = {
+        iri: localizedCubes[0].iri,
+        title: localizedCubes[0].title,
         description: null,
         creator: null,
-        publicationStatus: null,
+        publicationStatus: localizedCubes[0]
+          .publicationStatus as DataCubePublicationStatus,
         datePublished: null,
         themes: [],
       };
@@ -308,28 +309,23 @@ export const searchCubes = async ({
         }
 
         if (!parsedCube.creator && cube.creator) {
-          const creator: SearchCubeCreator = {
+          parsedCube.creator = {
             iri: cube.creator,
             label: cube.creatorLabel,
           };
-
-          parsedCube.creator = creator;
         }
 
         if (!parsedCube.datePublished) {
           parsedCube.datePublished = cube.datePublished;
         }
 
-        if (!parsedCube.publisher) {
-          parsedCube.publisher = cube.publisher;
-        }
-
         if (!parsedCube.publicationStatus) {
-          parsedCube.publicationStatus = cube.publicationStatus;
+          parsedCube.publicationStatus =
+            cube.publicationStatus as DataCubePublicationStatus;
         }
 
         if (cube.theme || cube.themeName) {
-          (parsedCube.themes as SearchCubeThemes).push({
+          parsedCube.themes.push({
             iri: cube.theme,
             label: cube.themeName,
           });
@@ -347,9 +343,10 @@ export const searchCubes = async ({
     .map((cube) => ({
       cube,
       highlightedTitle: query ? highlight(cube.title, query) : cube.title,
-      highlightedDescription: query
-        ? highlight(cube.description, query)
-        : cube.description,
+      highlightedDescription:
+        query && cube.description
+          ? highlight(cube.description, query)
+          : cube.description,
     }));
 
   return {
