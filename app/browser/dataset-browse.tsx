@@ -330,8 +330,10 @@ const NavItem = ({
         Boolean
       )
     );
-    const newFilters = [...filters].filter((f) =>
-      level === 1 ? f.__typename !== next.__typename : true
+    const newFilters = [...filters].filter(
+      (f) =>
+        f.__typename !== "DataCubeAbout" &&
+        (level === 1 ? f.__typename !== next.__typename : true)
     );
 
     if (level === 1) {
@@ -353,7 +355,6 @@ const NavItem = ({
         Boolean
       )
     );
-    // const nextIndex = filters.findIndex((f) => f.iri === next.iri);
     const newFilters = filters.filter((d) => d.iri !== next.iri);
 
     return `/browse/${newFilters
