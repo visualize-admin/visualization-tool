@@ -1,19 +1,16 @@
 import { TemplateResult } from "@tpluscode/rdf-string/lib/TemplateResult";
-import { DESCRIBE, SELECT, sparql } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { descending, group, rollup } from "d3";
 import { Literal, NamedNode } from "rdf-js";
-import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { RequestQueryMeta } from "@/graphql/query-meta";
 import {
   DataCubePublicationStatus,
   SearchCubeFilter,
 } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
-import { fromStream } from "@/rdf/sparql-client";
 import { locales } from "@/src";
 
 import { pragmas } from "./create-source";
@@ -32,36 +29,6 @@ const makeInFilter = (varName: string, values: string[]) => {
   )`
         : ""
     }`;
-};
-
-// It's a bit difficult ot access the types of the various sparql libraries
-const exampleSelectQuery = SELECT``;
-const exampleDescribeQuery = DESCRIBE``;
-type SelectQuery = typeof exampleSelectQuery;
-type DescribeQuery = typeof exampleDescribeQuery;
-type StreamOfQuad = Parameters<typeof fromStream>[1];
-
-const executeAndMeasure = async <T extends SelectQuery | DescribeQuery>(
-  client: T extends SelectQuery ? ParsingClient : StreamClient,
-  query: T
-): Promise<{
-  meta: RequestQueryMeta;
-  data: T extends SelectQuery ? unknown[] : StreamOfQuad;
-}> => {
-  const startTime = Date.now();
-  // @ts-ignore
-  const data = await query.execute(client.query, {
-    operation: "postUrlencoded",
-  });
-  const endTime = Date.now();
-  return {
-    meta: {
-      startTime,
-      endTime,
-      text: query.build(),
-    },
-    data,
-  };
 };
 
 const icontains = (left: string, right: string) => {
@@ -141,8 +108,6 @@ export const searchCubes = async ({
   includeDrafts?: Boolean | null;
   sparqlClient: ParsingClient;
 }) => {
-  const queries = [] as RequestQueryMeta[];
-
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ??
@@ -234,15 +199,10 @@ export const searchCubes = async ({
       }
   `.prologue`${pragmas}`;
 
-  const scoreResults = await executeAndMeasure(sparqlClient, scoresQuery);
-  queries.push({
-    ...scoreResults.meta,
-    label: "scores1",
+  const scoreResults = await scoresQuery.execute(sparqlClient.query, {
+    operation: "postUrlencoded",
   });
-
-  const rawCubes = (scoreResults.data as RawSearchCube[]).map(
-    parseRawSearchCube
-  );
+  const rawCubes = (scoreResults as RawSearchCube[]).map(parseRawSearchCube);
   const rawCubesByIriAndLang = rollup(
     rawCubes,
     (v) => group(v, (d) => d.lang),
@@ -336,7 +296,7 @@ export const searchCubes = async ({
     })
     .filter(truthy);
 
-  const candidates = cubes
+  return cubes
     .sort((a, b) =>
       descending(infoByCube[a.iri].score, infoByCube[b.iri].score)
     )
@@ -348,15 +308,6 @@ export const searchCubes = async ({
           ? highlight(cube.description, query)
           : cube.description,
     }));
-
-  return {
-    candidates,
-    meta: {
-      queries,
-    },
-  };
 };
 
-export type SearchResult = Awaited<
-  ReturnType<typeof searchCubes>
->["candidates"][0];
+export type SearchResult = Awaited<ReturnType<typeof searchCubes>>[0];

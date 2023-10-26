@@ -53,8 +53,8 @@ const sortResults = (
     case SearchCubeResultOrder.Score:
       break;
     default:
-      const exhaustCheck = order;
-      return exhaustCheck;
+      const _exhaustiveCheck: never = order;
+      return _exhaustiveCheck;
   }
   return results;
 };
@@ -62,25 +62,20 @@ const sortResults = (
 export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   _,
   { locale, query, order, includeDrafts, filters },
-  { setup, queries },
+  { setup },
   info
 ) => {
   const { sparqlClient } = await setup(info);
-  const { candidates, meta } = await _searchCubes({
+  const cubes = await _searchCubes({
     locale,
     includeDrafts,
     filters,
     query,
     sparqlClient,
   });
+  sortResults(cubes, order, locale);
 
-  for (const query of meta.queries) {
-    queries.push(query);
-  }
-
-  sortResults(candidates, order, locale);
-
-  return candidates;
+  return cubes;
 };
 
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =

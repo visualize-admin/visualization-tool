@@ -193,9 +193,11 @@ const AccordionOperation = ({
     const all = result?.extensions?.timings
       ? flatten(result?.extensions?.timings).sort(byStart)
       : [];
+
     if (all.length === 0) {
       return 0;
     }
+
     return maxBy(all, (x) => x.end)?.end! - minBy(all, (x) => x.start)?.start!;
   }, [result?.extensions?.timings]);
 
@@ -376,9 +378,11 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
   const { opsStartMap, opsEndMap, reset, results } = controller;
   const [expandedId, setExpandedId] =
     useState<OperationResult["operation"]["key"]>();
+
   if (typeof window === "undefined") {
     return null;
   }
+
   return (
     <div>
       <Box>
@@ -397,7 +401,7 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
               expanded={expandedId === result.operation.key}
               start={opsStartMap.get(result.operation.key)!}
               end={opsEndMap.get(result.operation.key)!}
-              onChange={(_e, expanded) =>
+              onChange={(_, expanded) =>
                 setExpandedId(expanded ? result.operation.key : undefined)
               }
             />
