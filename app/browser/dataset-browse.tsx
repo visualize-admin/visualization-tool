@@ -338,9 +338,9 @@ const NavItem = ({
       newFilters.push(next);
     }
 
-    return (
-      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
-    );
+    return `/browse/${newFilters
+      .map(encodeFilter)
+      .join("/")}?${extraURLParams}`;
   }, [includeDrafts, search, level, next, filters]);
 
   const removeFilterPath = useMemo(() => {
@@ -353,12 +353,12 @@ const NavItem = ({
         Boolean
       )
     );
-    const nextIndex = filters.findIndex((f) => f.iri === next.iri);
-    const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
+    // const nextIndex = filters.findIndex((f) => f.iri === next.iri);
+    const newFilters = filters.filter((d) => d.iri !== next.iri);
 
-    return (
-      "/browse?" + newFilters.map(encodeFilter).join("&") + `&${extraURLParams}`
-    );
+    return `/browse/${newFilters
+      .map(encodeFilter)
+      .join("/")}?${extraURLParams}`;
   }, [includeDrafts, search, filters, next.iri]);
 
   const classes = useStyles();
