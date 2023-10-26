@@ -1,12 +1,7 @@
 import { BoxProps, Typography, TypographyProps, styled } from "@mui/material";
 import React from "react";
 
-import { DataCubeOrganization, DataCubeTheme } from "@/graphql/resolver-types";
-
-type TagType =
-  | "draft"
-  | DataCubeTheme["__typename"]
-  | DataCubeOrganization["__typename"];
+type TagType = "draft" | "theme" | "organization";
 
 const TagTypography = styled(Typography)(({ theme }) => ({
   borderRadius: (theme.shape.borderRadius as number) * 1.5,
@@ -41,8 +36,7 @@ const Tag = React.forwardRef<
       variant="caption"
       {...props}
       sx={{
-        backgroundColor:
-          type === "DataCubeTheme" ? "success.light" : "primary.light",
+        backgroundColor: type === "theme" ? "success.light" : "primary.light",
         ...sx,
       }}
     >

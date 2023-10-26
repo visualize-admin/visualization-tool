@@ -32,13 +32,11 @@ export default () => markdown`
             dataCube={{
               iri: "http://example.com/iri",
               creator: {
-                __typename: "DataCubeOrganization",
                 iri: "http://example.com/iri",
                 label: "BAFU",
               },
               themes: [
                 {
-                  __typename: "DataCubeTheme",
                   label: "Administration",
                   iri: "http://lindas.com/adminstration",
                 },
@@ -55,7 +53,6 @@ export default () => markdown`
             dataCube={{
               iri: "http://example.com/iri",
               creator: {
-                __typename: "DataCubeOrganization",
                 iri: "http://example.com/iri",
                 label: "BAFU",
               },

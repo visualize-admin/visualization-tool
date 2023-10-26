@@ -961,12 +961,12 @@ export const DatasetResult = ({
                   // event, otherwise we go first to <tag> page then to <result> page
                   onClick={(ev) => ev.stopPropagation()}
                 >
-                  <Tag type={t.__typename}>{t.label}</Tag>
+                  <Tag type="theme">{t.label}</Tag>
                 </MUILink>
               </Link>
             ))
           : null}
-        {creator && creator.label ? (
+        {creator?.label ? (
           <Link
             key={creator.iri}
             href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
@@ -979,7 +979,7 @@ export const DatasetResult = ({
               // event, otherwise we go first to <tag> page then to <result> page
               onClick={(ev) => ev.stopPropagation()}
             >
-              <Tag type={creator.__typename}>{creator.label}</Tag>
+              <Tag type="organization">{creator.label}</Tag>
             </MUILink>
           </Link>
         ) : null}
