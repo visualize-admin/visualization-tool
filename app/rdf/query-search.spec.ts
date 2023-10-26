@@ -2,7 +2,6 @@ import { ParsedRawSearchCube } from "./query-search";
 import {
   computeScores,
   exactMatchPoints,
-  langMultiplier,
   weights,
 } from "./query-search-score-utils";
 
@@ -19,14 +18,10 @@ describe("compute scores", () => {
 
   it("should compute weighted score per cube from score rows", () => {
     const reduced = computeScores(scores, { query: "national economy" });
-    expect(reduced.a.score).toEqual(weights.title * langMultiplier);
-    expect(reduced.b.score).toEqual(
-      (weights.title + weights.description) * langMultiplier
-    );
+    expect(reduced.a.score).toEqual(weights.title);
+    expect(reduced.b.score).toEqual(weights.title + weights.description);
     expect(reduced.c.score).toEqual(weights.creatorLabel);
     expect(reduced.d).toBeUndefined();
-    expect(reduced.e.score).toEqual(
-      (weights.title * 2 + exactMatchPoints) * langMultiplier
-    );
+    expect(reduced.e.score).toEqual(weights.title * 2 + exactMatchPoints);
   });
 });

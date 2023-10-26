@@ -12,7 +12,6 @@ export const weights = {
   publisher: 1,
   creatorLabel: 1,
 };
-export const langMultiplier = 1.5;
 export const exactMatchPoints = weights.title * 2;
 
 const isStopword = (d: string) => {
