@@ -718,7 +718,7 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
         icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
-          orgFilter && filters[0] === orgFilter ? (
+          orgFilter && filters.includes(orgFilter) ? (
             <Subthemes
               subthemes={subthemes}
               filters={filters}
