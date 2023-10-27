@@ -218,10 +218,7 @@ export const searchCubes = async ({
           ?iri ${ns.schema.about}/${ns.schema.name} ?_subthemeLabel .
           FILTER(LANG(?_subthemeLabel) = ?_lang)
         }
-        OPTIONAL {
-          ?iri ${ns.dcterms.publisher}/${ns.schema.name} ?_publisher .
-          FILTER(LANG(?_publisher) = ?_lang)
-        }
+
         ${
           query
             ? `
