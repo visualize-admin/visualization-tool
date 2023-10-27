@@ -158,24 +158,23 @@ export const searchCubes = async ({
       }
       ${makeInFilter("themeIri", themeValues)}
 
+      VALUES (?subthemeGraph ?subthemeTermset) {
+        # Add more subtheme termsets here when they are available
+        (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>)
+      }
       OPTIONAL {
         ?iri ${ns.schema.about} ?subthemeIri .
-        OPTIONAL {
-          ?subthemeIri ${
-            ns.schema.inDefinedTermSet
-          } <https://register.ld.admin.ch/foen/theme> .
+        GRAPH ?subthemeGraph {
+          ?subthemeIri a ${ns.schema.DefinedTerm} ;
+          ${ns.schema.inDefinedTermSet} ?subthemeTermset .
+          ${buildLocalizedSubQuery(
+            "subthemeIri",
+            "schema:name",
+            "subthemeLabel",
+            { locale }
+          )}
         }
-        ${buildLocalizedSubQuery(
-          "subthemeIri",
-          "schema:name",
-          "subthemeLabel",
-          { locale }
-        )}
       }
-      ${makeVisualizeDatasetFilter({
-        includeDrafts: !!includeDrafts,
-        cubeIriVar: "?iri",
-      })}
 
       OPTIONAL {
         ?iri ${ns.dcterms.creator} ?creatorIri .
@@ -193,6 +192,11 @@ export const searchCubes = async ({
         }
       }
       ${makeInFilter("creatorIri", creatorValues)}
+
+      ${makeVisualizeDatasetFilter({
+        includeDrafts: !!includeDrafts,
+        cubeIriVar: "?iri",
+      })}
 
       ${
         query
