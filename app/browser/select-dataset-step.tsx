@@ -169,6 +169,7 @@ const SelectDatasetStepContent = () => {
       includeDrafts,
       filters: queryFilters,
     },
+    pause: !!dataset,
   });
 
   useRedirectToVersionedCube({

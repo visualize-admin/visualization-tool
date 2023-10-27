@@ -22,6 +22,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Fixed issue with filtering / unfiltering subthemes that resulted in 404 error (Browse page)
 - Performance
   - Improved performance of searching for and retrieving datasets (Browse page)
+  - Cubes, themes and organizations queries aren't fired anymore when previewing a dataset
   - Improved the performance of data download
   - (min|max)Inclusive values stored in `sh:or` are now also retrieved
 - Style

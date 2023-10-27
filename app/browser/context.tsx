@@ -117,20 +117,6 @@ export const useBrowseState = () => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ data: themeData }] = useThemesQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-  const [{ data: orgData }] = useOrganizationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
 
   const [browseParams, setParams] = useQueryParamsState(
     {},
@@ -148,6 +134,23 @@ export const useBrowseState = () => {
     includeDrafts,
     dataset: paramDataset,
   } = browseParams;
+
+  const [{ data: themeData }] = useThemesQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+    pause: !!paramDataset,
+  });
+  const [{ data: orgData }] = useOrganizationsQuery({
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+    },
+    pause: !!paramDataset,
+  });
 
   // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
   const dataset = type === "dataset" ? iri : paramDataset;

@@ -596,13 +596,14 @@ const NavSection = ({
 export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
   const { dataSource } = useDataSourceStore();
   const locale = useLocale();
-  const { filters } = useBrowseContext();
+  const { filters, dataset } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
     },
+    pause: !!dataset,
   });
   const [{ data: allOrgs }] = useOrganizationsQuery({
     variables: {
@@ -610,6 +611,7 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
       sourceUrl: dataSource.url,
       locale,
     },
+    pause: !!dataset,
   });
 
   const counts = useMemo(() => {
