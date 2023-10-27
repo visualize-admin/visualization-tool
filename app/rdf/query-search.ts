@@ -141,7 +141,8 @@ export const searchCubes = async ({
       OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?status . }
       OPTIONAL {
         ?iri ${ns.schema.datePublished} ?datePublished .
-        FILTER(DATATYPE(?datePublished) = ${ns.xsd.date})
+        # Uncomment once it's valid for all cubes, see https://github.com/visualize-admin/visualization-tool/pull/1236#issuecomment-1781498261
+        # FILTER(DATATYPE(?datePublished) = ${ns.xsd.date})
       }
 
       OPTIONAL {
