@@ -17,25 +17,6 @@ import { pragmas } from "./create-source";
 import { computeScores, highlight } from "./query-search-score-utils";
 import { makeVisualizeDatasetFilter } from "./query-utils";
 
-const toNamedNode = (x: string) => {
-  return `<${x}>`;
-};
-
-const makeInFilter = (varName: string, values: string[]) => {
-  return `
-    ${
-      values.length > 0
-        ? `FILTER (bound(?${varName}) && ?${varName} IN (${values.map(
-            toNamedNode
-          )}))`
-        : ""
-    }`;
-};
-
-const icontains = (left: string, right: string) => {
-  return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
-};
-
 // Keep in sync with the query.
 type RawSearchCube = {
   iri: NamedNode;
@@ -107,6 +88,21 @@ const buildLocalizedSubQuery = (
   `;
 };
 
+const makeInFilter = (name: string, values: string[]) => {
+  return `
+    ${
+      values.length > 0
+        ? `FILTER (bound(?${name}) && ?${name} IN (${values.map(
+            (d) => `<${d}>`
+          )}))`
+        : ""
+    }`;
+};
+
+const icontains = (left: string, right: string) => {
+  return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
+};
+
 export const searchCubes = async ({
   query,
   locale: _locale,
@@ -147,12 +143,21 @@ export const searchCubes = async ({
         ?iri ${ns.schema.datePublished} ?datePublished .
         FILTER(DATATYPE(?datePublished) = ${ns.xsd.date})
       }
+
       OPTIONAL {
         ?iri ${ns.dcat.theme} ?themeIri .
-        ${buildLocalizedSubQuery("themeIri", "schema:name", "themeLabel", {
-          locale,
-        })}
+        GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+          ?themeIri a ${ns.schema.DefinedTerm} ;
+          ${
+            ns.schema.inDefinedTermSet
+          } <https://register.ld.admin.ch/opendataswiss/category> .
+          ${buildLocalizedSubQuery("themeIri", "schema:name", "themeLabel", {
+            locale,
+          })}
+        }
       }
+      ${makeInFilter("themeIri", themeValues)}
+
       OPTIONAL {
         ?iri ${ns.schema.about} ?subthemeIri .
         OPTIONAL {
@@ -171,8 +176,7 @@ export const searchCubes = async ({
         includeDrafts: !!includeDrafts,
         cubeIriVar: "?iri",
       })}
-      ${makeInFilter("creatorIri", creatorValues)}
-      ${makeInFilter("themeIri", themeValues)}
+
       OPTIONAL {
         ?iri ${ns.dcterms.creator} ?creatorIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
@@ -188,6 +192,8 @@ export const searchCubes = async ({
             )}
         }
       }
+      ${makeInFilter("creatorIri", creatorValues)}
+
       ${
         query
           ? `FILTER(
