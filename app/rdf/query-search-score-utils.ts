@@ -30,6 +30,7 @@ export const computeScores = (
 
   if (query) {
     for (const cube of cubes) {
+      // If a cube have been found, it has at least a score of 1.
       let score = 1;
 
       for (const [field, weight] of Object.entries(weights) as [

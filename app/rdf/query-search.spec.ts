@@ -8,7 +8,7 @@ import {
 jest.mock("@tpluscode/sparql-builder", () => ({}));
 
 describe("compute scores", () => {
-  const scores = [
+  const cubes = [
     { iri: "a", title: "national" },
     { iri: "b", title: "national", description: "economy" },
     { iri: "c", creatorLabel: "national" },
@@ -17,11 +17,11 @@ describe("compute scores", () => {
   ] as unknown as ParsedRawSearchCube[];
 
   it("should compute weighted score per cube from score rows", () => {
-    const reduced = computeScores(scores, { query: "national economy" });
-    expect(reduced.a.score).toEqual(weights.title);
-    expect(reduced.b.score).toEqual(weights.title + weights.description);
-    expect(reduced.c.score).toEqual(weights.creatorLabel);
-    expect(reduced.d).toBeUndefined();
-    expect(reduced.e.score).toEqual(weights.title * 2 + exactMatchPoints);
+    const scores = computeScores(cubes, { query: "national economy" });
+    expect(scores.a.score).toEqual(1 + weights.title);
+    expect(scores.b.score).toEqual(1 + weights.title + weights.description);
+    expect(scores.c.score).toEqual(1 + weights.creatorLabel);
+    expect(scores.d.score).toEqual(1);
+    expect(scores.e.score).toEqual(1 + weights.title * 2 + exactMatchPoints);
   });
 });
