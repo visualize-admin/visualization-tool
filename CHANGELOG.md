@@ -20,6 +20,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Search string is now correctly persisted in search box when refreshing the page (Browse page)
   - Fixed issue with two queries being sent when refreshing the page when search string was entered (Browse page)
   - Fixed issue with filtering / unfiltering subthemes that resulted in 404 error (Browse page)
+  - Dates with timezones are now correctly parsed
 - Performance
   - Improved performance of searching for and retrieving datasets (Browse page)
   - Improved the performance of data download
