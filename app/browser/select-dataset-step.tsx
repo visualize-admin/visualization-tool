@@ -22,6 +22,7 @@ import {
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
   bannerPresenceProps,
+  DURATION,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
@@ -111,7 +112,6 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   },
   filters: {
     display: "block",
-    marginBottom: theme.spacing(4),
     color: theme.palette.grey[800],
   },
 }));
@@ -296,16 +296,43 @@ const SelectDatasetStepContent = () => {
                 </MotionBox>
               ) : (
                 <MotionBox {...navPresenceProps}>
-                  {filters.length > 0 && (
-                    <Typography
-                      key="filters"
-                      className={classes.filters}
-                      variant="h1"
-                    >
-                      {queryFilters.map((d) => d.label).join(", ")}
-                    </Typography>
-                  )}
-
+                  <AnimatePresence>
+                    {queryFilters.length > 0 && (
+                      <MotionBox
+                        {...{
+                          initial: {
+                            transform: "translateY(-16px)",
+                            height: 0,
+                            marginBottom: 0,
+                            opacity: 0,
+                          },
+                          animate: {
+                            transform: "translateY(0px)",
+                            height: "auto",
+                            marginBottom: 16,
+                            opacity: 1,
+                          },
+                          exit: {
+                            transform: "translateY(-16px)",
+                            height: 0,
+                            marginBottom: 0,
+                            opacity: 0,
+                          },
+                          transition: {
+                            duration: DURATION,
+                          },
+                        }}
+                      >
+                        <Typography
+                          key="filters"
+                          className={classes.filters}
+                          variant="h1"
+                        >
+                          {queryFilters.map((d) => d.label).join(", ")}
+                        </Typography>
+                      </MotionBox>
+                    )}
+                  </AnimatePresence>
                   <SearchDatasetControls
                     browseState={browseState}
                     cubes={cubes}

@@ -4,7 +4,7 @@ import { Transition, motion } from "framer-motion";
 export const MotionBox = motion(Box);
 export const MotionCard = motion(Card);
 
-const DURATION = 0.4;
+export const DURATION = 0.4;
 
 export const smoothPresenceProps = {
   initial: { opacity: 0 },
