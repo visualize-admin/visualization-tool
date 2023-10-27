@@ -146,6 +146,23 @@ export const searchCubes = async ({
       }
 
       OPTIONAL {
+        ?iri ${ns.dcterms.creator} ?creatorIri .
+        GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+          ?creatorIri a ${ns.schema.Organization} ;
+            ${
+              ns.schema.inDefinedTermSet
+            } <https://register.ld.admin.ch/opendataswiss/org> .
+            ${buildLocalizedSubQuery(
+              "creatorIri",
+              "schema:name",
+              "creatorLabel",
+              { locale }
+            )}
+        }
+      }
+      ${makeInFilter("creatorIri", creatorValues)}
+
+      OPTIONAL {
         ?iri ${ns.dcat.theme} ?themeIri .
         GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
           ?themeIri a ${ns.schema.DefinedTerm} ;
@@ -177,61 +194,59 @@ export const searchCubes = async ({
         }
       }
 
-      OPTIONAL {
-        ?iri ${ns.dcterms.creator} ?creatorIri .
-        GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-          ?creatorIri a ${ns.schema.Organization} ;
-            ${
-              ns.schema.inDefinedTermSet
-            } <https://register.ld.admin.ch/opendataswiss/org> .
-            ${buildLocalizedSubQuery(
-              "creatorIri",
-              "schema:name",
-              "creatorLabel",
-              { locale }
-            )}
-        }
-      }
-      ${makeInFilter("creatorIri", creatorValues)}
-
       ${makeVisualizeDatasetFilter({
         includeDrafts: !!includeDrafts,
         cubeIriVar: "?iri",
       })}
 
-      ${
-        query
-          ? `FILTER(
-        ${query
-          ?.split(" ")
-          .slice(0, 1)
-          .map(
-            (x) =>
-              `${icontains("?title", x)} || ${icontains("?description", x)}`
-          )
-          .join(" || ")}
+      {
+        ?iri ${ns.schema.name} ?_title .
+        BIND(LANG(?_title) AS ?_lang) .
+        OPTIONAL {
+          ?iri ${ns.schema.description} ?_description .
+          FILTER(LANG(?_description) = ?_lang)
+        }
+        OPTIONAL {
+          ?iri ${ns.dcterms.creator}/${ns.schema.name} ?_creatorLabel .
+          FILTER(LANG(?_creatorLabel) = ?_lang)
+        }
+        OPTIONAL {
+          ?iri ${ns.dcat.theme}/${ns.schema.name} ?_themeLabel .
+          FILTER(LANG(?_themeLabel) = ?_lang)
+        }
+        OPTIONAL {
+          ?iri ${ns.schema.about}/${ns.schema.name} ?_subthemeLabel .
+          FILTER(LANG(?_subthemeLabel) = ?_lang)
+        }
+        OPTIONAL {
+          ?iri ${ns.dcterms.publisher}/${ns.schema.name} ?_publisher .
+          FILTER(LANG(?_publisher) = ?_lang)
+        }
+        ${
+          query
+            ? `
+        FILTER(
+          ${query
+            .split(" ")
+            .map(
+              (d) =>
+                `${icontains("?_title", d)} || ${icontains(
+                  "?_description",
+                  d
+                )} || ${icontains("?_creatorLabel", d)} || ${icontains(
+                  "?_themeLabel",
+                  d
+                )} || ${icontains("?_subthemeLabel", d)} || ${icontains(
+                  "?_publisher",
+                  d
+                )}`
+            )
+            .join(" || ")}
+        )
+        `
+            : ""
+        }
 
-      || (bound(?publisher) && ${query
-        .split(" ")
-        .map((x) => icontains("?publisher", x))
-        .join(" || ")})
-
-      ||  (bound(?themeLabel) && ${query
-        .split(" ")
-        .map((x) => icontains("?themeLabel", x))
-        .join(" || ")})
-
-      ||  (bound(?subthemeLabel) && ${query
-        .split(" ")
-        .map((x) => icontains("?subthemeLabel", x))
-        .join(" || ")})
-
-      ||  (bound(?creatorLabel) && ${query
-        .split(" ")
-        .map((x) => icontains("?creatorLabel", x))
-        .join(" || ")})
-      )`
-          : ""
       }
   `
     .ORDER()

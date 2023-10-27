@@ -30,7 +30,7 @@ export const computeScores = (
 
   if (query) {
     for (const cube of cubes) {
-      let score = 0;
+      let score = 1;
 
       for (const [field, weight] of Object.entries(weights) as [
         keyof typeof weights,
@@ -59,12 +59,6 @@ export const computeScores = (
         score > infoPerCube[cube.iri].score
       ) {
         infoPerCube[cube.iri] = { score };
-      }
-    }
-
-    for (const k of Object.keys(infoPerCube)) {
-      if (infoPerCube[k]?.score === 0) {
-        delete infoPerCube[k];
       }
     }
   } else {
