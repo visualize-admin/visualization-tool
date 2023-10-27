@@ -138,7 +138,7 @@ export const searchCubes = async ({
       })}
       OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
-      OPTIONAL { ?iri ${ns.schema.creativeWorkStatus} ?status . }
+      ?iri ${ns.schema.creativeWorkStatus} ?status .
       OPTIONAL {
         ?iri ${ns.schema.datePublished} ?datePublished .
         # Uncomment once it's valid for all cubes, see https://github.com/visualize-admin/visualization-tool/pull/1236#issuecomment-1781498261
