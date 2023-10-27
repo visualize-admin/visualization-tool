@@ -11,6 +11,7 @@ export const weights = {
   themeLabel: 1,
   publisher: 1,
   creatorLabel: 1,
+  subthemeLabel: 1,
 };
 export const exactMatchPoints = weights.title * 2;
 
@@ -60,6 +61,7 @@ export const computeScores = (
         infoPerCube[cube.iri] = { score };
       }
     }
+
     for (const k of Object.keys(infoPerCube)) {
       if (infoPerCube[k]?.score === 0) {
         delete infoPerCube[k];
