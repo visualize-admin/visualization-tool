@@ -195,44 +195,50 @@ export const searchCubes = async ({
         cubeIriVar: "?iri",
       })}
 
-      {
-        ?iri ${ns.schema.name} ?_title .
-        BIND(LANG(?_title) AS ?_lang) .
-        OPTIONAL {
-          ?iri ${ns.schema.description} ?_description .
-          FILTER(LANG(?_description) = ?_lang)
-        }
-        OPTIONAL {
-          ?iri ${ns.dcterms.creator}/${ns.schema.name} ?_creatorLabel .
-          FILTER(LANG(?_creatorLabel) = ?_lang)
-        }
-        OPTIONAL {
-          ?iri ${ns.dcat.theme}/${ns.schema.name} ?_themeLabel .
-          FILTER(LANG(?_themeLabel) = ?_lang)
-        }
-        OPTIONAL {
-          ?iri ${ns.schema.about}/${ns.schema.name} ?_subthemeLabel .
-          FILTER(LANG(?_subthemeLabel) = ?_lang)
-        }
+      ${
+        query
+          ? `
+      VALUES ?keyword {${query
+        .split(" ")
+        .map((d) => `"${d}"`)
+        .join(" ")}}
 
-        ${
-          query
-            ? `
-        VALUES ?keyword { ${query
-          .split(" ")
-          .map((d) => `"${d}"`)
-          .join(" ")} }
-        FILTER(
-          CONTAINS(LCASE(?_title), LCASE(?keyword)) ||
-          CONTAINS(LCASE(?_description), LCASE(?keyword)) ||
-          CONTAINS(LCASE(?_creatorLabel), LCASE(?keyword)) ||
-          CONTAINS(LCASE(?_themeLabel), LCASE(?keyword)) ||
-          CONTAINS(LCASE(?_subthemeLabel), LCASE(?keyword)) ||
-          CONTAINS(LCASE(?_publisher), LCASE(?keyword))
-        )`
-            : ""
-        }
+      FILTER(
+        CONTAINS(LCASE(?title_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?title_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?title_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?title_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?title_),   LCASE(?keyword)) ||
+      
+        CONTAINS(LCASE(?description_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?description_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?description_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?description_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?description_),   LCASE(?keyword)) ||
+          
+        CONTAINS(LCASE(?creatorLabel_de), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?creatorLabel_fr), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?creatorLabel_it), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?creatorLabel_en), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?creatorLabel_),   LCASE(?keyword)) || 
+          
+        CONTAINS(LCASE(?themeLabel_de), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?themeLabel_fr), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?themeLabel_it), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?themeLabel_en), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?themeLabel_),   LCASE(?keyword)) || 
+          
+        CONTAINS(LCASE(?subthemeLabel_de), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?subthemeLabel_fr), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?subthemeLabel_it), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?subthemeLabel_en), LCASE(?keyword)) || 
+        CONTAINS(LCASE(?subthemeLabel_),   LCASE(?keyword)) || 
+          
+        CONTAINS(LCASE(?publisher), LCASE(?keyword))
+      )`
+          : ""
       }
+      
   `
     .ORDER()
     // Important for the latter part of the query, to return the latest cube per unversioned iri.
