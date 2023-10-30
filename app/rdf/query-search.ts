@@ -218,7 +218,10 @@ export const searchCubes = async ({
         ${
           query
             ? `
-        VALUES ?keyword { ${query.split(" ").map((d) => `"${d}"`)} }
+        VALUES ?keyword { ${query
+          .split(" ")
+          .map((d) => `"${d}"`)
+          .join(" ")} }
         FILTER(
           CONTAINS(LCASE(?_title), LCASE(?keyword)) ||
           CONTAINS(LCASE(?_description), LCASE(?keyword)) ||
