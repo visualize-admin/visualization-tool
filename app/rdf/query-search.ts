@@ -99,10 +99,6 @@ const makeInFilter = (name: string, values: string[]) => {
     }`;
 };
 
-const icontains = (left: string, right: string) => {
-  return `CONTAINS(LCASE(${left}), LCASE("${right}"))`;
-};
-
 export const searchCubes = async ({
   query,
   locale: _locale,
@@ -139,11 +135,7 @@ export const searchCubes = async ({
       OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
       ?iri ${ns.schema.creativeWorkStatus} ?status .
-      OPTIONAL {
-        ?iri ${ns.schema.datePublished} ?datePublished .
-        # Uncomment once it's valid for all cubes, see https://github.com/visualize-admin/visualization-tool/pull/1236#issuecomment-1781498261
-        # FILTER(DATATYPE(?datePublished) = ${ns.xsd.date})
-      }
+      OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
 
       OPTIONAL {
         ?iri ${ns.dcterms.creator} ?creatorIri .
@@ -176,10 +168,14 @@ export const searchCubes = async ({
       }
       ${makeInFilter("themeIri", themeValues)}
 
-      VALUES (?subthemeGraph ?subthemeTermset) {
-        # Add more subtheme termsets here when they are available
-        (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>)
-      }
+      # Add more subtheme termsets here when they are available
+       ${
+         creatorValues.includes(
+           "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu"
+         )
+           ? "VALUES (?subthemeGraph ?subthemeTermset) { (<https://lindas.admin.ch/foen/themes> <https://register.ld.admin.ch/foen/theme>) }"
+           : ""
+       }
       OPTIONAL {
         ?iri ${ns.schema.about} ?subthemeIri .
         GRAPH ?subthemeGraph {
@@ -222,28 +218,17 @@ export const searchCubes = async ({
         ${
           query
             ? `
+        VALUES ?keyword { ${query.split(" ").map((d) => `"${d}"`)} }
         FILTER(
-          ${query
-            .split(" ")
-            .map(
-              (d) =>
-                `${icontains("?_title", d)} || ${icontains(
-                  "?_description",
-                  d
-                )} || ${icontains("?_creatorLabel", d)} || ${icontains(
-                  "?_themeLabel",
-                  d
-                )} || ${icontains("?_subthemeLabel", d)} || ${icontains(
-                  "?_publisher",
-                  d
-                )}`
-            )
-            .join(" || ")}
-        )
-        `
+          CONTAINS(LCASE(?_title), LCASE(?keyword)) ||
+          CONTAINS(LCASE(?_description), LCASE(?keyword)) ||
+          CONTAINS(LCASE(?_creatorLabel), LCASE(?keyword)) ||
+          CONTAINS(LCASE(?_themeLabel), LCASE(?keyword)) ||
+          CONTAINS(LCASE(?_subthemeLabel), LCASE(?keyword)) ||
+          CONTAINS(LCASE(?_publisher), LCASE(?keyword))
+        )`
             : ""
         }
-
       }
   `
     .ORDER()
