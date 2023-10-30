@@ -254,7 +254,8 @@ export const searchCubes = async ({
   const cubes = rawCubes
     .map((cube) => {
       const versionHistory = versionHistoryPerCube[cube.iri];
-      const dedupIdentifier = versionHistory ?? cube.iri;
+      // Need to keep both published and draft cubes with the same iri.
+      const dedupIdentifier = (versionHistory ?? cube.iri) + cube.status;
 
       if (seenCubes.has(dedupIdentifier)) {
         return null;
