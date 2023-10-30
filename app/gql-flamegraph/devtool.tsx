@@ -328,13 +328,15 @@ const Queries = ({ queries }: { queries: RequestQueryMeta[] }) => {
         const text = q.text.replace(/\n\n/gm, "\n");
         return (
           <div key={i} style={{ overflowX: "auto" }}>
-            <Typography variant="caption">
-              {q.endTime - q.startTime}ms
-            </Typography>{" "}
-            -{" "}
-            <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
-              Copy
-            </CopyLink>
+            <div>
+              <Typography variant="caption">
+                {q.endTime - q.startTime}ms
+              </Typography>{" "}
+              -{" "}
+              <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
+                Copy
+              </CopyLink>
+            </div>
             <Box
               cols={100}
               rows={10}
