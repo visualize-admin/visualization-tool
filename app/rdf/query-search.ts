@@ -1,4 +1,3 @@
-import RDF from "@rdfjs/data-model";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { descending, group } from "d3";
 import { Literal, NamedNode } from "rdf-js";
@@ -22,7 +21,6 @@ type RawSearchCube = {
   iri: NamedNode;
   title: Literal;
   description: Literal;
-  versionHistory: NamedNode;
   status: NamedNode;
   datePublished: Literal;
   creatorIri: NamedNode;
@@ -43,7 +41,6 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
     iri: cube.iri.value,
     title: cube.title.value,
     description: cube.description?.value,
-    versionHistory: cube.versionHistory?.value,
     status:
       cube.status.value ===
       ns.adminVocabulary("CreativeWorkStatus/Published").value
@@ -123,7 +120,7 @@ export const searchCubes = async ({
       .map((v) => v.value) ?? [];
 
   const scoresQuery = SELECT.DISTINCT`
-    ?iri ?title ?status ?datePublished ?versionHistory ?description ?publisher ?creatorIri ?creatorLabel ?themeIri ?themeLabel ?subthemeIri ?subthemeLabel
+    ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel ?themeIri ?themeLabel ?subthemeIri ?subthemeLabel
     `.WHERE`
       ?iri a ${ns.cube.Cube} .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
@@ -132,7 +129,6 @@ export const searchCubes = async ({
       ${buildLocalizedSubQuery("iri", "schema:description", "description", {
         locale,
       })}
-      OPTIONAL { ?versionHistory ${ns.schema.hasPart} ?iri . }
       OPTIONAL { ?iri ${ns.dcterms.publisher} ?publisher . }
       ?iri ${ns.schema.creativeWorkStatus} ?status .
       OPTIONAL { ?iri ${ns.schema.datePublished} ?datePublished . }
@@ -239,29 +235,20 @@ export const searchCubes = async ({
           : ""
       }
       
-  `
-    .ORDER()
-    // Important for the latter part of the query, to return the latest cube per unversioned iri.
-    .BY(RDF.variable("versionHistory"))
-    .THEN.BY(RDF.variable("datePublished"), true)
-    .THEN.BY(RDF.variable("iri"), true).prologue`${pragmas}`;
+  `.prologue`${pragmas}`;
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
   });
   const rawCubes = (scoreResults as RawSearchCube[]).map(parseRawSearchCube);
   const rawCubesByIri = group(rawCubes, (d) => d.iri);
-  const versionHistoryPerCube = Object.fromEntries(
-    rawCubes.map((d) => [d.iri, d.versionHistory])
-  );
   const infoByCube = computeScores(rawCubes, { query });
 
   const seenCubes = new Set<string>();
   const cubes = rawCubes
     .map((cube) => {
-      const versionHistory = versionHistoryPerCube[cube.iri];
       // Need to keep both published and draft cubes with the same iri.
-      const dedupIdentifier = (versionHistory ?? cube.iri) + cube.status;
+      const dedupIdentifier = cube.iri + cube.status;
 
       if (seenCubes.has(dedupIdentifier)) {
         return null;
