@@ -8,10 +8,10 @@ export const parseFloatZeroed = (s: string) => {
 export const weights = {
   title: 5,
   description: 2,
-  themeLabel: 1,
-  publisher: 1,
   creatorLabel: 1,
-  subthemeLabel: 1,
+  publisher: 1,
+  themeLabels: 1,
+  subthemeLabels: 1,
 };
 export const exactMatchPoints = weights.title * 2;
 

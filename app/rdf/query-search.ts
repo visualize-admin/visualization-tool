@@ -26,10 +26,10 @@ type RawSearchCube = {
   creatorIri: NamedNode;
   creatorLabel: Literal;
   publisher: NamedNode;
-  themeIri: NamedNode;
-  themeLabel: Literal;
-  subthemeIri: NamedNode;
-  subthemeLabel: Literal;
+  themeIris: NamedNode;
+  themeLabels: Literal;
+  subthemeIris: NamedNode;
+  subthemeLabels: Literal;
 };
 
 export type ParsedRawSearchCube = {
@@ -50,10 +50,10 @@ const parseRawSearchCube = (cube: RawSearchCube): ParsedRawSearchCube => {
     creatorIri: cube.creatorIri?.value,
     creatorLabel: cube.creatorLabel?.value,
     publisher: cube.publisher?.value,
-    themeIri: cube.themeIri?.value,
-    themeLabel: cube.themeLabel?.value,
-    subthemeIri: cube.subthemeIri?.value,
-    subthemeLabel: cube.subthemeLabel?.value,
+    themeIris: cube.themeIris?.value,
+    themeLabels: cube.themeLabels?.value,
+    subthemeIris: cube.subthemeIris?.value,
+    subthemeLabels: cube.subthemeLabels?.value,
   };
 };
 
@@ -96,6 +96,8 @@ const makeInFilter = (name: string, values: string[]) => {
     }`;
 };
 
+const GROUP_SEPARATOR = "|||";
+
 export const searchCubes = async ({
   query,
   locale: _locale,
@@ -119,8 +121,10 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
 
-  const scoresQuery = SELECT.DISTINCT`
-    ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel ?themeIri ?themeLabel ?subthemeIri ?subthemeLabel
+  const scoresQuery = SELECT`
+    ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
+    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
+    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
     `.WHERE`
       ?iri a ${ns.cube.Cube} .
       ${buildLocalizedSubQuery("iri", "schema:name", "title", {
@@ -235,7 +239,9 @@ export const searchCubes = async ({
           : ""
       }
       
-  `.prologue`${pragmas}`;
+  `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
+    .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
+    .BY`?creatorLabel`.prologue`${pragmas}`;
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
@@ -262,68 +268,42 @@ export const searchCubes = async ({
         return null;
       }
 
-      const parsedCube: SearchCube = {
-        iri: rawCubes[0].iri,
-        title: rawCubes[0].title,
-        description: null,
-        creator: null,
-        publicationStatus: rawCubes[0].status as DataCubePublicationStatus,
-        datePublished: null,
-        themes: [],
-        subthemes: [],
-      };
-
-      for (const cube of rawCubes) {
-        if (!parsedCube.iri) {
-          parsedCube.iri = cube.iri;
-        }
-
-        if (!parsedCube.title) {
-          parsedCube.title = cube.title;
-        }
-
-        if (!parsedCube.description) {
-          parsedCube.description = cube.description;
-        }
-
-        if (!parsedCube.creator && cube.creatorIri) {
-          parsedCube.creator = {
-            iri: cube.creatorIri,
-            label: cube.creatorLabel,
-          };
-        }
-
-        if (!parsedCube.datePublished) {
-          parsedCube.datePublished = cube.datePublished;
-        }
-
-        if (!parsedCube.publicationStatus) {
-          parsedCube.publicationStatus =
-            cube.status as DataCubePublicationStatus;
-        }
-
-        if (
-          cube.themeIri &&
-          cube.themeLabel &&
-          !parsedCube.themes.some((d) => d.iri === cube.themeIri)
-        ) {
-          parsedCube.themes.push({
-            iri: cube.themeIri,
-            label: cube.themeLabel,
-          });
-        }
-
-        if (
-          cube.subthemeIri &&
-          cube.subthemeLabel &&
-          !parsedCube.subthemes.some((d) => d.iri === cube.subthemeIri)
-        ) {
-          parsedCube.subthemes.push({
-            iri: cube.subthemeIri,
-            label: cube.subthemeLabel,
-          });
-        }
+      if (rawCubes.length > 1) {
+        console.warn(`Found multiple cubes with the same iri: ${cube.iri}`);
       }
+
+      const rawCube = rawCubes[0];
+
+      const themeIris = rawCube.themeIris.split(GROUP_SEPARATOR);
+      const themeLabels = rawCube.themeLabels.split(GROUP_SEPARATOR);
+      const subthemeIris = rawCube.subthemeIris.split(GROUP_SEPARATOR);
+      const subthemeLabels = rawCube.subthemeLabels.split(GROUP_SEPARATOR);
+
+      const parsedCube: SearchCube = {
+        iri: rawCube.iri,
+        title: rawCube.title,
+        description: rawCube.description,
+        creator:
+          rawCube.creatorIri && rawCube.creatorLabel
+            ? { iri: rawCube.creatorIri, label: rawCube.creatorLabel }
+            : null,
+        publicationStatus: rawCube.status as DataCubePublicationStatus,
+        datePublished: rawCube.datePublished,
+        themes:
+          themeIris.length === themeLabels.length
+            ? themeIris.map((iri, i) => ({
+                iri,
+                label: themeLabels[i],
+              }))
+            : [],
+        subthemes:
+          subthemeIris.length === subthemeLabels.length
+            ? subthemeIris.map((iri, i) => ({
+                iri,
+                label: subthemeLabels[i],
+              }))
+            : [],
+      };
 
       return parsedCube;
     })
