@@ -207,3 +207,8 @@ test("sort language consistency", async ({ page, selectors }) => {
   expect(count5).toEqual(count7);
   expect(count5).toEqual(count8);
 });
+
+test("no results", async ({ page }) => {
+  await page.goto("/en/browse?dataSource=Int&search=foo");
+  await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
+});

@@ -246,7 +246,10 @@ export const searchCubes = async ({
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
   });
-  const rawCubes = (scoreResults as RawSearchCube[]).map(parseRawSearchCube);
+  const rawCubes = (scoreResults as RawSearchCube[])
+    // Filter out cubes without iri, happens due to grouping, when no cubes are found.
+    .filter((d) => d.iri)
+    .map(parseRawSearchCube);
   const rawCubesByIri = group(rawCubes, (d) => d.iri);
   const infoByCube = computeScores(rawCubes, { query });
 
