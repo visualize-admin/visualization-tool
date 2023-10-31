@@ -1,4 +1,4 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { descending, group } from "d3";
 import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
@@ -121,7 +121,7 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
 
-  let scoresQuery = SELECT`
+  const scoresQuery = SELECT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
@@ -165,6 +165,14 @@ export const searchCubes = async ({
             locale,
           })}
         }
+      }
+      ${
+        themeValues.length
+          ? sparql`
+      VALUES ?theme { ${themeValues.map((d) => `<${d}>`).join(" ")} }
+      ?iri ${ns.dcat.theme} ?theme .
+      `
+          : ""
       }
 
       # Add more subtheme termsets here when they are available
@@ -240,12 +248,6 @@ export const searchCubes = async ({
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
     .BY`?creatorLabel`.prologue`${pragmas}`;
-
-  if (themeValues.length) {
-    scoresQuery = scoresQuery.HAVING`${themeValues
-      .map((iri) => `CONTAINS(LCASE(?themeIris), LCASE("${iri}"))`)
-      .join(" || ")}` as any;
-  }
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
