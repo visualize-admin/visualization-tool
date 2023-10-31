@@ -351,7 +351,9 @@ const NavItem = ({
         Boolean
       )
     );
-    const newFilters = filters.filter((d) => d.iri !== next.iri);
+    const newFilters = filters.filter(
+      (f) => f.__typename !== "DataCubeAbout" && f.iri !== next.iri
+    );
 
     return `/browse/${newFilters
       .map(encodeFilter)
