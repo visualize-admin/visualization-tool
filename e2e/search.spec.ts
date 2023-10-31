@@ -1,7 +1,8 @@
 import { within } from "@playwright-testing-library/test";
-import { Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 
 import { setup } from "./common";
+import { Selectors } from "./selectors";
 
 const { test, expect } = setup();
 
@@ -45,7 +46,7 @@ test("search results count coherence", async ({ page, selectors }) => {
     "Swiss Federal Office of Energy SFOE",
   ];
 
-  for (let t of [...categories, ...themes]) {
+  for (const t of [...categories, ...themes]) {
     await page.goto("/en/browse?dataSource=Int");
     await selectors.search.resultsCount();
 
@@ -120,4 +121,94 @@ test("sort order", async ({ page, selectors, screen, actions }) => {
   await searchInput.type("NFI");
   await page.keyboard.press("Enter");
   expect(await getSelectValue(select)).toBe("SCORE");
+});
+
+const getResultCountForSearch = async (
+  search: string,
+  {
+    page,
+    selectors,
+    locale,
+  }: { page: Page; selectors: Selectors; locale: string }
+) => {
+  await page.goto(
+    `/${locale}/browse?search=${encodeURIComponent(search)}&dataSource=Prod`
+  );
+  const resultCount = await selectors.search.resultsCount();
+  const count = (await resultCount.textContent())?.split(" ")[0];
+  expect(count).toBeTruthy();
+
+  return count;
+};
+
+test("sort order consistency", async ({ page, selectors }) => {
+  const count1 = await getResultCountForSearch("wasser wald", {
+    locale: "en",
+    page,
+    selectors,
+  });
+  const count2 = await getResultCountForSearch("wald wasser", {
+    locale: "en",
+    page,
+    selectors,
+  });
+
+  expect(count1).toEqual(count2);
+});
+
+test("sort language consistency", async ({ page, selectors }) => {
+  const count1 = await getResultCountForSearch("wasser", {
+    locale: "en",
+    page,
+    selectors,
+  });
+  const count2 = await getResultCountForSearch("wasser", {
+    locale: "de",
+    page,
+    selectors,
+  });
+  const count3 = await getResultCountForSearch("wasser", {
+    locale: "fr",
+    page,
+    selectors,
+  });
+  const count4 = await getResultCountForSearch("wasser", {
+    locale: "it",
+    page,
+    selectors,
+  });
+
+  expect(count1).toEqual(count2);
+  expect(count1).toEqual(count3);
+  expect(count1).toEqual(count4);
+
+  const count5 = await getResultCountForSearch("water", {
+    locale: "en",
+    page,
+    selectors,
+  });
+  const count6 = await getResultCountForSearch("eaux", {
+    locale: "de",
+    page,
+    selectors,
+  });
+  const count7 = await getResultCountForSearch("acque", {
+    locale: "fr",
+    page,
+    selectors,
+  });
+  const count8 = await getResultCountForSearch("water", {
+    locale: "it",
+    page,
+    selectors,
+  });
+
+  expect(count5).toEqual(count6);
+  expect(count5).toEqual(count7);
+  expect(count5).toEqual(count8);
+});
+
+test("no results", async ({ page }) => {
+  await page.goto("/en/browse?dataSource=Int&search=foo");
+  await page.locator(`:text("No results")`).waitFor({ timeout: 10_000 });
 });

@@ -19,9 +19,9 @@ const getSource = (dataSourceType: string) => {
 };
 
 export const Query: QueryResolvers = {
-  dataCubes: async (parent, args, context, info) => {
+  searchCubes: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubes(parent, args, context, info);
+    return await source.searchCubes(parent, args, context, info);
   },
   dataCubeByIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
@@ -30,22 +30,6 @@ export const Query: QueryResolvers = {
   possibleFilters: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.possibleFilters(parent, args, context, info);
-  },
-  themes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.themes(parent, args, context, info);
-  },
-  subthemes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.subthemes(parent, args, context, info);
-  },
-  organizations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.organizations(parent, args, context, info);
-  },
-  datasetcount: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.datasetcount(parent, args, context, info);
   },
 };
 
@@ -64,7 +48,7 @@ const DataCube: DataCubeResolvers = {
   description: ({ data: { description } }) => description ?? null,
   dateModified: ({ data: { dateModified } }) => dateModified ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
-  themes: ({ data: { themes } }) => themes || [],
+  themes: ({ data: { themes } }) => themes ?? [],
   creator: ({ data: { creator } }) => creator ?? null,
   dimensions: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
