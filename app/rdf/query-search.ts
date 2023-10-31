@@ -121,7 +121,7 @@ export const searchCubes = async ({
       ?.filter((x) => x.type === "DataCubeOrganization")
       .map((v) => v.value) ?? [];
 
-  const scoresQuery = SELECT`
+  let scoresQuery = SELECT`
     ?iri ?title ?status ?datePublished ?description ?publisher ?creatorIri ?creatorLabel
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
@@ -152,7 +152,7 @@ export const searchCubes = async ({
             )}
         }
       }
-      ${makeInFilter("creatorIri", creatorValues)}
+      ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
 
       OPTIONAL {
         ?iri ${ns.dcat.theme} ?themeIri .
@@ -166,7 +166,6 @@ export const searchCubes = async ({
           })}
         }
       }
-      ${makeInFilter("themeIri", themeValues)}
 
       # Add more subtheme termsets here when they are available
        ${
@@ -238,10 +237,15 @@ export const searchCubes = async ({
       )`
           : ""
       }
-      
   `.GROUP().BY`?iri`.THEN.BY`?title`.THEN.BY`?status`.THEN.BY`?datePublished`
     .THEN.BY`?description`.THEN.BY`?publisher`.THEN.BY`?creatorIri`.THEN
     .BY`?creatorLabel`.prologue`${pragmas}`;
+
+  if (themeValues.length) {
+    scoresQuery = scoresQuery.HAVING`${themeValues
+      .map((iri) => `CONTAINS(LCASE(?themeIris), LCASE("${iri}"))`)
+      .join(" || ")}` as any;
+  }
 
   const scoreResults = await scoresQuery.execute(sparqlClient.query, {
     operation: "postUrlencoded",
