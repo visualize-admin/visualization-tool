@@ -70,6 +70,7 @@ const isAnnotationField = (field: string | undefined) => {
 
 const ConfigureChartStep = () => {
   const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const { dataSource, setDataSource } = useDataSourceStore();
 
   const handleClosePanel = useEvent(() => {
@@ -85,11 +86,12 @@ const ConfigureChartStep = () => {
     if (state.state !== "CONFIGURING_CHART") {
       return;
     }
+
     router.push(
       {
         pathname: `/browse`,
         query: {
-          dataset: state.dataSet,
+          dataset: chartConfig.dataSet,
         },
       },
       undefined,
@@ -109,8 +111,6 @@ const ConfigureChartStep = () => {
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
-
-  const chartConfig = getChartConfig(state);
 
   return (
     <InteractiveFiltersProvider>
@@ -136,7 +136,7 @@ const ConfigureChartStep = () => {
       <PanelMiddleWrapper>
         <ChartPanel>
           <ChartPreview
-            dataSetIri={state.dataSet}
+            dataSetIri={chartConfig.dataSet}
             dataSource={state.dataSource}
           />
         </ChartPanel>
@@ -173,6 +173,7 @@ const ConfigureChartStep = () => {
 
 const PublishStep = () => {
   const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
 
   if (state.state !== "PUBLISHING") {
     return null;
@@ -183,7 +184,7 @@ const PublishStep = () => {
       <ChartPanel>
         <InteractiveFiltersProvider>
           <ChartPreview
-            dataSetIri={state.dataSet}
+            dataSetIri={chartConfig.dataSet}
             dataSource={state.dataSource}
           />
         </InteractiveFiltersProvider>

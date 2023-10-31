@@ -15,6 +15,7 @@ describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
     const config = getInitialConfig({
       chartType: "table",
+      dataSet: "https://environment.ld.admin.ch/foen/nfi",
       dimensions: forestAreaData.data.dataCubeByIri.dimensions as NonNullable<
         ComponentsQuery["dataCubeByIri"]
       >["dimensions"],
@@ -81,6 +82,7 @@ describe("chart type switch", () => {
       key: "column",
       version: "1.4.0",
       chartType: "column",
+      dataSet: "https://environment.ld.admin.ch/foen/ubd0104",
       filters: {},
       meta: {
         title: {

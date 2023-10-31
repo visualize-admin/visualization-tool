@@ -171,9 +171,9 @@ const useLegendGroups = ({
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
-  const { dataSet: dataset, dataSource } = configState;
+  const { dataSource } = configState;
   const segmentDimension = useDimension({
-    dataset,
+    dataset: chartConfig.dataSet,
     dataSource,
     locale,
     dimensionIri: segmentField?.componentIri,
@@ -181,7 +181,7 @@ const useLegendGroups = ({
 
   const [hierarchyResp] = useDimensionValuesQuery({
     variables: {
-      dataCubeIri: dataset,
+      dataCubeIri: chartConfig.dataSet,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

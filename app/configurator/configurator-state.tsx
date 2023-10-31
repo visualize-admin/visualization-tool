@@ -109,10 +109,6 @@ export type ConfiguratorStateAction =
       >;
     }
   | {
-      type: "DATASET_SELECTED";
-      dataSet: string | undefined;
-    }
-  | {
       type: "DATASOURCE_CHANGED";
       value: DataSource;
     }
@@ -329,14 +325,13 @@ const getStateWithCurrentDataSource = (state: ConfiguratorState) => {
 
   return {
     ...state,
-    dataSource: dataSource || DEFAULT_DATA_SOURCE,
+    dataSource: dataSource ?? DEFAULT_DATA_SOURCE,
   };
 };
 
 const INITIAL_STATE: ConfiguratorState = {
   version: CONFIGURATOR_STATE_VERSION,
   state: "INITIAL",
-  dataSet: undefined,
   dataSource: DEFAULT_DATA_SOURCE,
 };
 
@@ -344,7 +339,6 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
   ...INITIAL_STATE,
   version: CONFIGURATOR_STATE_VERSION,
   state: "SELECTING_DATASET",
-  dataSet: undefined,
   dataSource: DEFAULT_DATA_SOURCE,
   chartConfigs: undefined,
   meta: {
@@ -366,10 +360,11 @@ const EMPTY_STATE: ConfiguratorStateSelectingDataSet = {
 
 const getCachedMetadata = (
   draft: ConfiguratorStateConfiguringChart,
+  dataSet: string,
   locale: Locale
 ): DataCubeMetadataWithHierarchies | null => {
   const variables = {
-    iri: draft.dataSet,
+    iri: dataSet,
     locale,
     sourceType: draft.dataSource.type,
     sourceUrl: draft.dataSource.url,
@@ -610,11 +605,16 @@ export const applyNonTableDimensionToFilters = ({
 
 const transitionStepNext = (
   draft: ConfiguratorState,
-  dataSetMetadata: DataCubeMetadataWithHierarchies
+  options: {
+    dataSet?: string;
+    dataSetMetadata: DataCubeMetadataWithHierarchies;
+  }
 ): ConfiguratorState => {
+  const { dataSet, dataSetMetadata } = options;
+
   switch (draft.state) {
     case "SELECTING_DATASET":
-      if (draft.dataSet) {
+      if (dataSet) {
         const possibleChartTypes = getPossibleChartTypes({
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
@@ -622,6 +622,7 @@ const transitionStepNext = (
         const chartConfig = deriveFiltersFromFields(
           getInitialConfig({
             chartType: possibleChartTypes[0],
+            dataSet,
             dimensions: dataSetMetadata.dimensions,
             measures: dataSetMetadata.measures,
           }),
@@ -631,7 +632,6 @@ const transitionStepNext = (
         return {
           version: CONFIGURATOR_STATE_VERSION,
           state: "CONFIGURING_CHART",
-          dataSet: draft.dataSet,
           dataSource: draft.dataSource,
           meta: draft.meta,
           chartConfigs: [chartConfig],
@@ -773,7 +773,7 @@ export const handleChartFieldChanged = (
   } = action.value;
   const f = get(chartConfig.fields, field);
   const { dimensions = [], measures = [] } =
-    getCachedMetadata(draft, locale) ?? {};
+    getCachedMetadata(draft, chartConfig.dataSet, locale) ?? {};
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
@@ -822,7 +822,7 @@ export const handleChartOptionChanged = (
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
     const { dimensions = [], measures = [] } =
-      getCachedMetadata(draft, locale) ?? {};
+      getCachedMetadata(draft, chartConfig.dataSet, locale) ?? {};
 
     if (field) {
       const sideEffect = getChartFieldOptionChangeSideEffect(
@@ -920,11 +920,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return action.value.state === "INITIAL"
         ? getStateWithCurrentDataSource(EMPTY_STATE)
         : action.value;
-    case "DATASET_SELECTED":
-      if (draft.state === "SELECTING_DATASET") {
-        draft.dataSet = action.dataSet;
-      }
-      return draft;
     case "DATASOURCE_CHANGED":
       draft.dataSource = action.value;
 
@@ -933,11 +928,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartKey, chartType } = action.value;
-        const metadata = getCachedMetadata(draft, locale);
+        const chartConfig = getChartConfig(draft, chartKey);
+        const metadata = getCachedMetadata(draft, chartConfig.dataSet, locale);
 
         if (metadata) {
           const { dimensions, measures } = metadata;
-          const chartConfig = getChartConfig(draft, chartKey);
           const newConfig = deriveFiltersFromFields(
             getChartConfigAdjustedToChartType({
               chartConfig: current(chartConfig),
@@ -972,10 +967,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
-
-        const metadata = getCachedMetadata(draft, action.value.locale);
+        const metadata = getCachedMetadata(
+          draft,
+          chartConfig.dataSet,
+          action.value.locale
+        );
         const dimensions = metadata?.dimensions ?? [];
-
         deriveFiltersFromFields(chartConfig, dimensions);
 
         if (
@@ -1243,7 +1240,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     // State transitions
     case "STEP_NEXT":
-      return transitionStepNext(draft, action.dataSetMetadata);
+      return transitionStepNext(draft, {
+        dataSetMetadata: action.dataSetMetadata,
+      });
 
     case "STEP_PREVIOUS":
       return transitionStepPrevious(draft, action.to);
@@ -1260,7 +1259,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_ADD":
       if (draft.state === "CONFIGURING_CHART") {
-        const metadata = getCachedMetadata(draft, action.value.locale);
+        const chartConfig = getChartConfig(draft);
+        const metadata = getCachedMetadata(
+          draft,
+          chartConfig.dataSet,
+          action.value.locale
+        );
 
         if (metadata) {
           draft.chartConfigs.push(
@@ -1374,10 +1378,13 @@ export const initChartStateFromCube = async (
     .toPromise();
 
   if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
-    return transitionStepNext(
-      getStateWithCurrentDataSource({ ...EMPTY_STATE, dataSet: datasetIri }),
-      { ...metadata.dataCubeByIri, ...components.dataCubeByIri }
-    );
+    return transitionStepNext(getStateWithCurrentDataSource(EMPTY_STATE), {
+      dataSetMetadata: {
+        ...metadata.dataCubeByIri,
+        ...components.dataCubeByIri,
+      },
+      dataSet: datasetIri,
+    });
   }
 
   console.warn(`Could not fetch cube with iri ${datasetIri}`);
@@ -1391,27 +1398,30 @@ export const initChartStateFromLocalStorage = async (
   chartId: string
 ): Promise<ConfiguratorState | undefined> => {
   const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
-  if (storedState) {
-    let parsedState;
-    try {
-      const rawParsedState = JSON.parse(storedState);
-      const migratedState = migrateConfiguratorState(rawParsedState);
-      parsedState = decodeConfiguratorState(migratedState);
-    } catch (e) {
-      console.error("Error while parsing stored state", e);
-      // Ignore errors since we are returning undefined and removing bad state from localStorage
-    }
 
-    if (parsedState) {
-      return parsedState;
-    }
-
-    console.warn(
-      "Attempted to restore invalid state. Removing from localStorage.",
-      parsedState
-    );
-    window.localStorage.removeItem(getLocalStorageKey(chartId));
+  if (!storedState) {
+    return;
   }
+
+  let parsedState;
+  try {
+    const rawParsedState = JSON.parse(storedState);
+    const migratedState = migrateConfiguratorState(rawParsedState);
+    parsedState = decodeConfiguratorState(migratedState);
+  } catch (e) {
+    console.error("Error while parsing stored state", e);
+    // Ignore errors since we are returning undefined and removing bad state from localStorage
+  }
+
+  if (parsedState) {
+    return parsedState;
+  }
+
+  console.warn(
+    "Attempted to restore invalid state. Removing from localStorage.",
+    parsedState
+  );
+  window.localStorage.removeItem(getLocalStorageKey(chartId));
 };
 
 const ConfiguratorStateProviderInternal = (

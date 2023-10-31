@@ -23,6 +23,7 @@ import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
+  getChartConfig,
 } from "@/config-types";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
@@ -121,9 +122,10 @@ export const ChartTypeSelector = ({
   chartKey: string;
 } & BoxProps) => {
   const locale = useLocale();
+  const chartConfig = getChartConfig(state);
   const [{ data }] = useComponentsWithHierarchiesQuery({
     variables: {
-      iri: state.dataSet,
+      iri: chartConfig.dataSet,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
