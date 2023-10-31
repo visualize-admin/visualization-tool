@@ -368,9 +368,6 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
-  themes: Array<DataCubeTheme>;
-  subthemes: Array<DataCubeTheme>;
-  organizations: Array<DataCubeOrganization>;
 };
 
 
@@ -402,28 +399,6 @@ export type QuerySearchCubesArgs = {
   order?: Maybe<SearchCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Array<SearchCubeFilter>>;
-};
-
-
-export type QueryThemesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-};
-
-
-export type QuerySubthemesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  parentIri: Scalars['String'];
-};
-
-
-export type QueryOrganizationsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
 };
 
 
@@ -1065,34 +1040,6 @@ export type PossibleFiltersQueryVariables = Exact<{
 
 export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
 
-export type ThemesQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-}>;
-
-
-export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> };
-
-export type OrganizationsQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-}>;
-
-
-export type OrganizationsQuery = { __typename: 'Query', organizations: Array<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> };
-
-export type SubthemesQueryVariables = Exact<{
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  parentIri: Scalars['String'];
-}>;
-
-
-export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
-
 export type HierarchyValueFieldsFragment = { __typename: 'HierarchyValue', value: string, dimensionIri: string, depth: number, label: string, alternateName?: Maybe<string>, hasValue?: Maybe<boolean>, position?: Maybe<any>, identifier?: Maybe<any> };
 
 export type DimensionHierarchyQueryVariables = Exact<{
@@ -1512,47 +1459,6 @@ export const PossibleFiltersDocument = gql`
 
 export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<PossibleFiltersQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
-};
-export const ThemesDocument = gql`
-    query Themes($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  themes(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
-    iri
-    label
-  }
-}
-    `;
-
-export function useThemesQuery(options: Omit<Urql.UseQueryArgs<ThemesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<ThemesQuery>({ query: ThemesDocument, ...options });
-};
-export const OrganizationsDocument = gql`
-    query Organizations($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  organizations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
-    iri
-    label
-  }
-}
-    `;
-
-export function useOrganizationsQuery(options: Omit<Urql.UseQueryArgs<OrganizationsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<OrganizationsQuery>({ query: OrganizationsDocument, ...options });
-};
-export const SubthemesDocument = gql`
-    query Subthemes($sourceType: String!, $sourceUrl: String!, $locale: String!, $parentIri: String!) {
-  subthemes(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    parentIri: $parentIri
-  ) {
-    label
-    iri
-  }
-}
-    `;
-
-export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
 };
 export const DimensionHierarchyDocument = gql`
     query DimensionHierarchy($sourceType: String!, $sourceUrl: String!, $locale: String!, $cubeIri: String!, $dimensionIri: String!) {

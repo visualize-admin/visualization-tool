@@ -39,8 +39,6 @@ import {
   DataCubeTheme,
   SearchCubeResultOrder,
   SearchCubesQuery,
-  useOrganizationsQuery,
-  useThemesQuery,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -49,8 +47,6 @@ import {
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { useLocale } from "@/locales/use-locale";
-import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 import useEvent from "@/utils/use-event";
 
@@ -525,6 +521,7 @@ const NavSection = ({
     );
   }, [counts, items]);
   const { isOpen, open, close } = useDisclosure();
+
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -545,7 +542,7 @@ const NavSection = ({
           return (
             <Reorder.Item drag={false} value={item} key={item.iri} as="div">
               <NavItem
-                active={currentFilter === item}
+                active={currentFilter?.iri === item.iri}
                 filters={filters}
                 next={item}
                 count={counts[item.iri]}
@@ -593,27 +590,16 @@ const NavSection = ({
   );
 };
 
-export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
-  const { filters, dataset } = useBrowseContext();
-  const [{ data: allThemes }] = useThemesQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !!dataset,
-  });
-  const [{ data: allOrgs }] = useOrganizationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !!dataset,
-  });
-
+export const SearchFilters = ({
+  cubes,
+  themes,
+  orgs,
+}: {
+  cubes: SearchCubeResult[];
+  themes: DataCubeTheme[];
+  orgs: DataCubeOrganization[];
+}) => {
+  const { filters } = useBrowseContext();
   const counts = useMemo(() => {
     const result: Record<string, number> = {};
 
@@ -639,14 +625,7 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
     isAttrEqual("__typename", "DataCubeOrganization")
   );
 
-  const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
-    return [
-      allThemes ? sortBy(allThemes.themes, (x) => x?.label) : null,
-      allOrgs ? sortBy(allOrgs.organizations, (x) => x?.label) : null,
-    ];
-  }, [allThemes, allOrgs]);
-
-  const displayedThemes = allThemesAlpha?.filter((theme) => {
+  const displayedThemes = themes.filter((theme) => {
     if (!theme.label) {
       return false;
     }
@@ -655,23 +634,23 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
       return false;
     }
 
-    if (themeFilter && themeFilter !== theme) {
+    if (themeFilter && themeFilter.iri !== theme.iri) {
       return false;
     }
 
     return true;
   });
 
-  const displayedOrgs = allOrgsAlpha?.filter((org) => {
+  const displayedOrgs = orgs.filter((org) => {
     if (!org.label) {
       return false;
     }
 
-    if (!counts[org.iri] && orgFilter !== org) {
+    if (!counts[org.iri] && orgFilter?.iri !== org.iri) {
       return false;
     }
 
-    if (orgFilter && orgFilter !== org) {
+    if (orgFilter && orgFilter.iri !== org.iri) {
       return false;
     }
 
@@ -721,7 +700,7 @@ export const SearchFilters = ({ cubes }: { cubes: SearchCubeResult[] }) => {
         icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
-          orgFilter && filters.includes(orgFilter) ? (
+          orgFilter && filters.map((d) => d.iri).includes(orgFilter.iri) ? (
             <Subthemes
               subthemes={subthemes}
               filters={filters}

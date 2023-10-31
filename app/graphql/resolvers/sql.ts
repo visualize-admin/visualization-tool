@@ -163,19 +163,6 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
     return [];
   };
 
-export const themes: NonNullable<QueryResolvers["themes"]> = async () => {
-  return [];
-};
-
-export const subthemes: NonNullable<QueryResolvers["subthemes"]> = async () => {
-  return [];
-};
-
-export const organizations: NonNullable<QueryResolvers["organizations"]> =
-  async () => {
-    return [];
-  };
-
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube }) => {
     // FIXME: type of cube should be different for RDF and SQL.

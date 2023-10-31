@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
+import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
@@ -32,7 +34,12 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { useSearchCubesQuery } from "@/graphql/query-hooks";
+import { truthy } from "@/domain/types";
+import {
+  DataCubeOrganization,
+  DataCubeTheme,
+  useSearchCubesQuery,
+} from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
@@ -206,6 +213,32 @@ const SelectDatasetStepContent = () => {
     };
   }, [data, filters]);
 
+  const themes: DataCubeTheme[] = React.useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes
+          .flatMap((d) => d.cube.themes)
+          .map((d) => ({ ...d, __typename: "DataCubeTheme" })),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
+
+  const orgs: DataCubeOrganization[] = React.useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes
+          .map((d) => d.cube.creator)
+          .filter((d) => d?.iri)
+          .filter(truthy)
+          .map((d) => ({ ...d, __typename: "DataCubeOrganization" })),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
+
   if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
@@ -280,7 +313,7 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             ) : (
               <MotionBox key="search-filters" {...navPresenceProps}>
-                <SearchFilters cubes={allCubes} />
+                <SearchFilters cubes={allCubes} themes={themes} orgs={orgs} />
               </MotionBox>
             )}
           </AnimatePresence>
@@ -329,7 +362,16 @@ const SelectDatasetStepContent = () => {
                           className={classes.filters}
                           variant="h1"
                         >
-                          {queryFilters.map((d) => d.label).join(", ")}
+                          {queryFilters
+                            .map((d) => {
+                              const searchList =
+                                d.type === "DataCubeTheme" ? themes : orgs;
+                              const item = (
+                                searchList as { iri: string; label?: string }[]
+                              ).find(({ iri }) => iri === d.value);
+                              return (item ?? d).label;
+                            })
+                            .join(", ")}
                         </Typography>
                       </MotionBox>
                     )}

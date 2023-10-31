@@ -7,14 +7,8 @@ import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  SearchCubeResultOrder,
-  useOrganizationsQuery,
-  useThemesQuery,
-} from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
-import { useDataSourceStore } from "@/stores/data-source";
 import useEvent from "@/utils/use-event";
 
 import { getFiltersFromParams } from "./filters";
@@ -114,10 +108,7 @@ const useQueryParamsState = <T extends object>(
 };
 
 export const useBrowseState = () => {
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [browseParams, setParams] = useQueryParamsState(
     {},
     {
@@ -125,7 +116,6 @@ export const useBrowseState = () => {
       serialize: buildURLFromBrowseState,
     }
   );
-
   const {
     search,
     type,
@@ -135,29 +125,9 @@ export const useBrowseState = () => {
     dataset: paramDataset,
   } = browseParams;
 
-  const [{ data: themeData }] = useThemesQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !!paramDataset,
-  });
-  const [{ data: orgData }] = useOrganizationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !!paramDataset,
-  });
-
   // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
   const dataset = type === "dataset" ? iri : paramDataset;
-  const filters = getFiltersFromParams(browseParams, {
-    themes: themeData?.themes,
-    organizations: orgData?.organizations,
-  });
+  const filters = getFiltersFromParams(browseParams);
 
   const setSearch = useEvent((v: string) => setParams({ search: v }));
   const setIncludeDrafts = useEvent((v: boolean) =>

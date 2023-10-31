@@ -388,45 +388,6 @@ query PossibleFilters(
   }
 }
 
-query Themes($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  themes(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
-    iri
-    label
-  }
-}
-
-query Organizations(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-) {
-  organizations(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-  ) {
-    iri
-    label
-  }
-}
-
-query Subthemes(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $parentIri: String!
-) {
-  subthemes(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    parentIri: $parentIri
-  ) {
-    label
-    iri
-  }
-}
-
 fragment hierarchyValueFields on HierarchyValue {
   value
   dimensionIri

@@ -1,22 +1,6 @@
-import { DataCubeOrganization, DataCubeTheme } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 
 import { getFiltersFromParams } from "./filters";
-
-const ctx = {
-  themes: [
-    {
-      iri: "https://fake-iri-theme",
-      __typename: "DataCubeTheme",
-    },
-  ] as DataCubeTheme[],
-  organizations: [
-    {
-      iri: "https://fake-iri-organization",
-      __typename: "DataCubeOrganization",
-    },
-  ] as DataCubeOrganization[],
-};
 
 describe("getFiltersFromParams", () => {
   it("should work only for organization", () => {
@@ -24,7 +8,7 @@ describe("getFiltersFromParams", () => {
       type: "organization",
       iri: "https://fake-iri-organization",
     } as BrowseParams;
-    const filters = getFiltersFromParams(params, ctx);
+    const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       {
         __typename: "DataCubeOrganization",
@@ -40,7 +24,7 @@ describe("getFiltersFromParams", () => {
       subtype: "organization",
       subiri: "https://fake-iri-organization",
     } as BrowseParams;
-    const filters = getFiltersFromParams(params, ctx);
+    const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       { iri: "https://fake-iri-theme", __typename: "DataCubeTheme" },
       {
@@ -57,7 +41,7 @@ describe("getFiltersFromParams", () => {
       subtype: "theme",
       subiri: "https://fake-iri-theme",
     } as BrowseParams;
-    const filters = getFiltersFromParams(params, ctx);
+    const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       {
         iri: "https://fake-iri-organization",
@@ -72,7 +56,7 @@ describe("getFiltersFromParams", () => {
       type: "dataset",
       iri: "https://fake-iri-dataset",
     } as BrowseParams;
-    const filters = getFiltersFromParams(params, ctx);
+    const filters = getFiltersFromParams(params);
     expect(filters).toEqual([]);
   });
 });

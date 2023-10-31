@@ -5,7 +5,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
@@ -20,11 +19,6 @@ import {
   getCubeObservations,
   getResolvedCube,
 } from "@/rdf/queries";
-import {
-  loadOrganizations,
-  loadSubthemes,
-  loadThemes,
-} from "@/rdf/query-cube-metadata";
 import { unversionObservation } from "@/rdf/query-dimension-values";
 import { queryHierarchy } from "@/rdf/query-hierarchies";
 import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
@@ -133,34 +127,6 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
     }
 
     return [];
-  };
-
-export const themes: NonNullable<QueryResolvers["themes"]> = async (
-  _,
-  { locale },
-  { setup },
-  info
-) => {
-  const { sparqlClient } = await setup(info);
-  return (await loadThemes({ locale, sparqlClient })).filter(truthy);
-};
-
-export const subthemes: NonNullable<QueryResolvers["subthemes"]> = async (
-  _,
-  { locale, parentIri },
-  { setup },
-  info
-) => {
-  const { sparqlClient } = await setup(info);
-  return (await loadSubthemes({ locale, parentIri, sparqlClient })).filter(
-    truthy
-  );
-};
-
-export const organizations: NonNullable<QueryResolvers["organizations"]> =
-  async (_, { locale }, { setup }, info) => {
-    const { sparqlClient } = await setup(info);
-    return (await loadOrganizations({ locale, sparqlClient })).filter(truthy);
   };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =

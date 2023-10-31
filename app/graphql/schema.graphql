@@ -382,20 +382,4 @@ type Query {
     includeDrafts: Boolean
     filters: [SearchCubeFilter!]
   ): [SearchCubeResult!]!
-  themes(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-  ): [DataCubeTheme!]!
-  subthemes(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-    parentIri: String!
-  ): [DataCubeTheme!]!
-  organizations(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-  ): [DataCubeOrganization!]!
 }

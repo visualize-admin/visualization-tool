@@ -31,18 +31,6 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.possibleFilters(parent, args, context, info);
   },
-  themes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.themes(parent, args, context, info);
-  },
-  subthemes: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.subthemes(parent, args, context, info);
-  },
-  organizations: async (parent, args, context, info) => {
-    const source = getSource(args.sourceType);
-    return await source.organizations(parent, args, context, info);
-  },
 };
 
 const DataCube: DataCubeResolvers = {
