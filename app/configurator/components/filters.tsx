@@ -591,7 +591,6 @@ const TreeAccordion = ({
           className={classes.optionCheck}
           style={{
             visibility: state === "NOT_SELECTED" ? "hidden" : "visible",
-            marginTop: 8,
           }}
         />
       </TreeAccordionSummary>
