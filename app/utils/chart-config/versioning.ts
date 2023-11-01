@@ -287,12 +287,15 @@ const chartConfigMigrations: Migration[] = [
                 ...(colorScaleType === "discrete"
                   ? {
                       scaleType: colorScaleType,
-                      interpolationType: colorScaleInterpolationType,
+                      interpolationType:
+                        colorScaleInterpolationType === "linear"
+                          ? "quantize"
+                          : colorScaleInterpolationType,
                       nbClass,
                     }
                   : {
                       scaleType: colorScaleType,
-                      interpolationType: colorScaleInterpolationType,
+                      interpolationType: "linear",
                     }),
               },
             };
