@@ -853,7 +853,7 @@ const configuratorStateMigrations: Migration[] = [
           if (chartConfig.dataSet === dataSet) {
             const migratedChartConfig = migrateChartConfig(chartConfig, {
               migrationProps: draft,
-              toVersion: "2.3.0",
+              toVersion: "2.2.0",
             });
             chartConfigs.push(migratedChartConfig);
           } else {
