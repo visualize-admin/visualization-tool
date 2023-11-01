@@ -463,7 +463,9 @@ const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
         </Typography>
       }
       placement="top"
-      componentsProps={{ tooltip: { sx: { width: 140, px: 2, py: 1 } } }}
+      componentsProps={{
+        tooltip: { sx: { width: 140, px: 2, py: 1, lineHeight: 1.2 } },
+      }}
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
       <Typography color="warning.main">
