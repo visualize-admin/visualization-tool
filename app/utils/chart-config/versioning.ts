@@ -12,7 +12,7 @@ type Migration = {
   down: (config: any, migrationProps?: any) => any;
 };
 
-export const CHART_CONFIG_VERSION = "2.2.0";
+export const CHART_CONFIG_VERSION = "2.3.0";
 
 const chartConfigMigrations: Migration[] = [
   {
@@ -287,12 +287,15 @@ const chartConfigMigrations: Migration[] = [
                 ...(colorScaleType === "discrete"
                   ? {
                       scaleType: colorScaleType,
-                      interpolationType: colorScaleInterpolationType,
+                      interpolationType:
+                        colorScaleInterpolationType === "linear"
+                          ? "quantize"
+                          : colorScaleInterpolationType,
                       nbClass,
                     }
                   : {
                       scaleType: colorScaleType,
-                      interpolationType: colorScaleInterpolationType,
+                      interpolationType: "linear",
                     }),
               },
             };
@@ -750,20 +753,42 @@ const chartConfigMigrations: Migration[] = [
       });
     },
   },
+  {
+    description: `ALL {
+      + dataSet
+    }`,
+    from: "2.2.0",
+    to: "2.3.0",
+    up: (config, configuratorState) => {
+      const newConfig = { ...config, version: "2.3.0" };
+      const { dataSet } = configuratorState;
+
+      return produce(newConfig, (draft: any) => {
+        draft.dataSet = dataSet;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.2.0" };
+
+      return produce(newConfig, (draft: any) => {
+        delete draft.dataSet;
+      });
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate(chartConfigMigrations, {
   defaultToVersion: CHART_CONFIG_VERSION,
 });
 
-export const CONFIGURATOR_STATE_VERSION = "2.0.0";
+export const CONFIGURATOR_STATE_VERSION = "3.0.0";
 
 const configuratorStateMigrations: Migration[] = [
   {
-    description: `ALL`,
+    description: "ALL",
     from: "1.0.0",
     to: "2.0.0",
-    up: (config: any) => {
+    up: (config) => {
       const newConfig = { ...config, version: "2.0.0" };
 
       return produce(newConfig, (draft: any) => {
@@ -790,6 +815,58 @@ const configuratorStateMigrations: Migration[] = [
           toVersion: "1.4.2",
         });
         draft.chartConfig = migratedChartConfig;
+      });
+    },
+  },
+  {
+    description: "ALL",
+    from: "2.0.0",
+    to: "3.0.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "3.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          const migratedChartConfig = migrateChartConfig(chartConfig, {
+            migrationProps: draft,
+            toVersion: "2.3.0",
+          });
+          chartConfigs.push(migratedChartConfig);
+        }
+
+        delete draft.dataSet;
+        draft.chartConfigs = chartConfigs;
+      });
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "2.0.0" };
+
+      return produce(newConfig, (draft: any) => {
+        let dataSet: string | undefined;
+        const chartConfigs: any[] = [];
+
+        for (const chartConfig of draft.chartConfigs) {
+          if (!dataSet) {
+            dataSet = chartConfig.dataSet;
+          }
+
+          // Only migrate chartConfigs with the same dataSet as configuratorState.
+          if (chartConfig.dataSet === dataSet) {
+            const migratedChartConfig = migrateChartConfig(chartConfig, {
+              migrationProps: draft,
+              toVersion: "2.2.0",
+            });
+            chartConfigs.push(migratedChartConfig);
+          } else {
+            console.warn(
+              "Cannot migrate chartConfig dataSet to configuratorState dataSet because they are not the same."
+            );
+          }
+        }
+
+        draft.dataSet = dataSet;
       });
     },
   },

@@ -31,13 +31,13 @@ export const InteractiveFiltersConfigurator = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const { dataSet, dataSource } = state;
+  const { dataSource } = state;
   const chartConfig = getChartConfig(state);
   const { fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useComponentsQuery({
     variables: {
-      iri: dataSet,
+      iri: chartConfig.dataSet,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,

@@ -8,7 +8,6 @@ export const states: ConfiguratorState[] = [
   {
     state: "SELECTING_DATASET",
     version: CONFIGURATOR_STATE_VERSION,
-    dataSet: undefined,
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfigs: undefined,
     meta: {
@@ -30,7 +29,6 @@ export const states: ConfiguratorState[] = [
   {
     state: "CONFIGURING_CHART",
     version: CONFIGURATOR_STATE_VERSION,
-    dataSet: "foo",
     dataSource: DEFAULT_DATA_SOURCE,
     chartConfigs: [
       {
@@ -50,6 +48,7 @@ export const states: ConfiguratorState[] = [
             it: "",
           },
         },
+        dataSet: "",
         chartType: "column",
         fields: {
           x: {
@@ -827,6 +826,7 @@ export const tableConfig: TableConfig = {
       it: "",
     },
   },
+  dataSet: "",
   chartType: "table",
   filters: {},
   interactiveFiltersConfig: undefined,

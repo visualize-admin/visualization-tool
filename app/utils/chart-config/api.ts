@@ -19,7 +19,6 @@ export const createConfig = async (state: ConfiguratorStatePublishing) => {
           // used by a chart that has been published.
           key: createChartId(),
           version: state.version,
-          dataSet: state.dataSet,
           dataSource: state.dataSource,
           meta: state.meta,
           chartConfigs: state.chartConfigs,
@@ -51,7 +50,6 @@ export const updateConfig = async (
         data: {
           key,
           version: state.version,
-          dataSet: state.dataSet,
           dataSource: state.dataSource,
           meta: state.meta,
           chartConfigs: state.chartConfigs,

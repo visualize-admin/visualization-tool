@@ -63,21 +63,17 @@ export const ChartConfiguratorTable = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-    },
-  });
+  const [, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const variables = {
+    iri: chartConfig.dataSet,
+    sourceType: state.dataSource.type,
+    sourceUrl: state.dataSource.url,
+    locale,
+  };
+  const [{ data: metadata }] = useDataCubeMetadataQuery({ variables });
   const [{ data: components }] = useComponentsWithHierarchiesQuery({
-    variables: {
-      iri: state.dataSet,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-    },
+    variables,
   });
 
   const metaData = useMemo(() => {
@@ -88,9 +84,6 @@ export const ChartConfiguratorTable = ({
         }
       : null;
   }, [metadata?.dataCubeByIri, components?.dataCubeByIri]);
-
-  const [, dispatch] = useConfiguratorState(isConfiguring);
-  const chartConfig = getChartConfig(state);
 
   const [currentDraggableId, setCurrentDraggableId] = useState<string | null>(
     null

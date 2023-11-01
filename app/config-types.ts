@@ -226,6 +226,7 @@ const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
+  dataSet: t.string,
   filters: Filters,
   activeField: t.union([t.string, t.undefined]),
 });
@@ -1076,7 +1077,6 @@ export type DataSource = t.TypeOf<typeof DataSource>;
 const Config = t.type(
   {
     version: t.string,
-    dataSet: t.string,
     dataSource: DataSource,
     meta: Meta,
     chartConfigs: t.array(ChartConfig),
@@ -1097,7 +1097,6 @@ export const decodeConfig = (config: unknown) => {
 const ConfiguratorStateInitial = t.type({
   version: t.string,
   state: t.literal("INITIAL"),
-  dataSet: t.undefined,
   dataSource: DataSource,
 });
 export type ConfiguratorStateInitial = t.TypeOf<
@@ -1107,7 +1106,6 @@ export type ConfiguratorStateInitial = t.TypeOf<
 const ConfiguratorStateSelectingDataSet = t.type({
   version: t.string,
   state: t.literal("SELECTING_DATASET"),
-  dataSet: t.union([t.string, t.undefined]),
   dataSource: DataSource,
   meta: Meta,
   chartConfigs: t.undefined,

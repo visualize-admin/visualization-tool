@@ -57,6 +57,7 @@ ${(
               it: "",
             },
           },
+          dataSet: "",
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -221,6 +222,7 @@ ${(
               it: "",
             },
           },
+          dataSet: "",
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
@@ -284,6 +286,7 @@ ${(
               it: "",
             },
           },
+          dataSet: "",
           chartType: "column",
           fields,
           interactiveFiltersConfig: {

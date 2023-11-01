@@ -32,7 +32,6 @@ ${(
           description: { en: "", de: "", fr: "", it: "" },
         },
         dataSource: { type: "sparql", url: "" },
-        dataSet: "",
         chartConfigs: [chartConfig],
         activeChartKey: "scatterplot",
       }}
@@ -94,6 +93,7 @@ const chartConfig: ColumnConfig = {
       it: "",
     },
   },
+  dataSet: "",
   filters: {},
   fields: columnFields,
   interactiveFiltersConfig: {

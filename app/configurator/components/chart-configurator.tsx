@@ -190,7 +190,7 @@ const useEnsurePossibleFilters = ({
         .query<PossibleFiltersQuery, PossibleFiltersQueryVariables>(
           PossibleFiltersDocument,
           {
-            iri: state.dataSet,
+            iri: chartConfig.dataSet,
             sourceType: state.dataSource.type,
             sourceUrl: state.dataSource.url,
             filters: unmappedFilters,
@@ -234,7 +234,7 @@ const useEnsurePossibleFilters = ({
     client,
     dispatch,
     chartConfig,
-    state.dataSet,
+    chartConfig.dataSet,
     state.dataSource.type,
     state.dataSource.url,
   ]);
@@ -263,7 +263,7 @@ const useFilterReorder = ({
   const variables = useMemo(() => {
     const hasUnmappedFilters = Object.keys(unmappedFilters).length > 0;
     const vars = {
-      iri: state.dataSet,
+      iri: chartConfig.dataSet,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       locale,
@@ -279,7 +279,7 @@ const useFilterReorder = ({
 
     return omitBy(vars, (x) => x === undefined) as typeof vars;
   }, [
-    state.dataSet,
+    chartConfig.dataSet,
     state.dataSource.type,
     state.dataSource.url,
     locale,

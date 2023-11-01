@@ -8,7 +8,6 @@ import * as React from "react";
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
-import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
@@ -194,7 +193,6 @@ export const DataSetPreview = ({
               </Trans>
             </Typography>
           </Flex>
-          <DebugPanel configurator />
         </Paper>
       </Flex>
     );

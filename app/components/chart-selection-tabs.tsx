@@ -255,21 +255,15 @@ const TabsFixed = (props: TabsFixedProps) => {
 const PublishChartButton = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
-  const { dataSet } = state;
+  const chartConfig = getChartConfig(state);
   const variables = {
-    iri: dataSet ?? "",
+    iri: chartConfig.dataSet,
     sourceType: state.dataSource.type,
     sourceUrl: state.dataSource.url,
     locale,
   };
-  const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables,
-    pause: !dataSet,
-  });
-  const [{ data: components }] = useComponentsQuery({
-    variables,
-    pause: !dataSet,
-  });
+  const [{ data: metadata }] = useDataCubeMetadataQuery({ variables });
+  const [{ data: components }] = useComponentsQuery({ variables });
   const goNext = useEvent(() => {
     if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
       dispatch({

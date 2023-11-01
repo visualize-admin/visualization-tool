@@ -12,7 +12,11 @@ import {
 import { useState } from "react";
 import { Inspector } from "react-inspector";
 
-import { DataSource, useConfiguratorState } from "@/configurator";
+import {
+  DataSource,
+  getChartConfig,
+  useConfiguratorState,
+} from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useComponentsWithHierarchiesQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -86,6 +90,7 @@ const CubeMetadata = ({
 
 const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
+  const chartConfig = getChartConfig(configuratorState);
   const sparqlEditorUrl = dataSourceToSparqlEditorUrl(
     configuratorState.dataSource
   );
@@ -96,51 +101,43 @@ const DebugConfigurator = () => {
         Cube Tools
       </Typography>
       <Stack spacing={2} sx={{ pl: 5, py: 3 }}>
-        {configuratorState.dataSet ? (
-          <Button
-            component="a"
-            color="primary"
-            variant="text"
-            size="small"
-            href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
-              configuratorState.dataSource.url
-            )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
-              configuratorState.dataSet ?? ""
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
-          >
-            <Typography variant="body2">Open in Cube Viewer</Typography>
-          </Button>
-        ) : (
-          <Typography variant="body1">Please select a dataset first</Typography>
-        )}
-        {
-          <Button
-            component="a"
-            color="primary"
-            variant="text"
-            size="small"
-            href={`${sparqlEditorUrl}#query=${encodeURIComponent(
-              `#pragma describe.strategy cbd
+        <Button
+          component="a"
+          color="primary"
+          variant="text"
+          size="small"
+          href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
+            configuratorState.dataSource.url
+          )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
+            chartConfig.dataSet
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          startIcon={<Icon name="linkExternal" size={16} />}
+        >
+          <Typography variant="body2">Open in Cube Viewer</Typography>
+        </Button>
+        <Button
+          component="a"
+          color="primary"
+          variant="text"
+          size="small"
+          href={`${sparqlEditorUrl}#query=${encodeURIComponent(
+            `#pragma describe.strategy cbd
               #pragma join.hash off
               
-DESCRIBE <${configuratorState.dataSet ?? ""}>`
-            )}&requestMethod=POST`}
-            target="_blank"
-            rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
-          >
-            <Typography variant="body2">Cube Metadata Query</Typography>
-          </Button>
-        }
-        {configuratorState.dataSet ? (
-          <CubeMetadata
-            datasetIri={configuratorState.dataSet}
-            dataSource={configuratorState.dataSource}
-          />
-        ) : null}
+DESCRIBE <${chartConfig.dataSet}>`
+          )}&requestMethod=POST`}
+          target="_blank"
+          rel="noopener noreferrer"
+          startIcon={<Icon name="linkExternal" size={16} />}
+        >
+          <Typography variant="body2">Cube Metadata Query</Typography>
+        </Button>
+        <CubeMetadata
+          datasetIri={chartConfig.dataSet}
+          dataSource={configuratorState.dataSource}
+        />
       </Stack>
       <Typography
         component="h3"

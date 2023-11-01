@@ -93,31 +93,24 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const chartConfig = getChartConfig(state);
-  const { dataSet, dataSource } = state;
+  const { dataSource } = state;
   const { activeField } = chartConfig;
   const locale = useLocale();
+  const commonVariables = {
+    iri: chartConfig.dataSet,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonVariables,
   });
   const [{ data: componentsData }] = useComponentsWithHierarchiesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonVariables,
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonVariables,
       filters: chartConfig.filters,
     },
   });
@@ -146,7 +139,6 @@ export const ChartOptionsSelector = ({
           <TableColumnOptions state={state} metaData={metadata} />
         ) : (
           <ActiveFieldSwitch
-            state={state}
             chartConfig={chartConfig}
             metadata={metadata}
             observations={observations}
@@ -163,14 +155,13 @@ export const ChartOptionsSelector = ({
 };
 
 type ActiveFieldSwitchProps = {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   metadata: DataCubeMetadataWithHierarchies;
   observations: Observation[];
 };
 
 const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
-  const { state, metadata, chartConfig, observations } = props;
+  const { metadata, chartConfig, observations } = props;
   const { dimensions, measures } = metadata;
   const activeField = chartConfig.activeField as EncodingFieldType | undefined;
 
@@ -204,7 +195,6 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
   return (
     <EncodingOptionsPanel
       encoding={encoding}
-      state={state}
       chartConfig={chartConfig}
       field={activeField}
       component={component}
@@ -217,7 +207,6 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
 
 type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
   component: DimensionMetadataFragment | undefined;
@@ -229,7 +218,6 @@ type EncodingOptionsPanelProps = {
 const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   const {
     encoding,
-    state,
     field,
     chartConfig,
     component,
@@ -409,7 +397,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
-          state={state}
           chartConfig={chartConfig}
           encoding={encoding}
           component={component}
@@ -442,7 +429,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       )}
 
       <ChartFieldMultiFilter
-        state={state}
         chartConfig={chartConfig}
         component={component}
         encoding={encoding}
@@ -1195,7 +1181,6 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
 };
 
 const ChartFieldMultiFilter = ({
-  state,
   chartConfig,
   component,
   encoding,
@@ -1203,7 +1188,6 @@ const ChartFieldMultiFilter = ({
   dimensions,
   measures,
 }: {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   component: DimensionMetadataFragment | undefined;
   encoding: EncodingSpec;
@@ -1246,7 +1230,7 @@ const ChartFieldMultiFilter = ({
             <DimensionValuesMultiFilter
               key={component.iri}
               dimensionIri={component.iri}
-              dataSetIri={state.dataSet}
+              dataSetIri={chartConfig.dataSet}
               field={field}
               colorComponent={colorComponent || component}
               // If colorType is defined, we are dealing with color field and
@@ -1542,7 +1526,6 @@ const ChartFieldSize = ({
 };
 
 type ChartFieldColorComponentProps = {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   encoding: EncodingSpec;
   component: DimensionMetadataFragment;
@@ -1555,7 +1538,6 @@ type ChartFieldColorComponentProps = {
 
 const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
   const {
-    state,
     chartConfig,
     encoding,
     component,
@@ -1660,7 +1642,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           colorComponentIri && component.iri !== colorComponentIri ? (
             <DimensionValuesMultiFilter
               key={component.iri}
-              dataSetIri={state.dataSet}
+              dataSetIri={chartConfig.dataSet}
               dimensionIri={colorComponentIri}
               field={field}
               colorConfigPath="color"

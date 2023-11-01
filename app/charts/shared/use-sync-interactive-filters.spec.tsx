@@ -45,6 +45,7 @@ const chartConfig = migrateChartConfig(
   {
     migrationProps: {
       meta: {},
+      dataSet: "foo",
     },
   }
 ) as ChartConfig;
