@@ -460,7 +460,7 @@ msgstr "Du"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
-msgstr "Renouveller les couleurs"
+msgstr "Mélanger les couleurs"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"

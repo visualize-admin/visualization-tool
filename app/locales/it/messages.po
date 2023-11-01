@@ -460,7 +460,7 @@ msgstr "Della"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
-msgstr "Aggiorna i colori"
+msgstr "Mescolare i colori"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"

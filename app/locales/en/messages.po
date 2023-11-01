@@ -460,7 +460,7 @@ msgstr "From"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
-msgstr "Refresh colors"
+msgstr "Shuffle colors"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"
