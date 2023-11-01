@@ -939,31 +939,8 @@ const ChartComboLineColumnYField = (
                 },
               });
             }}
+            sx={{ mb: 2 }}
           />
-
-          <Box component="fieldset" mt={2} mb={4}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.chart.combo.y.axis-orientation">
-                  Axis orientation
-                </Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }}>
-              {[
-                { value: "right", label: t({ id: "left", message: "Left" }) },
-                { value: "left", label: t({ id: "right", message: "Right" }) },
-              ].map((d) => (
-                <ChartOptionRadioField
-                  key={d.value}
-                  label={d.label}
-                  field="y"
-                  path="lineAxisOrientation"
-                  value={d.value}
-                />
-              ))}
-            </Flex>
-          </Box>
 
           <Select
             id={`mesure-${y.lineComponentIri}`}
