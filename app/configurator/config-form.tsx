@@ -432,7 +432,10 @@ export const useChartType = (
         value: {
           chartConfig: getInitialConfig({
             chartType,
-            dataSet: chartConfig.dataSet,
+            dataSet:
+              state.state === "CONFIGURING_CHART"
+                ? getChartConfig(state, state.activeChartKey).dataSet
+                : chartConfig.dataSet,
             dimensions,
             measures,
           }),
