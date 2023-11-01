@@ -250,7 +250,7 @@ msgstr "Axis orientation"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
-msgstr "Column measure"
+msgstr "Left axis (column)"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -271,7 +271,7 @@ msgstr "Left axis measure"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.line-measure"
-msgstr "Line measure"
+msgstr "Right axis (line)"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"

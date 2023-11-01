@@ -924,7 +924,7 @@ const ChartComboLineColumnYField = (
             sortOptions={false}
             label={t({
               id: "controls.chart.combo.y.column-measure",
-              message: "Column measure",
+              message: "Left axis (column)",
             })}
             value={y.columnComponentIri}
             onChange={(e) => {
@@ -949,7 +949,7 @@ const ChartComboLineColumnYField = (
             sortOptions={false}
             label={t({
               id: "controls.chart.combo.y.line-measure",
-              message: "Line measure",
+              message: "Right axis (line)",
             })}
             value={y.lineComponentIri}
             onChange={(e) => {

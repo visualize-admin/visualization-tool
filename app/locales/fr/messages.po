@@ -250,7 +250,7 @@ msgstr "Orientation de l'axe"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
-msgstr "Mesure de la colonne"
+msgstr "Axe gauche (colonne)"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -271,7 +271,7 @@ msgstr "Mesure de l'axe gauche"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.line-measure"
-msgstr "Mesure de la ligne"
+msgstr "Axe droit (ligne)"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"
