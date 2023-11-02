@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
-import { MouseEventHandler, useCallback, useRef } from "react";
+import { MouseEventHandler, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -71,17 +71,6 @@ const useColorPickerStyles = makeStyles((theme: Theme) => ({
 
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   const classes = useColorPickerStyles();
-  const selectColor = useCallback(
-    (_color) => {
-      // Make sure onChange is only called with valid colors
-      const c = d3Color(_color);
-
-      if (c) {
-        onChange?.(_color);
-      }
-    },
-    [onChange]
-  );
 
   return (
     <Box className={classes.root}>
@@ -91,9 +80,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             key={color}
             color={color}
             selected={color === selectedColor}
-            onClick={() => {
-              selectColor(color);
-            }}
+            onClick={() => onChange?.(color)}
           />
         ))}
       </Box>
