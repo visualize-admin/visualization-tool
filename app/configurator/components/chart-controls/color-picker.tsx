@@ -1,16 +1,8 @@
 import { Trans } from "@lingui/macro";
-import {
-  Box,
-  Button,
-  Input,
-  Popover,
-  styled,
-  Theme,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
-import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
+import { MouseEventHandler, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
@@ -75,43 +67,9 @@ const useColorPickerStyles = makeStyles((theme: Theme) => ({
     gap: 2,
     marginBottom: 2,
   },
-  input: {
-    color: theme.palette.grey[700],
-    borderColor: theme.palette.divider,
-    backgroundColor: theme.palette.grey[100],
-    fontSize: "0.875rem",
-    "&:focus": { outline: "none", borderColor: theme.palette.primary.main },
-  },
 }));
 
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
-  const [inputColorValue, setInputColorValue] = useState(selectedColor);
-
-  const selectColor = useCallback(
-    (_color) => {
-      setInputColorValue(_color);
-      // Make sure onChange is only called with valid colors
-      const c = d3Color(_color);
-
-      if (c) {
-        onChange?.(_color);
-      }
-    },
-    [onChange, setInputColorValue]
-  );
-
-  const formatInputColor = useCallback(
-    (_color) => {
-      // Make sure onChange is only called with valid colors
-      const c = d3Color(_color);
-
-      if (c) {
-        setInputColorValue(_color);
-      }
-    },
-    [setInputColorValue]
-  );
-
   const classes = useColorPickerStyles();
 
   return (
@@ -122,23 +80,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             key={color}
             color={color}
             selected={color === selectedColor}
-            onClick={() => {
-              selectColor(color);
-            }}
+            onClick={() => onChange?.(color)}
           />
         ))}
-      </Box>
-      <Box sx={{ position: "relative" }}>
-        <Input
-          className={classes.input}
-          value={inputColorValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            selectColor(e.currentTarget.value);
-          }}
-          onBlur={(e) => {
-            formatInputColor(e.currentTarget.value);
-          }}
-        />
       </Box>
     </Box>
   );

@@ -250,7 +250,7 @@ msgstr "Orientamento dell'asse"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
-msgstr "Misura della colonna"
+msgstr "Asse sinistro (colonna)"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -271,7 +271,7 @@ msgstr "Misura dell'asse sinistro"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.line-measure"
-msgstr "Misura della linea"
+msgstr "Asse destro (linea)"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"
@@ -460,7 +460,7 @@ msgstr "Della"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
-msgstr "Aggiorna i colori"
+msgstr "Mescolare i colori"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"
