@@ -85,6 +85,17 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
+export type DataCubeDimension = {
+  __typename?: 'DataCubeDimension';
+  iri: Scalars['String'];
+};
+
+export type DataCubeFilter = {
+  iri: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
+  latest?: Maybe<Scalars['Boolean']>;
+};
+
 export type DataCubeOrganization = {
   __typename?: 'DataCubeOrganization';
   iri: Scalars['String'];
@@ -366,9 +377,18 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  dataCubesComponents: Array<DataCubeDimension>;
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
+};
+
+
+export type QueryDataCubesComponentsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeFilter>;
 };
 
 
@@ -611,6 +631,8 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  DataCubeDimension: ResolverTypeWrapper<DataCubeDimension>;
+  DataCubeFilter: DataCubeFilter;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
@@ -654,6 +676,8 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
+  DataCubeDimension: DataCubeDimension;
+  DataCubeFilter: DataCubeFilter;
   DataCubeOrganization: DataCubeOrganization;
   DataCubeTheme: DataCubeTheme;
   Dimension: ResolvedDimension;
@@ -708,6 +732,11 @@ export type DataCubeResolvers<ContextType = VisualizeGraphQLContext, ParentType 
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri' | 'sourceType' | 'sourceUrl'>>;
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType, RequireFields<DataCubeMeasuresArgs, 'sourceType' | 'sourceUrl'>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DataCubeDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeDimension'] = ResolversParentTypes['DataCubeDimension']> = ResolversObject<{
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -902,6 +931,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  dataCubesComponents?: Resolver<Array<ResolversTypes['DataCubeDimension']>, ParentType, ContextType, RequireFields<QueryDataCubesComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
@@ -989,6 +1019,7 @@ export interface ValuePositionScalarConfig extends GraphQLScalarTypeConfig<Resol
 
 export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DataCube?: DataCubeResolvers<ContextType>;
+  DataCubeDimension?: DataCubeDimensionResolvers<ContextType>;
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;

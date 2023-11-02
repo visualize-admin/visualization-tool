@@ -166,6 +166,7 @@ export async function loadDimensionValues(
             const filterDimension = cube.dimensions.find(
               (d) => d.path?.value === iri
             );
+
             if (!filterDimension || dimensionIri?.value === iri) {
               return "";
             }
@@ -174,13 +175,14 @@ export async function loadDimensionValues(
               return "";
             }
 
+            // Ignore range filters for now.
             if (value.type === "range") {
-              console.log("Ignoring filter range for iri", iri);
               return "";
             }
             const versioned = filterDimension
               ? dimensionIsVersioned(filterDimension)
               : false;
+
             return sparql`${
               versioned
                 ? sparql`?dimension${idx} ${ns.schema.sameAs} ?dimension_unversioned${idx}.`

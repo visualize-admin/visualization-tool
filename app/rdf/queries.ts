@@ -14,6 +14,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
+import { DataCubeFilter } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 
 import { FilterValueMulti, Filters } from "../configurator";
@@ -52,7 +53,7 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 
-const getLatestCube = async (cube: Cube): Promise<Cube> => {
+export const getLatestCube = async (cube: Cube): Promise<Cube> => {
   const source = cube.source;
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
@@ -127,6 +128,38 @@ const getDimensionUnits = (d: CubeDimension) => {
   const t = d.out(ns.qudt.unit).term ?? d.out(ns.qudt.hasUnit).term;
 
   return t ? [t] : [];
+};
+
+export const getCubesDimensions = async (
+  cubes: Cube[],
+  options: {
+    filters: DataCubeFilter[];
+    locale: string;
+    sparqlClient: ParsingClient;
+    cache: LRUCache | undefined;
+  }
+) => {
+  const { filters, locale, sparqlClient, cache } = options;
+  const filtersByIri = keyBy(filters, (d) => d.iri);
+
+  return (
+    await Promise.all(
+      cubes.map(async (cube) => {
+        const iri = cube.term?.value;
+        const componentIris = iri
+          ? filtersByIri[iri]?.componentIris
+          : undefined;
+
+        return await getCubeDimensions({
+          cube,
+          locale,
+          sparqlClient,
+          componentIris,
+          cache,
+        });
+      })
+    )
+  ).flat();
 };
 
 export const getCubeDimensions = async ({

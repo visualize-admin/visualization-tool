@@ -5,6 +5,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import { DimensionValue } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
   DataCubeResolvers,
@@ -17,6 +18,8 @@ import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
+  getCubesDimensions,
+  getLatestCube,
   getResolvedCube,
 } from "@/rdf/queries";
 import { unversionObservation } from "@/rdf/query-dimension-values";
@@ -81,7 +84,7 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
       throw new Error("Cube not found");
     }
 
-    return getResolvedCube({ cube, locale: locale || "de", latest });
+    return getResolvedCube({ cube, locale: locale ?? "de", latest });
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
@@ -114,20 +117,48 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 
       const unversioned = await unversionObservation({
         observation: obs[0],
-        cube: cube,
+        cube,
         sparqlClient,
       });
-      const result = Object.keys(filters).map((f) => ({
+
+      return Object.keys(filters).map((f) => ({
         iri: f,
         type: "single",
         value: unversioned[f],
       }));
-
-      return result;
     }
 
     return [];
   };
+
+export const dataCubesComponents: NonNullable<
+  QueryResolvers["dataCubesComponents"]
+> = async (_, { locale, filters }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+
+  const cubes = (
+    await Promise.all(
+      filters.map(async (filter) => {
+        const { iri, latest = true } = filter;
+        const cube = await loaders.cube.load(iri);
+
+        if (!cube) {
+          throw new Error(`Cube ${iri} not found!`);
+        }
+
+        if (latest) {
+          return await getLatestCube(cube);
+        }
+
+        return cube;
+      })
+    )
+  ).filter(truthy);
+
+  return (
+    await getCubesDimensions(cubes, { locale, sparqlClient, filters, cache })
+  ).map((d) => ({ iri: d.data.iri }));
+};
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {

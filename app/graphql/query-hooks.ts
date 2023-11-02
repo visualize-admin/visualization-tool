@@ -84,6 +84,17 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
+export type DataCubeDimension = {
+  __typename: 'DataCubeDimension';
+  iri: Scalars['String'];
+};
+
+export type DataCubeFilter = {
+  iri: Scalars['String'];
+  componentIris?: Maybe<Array<Scalars['String']>>;
+  latest?: Maybe<Scalars['Boolean']>;
+};
+
 export type DataCubeOrganization = {
   __typename: 'DataCubeOrganization';
   iri: Scalars['String'];
@@ -365,9 +376,18 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename: 'Query';
+  dataCubesComponents: Array<DataCubeDimension>;
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
+};
+
+
+export type QueryDataCubesComponentsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeFilter>;
 };
 
 
@@ -906,6 +926,16 @@ export type ComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __t
       & DimensionMetadata_OrdinalMeasure_Fragment
     )> }> };
 
+export type DataCubesComponentsQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeFilter> | DataCubeFilter;
+}>;
+
+
+export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: Array<{ __typename: 'DataCubeDimension', iri: string }> };
+
 export type ComponentsWithHierarchiesQueryVariables = Exact<{
   iri: Scalars['String'];
   sourceType: Scalars['String'];
@@ -1307,6 +1337,22 @@ export const ComponentsDocument = gql`
 
 export function useComponentsQuery(options: Omit<Urql.UseQueryArgs<ComponentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ComponentsQuery>({ query: ComponentsDocument, ...options });
+};
+export const DataCubesComponentsDocument = gql`
+    query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {
+  dataCubesComponents(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  ) {
+    iri
+  }
+}
+    `;
+
+export function useDataCubesComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubesComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesComponentsQuery>({ query: DataCubesComponentsDocument, ...options });
 };
 export const ComponentsWithHierarchiesDocument = gql`
     query ComponentsWithHierarchies($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!]) {

@@ -354,9 +354,25 @@ enum SearchCubeResultOrder {
   CREATED_DESC
 }
 
+input DataCubeFilter {
+  iri: String!
+  componentIris: [String!]
+  latest: Boolean
+}
+
+type DataCubeDimension {
+  iri: String!
+}
+
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
+  dataCubesComponents(
+    sourceType: String!
+    sourceUrl: String!
+    locale: String!
+    filters: [DataCubeFilter!]!
+  ): [DataCubeDimension!]!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!
