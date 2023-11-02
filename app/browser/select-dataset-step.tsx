@@ -247,7 +247,7 @@ const SelectDatasetStepContent = () => {
     <Box>
       <AnimatePresence>
         {!dataset && (
-          <MotionBox {...bannerPresenceProps} key="banner">
+          <MotionBox key="banner" {...bannerPresenceProps}>
             <Box
               component="section"
               role="banner"
@@ -277,17 +277,15 @@ const SelectDatasetStepContent = () => {
           </MotionBox>
         )}
       </AnimatePresence>
-
-      <PanelLayout className={classes.panelLayout}>
+      <PanelLayout className={classes.panelLayout} key="panel">
         <PanelLeftWrapper className={classes.panelLeft}>
           <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
-                {...navPresenceProps}
+                key="dataset-metadata"
                 px={4}
                 mx={4}
-                key="dataset-metadata"
-                custom={dataset}
+                {...navPresenceProps}
               >
                 <NextLink href={backLink} passHref legacyBehavior>
                   <Button
@@ -300,11 +298,7 @@ const SelectDatasetStepContent = () => {
                     </Trans>
                   </Button>
                 </NextLink>
-                <MotionBox
-                  key="dataset-metadata"
-                  sx={{ mt: 6 }}
-                  {...smoothPresenceProps}
-                >
+                <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
                   <DataSetMetadata
                     dataSetIri={dataset}
                     dataSource={configState.dataSource}
@@ -329,7 +323,7 @@ const SelectDatasetStepContent = () => {
                   />
                 </MotionBox>
               ) : (
-                <MotionBox {...navPresenceProps}>
+                <MotionBox key="filters" {...navPresenceProps}>
                   <AnimatePresence>
                     {queryFilters.length > 0 && (
                       <MotionBox
