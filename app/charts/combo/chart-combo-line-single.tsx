@@ -83,6 +83,13 @@ export const ChartComboLineSingle = React.memo(
     const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
 
+    const getLegendItemDimension = React.useCallback(
+      (label) => {
+        return measures.find((measure) => measure.label === label);
+      },
+      [measures]
+    );
+
     return (
       <ComboLineSingleChart aspectRatio={0.4} {...props}>
         <ChartContainer>
@@ -100,9 +107,7 @@ export const ChartComboLineSingle = React.memo(
           <LegendColor
             chartConfig={chartConfig}
             symbol="line"
-            getLegendItemDimension={(label) => {
-              return measures.find((measure) => measure.label === label);
-            }}
+            getLegendItemDimension={getLegendItemDimension}
           />
         </ChartControlsContainer>
       </ComboLineSingleChart>
