@@ -74,6 +74,18 @@ describe("possible chart types", () => {
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
   });
+
+  it("should not allow multiline chart if there are no several measures of the same unit", () => {
+    const possibleChartTypes = getPossibleChartTypes({
+      dimensions: [],
+      measures: [
+        { __typename: "NumericalMeasure", unit: "m" },
+        { __typename: "NumericalMeasure", unit: "cm" },
+      ] as any,
+    });
+
+    expect(possibleChartTypes).not.toContain("comboLineSingle");
+  });
 });
 
 describe("chart type switch", () => {

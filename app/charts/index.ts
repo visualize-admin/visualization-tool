@@ -1,4 +1,4 @@
-import { ascending, descending, group, rollups } from "d3";
+import { ascending, descending, group, rollup, rollups } from "d3";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
@@ -109,10 +109,16 @@ export const regularChartTypes: RegularChartType[] = [
   "map",
 ];
 
-export const comboChartTypes: ComboChartType[] = [
-  "comboLineSingle",
+export const comboDifferentUnitChartTypes: ComboChartType[] = [
   "comboLineDual",
   "comboLineColumn",
+];
+
+export const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
+
+export const comboChartTypes: ComboChartType[] = [
+  ...comboSameUnitChartTypes,
+  ...comboDifferentUnitChartTypes,
 ];
 
 export const chartTypesOrder: { [k in ChartType]: number } = {
@@ -1914,14 +1920,23 @@ export const getPossibleChartTypes = ({
       possibles.push(...multipleNumericalMeasuresEnabled);
 
       if (temporalDimensions.length > 0) {
+        const measuresWithUnit = numericalMeasures.filter((d) => d.unit);
         const uniqueUnits = Array.from(
-          new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
+          new Set(measuresWithUnit.map((d) => d.unit))
         );
 
         if (uniqueUnits.length > 1) {
-          possibles.push(...comboChartTypes);
-        } else if (uniqueUnits.length > 0) {
-          possibles.push("comboLineSingle");
+          possibles.push(...comboDifferentUnitChartTypes);
+        }
+
+        const unitCounts = rollup(
+          measuresWithUnit,
+          (v) => v.length,
+          (d) => d.unit
+        );
+
+        if (Array.from(unitCounts.values()).some((d) => d > 1)) {
+          possibles.push(...comboSameUnitChartTypes);
         }
       }
     }
