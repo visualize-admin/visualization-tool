@@ -323,11 +323,13 @@ type OrdinalMeasure implements Dimension {
   hierarchy(sourceType: String!, sourceUrl: String!): [HierarchyValue!]
 }
 
-type DataCubeResult {
+scalar SearchCube
+
+type SearchCubeResult {
   score: Float
+  cube: SearchCube!
   highlightedTitle: String
   highlightedDescription: String
-  dataCube: DataCube!
 }
 
 type DataCubeTheme {
@@ -340,20 +342,16 @@ type DataCubeOrganization {
   label: String
 }
 
-input DataCubeSearchFilter {
+input SearchCubeFilter {
   type: String!
+  label: String
   value: String!
 }
 
-enum DataCubeResultOrder {
+enum SearchCubeResultOrder {
   SCORE
   TITLE_ASC
   CREATED_DESC
-}
-
-type DatasetCount {
-  iri: String!
-  count: Int!
 }
 
 # The "Query" type is special: it lists all of the available queries that
@@ -375,37 +373,13 @@ type Query {
     sourceUrl: String!
     filters: Filters!
   ): [ObservationFilter!]!
-  dataCubes(
+  searchCubes(
     sourceType: String!
     sourceUrl: String!
     locale: String
     query: String
-    order: DataCubeResultOrder
+    order: SearchCubeResultOrder
     includeDrafts: Boolean
-    filters: [DataCubeSearchFilter!]
-  ): [DataCubeResult!]!
-  themes(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-  ): [DataCubeTheme!]!
-  subthemes(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-    parentIri: String!
-  ): [DataCubeTheme!]!
-  organizations(
-    sourceType: String!
-    sourceUrl: String!
-    locale: String!
-  ): [DataCubeOrganization!]!
-  datasetcount(
-    sourceType: String!
-    sourceUrl: String!
-    theme: String
-    organization: String
-    subtheme: String
-    includeDrafts: Boolean
-  ): [DatasetCount!]
+    filters: [SearchCubeFilter!]
+  ): [SearchCubeResult!]!
 }

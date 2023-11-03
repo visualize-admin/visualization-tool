@@ -100,14 +100,19 @@ export const dateFormatterFromDimension = (
         dim.timeUnit.toLowerCase() as keyof typeof localFormatters
       ];
     const parser = timeParse(dim.timeFormat);
+    const timezoneParser = timeParse(`${dim.timeFormat}%Z`);
+
     return (d: string | null) => {
       if (!d) {
         return localFormatters.empty();
       }
-      const parsed = parser(d);
+
+      const parsed = parser(d) ?? timezoneParser(d);
+
       return parsed ? formatter(parsed) : localFormatters.empty();
     };
   }
+
   return formatDateAuto;
 };
 

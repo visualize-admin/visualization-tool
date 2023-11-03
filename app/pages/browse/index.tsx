@@ -1,7 +1,7 @@
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { AppLayout } from "@/components/layout";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { DataCubeResultOrder } from "@/graphql/query-hooks";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 
 export type BrowseParams = {
   type?: "theme" | "organization" | "dataset";
@@ -10,7 +10,7 @@ export type BrowseParams = {
   subiri?: string;
   topic?: string;
   search?: string;
-  order?: DataCubeResultOrder;
+  order?: SearchCubeResultOrder;
   includeDrafts?: boolean;
   dataset?: string;
 };

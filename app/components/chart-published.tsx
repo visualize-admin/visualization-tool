@@ -51,13 +51,12 @@ type ChartPublishedProps = {
 export const ChartPublished = (props: ChartPublishedProps) => {
   const { configKey } = props;
   const [state] = useConfiguratorState(isPublished);
-  const { dataSet, dataSource } = state;
+  const { dataSource } = state;
   const chartConfig = getChartConfig(state);
 
   return (
     <ChartTablePreviewProvider>
       <ChartPublishedInner
-        dataSet={dataSet}
         dataSource={dataSource}
         state={state}
         chartConfig={chartConfig}
@@ -83,7 +82,6 @@ const useStyles = makeStyles<Theme, { shrink: boolean }>((theme) => ({
 }));
 
 type ChartPublishInnerProps = {
-  dataSet: string;
   dataSource: DataSource | undefined;
   state: ConfiguratorStatePublished;
   chartConfig: ChartConfig;
@@ -92,7 +90,6 @@ type ChartPublishInnerProps = {
 
 const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const {
-    dataSet,
     dataSource = DEFAULT_DATA_SOURCE,
     state,
     chartConfig,
@@ -136,7 +133,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
   const commonQueryVariables = {
-    iri: dataSet,
+    iri: chartConfig.dataSet,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
@@ -225,7 +222,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
             </Typography>
 
             <MetadataPanel
-              datasetIri={dataSet}
+              datasetIri={chartConfig.dataSet}
               dataSource={dataSource}
               dimensions={allComponents}
               container={rootRef.current}
@@ -247,13 +244,13 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               {isTablePreview ? (
                 <DataSetTable
                   sx={{ maxHeight: "100%" }}
-                  dataSetIri={dataSet}
+                  dataSetIri={chartConfig.dataSet}
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                 />
               ) : (
                 <ChartWithFilters
-                  dataSet={dataSet}
+                  dataSet={chartConfig.dataSet}
                   dataSource={dataSource}
                   componentIris={componentIris}
                   chartConfig={chartConfig}
@@ -261,7 +258,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               )}
             </Flex>
             <ChartFootnotes
-              dataSetIri={dataSet}
+              dataSetIri={chartConfig.dataSet}
               dataSource={dataSource}
               chartConfig={chartConfig}
               configKey={configKey}

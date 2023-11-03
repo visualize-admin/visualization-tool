@@ -25,7 +25,6 @@ import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import React, {
   forwardRef,
@@ -38,6 +37,7 @@ import React, {
   useState,
 } from "react";
 
+import { getChartSymbol } from "@/charts";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
@@ -82,7 +82,6 @@ import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
-import SvgIcFormatting from "@/icons/components/IcFormatting";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
 import { getTimeInterval } from "@/intervals";
 import { useLocale } from "@/locales/use-locale";
@@ -302,44 +301,19 @@ const MultiFilterContent = ({
     anchorEl?.focus();
   });
 
-  const handleUpdateColorMapping = useEvent(
-    ({
-      type,
-    }: {
-      type: /** Goes back to original color mapping. */
-      | "reset"
-        /** Shuffles colors to create new, randomized color mapping. */
-        | "shuffle";
-    }) => {
-      const values = colorComponent?.values || [];
-
-      switch (type) {
-        case "reset":
-          return dispatch({
-            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-            value: {
-              field,
-              colorConfigPath,
-              dimensionIri,
-              values,
-              random: false,
-            },
-          });
-        case "shuffle":
-          const usedValues = new Set(values.map((v) => v.value));
-          return dispatch({
-            type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-            value: {
-              field,
-              colorConfigPath,
-              dimensionIri,
-              values: sortBy(values, (d) => (usedValues.has(d.value) ? 0 : 1)),
-              random: true,
-            },
-          });
-      }
-    }
-  );
+  const handleResetColorMapping = useEvent(() => {
+    const values = colorComponent?.values ?? [];
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        field,
+        colorConfigPath,
+        dimensionIri,
+        values,
+        random: false,
+      },
+    });
+  });
 
   const colorConfig = useMemo(() => {
     return getColorConfig(chartConfig, colorConfigPath);
@@ -355,6 +329,7 @@ const MultiFilterContent = ({
   }, [colorConfig?.colorMapping, dimensionIri, colorComponent]);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -398,43 +373,23 @@ const MultiFilterContent = ({
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
-            {hasColorMapping ? (
-              colorConfig?.palette === "dimension" ? (
-                <Tooltip
-                  title={
-                    <Trans id="controls.filters.select.reset-colors">
-                      Reset colors
-                    </Trans>
-                  }
+            {hasColorMapping && colorConfig?.palette === "dimension" && (
+              <Tooltip
+                title={
+                  <Trans id="controls.filters.select.reset-colors">
+                    Reset colors
+                  </Trans>
+                }
+              >
+                <IconButton
+                  size="small"
+                  onClick={handleResetColorMapping}
+                  sx={{ ml: 1, my: -2 }}
                 >
-                  <IconButton
-                    sx={{ ml: 1, my: -2 }}
-                    size="small"
-                    onClick={() => handleUpdateColorMapping({ type: "reset" })}
-                  >
-                    <SvgIcRefresh fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  title={
-                    <Trans id="controls.filters.select.refresh-colors">
-                      Refresh colors
-                    </Trans>
-                  }
-                >
-                  <IconButton
-                    sx={{ ml: 1, my: -2 }}
-                    size="small"
-                    onClick={() =>
-                      handleUpdateColorMapping({ type: "shuffle" })
-                    }
-                  >
-                    <SvgIcFormatting fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-              )
-            ) : null}
+                  <SvgIcRefresh fontSize="inherit" />
+                </IconButton>
+              </Tooltip>
+            )}
           </Typography>
           <Typography variant="body2" component="span">
             <Trans id="controls.filter.nb-elements">
@@ -454,20 +409,27 @@ const MultiFilterContent = ({
                 <BreadcrumbChevron key={i} />
               ))}
             </Typography>
-            {children.map((v) => {
+            {children.map(({ value, label }) => {
               return (
                 <Flex
-                  key={v.value}
+                  key={value}
                   className={classes.selectedValueRow}
                   data-testid="chart-filters-value"
                 >
                   {hasColorMapping ? (
-                    <MultiFilterFieldColorPicker value={v.value} />
-                  ) : null}
-                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                    {v?.label}
-                  </Typography>
-                  {hasColorMapping ? null : <SvgIcCheck />}
+                    <MultiFilterFieldColorPicker
+                      value={value}
+                      label={label}
+                      symbol={chartSymbol}
+                    />
+                  ) : (
+                    <>
+                      <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                        {label}
+                      </Typography>
+                      <SvgIcCheck />
+                    </>
+                  )}
                 </Flex>
               );
             })}
@@ -629,7 +591,6 @@ const TreeAccordion = ({
           className={classes.optionCheck}
           style={{
             visibility: state === "NOT_SELECTED" ? "hidden" : "visible",
-            marginTop: 8,
           }}
         />
       </TreeAccordionSummary>

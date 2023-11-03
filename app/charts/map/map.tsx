@@ -76,7 +76,7 @@ export const MapComponent = () => {
   const classes = useStyles();
   const locale = useLocale();
 
-  const [, dispatchInteraction] = useInteraction();
+  const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
   const {
@@ -182,6 +182,20 @@ export const MapComponent = () => {
     }
   );
 
+  const sortedShapes = React.useMemo(() => {
+    // Sort for smaller shapes to be over larger ones, to be able to use tooltip
+    const sortedFeatures = orderBy(
+      features.areaLayer?.shapes?.features,
+      geoArea,
+      "desc"
+    ) as GeoFeature[];
+
+    return {
+      ...features.areaLayer?.shapes,
+      features: sortedFeatures,
+    };
+  }, [features.areaLayer?.shapes]);
+
   const geoJsonLayer = React.useMemo(() => {
     if (!areaLayer?.colors) {
       return;
@@ -201,24 +215,12 @@ export const MapComponent = () => {
       return DEFAULT_COLOR;
     };
 
-    // Sort for smaller shapes to be over larger ones, to be able to use tooltip
-    const sortedFeatures = orderBy(
-      features.areaLayer?.shapes?.features,
-      geoArea,
-      "desc"
-    );
-    const sortedShapes = {
-      ...features.areaLayer?.shapes,
-      features: sortedFeatures,
-    };
-
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
       // @ts-ignore - FIXME: properly type data & getFillColor fields
       data: sortedShapes,
       pickable: true,
-      autoHighlight: true,
       parameters: {
         /**
          * Fixes hover on overlapping layers
@@ -228,7 +230,9 @@ export const MapComponent = () => {
       },
       extruded: false,
       filled: true,
-      stroked: false,
+      stroked: true,
+      lineWidthMinPixels: 0.8,
+      getLineColor: [255, 255, 255],
       // @ts-ignore
       getFillColor,
       onHover: ({
@@ -241,7 +245,44 @@ export const MapComponent = () => {
         object?: GeoFeature;
       }) => onHover({ type: "area", x, y, object }),
     });
-  }, [areaLayer?.colors, features.areaLayer?.shapes, onHover, showBaseLayer]);
+  }, [areaLayer?.colors, sortedShapes, onHover, showBaseLayer]);
+
+  const hoverLayer = React.useMemo(() => {
+    if (!interaction.visible || !sortedShapes || !areaLayer) {
+      return;
+    }
+
+    const shape = sortedShapes.features.find(
+      (d) => d.properties.observation === interaction.d
+    );
+
+    if (shape) {
+      const getFillColor = (d: GeoFeature) => {
+        const { observation } = d.properties;
+
+        if (observation) {
+          const value = areaLayer.colors.getValue(observation);
+
+          if (value !== null) {
+            return areaLayer.colors.getColor(observation);
+          }
+        }
+
+        return DEFAULT_COLOR;
+      };
+
+      return new GeoJsonLayer({
+        id: "hoverLayer",
+        // @ts-ignore
+        data: shape,
+        filled: true,
+        stroked: true,
+        lineWidthMinPixels: 2,
+        // @ts-ignore
+        getFillColor,
+      });
+    }
+  }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
 
   const scatterplotLayer = React.useMemo(() => {
     if (!symbolLayer) {
@@ -329,6 +370,7 @@ export const MapComponent = () => {
   });
 
   const [loaded, setLoaded] = useState(false);
+
   return (
     <>
       {locked ? null : (
@@ -396,7 +438,7 @@ export const MapComponent = () => {
           <div data-map-loaded={loaded ? "true" : "false"} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, scatterplotLayer]}
+            layers={[geoJsonLayer, hoverLayer, scatterplotLayer]}
           />
         </Map>
       ) : null}

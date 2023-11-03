@@ -166,16 +166,26 @@ type ProfileVisualizationsRowProps = {
 
 const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   const { userId, config, onRemoveSuccess } = props;
-  const { dataSet, dataSource } = config.data;
+  const { dataSource } = config.data;
+  const dataSets = Array.from(
+    new Set(config.data.chartConfigs.map((d) => d.dataSet))
+  );
+  const dataSet = dataSets.length === 1 ? dataSets[0] : null;
   const locale = useLocale();
-  const [{ data, fetching }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
+  const [{ data, fetching }] = useDataCubeMetadataQuery(
+    dataSet
+      ? {
+          variables: {
+            iri: dataSet,
+            sourceType: dataSource.type,
+            sourceUrl: dataSource.url,
+            locale,
+          },
+        }
+      : {
+          pause: true,
+        }
+  );
   const actions = React.useMemo(() => {
     const actions: ActionProps[] = [
       {
@@ -260,11 +270,11 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
       <TableCell width="auto" sx={{ maxWidth: 320 }}>
         {fetching ? (
           <Skeleton width="50%" height={32} />
-        ) : (
+        ) : dataSet ? (
           <NextLink
-            href={`/browse?dataset=${
-              config.data.dataSet
-            }&dataSource=${sourceToLabel(config.data.dataSource)}`}
+            href={`/browse?dataset=${dataSet}&dataSource=${sourceToLabel(
+              dataSource
+            )}`}
             passHref
             legacyBehavior
           >
@@ -274,6 +284,13 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
               </Typography>
             </Link>
           </NextLink>
+        ) : (
+          <Typography variant="body2" noWrap>
+            {t({
+              id: "login.profile.my-visualizations.multiple-datasets",
+              message: "Multiple datasets",
+            })}
+          </Typography>
         )}
       </TableCell>
       <TableCell width={120}>

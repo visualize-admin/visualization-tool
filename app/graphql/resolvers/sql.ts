@@ -113,14 +113,15 @@ const parseSQLDimension = (
   };
 };
 
-export const dataCubes: NonNullable<QueryResolvers["dataCubes"]> = async () => {
-  const result = await fetchSQL({ path: "cubes" });
-  const cubes = await result.json();
+export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> =
+  async () => {
+    const result = await fetchSQL({ path: "cubes" });
+    const cubes = await result.json();
 
-  return cubes.map((d: SQLCube) => ({
-    dataCube: parseSQLCube(d),
-  }));
-};
+    return cubes.map((d: SQLCube) => ({
+      dataCube: parseSQLCube(d),
+    }));
+  };
 
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   async (_, { iri }) => {
@@ -159,24 +160,6 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
       return result;
     }
 
-    return [];
-  };
-
-export const themes: NonNullable<QueryResolvers["themes"]> = async () => {
-  return [];
-};
-
-export const subthemes: NonNullable<QueryResolvers["subthemes"]> = async () => {
-  return [];
-};
-
-export const organizations: NonNullable<QueryResolvers["organizations"]> =
-  async () => {
-    return [];
-  };
-
-export const datasetcount: NonNullable<QueryResolvers["datasetcount"]> =
-  async () => {
     return [];
   };
 

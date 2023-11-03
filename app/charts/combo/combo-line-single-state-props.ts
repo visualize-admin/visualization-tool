@@ -42,6 +42,7 @@ export const useComboLineSingleStateVariables = (
         dimension: measuresByIri[iri],
         iri,
         label: measuresByIri[iri].label,
+        color: fields.y.colorMapping[iri],
         getY: (d) => {
           return d[iri] !== null ? Number(d[iri]) : null;
         },

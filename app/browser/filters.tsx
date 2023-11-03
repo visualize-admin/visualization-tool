@@ -1,9 +1,4 @@
-import {
-  DataCubeOrganization,
-  DataCubeTheme,
-  OrganizationsQuery,
-  ThemesQuery,
-} from "@/graphql/query-hooks";
+import { DataCubeOrganization, DataCubeTheme } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 
 export type DataCubeAbout = {
@@ -14,13 +9,7 @@ export type DataCubeAbout = {
 export type BrowseFilter = DataCubeTheme | DataCubeOrganization | DataCubeAbout;
 /** Builds the state search filters from query params */
 
-export const getFiltersFromParams = (
-  params: BrowseParams,
-  context: {
-    themes?: ThemesQuery["themes"];
-    organizations?: OrganizationsQuery["organizations"];
-  }
-) => {
+export const getFiltersFromParams = (params: BrowseParams) => {
   const filters: BrowseFilter[] = [];
   const { type, subtype, iri, subiri, topic } = params;
   for (const [t, i] of [
@@ -28,17 +17,13 @@ export const getFiltersFromParams = (
     [subtype, subiri],
   ]) {
     if (t && i && (t === "theme" || t === "organization")) {
-      const container = context[
-        t === "theme" ? "themes" : "organizations"
-      ] as BrowseFilter[];
-      const obj = container?.find((f) => i === f.iri);
-      if (obj) {
-        filters.push(obj);
-      } else {
-        break;
-      }
+      filters.push({
+        __typename: t === "theme" ? "DataCubeTheme" : "DataCubeOrganization",
+        iri: i,
+      });
     }
   }
+
   if (topic) {
     filters.push({
       __typename: "DataCubeAbout",

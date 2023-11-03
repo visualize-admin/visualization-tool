@@ -34,7 +34,6 @@ ${(
           description: { en: "", de: "", fr: "", it: "" },
         },
         dataSource: { type: "sparql", url: "" },
-        dataSet: "",
         chartConfigs: [chartConfig],
         activeChartKey: "line",
       }}
@@ -144,6 +143,7 @@ const chartConfig: LineConfig = {
       it: "",
     },
   },
+  dataSet: "",
   chartType: "line",
   interactiveFiltersConfig,
   fields,

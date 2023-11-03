@@ -3,7 +3,7 @@ import rdf from "rdf-ext";
 import { NamedNode } from "rdf-js";
 
 import { truthy } from "@/domain/types";
-import { DataCubeSearchFilter } from "@/graphql/resolver-types";
+import { SearchCubeFilter } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
 
 import isAttrEqual from "../utils/is-attr-equal";
@@ -19,7 +19,7 @@ const isVisualizeCubeFilter = where(
 
 export const makeInQueryFilter = (
   predicate: NamedNode,
-  filters: DataCubeSearchFilter[]
+  filters: SearchCubeFilter[]
 ) => {
   return filters.length > 0
     ? Cube.filter.in(
@@ -34,19 +34,19 @@ export const makeCubeFilters = ({
   filters,
 }: {
   includeDrafts: boolean;
-  filters?: DataCubeSearchFilter[];
+  filters?: SearchCubeFilter[];
 }) => {
   const themeQueryFilter = makeInQueryFilter(
     ns.dcat.theme,
-    filters?.filter(isAttrEqual("type", "DataCubeTheme")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeTheme")) ?? []
   );
   const orgQueryFilter = makeInQueryFilter(
     ns.dcterms.creator,
-    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) ?? []
   );
   const aboutQueryFilter = makeInQueryFilter(
     ns.schema.about,
-    filters?.filter(isAttrEqual("type", "DataCubeAbout")) || []
+    filters?.filter(isAttrEqual("type", "DataCubeAbout")) ?? []
   );
 
   const res = [

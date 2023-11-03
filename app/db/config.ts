@@ -120,8 +120,9 @@ const parseDbConfig = (
     ...d,
     data: {
       ...migratedData,
-      dataSet: migrateDataSet(migratedData.dataSet),
-      chartConfigs: migratedData.chartConfigs.map(ensureFiltersOrder),
+      chartConfigs: migratedData.chartConfigs
+        .map(ensureFiltersOrder)
+        .map((d: any) => ({ ...d, dataSet: migrateDataSet(d.dataSet) })),
     },
   };
 };

@@ -8,6 +8,7 @@ import {
   scaleOrdinal,
   ScaleTime,
   scaleTime,
+  schemeCategory10,
   stack,
   stackOrderAscending,
   stackOrderDescending,
@@ -251,7 +252,7 @@ const useAreasState = (
 
         return {
           label: segment,
-          color: fields.segment?.colorMapping![dvIri] ?? "#006699",
+          color: fields.segment?.colorMapping![dvIri] ?? schemeCategory10[0],
         };
       });
 

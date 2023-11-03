@@ -7,20 +7,14 @@ import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  DataCubeResultOrder,
-  useOrganizationsQuery,
-  useThemesQuery,
-} from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
-import { useDataSourceStore } from "@/stores/data-source";
 import useEvent from "@/utils/use-event";
 
 import { getFiltersFromParams } from "./filters";
 
 export const getBrowseParamsFromQuery = (query: Router["query"]) => {
-  const values = mapValues(
+  const rawValues = mapValues(
     pick(query, [
       "type",
       "iri",
@@ -31,16 +25,24 @@ export const getBrowseParamsFromQuery = (query: Router["query"]) => {
       "order",
       "search",
       "dataset",
+      "previous",
     ]),
     (v) => (Array.isArray(v) ? v[0] : v)
   );
 
+  const { type, iri, subtype, subiri, topic, includeDrafts, ...values } =
+    rawValues;
+  const previous = values.previous ? JSON.parse(values.previous) : undefined;
+
   return pickBy(
     {
       ...values,
-      includeDrafts: values.includeDrafts
-        ? JSON.parse(values.includeDrafts)
-        : false,
+      type: type ?? previous?.type,
+      iri: iri ?? previous?.iri,
+      subtype: subtype ?? previous?.subtype,
+      subiri: subiri ?? previous?.subiri,
+      topic: topic ?? previous?.topic,
+      includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
     },
     (x) => x !== undefined
   );
@@ -87,15 +89,19 @@ const useQueryParamsState = <T extends object>(
         : undefined;
     const dataset = extractParamFromPath(router.asPath, "dataset");
     const query = sp ? Object.fromEntries(sp.entries()) : undefined;
+
     if (dataset && query && !query.dataset) {
       query.dataset = dataset[0];
     }
+
     return query ? parse(query) : initialState;
   });
 
   useEffect(() => {
-    rawSetState(parse(router.query));
-  }, [parse, router.query]);
+    if (router.isReady) {
+      rawSetState(parse(router.query));
+    }
+  }, [parse, router.isReady, router.query]);
 
   const setState = useEvent((stateUpdate: T) => {
     rawSetState((curState) => {
@@ -110,24 +116,7 @@ const useQueryParamsState = <T extends object>(
 };
 
 export const useBrowseState = () => {
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [{ data: themeData }] = useThemesQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-  const [{ data: orgData }] = useOrganizationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
   const [browseParams, setParams] = useQueryParamsState(
     {},
     {
@@ -135,7 +124,6 @@ export const useBrowseState = () => {
       serialize: buildURLFromBrowseState,
     }
   );
-
   const {
     search,
     type,
@@ -147,22 +135,19 @@ export const useBrowseState = () => {
 
   // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
   const dataset = type === "dataset" ? iri : paramDataset;
-  const filters = getFiltersFromParams(browseParams, {
-    themes: themeData?.themes,
-    organizations: orgData?.organizations,
-  });
+  const filters = getFiltersFromParams(browseParams);
 
   const setSearch = useEvent((v: string) => setParams({ search: v }));
   const setIncludeDrafts = useEvent((v: boolean) =>
     setParams({ includeDrafts: v })
   );
-  const setOrder = useEvent((v: DataCubeResultOrder) =>
+  const setOrder = useEvent((v: SearchCubeResultOrder) =>
     setParams({ order: v })
   );
   const setDataset = useEvent((v: string) => setParams({ dataset: v }));
 
-  const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.Score
+  const previousOrderRef = useRef<SearchCubeResultOrder>(
+    SearchCubeResultOrder.Score
   );
 
   return useMemo(
@@ -171,20 +156,20 @@ export const useBrowseState = () => {
       includeDrafts: !!includeDrafts,
       setIncludeDrafts,
       onReset: () => {
-        setParams({ search: "", order: DataCubeResultOrder.CreatedDesc });
+        setParams({ search: "", order: SearchCubeResultOrder.CreatedDesc });
       },
       onSubmitSearch: (newSearch: string) => {
         setParams({
           search: newSearch,
           order:
             newSearch === ""
-              ? DataCubeResultOrder.CreatedDesc
+              ? SearchCubeResultOrder.CreatedDesc
               : previousOrderRef.current,
         });
       },
       search,
       order,
-      onSetOrder: (order: DataCubeResultOrder) => {
+      onSetOrder: (order: SearchCubeResultOrder) => {
         previousOrderRef.current = order;
         setOrder(order);
       },

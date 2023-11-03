@@ -244,7 +244,8 @@ export const parseCubeDimension = ({
     .out(ns.rdf.type)
     .terms.some((t) => t.equals(ns.cube.MeasureDimension));
 
-  const unitTerm = dim.out(ns.qudt.unit).term;
+  // Keeping qudt:unit format for backwards compatibility.
+  const unitTerm = dim.out(ns.qudt.unit).term ?? dim.out(ns.qudt.hasUnit).term;
   const unit = unitTerm ? units?.get(unitTerm.value) : undefined;
   const unitLabel = unit?.label?.value;
 

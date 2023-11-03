@@ -47,7 +47,7 @@ import {
   isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import { getDefaultCategoricalPaletteName } from "@/palettes";
+import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -112,6 +112,32 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
     }
   | {
       field: "useAbbreviations";
+    }
+  // TODO: As these are quite chart type specific, they might be handled in
+  // some other way.
+  | {
+      field: "lineAxisOrientation";
+      onChange: OnEncodingOptionChange<"left" | "right", ComboLineColumnConfig>;
+    }
+  | {
+      field: "componentIris";
+      onChange: OnEncodingOptionChange<string[], ComboLineSingleConfig>;
+    }
+  | {
+      field: "leftAxisComponentIri";
+      onChange: OnEncodingOptionChange<string, ComboLineDualConfig>;
+    }
+  | {
+      field: "rightAxisComponentIri";
+      onChange: OnEncodingOptionChange<string, ComboLineDualConfig>;
+    }
+  | {
+      field: "lineComponentIri";
+      onChange: OnEncodingOptionChange<string, ComboLineColumnConfig>;
+    }
+  | {
+      field: "columnComponentIri";
+      onChange: OnEncodingOptionChange<string, ComboLineColumnConfig>;
     };
 
 const onColorComponentScaleTypeChange: OnEncodingOptionChange<
@@ -890,6 +916,20 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          componentIris: {
+            onChange: (iris, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              const palette = getPalette(y.palette);
+              const newColorMapping = Object.fromEntries(
+                iris.map((iri, i) => [iri, y.colorMapping[i] ?? palette[i]])
+              );
+              chartConfig.fields.y.colorMapping = newColorMapping;
+            },
+          },
+        },
       },
       {
         field: "x",
@@ -909,6 +949,32 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          leftAxisComponentIri: {
+            onChange: (iri, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              chartConfig.fields.y.colorMapping = {
+                [iri]: y.colorMapping[y.leftAxisComponentIri],
+                [y.rightAxisComponentIri]:
+                  y.colorMapping[y.rightAxisComponentIri],
+              };
+            },
+          },
+          rightAxisComponentIri: {
+            onChange: (iri, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              chartConfig.fields.y.colorMapping = {
+                [y.leftAxisComponentIri]:
+                  y.colorMapping[y.leftAxisComponentIri],
+                [iri]: y.colorMapping[y.rightAxisComponentIri],
+              };
+            },
+          },
+        },
       },
       {
         field: "x",
@@ -928,6 +994,56 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         customComponent: true,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          lineComponentIri: {
+            onChange: (iri, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              const lineColor = y.colorMapping[y.lineComponentIri];
+              const columnColor = y.colorMapping[y.columnComponentIri];
+
+              chartConfig.fields.y.colorMapping =
+                y.lineAxisOrientation === "left"
+                  ? { [iri]: lineColor, [y.columnComponentIri]: columnColor }
+                  : { [y.columnComponentIri]: columnColor, [iri]: lineColor };
+            },
+          },
+          columnComponentIri: {
+            onChange: (iri, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              const columnColor = y.colorMapping[y.columnComponentIri];
+              const lineColor = y.colorMapping[y.lineComponentIri];
+
+              chartConfig.fields.y.colorMapping =
+                y.lineAxisOrientation === "left"
+                  ? { [y.lineComponentIri]: lineColor, [iri]: columnColor }
+                  : { [iri]: columnColor, [y.lineComponentIri]: lineColor };
+            },
+          },
+          lineAxisOrientation: {
+            onChange: (_, options) => {
+              const { chartConfig } = options;
+              const { fields } = chartConfig;
+              const { y } = fields;
+              const lineAxisLeft = y.lineAxisOrientation === "left";
+              // Need the correct order to not enable "Reset color palette" button.
+              const firstIri = lineAxisLeft
+                ? y.columnComponentIri
+                : y.lineComponentIri;
+              const secondIri = lineAxisLeft
+                ? y.lineComponentIri
+                : y.columnComponentIri;
+
+              chartConfig.fields.y.colorMapping = {
+                [firstIri]: y.colorMapping[secondIri],
+                [secondIri]: y.colorMapping[firstIri],
+              };
+            },
+          },
+        },
       },
       {
         field: "x",
@@ -967,5 +1083,17 @@ export const getChartFieldOptionChangeSideEffect = (
     case "areaLayer.color.scaleType":
     case "symbolLayer.color.scaleType":
       return get(encoding, "options.colorComponent.onScaleTypeChange");
+    case "y.componentIris":
+      return get(encoding, "options.componentIris.onChange");
+    case "y.lineAxisOrientation":
+      return get(encoding, "options.lineAxisOrientation.onChange");
+    case "y.leftAxisComponentIri":
+      return get(encoding, "options.leftAxisComponentIri.onChange");
+    case "y.rightAxisComponentIri":
+      return get(encoding, "options.rightAxisComponentIri.onChange");
+    case "y.lineComponentIri":
+      return get(encoding, "options.lineComponentIri.onChange");
+    case "y.columnComponentIri":
+      return get(encoding, "options.columnComponentIri.onChange");
   }
 };

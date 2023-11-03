@@ -11,10 +11,10 @@ Tags are used to show organizations and themes of a dataset.
 ${(
   <ReactSpecimen>
     <Stack direction="row">
-      <Tag type="DataCubeTheme">Water</Tag>
-      <Tag type="DataCubeTheme">Pollution</Tag>
-      <Tag type="DataCubeTheme">Finance</Tag>
-      <Tag type="DataCubeOrganization">BAFU</Tag>
+      <Tag type="theme">Water</Tag>
+      <Tag type="theme">Pollution</Tag>
+      <Tag type="theme">Finance</Tag>
+      <Tag type="organization">BAFU</Tag>
     </Stack>
   </ReactSpecimen>
 )}

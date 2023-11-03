@@ -79,16 +79,16 @@ fragment hierarchyMetadata on Dimension {
   }
 }
 
-query DataCubes(
+query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
   $locale: String!
   $query: String
-  $order: DataCubeResultOrder
+  $order: SearchCubeResultOrder
   $includeDrafts: Boolean
-  $filters: [DataCubeSearchFilter!]
+  $filters: [SearchCubeFilter!]
 ) {
-  dataCubes(
+  searchCubes(
     sourceType: $sourceType
     sourceUrl: $sourceUrl
     locale: $locale
@@ -99,22 +99,7 @@ query DataCubes(
   ) {
     highlightedTitle
     highlightedDescription
-    dataCube {
-      iri
-      title
-      workExamples
-      creator {
-        iri
-        label
-      }
-      description
-      publicationStatus
-      datePublished
-      themes {
-        iri
-        label
-      }
-    }
+    cube
   }
 }
 
@@ -403,45 +388,6 @@ query PossibleFilters(
   }
 }
 
-query Themes($sourceType: String!, $sourceUrl: String!, $locale: String!) {
-  themes(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale) {
-    iri
-    label
-  }
-}
-
-query Organizations(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-) {
-  organizations(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-  ) {
-    iri
-    label
-  }
-}
-
-query Subthemes(
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $parentIri: String!
-) {
-  subthemes(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    parentIri: $parentIri
-  ) {
-    label
-    iri
-  }
-}
-
 fragment hierarchyValueFields on HierarchyValue {
   value
   dimensionIri
@@ -473,26 +419,5 @@ query DimensionHierarchy(
     ) {
       ...hierarchyMetadata
     }
-  }
-}
-
-query DatasetCount(
-  $sourceType: String!
-  $sourceUrl: String!
-  $theme: String
-  $organization: String
-  $subtheme: String
-  $includeDrafts: Boolean
-) {
-  datasetcount(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    theme: $theme
-    organization: $organization
-    subtheme: $subtheme
-    includeDrafts: $includeDrafts
-  ) {
-    count
-    iri
   }
 }

@@ -1,3 +1,4 @@
+import { schemeCategory10 } from "d3";
 import React from "react";
 
 import {
@@ -8,7 +9,6 @@ import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
-import { useTheme } from "@/themes";
 
 export const Scatterplot = () => {
   const {
@@ -23,7 +23,6 @@ export const Scatterplot = () => {
     colors,
     getRenderingKey,
   } = useChartState() as ScatterplotState;
-  const theme = useTheme();
   const { margins } = bounds;
   const ref = React.useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
@@ -34,7 +33,7 @@ export const Scatterplot = () => {
         key: getRenderingKey(d),
         cx: xScale(getX(d) ?? NaN),
         cy: yScale(getY(d) ?? NaN),
-        color: hasSegment ? colors(getSegment(d)) : theme.palette.primary.main,
+        color: hasSegment ? colors(getSegment(d)) : schemeCategory10[0],
       };
     });
   }, [
@@ -44,7 +43,6 @@ export const Scatterplot = () => {
     getX,
     getY,
     hasSegment,
-    theme.palette.primary.main,
     xScale,
     yScale,
     getRenderingKey,

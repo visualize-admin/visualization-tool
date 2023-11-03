@@ -1,11 +1,12 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Input, Popover, styled, Theme } from "@mui/material";
+import { Box, Button, Popover, styled, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3";
-import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
+import { MouseEventHandler, useRef } from "react";
 
 import useDisclosure from "@/components/use-disclosure";
 import VisuallyHidden from "@/components/visually-hidden";
+import { Icon } from "@/icons";
 
 const useStyles = makeStyles(() => ({
   swatch: {
@@ -31,6 +32,7 @@ const Swatch = ({
 }) => {
   const classes = useStyles();
   const borderColor = d3Color(color)?.darker().toString();
+
   return (
     <Box
       className={classes.swatch}
@@ -42,7 +44,7 @@ const Swatch = ({
       }}
       role="button"
       onClick={onClick}
-    ></Box>
+    />
   );
 };
 
@@ -65,43 +67,9 @@ const useColorPickerStyles = makeStyles((theme: Theme) => ({
     gap: 2,
     marginBottom: 2,
   },
-  input: {
-    color: theme.palette.grey[700],
-    borderColor: theme.palette.divider,
-    backgroundColor: theme.palette.grey[100],
-    fontSize: "0.875rem",
-    "&:focus": { outline: "none", borderColor: theme.palette.primary.main },
-  },
 }));
 
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
-  const [inputColorValue, setInputColorValue] = useState(selectedColor);
-
-  const selectColor = useCallback(
-    (_color) => {
-      setInputColorValue(_color);
-      // Make sure onChange is only called with valid colors
-      const c = d3Color(_color);
-
-      if (c) {
-        onChange?.(_color);
-      }
-    },
-    [onChange, setInputColorValue]
-  );
-
-  const formatInputColor = useCallback(
-    (_color) => {
-      // Make sure onChange is only called with valid colors
-      const c = d3Color(_color);
-
-      if (c) {
-        setInputColorValue(_color);
-      }
-    },
-    [setInputColorValue]
-  );
-
   const classes = useColorPickerStyles();
 
   return (
@@ -112,23 +80,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             key={color}
             color={color}
             selected={color === selectedColor}
-            onClick={() => {
-              selectColor(color);
-            }}
+            onClick={() => onChange?.(color)}
           />
         ))}
-      </Box>
-      <Box sx={{ position: "relative" }}>
-        <Input
-          className={classes.input}
-          value={inputColorValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            selectColor(e.currentTarget.value);
-          }}
-          onBlur={(e) => {
-            formatInputColor(e.currentTarget.value);
-          }}
-        />
       </Box>
     </Box>
   );
@@ -139,60 +93,51 @@ const ColorPickerButton = styled(Button)({
   minWidth: "auto",
   minHeight: "auto",
   lineHeight: "16px",
+  backgroundColor: "transparent",
 });
 
-const ColorPickerBox = styled(Box)(({ theme }) => ({
+const ColorPickerBox = styled(Box)({
   lineHeight: "16px",
   "& > button": {
     backgroundColor: "grey.100",
     borderRadius: 4,
     overflow: "hidden",
     borderWidth: 1,
-    border: `1px solid ${theme.palette.divider}`,
     p: 0,
   },
   "& > button:hover": {
+    backgroundColor: "transparent",
     cursor: "pointer",
+    opacity: 0.8,
   },
   "& > button[aria-expanded]": {
     borderColor: "primary.active",
   },
-}));
+});
 
 export const ColorPickerMenu = (props: Props) => {
-  const { selectedColor } = props;
-  const borderColor = d3Color(selectedColor)?.darker().toString();
+  const { disabled } = props;
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
 
   return (
     <ColorPickerBox
       sx={{
-        "> button:hover": {
-          borderColor,
-          cursor: "pointer",
-        },
-        opacity: props.disabled ? 0.5 : 1,
-        pointerEvents: props.disabled ? "none" : "auto",
+        opacity: disabled ? 0.5 : 1,
+        pointerEvents: disabled ? "none" : "auto",
       }}
     >
-      <ColorPickerButton
-        ref={buttonRef}
-        disabled={props.disabled}
-        onClick={open}
-      >
+      <ColorPickerButton ref={buttonRef} disabled={disabled} onClick={open}>
         <VisuallyHidden>
           <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
         </VisuallyHidden>
-        <Box aria-hidden>
-          <Box
-            sx={{
-              backgroundColor: selectedColor,
-              width: "1rem",
-              height: "1rem",
-            }}
-          />
-        </Box>
+        <Typography
+          aria-hidden
+          color="primary"
+          sx={{ backgroundColor: "transparent" }}
+        >
+          <Icon name="color" size={16} />
+        </Typography>
       </ColorPickerButton>
       <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>
         <ColorPicker {...props} />

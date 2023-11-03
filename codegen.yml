@@ -20,6 +20,7 @@ generates:
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#QueryFilters"
         GeoShape: "../domain/data#GeoShape"
+        SearchCube: "../domain/data#SearchCube"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -35,6 +36,7 @@ generates:
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
+        SearchCube: "../domain/data#SearchCube"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

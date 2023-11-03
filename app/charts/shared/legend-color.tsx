@@ -10,6 +10,7 @@ import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DataSource,
@@ -32,6 +33,8 @@ import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
 export type LegendSymbol = "square" | "line" | "circle";
+
+export type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
@@ -66,7 +69,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 type ItemStyleProps = {
   symbol: LegendSymbol;
   color: string;
-  usage: "legend" | "tooltip";
+  usage: LegendItemUsage;
 };
 
 const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
@@ -74,25 +77,29 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
     position: "relative",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    fontWeight: theme.typography.fontWeightRegular,
-    color: theme.palette.grey[700],
     fontSize: ({ usage }) =>
-      usage === "legend"
+      ["legend", "colorPicker"].includes(usage)
         ? theme.typography.body2.fontSize
         : theme.typography.caption.fontSize,
+    fontWeight: theme.typography.fontWeightRegular,
+    color: theme.palette.grey[700],
 
     "&::before": {
       content: "''",
       position: "relative",
       display: "block",
-      width: ".5rem",
-      marginTop: ({ symbol }: ItemStyleProps) =>
-        symbol === "line" ? "0.75rem" : "0.5rem",
+      width: ({ usage }) => (usage === "colorPicker" ? "0.75rem" : "0.5rem"),
+      height: ({ symbol, usage }: ItemStyleProps) =>
+        `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * ${
+          usage === "colorPicker" ? 1.5 : 1
+        })`,
+      marginTop: ({ symbol, usage }: ItemStyleProps) =>
+        `calc(0.75rem - calc(${
+          ["square", "circle"].includes(symbol) ? "0.5rem" : "2px"
+        } * ${usage === "colorPicker" ? 1.5 : 1}) * 0.5)`,
       marginRight: "0.5rem",
       flexShrink: 0,
       backgroundColor: ({ color }: ItemStyleProps) => color,
-      height: ({ symbol }: ItemStyleProps) =>
-        symbol === "square" || symbol === "circle" ? `.5rem` : 2,
       borderRadius: ({ symbol }: ItemStyleProps) =>
         symbol === "circle" ? "50%" : 0,
     },
@@ -165,9 +172,9 @@ const useLegendGroups = ({
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
-  const { dataSet: dataset, dataSource } = configState;
+  const { dataSource } = configState;
   const segmentDimension = useDimension({
-    dataset,
+    dataset: chartConfig.dataSet,
     dataSource,
     locale,
     dimensionIri: segmentField?.componentIri,
@@ -175,7 +182,7 @@ const useLegendGroups = ({
 
   const [hierarchyResp] = useDimensionValuesQuery({
     variables: {
-      dataCubeIri: dataset,
+      dataCubeIri: chartConfig.dataSet,
       dimensionIri: segmentDimension?.iri!,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -202,11 +209,16 @@ const useLegendGroups = ({
 type LegendColorProps = {
   chartConfig: ChartConfig;
   symbol: LegendSymbol;
+  // If the legend is based on measures, this function can be used to get the
+  // corresponding measure to open the metadata panel.
+  getLegendItemDimension?: (
+    dimensionLabel: string
+  ) => DimensionMetadataFragment | undefined;
   interactive?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const { chartConfig, symbol, interactive } = props;
+  const { chartConfig, symbol, getLegendItemDimension, interactive } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ chartConfig, values });
@@ -216,6 +228,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
       groups={groups}
       getColor={(v) => colors(v)}
       getLabel={getColorLabel}
+      getItemDimension={getLegendItemDimension}
       symbol={symbol}
       interactive={interactive}
       numberOfOptions={values.length}
@@ -282,14 +295,24 @@ type LegendColorContentProps = {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
+  getItemDimension?: (
+    dimensionLabel: string
+  ) => DimensionMetadataFragment | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
 };
 
 const LegendColorContent = (props: LegendColorContentProps) => {
-  const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
-    props;
+  const {
+    groups,
+    getColor,
+    getLabel,
+    getItemDimension,
+    symbol,
+    interactive,
+    numberOfOptions,
+  } = props;
   const classes = useStyles();
   const categories = useInteractiveFilters((d) => d.categories);
   const addCategory = useInteractiveFilters((d) => d.addCategory);
@@ -352,6 +375,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                       key={`${d}_${i}`}
                       item={label}
                       color={getColor(d)}
+                      dimension={getItemDimension?.(label)}
                       symbol={symbol}
                       interactive={interactive}
                       onToggle={handleToggle}
@@ -371,18 +395,20 @@ const LegendColorContent = (props: LegendColorContentProps) => {
 type LegendItemProps = {
   item: string;
   color: string;
+  dimension?: DimensionMetadataFragment;
   symbol: LegendSymbol;
   interactive?: boolean;
   onToggle?: CheckboxProps["onChange"];
   checked?: boolean;
   disabled?: boolean;
-  usage?: "legend" | "tooltip";
+  usage?: LegendItemUsage;
 };
 
 export const LegendItem = (props: LegendItemProps) => {
   const {
     item,
     color,
+    dimension,
     symbol,
     interactive,
     onToggle,
@@ -392,37 +418,40 @@ export const LegendItem = (props: LegendItemProps) => {
   } = props;
   const classes = useItemStyles({ symbol, color, usage });
 
-  return (
-    <>
-      {interactive && onToggle ? (
-        <MaybeTooltip
-          text={
-            disabled
-              ? t({
-                  id: "controls.filters.interactive.color.min-1-filter",
-                  message: "At least one filter must be selected.",
-                })
-              : undefined
-          }
-        >
-          <div>
-            <Checkbox
-              label={item}
-              name={item}
-              value={item}
-              checked={checked !== undefined ? checked : true}
-              onChange={onToggle}
-              key={item}
-              color={color}
-              className={classes.legendCheckbox}
-            />
-          </div>
-        </MaybeTooltip>
+  return interactive && onToggle ? (
+    <MaybeTooltip
+      text={
+        disabled
+          ? t({
+              id: "controls.filters.interactive.color.min-1-filter",
+              message: "At least one filter must be selected.",
+            })
+          : undefined
+      }
+    >
+      <div>
+        <Checkbox
+          label={item}
+          name={item}
+          value={item}
+          checked={checked !== undefined ? checked : true}
+          onChange={onToggle}
+          key={item}
+          color={color}
+          className={classes.legendCheckbox}
+        />
+      </div>
+    </MaybeTooltip>
+  ) : (
+    <Flex data-testid="legendItem" className={classes.legendItem}>
+      {dimension ? (
+        <OpenMetadataPanelWrapper dim={dimension}>
+          {/* Account for the added space, to align the symbol and label. */}
+          <span style={{ marginTop: 3 }}>{item}</span>
+        </OpenMetadataPanelWrapper>
       ) : (
-        <Flex data-testid="legendItem" className={classes.legendItem}>
-          {item}
-        </Flex>
+        item
       )}
-    </>
+    </Flex>
   );
 };

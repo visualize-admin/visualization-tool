@@ -5,6 +5,7 @@ import {
   ButtonBase,
   FormControlLabel,
   FormControlLabelProps,
+  InputLabel,
   InputProps,
   ListSubheader,
   Checkbox as MUICheckbox,
@@ -66,7 +67,7 @@ export const Label = ({
       component="label"
       htmlFor={htmlFor}
       variant={smaller ? "caption" : "body2"}
-      color="secondary"
+      color="secondary.active"
       display="flex"
       sx={sx}
     >
@@ -318,6 +319,7 @@ export const Select = ({
   onClose,
   onOpen,
   loading,
+  hint,
   sx,
 }: {
   id: string;
@@ -328,6 +330,7 @@ export const Select = ({
   controls?: React.ReactNode;
   optionGroups?: [OptionGroup, SelectOption[]][];
   loading?: boolean;
+  hint?: string;
 } & SelectProps) => {
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
@@ -370,6 +373,37 @@ export const Select = ({
               // @ts-ignore - It works
               component: LoadingMenuPaper,
             },
+          }}
+          renderValue={(value) => {
+            const selectedOption = sortedOptions.find(
+              (opt) => opt.value === value
+            );
+
+            if (!selectedOption) {
+              return "";
+            }
+
+            return (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <InputLabel
+                  sx={{
+                    typography: "body2",
+                    color: "secondary.active",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {selectedOption.label}
+                </InputLabel>
+                {hint && <DisabledMessageIcon message={hint} />}
+              </Box>
+            );
           }}
         >
           {sortedOptions.map((opt) => {
@@ -423,7 +457,15 @@ const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
   return (
     <Tooltip
       arrow
-      title={message}
+      title={
+        <Typography variant="caption" color="secondary">
+          {message}
+        </Typography>
+      }
+      placement="top"
+      componentsProps={{
+        tooltip: { sx: { width: 140, px: 2, py: 1, lineHeight: 1.2 } },
+      }}
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
       <Typography color="warning.main">
@@ -551,6 +593,7 @@ export const SearchField = ({
     },
     [inputRef, onReset]
   );
+
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}

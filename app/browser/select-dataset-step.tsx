@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
+import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
@@ -22,6 +24,7 @@ import {
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
   bannerPresenceProps,
+  DURATION,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
@@ -31,7 +34,12 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { useDataCubesQuery } from "@/graphql/query-hooks";
+import { truthy } from "@/domain/types";
+import {
+  DataCubeOrganization,
+  DataCubeTheme,
+  useSearchCubesQuery,
+} from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 
@@ -42,7 +50,7 @@ import {
   buildURLFromBrowseState,
   useBrowseContext,
 } from "./context";
-import { DataCubeAbout } from "./filters";
+import { BrowseFilter, DataCubeAbout } from "./filters";
 
 const softJSONParse = (v: string) => {
   try {
@@ -111,7 +119,6 @@ const useStyles = makeStyles<Theme, { datasetPresent: boolean }>((theme) => ({
   },
   filters: {
     display: "block",
-    marginBottom: theme.spacing(4),
     color: theme.palette.grey[800],
   },
 }));
@@ -124,6 +131,18 @@ export const formatBackLink = (
     return "/browse";
   }
   return buildURLFromBrowseState(backParameters);
+};
+
+const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
+  return (
+    filters
+      // Subthemes are filtered on client side.
+      .filter(
+        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
+          d.__typename !== "DataCubeAbout"
+      )
+      .map((d) => ({ type: d.__typename, label: d.label, value: d.iri }))
+  );
 };
 
 const SelectDatasetStepContent = () => {
@@ -141,8 +160,13 @@ const SelectDatasetStepContent = () => {
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
+
+  const queryFilters = useMemo(() => {
+    return filters ? prepareSearchQueryFilters(filters) : [];
+  }, [filters]);
+
   // Use the debounced query value here only!
-  const [datacubesQuery] = useDataCubesQuery({
+  const [{ data, fetching, error }] = useSearchCubesQuery({
     variables: {
       sourceType: configState.dataSource.type,
       sourceUrl: configState.dataSource.url,
@@ -150,18 +174,70 @@ const SelectDatasetStepContent = () => {
       query: debouncedQuery,
       order,
       includeDrafts,
-      filters: filters
-        ? filters.map((filter) => {
-            return { type: filter.__typename, value: filter.iri };
-          })
-        : [],
+      filters: queryFilters,
     },
+    pause: !!dataset,
   });
 
   useRedirectToVersionedCube({
     dataSource: configState.dataSource,
     datasetIri: dataset,
   });
+
+  const { allCubes, cubes } = React.useMemo(() => {
+    if ((data && data.searchCubes.length === 0) || !data) {
+      return {
+        allCubes: [],
+        cubes: [],
+      };
+    }
+
+    const subthemeFilters = filters.filter(
+      (d) => d.__typename === "DataCubeAbout"
+    );
+
+    if (subthemeFilters.length === 0) {
+      return {
+        allCubes: data.searchCubes,
+        cubes: data.searchCubes,
+      };
+    }
+
+    const subthemes = subthemeFilters.map((d) => d.iri);
+
+    return {
+      allCubes: data.searchCubes,
+      cubes: data.searchCubes.filter((d) => {
+        return d.cube.subthemes.some((d) => subthemes.includes(d.iri));
+      }),
+    };
+  }, [data, filters]);
+
+  const themes: DataCubeTheme[] = React.useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes
+          .flatMap((d) => d.cube.themes)
+          .map((d) => ({ ...d, __typename: "DataCubeTheme" })),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
+
+  const orgs: DataCubeOrganization[] = React.useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes
+          .map((d) => d.cube.creator)
+          .filter((d) => d?.iri)
+          .filter(truthy)
+          .map((d) => ({ ...d, __typename: "DataCubeOrganization" })),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
 
   if (configState.state !== "SELECTING_DATASET") {
     return null;
@@ -171,7 +247,7 @@ const SelectDatasetStepContent = () => {
     <Box>
       <AnimatePresence>
         {!dataset && (
-          <MotionBox {...bannerPresenceProps} key="banner">
+          <MotionBox key="banner" {...bannerPresenceProps}>
             <Box
               component="section"
               role="banner"
@@ -201,17 +277,14 @@ const SelectDatasetStepContent = () => {
           </MotionBox>
         )}
       </AnimatePresence>
-
-      <PanelLayout className={classes.panelLayout}>
+      <PanelLayout className={classes.panelLayout} key="panel">
         <PanelLeftWrapper className={classes.panelLeft}>
           <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
+                key="metadata"
+                sx={{ mx: 4, px: 4 }}
                 {...navPresenceProps}
-                px={4}
-                mx={4}
-                key="dataset-metadata"
-                custom={dataset}
               >
                 <NextLink href={backLink} passHref legacyBehavior>
                   <Button
@@ -224,11 +297,7 @@ const SelectDatasetStepContent = () => {
                     </Trans>
                   </Button>
                 </NextLink>
-                <MotionBox
-                  key="dataset-metadata"
-                  sx={{ mt: 6 }}
-                  {...smoothPresenceProps}
-                >
+                <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
                   <DataSetMetadata
                     dataSetIri={dataset}
                     dataSource={configState.dataSource}
@@ -237,48 +306,83 @@ const SelectDatasetStepContent = () => {
               </MotionBox>
             ) : (
               <MotionBox key="search-filters" {...navPresenceProps}>
-                <SearchFilters data={datacubesQuery.data} />
+                <SearchFilters cubes={allCubes} themes={themes} orgs={orgs} />
               </MotionBox>
             )}
           </AnimatePresence>
         </PanelLeftWrapper>
-        <PanelMiddleWrapper className={classes.panelMiddle}>
-          <Box sx={{ maxWidth: 1040 }}>
-            <AnimatePresence mode="wait">
-              {dataset ? (
-                <MotionBox {...navPresenceProps} key="preview">
-                  <DataSetPreview
-                    dataSetIri={dataset}
-                    dataSource={configState.dataSource}
-                  />
-                </MotionBox>
-              ) : (
-                <MotionBox {...navPresenceProps}>
-                  {filters.length > 0 && (
-                    <Typography
-                      key="filters"
-                      className={classes.filters}
-                      variant="h1"
+        <PanelMiddleWrapper
+          className={classes.panelMiddle}
+          sx={{ maxWidth: 1040 }}
+        >
+          <AnimatePresence mode="wait">
+            {dataset ? (
+              <MotionBox key="preview" {...navPresenceProps}>
+                <DataSetPreview
+                  dataSetIri={dataset}
+                  dataSource={configState.dataSource}
+                />
+              </MotionBox>
+            ) : (
+              <MotionBox key="filters" {...navPresenceProps}>
+                <AnimatePresence>
+                  {queryFilters.length > 0 && (
+                    <MotionBox
+                      {...{
+                        initial: {
+                          transform: "translateY(-16px)",
+                          height: 0,
+                          marginBottom: 0,
+                          opacity: 0,
+                        },
+                        animate: {
+                          transform: "translateY(0px)",
+                          height: "auto",
+                          marginBottom: 16,
+                          opacity: 1,
+                        },
+                        exit: {
+                          transform: "translateY(-16px)",
+                          height: 0,
+                          marginBottom: 0,
+                          opacity: 0,
+                        },
+                        transition: {
+                          duration: DURATION,
+                        },
+                      }}
                     >
-                      {filters
-                        .filter(
-                          (f): f is Exclude<typeof f, DataCubeAbout> =>
-                            f.__typename !== "DataCubeAbout"
-                        )
-                        .map((f) => f.label)
-                        .join(", ")}
-                    </Typography>
+                      <Typography
+                        key="filters"
+                        className={classes.filters}
+                        variant="h1"
+                      >
+                        {queryFilters
+                          .map((d) => {
+                            const searchList =
+                              d.type === "DataCubeTheme" ? themes : orgs;
+                            const item = (
+                              searchList as { iri: string; label?: string }[]
+                            ).find(({ iri }) => iri === d.value);
+                            return (item ?? d).label;
+                          })
+                          .join(", ")}
+                      </Typography>
+                    </MotionBox>
                   )}
-
-                  <SearchDatasetControls
-                    browseState={browseState}
-                    searchResult={datacubesQuery.data}
-                  />
-                  <DatasetResults key="results" query={datacubesQuery} />
-                </MotionBox>
-              )}
-            </AnimatePresence>
-          </Box>
+                </AnimatePresence>
+                <SearchDatasetControls
+                  browseState={browseState}
+                  cubes={cubes}
+                />
+                <DatasetResults
+                  fetching={fetching}
+                  error={error}
+                  cubes={cubes}
+                />
+              </MotionBox>
+            )}
+          </AnimatePresence>
         </PanelMiddleWrapper>
       </PanelLayout>
       <Box

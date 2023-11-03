@@ -65,6 +65,7 @@ export const useComboLineColumnStateVariables = (
     dimension: measuresByIri[lineIri],
     iri: lineIri,
     label: getLabelWithUnit(measuresByIri[lineIri]),
+    color: fields.y.colorMapping[lineIri],
     getY: (d) => {
       return d[lineIri] !== null ? Number(d[lineIri]) : null;
     },
@@ -75,6 +76,7 @@ export const useComboLineColumnStateVariables = (
     dimension: measuresByIri[columnIri],
     iri: columnIri,
     label: getLabelWithUnit(measuresByIri[columnIri]),
+    color: fields.y.colorMapping[columnIri],
     getY: (d) => {
       return d[columnIri] !== null ? Number(d[columnIri]) : null;
     },

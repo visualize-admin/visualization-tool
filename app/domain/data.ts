@@ -12,6 +12,7 @@ import {
   TemporalDimension,
   TemporalOrdinalDimension,
 } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -70,6 +71,27 @@ export type GeoData = {
   symbolLayer: SymbolLayer | undefined;
 };
 
+// Extracted for performance reasons.
+export type SearchCube = {
+  iri: string;
+  title: string;
+  description: string | null;
+  publicationStatus: DataCubePublicationStatus;
+  datePublished: string | null;
+  creator: {
+    iri: string;
+    label: string;
+  } | null;
+  themes: {
+    iri: string;
+    label: string;
+  }[];
+  subthemes: {
+    iri: string;
+    label: string;
+  }[];
+};
+
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;
@@ -78,7 +100,6 @@ export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
     case "string":
     case "boolean":
       return v as T;
-    // return v === "true" ? true : false;
     case "float":
     case "integer":
     case "long":
@@ -96,13 +117,6 @@ export const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
     case "unsignedShort":
     case "unsignedByte":
       return +v as T;
-    // TODO: Figure out how to preserve granularity of date (maybe include interval?)
-    // case "date":
-    // case "time":
-    // case "dateTime":
-    // case "gYear":
-    // case "gYearMonth":
-    //   return new Date(v);
     default:
       return v as T;
   }

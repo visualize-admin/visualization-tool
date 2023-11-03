@@ -14,6 +14,7 @@ import {
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
 import { getMap } from "@/charts/map/ref";
+import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
 import { GenericField } from "@/config-types";
@@ -92,31 +93,24 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const chartConfig = getChartConfig(state);
-  const { dataSet, dataSource } = state;
+  const { dataSource } = state;
   const { activeField } = chartConfig;
   const locale = useLocale();
+  const commonVariables = {
+    iri: chartConfig.dataSet,
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonVariables,
   });
   const [{ data: componentsData }] = useComponentsWithHierarchiesQuery({
-    variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
+    variables: commonVariables,
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
-      iri: dataSet,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonVariables,
       filters: chartConfig.filters,
     },
   });
@@ -145,7 +139,6 @@ export const ChartOptionsSelector = ({
           <TableColumnOptions state={state} metaData={metadata} />
         ) : (
           <ActiveFieldSwitch
-            state={state}
             chartConfig={chartConfig}
             metadata={metadata}
             observations={observations}
@@ -162,14 +155,13 @@ export const ChartOptionsSelector = ({
 };
 
 type ActiveFieldSwitchProps = {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   metadata: DataCubeMetadataWithHierarchies;
   observations: Observation[];
 };
 
 const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
-  const { state, metadata, chartConfig, observations } = props;
+  const { metadata, chartConfig, observations } = props;
   const { dimensions, measures } = metadata;
   const activeField = chartConfig.activeField as EncodingFieldType | undefined;
 
@@ -203,7 +195,6 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
   return (
     <EncodingOptionsPanel
       encoding={encoding}
-      state={state}
       chartConfig={chartConfig}
       field={activeField}
       component={component}
@@ -216,7 +207,6 @@ const ActiveFieldSwitch = (props: ActiveFieldSwitchProps) => {
 
 type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
   component: DimensionMetadataFragment | undefined;
@@ -228,7 +218,6 @@ type EncodingOptionsPanelProps = {
 const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   const {
     encoding,
-    state,
     field,
     chartConfig,
     component,
@@ -408,7 +397,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
-          state={state}
           chartConfig={chartConfig}
           encoding={encoding}
           component={component}
@@ -441,7 +429,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       )}
 
       <ChartFieldMultiFilter
-        state={state}
         chartConfig={chartConfig}
         component={component}
         encoding={encoding}
@@ -557,8 +544,11 @@ const getComboOptionGroups = (
   measures: NumericalMeasure[],
   disable: (m: NumericalMeasure) => boolean
 ) => {
-  // FIXME: translate
-  return groups(measures, (d) => d.unit ?? "No unit").map(([k, v]) => {
+  return groups(
+    measures,
+    (d) =>
+      d.unit ?? t({ id: "controls.chart.combo.y.no-unit", message: "No unit" })
+  ).map(([k, v]) => {
     return [
       { label: k, value: k },
       v.map((m) => {
@@ -616,10 +606,12 @@ const ChartComboLineSingleYField = (
       } = {}
     ) => {
       const options = getComboOptionGroups(numericalMeasures, (m) => {
-        return enableAll
+        return !m.unit
+          ? true
+          : enableAll
           ? false
           : m.unit !== unit ||
-              (y.componentIris.includes(m.iri) && m.iri !== iri);
+            (y.componentIris.includes(m.iri) && m.iri !== iri);
       });
 
       if (allowNone) {
@@ -656,94 +648,104 @@ const ChartComboLineSingleYField = (
     }, [getOptionGroups]);
 
   return (
-    <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
-      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="body2" sx={{ mb: 2 }}>
-          {/* FIXME: translate */}
-          Common unit: <b>{unit ?? "none"}</b>
-        </Typography>
-        <Typography variant="caption" sx={{ mb: 4 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of the same unit.
-        </Typography>
-
-        {y.componentIris.map((iri, index) => {
-          // If there are multiple measures, we allow the user to remove any measure.
-          const allowNone = y.componentIris.length > 1;
-          // If there is only one measure, we allow the user to select any measure.
-          const enableAll = index === 0 && y.componentIris.length === 1;
-          const options = getOptionGroups(iri, { allowNone, enableAll });
-
-          return (
-            <Select
-              key={iri}
-              id={`mesure-${iri}`}
-              options={[]}
-              optionGroups={options}
-              sortOptions={false}
-              value={iri}
-              onChange={(e) => {
-                const newIri = e.target.value as string;
-                let newComponentIris: string[];
-
-                if (newIri === FIELD_VALUE_NONE) {
-                  newComponentIris = y.componentIris.filter((d) => d !== iri);
-                } else {
-                  newComponentIris = [...y.componentIris];
-                  newComponentIris.splice(index, 1, newIri);
-                }
-
-                dispatch({
-                  type: "CHART_OPTION_CHANGED",
-                  value: {
-                    locale,
-                    field: "y",
-                    path: "componentIris",
-                    value: newComponentIris,
-                  },
-                });
-              }}
-              sx={{ mb: 2 }}
-            />
-          );
-        })}
-        {showAddNewMeasureButton ? (
-          <Select
-            id="measure-add"
-            label={t({
-              id: "controls.sorting.addDimension",
-              message: "Add dimension",
-            })}
-            options={[]}
-            optionGroups={addNewMeasureOptions}
-            sortOptions={false}
-            onChange={(e) => {
-              const iri = e.target.value as string;
-
-              if (iri !== FIELD_VALUE_NONE) {
-                const newComponentIris = [...y.componentIris, iri];
-                dispatch({
-                  type: "CHART_OPTION_CHANGED",
-                  value: {
-                    locale,
-                    field: "y",
-                    path: "componentIris",
-                    value: newComponentIris,
-                  },
-                });
-              }
-            }}
-            value={FIELD_VALUE_NONE}
-          />
-        ) : y.componentIris.length === 1 ? (
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            {/* FIXME: translate */}
-            No compatible measures to combine! 🥲
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 2 }}>
+            <Trans id="controls.chart.combo.y.combine-same-unit">
+              Note that you can only combine measures of the same unit.
+            </Trans>
           </Typography>
-        ) : null}
-      </ControlSectionContent>
-    </ControlSection>
+          <Typography variant="caption" sx={{ mb: 2 }}>
+            <Trans id="controls.chart.combo.y.common-unit">Common unit</Trans>:{" "}
+            <b>{unit ?? t({ id: "controls.none", message: "None" })}</b>
+          </Typography>
+
+          {y.componentIris.map((iri, index) => {
+            // If there are multiple measures, we allow the user to remove any measure.
+            const allowNone = y.componentIris.length > 1;
+            // If there is only one measure, we allow the user to select any measure.
+            const enableAll = index === 0 && y.componentIris.length === 1;
+            const options = getOptionGroups(iri, { allowNone, enableAll });
+
+            return (
+              <Select
+                key={iri}
+                id={`mesure-${iri}`}
+                hint={
+                  !showAddNewMeasureButton && y.componentIris.length === 1
+                    ? t({
+                        id: "controls.chart.combo.y.no-compatible-measures",
+                        message: "No compatible measures to combine!",
+                      })
+                    : undefined
+                }
+                options={[]}
+                optionGroups={options}
+                sortOptions={false}
+                value={iri}
+                onChange={(e) => {
+                  const newIri = e.target.value as string;
+                  let newComponentIris: string[];
+
+                  if (newIri === FIELD_VALUE_NONE) {
+                    newComponentIris = y.componentIris.filter((d) => d !== iri);
+                  } else {
+                    newComponentIris = [...y.componentIris];
+                    newComponentIris.splice(index, 1, newIri);
+                  }
+
+                  dispatch({
+                    type: "CHART_OPTION_CHANGED",
+                    value: {
+                      locale,
+                      field: "y",
+                      path: "componentIris",
+                      value: newComponentIris,
+                    },
+                  });
+                }}
+                sx={{ mb: 2 }}
+              />
+            );
+          })}
+          {showAddNewMeasureButton && (
+            <Select
+              id="measure-add"
+              label={t({
+                id: "controls.sorting.addDimension",
+                message: "Add dimension",
+              })}
+              options={[]}
+              optionGroups={addNewMeasureOptions}
+              sortOptions={false}
+              onChange={(e) => {
+                const iri = e.target.value as string;
+
+                if (iri !== FIELD_VALUE_NONE) {
+                  const newComponentIris = [...y.componentIris, iri];
+                  dispatch({
+                    type: "CHART_OPTION_CHANGED",
+                    value: {
+                      locale,
+                      field: "y",
+                      path: "componentIris",
+                      value: newComponentIris,
+                    },
+                  });
+                }
+              }}
+              value={FIELD_VALUE_NONE}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+      <ComboChartYColorSection
+        values={y.componentIris.map((iri) => ({ iri, symbol: "line" }))}
+        measures={measures}
+      />
+    </>
   );
 };
 
@@ -790,61 +792,75 @@ const ChartComboLineDualYField = (
   );
 
   return (
-    <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
-      <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ mb: 4 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of different units.
-        </Typography>
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 4 }}>
+            <Trans id="controls.chart.combo.y.combine-different-unit">
+              Note that you can only combine measures of different units.
+            </Trans>
+          </Typography>
 
-        <Select
-          id={`mesure-${y.leftAxisComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("left")}
-          sortOptions={false}
-          // FIXME: translate
-          label="Left axis measure"
-          value={y.leftAxisComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "leftAxisComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
+          <Select
+            id={`mesure-${y.leftAxisComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("left")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.left-axis-measure",
+              message: "Left axis measure",
+            })}
+            value={y.leftAxisComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "leftAxisComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
 
-        <Select
-          id={`mesure-${y.rightAxisComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("right")}
-          sortOptions={false}
-          // FIXME: translate
-          label="Right axis measure"
-          value={y.rightAxisComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "rightAxisComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
-      </ControlSectionContent>
-    </ControlSection>
+          <Select
+            id={`mesure-${y.rightAxisComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("right")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.right-axis-measure",
+              message: "Right axis measure",
+            })}
+            value={y.rightAxisComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "rightAxisComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ComboChartYColorSection
+        values={[
+          { iri: y.leftAxisComponentIri, symbol: "line" },
+          { iri: y.rightAxisComponentIri, symbol: "line" },
+        ]}
+        measures={measures}
+      />
+    </>
   );
 };
 
@@ -891,77 +907,128 @@ const ChartComboLineColumnYField = (
   );
 
   return (
+    <>
+      <ControlSection collapse>
+        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ mb: 4 }}>
+            <Trans id="controls.chart.combo.y.combine-different-unit">
+              Note that you can only combine measures of different units.
+            </Trans>
+          </Typography>
+
+          <Select
+            id={`mesure-${y.columnComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("column")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.column-measure",
+              message: "Left axis (column)",
+            })}
+            value={y.columnComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "columnComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
+
+          <Select
+            id={`mesure-${y.lineComponentIri}`}
+            options={[]}
+            optionGroups={getOptionGroups("line")}
+            sortOptions={false}
+            label={t({
+              id: "controls.chart.combo.y.line-measure",
+              message: "Right axis (line)",
+            })}
+            value={y.lineComponentIri}
+            onChange={(e) => {
+              const newIri = e.target.value as string;
+              dispatch({
+                type: "CHART_OPTION_CHANGED",
+                value: {
+                  locale,
+                  field: "y",
+                  path: "lineComponentIri",
+                  value: newIri,
+                },
+              });
+            }}
+            sx={{ mb: 2 }}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ComboChartYColorSection
+        values={
+          y.lineAxisOrientation === "left"
+            ? [
+                { iri: y.lineComponentIri, symbol: "line" },
+                { iri: y.columnComponentIri, symbol: "square" },
+              ]
+            : [
+                { iri: y.columnComponentIri, symbol: "square" },
+                { iri: y.lineComponentIri, symbol: "line" },
+              ]
+        }
+        measures={measures}
+      />
+    </>
+  );
+};
+
+type ComboChartYColorSectionProps = {
+  values: { iri: string; symbol: LegendSymbol }[];
+  measures: DimensionMetadataFragment[];
+};
+
+const ComboChartYColorSection = (props: ComboChartYColorSectionProps) => {
+  const { values, measures } = props;
+
+  return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+      <SubsectionTitle iconName="color">
+        <Trans id="controls.section.layout-options">Layout options</Trans>
+      </SubsectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ mb: 4 }}>
-          {/* FIXME: translate */}
-          Note that you can only combine measures of different units.
-        </Typography>
-
-        <Select
-          id={`mesure-${y.columnComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("column")}
-          sortOptions={false}
-          // FIXME: translate
-          label="Column measure"
-          value={y.columnComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "columnComponentIri",
-                value: newIri,
-              },
-            });
-          }}
+        <ColorPalette
+          field="y"
+          // Faking a component here, because we don't have a real one.
+          // We use measure iris as dimension values, because that's how
+          // the color mapping is done.
+          component={
+            {
+              __typename: "",
+              values: values.map(({ iri }) => ({
+                value: iri,
+                label: iri,
+              })),
+            } as any as DimensionMetadataFragment
+          }
         />
-
-        <Box component="fieldset" mt={2} mb={4}>
-          {/* FIXME: translate */}
-          <FieldSetLegend legendTitle={<Trans id="">Axis orientation</Trans>} />
-          <Flex sx={{ justifyContent: "flex-start" }}>
-            {[
-              { value: "right", label: "Left" },
-              { value: "left", label: "Right" },
-            ].map((d) => (
-              <ChartOptionRadioField
-                key={d.value}
-                label={d.label}
-                field="y"
-                path="lineAxisOrientation"
-                value={d.value}
-              />
-            ))}
-          </Flex>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}>
+          {values.map(({ iri, symbol }) => {
+            return (
+              <Box key={iri}>
+                <ColorPickerField
+                  field="y"
+                  path={`colorMapping["${iri}"]`}
+                  label={measures.find((d) => d.iri === iri)!.label}
+                  symbol={symbol}
+                />
+              </Box>
+            );
+          })}
         </Box>
-
-        <Select
-          id={`mesure-${y.lineComponentIri}`}
-          options={[]}
-          optionGroups={getOptionGroups("line")}
-          sortOptions={false}
-          // FIXME: translate
-          label="Line measure"
-          value={y.lineComponentIri}
-          onChange={(e) => {
-            const newIri = e.target.value as string;
-            dispatch({
-              type: "CHART_OPTION_CHANGED",
-              value: {
-                locale,
-                field: "y",
-                path: "lineComponentIri",
-                value: newIri,
-              },
-            });
-          }}
-          sx={{ mb: 2 }}
-        />
       </ControlSectionContent>
     </ControlSection>
   );
@@ -1091,7 +1158,6 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
 };
 
 const ChartFieldMultiFilter = ({
-  state,
   chartConfig,
   component,
   encoding,
@@ -1099,7 +1165,6 @@ const ChartFieldMultiFilter = ({
   dimensions,
   measures,
 }: {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   component: DimensionMetadataFragment | undefined;
   encoding: EncodingSpec;
@@ -1142,7 +1207,7 @@ const ChartFieldMultiFilter = ({
             <DimensionValuesMultiFilter
               key={component.iri}
               dimensionIri={component.iri}
-              dataSetIri={state.dataSet}
+              dataSetIri={chartConfig.dataSet}
               field={field}
               colorComponent={colorComponent || component}
               // If colorType is defined, we are dealing with color field and
@@ -1438,7 +1503,6 @@ const ChartFieldSize = ({
 };
 
 type ChartFieldColorComponentProps = {
-  state: ConfiguratorStateConfiguringChart;
   chartConfig: ChartConfig;
   encoding: EncodingSpec;
   component: DimensionMetadataFragment;
@@ -1451,7 +1515,6 @@ type ChartFieldColorComponentProps = {
 
 const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
   const {
-    state,
     chartConfig,
     encoding,
     component,
@@ -1556,7 +1619,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           colorComponentIri && component.iri !== colorComponentIri ? (
             <DimensionValuesMultiFilter
               key={component.iri}
-              dataSetIri={state.dataSet}
+              dataSetIri={chartConfig.dataSet}
               dimensionIri={colorComponentIri}
               field={field}
               colorConfigPath="color"
@@ -1753,8 +1816,7 @@ const ChartMapBaseLayerSettings = ({
           value: {
             locale,
             field: null,
-            // FIXME: shouldn't be a field if not mapped
-            // to a component
+            // FIXME: shouldn't be a field if not mapped to a component
             path: "baseLayer.bbox",
             value: map.getBounds().toArray(),
           },

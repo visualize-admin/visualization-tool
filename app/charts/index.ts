@@ -1,4 +1,4 @@
-import { ascending, descending, group, rollups } from "d3";
+import { ascending, descending, group, rollup, rollups } from "d3";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
@@ -29,6 +29,7 @@ import {
   InteractiveFiltersConfig,
   isAreaConfig,
   isColumnConfig,
+  isComboChartConfig,
   isComboLineColumnConfig,
   isComboLineDualConfig,
   isComboLineSingleConfig,
@@ -75,7 +76,10 @@ import {
   DataCubeMetadata,
   DataCubeMetadataWithHierarchies,
 } from "@/graphql/types";
-import { getDefaultCategoricalPaletteName } from "@/palettes";
+import {
+  DEFAULT_CATEGORICAL_PALETTE_NAME,
+  getDefaultCategoricalPaletteName,
+} from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 import { createChartId } from "@/utils/create-chart-id";
@@ -105,10 +109,16 @@ export const regularChartTypes: RegularChartType[] = [
   "map",
 ];
 
-export const comboChartTypes: ComboChartType[] = [
-  "comboLineSingle",
+export const comboDifferentUnitChartTypes: ComboChartType[] = [
   "comboLineDual",
   "comboLineColumn",
+];
+
+export const comboSameUnitChartTypes: ComboChartType[] = ["comboLineSingle"];
+
+export const comboChartTypes: ComboChartType[] = [
+  ...comboSameUnitChartTypes,
+  ...comboDifferentUnitChartTypes,
 ];
 
 export const chartTypesOrder: { [k in ChartType]: number } = {
@@ -323,6 +333,7 @@ const META: Meta = {
 
 type GetInitialConfigOptions = {
   key?: string;
+  dataSet: string;
   chartType: ChartType;
   dimensions: DataCubeMetadataWithHierarchies["dimensions"];
   measures: DataCubeMetadataWithHierarchies["measures"];
@@ -331,16 +342,18 @@ type GetInitialConfigOptions = {
 export const getInitialConfig = (
   options: GetInitialConfigOptions
 ): ChartConfig => {
-  const { key, chartType, dimensions, measures } = options;
+  const { key, dataSet, chartType, dimensions, measures } = options;
   const genericConfigProps: {
     key: string;
     version: string;
     meta: Meta;
+    dataSet: string;
     activeField: string | undefined;
   } = {
     key: key ?? createChartId(),
     version: CHART_CONFIG_VERSION,
     meta: META,
+    dataSet,
     activeField: undefined,
   };
   const numericalMeasures = measures.filter(isNumericalMeasure);
@@ -530,10 +543,13 @@ export const getInitialConfig = (
     case "comboLineSingle": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const mostCommonUnit = rollups(
-        numericalMeasures,
+        numericalMeasures.filter((d) => d.unit),
         (v) => v.length,
         (d) => d.unit
       ).sort((a, b) => descending(a[1], b[1]))[0][0];
+      const yComponentIris = numericalMeasures
+        .filter((d) => d.unit === mostCommonUnit)
+        .map((d) => d.iri);
 
       return {
         ...genericConfigProps,
@@ -546,9 +562,15 @@ export const getInitialConfig = (
           x: { componentIri: temporalDimensions[0].iri },
           // Use all measures with the most common unit.
           y: {
-            componentIris: numericalMeasures
-              .filter((d) => d.unit === mostCommonUnit)
-              .map((d) => d.iri),
+            componentIris: yComponentIris,
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            colorMapping: mapValueIrisToColor({
+              palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+              dimensionValues: yComponentIris.map((iri) => ({
+                value: iri,
+                label: iri,
+              })),
+            }),
           },
         },
       };
@@ -556,8 +578,14 @@ export const getInitialConfig = (
     case "comboLineDual": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
-        new Set(numericalMeasures.map((d) => d.unit))
+        new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
+      const leftAxisComponentIri = numericalMeasures.find(
+        (d) => d.unit === firstUnit
+      )!.iri;
+      const rightAxisComponentIri = numericalMeasures.find(
+        (d) => d.unit === secondUnit
+      )!.iri;
 
       return {
         ...genericConfigProps,
@@ -569,12 +597,19 @@ export const getInitialConfig = (
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
           y: {
-            leftAxisComponentIri: numericalMeasures.find(
-              (d) => d.unit === firstUnit
-            )!.iri,
-            rightAxisComponentIri: numericalMeasures.find(
-              (d) => d.unit === secondUnit
-            )!.iri,
+            leftAxisComponentIri,
+            rightAxisComponentIri,
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            colorMapping: mapValueIrisToColor({
+              palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+              dimensionValues: [
+                leftAxisComponentIri,
+                rightAxisComponentIri,
+              ].map((iri) => ({
+                value: iri,
+                label: iri,
+              })),
+            }),
           },
         },
       };
@@ -582,8 +617,14 @@ export const getInitialConfig = (
     case "comboLineColumn": {
       // It's guaranteed by getPossibleChartTypes that there are at least two units.
       const [firstUnit, secondUnit] = Array.from(
-        new Set(numericalMeasures.map((d) => d.unit))
+        new Set(numericalMeasures.filter((d) => d.unit).map((d) => d.unit))
       );
+      const lineComponentIri = numericalMeasures.find(
+        (d) => d.unit === firstUnit
+      )!.iri;
+      const columnComponentIri = numericalMeasures.find(
+        (d) => d.unit === secondUnit
+      )!.iri;
 
       return {
         ...genericConfigProps,
@@ -595,13 +636,19 @@ export const getInitialConfig = (
         fields: {
           x: { componentIri: temporalDimensions[0].iri },
           y: {
-            lineComponentIri: numericalMeasures.find(
-              (d) => d.unit === firstUnit
-            )!.iri,
+            lineComponentIri,
             lineAxisOrientation: "right",
-            columnComponentIri: numericalMeasures.find(
-              (d) => d.unit === secondUnit
-            )!.iri,
+            columnComponentIri,
+            palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+            colorMapping: mapValueIrisToColor({
+              palette: DEFAULT_CATEGORICAL_PALETTE_NAME,
+              dimensionValues: [lineComponentIri, columnComponentIri].map(
+                (iri) => ({
+                  value: iri,
+                  label: iri,
+                })
+              ),
+            }),
           },
         },
       };
@@ -629,6 +676,7 @@ export const getChartConfigAdjustedToChartType = ({
   const initialConfig = getInitialConfig({
     key: chartConfig.key,
     chartType: newChartType,
+    dataSet: chartConfig.dataSet,
     dimensions,
     measures,
   });
@@ -1291,18 +1339,39 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: {
-        componentIris: ({ oldValue, newChartConfig, measures }) => {
-          const numericalMeasures = measures.filter(isNumericalMeasure);
-          const availableMeasureIris = numericalMeasures.map((d) => d.iri);
-          const measure = numericalMeasures.find(
-            (d) => d.iri === (oldValue ?? availableMeasureIris[0])
-          ) as NumericalMeasure;
+        componentIris: ({
+          oldValue,
+          newChartConfig,
+          oldChartConfig,
+          measures,
+        }) => {
+          const numericalMeasures = measures.filter(
+            (d) => isNumericalMeasure(d) && d.unit
+          );
+          const { unit } =
+            numericalMeasures.find((d) => d.iri === oldValue) ??
+            numericalMeasures[0];
+          const componentIris = numericalMeasures
+            .filter((d) => d.unit === unit)
+            .map((d) => d.iri);
+          const palette = isSegmentInConfig(oldChartConfig)
+            ? oldChartConfig.fields.segment?.palette ??
+              DEFAULT_CATEGORICAL_PALETTE_NAME
+            : isComboChartConfig(oldChartConfig)
+            ? oldChartConfig.fields.y.palette
+            : DEFAULT_CATEGORICAL_PALETTE_NAME;
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
-              componentIris: numericalMeasures
-                .filter((d) => d.unit === measure.unit)
-                .map((d) => d.iri),
+              componentIris,
+              palette,
+              colorMapping: mapValueIrisToColor({
+                palette,
+                dimensionValues: componentIris.map((iri) => ({
+                  value: iri,
+                  label: iri,
+                })),
+              }),
             };
           });
         },
@@ -1374,16 +1443,35 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         }
 
+        const rightAxisComponentIri = (
+          numericalMeasures.find((d) =>
+            rightMeasureIri
+              ? d.iri === rightMeasureIri
+              : d.unit !== leftMeasure.unit
+          ) as NumericalMeasure
+        ).iri;
+
+        const palette = isSegmentInConfig(oldChartConfig)
+          ? oldChartConfig.fields.segment?.palette ??
+            DEFAULT_CATEGORICAL_PALETTE_NAME
+          : isComboChartConfig(oldChartConfig)
+          ? oldChartConfig.fields.y.palette
+          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             leftAxisComponentIri: leftMeasure.iri,
-            rightAxisComponentIri: (
-              numericalMeasures.find((d) =>
-                rightMeasureIri
-                  ? d.iri === rightMeasureIri
-                  : d.unit !== leftMeasure.unit
-              ) as NumericalMeasure
-            ).iri,
+            rightAxisComponentIri,
+            palette,
+            colorMapping: mapValueIrisToColor({
+              palette,
+              dimensionValues: [leftMeasure.iri, rightAxisComponentIri].map(
+                (iri) => ({
+                  value: iri,
+                  label: iri,
+                })
+              ),
+            }),
           };
         });
       },
@@ -1449,17 +1537,36 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         }
 
+        const lineComponentIri = (
+          numericalMeasures.find((d) =>
+            rightAxisMeasureIri
+              ? d.iri === rightAxisMeasureIri
+              : d.unit !== leftMeasure.unit
+          ) as NumericalMeasure
+        ).iri;
+
+        const palette = isSegmentInConfig(oldChartConfig)
+          ? oldChartConfig.fields.segment?.palette ??
+            DEFAULT_CATEGORICAL_PALETTE_NAME
+          : isComboChartConfig(oldChartConfig)
+          ? oldChartConfig.fields.y.palette
+          : DEFAULT_CATEGORICAL_PALETTE_NAME;
+
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             columnComponentIri: leftMeasure.iri,
-            lineComponentIri: (
-              numericalMeasures.find((d) =>
-                rightAxisMeasureIri
-                  ? d.iri === rightAxisMeasureIri
-                  : d.unit !== leftMeasure.unit
-              ) as NumericalMeasure
-            ).iri,
+            lineComponentIri,
             lineAxisOrientation: "right",
+            palette,
+            colorMapping: mapValueIrisToColor({
+              palette,
+              dimensionValues: [leftMeasure.iri, lineComponentIri].map(
+                (iri) => ({
+                  value: iri,
+                  label: iri,
+                })
+              ),
+            }),
           };
         });
       },
@@ -1813,14 +1920,23 @@ export const getPossibleChartTypes = ({
       possibles.push(...multipleNumericalMeasuresEnabled);
 
       if (temporalDimensions.length > 0) {
+        const measuresWithUnit = numericalMeasures.filter((d) => d.unit);
         const uniqueUnits = Array.from(
-          new Set(numericalMeasures.map((d) => d.unit))
+          new Set(measuresWithUnit.map((d) => d.unit))
         );
 
         if (uniqueUnits.length > 1) {
-          possibles.push(...comboChartTypes);
-        } else {
-          possibles.push("comboLineSingle");
+          possibles.push(...comboDifferentUnitChartTypes);
+        }
+
+        const unitCounts = rollup(
+          measuresWithUnit,
+          (v) => v.length,
+          (d) => d.unit
+        );
+
+        if (Array.from(unitCounts.values()).some((d) => d > 1)) {
+          possibles.push(...comboSameUnitChartTypes);
         }
       }
     }
@@ -1906,5 +2022,28 @@ const convertTableFieldsToSegmentField = ({
         dimensionValues: actualComponent.values,
       }),
     };
+  }
+};
+
+export const getChartSymbol = (
+  chartType: ChartType
+): "square" | "line" | "circle" => {
+  switch (chartType) {
+    case "area":
+    case "column":
+    case "comboLineColumn":
+    case "pie":
+    case "map":
+    case "table":
+      return "square";
+    case "comboLineDual":
+    case "comboLineSingle":
+    case "line":
+      return "line";
+    case "scatterplot":
+      return "circle";
+    default:
+      const _exhaustiveCheck: never = chartType;
+      return _exhaustiveCheck;
   }
 };

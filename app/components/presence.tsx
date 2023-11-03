@@ -4,7 +4,7 @@ import { Transition, motion } from "framer-motion";
 export const MotionBox = motion(Box);
 export const MotionCard = motion(Card);
 
-const DURATION = 0.4;
+export const DURATION = 0.4;
 
 export const smoothPresenceProps = {
   initial: { opacity: 0 },
@@ -25,23 +25,9 @@ export const accordionPresenceProps = {
 };
 
 export const navPresenceProps = {
-  variants: {
-    enter: () => ({
-      opacity: 0,
-      x: 20,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: DURATION,
-      },
-    }),
-    center: () => ({ opacity: 1, x: 0 }),
-    exit: () => ({
-      opacity: 0,
-    }),
-  },
-  initial: "enter",
-  animate: "center",
-  exit: "exit",
+  initial: { opacity: 0, x: 20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 },
   transition: {
     duration: DURATION,
   },

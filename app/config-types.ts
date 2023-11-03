@@ -226,6 +226,7 @@ const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
+  dataSet: t.string,
   filters: Filters,
   activeField: t.union([t.string, t.undefined]),
 });
@@ -606,6 +607,8 @@ const ComboLineSingleFields = t.type({
   x: GenericField,
   y: t.type({
     componentIris: t.array(t.string),
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
@@ -628,6 +631,8 @@ const ComboLineDualFields = t.type({
   y: t.type({
     leftAxisComponentIri: t.string,
     rightAxisComponentIri: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
@@ -651,6 +656,8 @@ const ComboLineColumnFields = t.type({
     lineComponentIri: t.string,
     lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
     columnComponentIri: t.string,
+    palette: t.string,
+    colorMapping: ColorMapping,
   }),
 });
 export type ComboLineColumnFields = t.TypeOf<typeof ComboLineColumnFields>;
@@ -1070,7 +1077,6 @@ export type DataSource = t.TypeOf<typeof DataSource>;
 const Config = t.type(
   {
     version: t.string,
-    dataSet: t.string,
     dataSource: DataSource,
     meta: Meta,
     chartConfigs: t.array(ChartConfig),
@@ -1091,7 +1097,6 @@ export const decodeConfig = (config: unknown) => {
 const ConfiguratorStateInitial = t.type({
   version: t.string,
   state: t.literal("INITIAL"),
-  dataSet: t.undefined,
   dataSource: DataSource,
 });
 export type ConfiguratorStateInitial = t.TypeOf<
@@ -1101,7 +1106,6 @@ export type ConfiguratorStateInitial = t.TypeOf<
 const ConfiguratorStateSelectingDataSet = t.type({
   version: t.string,
   state: t.literal("SELECTING_DATASET"),
-  dataSet: t.union([t.string, t.undefined]),
   dataSource: DataSource,
   meta: Meta,
   chartConfigs: t.undefined,

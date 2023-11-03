@@ -5,6 +5,7 @@ import {
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
+  schemeCategory10,
 } from "d3";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
@@ -135,7 +136,7 @@ const useScatterplotState = (
 
       return {
         label: segment,
-        color: fields.segment!.colorMapping![dvIri] ?? "#006699",
+        color: fields.segment!.colorMapping![dvIri] ?? schemeCategory10[0],
       };
     });
 

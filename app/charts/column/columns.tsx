@@ -1,3 +1,4 @@
+import { schemeCategory10 } from "d3";
 import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
@@ -79,7 +80,7 @@ export const Columns = () => {
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = React.useMemo(() => {
     const getColor = (d: number) => {
-      return d <= 0 ? theme.palette.secondary.main : theme.palette.primary.main;
+      return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
     };
 
     return chartData.map((d) => {
@@ -108,7 +109,6 @@ export const Columns = () => {
     xScale,
     yScale,
     y0,
-    theme.palette.primary.main,
     theme.palette.secondary.main,
     getRenderingKey,
   ]);

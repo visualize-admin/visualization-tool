@@ -95,6 +95,7 @@ export const useChartFieldField = ({
   const unmountedRef = useRef(false);
   const [fetching, setFetching] = useState(false);
   const [state, dispatch] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const client = useClient();
   const locale = useLocale();
 
@@ -105,10 +106,6 @@ export const useChartFieldField = ({
   }, []);
 
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
-    if (!state.dataSet) {
-      return;
-    }
-
     if (e.target.value !== FIELD_VALUE_NONE) {
       setFetching(true);
       const dimensionIri = e.target.value as string;
@@ -117,7 +114,7 @@ export const useChartFieldField = ({
           DimensionHierarchyDocument,
           {
             locale,
-            cubeIri: state.dataSet,
+            cubeIri: chartConfig.dataSet,
             dimensionIri,
             sourceUrl: state.dataSource.url,
             sourceType: state.dataSource.type,
@@ -435,6 +432,10 @@ export const useChartType = (
         value: {
           chartConfig: getInitialConfig({
             chartType,
+            dataSet:
+              state.state === "CONFIGURING_CHART"
+                ? getChartConfig(state, state.activeChartKey).dataSet
+                : chartConfig.dataSet,
             dimensions,
             measures,
           }),

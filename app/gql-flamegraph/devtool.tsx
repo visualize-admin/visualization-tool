@@ -182,20 +182,24 @@ const AccordionOperation = ({
   operation,
   start,
   end,
+  maxTime,
   ...accordionProps
 }: {
   result: VisualizeOperationResult | undefined;
   operation: Operation;
   start: number;
   end: number;
+  maxTime: number;
 } & Omit<AccordionProps, "children">) => {
   const duration = useMemo(() => {
     const all = result?.extensions?.timings
       ? flatten(result?.extensions?.timings).sort(byStart)
       : [];
+
     if (all.length === 0) {
       return 0;
     }
+
     return maxBy(all, (x) => x.end)?.end! - minBy(all, (x) => x.start)?.start!;
   }, [result?.extensions?.timings]);
 
@@ -213,11 +217,19 @@ const AccordionOperation = ({
           }}
         >
           <Typography variant="body2" sx={{ mb: 0 }}>
-            {operation.key} {getOperationQueryName(operation)}
-            <Box component="span" sx={{ ml: 2 }}>
-              {result ? "✅" : "🔄"}
-            </Box>
+            {getOperationQueryName(operation)}
           </Typography>
+          <div style={{ marginTop: 4 }}>
+            <svg width={100} height={10}>
+              <rect
+                x={0}
+                y={0}
+                width={(duration / maxTime) * 100}
+                height={10}
+                fill="#ccc"
+              />
+            </svg>
+          </div>
           <Typography variant="caption">{duration}ms</Typography>
           <Link
             fontSize="small"
@@ -252,18 +264,47 @@ const AccordionOperation = ({
       </AccordionSummary>
       {accordionProps.expanded ? (
         <AccordionDetails>
-          <Box sx={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
-            <Box sx={{ overflowX: "scroll" }}>
+          <div>
+            <Typography variant="h5" gutterBottom>
+              Variables
+            </Typography>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+              {result?.operation.variables &&
+                Object.entries(result.operation.variables).map(([k, v]) => {
+                  return (
+                    <Box key={k}>
+                      <Typography variant="caption">
+                        <b>{k}</b>: {JSON.stringify(v, null, 2)}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+            </div>
+          </div>
+          <Box sx={{ display: "grid", gridTemplateColumns: "40% 60%", mt: 2 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
               <Typography variant="h5" gutterBottom>
                 Resolvers
               </Typography>
-              <>
-                {result?.extensions?.timings ? (
+              <div style={{ overflowX: "auto", marginTop: 8 }}>
+                {result?.extensions?.timings && (
                   <Flamegraph timings={flatten(result.extensions.timings)} />
-                ) : null}
-              </>
-            </Box>
-            <div>
+                )}
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
               <Typography variant="h5" gutterBottom>
                 SPARQL queries ({result?.extensions?.queries.length})
               </Typography>
@@ -286,14 +327,16 @@ const Queries = ({ queries }: { queries: RequestQueryMeta[] }) => {
       {queries.map((q, i) => {
         const text = q.text.replace(/\n\n/gm, "\n");
         return (
-          <div key={i}>
-            <Typography variant="caption">
-              {q.endTime - q.startTime}ms
-            </Typography>{" "}
-            -{" "}
-            <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
-              Copy
-            </CopyLink>
+          <div key={i} style={{ overflowX: "auto" }}>
+            <div>
+              <Typography variant="caption">
+                {q.endTime - q.startTime}ms
+              </Typography>{" "}
+              -{" "}
+              <CopyLink toCopy={q.text} sx={{ fontSize: "small" }}>
+                Copy
+              </CopyLink>
+            </div>
             <Box
               cols={100}
               rows={10}
@@ -376,9 +419,21 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
   const { opsStartMap, opsEndMap, reset, results } = controller;
   const [expandedId, setExpandedId] =
     useState<OperationResult["operation"]["key"]>();
+
   if (typeof window === "undefined") {
     return null;
   }
+
+  const preparedResults = sortBy(results, (r) =>
+    opsStartMap.get(r.operation.key)
+  ).filter((x) => x?.extensions?.timings);
+  const maxOperationTime = Math.max(
+    ...preparedResults.map((r) => {
+      const timings = flatten(r.extensions.timings);
+      return Math.max(...timings.map((x) => x.end - x.start));
+    })
+  );
+
   return (
     <div>
       <Box>
@@ -387,21 +442,20 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
         </Button>
       </Box>
       <Box sx={{ maxHeight: "500px" }}>
-        {sortBy(results, (r) => opsStartMap.get(r.operation.key))
-          .filter((x) => x?.extensions?.timings)
-          .map((result, i) => (
-            <AccordionOperation
-              key={i}
-              result={result}
-              operation={result.operation}
-              expanded={expandedId === result.operation.key}
-              start={opsStartMap.get(result.operation.key)!}
-              end={opsEndMap.get(result.operation.key)!}
-              onChange={(_e, expanded) =>
-                setExpandedId(expanded ? result.operation.key : undefined)
-              }
-            />
-          ))}
+        {preparedResults.map((result, i) => (
+          <AccordionOperation
+            key={i}
+            result={result}
+            operation={result.operation}
+            expanded={expandedId === result.operation.key}
+            start={opsStartMap.get(result.operation.key)!}
+            end={opsEndMap.get(result.operation.key)!}
+            onChange={(_, expanded) =>
+              setExpandedId(expanded ? result.operation.key : undefined)
+            }
+            maxTime={maxOperationTime}
+          />
+        ))}
       </Box>
     </div>
   );

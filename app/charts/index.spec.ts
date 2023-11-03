@@ -15,6 +15,7 @@ describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
     const config = getInitialConfig({
       chartType: "table",
+      dataSet: "https://environment.ld.admin.ch/foen/nfi",
       dimensions: forestAreaData.data.dataCubeByIri.dimensions as NonNullable<
         ComponentsQuery["dataCubeByIri"]
       >["dimensions"],
@@ -73,6 +74,18 @@ describe("possible chart types", () => {
 
     expect(possibleChartTypes).toEqual(["column", "map", "pie", "table"]);
   });
+
+  it("should not allow multiline chart if there are no several measures of the same unit", () => {
+    const possibleChartTypes = getPossibleChartTypes({
+      dimensions: [],
+      measures: [
+        { __typename: "NumericalMeasure", unit: "m" },
+        { __typename: "NumericalMeasure", unit: "cm" },
+      ] as any,
+    });
+
+    expect(possibleChartTypes).not.toContain("comboLineSingle");
+  });
 });
 
 describe("chart type switch", () => {
@@ -81,6 +94,7 @@ describe("chart type switch", () => {
       key: "column",
       version: "1.4.0",
       chartType: "column",
+      dataSet: "https://environment.ld.admin.ch/foen/ubd0104",
       filters: {},
       meta: {
         title: {

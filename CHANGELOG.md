@@ -9,7 +9,29 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to adjust Combo charts colors 🧑‍🎨
+  - Subthemes are now displayed even when organization section is the second one (Browse page)
+- Fixes
+  - Color picker in now in sync with selected color palette
+  - Dataset counts should now be correct in all cases
+  - Dataset tags now wrap
+  - It's now possible to de-select only one filter when both themes and organizations are filtered (Browse page)
+  - Search string is now correctly persisted in search box when refreshing the page (Browse page)
+  - Fixed issue with two queries being sent when refreshing the page when search string was entered (Browse page)
+  - Fixed issue with filtering / unfiltering subthemes that resulted in 404 error (Browse page)
+  - Dates with timezones are now correctly parsed
+- Performance
+  - Improved performance of searching for and retrieving datasets (Browse page)
+  - Cubes, themes and organizations queries aren't fired anymore when previewing a dataset
+  - Improved the performance of data download
+  - (min|max)Inclusive values stored in `sh:or` are now also retrieved
+- Style
+  - Color picker's design has been adjusted to be more user-friendly
+  - Map now outlines shapes on hover, instead of changing their colors
+- Maintenance
+  - Added retrieval of dimension units via `qudt:hasUnit` (but kept `qudt:unit` for backward compatibility)
+  - Improved GQL debug panel (added resolver variables and rectangles to visually indicate resolving times)
 
 # [3.23.0] - 2023-10-17
 

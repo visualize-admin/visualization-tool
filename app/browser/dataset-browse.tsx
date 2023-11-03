@@ -1,4 +1,3 @@
-import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
 import {
   Box,
@@ -11,15 +10,15 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Reorder } from "framer-motion";
+import { AnimatePresence, Reorder } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
 import React, { useMemo, useState } from "react";
-import { UseQueryState } from "urql";
 
 import Flex, { FlexProps } from "@/components/flex";
 import { Checkbox, MinimalisticSelect, SearchField } from "@/components/form";
@@ -32,23 +31,22 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
-  DataCubeResultOrder,
-  DataCubesQuery,
   DataCubeTheme,
-  useOrganizationsQuery,
-  useSubthemesQuery,
-  useThemesQuery,
+  SearchCubeResultOrder,
+  SearchCubesQuery,
 } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import {
+  DataCubePublicationStatus,
+  SearchCubeResult,
+} from "@/graphql/resolver-types";
 import SvgIcCategories from "@/icons/components/IcCategories";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcOrganisations from "@/icons/components/IcOrganisations";
-import { useLocale } from "@/locales/use-locale";
-import { useDataSourceStore } from "@/stores/data-source";
 import isAttrEqual from "@/utils/is-attr-equal";
 import useEvent from "@/utils/use-event";
 
@@ -58,7 +56,6 @@ import {
   useBrowseContext,
 } from "./context";
 import { BrowseFilter } from "./filters";
-import useDatasetCount from "./use-dataset-count";
 
 export const SearchDatasetInput = ({
   browseState,
@@ -70,7 +67,7 @@ export const SearchDatasetInput = ({
 
   const searchLabel = t({
     id: "dataset.search.label",
-    message: `Search datasets`,
+    message: "Search datasets",
   });
 
   const placeholderLabel = t({
@@ -93,16 +90,17 @@ export const SearchDatasetInput = ({
   return (
     <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
       <SearchField
+        key={search}
         inputRef={inputRef}
         id="datasetSearch"
         label={searchLabel}
-        defaultValue={search || ""}
+        defaultValue={search ?? ""}
         InputProps={{
           inputProps: {
             "data-testid": "datasetSearch",
           },
           onKeyPress: handleKeyPress,
-          onReset: onReset,
+          onReset,
           onFocus: () => setShowDraftCheckbox(true),
         }}
         placeholder={placeholderLabel}
@@ -117,10 +115,10 @@ export const SearchDatasetInput = ({
 
 export const SearchDatasetControls = ({
   browseState,
-  searchResult,
+  cubes,
 }: {
   browseState: BrowseState;
-  searchResult: Maybe<DataCubesQuery>;
+  cubes: SearchCubeResult[];
 }) => {
   const {
     inputRef,
@@ -132,18 +130,18 @@ export const SearchDatasetControls = ({
     onSetOrder,
   } = browseState;
 
-  const order = stateOrder || DataCubeResultOrder.CreatedDesc;
+  const order = stateOrder || SearchCubeResultOrder.CreatedDesc;
   const options = [
     {
-      value: DataCubeResultOrder.Score,
+      value: SearchCubeResultOrder.Score,
       label: t({ id: "dataset.order.relevance", message: `Relevance` }),
     },
     {
-      value: DataCubeResultOrder.TitleAsc,
+      value: SearchCubeResultOrder.TitleAsc,
       label: t({ id: "dataset.order.title", message: `Title` }),
     },
     {
-      value: DataCubeResultOrder.CreatedDesc,
+      value: SearchCubeResultOrder.CreatedDesc,
       label: t({ id: "dataset.order.newest", message: `Newest` }),
     },
   ];
@@ -167,10 +165,10 @@ export const SearchDatasetControls = ({
         aria-live="polite"
         data-testid="search-results-count"
       >
-        {searchResult && searchResult.dataCubes.length > 0 && (
+        {cubes.length > 0 && (
           <Plural
             id="dataset.results"
-            value={searchResult.dataCubes.length}
+            value={cubes.length}
             zero="No datasets"
             one="# dataset"
             other="# datasets"
@@ -204,7 +202,7 @@ export const SearchDatasetControls = ({
           data-testid="datasetSort"
           options={isSearching ? options : options.slice(1)}
           onChange={(e) => {
-            onSetOrder(e.target.value as DataCubeResultOrder);
+            onSetOrder(e.target.value as SearchCubeResultOrder);
           }}
         />
       </Flex>
@@ -328,15 +326,19 @@ const NavItem = ({
         Boolean
       )
     );
-    const newFilters = [...filters].filter((f) =>
-      level === 1 ? f.__typename !== next.__typename : true
+    const newFilters = [...filters].filter(
+      (f) =>
+        f.__typename !== "DataCubeAbout" &&
+        (level === 1 ? f.__typename !== next.__typename : true)
     );
+
     if (level === 1) {
       newFilters.push(next);
     }
-    return (
-      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
-    );
+
+    return `/browse/${newFilters
+      .map(encodeFilter)
+      .join("/")}?${extraURLParams}`;
   }, [includeDrafts, search, level, next, filters]);
 
   const removeFilterPath = useMemo(() => {
@@ -349,14 +351,17 @@ const NavItem = ({
         Boolean
       )
     );
-    const nextIndex = filters.findIndex((f) => f.iri === next.iri);
-    const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
-    return (
-      "/browse?" + newFilters.map(encodeFilter).join("&") + `&${extraURLParams}`
+    const newFilters = filters.filter(
+      (f) => f.__typename !== "DataCubeAbout" && f.iri !== next.iri
     );
+
+    return `/browse/${newFilters
+      .map(encodeFilter)
+      .join("/")}?${extraURLParams}`;
   }, [includeDrafts, search, filters, next.iri]);
 
   const classes = useStyles();
+
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref legacyBehavior>
       <ButtonBase
@@ -371,12 +376,14 @@ const NavItem = ({
       </ButtonBase>
     </Link>
   );
+
   const countChip =
     count !== undefined ? (
       <NavChip color={theme.countColor} backgroundColor={theme.countBg}>
         {count}
       </NavChip>
     ) : null;
+
   return (
     <MotionBox
       {...accordionPresenceProps}
@@ -421,54 +428,35 @@ const NavItem = ({
   );
 };
 
-const organizationIriToTermsetParentIri = {
-  "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu":
-    "https://register.ld.admin.ch/foen/theme",
-} as Record<string, string>;
-
 export const Subthemes = ({
-  organization,
+  subthemes,
   filters,
   counts,
 }: {
-  organization: DataCubeOrganization;
+  subthemes: SearchCube["subthemes"];
   filters: BrowseFilter[];
-  counts: ReturnType<typeof useDatasetCount>;
+  counts: Record<string, number>;
 }) => {
-  const termsetIri = organizationIriToTermsetParentIri[organization.iri];
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
-  const [{ data: subthemes }] = useSubthemesQuery({
-    variables: {
-      parentIri: termsetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !termsetIri,
-  });
-  const alphaSubthemes = useMemo(
-    () => sortBy(subthemes?.subthemes, (x) => x.label),
-    [subthemes]
-  );
   return (
     <>
-      {alphaSubthemes.map((x) => {
-        const count = counts[x.iri];
+      {subthemes.map((d) => {
+        const count = counts[d.iri];
+
         if (!count) {
           return null;
         }
+
         return (
           <NavItem
-            key={x.iri}
-            next={x}
+            key={d.iri}
+            next={{ __typename: "DataCubeAbout", ...d }}
             filters={filters}
             theme={organizationNavItemTheme}
-            active={filters[filters.length - 1]?.iri === x.iri}
+            active={filters[filters.length - 1]?.iri === d.iri}
             level={2}
             count={count}
           >
-            {x.label}
+            {d.label}
           </NavItem>
         );
       })}
@@ -535,6 +523,7 @@ const NavSection = ({
     );
   }, [counts, items]);
   const { isOpen, open, close } = useDisclosure();
+
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -555,7 +544,7 @@ const NavSection = ({
           return (
             <Reorder.Item drag={false} value={item} key={item.iri} as="div">
               <NavItem
-                active={currentFilter === item}
+                active={currentFilter?.iri === item.iri}
                 filters={filters}
                 next={item}
                 count={counts[item.iri]}
@@ -603,90 +592,77 @@ const NavSection = ({
   );
 };
 
-export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
-  const { dataSource } = useDataSourceStore();
-  const locale = useLocale();
-  const { filters, search, includeDrafts } = useBrowseContext();
-  const [{ data: allThemes }] = useThemesQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-  const [{ data: allOrgs }] = useOrganizationsQuery({
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
+export const SearchFilters = ({
+  cubes,
+  themes,
+  orgs,
+}: {
+  cubes: SearchCubeResult[];
+  themes: DataCubeTheme[];
+  orgs: DataCubeOrganization[];
+}) => {
+  const { filters } = useBrowseContext();
+  const counts = useMemo(() => {
+    const result: Record<string, number> = {};
 
-  const allCounts = useDatasetCount(filters, includeDrafts);
-  const resultsCounts = useMemo(() => {
-    if (!data?.dataCubes) {
-      return {};
-    } else {
-      const res = {} as Record<string, number>;
-      for (const cube of data.dataCubes) {
-        const countables = [
-          ...cube.dataCube.themes,
-          cube.dataCube.creator,
-        ].filter(truthy);
-        for (const item of countables) {
-          res[item.iri] = res[item.iri] || 0;
-          res[item.iri] += 1;
+    for (const { cube } of cubes) {
+      const countables = [
+        ...cube.themes,
+        ...cube.subthemes,
+        cube.creator,
+      ].filter(truthy);
+
+      for (const { iri } of countables) {
+        if (iri) {
+          result[iri] = (result[iri] ?? 0) + 1;
         }
       }
-      return res;
     }
-  }, [data]);
-  const total = Object.values(resultsCounts).reduce((acc, n) => acc + n, 0);
 
-  const counts =
-    search && search != "" && total > 0 ? resultsCounts : allCounts;
+    return result;
+  }, [cubes]);
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
     isAttrEqual("__typename", "DataCubeOrganization")
   );
 
-  const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
-    return [
-      allThemes ? sortBy(allThemes.themes, (x) => x?.label) : null,
-      allOrgs ? sortBy(allOrgs.organizations, (x) => x?.label) : null,
-    ];
-  }, [allThemes, allOrgs]);
-
-  const displayedThemes = allThemesAlpha?.filter((theme) => {
+  const displayedThemes = themes.filter((theme) => {
     if (!theme.label) {
       return false;
     }
+
     if (!counts[theme.iri]) {
       return false;
     }
-    if (themeFilter && themeFilter !== theme) {
+
+    if (themeFilter && themeFilter.iri !== theme.iri) {
       return false;
     }
+
     return true;
   });
 
-  const displayedOrgs = allOrgsAlpha?.filter((org) => {
+  const displayedOrgs = orgs.filter((org) => {
     if (!org.label) {
       return false;
     }
-    if (!counts[org.iri] && orgFilter !== org) {
+
+    if (!counts[org.iri] && orgFilter?.iri !== org.iri) {
       return false;
     }
-    if (orgFilter && orgFilter !== org) {
+
+    if (orgFilter && orgFilter.iri !== org.iri) {
       return false;
     }
+
     return true;
   });
 
   const themeNav =
     displayedThemes && displayedThemes.length > 0 ? (
       <NavSection
+        key="themes"
         items={displayedThemes}
         theme={{
           backgroundColor: "category.light",
@@ -702,9 +678,20 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       />
     ) : null;
 
+  const subthemes = React.useMemo(() => {
+    return sortBy(
+      uniqBy(
+        cubes.flatMap((d) => d.cube.subthemes),
+        (d) => d.iri
+      ),
+      (d) => d.label
+    );
+  }, [cubes]);
+
   const orgNav =
     displayedOrgs && displayedOrgs.length > 0 ? (
       <NavSection
+        key="orgs"
         items={displayedOrgs}
         theme={{
           backgroundColor: "organization.light",
@@ -717,9 +704,9 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
-          orgFilter && filters[0] === orgFilter ? (
+          orgFilter && filters.map((d) => d.iri).includes(orgFilter.iri) ? (
             <Subthemes
-              organization={orgFilter}
+              subthemes={subthemes}
               filters={filters}
               counts={counts}
             />
@@ -727,41 +714,42 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         }
       />
     ) : null;
-  let navs = [themeNav, orgNav];
-  if (filters[0]?.__typename === "DataCubeTheme") {
-    navs = [themeNav, orgNav];
-  } else if (filters[0]?.__typename === "DataCubeOrganization") {
-    navs = [orgNav, themeNav];
-  }
 
   return (
     <Flex
-      sx={{
-        flexDirection: "column",
-        height: "100%",
-      }}
-      px={4}
-      pt="0.75rem"
-      role="search"
       key={filters.length}
+      role="search"
+      sx={{ height: "100%", px: 4, pt: "0.75rem" }}
     >
-      {/* Theme tree */}
-      <Stack spacing={5}>
-        {navs[0]}
-        {navs[1]}
-      </Stack>
+      {/* Need to "catch" the Reorder items here, as otherwise there is an exiting
+          bug as they get picked by parent AnimatePresence. Probably related to
+          https://github.com/framer/motion/issues/1619. */}
+      <AnimatePresence>
+        {filters[0]?.__typename === "DataCubeOrganization" ? (
+          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+            {orgNav}
+            {themeNav}
+          </Flex>
+        ) : (
+          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+            {themeNav}
+            {orgNav}
+          </Flex>
+        )}
+      </AnimatePresence>
     </Flex>
   );
 };
 
 export const DatasetResults = ({
-  resultProps,
-  query,
+  fetching,
+  error,
+  cubes,
 }: {
-  resultProps?: Partial<ResultProps>;
-  query: UseQueryState<DataCubesQuery>;
+  fetching: boolean;
+  error: any;
+  cubes: SearchCubeResult[];
 }) => {
-  const { fetching, data, error } = query;
   if (fetching) {
     return (
       <Box sx={{ alignItems: "center" }}>
@@ -778,7 +766,7 @@ export const DatasetResults = ({
     );
   }
 
-  if ((data && data.dataCubes.length === 0) || !data) {
+  if (cubes.length === 0) {
     return (
       <Typography
         variant="h2"
@@ -791,17 +779,14 @@ export const DatasetResults = ({
 
   return (
     <>
-      {data.dataCubes.map(
-        ({ dataCube, highlightedTitle, highlightedDescription }) => (
-          <DatasetResult
-            {...resultProps}
-            key={dataCube.iri}
-            dataCube={dataCube}
-            highlightedTitle={highlightedTitle}
-            highlightedDescription={highlightedDescription}
-          />
-        )
-      )}
+      {cubes.map(({ cube, highlightedTitle, highlightedDescription }) => (
+        <DatasetResult
+          key={cube.iri}
+          dataCube={cube}
+          highlightedTitle={highlightedTitle}
+          highlightedDescription={highlightedDescription}
+        />
+      ))}
     </>
   );
 };
@@ -837,7 +822,7 @@ export const DateFormat = ({ date }: { date: string }) => {
 
 type ResultProps = {
   dataCube: Pick<
-    DataCubesQuery["dataCubes"][0]["dataCube"],
+    SearchCubesQuery["searchCubes"][0]["cube"],
     | "iri"
     | "publicationStatus"
     | "title"
@@ -887,7 +872,14 @@ export const DatasetResult = ({
   return (
     <MotionCard {...smoothPresenceProps} elevation={1} className={classes.root}>
       <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
-        <Flex sx={{ justifyContent: "space-between", width: "100%" }}>
+        <Flex
+          sx={{
+            justifyContent: "space-between",
+            width: "100%",
+            // To account for the space taken by the draft tag
+            minHeight: 24,
+          }}
+        >
           <Typography variant="body2" fontWeight={700} gutterBottom={false}>
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
@@ -939,7 +931,7 @@ export const DatasetResult = ({
           )}
         </Typography>
       </Stack>
-      <Stack spacing={1} direction="row">
+      <Flex sx={{ flexWrap: "wrap", gap: "6px" }}>
         {themes && showTags
           ? sortBy(themes, (t) => t.label).map((t) => (
               <Link
@@ -954,12 +946,12 @@ export const DatasetResult = ({
                   // event, otherwise we go first to <tag> page then to <result> page
                   onClick={(ev) => ev.stopPropagation()}
                 >
-                  <Tag type={t.__typename}>{t.label}</Tag>
+                  <Tag type="theme">{t.label}</Tag>
                 </MUILink>
               </Link>
             ))
           : null}
-        {creator ? (
+        {creator?.label ? (
           <Link
             key={creator.iri}
             href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
@@ -972,11 +964,11 @@ export const DatasetResult = ({
               // event, otherwise we go first to <tag> page then to <result> page
               onClick={(ev) => ev.stopPropagation()}
             >
-              <Tag type={creator.__typename}>{creator.label}</Tag>
+              <Tag type="organization">{creator.label}</Tag>
             </MUILink>
           </Link>
         ) : null}
-      </Stack>
+      </Flex>
     </MotionCard>
   );
 };

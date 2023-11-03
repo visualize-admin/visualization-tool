@@ -8,6 +8,7 @@ export type BaseYGetter = {
   dimension: DimensionMetadataFragment;
   iri: string;
   label: string;
+  color: string;
   getY: (d: Observation) => number | null;
 };
 

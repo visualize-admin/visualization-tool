@@ -22,6 +22,7 @@ const CONFIGURATOR_STATE = {
       en: "",
     },
   },
+  dataSet: "foo",
 } as unknown as ConfiguratorStateConfiguringChart;
 
 describe("config migrations", () => {
