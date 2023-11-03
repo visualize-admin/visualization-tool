@@ -282,9 +282,8 @@ const SelectDatasetStepContent = () => {
           <AnimatePresence mode="wait">
             {dataset ? (
               <MotionBox
-                key="dataset-metadata"
-                px={4}
-                mx={4}
+                key="metadata"
+                sx={{ mx: 4, px: 4 }}
                 {...navPresenceProps}
               >
                 <NextLink href={backLink} passHref legacyBehavior>
@@ -312,77 +311,78 @@ const SelectDatasetStepContent = () => {
             )}
           </AnimatePresence>
         </PanelLeftWrapper>
-        <PanelMiddleWrapper className={classes.panelMiddle}>
-          <Box sx={{ maxWidth: 1040 }}>
-            <AnimatePresence mode="wait">
-              {dataset ? (
-                <MotionBox {...navPresenceProps} key="preview">
-                  <DataSetPreview
-                    dataSetIri={dataset}
-                    dataSource={configState.dataSource}
-                  />
-                </MotionBox>
-              ) : (
-                <MotionBox key="filters" {...navPresenceProps}>
-                  <AnimatePresence>
-                    {queryFilters.length > 0 && (
-                      <MotionBox
-                        {...{
-                          initial: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          animate: {
-                            transform: "translateY(0px)",
-                            height: "auto",
-                            marginBottom: 16,
-                            opacity: 1,
-                          },
-                          exit: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          transition: {
-                            duration: DURATION,
-                          },
-                        }}
+        <PanelMiddleWrapper
+          className={classes.panelMiddle}
+          sx={{ maxWidth: 1040 }}
+        >
+          <AnimatePresence mode="wait">
+            {dataset ? (
+              <MotionBox key="preview" {...navPresenceProps}>
+                <DataSetPreview
+                  dataSetIri={dataset}
+                  dataSource={configState.dataSource}
+                />
+              </MotionBox>
+            ) : (
+              <MotionBox key="filters" {...navPresenceProps}>
+                <AnimatePresence>
+                  {queryFilters.length > 0 && (
+                    <MotionBox
+                      {...{
+                        initial: {
+                          transform: "translateY(-16px)",
+                          height: 0,
+                          marginBottom: 0,
+                          opacity: 0,
+                        },
+                        animate: {
+                          transform: "translateY(0px)",
+                          height: "auto",
+                          marginBottom: 16,
+                          opacity: 1,
+                        },
+                        exit: {
+                          transform: "translateY(-16px)",
+                          height: 0,
+                          marginBottom: 0,
+                          opacity: 0,
+                        },
+                        transition: {
+                          duration: DURATION,
+                        },
+                      }}
+                    >
+                      <Typography
+                        key="filters"
+                        className={classes.filters}
+                        variant="h1"
                       >
-                        <Typography
-                          key="filters"
-                          className={classes.filters}
-                          variant="h1"
-                        >
-                          {queryFilters
-                            .map((d) => {
-                              const searchList =
-                                d.type === "DataCubeTheme" ? themes : orgs;
-                              const item = (
-                                searchList as { iri: string; label?: string }[]
-                              ).find(({ iri }) => iri === d.value);
-                              return (item ?? d).label;
-                            })
-                            .join(", ")}
-                        </Typography>
-                      </MotionBox>
-                    )}
-                  </AnimatePresence>
-                  <SearchDatasetControls
-                    browseState={browseState}
-                    cubes={cubes}
-                  />
-                  <DatasetResults
-                    fetching={fetching}
-                    error={error}
-                    cubes={cubes}
-                  />
-                </MotionBox>
-              )}
-            </AnimatePresence>
-          </Box>
+                        {queryFilters
+                          .map((d) => {
+                            const searchList =
+                              d.type === "DataCubeTheme" ? themes : orgs;
+                            const item = (
+                              searchList as { iri: string; label?: string }[]
+                            ).find(({ iri }) => iri === d.value);
+                            return (item ?? d).label;
+                          })
+                          .join(", ")}
+                      </Typography>
+                    </MotionBox>
+                  )}
+                </AnimatePresence>
+                <SearchDatasetControls
+                  browseState={browseState}
+                  cubes={cubes}
+                />
+                <DatasetResults
+                  fetching={fetching}
+                  error={error}
+                  cubes={cubes}
+                />
+              </MotionBox>
+            )}
+          </AnimatePresence>
         </PanelMiddleWrapper>
       </PanelLayout>
       <Box
