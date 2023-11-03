@@ -51,7 +51,6 @@ export const makeCubeFilters = ({
 
   const res = [
     // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
-    Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
     Cube.filter.noExpires(),
     isVisualizeCubeFilter,
     includeDrafts

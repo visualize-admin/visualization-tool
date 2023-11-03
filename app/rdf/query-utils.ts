@@ -6,19 +6,18 @@ export const makeVisualizeDatasetFilter = (options?: {
   includeDrafts?: boolean;
   cubeIriVar?: string;
 }) => {
-  const cubeIriVar = options?.cubeIriVar || "?iri";
-  const includeDrafts = options?.includeDrafts || false;
+  const cubeIriVar = options?.cubeIriVar ?? "?iri";
+  const includeDrafts = options?.includeDrafts ?? false;
+
   return sparql`
     ${cubeIriVar} ${
     schema.workExample
-  } <https://ld.admin.ch/application/visualize>.
+  } <https://ld.admin.ch/application/visualize> .
     ${
       includeDrafts
         ? ""
-        : sparql`${cubeIriVar} ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.`
+        : sparql`${cubeIriVar} ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> .`
     }
-    ${cubeIriVar} ${cube.observationConstraint} ?shape.
-    FILTER NOT EXISTS {${cubeIriVar} ${schema.expires} ?expiryDate }
-    FILTER NOT EXISTS {${cubeIriVar} ${schema.validThrough} ?validThrough }
-    `;
+    ${cubeIriVar} ${cube.observationConstraint} ?shape .
+    FILTER NOT EXISTS { ${cubeIriVar} ${schema.expires} ?expiryDate }`;
 };
