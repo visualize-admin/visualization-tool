@@ -72,6 +72,8 @@ import { getColorInterpolator } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
 
+import { DEFAULT_RADIUS_RANGE, UNDEFINED_RADIUS_RANGE } from "./constants";
+
 export type MapState = CommonChartState &
   MapStateVariables & {
     chartType: "map";
@@ -168,11 +170,11 @@ const useMapState = (
     // Measure dimension is undefined. Can be useful when the user want to
     // encode only the color of symbols, and the size is irrelevant.
     if (symbolLayerState.dataDomain[1] === undefined) {
-      return scaleSqrt().range([0, 12]).unknown(12);
+      return scaleSqrt().range(UNDEFINED_RADIUS_RANGE).unknown(12);
     } else {
       return scaleSqrt()
         .domain([0, symbolLayerState.dataDomain[1]])
-        .range([0, 24]);
+        .range(DEFAULT_RADIUS_RANGE);
     }
   }, [symbolLayerState.dataDomain]) as ScalePower<number, number>;
 

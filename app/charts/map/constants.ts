@@ -13,3 +13,6 @@ export const DEFAULT_COLOR = [222, 222, 222, 125];
 export const FLY_TO_DURATION = 500;
 
 export const RESET_DURATION = 1500;
+
+export const DEFAULT_RADIUS_RANGE = [0, 24];
+export const UNDEFINED_RADIUS_RANGE = [0, 12];
