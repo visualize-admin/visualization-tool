@@ -28,6 +28,8 @@ yarn dev
 
 > 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start the dev server, database server, and TypeScript checker (you'll need [Nix](https://nixos.org) for that to work).
 
+To run the application with debugging enabled through vscode, make sure the dev server is running and the click the "Run and Debug" button in the sidebar (CMD-SHIFT-D). Then select the "Launch Chrome" configuration. This will open a new Chrome window with the dev tools open. You can now set breakpoints in the code and they will be hit.
+
 ### Postgres database
 
 If the database server is not running, run:
