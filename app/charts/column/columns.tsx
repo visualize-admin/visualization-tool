@@ -16,6 +16,7 @@ import { useTheme } from "@/themes";
 export const ErrorWhiskers = () => {
   const {
     getX,
+    getYError,
     getYErrorRange,
     chartData,
     yScale,
@@ -32,23 +33,33 @@ export const ErrorWhiskers = () => {
       return [];
     }
 
-    return chartData.map((d, i) => {
-      const x0 = xScale(getX(d)) as number;
-      const bandwidth = xScale.bandwidth();
-      const barwidth = Math.min(bandwidth, 15);
-      const [y1, y2] = getYErrorRange(d);
+    return chartData
+      .filter((d) => !!getYError?.(d))
+      .map((d, i) => {
+        const x0 = xScale(getX(d)) as number;
+        const bandwidth = xScale.bandwidth();
+        const barwidth = Math.min(bandwidth, 15);
+        const [y1, y2] = getYErrorRange(d);
 
-      return {
-        key: `${i}`,
-        x: x0 + bandwidth / 2 - barwidth / 2,
-        y1: yScale(y1),
-        y2: yScale(y2),
-        width: barwidth,
-      };
-    });
-  }, [chartData, getX, getYErrorRange, showYStandardError, xScale, yScale]);
+        return {
+          key: `${i}`,
+          x: x0 + bandwidth / 2 - barwidth / 2,
+          y1: yScale(y1),
+          y2: yScale(y2),
+          width: barwidth,
+        };
+      });
+  }, [
+    chartData,
+    getX,
+    getYError,
+    getYErrorRange,
+    showYStandardError,
+    xScale,
+    yScale,
+  ]);
 
-  React.useEffect(() => {
+    React.useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-error-whiskers",
