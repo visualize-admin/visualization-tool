@@ -998,6 +998,10 @@ msgstr "Titre"
 
 #: app/browser/dataset-preview.tsx
 #: app/components/chart-preview.tsx
+#: app/components/banner.tsx
+msgid "dataset.error.negative-values"
+msgstr "Attention, cet ensemble de données contient des valeurs négatives et pourrait ne pas s'afficher correctement avec ce type de graphique. <0/><1>Essayez d'utiliser un autre type de graphique.</1>"
+
 #: app/components/chart-published.tsx
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'utilisez pas pour une publication!</1>"

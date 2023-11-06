@@ -23,6 +23,7 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
+import { Banner } from "../../components/banner";
 import { ChartProps } from "../shared/ChartProps";
 
 export const ChartAreasVisualization = ({
@@ -78,26 +79,31 @@ export const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
-    <AreaChart aspectRatio={0.4} {...props}>
-      <ChartContainer>
-        <ChartSvg>
-          <AxisTime /> <AxisHeightLinear />
-          <Areas /> <AxisTimeDomain />
-          <InteractionHorizontal />
-          {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}
-        </ChartSvg>
-        <Tooltip type={fields.segment ? "multiple" : "single"} />
-        <Ruler />
-      </ChartContainer>
-      {fields.segment && (
-        <ChartControlsContainer>
-          <LegendColor
-            chartConfig={chartConfig}
-            symbol="square"
-            interactive={interactiveFiltersConfig?.legend.active}
-          />
-        </ChartControlsContainer>
-      )}
-    </AreaChart>
+    <>
+      <AreaChart aspectRatio={0.4} {...props}>
+        <Banner />
+        <ChartContainer>
+          <ChartSvg>
+            <AxisTime /> <AxisHeightLinear />
+            <Areas /> <AxisTimeDomain />
+            <InteractionHorizontal />
+            {interactiveFiltersConfig?.timeRange.active === true && (
+              <BrushTime />
+            )}
+          </ChartSvg>
+          <Tooltip type={fields.segment ? "multiple" : "single"} />
+          <Ruler />
+        </ChartContainer>
+        {fields.segment && (
+          <ChartControlsContainer>
+            <LegendColor
+              chartConfig={chartConfig}
+              symbol="square"
+              interactive={interactiveFiltersConfig?.legend.active}
+            />
+          </ChartControlsContainer>
+        )}
+      </AreaChart>
+    </>
   );
 });
