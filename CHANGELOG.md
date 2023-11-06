@@ -32,6 +32,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Maintenance
   - Added retrieval of dimension units via `qudt:hasUnit` (but kept `qudt:unit` for backward compatibility)
   - Improved GQL debug panel (added resolver variables and rectangles to visually indicate resolving times)
+  - Removed deprecated `validThrough` cube filters
 
 # [3.23.0] - 2023-10-17
 
