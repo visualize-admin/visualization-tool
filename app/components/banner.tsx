@@ -23,7 +23,7 @@ export const Banner = () => {
       default:
         return null;
     }
-  }, [state.chartType]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state]);
 
   return warning ? <Box sx={{ mb: 4 }}>{warning}</Box> : null;
 };
