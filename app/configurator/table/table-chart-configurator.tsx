@@ -176,6 +176,8 @@ export const ChartConfiguratorTable = ({
             items={groupFields}
             isDropDisabled={isGroupsDropDisabled}
             emptyComponent={<EmptyGroups />}
+            onUp={(_index) => {}} // TODO: implement
+            onDown={(_index) => {}} // TODO: implement
           />
 
           <TabDropZone
@@ -183,6 +185,8 @@ export const ChartConfiguratorTable = ({
             title={<Trans id="controls.section.columns">Columns</Trans>}
             metaData={metaData}
             items={columnFields}
+            onUp={(_index) => {}} // TODO: implement
+            onDown={(_index) => {}} // TODO: implement
           />
         </DragDropContext>
       </>
