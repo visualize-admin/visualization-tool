@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Reorder } from "framer-motion";
+import { AnimatePresence, Reorder } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
@@ -662,6 +662,7 @@ export const SearchFilters = ({
   const themeNav =
     displayedThemes && displayedThemes.length > 0 ? (
       <NavSection
+        key="themes"
         items={displayedThemes}
         theme={{
           backgroundColor: "category.light",
@@ -690,6 +691,7 @@ export const SearchFilters = ({
   const orgNav =
     displayedOrgs && displayedOrgs.length > 0 ? (
       <NavSection
+        key="orgs"
         items={displayedOrgs}
         theme={{
           backgroundColor: "organization.light",
@@ -713,29 +715,28 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  let navs = [themeNav, orgNav];
-
-  if (filters[0]?.__typename === "DataCubeTheme") {
-    navs = [themeNav, orgNav];
-  } else if (filters[0]?.__typename === "DataCubeOrganization") {
-    navs = [orgNav, themeNav];
-  }
-
   return (
     <Flex
-      sx={{
-        flexDirection: "column",
-        height: "100%",
-      }}
-      px={4}
-      pt="0.75rem"
-      role="search"
       key={filters.length}
+      role="search"
+      sx={{ height: "100%", px: 4, pt: "0.75rem" }}
     >
-      <Stack spacing={5}>
-        {navs[0]}
-        {navs[1]}
-      </Stack>
+      {/* Need to "catch" the Reorder items here, as otherwise there is an exiting
+          bug as they get picked by parent AnimatePresence. Probably related to
+          https://github.com/framer/motion/issues/1619. */}
+      <AnimatePresence>
+        {filters[0]?.__typename === "DataCubeOrganization" ? (
+          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+            {orgNav}
+            {themeNav}
+          </Flex>
+        ) : (
+          <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+            {themeNav}
+            {orgNav}
+          </Flex>
+        )}
+      </AnimatePresence>
     </Flex>
   );
 };

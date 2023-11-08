@@ -28,6 +28,7 @@ import { MotionBox } from "@/components/presence";
 import { BackButton, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import { DimensionValue, isStandardErrorDimension } from "@/domain/data";
+import { useDimensionFormatters } from "@/formatters";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
@@ -631,11 +632,12 @@ const DimensionValues = ({ dim }: { dim: DimensionMetadataFragment }) => {
     case "GeoShapesDimension":
       return <DimensionValuesNominal values={sortedValues} />;
     case "NumericalMeasure":
-    case "TemporalDimension":
     case "StandardErrorDimension":
       return sortedValues.length > 0 ? (
         <DimensionValuesNumeric values={sortedValues} />
       ) : null;
+    case "TemporalDimension":
+      return <DimensionValuesTemporal dim={dim} values={sortedValues} />;
     default:
       const _exhaustiveCheck: never = dim;
       return _exhaustiveCheck;
@@ -646,7 +648,7 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
   return (
     <>
       {values.map((d) =>
-        !d.label ? null : (
+        d.label ? (
           <React.Fragment key={d.value}>
             <Typography variant="body2" fontWeight="bold" {...animationProps}>
               {d.label}{" "}
@@ -660,20 +662,38 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
               <Typography variant="body2">{d.description}</Typography>
             ) : null}
           </React.Fragment>
-        )
+        ) : null
       )}
     </>
   );
 };
 
 const DimensionValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
-  const min = values[0];
-  const max = values[values.length - 1];
+  const [min, max] = [values[0].value, values[values.length - 1].value];
 
   return (
     <>
-      <Typography variant="body2">Min: {min.value}</Typography>
-      <Typography variant="body2">Max: {max.value}</Typography>
+      <Typography variant="body2">Min: {min}</Typography>
+      <Typography variant="body2">Max: {max}</Typography>
+    </>
+  );
+};
+
+const DimensionValuesTemporal = ({
+  dim,
+  values,
+}: {
+  dim: DimensionMetadataFragment;
+  values: DimensionValue[];
+}) => {
+  const formatters = useDimensionFormatters([dim]);
+  const format = formatters[dim.iri];
+  const [min, max] = [values[0].value, values[values.length - 1].value];
+
+  return (
+    <>
+      <Typography variant="body2">Min: {format(min)}</Typography>
+      <Typography variant="body2">Max: {format(max)}</Typography>
     </>
   );
 };

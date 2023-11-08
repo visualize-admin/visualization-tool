@@ -10,6 +10,7 @@ import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import Flex from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DataSource,
@@ -208,11 +209,16 @@ const useLegendGroups = ({
 type LegendColorProps = {
   chartConfig: ChartConfig;
   symbol: LegendSymbol;
+  // If the legend is based on measures, this function can be used to get the
+  // corresponding measure to open the metadata panel.
+  getLegendItemDimension?: (
+    dimensionLabel: string
+  ) => DimensionMetadataFragment | undefined;
   interactive?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const { chartConfig, symbol, interactive } = props;
+  const { chartConfig, symbol, getLegendItemDimension, interactive } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ chartConfig, values });
@@ -222,6 +228,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
       groups={groups}
       getColor={(v) => colors(v)}
       getLabel={getColorLabel}
+      getItemDimension={getLegendItemDimension}
       symbol={symbol}
       interactive={interactive}
       numberOfOptions={values.length}
@@ -288,14 +295,24 @@ type LegendColorContentProps = {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
+  getItemDimension?: (
+    dimensionLabel: string
+  ) => DimensionMetadataFragment | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
 };
 
 const LegendColorContent = (props: LegendColorContentProps) => {
-  const { groups, getColor, getLabel, symbol, interactive, numberOfOptions } =
-    props;
+  const {
+    groups,
+    getColor,
+    getLabel,
+    getItemDimension,
+    symbol,
+    interactive,
+    numberOfOptions,
+  } = props;
   const classes = useStyles();
   const categories = useInteractiveFilters((d) => d.categories);
   const addCategory = useInteractiveFilters((d) => d.addCategory);
@@ -358,6 +375,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                       key={`${d}_${i}`}
                       item={label}
                       color={getColor(d)}
+                      dimension={getItemDimension?.(label)}
                       symbol={symbol}
                       interactive={interactive}
                       onToggle={handleToggle}
@@ -377,6 +395,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
 type LegendItemProps = {
   item: string;
   color: string;
+  dimension?: DimensionMetadataFragment;
   symbol: LegendSymbol;
   interactive?: boolean;
   onToggle?: CheckboxProps["onChange"];
@@ -389,6 +408,7 @@ export const LegendItem = (props: LegendItemProps) => {
   const {
     item,
     color,
+    dimension,
     symbol,
     interactive,
     onToggle,
@@ -424,7 +444,14 @@ export const LegendItem = (props: LegendItemProps) => {
     </MaybeTooltip>
   ) : (
     <Flex data-testid="legendItem" className={classes.legendItem}>
-      {item}
+      {dimension ? (
+        <OpenMetadataPanelWrapper dim={dimension}>
+          {/* Account for the added space, to align the symbol and label. */}
+          <span style={{ marginTop: 3 }}>{item}</span>
+        </OpenMetadataPanelWrapper>
+      ) : (
+        item
+      )}
     </Flex>
   );
 };

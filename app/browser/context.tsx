@@ -14,7 +14,7 @@ import useEvent from "@/utils/use-event";
 import { getFiltersFromParams } from "./filters";
 
 export const getBrowseParamsFromQuery = (query: Router["query"]) => {
-  const values = mapValues(
+  const rawValues = mapValues(
     pick(query, [
       "type",
       "iri",
@@ -25,16 +25,24 @@ export const getBrowseParamsFromQuery = (query: Router["query"]) => {
       "order",
       "search",
       "dataset",
+      "previous",
     ]),
     (v) => (Array.isArray(v) ? v[0] : v)
   );
 
+  const { type, iri, subtype, subiri, topic, includeDrafts, ...values } =
+    rawValues;
+  const previous = values.previous ? JSON.parse(values.previous) : undefined;
+
   return pickBy(
     {
       ...values,
-      includeDrafts: values.includeDrafts
-        ? JSON.parse(values.includeDrafts)
-        : false,
+      type: type ?? previous?.type,
+      iri: iri ?? previous?.iri,
+      subtype: subtype ?? previous?.subtype,
+      subiri: subiri ?? previous?.subiri,
+      topic: topic ?? previous?.topic,
+      includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
     },
     (x) => x !== undefined
   );

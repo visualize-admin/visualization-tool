@@ -250,7 +250,7 @@ msgstr "Achsenausrichtung"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.column-measure"
-msgstr "Säule Messung"
+msgstr "Linke Achse (Säule)"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -271,7 +271,7 @@ msgstr "Messung der linken Achse"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.line-measure"
-msgstr "Linie Messung"
+msgstr "Rechte Achse (Linie)"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"
@@ -460,7 +460,7 @@ msgstr "Von"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.refresh-colors"
-msgstr "Farben auffrischen"
+msgstr "Farben mischen"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"

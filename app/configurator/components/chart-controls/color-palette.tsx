@@ -147,7 +147,7 @@ export const ColorPalette = ({
         ))}
       </Select>
       {component && state.state === "CONFIGURING_CHART" && (
-        <ColorPaletteReset
+        <ColorPaletteControls
           field={field}
           component={component}
           state={state}
@@ -197,7 +197,7 @@ const ColorSquare = ({
   );
 };
 
-const ColorPaletteReset = ({
+const ColorPaletteControls = ({
   field,
   colorConfigPath,
   component,
@@ -252,14 +252,37 @@ const ColorPaletteReset = ({
       palette === "dimension";
 
     return (
-      <Button
-        disabled={same}
-        onClick={resetColorPalette}
-        variant="inline"
-        sx={{ mt: 1, px: 1 }}
-      >
-        <Trans id="controls.color.palette.reset">Reset color palette</Trans>
-      </Button>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
+        <Button
+          disabled={same}
+          onClick={resetColorPalette}
+          variant="inline"
+          sx={{ px: 1 }}
+        >
+          <Trans id="controls.color.palette.reset">Reset color palette</Trans>
+        </Button>
+        <Typography color="secondary">•</Typography>
+        <Button
+          onClick={() => {
+            return dispatch({
+              type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+              value: {
+                field,
+                colorConfigPath,
+                dimensionIri: component.iri,
+                values: component.values,
+                random: true,
+              },
+            });
+          }}
+          variant="inline"
+          sx={{ px: 1 }}
+        >
+          <Trans id="controls.filters.select.refresh-colors">
+            Shuffle colors
+          </Trans>
+        </Button>
+      </Box>
     );
   } else {
     return <Box mt={2} />;

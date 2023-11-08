@@ -80,8 +80,15 @@ export const ChartComboLineSingleVisualization = (
 
 export const ChartComboLineSingle = React.memo(
   (props: ChartProps<ComboLineSingleConfig>) => {
-    const { chartConfig } = props;
+    const { chartConfig, measures } = props;
     const { interactiveFiltersConfig } = chartConfig;
+
+    const getLegendItemDimension = React.useCallback(
+      (label) => {
+        return measures.find((measure) => measure.label === label);
+      },
+      [measures]
+    );
 
     return (
       <ComboLineSingleChart aspectRatio={0.4} {...props}>
@@ -97,7 +104,11 @@ export const ChartComboLineSingle = React.memo(
           <Tooltip type="multiple" />
         </ChartContainer>
         <ChartControlsContainer>
-          <LegendColor chartConfig={chartConfig} symbol="line" />
+          <LegendColor
+            chartConfig={chartConfig}
+            symbol="line"
+            getLegendItemDimension={getLegendItemDimension}
+          />
         </ChartControlsContainer>
       </ComboLineSingleChart>
     );
