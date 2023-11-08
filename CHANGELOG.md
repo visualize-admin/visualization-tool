@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - remove ErrorWhisker and Tooltip when error is null in Column charts
 
 # [3.24.0] - 2023-11-08
 
