@@ -3,6 +3,7 @@ import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
+  filterWithoutErrors,
   RenderColumnDatum,
   renderColumns,
   RenderWhiskerDatum,
@@ -16,6 +17,7 @@ import { useTheme } from "@/themes";
 export const ErrorWhiskers = () => {
   const {
     getX,
+    getYError,
     getYErrorRange,
     chartData,
     yScale,
@@ -32,7 +34,7 @@ export const ErrorWhiskers = () => {
       return [];
     }
 
-    return chartData.map((d, i) => {
+    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const bandwidth = xScale.bandwidth();
       const barwidth = Math.min(bandwidth, 15);
@@ -46,7 +48,15 @@ export const ErrorWhiskers = () => {
         width: barwidth,
       };
     });
-  }, [chartData, getX, getYErrorRange, showYStandardError, xScale, yScale]);
+  }, [
+    chartData,
+    getX,
+    getYError,
+    getYErrorRange,
+    showYStandardError,
+    xScale,
+    yScale,
+  ]);
 
   React.useEffect(() => {
     if (ref.current) {

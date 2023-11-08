@@ -226,7 +226,7 @@ const useColumnsState = (
       );
 
     const getError = (d: Observation) => {
-      if (!showYStandardError || !getYError) {
+      if (!showYStandardError || !getYError || getYError(d) === null) {
         return;
       }
 
