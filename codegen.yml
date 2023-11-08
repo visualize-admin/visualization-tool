@@ -21,6 +21,7 @@ generates:
         Filters: "../configurator#QueryFilters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
+        DataCubeComponent: "../domain/data#DataCubeComponent"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -37,6 +38,7 @@ generates:
         Filters: "../configurator#Filters"
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
+        DataCubeComponent: "../domain/data#DataCubeComponent"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

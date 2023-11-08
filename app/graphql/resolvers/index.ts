@@ -11,6 +11,7 @@ import {
 } from "@/graphql/resolver-types";
 import * as RDF from "@/graphql/resolvers/rdf";
 import * as SQL from "@/graphql/resolvers/sql";
+import { ResolvedDimension } from "@/graphql/shared-types";
 import { RawGeoShape } from "@/rdf/query-geo-shapes";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
@@ -72,29 +73,41 @@ const DataCube: DataCubeResolvers = {
   },
 };
 
+export const resolveComponentType = (component: ResolvedDimension) => {
+  const { dataKind, isMeasureDimension, scaleType, related } = component.data;
+
+  if (isMeasureDimension) {
+    return "NumericalMeasure";
+  }
+
+  if (related.some((d) => d.type === "StandardError")) {
+    return "StandardErrorDimension";
+  }
+
+  if (dataKind === "Time") {
+    return scaleType === "Ordinal"
+      ? "TemporalOrdinalDimension"
+      : "TemporalDimension";
+  }
+
+  if (dataKind === "GeoCoordinates") {
+    return "GeoCoordinatesDimension";
+  }
+
+  if (dataKind === "GeoShape") {
+    return "GeoShapesDimension";
+  }
+
+  if (scaleType === "Ordinal") {
+    return "OrdinalDimension";
+  }
+
+  return "NominalDimension";
+};
+
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
-  __resolveType({ data: { related, dataKind, scaleType } }) {
-    if (related.some((d) => d.type === "StandardError")) {
-      return "StandardErrorDimension";
-    }
-
-    if (dataKind === "Time") {
-      if (scaleType === "Ordinal") {
-        return "TemporalOrdinalDimension";
-      } else {
-        return "TemporalDimension";
-      }
-    } else if (dataKind === "GeoCoordinates") {
-      return "GeoCoordinatesDimension";
-    } else if (dataKind === "GeoShape") {
-      return "GeoShapesDimension";
-    }
-
-    if (scaleType === "Ordinal") {
-      return "OrdinalDimension";
-    }
-
-    return "NominalDimension";
+  __resolveType(dimension) {
+    return resolveComponentType(dimension);
   },
   iri: ({ data: { iri } }) => iri,
   label: ({ data: { name } }) => name,

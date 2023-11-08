@@ -1,3 +1,4 @@
+import { DataCubeComponent } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { Observation } from '../domain/data';
@@ -18,6 +19,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DataCubeComponent: DataCubeComponent;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: Filters;
@@ -85,10 +87,6 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
-export type DataCubeDimension = {
-  __typename?: 'DataCubeDimension';
-  iri: Scalars['String'];
-};
 
 export type DataCubeFilter = {
   iri: Scalars['String'];
@@ -377,7 +375,7 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  dataCubesComponents: Array<DataCubeDimension>;
+  dataCubesComponents: Array<Scalars['DataCubeComponent']>;
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -631,7 +629,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  DataCubeDimension: ResolverTypeWrapper<DataCubeDimension>;
+  DataCubeComponent: ResolverTypeWrapper<Scalars['DataCubeComponent']>;
   DataCubeFilter: DataCubeFilter;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePublicationStatus: DataCubePublicationStatus;
@@ -676,7 +674,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
-  DataCubeDimension: DataCubeDimension;
+  DataCubeComponent: Scalars['DataCubeComponent'];
   DataCubeFilter: DataCubeFilter;
   DataCubeOrganization: DataCubeOrganization;
   DataCubeTheme: DataCubeTheme;
@@ -735,10 +733,9 @@ export type DataCubeResolvers<ContextType = VisualizeGraphQLContext, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type DataCubeDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeDimension'] = ResolversParentTypes['DataCubeDimension']> = ResolversObject<{
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export interface DataCubeComponentScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubeComponent'], any> {
+  name: 'DataCubeComponent';
+}
 
 export type DataCubeOrganizationResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeOrganization'] = ResolversParentTypes['DataCubeOrganization']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -931,7 +928,7 @@ export type OrdinalMeasureResolvers<ContextType = VisualizeGraphQLContext, Paren
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubesComponents?: Resolver<Array<ResolversTypes['DataCubeDimension']>, ParentType, ContextType, RequireFields<QueryDataCubesComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
+  dataCubesComponents?: Resolver<Array<ResolversTypes['DataCubeComponent']>, ParentType, ContextType, RequireFields<QueryDataCubesComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'filters'>>;
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'sourceType' | 'sourceUrl' | 'iri' | 'latest'>>;
   possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'sourceType' | 'sourceUrl' | 'filters'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
@@ -1019,7 +1016,7 @@ export interface ValuePositionScalarConfig extends GraphQLScalarTypeConfig<Resol
 
 export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   DataCube?: DataCubeResolvers<ContextType>;
-  DataCubeDimension?: DataCubeDimensionResolvers<ContextType>;
+  DataCubeComponent?: GraphQLScalarType;
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;

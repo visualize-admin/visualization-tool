@@ -12,7 +12,11 @@ import {
   TemporalDimension,
   TemporalOrdinalDimension,
 } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import {
+  DataCubePublicationStatus,
+  RelatedDimension,
+  ScaleType,
+} from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -32,6 +36,22 @@ export type DimensionValue = {
 };
 
 export type Observation = Record<string, ObservationValue>;
+
+export type DataCubeComponent = {
+  __typename: ComponentType;
+  cubeIri: string;
+  iri: string;
+  label: string;
+  description?: string;
+  unit?: string;
+  scaleType?: ScaleType;
+  dataType?: string;
+  order?: number;
+  isNumerical: boolean;
+  isKeyDimension: boolean;
+  values: DimensionValue[];
+  related?: RelatedDimension[];
+};
 
 export type GeoProperties = {
   iri: string;

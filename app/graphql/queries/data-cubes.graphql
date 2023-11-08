@@ -233,10 +233,7 @@ query DataCubesComponents(
     sourceUrl: $sourceUrl
     locale: $locale
     filters: $filters
-  ) {
-    # Convert to scalar: `component`.
-    iri
-  }
+  )
 }
 
 query ComponentsWithHierarchies(

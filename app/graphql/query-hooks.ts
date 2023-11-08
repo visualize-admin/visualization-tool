@@ -1,3 +1,4 @@
+import { DataCubeComponent } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
 import { Observation } from '../domain/data';
@@ -17,6 +18,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DataCubeComponent: DataCubeComponent;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: QueryFilters;
@@ -84,10 +86,6 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
-export type DataCubeDimension = {
-  __typename: 'DataCubeDimension';
-  iri: Scalars['String'];
-};
 
 export type DataCubeFilter = {
   iri: Scalars['String'];
@@ -376,7 +374,7 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename: 'Query';
-  dataCubesComponents: Array<DataCubeDimension>;
+  dataCubesComponents: Array<Scalars['DataCubeComponent']>;
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -934,7 +932,7 @@ export type DataCubesComponentsQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: Array<{ __typename: 'DataCubeDimension', iri: string }> };
+export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: Array<DataCubeComponent> };
 
 export type ComponentsWithHierarchiesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1345,9 +1343,7 @@ export const DataCubesComponentsDocument = gql`
     sourceUrl: $sourceUrl
     locale: $locale
     filters: $filters
-  ) {
-    iri
-  }
+  )
 }
     `;
 
