@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.24.0] - 2023-11-08
+
 - Features
   - It's now possible to adjust Combo charts colors 🧑‍🎨
   - Subthemes are now displayed even when organization section is the second one (Browse page)
