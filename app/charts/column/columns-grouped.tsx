@@ -4,6 +4,7 @@ import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import {
   RenderColumnDatum,
   RenderWhiskerDatum,
+  filterWithoutErrors,
   renderColumns,
   renderWhiskers,
 } from "@/charts/column/rendering-utils";
@@ -17,6 +18,7 @@ export const ErrorWhiskers = () => {
     xScale,
     xScaleIn,
     getYErrorRange,
+    getYError,
     yScale,
     getSegment,
     grouped,
@@ -31,25 +33,28 @@ export const ErrorWhiskers = () => {
       return [];
     }
 
-    return grouped.flatMap(([segment, observations]) =>
-      observations.map((d) => {
-        const x0 = xScaleIn(getSegment(d)) as number;
-        const bandwidth = xScaleIn.bandwidth();
-        const barwidth = Math.min(bandwidth, 15);
-        const [y1, y2] = getYErrorRange(d);
+    return grouped
+      .filter((d) => d[1].some(filterWithoutErrors(getYError)))
+      .flatMap(([segment, observations]) =>
+        observations.map((d) => {
+          const x0 = xScaleIn(getSegment(d)) as number;
+          const bandwidth = xScaleIn.bandwidth();
+          const barwidth = Math.min(bandwidth, 15);
+          const [y1, y2] = getYErrorRange(d);
 
-        return {
-          key: `${segment}-${getSegment(d)}`,
-          x: (xScale(segment) as number) + x0 + bandwidth / 2 - barwidth / 2,
-          y1: yScale(y1),
-          y2: yScale(y2),
-          width: barwidth,
-        };
-      })
-    );
+          return {
+            key: `${segment}-${getSegment(d)}`,
+            x: (xScale(segment) as number) + x0 + bandwidth / 2 - barwidth / 2,
+            y1: yScale(y1),
+            y2: yScale(y2),
+            width: barwidth,
+          };
+        })
+      );
   }, [
     getSegment,
     getYErrorRange,
+    getYError,
     grouped,
     showYStandardError,
     xScale,

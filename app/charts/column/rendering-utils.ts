@@ -4,6 +4,7 @@ import {
   RenderOptions,
   maybeTransition,
 } from "@/charts/shared/rendering-utils";
+import { Observation, ObservationValue } from "@/domain/data";
 
 export type RenderColumnDatum = {
   key: string;
@@ -158,3 +159,8 @@ export const renderWhiskers = (
         })
     );
 };
+
+export const filterWithoutErrors =
+  (getError: ((d: Observation) => ObservationValue) | null) =>
+  (d: Observation): boolean =>
+    !!getError?.(d);

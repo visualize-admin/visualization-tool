@@ -3,6 +3,7 @@ import React from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import {
+  filterWithoutErrors,
   RenderColumnDatum,
   renderColumns,
   RenderWhiskerDatum,
@@ -33,22 +34,20 @@ export const ErrorWhiskers = () => {
       return [];
     }
 
-    return chartData
-      .filter((d) => !!getYError?.(d))
-      .map((d, i) => {
-        const x0 = xScale(getX(d)) as number;
-        const bandwidth = xScale.bandwidth();
-        const barwidth = Math.min(bandwidth, 15);
-        const [y1, y2] = getYErrorRange(d);
+    return chartData.filter(filterWithoutErrors(getYError)).map((d, i) => {
+      const x0 = xScale(getX(d)) as number;
+      const bandwidth = xScale.bandwidth();
+      const barwidth = Math.min(bandwidth, 15);
+      const [y1, y2] = getYErrorRange(d);
 
-        return {
-          key: `${i}`,
-          x: x0 + bandwidth / 2 - barwidth / 2,
-          y1: yScale(y1),
-          y2: yScale(y2),
-          width: barwidth,
-        };
-      });
+      return {
+        key: `${i}`,
+        x: x0 + bandwidth / 2 - barwidth / 2,
+        y1: yScale(y1),
+        y2: yScale(y2),
+        width: barwidth,
+      };
+    });
   }, [
     chartData,
     getX,
@@ -59,7 +58,7 @@ export const ErrorWhiskers = () => {
     yScale,
   ]);
 
-    React.useEffect(() => {
+  React.useEffect(() => {
     if (ref.current) {
       renderContainer(ref.current, {
         id: "columns-error-whiskers",
