@@ -21,6 +21,7 @@ declare module "rdf-cube-view-query" {
     constructor(
       options: NodeInit & {
         source?: Source;
+        term?: Term;
       }
     );
     static filter: {
@@ -115,6 +116,7 @@ declare module "rdf-cube-view-query" {
         password?: string;
         queryOperation?: "get" | "postUrlencoded" | "postDirect";
         queryPrefix?: string;
+        term?: Term;
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
@@ -127,9 +129,11 @@ declare module "rdf-cube-view-query" {
     client: ParsingClient;
     queryOperation?: "get" | "postUrlencoded" | "postDirect";
   }
+
   export class LookupSource extends Source {
     static fromSource(source: Source): LookupSource;
     queryPrefix?: string;
   }
+
   export class CubeSource extends Source {}
 }

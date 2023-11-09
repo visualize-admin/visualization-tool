@@ -251,15 +251,13 @@ export const hierarchy: NonNullable<DimensionResolvers["hierarchy"]> = async (
     throw new Error("Could not find cube");
   }
 
-  const res = await queryHierarchy(
+  return await queryHierarchy(
     rdimension,
     locale,
     sparqlClient,
     sparqlClientStream,
     cache
   );
-
-  return res;
 };
 
 export const dimensionValues: NonNullable<
