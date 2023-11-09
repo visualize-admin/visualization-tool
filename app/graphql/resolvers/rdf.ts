@@ -15,6 +15,7 @@ import {
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
 import { resolveComponentType } from "@/graphql/resolvers";
+import { defaultLocale } from "@/locales/locales";
 import { parseIri } from "@/rdf/parse";
 import {
   createCubeDimensionValuesLoader,
@@ -86,7 +87,7 @@ export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
       throw new Error("Cube not found");
     }
 
-    return getResolvedCube({ cube, locale: locale ?? "de", latest });
+    return getResolvedCube({ cube, locale: locale ?? defaultLocale, latest });
   };
 
 export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =

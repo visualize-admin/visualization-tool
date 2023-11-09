@@ -9,8 +9,8 @@ import {
   DataCubePublicationStatus,
   SearchCubeFilter,
 } from "@/graphql/resolver-types";
+import { defaultLocale, locales } from "@/locales/locales";
 import * as ns from "@/rdf/namespace";
-import { locales } from "@/src";
 
 import { pragmas } from "./create-source";
 import { computeScores, highlight } from "./query-search-score-utils";
@@ -111,7 +111,7 @@ export const searchCubes = async ({
   includeDrafts?: Boolean | null;
   sparqlClient: ParsingClient;
 }) => {
-  const locale = _locale ?? "de";
+  const locale = _locale ?? defaultLocale;
   // Search cubeIris along with their score
   const themeValues =
     filters?.filter((x) => x.type === "DataCubeTheme").map((v) => v.value) ??
