@@ -157,27 +157,34 @@ export const dataCubesComponents: NonNullable<
     )
   ).filter(truthy);
 
-  return (
-    await getCubesDimensions(cubes, { locale, sparqlClient, filters, cache })
-  ).map(async (dimension) => {
-    const { cube, data } = dimension;
-
-    return {
-      __typename: resolveComponentType(dimension),
-      cubeIri: parseIri(cube),
-      iri: data.iri,
-      label: data.name,
-      description: data.description,
-      unit: data.unit,
-      scaleType: data.scaleType,
-      dataType: data.dataType,
-      order: data.order,
-      isNumerical: data.isNumerical,
-      isKeyDimension: data.isKeyDimension,
-      values: [],
-      related: data.related,
-    };
+  const dimensions = await getCubesDimensions(cubes, {
+    locale,
+    sparqlClient,
+    filters,
+    cache,
   });
+
+  return await Promise.all(
+    dimensions.map(async (dimension) => {
+      const { cube, data } = dimension;
+
+      return {
+        __typename: resolveComponentType(dimension),
+        cubeIri: parseIri(cube),
+        iri: data.iri,
+        label: data.name,
+        description: data.description,
+        unit: data.unit,
+        scaleType: data.scaleType,
+        dataType: data.dataType,
+        order: data.order,
+        isNumerical: data.isNumerical,
+        isKeyDimension: data.isKeyDimension,
+        values: await loaders.dimensionValues.load(dimension),
+        related: data.related,
+      };
+    })
+  );
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
