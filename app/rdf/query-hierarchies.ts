@@ -131,7 +131,7 @@ export const queryHierarchy = async (
     hierarchies?.map(async (h) => ({
       // @ts-ignore
       nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
-      hierarchyName: getName(h.out(ns.cubeMeta.nextInHierarchy), locale),
+      hierarchyName: getName(h, locale),
     }))
   );
 
