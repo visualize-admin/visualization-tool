@@ -18,6 +18,11 @@ declare module "rdf-cube-view-query" {
   }
 
   export class Cube extends Node {
+    constructor(
+      options: NodeInit & {
+        source?: Source;
+      }
+    );
     static filter: {
       isPartOf: (container: $FixMe) => $FixMe;
       noValidThrough: () => $FixMe;
@@ -28,7 +33,9 @@ declare module "rdf-cube-view-query" {
     };
     dimensions: CubeDimension[];
     source: CubeSource;
+    shapeQuery(): string;
     async fetchShape(): Promise<void>;
+    async init(): Promise<void>;
   }
 
   export class CubeDimension {
