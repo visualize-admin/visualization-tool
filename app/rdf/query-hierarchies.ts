@@ -1,6 +1,6 @@
 import {
-  getHierarchy,
   HierarchyNode,
+  getHierarchy,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
 import orderBy from "lodash/orderBy";
@@ -62,9 +62,9 @@ const toTree = (
               .filter((d) => d.label)
           ),
           position: parseTerm(node.resource.out(ns.schema.position).term),
-          identifier: identifier,
+          identifier,
           depth,
-          dimensionIri: dimensionIri,
+          dimensionIri,
         }
       : undefined;
     return res;
@@ -73,24 +73,39 @@ const toTree = (
   return sortChildren(results.map((r) => serializeNode(r, 0)).filter(truthy));
 };
 
-const findHierarchiesForDimension = (
+const getDimensionHierarchies = async (
   cube: Cube,
   dimensionIri: string,
   locale: string
 ) => {
-  const newHierarchies = uniqBy(
-    cube.ptr
-      .any()
-      .has(ns.sh.path, rdf.namedNode(dimensionIri))
-      .has(ns.cubeMeta.inHierarchy)
-      .out(ns.cubeMeta.inHierarchy)
-      .toArray(),
-    (x) => getName(x, locale)
-  );
-  if (newHierarchies) {
-    return newHierarchies;
+  const cubeIri = cube.term?.value;
+
+  if (!cubeIri) {
+    throw new Error("Cube must have an iri!");
   }
-  return [];
+
+  // Can't rely on the cube here, because sometimes it might contain duplicate
+  // hierarchies, due to fetching both cube and shape when cube is initialized.
+  // Here we are only interested in shape hierarchies, that's why we don't have
+  // to initialize the cube, but rather just fetch its shape.
+  const hierarchyCube = new Cube({
+    source: cube.source,
+    term: rdf.namedNode(cubeIri),
+  });
+  // Need to set the shape query manually, because we didn't initialize the cube,
+  // thus can't access its observationConstraint.
+  hierarchyCube.shapeQuery = () => {
+    return `DESCRIBE <${cube.out(ns.cube.observationConstraint)}>`;
+  };
+  await hierarchyCube.fetchShape();
+  const hierarchies = hierarchyCube.ptr
+    .any()
+    .has(ns.sh.path, rdf.namedNode(dimensionIri))
+    .has(ns.cubeMeta.inHierarchy)
+    .out(ns.cubeMeta.inHierarchy)
+    .toArray();
+
+  return uniqBy(hierarchies, (hierarchy) => getName(hierarchy, locale));
 };
 
 export const queryHierarchy = async (
@@ -100,13 +115,13 @@ export const queryHierarchy = async (
   sparqlClientStream: StreamClient,
   cache: LRUCache | undefined
 ): Promise<HierarchyValue[] | null> => {
-  const hierarchies = findHierarchiesForDimension(
-    rdimension.cube,
-    rdimension.data.iri,
-    locale
-  );
+  const {
+    cube,
+    data: { iri },
+  } = rdimension;
+  const hierarchyPointers = await getDimensionHierarchies(cube, iri, locale);
 
-  if (hierarchies.length === 0) {
+  if (hierarchyPointers.length === 0) {
     return null;
   }
 
@@ -118,25 +133,25 @@ export const queryHierarchy = async (
     cache,
   });
 
-  const allHierarchies = await Promise.all(
-    hierarchies?.map(async (h) => ({
-      // @ts-ignore
-      nodes: (await getHierarchy(h).execute(sparqlClientStream, rdf)) || [],
-      hierarchyName: getName(h, locale),
-    }))
+  const hierarchies = await Promise.all(
+    hierarchyPointers.map(async (pointer) => {
+      return {
+        // @ts-ignore
+        nodes: await getHierarchy(pointer).execute(sparqlClientStream, rdf),
+        hierarchyName: getName(pointer, locale),
+      };
+    })
   );
 
-  const trees = allHierarchies.map((h) => {
-    const tree: (HierarchyValue & { hierarchyName?: string })[] = toTree(
-      h.nodes,
-      rdimension.data.iri,
-      locale
-    );
+  const trees = hierarchies.map(({ nodes, hierarchyName }) => {
+    const tree: (HierarchyValue & {
+      hierarchyName?: string;
+    })[] = toTree(nodes, iri, locale);
 
     if (tree.length > 0) {
       // Augment hierarchy value with hierarchyName so that when regrouping
       // below, we can create the fake nodes
-      tree[0].hierarchyName = h.hierarchyName;
+      tree[0].hierarchyName = hierarchyName;
     }
     return tree;
   });
