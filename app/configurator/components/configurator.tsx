@@ -22,11 +22,12 @@ import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
 } from "@/configurator/components/layout";
-import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useDataSourceStore } from "@/stores/data-source";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import useEvent from "@/utils/use-event";
+
+import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 
 const BackContainer = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -57,8 +57,8 @@ type Props = {
   metaData: DataCubeMetadataWithHierarchies;
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
-  onUp: (newIndex: number) => void;
-  onDown: (newIndex: number) => void;
+  onUp: (idx: number) => void;
+  onDown: (idx: number) => void;
 };
 export const TabDropZone = ({
   id,
@@ -136,8 +136,8 @@ export const TabDropZone = ({
                                   }),
                                 }}
                                 className="buttons"
-                                onClickUp={() => onUp(i - 1)}
-                                onClickDown={() => onDown(i + 1)}
+                                onClickUp={() => onUp(index)}
+                                onClickDown={() => onDown(index)}
                               />
                             </Box>
                           </Box>
