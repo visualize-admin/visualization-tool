@@ -32,6 +32,9 @@ jest.mock("../rdf/query-search", () => ({}));
 jest.mock("../rdf/queries", () => ({
   getCubeObservations: jest.fn(),
   createCubeDimensionValuesLoader: () => async () => [],
+  getLatestCube: () => ({
+    fetchShape: () => ({}),
+  }),
 }));
 jest.mock("../rdf/create-source", () => ({
   createSource: jest.fn(),
@@ -85,7 +88,8 @@ describe("possible filters", () => {
     }));
     // @ts-ignore
     ExtendedCube.mockImplementation(() => ({
-      init: () => ({}),
+      fetchCube: () => ({}),
+      fetchShape: () => ({}),
     }));
 
     const res = await Query?.possibleFilters?.(
