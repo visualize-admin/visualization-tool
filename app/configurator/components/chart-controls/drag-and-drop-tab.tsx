@@ -1,9 +1,10 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
+import MoveDragButtons from "@/components/move-drag-buttons";
 import { TableColumn } from "@/config-types";
 import { DraggableTab } from "@/configurator/components/chart-controls/control-tab";
 import {
@@ -15,20 +16,37 @@ import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadataWithHierarchies } from "@/graphql/types";
-import { Icon } from "@/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  icon: {
-    width: 24,
-    height: 24,
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    right: 3,
-    margin: "auto",
-    "&:hover": {
-      color: theme.palette.secondary.hover,
+  filterRow: {
+    display: "grid",
+    gridTemplateColumns: "auto min-content",
+    overflow: "hidden",
+    width: "100%",
+    gridColumnGap: theme.spacing(2),
+    gridTemplateRows: "min-content min-content",
+    gridTemplateAreas: '"description drag-button" "select drag-button"',
+    "& .buttons": {
+      transition: "color 0.125s ease, opacity 0.125s ease-out",
+      opacity: 0.25,
+      color: theme.palette.secondary.active,
     },
+    "& .buttons:hover": {
+      opacity: 1,
+    },
+    "& > *": {
+      overflow: "hidden",
+    },
+  },
+  dragButtons: {
+    gridArea: "drag-button",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingBottom: 0,
   },
 }));
 
@@ -39,6 +57,8 @@ type Props = {
   metaData: DataCubeMetadataWithHierarchies;
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
+  onUp: (idx: number) => void;
+  onDown: (idx: number) => void;
 };
 export const TabDropZone = ({
   id,
@@ -47,6 +67,8 @@ export const TabDropZone = ({
   metaData,
   isDropDisabled,
   emptyComponent,
+  onUp,
+  onDown,
 }: Props) => {
   const { dimensions, measures } = metaData;
   const classes = useStyles();
@@ -84,7 +106,7 @@ export const TabDropZone = ({
                             ref={innerRef}
                             {...draggableProps}
                             {...dragHandleProps}
-                            sx={{ position: "relative" }}
+                            className={classes.filterRow}
                           >
                             <DraggableTabField
                               key={componentIri}
@@ -100,15 +122,23 @@ export const TabDropZone = ({
                               isDragging={isDragging}
                               disabled={isHidden}
                             />
-                            <Box
-                              className={classes.icon}
-                              sx={{
-                                color: isDragging
-                                  ? "secondary.active"
-                                  : "secondary.disabled",
-                              }}
-                            >
-                              <Icon name="dragndrop" />
+                            <Box className={classes.dragButtons}>
+                              <MoveDragButtons
+                                moveUpButtonProps={{
+                                  title: t({ id: "Move filter up" }),
+                                }}
+                                moveDownButtonProps={{
+                                  title: t({ id: "Move filter down" }),
+                                }}
+                                dragButtonProps={{
+                                  title: t({
+                                    id: "Drag filters to reorganize",
+                                  }),
+                                }}
+                                className="buttons"
+                                onClickUp={() => onUp(index)}
+                                onClickDown={() => onDown(index)}
+                              />
                             </Box>
                           </Box>
                         );

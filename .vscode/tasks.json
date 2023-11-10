@@ -4,29 +4,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "tsc",
-      "type": "shell",
-      "command": "yarn tsc --watch --noEmit -p ./app",
-      "options": {
-        "shell": {
-          "executable": "nix-shell",
-          "args": ["--run"]
-        }
-      },
-      "isBackground": true,
-      "problemMatcher": {
-        "base": "$tsc-watch",
-        "owner": "typescript",
-        "applyTo": "allDocuments"
-      },
-      "presentation": {
-        "group": "dev"
-      },
-      "runOptions": {
-        "runOn": "folderOpen"
-      }
-    },
-    {
       "label": "dev-server",
       "type": "shell",
       "command": "yarn && yarn dev",

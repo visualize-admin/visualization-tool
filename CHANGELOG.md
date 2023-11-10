@@ -9,8 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+- Features
+  - Match drag and drop behavior for table chart and filter panel
 - Fixes
-  - Removed ErrorWhisker and Tooltip when error is null in Column charts
+  - Remove ErrorWhisker and Tooltip when error is null in Column charts
   - We now only fetch hierarchies defined in cube's shape
   - Hierarchy names are now correctly retrieved
 - Performance
