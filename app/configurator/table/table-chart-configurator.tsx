@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { useCallback, useMemo, useState } from "react";
 import {
   DragDropContext,
-  OnDragEndResponder,
+  DraggableLocation,
   OnDragStartResponder,
 } from "react-beautiful-dnd";
 
@@ -89,8 +89,14 @@ export const ChartConfiguratorTable = ({
     null
   );
 
-  const onDragEnd = useCallback<OnDragEndResponder>(
-    ({ source, destination }) => {
+  const onDragEnd = useCallback(
+    ({
+      source,
+      destination,
+    }: {
+      source: DraggableLocation;
+      destination?: DraggableLocation | null;
+    }) => {
       setCurrentDraggableId(null);
 
       if (!destination || chartConfig.chartType !== "table" || !metaData) {
@@ -168,7 +174,15 @@ export const ChartConfiguratorTable = ({
             />
           </ControlSectionContent>
         </ControlSection>
-        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+        <DragDropContext
+          onDragEnd={(result) =>
+            onDragEnd({
+              source: result.source,
+              destination: result.destination,
+            })
+          }
+          onDragStart={onDragStart}
+        >
           <TabDropZone
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
@@ -185,7 +199,16 @@ export const ChartConfiguratorTable = ({
             title={<Trans id="controls.section.columns">Columns</Trans>}
             metaData={metaData}
             items={columnFields}
-            onUp={(_index) => {}} // TODO: implement
+            onUp={(newIndex) => {
+              if (newIndex < 0) {
+                return;
+              }
+
+              onDragEnd({
+                source: { droppableId: "columns", index: newIndex + 1 },
+                destination: { droppableId: "columns", index: newIndex },
+              });
+            }} // TODO: implement
             onDown={(_index) => {}} // TODO: implement
           />
         </DragDropContext>
