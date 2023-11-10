@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
 ## Unreleased
-
+- Features
+  - Match drag and drop behavior for table chart and filter panel
 - Fixes
-  - remove ErrorWhisker and Tooltip when error is null in Column charts
+  - Remove ErrorWhisker and Tooltip when error is null in Column charts
 
 # [3.24.0] - 2023-11-08
 

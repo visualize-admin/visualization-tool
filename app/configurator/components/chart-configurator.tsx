@@ -57,7 +57,7 @@ import {
   DataFilterSelectTime,
   OnOffControlTabField,
 } from "@/configurator/components/field";
-import MoveDragButtons from "@/configurator/components/move-drag-buttons";
+import MoveDragButtons from "@/components/move-drag-buttons";
 import {
   getFiltersByMappingStatus,
   isConfiguring,
