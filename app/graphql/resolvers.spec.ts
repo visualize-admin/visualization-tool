@@ -3,6 +3,7 @@ import { IncomingMessage } from "http";
 import { GraphQLResolveInfo } from "graphql";
 
 import { createSource as createSource_ } from "@/rdf/create-source";
+import { ExtendedCube as ExtendedCube_ } from "@/rdf/extended-cube";
 import { getCubeObservations as getCubeObservations_ } from "@/rdf/queries";
 import { unversionObservation as unversionObservation_ } from "@/rdf/query-dimension-values";
 
@@ -14,6 +15,10 @@ const getCubeObservations = getCubeObservations_ as unknown as jest.Mock<
 >;
 const createSource = createSource_ as unknown as jest.Mock<
   typeof createSource_
+>;
+
+const ExtendedCube = ExtendedCube_ as unknown as jest.Mock<
+  typeof ExtendedCube_
 >;
 
 const unversionObservation = unversionObservation_ as unknown as jest.Mock<
@@ -33,6 +38,9 @@ jest.mock("../rdf/create-source", () => ({
 }));
 jest.mock("../rdf/query-hierarchies", () => ({}));
 jest.mock("../rdf/parse", () => ({}));
+jest.mock("../rdf/extended-cube", () => ({
+  ExtendedCube: jest.fn(),
+}));
 
 jest.mock("@rdf-esm/data-model", () => ({}));
 jest.mock("@rdf-esm/term-map", () => ({}));
@@ -45,6 +53,7 @@ describe("possible filters", () => {
   beforeEach(() => {
     getCubeObservations.mockReset();
   });
+
   it("should try to find an observation given possible filters, relaxing fitlers from the bottom", async () => {
     // @ts-ignore
     getCubeObservations.mockImplementation(async ({ filters }) => {
@@ -74,6 +83,10 @@ describe("possible filters", () => {
     createSource.mockImplementation(() => ({
       cube: () => ({}),
     }));
+    // @ts-ignore
+    ExtendedCube.mockImplementation(() => ({
+      init: () => ({}),
+    }));
 
     const res = await Query?.possibleFilters?.(
       {},
@@ -94,9 +107,18 @@ describe("possible filters", () => {
         },
       } as unknown as GraphQLResolveInfo
     );
+
     expect(res).toEqual([
-      { iri: "https://fake-dimension-iri-1", type: "single", value: 1 },
-      { iri: "https://fake-dimension-iri-2", type: "single", value: 3 },
+      {
+        iri: "https://fake-dimension-iri-1",
+        type: "single",
+        value: 1,
+      },
+      {
+        iri: "https://fake-dimension-iri-2",
+        type: "single",
+        value: 3,
+      },
     ]);
     expect(getCubeObservations).toHaveBeenCalledTimes(2);
   });

@@ -114,16 +114,15 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 
       const unversioned = await unversionObservation({
         observation: obs[0],
-        cube: cube,
+        cube,
         sparqlClient,
       });
-      const result = Object.keys(filters).map((f) => ({
+
+      return Object.keys(filters).map((f) => ({
         iri: f,
         type: "single",
         value: unversioned[f],
       }));
-
-      return result;
     }
 
     return [];
