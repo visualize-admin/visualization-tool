@@ -13,6 +13,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Removed ErrorWhisker and Tooltip when error is null in Column charts
   - We now only fetch hierarchies defined in cube's shape
   - Hierarchy names are now correctly retrieved
+- Performance
+  - We no longer fetch shape when initalizing the cube, as we might need to re-fetch it again if a newer cube is required
 
 # [3.24.0] - 2023-11-08
 
