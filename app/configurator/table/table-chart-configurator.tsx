@@ -50,8 +50,8 @@ export const ChartConfiguratorTable = ({
     metaData,
     currentDraggableId,
     chartConfig,
-    onDragEnd,
-    onDragStart,
+    handleDragEnd,
+    handleDragStart,
     handleMove,
   } = useTableChartController(state);
 
@@ -110,12 +110,12 @@ export const ChartConfiguratorTable = ({
       </ControlSection>
       <DragDropContext
         onDragEnd={(result) =>
-          onDragEnd({
+          handleDragEnd({
             source: result.source,
             destination: result.destination,
           })
         }
-        onDragStart={onDragStart}
+        onDragStart={handleDragStart}
       >
         <TabDropZone
           id="groups"

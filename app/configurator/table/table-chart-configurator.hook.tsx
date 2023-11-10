@@ -102,8 +102,8 @@ export const useTableChartController = (
   return {
     metaData,
     currentDraggableId,
-    onDragStart: handleDragStart,
-    onDragEnd: handleDragEnd,
+    handleDragStart,
+    handleDragEnd,
     handleMove,
     chartConfig: {
       ...chartConfig,
