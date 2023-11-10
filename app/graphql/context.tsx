@@ -26,7 +26,14 @@ export const MAX_BATCH_SIZE = 500;
 
 export const getRawCube = async (sourceUrl: string, iri: string) => {
   const source = createSource({ endpointUrl: sourceUrl });
-  return await source.cube(iri);
+  const cube = new Cube({
+    parent: source,
+    term: rdf.namedNode(iri),
+    source,
+  });
+  await cube.init();
+
+  return cube;
 };
 
 // const cachedGetRawCube = cachedWithTTL(
