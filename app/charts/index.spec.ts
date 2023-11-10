@@ -1,6 +1,7 @@
 import { ColumnConfig, TableFields } from "@/configurator";
 import { ComponentsQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
+import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
@@ -10,6 +11,8 @@ import {
   getInitialConfig,
   getPossibleChartTypes,
 } from "./index";
+
+RDFCubeViewQueryMock;
 
 describe("initial config", () => {
   it("should create an initial table config with column order based on dimension order", () => {
