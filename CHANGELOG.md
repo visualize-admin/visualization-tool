@@ -17,6 +17,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
   - Hierarchy names are now correctly retrieved
 - Performance
   - We no longer fetch shape when initalizing the cube, as we might need to re-fetch it again if a newer cube is required
+  - Vastly improved performance of dataset preview by using a new version of `cube-view-query` library (`View.preview`)
 
 # [3.24.0] - 2023-11-08
 

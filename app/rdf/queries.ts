@@ -842,6 +842,8 @@ const buildFilters = ({
   });
 };
 
+type ObservationRaw = Record<string, Literal | NamedNode>;
+
 async function fetchViewObservations({
   limit,
   observationsView,
@@ -851,37 +853,28 @@ async function fetchViewObservations({
   observationsView: View;
   disableDistinct: boolean;
 }) {
-  /**
-   * Add LIMIT to query
-   */
-  if (limit !== undefined) {
-    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) =>
-      projection.addOut(ns.cubeView.limit, limit)
-    );
-  }
+  const fullQuery = observationsView.observationsQuery({ disableDistinct });
+  const query = (
+    limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
+  ).toString();
 
-  const queryOptions = {
-    disableDistinct,
-  };
+  let observationsRaw: PromiseValue<ObservationRaw[]> | undefined;
 
-  const query = observationsView
-    .observationsQuery(queryOptions)
-    .query.toString();
-
-  let observationsRaw:
-    | PromiseValue<ReturnType<typeof observationsView.observations>>
-    | undefined;
   try {
-    observationsRaw = await observationsView.observations(queryOptions);
+    observationsRaw = await (limit
+      ? observationsView.preview({ limit })
+      : observationsView.observations({ disableDistinct }));
   } catch (e) {
-    console.warn("Query failed", query);
+    console.warn("Observations query failed!", query);
     throw new Error(
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }
 
-  return { query, observationsRaw };
+  return {
+    query,
+    observationsRaw,
+  };
 }
 
 type RDFObservation = Record<string, Literal | NamedNode<string>>;
@@ -892,7 +885,8 @@ function parseObservation(
 ): (value: RDFObservation) => Observation {
   return (obs) => {
     const res = {} as Observation;
-    for (let d of cubeDimensions) {
+
+    for (const d of cubeDimensions) {
       const label = obs[labelDimensionIri(d.data.iri)]?.value;
       const termType = obs[d.data.iri]?.termType;
 

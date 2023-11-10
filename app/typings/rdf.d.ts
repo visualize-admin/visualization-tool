@@ -101,12 +101,17 @@ declare module "rdf-cube-view-query" {
     dimension(options: { cubeDimension: NamedNode | string }): Dimension | null;
     observationsQuery({ disableDistinct }: { disableDistinct?: boolean }): {
       query: $FixMe;
+      previewQuery: $FixMe;
       dimensionMap: Map;
     };
     async observations({
       disableDistinct,
     }: {
       disableDistinct?: boolean;
+    }): Promise<Record<string, Literal | NamedNode>[]>;
+    async preview(options: {
+      limit?: number;
+      offset?: number;
     }): Promise<Record<string, Literal | NamedNode>[]>;
     addDimension(dimension: Dimension): View;
     createDimension(options: $FixMe): Dimension;
