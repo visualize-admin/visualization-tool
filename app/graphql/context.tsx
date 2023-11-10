@@ -33,7 +33,8 @@ export const getRawCube = async (sourceUrl: string, iri: string) => {
     term: rdf.namedNode(iri),
     source,
   });
-  await cube.init();
+  // Don't fetch shape yet, as we might need to fetch newer cube.
+  await cube.fetchCube();
 
   return cube;
 };

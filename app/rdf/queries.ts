@@ -20,7 +20,7 @@ import {
   parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
-import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
+import { ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
 import { schema } from "./namespace";
@@ -28,7 +28,6 @@ import {
   getQueryLocales,
   getScaleType,
   isCubePublished,
-  parseCube,
   parseCubeDimension,
   parseRelatedDimensions,
 } from "./parse";
@@ -47,7 +46,9 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 
-const getLatestCube = async (cube: ExtendedCube): Promise<ExtendedCube> => {
+export const getLatestCube = async (
+  cube: ExtendedCube
+): Promise<ExtendedCube> => {
   const source = cube.source;
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
@@ -84,7 +85,6 @@ const getLatestCube = async (cube: ExtendedCube): Promise<ExtendedCube> => {
         term: row.cube,
         source,
       });
-      // Don't fetch shape on multiple cubes for performance resons. Shape is fetched on the cube that's picked below.
       await cube.fetchCube();
 
       return cube;
@@ -101,30 +101,11 @@ const getLatestCube = async (cube: ExtendedCube): Promise<ExtendedCube> => {
 
     // If there's a newer cube that's published, it's preferred over drafts
     // (this only applies if the original cube was in draft status anyway)
-    const latestCube =
-      newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
-
-    // Call cube.fetchShape() to populate dimension metadata
-    await latestCube.fetchShape();
-
-    return latestCube;
+    return newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
   }
 
   // If there are no newer cubes, return the original one
   return cube;
-};
-
-export const getResolvedCube = async ({
-  cube,
-  locale,
-  latest = true,
-}: {
-  cube: ExtendedCube;
-  locale: string;
-  latest?: boolean;
-}): Promise<ResolvedDataCube | null> => {
-  const latestCube = latest === false ? cube : await getLatestCube(cube);
-  return parseCube({ cube: latestCube, locale });
 };
 
 const getDimensionUnits = (d: CubeDimension) => {
