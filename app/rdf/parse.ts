@@ -10,11 +10,12 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 
 import { truthy } from "@/domain/types";
 import { ScaleType } from "@/graphql/query-hooks";
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -29,18 +30,18 @@ export const getQueryLocales = (locale: string): string[] => [
   "",
 ];
 
-export const isCubePublished = (cube: Cube): boolean =>
+export const isCubePublished = (cube: ExtendedCube): boolean =>
   cube
     .out(ns.schema.creativeWorkStatus)
     .terms.some((t) =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
 
-export const parseVersionHistory = (cube: Cube) => {
+export const parseVersionHistory = (cube: ExtendedCube) => {
   return cube.in(ns.schema.hasPart)?.value;
 };
 
-export const parseIri = (cube: Cube) => {
+export const parseIri = (cube: ExtendedCube) => {
   return cube.term?.value ?? "[NO IRI]";
 };
 
@@ -53,7 +54,7 @@ export const parseCube = ({
   cube,
   locale,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
 }): ResolvedDataCube => {
   const outOpts = { language: getQueryLocales(locale) };
@@ -206,7 +207,7 @@ export const parseCubeDimension = ({
   units,
 }: {
   dim: CubeDimension;
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   units?: Map<
     string,

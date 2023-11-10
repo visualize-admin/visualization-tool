@@ -1,5 +1,7 @@
-import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
+
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { Observation } from "../domain/data";
 
@@ -15,7 +17,7 @@ import {
 /** Types shared by graphql-codegen and resolver code */
 
 export type ResolvedDataCube = {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   data: {
     iri: string;
@@ -42,7 +44,7 @@ export type ResolvedDataCube = {
 };
 
 export type ResolvedDimension = {
-  cube: Cube;
+  cube: ExtendedCube;
   dimension: CubeDimension;
   locale: string;
   data: {
@@ -73,7 +75,7 @@ export type ResolvedDimension = {
 export type ResolvedMeasure = ResolvedDimension;
 
 export type ResolvedObservationsQuery = {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
 
   data: {

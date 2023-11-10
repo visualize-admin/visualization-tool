@@ -1,13 +1,7 @@
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
-import {
-  Cube,
-  CubeDimension,
-  Filter,
-  LookupSource,
-  View,
-} from "rdf-cube-view-query";
+import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -15,6 +9,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { PromiseValue, truthy } from "@/domain/types";
 import { pragmas } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { FilterValueMulti, Filters } from "../configurator";
 import {
@@ -52,7 +47,7 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 
-const getLatestCube = async (cube: Cube): Promise<Cube> => {
+const getLatestCube = async (cube: ExtendedCube): Promise<ExtendedCube> => {
   const source = cube.source;
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
@@ -67,11 +62,11 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
 
   const filters = [
     // Only cubes from the same version history
-    Cube.filter.isPartOf(versionHistory),
+    ExtendedCube.filter.isPartOf(versionHistory),
     // With a higher version number
-    Cube.filter.version.gt(version),
+    ExtendedCube.filter.version.gt(version),
     // If the original cube is published, only select cubes that are also published
-    Cube.filter.status(
+    ExtendedCube.filter.status(
       isPublished
         ? [ns.adminVocabulary("CreativeWorkStatus/Published")]
         : [
@@ -81,10 +76,20 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
     ),
   ];
 
-  const newerCubes = await source.cubes({
-    noShape: true, // Don't fetch shape on multiple cubes for performance resons. Shape is fetched on the cube that's picked below.
-    filters,
-  });
+  const rows = await source.client.query.select(source.cubesQuery({ filters }));
+  const newerCubes = await Promise.all(
+    rows.map(async (row) => {
+      const cube = new ExtendedCube({
+        parent: source,
+        term: row.cube,
+        source,
+      });
+      // Don't fetch shape on multiple cubes for performance resons. Shape is fetched on the cube that's picked below.
+      await cube.fetchCube();
+
+      return cube;
+    })
+  );
 
   if (newerCubes.length > 0) {
     newerCubes.sort((a, b) =>
@@ -114,7 +119,7 @@ export const getResolvedCube = async ({
   locale,
   latest = true,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   latest?: boolean;
 }): Promise<ResolvedDataCube | null> => {
@@ -136,7 +141,7 @@ export const getCubeDimensions = async ({
   componentIris,
   cache,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
   componentIris?: Maybe<string[]>;
@@ -310,7 +315,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
   cache,
 }: {
   dimension: CubeDimension;
-  cube: Cube;
+  cube: ExtendedCube;
   sparqlClient: ParsingClient;
   locale: string;
   filters?: Filters;
@@ -511,7 +516,7 @@ export const getCubeObservations = async ({
   componentIris,
   cache,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
@@ -763,7 +768,7 @@ const buildFilters = ({
   filters,
   locale,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   view: View;
   filters: Filters;
   locale: string;
@@ -941,7 +946,7 @@ function buildDimensions({
   cubeView: View;
   dimensionIris: Maybe<string[]>;
   resolvedDimensions: ResolvedDimension[];
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   observationFilters: Filter[];
   raw?: boolean;
