@@ -1,8 +1,10 @@
 declare module "rdf-cube-view-query" {
   import { AnyPointer, ClownfaceInit } from "clownface";
+  import DatasetExt from "rdf-ext/lib/Dataset";
   import DefaultGraphExt from "rdf-ext/lib/DefaultGraph";
-  import { Literal, NamedNode, Term } from "rdf-js";
+  import { Literal, NamedNode, Quad, Term } from "rdf-js";
   import { ParsingClient } from "sparql-http-client/ParsingClient";
+
   type NodeInit = {
     parent?: Node;
   } & ClownfaceInit;
@@ -13,17 +15,17 @@ declare module "rdf-cube-view-query" {
     term: AnyPointer["term"];
     out: AnyPointer["out"];
     in: AnyPointer["in"];
-    dataset: AnyPointer["dataset"];
+    dataset: DatasetExt;
     clear(): void;
   }
 
+  export type CubeOptions = NodeInit & {
+    source?: Source;
+    term?: Term;
+  };
+
   export class Cube extends Node {
-    constructor(
-      options: NodeInit & {
-        source?: Source;
-        term?: Term;
-      }
-    );
+    constructor(options: CubeOptions);
     static filter: {
       isPartOf: (container: $FixMe) => $FixMe;
       noValidThrough: () => $FixMe;
@@ -34,9 +36,12 @@ declare module "rdf-cube-view-query" {
     };
     dimensions: CubeDimension[];
     source: CubeSource;
+    cubeQuery(): string;
     shapeQuery(): string;
+    async fetchCube(): Promise<void>;
     async fetchShape(): Promise<void>;
     async init(): Promise<void>;
+    quads: Quad[];
   }
 
   export class CubeDimension {
@@ -107,18 +112,18 @@ declare module "rdf-cube-view-query" {
     createDimension(options: $FixMe): Dimension;
     setDefaultColumns(): void;
   }
+
+  export type SourceOptions = NodeInit & {
+    endpointUrl: string;
+    sourceGraph?: string | DefaultGraphExt;
+    user?: string;
+    password?: string;
+    queryOperation?: "get" | "postUrlencoded" | "postDirect";
+    queryPrefix?: string;
+    term?: Term;
+  };
   export class Source extends Node {
-    constructor(
-      options: NodeInit & {
-        endpointUrl: string;
-        sourceGraph?: string | DefaultGraphExt;
-        user?: string;
-        password?: string;
-        queryOperation?: "get" | "postUrlencoded" | "postDirect";
-        queryPrefix?: string;
-        term?: Term;
-      }
-    );
+    constructor(options: SourceOptions);
     async cube(term: Term | string): Promise<Cube | null>;
     endpoint: string;
     async cubes(options?: {
