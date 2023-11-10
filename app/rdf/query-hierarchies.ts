@@ -5,7 +5,6 @@ import {
 import { AnyPointer } from "clownface";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
-import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { StreamClient } from "sparql-http-client";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -15,6 +14,7 @@ import { parseTerm } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { HierarchyValue } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import * as ns from "./namespace";
 import { getCubeDimensionValuesWithMetadata } from "./queries";
@@ -74,7 +74,7 @@ const toTree = (
 };
 
 const getDimensionHierarchies = async (
-  cube: Cube,
+  cube: ExtendedCube,
   dimensionIri: string,
   locale: string
 ) => {
@@ -88,17 +88,7 @@ const getDimensionHierarchies = async (
   // hierarchies, due to fetching both cube and shape when cube is initialized.
   // Here we are only interested in shape hierarchies, that's why we don't have
   // to initialize the cube, but rather just fetch its shape.
-  const hierarchyCube = new Cube({
-    source: cube.source,
-    term: rdf.namedNode(cubeIri),
-  });
-  // Need to set the shape query manually, because we didn't initialize the cube,
-  // thus can't access its observationConstraint.
-  hierarchyCube.shapeQuery = () => {
-    return `DESCRIBE <${cube.out(ns.cube.observationConstraint)}>`;
-  };
-  await hierarchyCube.fetchShape();
-  const hierarchies = hierarchyCube.ptr
+  const hierarchies = cube.shapePtr
     .any()
     .has(ns.sh.path, rdf.namedNode(dimensionIri))
     .has(ns.cubeMeta.inHierarchy)
