@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
 ## Unreleased
+
 - Features
   - Match drag and drop behavior for table chart and filter panel
 - Fixes
   - Remove ErrorWhisker and Tooltip when error is null in Column charts
+  - We now only fetch hierarchies defined in cube's shape
+  - Hierarchy names are now correctly retrieved
+- Performance
+  - We no longer fetch shape when initalizing the cube, as we might need to re-fetch it again if a newer cube is required
 
 # [3.24.0] - 2023-11-08
 

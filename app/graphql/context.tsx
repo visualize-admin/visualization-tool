@@ -2,6 +2,7 @@ import { IncomingMessage } from "http";
 
 import DataLoader from "dataloader";
 import { GraphQLResolveInfo } from "graphql";
+import rdf from "rdf-ext";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
@@ -10,6 +11,7 @@ import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
 import { createSource } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
 import { timed, TimingCallback } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
@@ -26,7 +28,15 @@ export const MAX_BATCH_SIZE = 500;
 
 export const getRawCube = async (sourceUrl: string, iri: string) => {
   const source = createSource({ endpointUrl: sourceUrl });
-  return await source.cube(iri);
+  const cube = new ExtendedCube({
+    parent: source,
+    term: rdf.namedNode(iri),
+    source,
+  });
+  // Don't fetch shape yet, as we might need to fetch newer cube.
+  await cube.fetchCube();
+
+  return cube;
 };
 
 // const cachedGetRawCube = cachedWithTTL(
