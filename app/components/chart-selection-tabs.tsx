@@ -20,8 +20,8 @@ import {
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import {
-  useComponentsQuery,
   useDataCubeMetadataQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
@@ -263,15 +263,19 @@ const PublishChartButton = () => {
     locale,
   };
   const [{ data: metadata }] = useDataCubeMetadataQuery({ variables });
-  const [{ data: components }] = useComponentsQuery({ variables });
+  const [{ data: components }] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      filters: [{ iri: chartConfig.dataSet }],
+    },
+  });
   const goNext = useEvent(() => {
-    if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
+    if (metadata?.dataCubeByIri && components?.dataCubesComponents) {
       dispatch({
         type: "STEP_NEXT",
-        dataSetMetadata: {
-          ...metadata.dataCubeByIri,
-          ...components.dataCubeByIri,
-        },
+        dataCubesComponents: components.dataCubesComponents,
       });
     }
   });

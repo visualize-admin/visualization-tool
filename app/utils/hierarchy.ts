@@ -1,7 +1,6 @@
 import { SelectTreeProps } from "@/components/select-tree";
-import { DimensionValue } from "@/domain/data";
+import { DimensionValue, HierarchyValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { HierarchyValue } from "@/graphql/resolver-types";
 import { sortHierarchy } from "@/rdf/tree-utils";
 
 export const hierarchyToOptions = (
@@ -33,6 +32,7 @@ export const hierarchyToOptions = (
       children,
     };
   };
+
   return sortHierarchy(hierarchy).map(transform).filter(truthy);
 };
 

@@ -178,7 +178,6 @@ export const getCubeDimensions = async ({
       });
 
     const dimensionUnits = dimensions.flatMap(getDimensionUnits);
-
     const dimensionUnitIndex = index(
       await loadUnits({
         ids: dimensionUnits,

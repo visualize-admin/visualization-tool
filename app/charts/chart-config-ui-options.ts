@@ -39,14 +39,16 @@ import {
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
   Observation,
-  canDimensionBeMultiFiltered,
-  isNumericalMeasure,
-  isOrdinalMeasure,
-  isTemporalDimension,
-  isTemporalOrdinalDimension,
+  canDataCubeDimensionBeMultiFiltered,
+  isDataCubeNumericalMeasure,
+  isDataCubeOrdinalMeasure,
+  isDataCubeTemporalDimension,
+  isDataCubeTemporalOrdinalDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
 /**
@@ -66,8 +68,8 @@ type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
   value: V,
   options: {
     chartConfig: T;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: DataCubeDimension[];
+    measures: DataCubeMeasure[];
     field: EncodingFieldType;
   }
 ) => void;
@@ -76,7 +78,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   field: "chartSubType";
   getValues: (
     chartConfig: T,
-    dimensions: DimensionMetadataFragment[]
+    dimensions: DataCubeComponent[]
   ) => {
     value: ChartSubType;
     disabled: boolean;
@@ -176,7 +178,10 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
       `${basePath}.color.palette`
     );
 
-    if (canDimensionBeMultiFiltered(component) || isOrdinalMeasure(component)) {
+    if (
+      canDataCubeDimensionBeMultiFiltered(component) ||
+      isDataCubeOrdinalMeasure(component)
+    ) {
       const palette = getDefaultCategoricalPaletteName(component, colorPalette);
       newField = {
         type: "categorical",
@@ -187,7 +192,7 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
           dimensionValues: component.values,
         }),
       };
-    } else if (isNumericalMeasure(component)) {
+    } else if (isDataCubeNumericalMeasure(component)) {
       newField = {
         type: "numerical",
         componentIri: iri,
@@ -233,8 +238,8 @@ type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
   options: {
     chartConfig: T;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: DataCubeDimension[];
+    measures: DataCubeMeasure[];
     initializing: boolean;
     selectedValues: any[];
     field: EncodingFieldType;
@@ -262,7 +267,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   onChange?: OnEncodingChange<T>;
   getDisabledState?: (
     chartConfig: T,
-    components: DimensionMetadataFragment[],
+    components: DataCubeComponent[],
     observations: Observation[]
   ) => {
     disabled: boolean;
@@ -384,7 +389,9 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     warnMessage?: string;
   } => {
     const temporalDimensions = components.filter((d) => {
-      return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
+      return (
+        isDataCubeTemporalDimension(d) || isDataCubeTemporalOrdinalDimension(d)
+      );
     });
     const noTemporalDimensions = temporalDimensions.length === 0;
 
@@ -457,7 +464,7 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   return checkForMissingValuesInSegments(grouped, segments);
 };
 
-export const disableStacked = (d?: DimensionMetadataFragment): boolean => {
+export const disableStacked = (d?: DataCubeComponent): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
@@ -650,7 +657,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (iri, { chartConfig, dimensions }) => {
           const component = dimensions.find((d) => d.iri === iri);
 
-          if (!isTemporalDimension(component)) {
+          if (!isDataCubeTemporalDimension(component)) {
             setWith(
               chartConfig,
               "interactiveFiltersConfig.timeRange.active",

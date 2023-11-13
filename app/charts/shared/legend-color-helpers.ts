@@ -1,6 +1,6 @@
 import { ascending } from "d3";
 
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
 export const getLegendGroups = ({

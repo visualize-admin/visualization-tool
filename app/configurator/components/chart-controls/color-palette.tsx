@@ -22,8 +22,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { isNumericalMeasure } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeComponent, isDataCubeNumericalMeasure } from "@/domain/data";
 import {
   DEFAULT_CATEGORICAL_PALETTE_NAME,
   categoricalPalettes,
@@ -32,13 +31,6 @@ import {
   getPalette,
 } from "@/palettes";
 import useEvent from "@/utils/use-event";
-
-type Props = {
-  field: string;
-  disabled?: boolean;
-  colorConfigPath?: string;
-  component: DimensionMetadataFragment | undefined;
-};
 
 const useStyles = makeStyles({
   root: {
@@ -53,6 +45,13 @@ const useStyles = makeStyles({
     },
   },
 });
+
+type Props = {
+  field: string;
+  disabled?: boolean;
+  colorConfigPath?: string;
+  component?: DataCubeComponent;
+};
 
 export const ColorPalette = ({
   field,
@@ -71,7 +70,7 @@ export const ColorPalette = ({
         )
       : null;
 
-  const palettes = isNumericalMeasure(component)
+  const palettes = isDataCubeNumericalMeasure(component)
     ? divergingSteppedPalettes
     : defaultPalette
     ? [defaultPalette, ...categoricalPalettes]
@@ -205,7 +204,7 @@ const ColorPaletteControls = ({
 }: {
   field: string;
   colorConfigPath?: string;
-  component: DimensionMetadataFragment;
+  component: DataCubeComponent;
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();

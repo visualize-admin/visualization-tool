@@ -51,26 +51,24 @@ import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { ParsedConfig } from "@/db/config";
-import { DimensionValue, isGeoDimension } from "@/domain/data";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubesComponents,
+  DimensionValue,
+  isDataCubeGeoDimension,
+  isDataCubeMeasure,
+} from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
 import {
-  ComponentsDocument,
-  ComponentsQuery,
-  ComponentsQueryVariables,
-  ComponentsWithHierarchiesDocument,
-  ComponentsWithHierarchiesQuery,
-  ComponentsWithHierarchiesQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataQuery,
   DataCubeMetadataQueryVariables,
-  DimensionMetadataFragment,
-  DimensionMetadataWithHierarchiesFragment,
+  DataCubesComponentsDocument,
+  DataCubesComponentsQuery,
+  DataCubesComponentsQueryVariables,
 } from "@/graphql/query-hooks";
-import {
-  DataCubeMetadata,
-  DataCubeMetadataWithHierarchies,
-} from "@/graphql/types";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
@@ -99,7 +97,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "STEP_NEXT";
-      dataSetMetadata: DataCubeMetadata;
+      dataCubesComponents: DataCubesComponents;
     }
   | {
       type: "STEP_PREVIOUS";
@@ -197,7 +195,8 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_REPLACED";
       value: {
         chartConfig: ChartConfig;
-        dataSetMetadata: DataCubeMetadataWithHierarchies;
+        dataCubeMetadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
+        dataCubesComponents: DataCubesComponents;
       };
     }
   | {
@@ -362,33 +361,35 @@ const getCachedMetadata = (
   draft: ConfiguratorStateConfiguringChart,
   dataSet: string,
   locale: Locale
-): DataCubeMetadataWithHierarchies | null => {
-  const variables = {
+): {
+  metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
+  components: DataCubesComponents;
+} | null => {
+  const metadataQuery = client.readQuery<
+    DataCubeMetadataQuery,
+    DataCubeMetadataQueryVariables
+  >(DataCubeMetadataDocument, {
     iri: dataSet,
     locale,
     sourceType: draft.dataSource.type,
     sourceUrl: draft.dataSource.url,
-  };
-  const metadataQuery = client.readQuery<
-    DataCubeMetadataQuery,
-    DataCubeMetadataQueryVariables
-  >(DataCubeMetadataDocument, variables);
+  });
   // Some charts use hierarchical query, so we need to check for both.
-  const componentsQuery =
-    client.readQuery<
-      ComponentsWithHierarchiesQuery,
-      ComponentsWithHierarchiesQueryVariables
-    >(ComponentsWithHierarchiesDocument, variables) ??
-    client.readQuery<ComponentsQuery, ComponentsQueryVariables>(
-      ComponentsDocument,
-      variables
-    );
+  const componentsQuery = client.readQuery<
+    DataCubesComponentsQuery,
+    DataCubesComponentsQueryVariables
+  >(DataCubesComponentsDocument, {
+    sourceType: draft.dataSource.type,
+    sourceUrl: draft.dataSource.url,
+    locale,
+    filters: [{ iri: dataSet }],
+  });
 
   return metadataQuery?.data?.dataCubeByIri &&
-    componentsQuery?.data?.dataCubeByIri
+    componentsQuery?.data?.dataCubesComponents
     ? {
-        ...metadataQuery.data.dataCubeByIri,
-        ...componentsQuery.data.dataCubeByIri,
+        metadata: metadataQuery.data.dataCubeByIri,
+        components: componentsQuery.data.dataCubesComponents,
       }
     : null;
 };
@@ -443,10 +444,7 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (
-    chartConfig: ChartConfig,
-    dimensions: DimensionMetadataWithHierarchiesFragment[]
-  ) => {
+  (chartConfig: ChartConfig, components: DataCubeComponent[]) => {
     const { chartType, fields, filters } = chartConfig;
 
     if (chartType === "table") {
@@ -457,12 +455,16 @@ export const deriveFiltersFromFields = produce(
       const isHidden = (iri: string) => hiddenFieldIris.has(iri);
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-      dimensions.forEach((dimension) => {
+      components.forEach((component) => {
+        if (isDataCubeMeasure(component)) {
+          return;
+        }
+
         applyTableDimensionToFilters({
           filters,
-          dimension,
-          isHidden: isHidden(dimension.iri),
-          isGrouped: isGrouped(dimension.iri),
+          dimension: component,
+          isHidden: isHidden(component.iri),
+          isGrouped: isGrouped(component.iri),
         });
       });
     } else {
@@ -470,16 +472,20 @@ export const deriveFiltersFromFields = produce(
       const isField = (iri: string) => fieldDimensionIris.has(iri);
 
       // Apply hierarchical dimensions first
-      const sortedDimensions = sortBy(
-        dimensions,
-        (d) => (isGeoDimension(d) ? -1 : 1),
-        (d) => (d.hierarchy ? -1 : 1)
+      const sortedComponents = sortBy(
+        components,
+        (d) => (isDataCubeGeoDimension(d) ? -1 : 1),
+        (d) => (isDataCubeMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
       );
-      sortedDimensions.forEach((dimension) => {
+      sortedComponents.forEach((component) => {
+        if (isDataCubeMeasure(component)) {
+          return;
+        }
+
         applyNonTableDimensionToFilters({
           filters,
-          dimension,
-          isField: isField(dimension.iri),
+          dimension: component,
+          isField: isField(component.iri),
         });
       });
     }
@@ -495,7 +501,7 @@ export const applyTableDimensionToFilters = ({
   isGrouped,
 }: {
   filters: Filters;
-  dimension: DimensionMetadataFragment;
+  dimension: DataCubeDimension;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
@@ -544,7 +550,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetadataWithHierarchiesFragment;
+  dimension: DataCubeDimension;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
@@ -607,26 +613,26 @@ const transitionStepNext = (
   draft: ConfiguratorState,
   options: {
     dataSet?: string;
-    dataSetMetadata: DataCubeMetadataWithHierarchies;
+    dataCubesComponents: DataCubesComponents;
   }
 ): ConfiguratorState => {
-  const { dataSet, dataSetMetadata } = options;
+  const { dataSet, dataCubesComponents } = options;
 
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (dataSet) {
         const possibleChartTypes = getPossibleChartTypes({
-          dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures,
+          dimensions: dataCubesComponents.dimensions,
+          measures: dataCubesComponents.measures,
         });
         const chartConfig = deriveFiltersFromFields(
           getInitialConfig({
             chartType: possibleChartTypes[0],
             dataSet,
-            dimensions: dataSetMetadata.dimensions,
-            measures: dataSetMetadata.measures,
+            dimensions: dataCubesComponents.dimensions,
+            measures: dataCubesComponents.measures,
           }),
-          dataSetMetadata.dimensions
+          dataCubesComponents.dimensions
         );
 
         return {
@@ -772,8 +778,10 @@ export const handleChartFieldChanged = (
     selectedValues: actionSelectedValues,
   } = action.value;
   const f = get(chartConfig.fields, field);
-  const { dimensions = [], measures = [] } =
+  const { components: dataCubesComponents } =
     getCachedMetadata(draft, chartConfig.dataSet, locale) ?? {};
+  const dimensions = dataCubesComponents?.dimensions ?? [];
+  const measures = dataCubesComponents?.measures ?? [];
   const components = [...dimensions, ...measures];
   const component = components.find((d) => d.iri === componentIri);
   const selectedValues = actionSelectedValues ?? component?.values ?? [];
@@ -821,8 +829,10 @@ export const handleChartOptionChanged = (
     const { locale, path, field, value } = action.value;
     const chartConfig = getChartConfig(draft);
     const updatePath = field === null ? path : `fields["${field}"].${path}`;
-    const { dimensions = [], measures = [] } =
+    const { components: dataCubesComponents } =
       getCachedMetadata(draft, chartConfig.dataSet, locale) ?? {};
+    const dimensions = dataCubesComponents?.dimensions ?? [];
+    const measures = dataCubesComponents?.measures ?? [];
 
     if (field) {
       const sideEffect = getChartFieldOptionChangeSideEffect(
@@ -929,10 +939,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const { locale, chartKey, chartType } = action.value;
         const chartConfig = getChartConfig(draft, chartKey);
-        const metadata = getCachedMetadata(draft, chartConfig.dataSet, locale);
+        const { components: dataCubesComponents } =
+          getCachedMetadata(draft, chartConfig.dataSet, locale) ?? {};
+        const dimensions = dataCubesComponents?.dimensions;
+        const measures = dataCubesComponents?.measures;
 
-        if (metadata) {
-          const { dimensions, measures } = metadata;
+        if (dimensions && measures) {
           const newConfig = deriveFiltersFromFields(
             getChartConfigAdjustedToChartType({
               chartConfig: current(chartConfig),
@@ -967,12 +979,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
         delete (chartConfig.fields as GenericFields)[action.value.field];
-        const metadata = getCachedMetadata(
-          draft,
-          chartConfig.dataSet,
-          action.value.locale
-        );
-        const dimensions = metadata?.dimensions ?? [];
+        const { components: dataCubesComponents } =
+          getCachedMetadata(draft, chartConfig.dataSet, action.value.locale) ??
+          {};
+        const dimensions = dataCubesComponents?.dimensions ?? [];
         deriveFiltersFromFields(chartConfig, dimensions);
 
         if (
@@ -1073,7 +1083,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
         draft.chartConfigs[index] = deriveFiltersFromFields(
           action.value.chartConfig,
-          action.value.dataSetMetadata.dimensions
+          action.value.dataCubesComponents.dimensions
         );
       }
 
@@ -1241,7 +1251,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     // State transitions
     case "STEP_NEXT":
       return transitionStepNext(draft, {
-        dataSetMetadata: action.dataSetMetadata,
+        dataCubesComponents: action.dataCubesComponents,
       });
 
     case "STEP_PREVIOUS":
@@ -1260,17 +1270,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_ADD":
       if (draft.state === "CONFIGURING_CHART") {
         const chartConfig = getChartConfig(draft);
-        const metadata = getCachedMetadata(
-          draft,
-          chartConfig.dataSet,
-          action.value.locale
-        );
+        const { components: dataCubesComponents } =
+          getCachedMetadata(draft, chartConfig.dataSet, action.value.locale) ??
+          {};
 
-        if (metadata) {
+        if (dataCubesComponents) {
           draft.chartConfigs.push(
             deriveFiltersFromFields(
               action.value.chartConfig,
-              metadata.dimensions
+              dataCubesComponents.dimensions
             )
           );
           draft.activeChartKey = action.value.chartConfig.key;
@@ -1366,23 +1374,20 @@ export const initChartStateFromCube = async (
     )
     .toPromise();
   const { data: components } = await client
-    .query<
-      ComponentsWithHierarchiesQuery,
-      ComponentsWithHierarchiesQueryVariables
-    >(ComponentsWithHierarchiesDocument, {
-      iri: datasetIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    })
+    .query<DataCubesComponentsQuery, DataCubesComponentsQueryVariables>(
+      DataCubesComponentsDocument,
+      {
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+        locale,
+        filters: [{ iri: datasetIri }],
+      }
+    )
     .toPromise();
 
-  if (metadata?.dataCubeByIri && components?.dataCubeByIri) {
+  if (metadata?.dataCubeByIri && components?.dataCubesComponents) {
     return transitionStepNext(getStateWithCurrentDataSource(EMPTY_STATE), {
-      dataSetMetadata: {
-        ...metadata.dataCubeByIri,
-        ...components.dataCubeByIri,
-      },
+      dataCubesComponents: components.dataCubesComponents,
       dataSet: datasetIri,
     });
   }

@@ -1,13 +1,13 @@
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/domain/data";
 
 import { getLegendGroups } from "./legend-color-helpers";
 
 describe("getLegendGroups", () => {
-  const hierarchy: HierarchyValue[] = [
+  const hierarchy = [
     { dimensionIri: "numbers", depth: 0, value: "1", label: "one" },
     { dimensionIri: "numbers", depth: 0, value: "2", label: "two" },
     { dimensionIri: "numbers", depth: 0, value: "3", label: "three" },
-  ];
+  ] as HierarchyValue[];
 
   it("should properly create groups when encountering top-level values", () => {
     const groups = getLegendGroups({

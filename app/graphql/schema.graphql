@@ -6,6 +6,7 @@ scalar Filters
 scalar GeoShapes
 scalar ValueIdentifier
 scalar ValuePosition
+scalar HierarchyValue
 
 type ObservationsQuery {
   "Observations with their values parsed to native JS types"
@@ -76,18 +77,6 @@ type DataCube {
 type RelatedDimension {
   type: String!
   iri: String!
-}
-
-type HierarchyValue {
-  value: String!
-  label: String!
-  alternateName: String
-  position: ValuePosition
-  identifier: ValueIdentifier
-  dimensionIri: String!
-  depth: Int!
-  children: [HierarchyValue!]
-  hasValue: Boolean
 }
 
 interface Dimension {
@@ -357,6 +346,7 @@ enum SearchCubeResultOrder {
 input DataCubeFilter {
   iri: String!
   componentIris: [String!]
+  filters: Filters
   latest: Boolean
 }
 

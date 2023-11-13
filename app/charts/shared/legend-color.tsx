@@ -13,16 +13,18 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
-  DataSource,
   GenericSegmentField,
   MapConfig,
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import { DataCubeComponent, DataCubeMeasure, Observation } from "@/domain/data";
-import { useDimensionValuesQuery } from "@/graphql/query-hooks";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
+  Observation,
+} from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-import { useLocale } from "@/src";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { MaybeTooltip } from "@/utils/maybe-tooltip";
@@ -108,40 +110,16 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => ({
   },
 }));
 
-const useDimension = ({
-  dataset,
-  dataSource,
-  locale,
-  dimensionIri,
-}: {
-  dataset: string;
-  dataSource: DataSource;
-  locale: string;
-  dimensionIri?: string;
-}) => {
-  const [{ data: cubeMetadata }] = useDimensionValuesQuery({
-    variables: {
-      dataCubeIri: dataset,
-      dimensionIri: dimensionIri!,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !dimensionIri,
-  });
-  return useMemo(() => {
-    return cubeMetadata?.dataCubeByIri?.dimensionByIri;
-  }, [cubeMetadata?.dataCubeByIri?.dimensionByIri]);
-};
-
 const emptyObj = {};
 
 const useLegendGroups = ({
   chartConfig,
+  segmentDimension,
   title,
   values,
 }: {
   chartConfig: ChartConfig;
+  segmentDimension?: DataCubeDimension;
   title?: string;
   values: string[];
 }) => {
@@ -156,55 +134,29 @@ const useLegendGroups = ({
     );
   }
 
-  const locale = useLocale();
-
-  // FIXME: should color field also be included here?
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericSegmentField | null | undefined;
-
   const segmentFilters = segmentField?.componentIri
     ? chartConfig.filters[segmentField.componentIri]
     : null;
   const segmentValues =
     segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
-  const { dataSource } = configState;
-  const segmentDimension = useDimension({
-    dataset: chartConfig.dataSet,
-    dataSource,
-    locale,
-    dimensionIri: segmentField?.componentIri,
-  });
-
-  const [hierarchyResp] = useDimensionValuesQuery({
-    variables: {
-      dataCubeIri: chartConfig.dataSet,
-      dimensionIri: segmentDimension?.iri!,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-    pause: !segmentDimension?.iri,
-  });
-  const hierarchy =
-    hierarchyResp?.data?.dataCubeByIri?.dimensionByIri?.hierarchy;
-
-  const groups = useMemo(() => {
+  return useMemo(() => {
     return getLegendGroups({
       title,
       values,
-      hierarchy,
+      hierarchy: segmentDimension?.hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
       labelIris: segmentValues,
     });
-  }, [title, values, hierarchy, segmentField, segmentValues]);
-
-  return groups;
+  }, [title, values, segmentDimension?.hierarchy, segmentField, segmentValues]);
 };
 
 type LegendColorProps = {
   chartConfig: ChartConfig;
+  segmentDimension?: DataCubeDimension;
   symbol: LegendSymbol;
   // If the legend is based on measures, this function can be used to get the
   // corresponding measure to open the metadata panel.
@@ -215,10 +167,16 @@ type LegendColorProps = {
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const { chartConfig, symbol, getLegendItemDimension, interactive } = props;
+  const {
+    chartConfig,
+    segmentDimension,
+    symbol,
+    getLegendItemDimension,
+    interactive,
+  } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
-  const groups = useLegendGroups({ chartConfig, values });
+  const groups = useLegendGroups({ chartConfig, segmentDimension, values });
 
   return (
     <LegendColorContent

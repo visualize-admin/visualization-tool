@@ -32,6 +32,7 @@ import { useClient } from "urql";
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import MoveDragButtons from "@/components/move-drag-buttons";
 import useDisclosure from "@/components/use-disclosure";
 import {
   ChartConfig,
@@ -57,7 +58,6 @@ import {
   DataFilterSelectTime,
   OnOffControlTabField,
 } from "@/configurator/components/field";
-import MoveDragButtons from "@/components/move-drag-buttons";
 import {
   getFiltersByMappingStatus,
   isConfiguring,
@@ -66,27 +66,27 @@ import {
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
-import { isStandardErrorDimension, isTemporalDimension } from "@/domain/data";
 import {
-  DimensionMetadataWithHierarchiesFragment,
+  DataCubeDimension,
+  DataCubeMeasure,
+  isDataCubeStandardErrorDimension,
+  isDataCubeTemporalDimension,
+} from "@/domain/data";
+import {
+  DataCubeMetadataQuery,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useComponentsWithHierarchiesQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
-import {
-  DataCubeMetadata,
-  DataCubeMetadataWithHierarchies,
-} from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 type DataFilterSelectGenericProps = {
-  dimension: DimensionMetadataWithHierarchiesFragment;
+  dimension: DataCubeDimension;
   index: number;
   disabled?: boolean;
   onRemove: () => void;
@@ -121,9 +121,9 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
     isOptional: !dimension.isKeyDimension,
   };
 
-  if (isTemporalDimension(dimension)) {
+  if (isDataCubeTemporalDimension(dimension)) {
     if (dimension.timeUnit === "Day") {
-      return <DataFilterSelectDay {...sharedProps} />;
+      return <DataFilterSelectDay {...sharedProps} dimension={dimension} />;
     } else if (dimension.timeUnit === "Month") {
       return <DataFilterSelect {...sharedProps} />;
     } else {
@@ -142,10 +142,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
     }
   } else {
     return (
-      <DataFilterSelect
-        {...sharedProps}
-        hierarchy={dimension.hierarchy as HierarchyValue[] | undefined}
-      />
+      <DataFilterSelect {...sharedProps} hierarchy={dimension.hierarchy} />
     );
   }
 };
@@ -242,10 +239,6 @@ const useEnsurePossibleFilters = ({
   return { error, fetching };
 };
 
-type Dimension = NonNullable<
-  NonNullable<DataCubeMetadata>["dimensions"]
->[number];
-
 const useFilterReorder = ({
   onAddDimensionFilter,
 }: {
@@ -286,12 +279,25 @@ const useFilterReorder = ({
     unmappedFilters,
   ]);
 
-  const [{ data: metadata, fetching: metadataFetching }, executeMetadataQuery] =
-    useDataCubeMetadataQuery({ variables });
   const [
-    { data: components, fetching: componentsFetching },
+    { data: metadataData, fetching: metadataFetching },
+    executeMetadataQuery,
+  ] = useDataCubeMetadataQuery({
+    variables,
+  });
+  const [
+    { data: componentsData, fetching: componentsFetching },
     exectueComponentsQuery,
-  ] = useComponentsWithHierarchiesQuery({ variables });
+  ] = useDataCubesComponentsQuery({
+    variables: {
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      locale,
+      filters: [{ iri: chartConfig.dataSet, filters: variables.filters }],
+      // @ts-ignore This is to make urql requery
+      filterKeys: variables.filterKeys,
+    },
+  });
 
   useEffect(() => {
     executeMetadataQuery({
@@ -302,28 +308,13 @@ const useFilterReorder = ({
     });
   }, [variables, executeMetadataQuery, exectueComponentsQuery]);
 
-  const dimensions = useMemo(() => {
-    const dimensions = components?.dataCubeByIri?.dimensions;
-    type T = Exclude<typeof dimensions, undefined>;
-
-    if (!components?.dataCubeByIri?.dimensions) {
-      return [] as T;
-    }
-
-    return dimensions as T;
-  }, [components?.dataCubeByIri?.dimensions]);
-
-  const data =
-    metadata?.dataCubeByIri && components?.dataCubeByIri
-      ? ({
-          ...metadata.dataCubeByIri,
-          ...components.dataCubeByIri,
-        } as DataCubeMetadataWithHierarchies)
-      : null;
+  const metadata = metadataData?.dataCubeByIri;
+  const dimensions = componentsData?.dataCubesComponents?.dimensions;
+  const measures = componentsData?.dataCubesComponents?.measures;
 
   // Handlers
   const handleMove = useEvent((dimensionIri: string, delta: number) => {
-    if (!data) {
+    if (!metadata || !dimensions || !measures) {
       return;
     }
 
@@ -338,12 +329,16 @@ const useFilterReorder = ({
       type: "CHART_CONFIG_REPLACED",
       value: {
         chartConfig: newChartConfig,
-        dataSetMetadata: data,
+        dataCubeMetadata: metadata,
+        dataCubesComponents: {
+          dimensions,
+          measures,
+        },
       },
     });
   });
 
-  const handleAddDimensionFilter = useEvent((dimension: Dimension) => {
+  const handleAddDimensionFilter = useEvent((dimension: DataCubeDimension) => {
     onAddDimensionFilter?.();
     const filterValue = dimension.values[0];
     dispatch({
@@ -355,14 +350,16 @@ const useFilterReorder = ({
     });
   });
 
-  const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
-      value: {
-        dimensionIri: dimension.iri,
-      },
-    });
-  });
+  const handleRemoveDimensionFilter = useEvent(
+    (dimension: DataCubeDimension) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+        value: {
+          dimensionIri: dimension.iri,
+        },
+      });
+    }
+  );
 
   const handleDragEnd: OnDragEndResponder = useEvent((result) => {
     const sourceIndex = result.source?.index;
@@ -389,18 +386,19 @@ const useFilterReorder = ({
       Object.keys(filters).map((k, i) => [k, i])
     );
     const filterDimensions = sortBy(
-      dimensions.filter(
+      dimensions?.filter(
         (dim) =>
           !mappedFiltersIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
       ) || [],
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
-    const addableDimensions = dimensions.filter(
+    const addableDimensions = dimensions?.filter(
       (dim) =>
         !mappedFiltersIris.has(dim.iri) &&
         keysOrder[dim.iri] === undefined &&
-        !isStandardErrorDimension(dim)
+        !isDataCubeStandardErrorDimension(dim)
     );
+
     return {
       filterDimensions,
       addableDimensions,
@@ -413,7 +411,9 @@ const useFilterReorder = ({
     handleMove,
     handleDragEnd,
     fetching,
-    data,
+    metadata,
+    dimensions,
+    measures,
     filterDimensions,
     addableDimensions,
   };
@@ -545,7 +545,9 @@ export const ChartConfigurator = ({
     handleAddDimensionFilter,
     handleRemoveDimensionFilter,
     handleDragEnd,
-    data,
+    metadata,
+    dimensions,
+    measures,
     filterDimensions,
     addableDimensions,
     handleMove,
@@ -562,7 +564,7 @@ export const ChartConfigurator = ({
 
   const classes = useStyles({ fetching });
 
-  if (!data) {
+  if (!metadata || !dimensions || !measures) {
     return (
       <>
         <ControlSectionSkeleton />
@@ -599,11 +601,14 @@ export const ChartConfigurator = ({
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
-            metadata={data}
+            metadata={metadata}
+            dimensions={dimensions}
+            measures={measures}
           />
         </ControlSectionContent>
       </ControlSection>
       {filterDimensions.length === 0 &&
+      addableDimensions &&
       addableDimensions.length === 0 ? null : (
         <ControlSection className={classes.filterSection} collapse>
           <SubsectionTitle titleId="controls-data" gutterBottom={false}>
@@ -704,7 +709,7 @@ export const ChartConfigurator = ({
                 )}
               </Droppable>
             </DragDropContext>
-            {addableDimensions.length > 0 ? (
+            {addableDimensions && addableDimensions.length > 0 ? (
               <Box className={classes.addDimensionContainer}>
                 <Button
                   ref={filterMenuButtonRef}
@@ -746,12 +751,13 @@ export const ChartConfigurator = ({
 type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
-  metadata: DataCubeMetadata;
+  metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, metadata } = props;
-  const { dimensions, measures } = metadata;
+  const { dataSource, chartConfig, metadata, dimensions, measures } = props;
   const components = [...dimensions, ...measures];
   const queryFilters = useQueryFilters({ chartConfig });
   const locale = useLocale();

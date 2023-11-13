@@ -47,7 +47,8 @@ export const ChartConfiguratorTable = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const {
-    metaData,
+    dimensions,
+    measures,
     currentDraggableId,
     chartConfig,
     handleDragEnd,
@@ -57,7 +58,7 @@ export const ChartConfiguratorTable = ({
 
   const fieldsArray = useOrderedTableColumns(chartConfig.fields);
 
-  if (!metaData) {
+  if (!dimensions || !measures) {
     return <Loading />;
   }
 
@@ -120,7 +121,8 @@ export const ChartConfiguratorTable = ({
         <TabDropZone
           id="groups"
           title={<Trans id="controls.section.groups">Groups</Trans>}
-          metaData={metaData}
+          dimensions={dimensions}
+          measures={measures}
           items={groupFields}
           isDropDisabled={isGroupsDropDisabled}
           emptyComponent={<EmptyGroups />}
@@ -131,7 +133,8 @@ export const ChartConfiguratorTable = ({
         <TabDropZone
           id="columns"
           title={<Trans id="controls.section.columns">Columns</Trans>}
-          metaData={metaData}
+          dimensions={dimensions}
+          measures={measures}
           items={columnFields}
           onUp={handleMove(-1, "columns")}
           onDown={handleMove(1, "columns")}

@@ -1,6 +1,7 @@
 import { DataCubesComponents } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
+import { HierarchyValue } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { SearchCube } from '../domain/data';
@@ -24,6 +25,7 @@ export type Scalars = {
   FilterValue: any;
   Filters: Filters;
   GeoShapes: any;
+  HierarchyValue: HierarchyValue;
   Observation: Observation;
   RawObservation: RawObservation;
   SearchCube: SearchCube;
@@ -90,6 +92,7 @@ export type DataCubeMeasuresArgs = {
 export type DataCubeFilter = {
   iri: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
+  filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
 };
 
@@ -123,7 +126,7 @@ export type Dimension = {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -165,7 +168,7 @@ export type GeoCoordinatesDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
   geoCoordinates?: Maybe<Array<GeoCoordinates>>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -197,7 +200,7 @@ export type GeoShapesDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
   geoShapes?: Maybe<Scalars['GeoShapes']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -214,18 +217,6 @@ export type GeoShapesDimensionHierarchyArgs = {
   sourceUrl: Scalars['String'];
 };
 
-export type HierarchyValue = {
-  __typename?: 'HierarchyValue';
-  value: Scalars['String'];
-  label: Scalars['String'];
-  alternateName?: Maybe<Scalars['String']>;
-  position?: Maybe<Scalars['ValuePosition']>;
-  identifier?: Maybe<Scalars['ValueIdentifier']>;
-  dimensionIri: Scalars['String'];
-  depth: Scalars['Int'];
-  children?: Maybe<Array<HierarchyValue>>;
-  hasValue?: Maybe<Scalars['Boolean']>;
-};
 
 export type Measure = NumericalMeasure | OrdinalMeasure;
 
@@ -242,7 +233,7 @@ export type NominalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -276,7 +267,7 @@ export type NumericalMeasure = Dimension & {
   resolution?: Maybe<Scalars['Int']>;
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -326,7 +317,7 @@ export type OrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -356,7 +347,7 @@ export type OrdinalMeasure = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -468,7 +459,7 @@ export type StandardErrorDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -500,7 +491,7 @@ export type TemporalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -530,7 +521,7 @@ export type TemporalOrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   related?: Maybe<Array<RelatedDimension>>;
-  hierarchy?: Maybe<Array<HierarchyValue>>;
+  hierarchy?: Maybe<Array<Scalars['HierarchyValue']>>;
 };
 
 
@@ -643,7 +634,7 @@ export type ResolversTypes = ResolversObject<{
   GeoCoordinatesDimension: ResolverTypeWrapper<ResolvedDimension>;
   GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   GeoShapesDimension: ResolverTypeWrapper<ResolvedDimension>;
-  HierarchyValue: ResolverTypeWrapper<HierarchyValue>;
+  HierarchyValue: ResolverTypeWrapper<Scalars['HierarchyValue']>;
   Measure: ResolversTypes['NumericalMeasure'] | ResolversTypes['OrdinalMeasure'];
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
   NumericalMeasure: ResolverTypeWrapper<ResolvedMeasure>;
@@ -687,7 +678,7 @@ export type ResolversParentTypes = ResolversObject<{
   GeoCoordinatesDimension: ResolvedDimension;
   GeoShapes: Scalars['GeoShapes'];
   GeoShapesDimension: ResolvedDimension;
-  HierarchyValue: HierarchyValue;
+  HierarchyValue: Scalars['HierarchyValue'];
   Measure: ResolversParentTypes['NumericalMeasure'] | ResolversParentTypes['OrdinalMeasure'];
   NominalDimension: ResolvedDimension;
   NumericalMeasure: ResolvedMeasure;
@@ -823,18 +814,9 @@ export type GeoShapesDimensionResolvers<ContextType = VisualizeGraphQLContext, P
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type HierarchyValueResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['HierarchyValue'] = ResolversParentTypes['HierarchyValue']> = ResolversObject<{
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  alternateName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  position?: Resolver<Maybe<ResolversTypes['ValuePosition']>, ParentType, ContextType>;
-  identifier?: Resolver<Maybe<ResolversTypes['ValueIdentifier']>, ParentType, ContextType>;
-  dimensionIri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  depth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  children?: Resolver<Maybe<Array<ResolversTypes['HierarchyValue']>>, ParentType, ContextType>;
-  hasValue?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export interface HierarchyValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['HierarchyValue'], any> {
+  name: 'HierarchyValue';
+}
 
 export type MeasureResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Measure'] = ResolversParentTypes['Measure']> = ResolversObject<{
   __resolveType: TypeResolveFn<'NumericalMeasure' | 'OrdinalMeasure', ParentType, ContextType>;
@@ -1027,7 +1009,7 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   GeoCoordinatesDimension?: GeoCoordinatesDimensionResolvers<ContextType>;
   GeoShapes?: GraphQLScalarType;
   GeoShapesDimension?: GeoShapesDimensionResolvers<ContextType>;
-  HierarchyValue?: HierarchyValueResolvers<ContextType>;
+  HierarchyValue?: GraphQLScalarType;
   Measure?: MeasureResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;
   NumericalMeasure?: NumericalMeasureResolvers<ContextType>;

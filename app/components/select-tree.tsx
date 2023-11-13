@@ -26,7 +26,7 @@ import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Label } from "@/components/form";
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
@@ -246,7 +246,7 @@ const TreeItem = (props: TreeItemProps) => {
   return <MUITreeItem {...props} ContentComponent={TreeItemContent} />;
 };
 
-type TreeHierachyValue = Omit<
+export type TreeHierachyValue = Omit<
   HierarchyValue,
   "depth" | "dimensionIri" | "children"
 > & {

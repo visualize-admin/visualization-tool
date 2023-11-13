@@ -36,6 +36,19 @@ export type DimensionValue = {
   alternateName?: string;
 };
 
+export type HierarchyValue = {
+  depth: number;
+  dimensionIri: string;
+  value: string;
+  /** In other words, is selectable? */
+  hasValue: Boolean;
+  label: string;
+  alternateName?: string;
+  position?: ObservationValue;
+  identifier?: ObservationValue;
+  children?: HierarchyValue[];
+};
+
 export type Observation = Record<string, ObservationValue>;
 
 export type DataCubesComponents = {
@@ -60,6 +73,10 @@ type BasicDataCubeComponent = {
   related?: RelatedDimension[];
 };
 
+type BasicDataCubeDimension = BasicDataCubeComponent & {
+  hierarchy?: HierarchyValue[];
+};
+
 export type DataCubeDimension =
   | DataCubeNominalDimension
   | DataCubeOrdinalDimension
@@ -69,33 +86,33 @@ export type DataCubeDimension =
   | DataCubeGeoShapesDimension
   | DataCubeStandardErrorDimension;
 
-export type DataCubeNominalDimension = BasicDataCubeComponent & {
+export type DataCubeNominalDimension = BasicDataCubeDimension & {
   __typename: "NominalDimension";
 };
 
-export type DataCubeOrdinalDimension = BasicDataCubeComponent & {
+export type DataCubeOrdinalDimension = BasicDataCubeDimension & {
   __typename: "OrdinalDimension";
 };
 
-export type DataCubeTemporalDimension = BasicDataCubeComponent & {
+export type DataCubeTemporalDimension = BasicDataCubeDimension & {
   __typename: "TemporalDimension";
   timeUnit: TimeUnit;
   timeFormat: string;
 };
 
-export type DataCubeTemporalOrdinalDimension = BasicDataCubeComponent & {
+export type DataCubeTemporalOrdinalDimension = BasicDataCubeDimension & {
   __typename: "TemporalOrdinalDimension";
 };
 
-export type DataCubeGeoCoordinatesDimension = BasicDataCubeComponent & {
+export type DataCubeGeoCoordinatesDimension = BasicDataCubeDimension & {
   __typename: "GeoCoordinatesDimension";
 };
 
-export type DataCubeGeoShapesDimension = BasicDataCubeComponent & {
+export type DataCubeGeoShapesDimension = BasicDataCubeDimension & {
   __typename: "GeoShapesDimension";
 };
 
-export type DataCubeStandardErrorDimension = BasicDataCubeComponent & {
+export type DataCubeStandardErrorDimension = BasicDataCubeDimension & {
   __typename: "StandardErrorDimension";
 };
 
@@ -242,11 +259,23 @@ export const parseObservationValue = ({
   return value.value;
 };
 
+export const isDataCubeMeasure = (
+  component?: DataCubeComponent | null
+): component is DataCubeMeasure => {
+  return (
+    isDataCubeNumericalMeasure(component) || isDataCubeOrdinalMeasure(component)
+  );
+};
+
 /**
  * @fixme use metadata to filter time dimension!
  */
 export const getTemporalDimensions = (
   dimensions: DimensionMetadataFragment[]
+) => dimensions.filter((d) => d.__typename === "TemporalDimension");
+
+export const getDataCubeTemporalDimensions = (
+  dimensions: DataCubeComponent[]
 ) => dimensions.filter((d) => d.__typename === "TemporalDimension");
 
 export const isCategoricalDimension = (
@@ -256,6 +285,19 @@ export const isCategoricalDimension = (
     isNominalDimension(d) ||
     isOrdinalDimension(d) ||
     isTemporalOrdinalDimension(d)
+  );
+};
+
+export const isDataCubeCategoricalDimension = (
+  d: DataCubeComponent
+): d is
+  | DataCubeNominalDimension
+  | DataCubeOrdinalDimension
+  | DataCubeTemporalOrdinalDimension => {
+  return (
+    isDataCubeNominalDimension(d) ||
+    isDataCubeOrdinalDimension(d) ||
+    isDataCubeTemporalOrdinalDimension(d)
   );
 };
 
@@ -269,6 +311,16 @@ export const canDimensionBeMultiFiltered = (d: DimensionMetadataFragment) => {
   );
 };
 
+export const canDataCubeDimensionBeMultiFiltered = (d: DataCubeComponent) => {
+  return (
+    isDataCubeNominalDimension(d) ||
+    isDataCubeOrdinalDimension(d) ||
+    isDataCubeTemporalOrdinalDimension(d) ||
+    isDataCubeGeoCoordinatesDimension(d) ||
+    isDataCubeGeoShapesDimension(d)
+  );
+};
+
 export const isDimensionSortable = (
   d?: DimensionMetadataFragment
 ): d is NominalDimension | GeoCoordinatesDimension | GeoShapesDimension => {
@@ -279,12 +331,29 @@ export const isDimensionSortable = (
   );
 };
 
+export const isDataCubeDimensionSortable = (
+  d?: DataCubeComponent
+): d is
+  | DataCubeNominalDimension
+  | DataCubeGeoCoordinatesDimension
+  | DataCubeGeoShapesDimension => {
+  return (
+    isDataCubeNominalDimension(d) ||
+    isDataCubeGeoCoordinatesDimension(d) ||
+    isDataCubeGeoShapesDimension(d)
+  );
+};
+
 /**
  * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = (
   dimensions: DimensionMetadataFragment[]
 ) => dimensions.filter(isCategoricalDimension);
+
+export const getDataCubeCategoricalDimensions = (
+  dimensions: DataCubeComponent[]
+) => dimensions.filter(isDataCubeCategoricalDimension);
 
 export const getGeoCoordinatesDimensions = (
   dimensions: DimensionMetadataFragment[]
@@ -297,6 +366,9 @@ export const getGeoShapesDimensions = (
 export const getGeoDimensions = (dimensions: DimensionMetadataFragment[]) => {
   return dimensions.filter(isGeoDimension);
 };
+
+export const getDataCubeGeoDimensions = (dimensions: DataCubeComponent[]) =>
+  dimensions.filter(isDataCubeGeoDimension);
 
 export const getDimensionsByDimensionType = ({
   dimensionTypes,
@@ -311,15 +383,40 @@ export const getDimensionsByDimensionType = ({
     dimensionTypes.includes(component.__typename)
   );
 
+export const getDataCubeDimensionsByDimensionType = ({
+  dimensionTypes,
+  dimensions,
+  measures,
+}: {
+  dimensionTypes: ComponentType[];
+  dimensions: DataCubeComponent[];
+  measures: DataCubeComponent[];
+}) =>
+  [...measures, ...dimensions].filter((component) =>
+    dimensionTypes.includes(component.__typename)
+  );
+
 export const isNominalDimension = (
   dimension?: DimensionMetadataFragment
 ): dimension is NominalDimension => {
   return dimension?.__typename === "NominalDimension";
 };
 
+export const isDataCubeNominalDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeNominalDimension => {
+  return dimension?.__typename === "NominalDimension";
+};
+
 export const isOrdinalDimension = (
   dimension?: DimensionMetadataFragment
 ): dimension is OrdinalDimension => {
+  return dimension?.__typename === "OrdinalDimension";
+};
+
+export const isDataCubeOrdinalDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeOrdinalDimension => {
   return dimension?.__typename === "OrdinalDimension";
 };
 
@@ -382,6 +479,12 @@ export const isDataCubeNumericalMeasure = (
 export const isOrdinalMeasure = (
   dimension?: DimensionMetadataFragment | null
 ): dimension is OrdinalMeasure => {
+  return dimension?.__typename === "OrdinalMeasure";
+};
+
+export const isDataCubeOrdinalMeasure = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeOrdinalMeasure => {
   return dimension?.__typename === "OrdinalMeasure";
 };
 

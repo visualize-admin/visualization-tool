@@ -17,13 +17,12 @@ import { Inspector } from "react-inspector";
 import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
+import { DataCubeDimension, HierarchyValue } from "@/domain/data";
 import {
   Dimension,
-  HierarchyValue,
   Measure,
-  useComponentsQuery,
   useDataCubeObservationsQuery,
-  useDimensionHierarchyQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
@@ -161,19 +160,20 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
     Record<Measure["iri"], boolean>
   >({});
-  const [pivotDimension, setPivotDimension] = useState<Dimension>();
-  const [hierarchyDimension, setHierarchyDimension] = useState<Dimension>();
+  const [pivotDimension, setPivotDimension] = useState<DataCubeDimension>();
+  const [hierarchyDimension, setHierarchyDimension] =
+    useState<DataCubeDimension>();
   const [ignoredDimensions, setIgnoredDimensions] = useState<
     Record<Dimension["iri"], boolean>
   >({});
 
   const [{ data: componentsData, fetching: fetchingComponents }] =
-    useComponentsQuery({
+    useDataCubesComponentsQuery({
       variables: {
-        iri: dataset.iri,
         sourceUrl: "https://int.lindas.admin.ch/query",
         sourceType: "sparql",
         locale: "en",
+        filters: [{ iri: dataset.iri }],
       },
     });
   const [{ data: observationsData, fetching: fetchingObservations }] =
@@ -186,25 +186,13 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
       },
     });
 
-  const [{ data: hierarchyData, fetching: fetchingHierarchy }] =
-    useDimensionHierarchyQuery({
-      variables: {
-        cubeIri: dataset.iri,
-        dimensionIri: hierarchyDimension?.iri!,
-        sourceUrl: "https://int.lindas.admin.ch/query",
-        sourceType: "sparql",
-        locale: "en",
-      },
-      pause: !hierarchyDimension,
-    });
-
   const classes = useStyles();
 
-  const allDimensions = componentsData?.dataCubeByIri?.dimensions;
+  const allDimensions = componentsData?.dataCubesComponents?.dimensions;
   const dimensions = useMemo(() => {
     return allDimensions?.filter((d) => !ignoredDimensions[d.iri]);
   }, [allDimensions, ignoredDimensions]);
-  const measures = componentsData?.dataCubeByIri?.measures;
+  const measures = componentsData?.dataCubesComponents?.measures;
   const observations = useMemo(() => {
     return observationsData?.dataCubeByIri?.observations.data || [];
   }, [observationsData?.dataCubeByIri?.observations.data]);
@@ -241,12 +229,15 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
     }
   );
 
+  const hierarchy = componentsData?.dataCubesComponents.dimensions.find(
+    (d) => d.iri === hierarchyDimension?.iri
+  )?.hierarchy;
+
   const hierarchyIndexes = useMemo(() => {
-    const hierarchy = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
     if (hierarchy) {
       return indexHierarchy(hierarchy);
     }
-  }, [hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy]);
+  }, [hierarchy]);
 
   const { pivotted, pivotUniqueValues, tree } = useMemo(() => {
     if (!pivotDimension || !dimensions || !measures) {
@@ -311,9 +302,11 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
           } else {
             tree.push(row);
           }
-        } else {
-          tree.push(row);
+
+          return;
         }
+
+        tree.push(row);
       });
       return {
         pivotted,
@@ -492,7 +485,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
             })}
           </select>
 
-          {fetchingHierarchy ? (
+          {fetchingComponents ? (
             <CircularProgress size={12} sx={{ ml: 2 }} />
           ) : null}
         </div>
@@ -572,10 +565,7 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
             <Typography variant="overline" display="block">
               Hierarchy
             </Typography>
-            <Inspector
-              data={hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy}
-              table={false}
-            />
+            <Inspector data={hierarchy} table={false} />
             <Typography variant="overline" display="block">
               Hierarchy indexes
             </Typography>

@@ -1,4 +1,4 @@
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { HierarchyValue } from "@/domain/data";
 
 export const IGNORE = {};
 

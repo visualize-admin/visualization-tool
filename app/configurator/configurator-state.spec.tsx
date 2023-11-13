@@ -28,10 +28,11 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state";
 import {
-  DimensionMetadataFragment,
-  DimensionMetadataWithHierarchiesFragment,
-} from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
+  DataCubeNominalDimension,
+} from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
@@ -214,7 +215,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetadataFragment;
+  } as any as DataCubeNominalDimension;
 
   const keyDimensionWithHierarchy = {
     __typename: "NominalDimension",
@@ -246,7 +247,7 @@ describe("applyDimensionToFilters", () => {
         children: [],
       },
     ],
-  } as DimensionMetadataWithHierarchiesFragment;
+  } as any as DataCubeNominalDimension;
 
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
@@ -258,7 +259,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as DimensionMetadataFragment;
+  } as any as DataCubeNominalDimension;
 
   describe("applyNonTableDimensionToFilters", () => {
     it("should remove single value filter when a keyDimension is used as a field", () => {
@@ -516,8 +517,7 @@ describe("moveField", () => {
 });
 
 describe("retainChartConfigWhenSwitchingChartType", () => {
-  const dataSetMetadata = covid19Metadata.data
-    .dataCubeByIri as unknown as DataCubeMetadata;
+  const dataSetMetadata = covid19Metadata.data.dataCubeByIri;
 
   const deriveNewChartConfig = (
     oldConfig: ChartConfig,
@@ -527,11 +527,14 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       getChartConfigAdjustedToChartType({
         chartConfig: oldConfig,
         newChartType,
-        dimensions: dataSetMetadata.dimensions,
-        measures: dataSetMetadata.measures,
+        dimensions: dataSetMetadata.dimensions as any as DataCubeDimension[],
+        measures: dataSetMetadata.measures as any as DataCubeMeasure[],
       })
     );
-    deriveFiltersFromFields(newConfig, dataSetMetadata.dimensions);
+    deriveFiltersFromFields(newConfig, [
+      ...dataSetMetadata.dimensions,
+      ...dataSetMetadata.measures,
+    ] as any as DataCubeComponent[]);
 
     return current(newConfig);
   };

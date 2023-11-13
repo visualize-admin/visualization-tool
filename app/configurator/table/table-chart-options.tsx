@@ -42,16 +42,16 @@ import {
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
 import {
-  canDimensionBeMultiFiltered,
-  isNumericalMeasure,
-  isStandardErrorDimension,
-  isTemporalDimension,
+  canDataCubeDimensionBeMultiFiltered,
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
+  isDataCubeMeasure,
+  isDataCubeNumericalMeasure,
+  isDataCubeStandardErrorDimension,
+  isDataCubeTemporalDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
-import {
-  DataCubeMetadata,
-  DataCubeMetadataWithHierarchies,
-} from "@/graphql/types";
+import { DataCubeMetadataQuery } from "@/graphql/query-hooks";
 import {
   getDefaultCategoricalPalette,
   getDefaultCategoricalPaletteName,
@@ -61,33 +61,43 @@ import {
 const useTableColumnGroupHiddenField = ({
   path,
   field,
-  metaData,
+  metadata,
+  dimensions,
+  measures,
 }: {
   path: "isGroup" | "isHidden";
   field: string;
-  metaData: DataCubeMetadata;
+  metadata: DataCubeMetadataQuery["dataCubeByIri"];
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (isTableConfig(chartConfig)) {
-        const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
-        const newChartConfig = updater(chartConfig, {
-          field,
-          value: e.currentTarget.checked,
-        });
-
-        dispatch({
-          type: "CHART_CONFIG_REPLACED",
-          value: {
-            chartConfig: newChartConfig,
-            dataSetMetadata: metaData,
-          },
-        });
+      if (!isTableConfig(chartConfig) || !metadata) {
+        return;
       }
+
+      const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
+      const newChartConfig = updater(chartConfig, {
+        field,
+        value: e.currentTarget.checked,
+      });
+
+      dispatch({
+        type: "CHART_CONFIG_REPLACED",
+        value: {
+          chartConfig: newChartConfig,
+          dataCubeMetadata: metadata,
+          dataCubesComponents: {
+            dimensions,
+            measures,
+          },
+        },
+      });
     },
-    [path, chartConfig, field, dispatch, metaData]
+    [chartConfig, path, field, dispatch, metadata, dimensions, measures]
   );
   const stateValue = get(chartConfig, `fields["${field}"].${path}`, "");
   const checked = stateValue ? stateValue : false;
@@ -105,19 +115,25 @@ const ChartOptionGroupHiddenField = ({
   path,
   defaultChecked,
   disabled = false,
-  metaData,
+  metadata,
+  dimensions,
+  measures,
 }: {
   label: string;
   field: string;
   path: "isGroup" | "isHidden";
   defaultChecked?: boolean;
   disabled?: boolean;
-  metaData: DataCubeMetadata;
+  metadata: DataCubeMetadataQuery["dataCubeByIri"];
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
 }) => {
   const fieldProps = useTableColumnGroupHiddenField({
     field,
     path,
-    metaData,
+    metadata,
+    dimensions,
+    measures,
   });
 
   return (
@@ -126,16 +142,20 @@ const ChartOptionGroupHiddenField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
-    ></Checkbox>
+    />
   );
 };
 
 export const TableColumnOptions = ({
   state,
-  metaData,
+  metadata,
+  dimensions,
+  measures,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadataWithHierarchies;
+  metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
 }) => {
   const chartConfig = getChartConfig(state);
   const { activeField: _activeField } = chartConfig;
@@ -154,7 +174,14 @@ export const TableColumnOptions = ({
   // FIXME: table encoding should be added to UI encodings
   // @ts-ignore
   if (activeField === "table-sorting") {
-    return <TableSortingOptions state={state} dataSetMetadata={metaData} />;
+    return (
+      <TableSortingOptions
+        state={state}
+        metadata={metadata}
+        dimensions={dimensions}
+        measures={measures}
+      />
+    );
   }
 
   const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
@@ -165,7 +192,7 @@ export const TableColumnOptions = ({
   }
 
   // Active field is always a component IRI, like in filters
-  const allComponents = [...metaData.dimensions, ...metaData.measures];
+  const allComponents = [...dimensions, ...measures];
   const component = allComponents.find((d) => d.iri === activeField);
 
   if (!component) {
@@ -178,7 +205,7 @@ export const TableColumnOptions = ({
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];
 
-  const columnStyleOptions = isNumericalMeasure(component)
+  const columnStyleOptions = isDataCubeNumericalMeasure(component)
     ? [
         {
           value: "text",
@@ -193,7 +220,7 @@ export const TableColumnOptions = ({
           label: t({ id: "columnStyle.bar", message: `Bar Chart` }),
         },
       ]
-    : isTemporalDimension(component)
+    : isDataCubeTemporalDimension(component)
     ? [
         {
           value: "text",
@@ -230,7 +257,9 @@ export const TableColumnOptions = ({
               })}
               field={activeField}
               path="isGroup"
-              metaData={metaData}
+              metadata={metadata}
+              dimensions={dimensions}
+              measures={measures}
             />
           )}
           <ChartOptionGroupHiddenField
@@ -240,7 +269,9 @@ export const TableColumnOptions = ({
             })}
             field={activeField}
             path="isHidden"
-            metaData={metaData}
+            metadata={metadata}
+            dimensions={dimensions}
+            measures={measures}
           />
         </ControlSectionContent>
       </ControlSection>
@@ -275,9 +306,7 @@ export const TableColumnOptions = ({
                       palette,
                       colorMapping: mapValueIrisToColor({
                         palette,
-                        dimensionValues: (
-                          component as DimensionMetadataFragment
-                        )?.values,
+                        dimensionValues: component.values,
                       }),
                     };
                   case "heatmap":
@@ -305,17 +334,16 @@ export const TableColumnOptions = ({
               field={activeField}
               path="columnStyle"
             />
-
             <ColumnStyleSubOptions
               chartConfig={chartConfig}
               activeField={activeField}
-              component={component as DimensionMetadataFragment}
+              component={component}
             />
           </ControlSectionContent>
         </ControlSection>
       )}
-      {canDimensionBeMultiFiltered(component) &&
-      !isStandardErrorDimension(component) ? (
+      {canDataCubeDimensionBeMultiFiltered(component) &&
+      !isDataCubeStandardErrorDimension(component) ? (
         <ControlSection collapse>
           <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -325,23 +353,20 @@ export const TableColumnOptions = ({
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
             {component.isKeyDimension && isHidden && !isGroup ? (
-              <DimensionValuesSingleFilter
-                dataSetIri={metaData.iri}
-                dimensionIri={component.iri}
-              />
-            ) : (
+              <DimensionValuesSingleFilter dimension={component} />
+            ) : isDataCubeMeasure(component) ? null : (
               <DimensionValuesMultiFilter
                 key={component.iri}
                 field={component.iri}
-                dimensionIri={component.iri}
-                dataSetIri={metaData.iri}
+                dimension={component}
+                dataSetIri={metadata.iri}
                 colorComponent={component}
                 colorConfigPath="columnStyle"
               />
             )}
           </ControlSectionContent>
         </ControlSection>
-      ) : isTemporalDimension(component) ? (
+      ) : isDataCubeTemporalDimension(component) ? (
         <ControlSection collapse>
           <SubsectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -381,7 +406,7 @@ const ColumnStyleSubOptions = ({
 }: {
   chartConfig: TableConfig;
   activeField: EncodingFieldType;
-  component: DimensionMetadataFragment;
+  component: DataCubeComponent;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (

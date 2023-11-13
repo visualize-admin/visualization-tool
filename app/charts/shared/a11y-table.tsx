@@ -2,8 +2,7 @@ import { Box } from "@mui/material";
 import { memo, useMemo } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
-import { Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeDimension, DataCubeMeasure, Observation } from "@/domain/data";
 
 export const A11yTable = memo(
   ({
@@ -13,8 +12,8 @@ export const A11yTable = memo(
     observations,
   }: {
     title: string;
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: DataCubeDimension[];
+    measures: DataCubeMeasure[];
     observations: Observation[];
   }) => {
     const headers = useMemo(() => {

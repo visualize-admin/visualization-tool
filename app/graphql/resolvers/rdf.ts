@@ -159,8 +159,13 @@ export const dataCubesComponents: NonNullable<
         }
 
         if (latest) {
-          return await getLatestCube(cube);
+          const latestCube = await getLatestCube(cube);
+          await latestCube.fetchShape();
+
+          return latestCube;
         }
+
+        await cube.fetchShape();
 
         return cube;
       })
@@ -176,9 +181,16 @@ export const dataCubesComponents: NonNullable<
 
   const dimensions: DataCubeDimension[] = [];
   const measures: DataCubeMeasure[] = [];
+
   await Promise.all(
     rawComponents.map(async (component) => {
       const { cube, data } = component;
+      const dimensionValuesLoader = getDimensionValuesLoader(
+        sparqlClient,
+        loaders,
+        cache,
+        filters.find((d) => d.iri === component.cube.term?.value)?.filters
+      );
       const baseComponent = {
         cubeIri: parseIri(cube),
         iri: data.iri,
@@ -190,7 +202,7 @@ export const dataCubesComponents: NonNullable<
         order: data.order,
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
-        values: await loaders.dimensionValues.load(component),
+        values: await dimensionValuesLoader.load(component),
         related: data.related,
       };
 

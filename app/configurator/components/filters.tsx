@@ -69,15 +69,14 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { ObservationValue } from "@/domain/data";
-import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import {
-  DimensionMetadataFragment,
-  Maybe,
-  useDimensionHierarchyQuery,
-  useDimensionValuesQuery,
-} from "@/graphql/query-hooks";
-import { HierarchyValue, TemporalDimension } from "@/graphql/resolver-types";
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeTemporalDimension,
+  HierarchyValue,
+  ObservationValue,
+} from "@/domain/data";
+import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
 import SvgIcCheck from "@/icons/components/IcCheck";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -96,8 +95,6 @@ import useEvent from "@/utils/use-event";
 
 import { GenericSegmentField } from "../../config-types";
 import { interlace } from "../../utils/interlace";
-
-import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -223,7 +220,7 @@ const MultiFilterContent = ({
   tree,
 }: {
   field: string;
-  colorComponent: DimensionMetadataFragment | undefined;
+  colorComponent?: DataCubeComponent;
   tree: HierarchyValue[];
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
@@ -600,7 +597,7 @@ const TreeAccordion = ({
 };
 
 const validateChildren = (
-  d: Maybe<HierarchyValue[]> | undefined
+  d: HierarchyValue[] | undefined
 ): d is HierarchyValue[] => {
   return Array.isArray(d) && d.length > 0;
 };
@@ -609,7 +606,7 @@ const areChildrenSelected = ({
   children,
   selectedValues,
 }: {
-  children: Maybe<HierarchyValue[]> | undefined;
+  children: HierarchyValue[] | undefined;
   selectedValues: HierarchyValue[];
 }): boolean => {
   if (validateChildren(children)) {
@@ -849,47 +846,19 @@ const getPathToColorConfigProperty = ({
 };
 
 export const DimensionValuesMultiFilter = ({
-  dataSetIri,
-  dimensionIri,
+  dimension,
   colorConfigPath,
   colorComponent,
   field = "segment",
 }: {
   dataSetIri: string;
-  dimensionIri: string;
+  dimension: DataCubeDimension;
   colorConfigPath?: string;
-  colorComponent?: DimensionMetadataFragment;
+  colorComponent?: DataCubeComponent;
   field?: string;
 }) => {
-  const locale = useLocale();
   const [state] = useConfiguratorState(isConfiguring);
-  const { dataSource } = state;
   const chartConfig = getChartConfig(state);
-
-  const [{ data }] = useDimensionValuesQuery({
-    variables: {
-      dataCubeIri: dataSetIri,
-      dimensionIri,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-    },
-  });
-
-  const [{ fetching: fetchingHierarchy, data: hierarchyData }] =
-    useDimensionHierarchyQuery({
-      variables: {
-        cubeIri: dataSetIri,
-        dimensionIri,
-        sourceType: dataSource.type,
-        sourceUrl: dataSource.url,
-        locale,
-      },
-    });
-
-  const hierarchyTree = hierarchyData?.dataCubeByIri?.dimensionByIri?.hierarchy;
-  const dimensionData = data?.dataCubeByIri?.dimensionByIri;
-
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
       field,
@@ -899,35 +868,28 @@ export const DimensionValuesMultiFilter = ({
     return get(chartConfig, colorPath);
   });
 
-  if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
-    return (
-      <MultiFilterContextProvider
-        dimensionData={dimensionData}
-        dimensionIri={dimensionIri}
-        hierarchyData={hierarchyTree || []}
-        colorConfigPath={colorConfigPath}
-        getValueColor={getValueColor}
-      >
-        <MultiFilterContent
-          field={field}
-          colorComponent={colorComponent}
-          // FIXME: types
-          // @ts-ignore
-          tree={
-            hierarchyTree && hierarchyTree.length > 0
-              ? hierarchyTree
-              : data.dataCubeByIri.dimensionByIri.values
-          }
-        />
-      </MultiFilterContextProvider>
-    );
-  } else {
-    return <ControlSectionSkeleton sx={{ px: 0 }} />;
-  }
+  return (
+    <MultiFilterContextProvider
+      dimension={dimension}
+      colorConfigPath={colorConfigPath}
+      getValueColor={getValueColor}
+    >
+      <MultiFilterContent
+        field={field}
+        colorComponent={colorComponent}
+        // @ts-ignore
+        tree={
+          dimension.hierarchy && dimension.hierarchy.length > 0
+            ? dimension.hierarchy
+            : dimension.values
+        }
+      />
+    </MultiFilterContextProvider>
+  );
 };
 
 type TimeFilterProps = {
-  dimension: TemporalDimension;
+  dimension: DataCubeTemporalDimension;
   disableInteractiveFilters?: boolean;
 };
 
@@ -1131,7 +1093,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
 };
 
 type GetTimeFilterOptionsProps = {
-  dimension: TemporalDimension | null;
+  dimension: DataCubeTemporalDimension | null;
   formatLocale: ReturnType<typeof useTimeFormatLocale>;
   timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
 };
@@ -1209,48 +1171,31 @@ export const InteractiveTimeRangeToggle = (
 
 // This component is now only used in the Table Chart options.
 export const DimensionValuesSingleFilter = ({
-  dataSetIri,
-  dimensionIri,
+  dimension,
 }: {
-  dataSetIri: string;
-  dimensionIri: string;
+  dimension: DataCubeComponent;
 }) => {
   const locale = useLocale();
-  const [state] = useConfiguratorState();
-  const [{ data }] = useDimensionValuesQuery({
-    variables: {
-      dimensionIri,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
-      dataCubeIri: dataSetIri,
-    },
-  });
-
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
-
   const sortedDimensionValues = useMemo(() => {
-    const values = dimension?.values ?? [];
+    const values = dimension.values;
 
     return [...values].sort(valueComparator(locale));
   }, [dimension?.values, locale]);
 
-  if (dimension) {
-    return (
-      <>
-        {sortedDimensionValues.map((dv) => {
-          return (
-            <SingleFilterField
-              key={dv.value}
-              dimensionIri={dimensionIri}
-              label={dv.label}
-              value={`${dv.value}`}
-            />
-          );
-        })}
-      </>
-    );
-  } else {
-    return <Loading />;
-  }
+  return dimension ? (
+    <>
+      {sortedDimensionValues.map((dv) => {
+        return (
+          <SingleFilterField
+            key={dv.value}
+            dimensionIri={dimension.iri}
+            label={dv.label}
+            value={`${dv.value}`}
+          />
+        );
+      })}
+    </>
+  ) : (
+    <Loading />
+  );
 };

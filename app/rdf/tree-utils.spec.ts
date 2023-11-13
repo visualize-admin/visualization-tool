@@ -1,8 +1,8 @@
-import { HierarchyValue } from "@/graphql/query-hooks";
+import { HierarchyValue } from "@/domain/data";
 
 import multipleRootHierarchy from "../test/__fixtures/data/multiple-root-hierarchy.json";
 
-import { pruneTree, mapTree, regroupTrees } from "./tree-utils";
+import { mapTree, pruneTree, regroupTrees } from "./tree-utils";
 
 // Country > Canton > Municipality
 // Countries have no value
@@ -33,7 +33,7 @@ const tree = [
     value: "France",
     hasValue: false,
   },
-] as HierarchyValue[];
+] as any as HierarchyValue[];
 
 describe("mapTree", () => {
   it("should map the function across all nodes of the tree", () => {
@@ -82,7 +82,7 @@ describe("filterTree", () => {
 
 describe("multiple hierarchy handling", () => {
   it("should regroup trees", () => {
-    const tree = regroupTrees(multipleRootHierarchy);
+    const tree = regroupTrees(multipleRootHierarchy as any);
     expect(tree[0].children?.map((x) => x.value)).toEqual([
       "Switzerland - Canton",
       "Switzerland - Protection Region - Economic Region",

@@ -1,6 +1,5 @@
 import { ColumnConfig, TableFields } from "@/configurator";
-import { ComponentsQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
+import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
 import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -19,12 +18,10 @@ describe("initial config", () => {
     const config = getInitialConfig({
       chartType: "table",
       dataSet: "https://environment.ld.admin.ch/foen/nfi",
-      dimensions: forestAreaData.data.dataCubeByIri.dimensions as NonNullable<
-        ComponentsQuery["dataCubeByIri"]
-      >["dimensions"],
-      measures: forestAreaData.data.dataCubeByIri.measures as NonNullable<
-        ComponentsQuery["dataCubeByIri"]
-      >["measures"],
+      dimensions: forestAreaData.data.dataCubeByIri
+        .dimensions as any as DataCubeDimension[],
+      measures: forestAreaData.data.dataCubeByIri
+        .measures as any as DataCubeMeasure[],
     });
 
     expect(
@@ -49,12 +46,10 @@ describe("possible chart types", () => {
   it("should allow appropriate chart types based on available dimensions", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
     const possibleChartTypes = getPossibleChartTypes({
-      dimensions: bathingWaterData.data.dataCubeByIri.dimensions as NonNullable<
-        ComponentsQuery["dataCubeByIri"]
-      >["dimensions"],
-      measures: bathingWaterData.data.dataCubeByIri.measures as NonNullable<
-        ComponentsQuery["dataCubeByIri"]
-      >["measures"],
+      dimensions: bathingWaterData.data.dataCubeByIri
+        .dimensions as any as DataCubeDimension[],
+      measures: bathingWaterData.data.dataCubeByIri
+        .measures as any as DataCubeMeasure[],
     }).sort();
 
     expect(possibleChartTypes).toEqual(expectedChartTypes);
@@ -153,9 +148,9 @@ describe("chart type switch", () => {
       chartConfig,
       newChartType: "line",
       dimensions: bathingWaterData.data.dataCubeByIri
-        .dimensions as DataCubeMetadata["dimensions"],
+        .dimensions as any as DataCubeDimension[],
       measures: bathingWaterData.data.dataCubeByIri
-        .measures as DataCubeMetadata["measures"],
+        .measures as DataCubeMeasure[],
     });
 
     expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(

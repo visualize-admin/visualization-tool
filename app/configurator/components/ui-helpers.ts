@@ -18,7 +18,7 @@ import {
   DimensionValue,
   Observation,
 } from "../../domain/data";
-import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
+import { TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { getPalette } from "../../palettes";
 
@@ -256,7 +256,7 @@ export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
   }, [fields]);
 };
 
-export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
+export const canUseAbbreviations = (d?: DataCubeComponent): boolean => {
   if (!d) {
     return false;
   }
@@ -272,7 +272,5 @@ export const canUseAbbreviations = (d?: DimensionMetadataFragment): boolean => {
       return false;
   }
 
-  const anyAbbreviationsPresent = !!d.values.find((d) => d.alternateName);
-
-  return anyAbbreviationsPresent;
+  return !!d.values.find((d) => d.alternateName);
 };

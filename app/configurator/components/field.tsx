@@ -62,10 +62,15 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeTemporalDimension,
+  HierarchyValue,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
-import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
-import { HierarchyValue } from "@/graphql/resolver-types";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { hierarchyToOptions } from "@/utils/hierarchy";
@@ -86,7 +91,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 type ControlTabFieldProps = {
   chartConfig: ChartConfig;
-  component?: DimensionMetadataFragment;
+  component?: DataCubeComponent;
   value: string;
   labelId: string | null;
   disabled?: boolean;
@@ -150,7 +155,7 @@ export const DataFilterSelect = ({
   onOpen,
   loading,
 }: {
-  dimension: DimensionMetadataFragment;
+  dimension: DataCubeDimension;
   label: React.ReactNode;
   id: string;
   disabled?: boolean;
@@ -251,7 +256,7 @@ export const DataFilterSelectDay = ({
   isOptional,
   controls,
 }: {
-  dimension: DimensionMetadataFragment;
+  dimension: DataCubeTemporalDimension;
   label: React.ReactNode;
   disabled?: boolean;
   isOptional?: boolean;
@@ -345,7 +350,7 @@ export const DataFilterSelectTime = ({
   isOptional,
   controls,
 }: {
-  dimension: DimensionMetadataFragment;
+  dimension: DataCubeDimension;
   label: React.ReactNode;
   from: string;
   to: string;
@@ -753,14 +758,16 @@ export const ChartFieldField = ({
   options,
   optional,
   disabled,
+  components,
 }: {
   label?: string;
   field: EncodingFieldType;
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
+  components: DataCubeComponent[];
 }) => {
-  const { fetching, ...fieldProps } = useChartFieldField({ field });
+  const props = useChartFieldField({ field, components });
   const noneLabel = t({
     id: "controls.none",
     message: "None",
@@ -770,10 +777,8 @@ export const ChartFieldField = ({
     <Select
       key={`select-${field}-dimension`}
       id={field}
-      label={
-        <FieldLabel isOptional={optional} isFetching={fetching} label={label} />
-      }
-      disabled={disabled || fetching}
+      label={<FieldLabel isOptional={optional} label={label} />}
+      disabled={disabled}
       options={
         optional
           ? [
@@ -786,7 +791,7 @@ export const ChartFieldField = ({
             ]
           : options
       }
-      {...fieldProps}
+      {...props}
     />
   );
 };

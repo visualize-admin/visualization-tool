@@ -14,7 +14,7 @@ import {
   Select,
   Switch,
 } from "@/components/form";
-import SelectTree from "@/components/select-tree";
+import SelectTree, { TreeHierachyValue } from "@/components/select-tree";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
   const [checked, toggle] = useState(initialChecked || false);
@@ -42,42 +42,57 @@ const SelectTreeExample = () => {
     <SelectTree
       value={value}
       onChange={({ target: { value } }) => setValue(value)}
-      options={[
-        {
-          value: "1",
-          label: "Root",
-          children: [{ value: "2", label: "Calendar" }],
-        },
-        {
-          value: "5",
-          label: "Switzerland",
-          selectable: false,
-          children: [
-            { value: "10", label: "Bern" },
-            {
-              value: "6",
-              label: "Zürich",
-              children: [
-                {
-                  value: "9",
-                  label: "Bürkliplatz",
-                  children: [{ value: "7", label: "Pavillion" }],
-                },
-                {
-                  value: "8",
-                  label: "Langstrasse",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "Numbers",
-          value: "numbers",
-          selectable: false,
-          children: numberOptions,
-        },
-      ]}
+      options={
+        [
+          {
+            value: "1",
+            label: "Root",
+            children: [
+              {
+                value: "2",
+                label: "Calendar",
+              },
+            ],
+          },
+          {
+            value: "5",
+            label: "Switzerland",
+            selectable: false,
+            children: [
+              {
+                value: "10",
+                label: "Bern",
+              },
+              {
+                value: "6",
+                label: "Zürich",
+                children: [
+                  {
+                    value: "9",
+                    label: "Bürkliplatz",
+                    children: [
+                      {
+                        value: "7",
+                        label: "Pavillion",
+                      },
+                    ],
+                  },
+                  {
+                    value: "8",
+                    label: "Langstrasse",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            label: "Numbers",
+            value: "numbers",
+            selectable: false,
+            children: numberOptions,
+          },
+        ] as TreeHierachyValue[]
+      }
     />
   );
 };

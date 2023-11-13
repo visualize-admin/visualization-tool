@@ -31,15 +31,15 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   DataCubeDimension,
   DataCubeTemporalDimension,
-  isTemporalDimension,
+  HierarchyValue,
+  isDataCubeTemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
-  HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  useDimensionValuesQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -206,28 +206,29 @@ const DataFilter = (props: DataFilterProps) => {
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useInteractiveFilters((d) => d.updateDataFilter);
   const keys = Object.keys(interactiveFilters);
-  const [{ data, fetching }] = useDimensionValuesQuery({
+  const [{ data, fetching }] = useDataCubesComponentsQuery({
     variables: {
-      dimensionIri,
-      dataCubeIri: dataSetIri,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      ...(keys.length > 0
-        ? {
-            filters: interactiveFilters,
-            // This is important for urql not to think that filters
-            // are the same  while the order of the keys has changed.
-            // If this is not present, we'll have outdated dimension
-            // values after we change the filter order
-            filterKeys: keys.join(", "),
-          }
-        : {}),
+      filters: [
+        {
+          iri: dataSetIri,
+          componentIris: [dimensionIri],
+          filters: keys.length > 0 ? interactiveFilters : undefined,
+        },
+      ],
+      // This is important for urql not to think that filters
+      // are the same  while the order of the keys has changed.
+      // If this is not present, we'll have outdated dimension
+      // values after we change the filter order.
+      // @ts-ignore
+      filterKeys: keys.join(", "),
     },
   });
 
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
-  const hierarchy = data?.dataCubeByIri?.dimensionByIri?.hierarchy;
+  const dimension = data?.dataCubesComponents.dimensions[0];
+  const hierarchy = dimension?.hierarchy;
 
   const setDataFilter = useEvent(
     (e: SelectChangeEvent<unknown> | { target: { value: string } }) => {
@@ -282,7 +283,7 @@ const DataFilter = (props: DataFilterProps) => {
         " > div": { width: "100%" },
       }}
     >
-      {isTemporalDimension(dimension) ? (
+      {isDataCubeTemporalDimension(dimension) ? (
         <DataFilterTemporalDimension
           value={value as string}
           dimension={dimension}
@@ -361,7 +362,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
 };
 
 type DataFilterHierarchyDimensionProps = {
-  dimension: DataCubeDimension; // TODO: with hierarchy
+  dimension: DataCubeDimension;
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
@@ -378,22 +379,26 @@ const DataFilterHierarchyDimension = (
     message: `No Filter`,
   });
   const options = React.useMemo(() => {
-    let opts = [] as { label: string; value: string; isNoneValue?: boolean }[];
-    if (hierarchy) {
-      opts = hierarchyToOptions(
-        hierarchy,
-        dimensionValues.map((d) => d.value)
-      );
-    } else {
-      // @ts-ignore
-      opts = dimensionValues;
-    }
+    const opts = (
+      hierarchy
+        ? hierarchyToOptions(
+            hierarchy,
+            dimensionValues.map((d) => d.value)
+          )
+        : dimensionValues
+    ) as {
+      label: string;
+      value: string;
+      isNoneValue?: boolean;
+      hasValue: boolean;
+    }[];
 
     if (!isKeyDimension) {
       opts.unshift({
         value: FIELD_VALUE_NONE,
         label: noneLabel,
         isNoneValue: true,
+        hasValue: true,
       });
     }
 
