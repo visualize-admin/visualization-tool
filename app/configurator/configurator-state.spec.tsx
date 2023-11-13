@@ -37,7 +37,6 @@ import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-ta
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
 import bathingWaterMetadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
-import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 import * as api from "@/utils/chart-config/api";
 import {
   migrateChartConfig,
@@ -46,7 +45,17 @@ import {
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
-RDFCubeViewQueryMock;
+jest.mock("rdf-cube-view-query", () => ({
+  Node: class {
+    constructor() {}
+  },
+  Source: class {
+    constructor() {}
+  },
+  Cube: class {
+    constructor() {}
+  },
+}));
 
 jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
