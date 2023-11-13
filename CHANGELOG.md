@@ -9,6 +9,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.24.1] - 2023-11-13
+
 - Features
   - Match drag and drop behavior for table chart and filter panel
 - Fixes
