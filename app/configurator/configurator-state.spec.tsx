@@ -45,6 +45,18 @@ import {
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
+jest.mock("rdf-cube-view-query", () => ({
+  Node: class {
+    constructor() {}
+  },
+  Source: class {
+    constructor() {}
+  },
+  Cube: class {
+    constructor() {}
+  },
+}));
+
 jest.mock("@/utils/chart-config/api", () => ({
   fetchChartConfig: jest.fn(),
 }));

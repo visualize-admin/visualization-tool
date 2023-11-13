@@ -70,12 +70,11 @@ const describeCubes = async (
 
 const getCubeDimensions = async (
   sparqlClient: ParsingClient,
-  sourceUrl: string,
   cubeIris: readonly string[]
 ) => {
   return Promise.all(
     cubeIris.map(async (cubeIri) => {
-      const rawCube = await getRawCube(sourceUrl, cubeIri);
+      const rawCube = await getRawCube(sparqlClient, cubeIri);
 
       if (rawCube) {
         return await _getCubeDimensions({
@@ -386,9 +385,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
           string,
           ResolvedDimension[] | undefined,
           unknown
-        >((cubeIri) =>
-          getCubeDimensions(sparqlClient, datasource.url, cubeIri)
-        ),
+        >((cubeIri) => getCubeDimensions(sparqlClient, cubeIri)),
       },
     };
     const runCheck = async (check: Check) => {

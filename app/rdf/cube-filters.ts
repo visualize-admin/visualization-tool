@@ -1,9 +1,9 @@
-import { Cube } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { NamedNode } from "rdf-js";
 
 import { truthy } from "@/domain/types";
 import { SearchCubeFilter } from "@/graphql/resolver-types";
+import { ExtendedCube } from "@/rdf/extended-cube";
 import * as ns from "@/rdf/namespace";
 
 import isAttrEqual from "../utils/is-attr-equal";
@@ -22,7 +22,7 @@ export const makeInQueryFilter = (
   filters: SearchCubeFilter[]
 ) => {
   return filters.length > 0
-    ? Cube.filter.in(
+    ? ExtendedCube.filter.in(
         predicate,
         filters.map((x) => rdf.namedNode(x.value))
       )
@@ -51,11 +51,11 @@ export const makeCubeFilters = ({
 
   const res = [
     // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
-    Cube.filter.noExpires(),
+    ExtendedCube.filter.noExpires(),
     isVisualizeCubeFilter,
     includeDrafts
       ? null
-      : Cube.filter.status([
+      : ExtendedCube.filter.status([
           ns.adminVocabulary("CreativeWorkStatus/Published"),
         ]),
     themeQueryFilter,

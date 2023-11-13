@@ -9,8 +9,19 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+# [3.24.1] - 2023-11-13
+
+- Features
+  - Match drag and drop behavior for table chart and filter panel
 - Fixes
-  - remove ErrorWhisker and Tooltip when error is null in Column charts
+  - Remove ErrorWhisker and Tooltip when error is null in Column charts
+  - We now only fetch hierarchies defined in cube's shape
+  - Hierarchy names are now correctly retrieved
+- Performance
+  - We no longer fetch shape when initalizing the cube, as we might need to re-fetch it again if a newer cube is required
+  - Vastly improved performance of dataset preview by using a new version of `cube-view-query` library (`View.preview`)
 
 # [3.24.0] - 2023-11-08
 

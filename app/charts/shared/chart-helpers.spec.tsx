@@ -19,6 +19,18 @@ import { InteractiveFiltersState } from "@/stores/interactive-filters";
 import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 
+jest.mock("rdf-cube-view-query", () => ({
+  Node: class {
+    constructor() {}
+  },
+  Source: class {
+    constructor() {}
+  },
+  Cube: class {
+    constructor() {}
+  },
+}));
+
 const makeCubeNsGetters = (cubeIri: string) => ({
   col: (col: string) => `${cubeIri}/dimension/${col}`,
   val: (col: string, n: string) => `${cubeIri}/dimension/${col}/${n}`,

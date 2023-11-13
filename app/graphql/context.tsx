@@ -2,6 +2,7 @@ import { IncomingMessage } from "http";
 
 import DataLoader from "dataloader";
 import { GraphQLResolveInfo } from "graphql";
+import rdf from "rdf-ext";
 import StreamClient from "sparql-http-client";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
@@ -10,6 +11,7 @@ import { SPARQL_GEO_ENDPOINT } from "@/domain/env";
 import { Awaited } from "@/domain/types";
 import { Timings } from "@/gql-flamegraph/resolvers";
 import { createSource } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
 import { timed, TimingCallback } from "@/utils/timed";
 
 import { createCubeDimensionValuesLoader } from "../rdf/queries";
@@ -24,9 +26,17 @@ import { RequestQueryMeta } from "./query-meta";
 
 export const MAX_BATCH_SIZE = 500;
 
-export const getRawCube = async (sourceUrl: string, iri: string) => {
-  const source = createSource({ endpointUrl: sourceUrl });
-  return await source.cube(iri);
+export const getRawCube = async (sparqlClient: ParsingClient, iri: string) => {
+  const source = createSource(sparqlClient);
+  const cube = new ExtendedCube({
+    parent: source,
+    term: rdf.namedNode(iri),
+    source,
+  });
+  // Don't fetch shape yet, as we might need to fetch newer cube.
+  await cube.fetchCube();
+
+  return cube;
 };
 
 // const cachedGetRawCube = cachedWithTTL(
@@ -38,11 +48,11 @@ export const getRawCube = async (sourceUrl: string, iri: string) => {
 //   60_000
 // );
 
-const createCubeLoader = (sourceUrl: string) => {
+const createCubeLoader = (sparqlClient: ParsingClient) => {
   return (cubeIris: readonly string[]) => {
     return Promise.all(
       cubeIris.map(async (iri) => {
-        return getRawCube(sourceUrl, iri);
+        return getRawCube(sparqlClient, iri);
       })
     );
   };
@@ -52,11 +62,10 @@ const createLoaders = async (
   locale: string,
   sparqlClient: ParsingClient,
   geoSparqlClient: ParsingClient,
-  sourceUrl: string,
   cache: LRUCache | undefined
 ) => {
   return {
-    cube: new DataLoader(createCubeLoader(sourceUrl)),
+    cube: new DataLoader(createCubeLoader(sparqlClient)),
     dimensionValues: new DataLoader(
       createCubeDimensionValuesLoader(sparqlClient, cache),
       {
@@ -171,7 +180,6 @@ const createContextContent = async ({
     locale,
     sparqlClient,
     geoSparqlClient,
-    sourceUrl,
     contextCache
   );
 

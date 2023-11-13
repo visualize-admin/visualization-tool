@@ -2,7 +2,7 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
-import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { CubeDimension } from "rdf-cube-view-query";
 import LiteralExt from "rdf-ext/lib/Literal";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -11,6 +11,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { parseObservationValue } from "@/domain/data";
 import { pragmas } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { Filters } from "../configurator";
 
@@ -73,7 +74,7 @@ export async function unversionObservation({
   observation,
   sparqlClient,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   observation: Record<string, string | number | undefined | null>;
   sparqlClient: ParsingClient;
 }) {
@@ -138,7 +139,7 @@ export async function loadDimensionValues(
   }: {
     datasetIri: Term | undefined;
     dimension: CubeDimension;
-    cube: Cube;
+    cube: ExtendedCube;
     sparqlClient: ParsingClient;
   },
   filters?: Filters

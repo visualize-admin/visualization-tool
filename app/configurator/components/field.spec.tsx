@@ -3,6 +3,18 @@ import { fireEvent, render } from "@testing-library/react";
 import { TimeInput } from "@/configurator/components/field";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 
+jest.mock("rdf-cube-view-query", () => ({
+  Node: class {
+    constructor() {}
+  },
+  Source: class {
+    constructor() {}
+  },
+  Cube: class {
+    constructor() {}
+  },
+}));
+
 describe("TimeInput", () => {
   const expectedValue = "2020-05-24";
   const setup = ({ isOptional, id }: { isOptional: boolean; id: string }) => {

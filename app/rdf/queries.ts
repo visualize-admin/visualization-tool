@@ -1,13 +1,7 @@
 import { descending, group, index } from "d3";
 import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
-import {
-  Cube,
-  CubeDimension,
-  Filter,
-  LookupSource,
-  View,
-} from "rdf-cube-view-query";
+import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
@@ -16,6 +10,7 @@ import { LRUCache } from "typescript-lru-cache";
 import { PromiseValue, truthy } from "@/domain/types";
 import { DataCubeFilter } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
+import { ExtendedCube } from "@/rdf/extended-cube";
 
 import { FilterValueMulti, Filters } from "../configurator";
 import {
@@ -26,7 +21,7 @@ import {
   parseRDFLiteral,
   shouldLoadMinMaxValues,
 } from "../domain/data";
-import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
+import { ResolvedDimension } from "../graphql/shared-types";
 
 import * as ns from "./namespace";
 import { schema } from "./namespace";
@@ -34,7 +29,6 @@ import {
   getQueryLocales,
   getScaleType,
   isCubePublished,
-  parseCube,
   parseCubeDimension,
   parseRelatedDimensions,
 } from "./parse";
@@ -53,7 +47,9 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 
-export const getLatestCube = async (cube: Cube): Promise<Cube> => {
+export const getLatestCube = async (
+  cube: ExtendedCube
+): Promise<ExtendedCube> => {
   const source = cube.source;
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
@@ -68,11 +64,11 @@ export const getLatestCube = async (cube: Cube): Promise<Cube> => {
 
   const filters = [
     // Only cubes from the same version history
-    Cube.filter.isPartOf(versionHistory),
+    ExtendedCube.filter.isPartOf(versionHistory),
     // With a higher version number
-    Cube.filter.version.gt(version),
+    ExtendedCube.filter.version.gt(version),
     // If the original cube is published, only select cubes that are also published
-    Cube.filter.status(
+    ExtendedCube.filter.status(
       isPublished
         ? [ns.adminVocabulary("CreativeWorkStatus/Published")]
         : [
@@ -82,10 +78,19 @@ export const getLatestCube = async (cube: Cube): Promise<Cube> => {
     ),
   ];
 
-  const newerCubes = await source.cubes({
-    noShape: true, // Don't fetch shape on multiple cubes for performance resons. Shape is fetched on the cube that's picked below.
-    filters,
-  });
+  const rows = await source.client.query.select(source.cubesQuery({ filters }));
+  const newerCubes = await Promise.all(
+    rows.map(async (row) => {
+      const cube = new ExtendedCube({
+        parent: source,
+        term: row.cube,
+        source,
+      });
+      await cube.fetchCube();
+
+      return cube;
+    })
+  );
 
   if (newerCubes.length > 0) {
     newerCubes.sort((a, b) =>
@@ -97,30 +102,11 @@ export const getLatestCube = async (cube: Cube): Promise<Cube> => {
 
     // If there's a newer cube that's published, it's preferred over drafts
     // (this only applies if the original cube was in draft status anyway)
-    const latestCube =
-      newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
-
-    // Call cube.fetchShape() to populate dimension metadata
-    await latestCube.fetchShape();
-
-    return latestCube;
+    return newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
   }
 
   // If there are no newer cubes, return the original one
   return cube;
-};
-
-export const getResolvedCube = async ({
-  cube,
-  locale,
-  latest = true,
-}: {
-  cube: Cube;
-  locale: string;
-  latest?: boolean;
-}): Promise<ResolvedDataCube | null> => {
-  const latestCube = latest === false ? cube : await getLatestCube(cube);
-  return parseCube({ cube: latestCube, locale });
 };
 
 const getDimensionUnits = (d: CubeDimension) => {
@@ -131,7 +117,7 @@ const getDimensionUnits = (d: CubeDimension) => {
 };
 
 export const getCubesDimensions = async (
-  cubes: Cube[],
+  cubes: ExtendedCube[],
   options: {
     filters: DataCubeFilter[];
     locale: string;
@@ -169,7 +155,7 @@ export const getCubeDimensions = async ({
   componentIris,
   cache,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
   componentIris?: Maybe<string[]>;
@@ -343,7 +329,7 @@ export const getCubeDimensionValuesWithMetadata = async ({
   cache,
 }: {
   dimension: CubeDimension;
-  cube: Cube;
+  cube: ExtendedCube;
   sparqlClient: ParsingClient;
   locale: string;
   filters?: Filters;
@@ -544,7 +530,7 @@ export const getCubeObservations = async ({
   componentIris,
   cache,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
   /** Observations filters that should be considered */
@@ -796,7 +782,7 @@ const buildFilters = ({
   filters,
   locale,
 }: {
-  cube: Cube;
+  cube: ExtendedCube;
   view: View;
   filters: Filters;
   locale: string;
@@ -889,6 +875,8 @@ const buildFilters = ({
   });
 };
 
+type ObservationRaw = Record<string, Literal | NamedNode>;
+
 async function fetchViewObservations({
   limit,
   observationsView,
@@ -898,37 +886,28 @@ async function fetchViewObservations({
   observationsView: View;
   disableDistinct: boolean;
 }) {
-  /**
-   * Add LIMIT to query
-   */
-  if (limit !== undefined) {
-    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) =>
-      projection.addOut(ns.cubeView.limit, limit)
-    );
-  }
+  const fullQuery = observationsView.observationsQuery({ disableDistinct });
+  const query = (
+    limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
+  ).toString();
 
-  const queryOptions = {
-    disableDistinct,
-  };
+  let observationsRaw: PromiseValue<ObservationRaw[]> | undefined;
 
-  const query = observationsView
-    .observationsQuery(queryOptions)
-    .query.toString();
-
-  let observationsRaw:
-    | PromiseValue<ReturnType<typeof observationsView.observations>>
-    | undefined;
   try {
-    observationsRaw = await observationsView.observations(queryOptions);
+    observationsRaw = await (limit
+      ? observationsView.preview({ limit })
+      : observationsView.observations({ disableDistinct }));
   } catch (e) {
-    console.warn("Query failed", query);
+    console.warn("Observations query failed!", query);
     throw new Error(
       `Could not retrieve data: ${e instanceof Error ? e.message : e}`
     );
   }
 
-  return { query, observationsRaw };
+  return {
+    query,
+    observationsRaw,
+  };
 }
 
 type RDFObservation = Record<string, Literal | NamedNode<string>>;
@@ -939,7 +918,8 @@ function parseObservation(
 ): (value: RDFObservation) => Observation {
   return (obs) => {
     const res = {} as Observation;
-    for (let d of cubeDimensions) {
+
+    for (const d of cubeDimensions) {
       const label = obs[labelDimensionIri(d.data.iri)]?.value;
       const termType = obs[d.data.iri]?.termType;
 
@@ -974,7 +954,7 @@ function buildDimensions({
   cubeView: View;
   dimensionIris: Maybe<string[]>;
   resolvedDimensions: ResolvedDimension[];
-  cube: Cube;
+  cube: ExtendedCube;
   locale: string;
   observationFilters: Filter[];
   raw?: boolean;
