@@ -6,15 +6,18 @@ import {
   Filters,
   InteractiveFiltersConfig,
 } from "@/configurator";
-import { isStandardErrorDimension, Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import {
+  DataCubeComponent,
+  isDataCubeStandardErrorDimension,
+  Observation,
+} from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
 /** Use to create a unique key for rendering the shapes.
  * It's important to animate them correctly when using d3.
  */
 export const useRenderingKeyVariable = (
-  dimensions: DimensionMetadataFragment[],
+  dimensions: DataCubeComponent[],
   filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined
@@ -43,7 +46,7 @@ export const useRenderingKeyVariable = (
     }
 
     return dimensions
-      .filter((d) => !isStandardErrorDimension(d))
+      .filter((d) => !isDataCubeStandardErrorDimension(d))
       .map((d) => d.iri)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);

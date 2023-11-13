@@ -3,6 +3,7 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 
+import { DimensionType, MeasureType } from "@/configurator";
 import { GeoFeature, GeoProperties, GeoShapes } from "@/domain/data";
 import {
   DataCubeResolvers,
@@ -73,12 +74,10 @@ const DataCube: DataCubeResolvers = {
   },
 };
 
-export const resolveComponentType = (component: ResolvedDimension) => {
-  const { dataKind, isMeasureDimension, scaleType, related } = component.data;
-
-  if (isMeasureDimension) {
-    return "NumericalMeasure";
-  }
+export const resolveDimensionType = (
+  component: ResolvedDimension
+): DimensionType => {
+  const { dataKind, scaleType, related } = component.data;
 
   if (related.some((d) => d.type === "StandardError")) {
     return "StandardErrorDimension";
@@ -105,9 +104,17 @@ export const resolveComponentType = (component: ResolvedDimension) => {
   return "NominalDimension";
 };
 
+export const resolveMeasureType = (
+  component: ResolvedDimension
+): MeasureType => {
+  const { scaleType } = component.data;
+
+  return scaleType === "Ordinal" ? "OrdinalMeasure" : "NumericalMeasure";
+};
+
 const mkDimensionResolvers = (_: string): Resolvers["Dimension"] => ({
   __resolveType(dimension) {
-    return resolveComponentType(dimension);
+    return resolveDimensionType(dimension);
   },
   iri: ({ data: { iri } }) => iri,
   label: ({ data: { name } }) => name,
@@ -189,28 +196,8 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType({ data: { related, dataKind, scaleType } }) {
-      if (related.some((d) => d.type === "StandardError")) {
-        return "StandardErrorDimension";
-      }
-
-      if (dataKind === "Time") {
-        if (scaleType === "Ordinal") {
-          return "TemporalOrdinalDimension";
-        } else {
-          return "TemporalDimension";
-        }
-      } else if (dataKind === "GeoCoordinates") {
-        return "GeoCoordinatesDimension";
-      } else if (dataKind === "GeoShape") {
-        return "GeoShapesDimension";
-      }
-
-      if (scaleType === "Ordinal") {
-        return "OrdinalDimension";
-      }
-
-      return "NominalDimension";
+    __resolveType(dimension) {
+      return resolveDimensionType(dimension);
     },
   },
   NominalDimension: {
@@ -280,12 +267,8 @@ export const resolvers: Resolvers = {
     },
   },
   Measure: {
-    __resolveType: ({ data: { scaleType } }) => {
-      if (scaleType === "Ordinal") {
-        return "OrdinalMeasure";
-      } else {
-        return "NumericalMeasure";
-      }
+    __resolveType(dimension) {
+      return resolveMeasureType(dimension);
     },
   },
   NumericalMeasure: {

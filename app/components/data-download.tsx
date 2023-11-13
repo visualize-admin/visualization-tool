@@ -31,20 +31,19 @@ import { useClient } from "urql";
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
 import { DataSource, QueryFilters, SortingField } from "@/config-types";
-import { Observation } from "@/domain/data";
+import { DataCubeComponent, Observation } from "@/domain/data";
 import {
   dateFormatterFromDimension,
   getFormatFullDateAuto,
   getFormattersForLocale,
 } from "@/formatters";
 import {
-  ComponentsDocument,
-  ComponentsQuery,
-  ComponentsQueryVariables,
   DataCubeObservationsDocument,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
-  DimensionMetadataFragment,
+  DataCubesComponentsDocument,
+  DataCubesComponentsQuery,
+  DataCubesComponentsQueryVariables,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
@@ -92,7 +91,7 @@ export const DataDownloadStateProvider = ({
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
 
-const makeColumnLabel = (dim: DimensionMetadataFragment) => {
+const makeColumnLabel = (dim: DataCubeComponent) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
 };
 
@@ -101,7 +100,7 @@ const prepareData = ({
   observations,
   dimensionParsers,
 }: {
-  components: DimensionMetadataFragment[];
+  components: DataCubeComponent[];
   observations: Observation[];
   dimensionParsers: DimensionParsers;
 }) => {
@@ -327,14 +326,18 @@ const DownloadMenuItem = ({
   const [state, dispatch] = useDataDownloadState();
   const download = useCallback(
     async (
-      componentsData: ComponentsQuery,
+      componentsData: DataCubesComponentsQuery,
       observationsData: DataCubeObservationsQuery
     ) => {
-      if (!(componentsData?.dataCubeByIri && observationsData?.dataCubeByIri)) {
+      if (
+        !(
+          componentsData?.dataCubesComponents && observationsData?.dataCubeByIri
+        )
+      ) {
         return;
       }
 
-      const { dimensions, measures } = componentsData.dataCubeByIri;
+      const { dimensions, measures } = componentsData.dataCubesComponents;
       const components = [...dimensions, ...measures];
       const dimensionParsers = getDimensionParsers(components, { locale });
       const observations = observationsData.dataCubeByIri.observations.data;
@@ -382,16 +385,15 @@ const DownloadMenuItem = ({
         try {
           const [componentsResult, observationsResult] = await Promise.all([
             urqlClient
-              .query<ComponentsQuery, ComponentsQueryVariables>(
-                ComponentsDocument,
-                {
-                  iri: dataSetIri,
-                  sourceType: dataSource.type,
-                  sourceUrl: dataSource.url,
-                  locale,
-                  componentIris: undefined,
-                }
-              )
+              .query<
+                DataCubesComponentsQuery,
+                DataCubesComponentsQueryVariables
+              >(DataCubesComponentsDocument, {
+                sourceType: dataSource.type,
+                sourceUrl: dataSource.url,
+                locale,
+                filters: [{ iri: dataSetIri }],
+              })
               .toPromise(),
             urqlClient
               .query<
@@ -467,7 +469,7 @@ type DimensionParsers = {
 };
 
 const getDimensionParsers = (
-  components: DimensionMetadataFragment[],
+  components: DataCubeComponent[],
   { locale }: { locale: Locale }
 ): DimensionParsers => {
   return Object.fromEntries(

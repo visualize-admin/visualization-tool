@@ -109,7 +109,6 @@ query DataCubePreview(
   $sourceUrl: String!
   $locale: String!
   $latest: Boolean
-  $filters: Filters
   $disableValuesLoad: Boolean = true
 ) {
   dataCubeByIri(
@@ -124,20 +123,6 @@ query DataCubePreview(
     title
     description
     publicationStatus
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
       sparql

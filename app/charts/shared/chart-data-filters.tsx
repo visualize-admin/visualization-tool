@@ -28,16 +28,17 @@ import {
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { isTemporalDimension } from "@/domain/data";
+import {
+  DataCubeDimension,
+  DataCubeTemporalDimension,
+  isTemporalDimension,
+} from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
-  Dimension,
-  DimensionMetadataFragment,
   HierarchyValue,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   PossibleFiltersQueryVariables,
-  TemporalDimension,
   useDimensionValuesQuery,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
@@ -311,7 +312,7 @@ const DataFilter = (props: DataFilterProps) => {
 };
 
 type DataFilterGenericDimensionProps = {
-  dimension: Dimension;
+  dimension: DataCubeDimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
   options?: Array<{ label: string; value: string }>;
@@ -345,9 +346,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper
-              dim={dimension as DimensionMetadataFragment}
-            >
+            <OpenMetadataPanelWrapper dim={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }
@@ -362,7 +361,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
 };
 
 type DataFilterHierarchyDimensionProps = {
-  dimension: Dimension;
+  dimension: DataCubeDimension; // TODO: with hierarchy
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
@@ -409,9 +408,7 @@ const DataFilterHierarchyDimension = (
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper
-              dim={dimension as DimensionMetadataFragment}
-            >
+            <OpenMetadataPanelWrapper dim={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }
@@ -428,7 +425,7 @@ const DataFilterTemporalDimension = ({
   onChange,
   disabled,
 }: {
-  dimension: TemporalDimension;
+  dimension: DataCubeTemporalDimension;
   value: string;
   onChange: (
     e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>
@@ -484,9 +481,7 @@ const DataFilterTemporalDimension = ({
       label={
         <FieldLabel
           label={
-            <OpenMetadataPanelWrapper
-              dim={dimension as DimensionMetadataFragment}
-            >
+            <OpenMetadataPanelWrapper dim={dimension}>
               {label}
             </OpenMetadataPanelWrapper>
           }

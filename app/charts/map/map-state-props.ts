@@ -21,8 +21,9 @@ import {
   GeoData,
   GeoPoint,
   GeoShapes,
+  isDataCubeGeoDimension,
+  isDataCubeGeoShapesDimension,
   isGeoCoordinatesDimension,
-  isGeoDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
 import { DimensionMetadataFragment } from "@/graphql/query-hooks";
@@ -48,7 +49,7 @@ export const useMapStateVariables = (
     (d) => d.iri === areaLayer?.componentIri
   );
 
-  if (areaLayerDimension && !isGeoShapesDimension(areaLayerDimension)) {
+  if (areaLayerDimension && !isDataCubeGeoShapesDimension(areaLayerDimension)) {
     throw Error(
       `Dimension <${areaLayerDimension.iri}> is not geo shapes dimension!`
     );
@@ -64,7 +65,7 @@ export const useMapStateVariables = (
   );
 
   // Symbol layer dimension can be either GeoShapes or GeoCoordinates dimension.
-  if (symbolLayerDimension && !isGeoDimension(symbolLayerDimension)) {
+  if (symbolLayerDimension && !isDataCubeGeoDimension(symbolLayerDimension)) {
     throw Error(
       `Dimension <${symbolLayerDimension.iri}> is not geo dimension!`
     );

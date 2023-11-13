@@ -12,13 +12,14 @@ import keyBy from "lodash/keyBy";
 import memoize from "lodash/memoize";
 import { useMemo } from "react";
 
-import { isNumericalMeasure, isTemporalDimension } from "@/domain/data";
 import {
-  DimensionMetadataFragment,
-  NumericalMeasure,
-  TemporalDimension,
-  TimeUnit,
-} from "@/graphql/query-hooks";
+  DataCubeComponent,
+  DataCubeNumericalMeasure,
+  DataCubeTemporalDimension,
+  isDataCubeNumericalMeasure,
+  isDataCubeTemporalDimension,
+} from "@/domain/data";
+import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { parseDate } from "./configurator/components/ui-helpers";
@@ -33,14 +34,18 @@ const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
   return first && first.label !== first.value;
 };
 
-const namedNodeFormatter = (d: DimensionMetadataFragment) => {
+const isDataCubeNamedNodeDimension = (d: DataCubeComponent) => {
+  return isNamedNodeDimension(d as DimensionMetadataFragment);
+};
+
+const namedNodeFormatter = (d: DataCubeComponent) => {
   const valuesByIri = keyBy(d.values, (x) => x.value);
   return (v: string) => {
     return valuesByIri[v]?.label || v;
   };
 };
 
-const currencyFormatter = (d: NumericalMeasure) => {
+const currencyFormatter = (d: DataCubeNumericalMeasure) => {
   const formatLocale = getD3FormatLocale();
   const minDecimals = d.resolution ?? d.currencyExponent ?? 2;
   const maxDecimals = 8;
@@ -86,7 +91,7 @@ export const useLocalFormatters = () => {
 };
 
 export const dateFormatterFromDimension = (
-  dim: TemporalDimension,
+  dim: DataCubeTemporalDimension,
   localFormatters: LocalDateFormatters,
   formatDateAuto: (d: Date | string | null) => string
 ) => {
@@ -122,7 +127,10 @@ const formatIdentity = (x: string | Date | null) => {
   return x !== DIMENSION_VALUE_UNDEFINED ? `${x}` : "–";
 };
 
-const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
+const decimalFormatter = (
+  dim: DataCubeNumericalMeasure,
+  formatNumber: Formatter
+) => {
   const res = dim.resolution;
   const hasResolution = typeof res === "number";
   const formatting = `${hasResolution ? `.${res}` : ""}~e`;
@@ -141,20 +149,20 @@ const decimalFormatter = (dim: NumericalMeasure, formatNumber: Formatter) => {
 };
 
 export const getDimensionFormatters = ({
-  dimensions,
+  components,
   formatNumber,
   formatDateAuto,
   dateFormatters,
 }: {
-  dimensions: DimensionMetadataFragment[];
+  components: DataCubeComponent[];
   formatNumber: (d: number | string) => string;
   formatDateAuto: (d: Date | string | null) => string;
   dateFormatters: LocalDateFormatters;
 }) => {
   return Object.fromEntries(
-    dimensions.map((d) => {
+    components.map((d) => {
       let formatter: (s: any) => string;
-      if (isNumericalMeasure(d)) {
+      if (isDataCubeNumericalMeasure(d)) {
         if (d.isCurrency) {
           formatter = currencyFormatter(d);
         } else if (d.isDecimal) {
@@ -162,13 +170,13 @@ export const getDimensionFormatters = ({
         } else {
           formatter = formatNumber;
         }
-      } else if (isTemporalDimension(d)) {
+      } else if (isDataCubeTemporalDimension(d)) {
         formatter = dateFormatterFromDimension(
           d,
           dateFormatters,
           formatDateAuto
         );
-      } else if (isNamedNodeDimension(d)) {
+      } else if (isDataCubeNamedNodeDimension(d)) {
         formatter = namedNodeFormatter(d);
       } else if (
         // It makes no sense to format numeric values of ordinal dimensions
@@ -187,9 +195,7 @@ export const getDimensionFormatters = ({
   );
 };
 
-export const useDimensionFormatters = (
-  dimensions: DimensionMetadataFragment[]
-) => {
+export const useDimensionFormatters = (components: DataCubeComponent[]) => {
   const formatNumber = useFormatNumber() as unknown as (
     d: number | string
   ) => string;
@@ -198,12 +204,12 @@ export const useDimensionFormatters = (
 
   return useMemo(() => {
     return getDimensionFormatters({
-      dimensions,
+      components,
       formatNumber,
       formatDateAuto,
       dateFormatters,
     });
-  }, [dimensions, formatNumber, formatDateAuto, dateFormatters]);
+  }, [components, formatNumber, formatDateAuto, dateFormatters]);
 };
 
 export const getFormatFullDateAuto = (formatters: LocalDateFormatters) => {

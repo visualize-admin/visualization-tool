@@ -21,37 +21,41 @@ import {
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/config-types";
-import { Observation, isNumericalMeasure } from "@/domain/data";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
+  Observation,
+  isDataCubeNumericalMeasure,
+} from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
-  DimensionMetadataFragment,
-  useComponentsQuery,
   useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
+  useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
-const DimensionLabel = ({
-  dimension,
-  tooltipProps,
-  linkToMetadataPanel,
-}: {
-  dimension: DimensionMetadataFragment;
+type ComponentLabelProps = {
+  component: DataCubeComponent;
   tooltipProps?: Omit<TooltipProps, "title" | "children">;
   linkToMetadataPanel: boolean;
-}) => {
-  const label = dimension.unit
-    ? `${dimension.label} (${dimension.unit})`
-    : dimension.label;
+};
+
+const ComponentLabel = (props: ComponentLabelProps) => {
+  const { component, tooltipProps, linkToMetadataPanel } = props;
+  const label = `${component.label}${
+    component.unit ? ` (${component.unit})` : ""
+  }`;
 
   return linkToMetadataPanel ? (
-    <OpenMetadataPanelWrapper dim={dimension}>
+    <OpenMetadataPanelWrapper dim={component}>
       <span style={{ fontWeight: "bold" }}>{label}</span>
     </OpenMetadataPanelWrapper>
-  ) : dimension.description ? (
-    <Tooltip title={dimension.description} arrow {...tooltipProps}>
+  ) : component.description ? (
+    <Tooltip title={component.description} arrow {...tooltipProps}>
       <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
         {label}
       </span>
@@ -68,11 +72,11 @@ export const PreviewTable = ({
   linkToMetadataPanel,
 }: {
   title: string;
-  headers: DimensionMetadataFragment[];
+  headers: DataCubeComponent[];
   observations: Observation[];
   linkToMetadataPanel: boolean;
 }) => {
-  const [sortBy, setSortBy] = useState<DimensionMetadataFragment>();
+  const [sortBy, setSortBy] = useState<DataCubeComponent>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
   const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
@@ -83,7 +87,7 @@ export const PreviewTable = ({
     const compare = sortDirection === "asc" ? ascending : descending;
     const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
     const convert =
-      isNumericalMeasure(sortBy) || sortBy.isNumerical
+      isDataCubeNumericalMeasure(sortBy) || sortBy.isNumerical
         ? (d: string) => +d
         : (d: string) => {
             const value = valuesIndex.get(d);
@@ -121,30 +125,32 @@ export const PreviewTable = ({
         <caption style={{ display: "none" }}>{title}</caption>
         <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
           <TableRow sx={{ borderBottom: "none" }}>
-            {headers.map((d) => {
+            {headers.map((header) => {
               return (
                 <TableCell
-                  key={d.iri}
+                  key={header.iri}
                   component="th"
                   role="columnheader"
                   onClick={() => {
-                    if (sortBy?.iri === d.iri) {
+                    if (sortBy?.iri === header.iri) {
                       setSortDirection(
                         sortDirection === "asc" ? "desc" : "asc"
                       );
                     } else {
-                      setSortBy(d);
+                      setSortBy(header);
                       setSortDirection("asc");
                     }
                   }}
                   sx={{
-                    textAlign: isNumericalMeasure(d) ? "right" : "left",
+                    textAlign: isDataCubeNumericalMeasure(header)
+                      ? "right"
+                      : "left",
                     borderBottom: "none",
                     whiteSpace: "nowrap",
                   }}
                 >
                   <TableSortLabel
-                    active={sortBy === undefined || sortBy.iri === d.iri}
+                    active={sortBy === undefined || sortBy.iri === header.iri}
                     direction={sortBy === undefined ? "desc" : sortDirection}
                     IconComponent={SvgIcChevronDown}
                     sx={{
@@ -155,8 +161,8 @@ export const PreviewTable = ({
                       },
                     }}
                   >
-                    <DimensionLabel
-                      dimension={d}
+                    <ComponentLabel
+                      component={header}
                       tooltipProps={tooltipProps}
                       linkToMetadataPanel={linkToMetadataPanel}
                     />
@@ -178,7 +184,7 @@ export const PreviewTable = ({
                       key={header.iri}
                       component="td"
                       sx={{
-                        textAlign: isNumericalMeasure(header)
+                        textAlign: isDataCubeNumericalMeasure(header)
                           ? "right"
                           : "left",
                       }}
@@ -202,7 +208,7 @@ const BackgroundRow = ({ nCells }: { nCells: number }) => {
       <TableCell
         colSpan={nCells}
         sx={{ height: "1px", padding: 0, borderBottom: "none" }}
-      ></TableCell>
+      />
     </TableRow>
   );
 };
@@ -214,8 +220,8 @@ export const DataSetPreviewTable = ({
   observations,
 }: {
   title: string;
-  dimensions: DimensionMetadataFragment[];
-  measures: DimensionMetadataFragment[];
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
   observations: Observation[] | undefined;
 }) => {
   const headers = useMemo(() => {
@@ -257,10 +263,12 @@ export const DataSetTable = ({
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
     variables: commonQueryVariables,
   });
-  const [{ data: componentsData }] = useComponentsQuery({
+  const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
-      ...commonQueryVariables,
-      componentIris,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      filters: [{ iri: dataSetIri, componentIris }],
     },
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
@@ -272,37 +280,33 @@ export const DataSetTable = ({
   });
 
   const headers = useMemo(() => {
-    if (!componentsData?.dataCubeByIri) {
+    if (!componentsData?.dataCubesComponents) {
       return [];
     }
 
     return getSortedColumns([
-      ...componentsData.dataCubeByIri.dimensions,
-      ...componentsData.dataCubeByIri.measures,
+      ...componentsData.dataCubesComponents.dimensions,
+      ...componentsData.dataCubesComponents.measures,
     ]);
-  }, [componentsData?.dataCubeByIri]);
+  }, [componentsData?.dataCubesComponents]);
 
-  if (
-    metadataData?.dataCubeByIri &&
-    componentsData?.dataCubeByIri &&
-    observationsData?.dataCubeByIri
-  ) {
-    return (
-      <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
-        <PreviewTable
-          title={metadataData.dataCubeByIri.title}
-          headers={headers}
-          observations={observationsData.dataCubeByIri.observations.data}
-          linkToMetadataPanel={true}
-        />
-      </Box>
-    );
-  } else {
-    return <Loading />;
-  }
+  return metadataData?.dataCubeByIri &&
+    componentsData?.dataCubesComponents &&
+    observationsData?.dataCubeByIri ? (
+    <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
+      <PreviewTable
+        title={metadataData.dataCubeByIri.title}
+        headers={headers}
+        observations={observationsData.dataCubeByIri.observations.data}
+        linkToMetadataPanel={true}
+      />
+    </Box>
+  ) : (
+    <Loading />
+  );
 };
 
-export const getSortedColumns = (components: DimensionMetadataFragment[]) => {
+export const getSortedColumns = (components: DataCubeComponent[]) => {
   return [...components].sort((a, b) => {
     return ascending(a.order ?? Infinity, b.order ?? Infinity);
   });

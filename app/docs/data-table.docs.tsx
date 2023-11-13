@@ -10,7 +10,7 @@ import {
   tableMeasures,
   tableObservations,
 } from "@/docs/fixtures";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 
 export const Docs = () => markdown`
@@ -22,16 +22,13 @@ ${(
     <InteractiveFiltersProvider>
       <TableChart
         observations={tableObservations}
-        dimensions={tableDimensions as DimensionMetadataFragment[]}
+        dimensions={tableDimensions as DataCubeDimension[]}
         dimensionsByIri={keyBy(
-          tableDimensions as DimensionMetadataFragment[],
+          tableDimensions as DataCubeDimension[],
           (d) => d.iri
         )}
-        measures={tableMeasures as DimensionMetadataFragment[]}
-        measuresByIri={keyBy(
-          tableMeasures as DimensionMetadataFragment[],
-          (d) => d.iri
-        )}
+        measures={tableMeasures as DataCubeMeasure[]}
+        measuresByIri={keyBy(tableMeasures as DataCubeMeasure[], (d) => d.iri)}
         chartConfig={tableConfig}
       >
         <ChartContainer>

@@ -14,7 +14,7 @@ import {
   SortingField,
 } from "@/configurator";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -232,7 +232,7 @@ const measures = [
     label: "Übrige Sortimente in m3",
     __typename: "NumericalMeasure",
   },
-] as DimensionMetadataFragment[];
+] as DataCubeMeasure[];
 
 const dimensions = [
   {
@@ -520,7 +520,7 @@ const dimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as unknown as DimensionMetadataFragment[];
+] as unknown as DataCubeDimension[];
 
 const observations = [
   {

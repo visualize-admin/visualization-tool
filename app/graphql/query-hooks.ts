@@ -1,4 +1,4 @@
-import { DataCubeComponent } from '../domain/data';
+import { DataCubesComponents } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
 import { Observation } from '../domain/data';
@@ -18,7 +18,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  DataCubeComponent: DataCubeComponent;
+  DataCubesComponents: DataCubesComponents;
   DimensionValue: DimensionValue;
   FilterValue: any;
   Filters: QueryFilters;
@@ -86,7 +86,6 @@ export type DataCubeMeasuresArgs = {
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 };
 
-
 export type DataCubeFilter = {
   iri: Scalars['String'];
   componentIris?: Maybe<Array<Scalars['String']>>;
@@ -109,6 +108,7 @@ export type DataCubeTheme = {
   iri: Scalars['String'];
   label?: Maybe<Scalars['String']>;
 };
+
 
 export type Dimension = {
   iri: Scalars['String'];
@@ -374,7 +374,7 @@ export type OrdinalMeasureHierarchyArgs = {
 
 export type Query = {
   __typename: 'Query';
-  dataCubesComponents: Array<Scalars['DataCubeComponent']>;
+  dataCubesComponents: Scalars['DataCubesComponents'];
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -826,45 +826,11 @@ export type DataCubePreviewQueryVariables = Exact<{
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
   disableValuesLoad?: Maybe<Scalars['Boolean']>;
 }>;
 
 
-export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
-      { __typename: 'GeoCoordinatesDimension' }
-      & DimensionMetadata_GeoCoordinatesDimension_Fragment
-    ) | (
-      { __typename: 'GeoShapesDimension' }
-      & DimensionMetadata_GeoShapesDimension_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetadata_NominalDimension_Fragment
-    ) | (
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetadata_OrdinalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    ) | (
-      { __typename: 'StandardErrorDimension' }
-      & DimensionMetadata_StandardErrorDimension_Fragment
-    ) | (
-      { __typename: 'TemporalDimension' }
-      & DimensionMetadata_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'TemporalOrdinalDimension' }
-      & DimensionMetadata_TemporalOrdinalDimension_Fragment
-    )>, measures: Array<(
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    )>, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
+export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, observations: { __typename: 'ObservationsQuery', data: Array<Observation>, sparql: string, sparqlEditorUrl?: Maybe<string> } }> };
 
 export type DataCubeMetadataQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -932,7 +898,7 @@ export type DataCubesComponentsQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: Array<DataCubeComponent> };
+export type DataCubesComponentsQuery = { __typename: 'Query', dataCubesComponents: DataCubesComponents };
 
 export type ComponentsWithHierarchiesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -1226,7 +1192,7 @@ export function useSearchCubesQuery(options: Omit<Urql.UseQueryArgs<SearchCubesQ
   return Urql.useQuery<SearchCubesQuery>({ query: SearchCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
-    query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $disableValuesLoad: Boolean = true) {
+    query DataCubePreview($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $disableValuesLoad: Boolean = true) {
   dataCubeByIri(
     iri: $iri
     sourceType: $sourceType
@@ -1239,20 +1205,6 @@ export const DataCubePreviewDocument = gql`
     title
     description
     publicationStatus
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
     observations(sourceType: $sourceType, sourceUrl: $sourceUrl, limit: 10) {
       data
       sparql
@@ -1260,7 +1212,7 @@ export const DataCubePreviewDocument = gql`
     }
   }
 }
-    ${DimensionMetadataFragmentDoc}`;
+    `;
 
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });

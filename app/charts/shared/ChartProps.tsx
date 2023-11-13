@@ -1,15 +1,21 @@
 import { ChartConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeDimension, DataCubeMeasure, Observation } from "@/domain/data";
 
-export type ComponentsByIri = Record<string, DimensionMetadataFragment>;
+export type ComponentsByIri = Record<
+  string,
+  DataCubeDimension | DataCubeMeasure
+>;
+
+export type DimensionsByIri = Record<string, DataCubeDimension>;
+
+export type MeasuresByIri = Record<string, DataCubeMeasure>;
 
 export type BaseChartProps = {
   observations: Observation[];
-  dimensions: DimensionMetadataFragment[];
-  dimensionsByIri: ComponentsByIri;
-  measures: DimensionMetadataFragment[];
-  measuresByIri: ComponentsByIri;
+  dimensions: DataCubeDimension[];
+  dimensionsByIri: DimensionsByIri;
+  measures: DataCubeMeasure[];
+  measuresByIri: MeasuresByIri;
 };
 
 export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {

@@ -360,7 +360,7 @@ input DataCubeFilter {
   latest: Boolean
 }
 
-scalar DataCubeComponent
+scalar DataCubesComponents
 
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
@@ -370,7 +370,7 @@ type Query {
     sourceUrl: String!
     locale: String!
     filters: [DataCubeFilter!]!
-  ): [DataCubeComponent!]!
+  ): DataCubesComponents!
   dataCubeByIri(
     sourceType: String!
     sourceUrl: String!

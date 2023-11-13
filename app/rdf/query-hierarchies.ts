@@ -87,18 +87,22 @@ const findHierarchiesForDimension = (
       .toArray(),
     (x) => getName(x, locale)
   );
+
   if (newHierarchies) {
     return newHierarchies;
   }
+
   const legacyHierarchies = cube.ptr
     .any()
     .has(ns.sh.path, rdf.namedNode(dimensionIri))
     .has(ns.cubeMeta.hasHierarchy)
     .out(ns.cubeMeta.hasHierarchy)
     .toArray();
+
   if (legacyHierarchies) {
     return legacyHierarchies;
   }
+
   return [];
 };
 

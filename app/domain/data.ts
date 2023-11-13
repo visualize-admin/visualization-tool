@@ -16,6 +16,7 @@ import {
   DataCubePublicationStatus,
   RelatedDimension,
   ScaleType,
+  TimeUnit,
 } from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 
@@ -37,8 +38,14 @@ export type DimensionValue = {
 
 export type Observation = Record<string, ObservationValue>;
 
-export type DataCubeComponent = {
-  __typename: ComponentType;
+export type DataCubesComponents = {
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
+};
+
+export type DataCubeComponent = DataCubeDimension | DataCubeMeasure;
+
+type BasicDataCubeComponent = {
   cubeIri: string;
   iri: string;
   label: string;
@@ -51,6 +58,63 @@ export type DataCubeComponent = {
   isKeyDimension: boolean;
   values: DimensionValue[];
   related?: RelatedDimension[];
+};
+
+export type DataCubeDimension =
+  | DataCubeNominalDimension
+  | DataCubeOrdinalDimension
+  | DataCubeTemporalDimension
+  | DataCubeTemporalOrdinalDimension
+  | DataCubeGeoCoordinatesDimension
+  | DataCubeGeoShapesDimension
+  | DataCubeStandardErrorDimension;
+
+export type DataCubeNominalDimension = BasicDataCubeComponent & {
+  __typename: "NominalDimension";
+};
+
+export type DataCubeOrdinalDimension = BasicDataCubeComponent & {
+  __typename: "OrdinalDimension";
+};
+
+export type DataCubeTemporalDimension = BasicDataCubeComponent & {
+  __typename: "TemporalDimension";
+  timeUnit: TimeUnit;
+  timeFormat: string;
+};
+
+export type DataCubeTemporalOrdinalDimension = BasicDataCubeComponent & {
+  __typename: "TemporalOrdinalDimension";
+};
+
+export type DataCubeGeoCoordinatesDimension = BasicDataCubeComponent & {
+  __typename: "GeoCoordinatesDimension";
+};
+
+export type DataCubeGeoShapesDimension = BasicDataCubeComponent & {
+  __typename: "GeoShapesDimension";
+};
+
+export type DataCubeStandardErrorDimension = BasicDataCubeComponent & {
+  __typename: "StandardErrorDimension";
+};
+
+export type DataCubeMeasure = DataCubeNumericalMeasure | DataCubeOrdinalMeasure;
+
+type BasicDataCubeMeasure = BasicDataCubeComponent & {
+  isCurrency?: boolean;
+  isDecimal?: boolean;
+  currencyExponent?: number;
+  resolution?: number;
+};
+
+// TODO: update name once migration is complete!
+export type DataCubeNumericalMeasure = BasicDataCubeMeasure & {
+  __typename: "NumericalMeasure";
+};
+
+export type DataCubeOrdinalMeasure = BasicDataCubeMeasure & {
+  __typename: "OrdinalMeasure";
 };
 
 export type GeoProperties = {
@@ -267,9 +331,26 @@ export const isGeoDimension = (
   );
 };
 
+export const isDataCubeGeoDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is
+  | DataCubeGeoCoordinatesDimension
+  | DataCubeGeoShapesDimension => {
+  return (
+    isDataCubeGeoCoordinatesDimension(dimension) ||
+    isDataCubeGeoShapesDimension(dimension)
+  );
+};
+
 export const isGeoCoordinatesDimension = (
   dimension?: DimensionMetadataFragment | null
 ): dimension is GeoCoordinatesDimension => {
+  return dimension?.__typename === "GeoCoordinatesDimension";
+};
+
+export const isDataCubeGeoCoordinatesDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeGeoCoordinatesDimension => {
   return dimension?.__typename === "GeoCoordinatesDimension";
 };
 
@@ -279,9 +360,22 @@ export const isGeoShapesDimension = (
   return dimension?.__typename === "GeoShapesDimension";
 };
 
+export const isDataCubeGeoShapesDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeGeoShapesDimension => {
+  return dimension?.__typename === "GeoShapesDimension";
+};
+
 export const isNumericalMeasure = (
   dimension?: DimensionMetadataFragment | null
 ): dimension is NumericalMeasure => {
+  return dimension?.__typename === "NumericalMeasure";
+};
+
+// FIXME: change names once migration is complete!
+export const isDataCubeNumericalMeasure = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeNumericalMeasure => {
   return dimension?.__typename === "NumericalMeasure";
 };
 
@@ -297,9 +391,21 @@ export const isTemporalDimension = (
   return dimension?.__typename === "TemporalDimension";
 };
 
+export const isDataCubeTemporalDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeTemporalDimension => {
+  return dimension?.__typename === "TemporalDimension";
+};
+
 export const isTemporalOrdinalDimension = (
   dimension?: DimensionMetadataFragment | null
 ): dimension is TemporalOrdinalDimension => {
+  return dimension?.__typename === "TemporalOrdinalDimension";
+};
+
+export const isDataCubeTemporalOrdinalDimension = (
+  dimension?: DataCubeComponent | null
+): dimension is DataCubeTemporalOrdinalDimension => {
   return dimension?.__typename === "TemporalOrdinalDimension";
 };
 
@@ -311,9 +417,24 @@ export const isStandardErrorDimension = (dim: DimensionMetadataFragment) => {
   return dim.__typename === "StandardErrorDimension";
 };
 
+export const isDataCubeStandardErrorDimension = (
+  dim: DataCubeComponent
+): dim is DataCubeStandardErrorDimension => {
+  return dim.__typename === "StandardErrorDimension";
+};
+
 export const findRelatedErrorDimension = (
   dimIri: string,
   dimensions: DimensionMetadataFragment[]
+) => {
+  return dimensions.find((x) =>
+    x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")
+  );
+};
+
+export const findRelatedDataCubeErrorDimension = (
+  dimIri: string,
+  dimensions: DataCubeComponent[]
 ) => {
   return dimensions.find((x) =>
     x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")

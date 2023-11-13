@@ -19,11 +19,8 @@ import {
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
-import {
-  DimensionMetadataFragment,
-  useDimensionValuesQuery,
-} from "@/graphql/query-hooks";
+import { DataCubeComponent, DataCubeMeasure, Observation } from "@/domain/data";
+import { useDimensionValuesQuery } from "@/graphql/query-hooks";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
@@ -213,7 +210,7 @@ type LegendColorProps = {
   // corresponding measure to open the metadata panel.
   getLegendItemDimension?: (
     dimensionLabel: string
-  ) => DimensionMetadataFragment | undefined;
+  ) => DataCubeMeasure | undefined;
   interactive?: boolean;
 };
 
@@ -243,7 +240,7 @@ export const MapLegendColor = memo(function LegendColor({
   useAbbreviations,
   chartConfig,
 }: {
-  component: DimensionMetadataFragment;
+  component: DataCubeComponent;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
@@ -295,9 +292,7 @@ type LegendColorContentProps = {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
-  getItemDimension?: (
-    dimensionLabel: string
-  ) => DimensionMetadataFragment | undefined;
+  getItemDimension?: (dimensionLabel: string) => DataCubeMeasure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
@@ -395,7 +390,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
 type LegendItemProps = {
   item: string;
   color: string;
-  dimension?: DimensionMetadataFragment;
+  dimension?: DataCubeMeasure;
   symbol: LegendSymbol;
   interactive?: boolean;
   onToggle?: CheckboxProps["onChange"];

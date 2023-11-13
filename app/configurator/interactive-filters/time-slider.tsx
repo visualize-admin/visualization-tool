@@ -8,10 +8,14 @@ import { TableChartState } from "@/charts/table/table-state";
 import { Slider as GenericSlider } from "@/components/form";
 import { AnimationField, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
+import {
+  DataCubeDimension,
+  isDataCubeTemporalDimension,
+  isDataCubeTemporalOrdinalDimension,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
-import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { Timeline, TimelineProps } from "@/utils/observables";
@@ -39,7 +43,7 @@ const useTimeline = () => {
 
 type TimeSliderProps = {
   filters: Filters;
-  dimensions: DimensionMetadataFragment[];
+  dimensions: DataCubeDimension[];
 } & AnimationField;
 
 export const TimeSlider = (props: TimeSliderProps) => {
@@ -51,25 +55,24 @@ export const TimeSlider = (props: TimeSliderProps) => {
     filters,
     dimensions,
   } = props;
-  const component = React.useMemo(() => {
+
+  const dimension = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
+  const hasTimeUnit = isDataCubeTemporalDimension(dimension);
 
-  const hasTimeUnit = isTemporalDimension(component);
-  if (!(hasTimeUnit || isTemporalOrdinalDimension(component))) {
+  if (!(hasTimeUnit || isDataCubeTemporalOrdinalDimension(dimension))) {
     throw new Error("You can only use TimeSlider with temporal dimensions!");
   }
 
   const timeFormatUnit = useTimeFormatUnit();
-  const timeUnit = hasTimeUnit ? component.timeUnit ?? TimeUnit.Day : undefined;
+  const timeUnit = hasTimeUnit ? dimension.timeUnit ?? TimeUnit.Day : undefined;
 
   // No TimeSlider for tables.
   const chartState = useChartState() as NonNullable<
     Exclude<ChartState, TableChartState>
   >;
-
-  const componentFilter = filters[component.iri];
-
+  const dimensionFilter = filters[dimension.iri];
   const timelineProps: TimelineProps = React.useMemo(() => {
     const commonProps = {
       animationType,
@@ -78,7 +81,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
     const uniqueValues = Array.from(
       new Set(
         chartState.allData
-          .map((d) => d[component.iri])
+          .map((d) => d[dimension.iri])
           .filter(truthy) as string[]
       )
     );
@@ -98,8 +101,8 @@ export const TimeSlider = (props: TimeSliderProps) => {
         sortingType: "byAuto",
         sortingOrder: "asc",
       };
-      const sorters = makeDimensionValueSorters(component, {
-        dimensionFilter: componentFilter,
+      const sorters = makeDimensionValueSorters(dimension, {
+        dimensionFilter,
         sorting,
       });
       const sortingOrders = getSortingOrders(sorters, sorting);
@@ -116,10 +119,10 @@ export const TimeSlider = (props: TimeSliderProps) => {
     animationType,
     animationDuration,
     chartState.allData,
-    component,
+    dimension,
     timeFormatUnit,
     timeUnit,
-    componentFilter,
+    dimensionFilter,
   ]);
 
   const timeline = React.useMemo(() => {

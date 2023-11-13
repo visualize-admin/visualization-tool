@@ -17,7 +17,7 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { InteractiveFiltersConfig, ScatterPlotConfig } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
+import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -233,7 +233,7 @@ const scatterplotMeasures = [
     label: "Übrige Sortimente in m3",
     __typename: "NumericalMeasure",
   },
-] as DimensionMetadataFragment[];
+] as DataCubeMeasure[];
 
 const scatterplotDimensions = [
   {
@@ -521,7 +521,8 @@ const scatterplotDimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as unknown as DimensionMetadataFragment[];
+] as unknown as DataCubeDimension[];
+
 const scatterplotObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

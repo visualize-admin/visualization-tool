@@ -1,8 +1,9 @@
+import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
 
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
-import { DimensionMetadataFragment, TimeUnit } from "../graphql/query-hooks";
+import { TimeUnit } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
   {
@@ -151,8 +152,9 @@ export const fields: ColumnFields = {
   },
 };
 
-export const dimensions: DimensionMetadataFragment[] = [
+export const dimensions: DataCubeDimension[] = [
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     label: "Jahr",
     __typename: "TemporalDimension",
@@ -166,6 +168,7 @@ export const dimensions: DimensionMetadataFragment[] = [
     ],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/1",
     label: "Kanton",
     __typename: "NominalDimension",
@@ -174,6 +177,7 @@ export const dimensions: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/2",
     label: "Forstzone",
     __typename: "NominalDimension",
@@ -182,8 +186,10 @@ export const dimensions: DimensionMetadataFragment[] = [
     values: [],
   },
 ];
-export const measures: DimensionMetadataFragment[] = [
+
+export const measures: DataCubeMeasure[] = [
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     label: "Investitionen: Einnahmen - Total",
     __typename: "NumericalMeasure",
@@ -192,6 +198,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/1",
     label: "Investitionen: Einnahmen aus Beiträgen Bund und Kantone",
     __typename: "NumericalMeasure",
@@ -200,6 +207,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/2",
     label: "Investitionen: Einnahmen aus Beiträgen von Gemeinden und Dritten",
     __typename: "NumericalMeasure",
@@ -208,6 +216,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/3",
     label: "Investitionen: übrige Einnahmen",
     __typename: "NumericalMeasure",
@@ -216,6 +225,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/4",
     label: "Investitionen - Total",
     __typename: "NumericalMeasure",
@@ -224,6 +234,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/5",
     label: "Investitionen für Wirtschaftsgebäude",
     __typename: "NumericalMeasure",
@@ -232,6 +243,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/6",
     label: "Investitionen für Maschinen",
     __typename: "NumericalMeasure",
@@ -240,6 +252,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/7",
     label: "Übrige Ausgaben für Investitionen",
     __typename: "NumericalMeasure",
@@ -248,6 +261,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/8",
     label: "Investitionen für Erschliessungsanlagen",
     __typename: "NumericalMeasure",
@@ -256,6 +270,7 @@ export const measures: DimensionMetadataFragment[] = [
     values: [],
   },
   {
+    cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/9",
     label: "Netto-Investitionen",
     __typename: "NumericalMeasure",

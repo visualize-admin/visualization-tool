@@ -11,7 +11,13 @@ import type { BaseChartProps } from "@/charts/shared/ChartProps";
 import { getTimeInterval } from "@/intervals";
 
 import { TableColumn, TableFields } from "../../config-types";
-import { DimensionValue, Observation } from "../../domain/data";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  DataCubeMeasure,
+  DimensionValue,
+  Observation,
+} from "../../domain/data";
 import { DimensionMetadataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { getPalette } from "../../palettes";
@@ -96,8 +102,8 @@ export const useErrorMeasure = (
     dimensions,
     measures,
   }: {
-    dimensions: DimensionMetadataFragment[];
-    measures: DimensionMetadataFragment[];
+    dimensions: DataCubeDimension[];
+    measures: DataCubeMeasure[];
   }
 ) => {
   return useMemo(() => {
@@ -105,7 +111,7 @@ export const useErrorMeasure = (
   }, [componentIri, dimensions, measures]);
 };
 
-export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
+export const useErrorVariable = (errorMeasure?: DataCubeComponent) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
@@ -116,7 +122,7 @@ export const useErrorVariable = (errorMeasure?: DimensionMetadataFragment) => {
 };
 
 export const useErrorRange = (
-  errorMeasure: DimensionMetadataFragment | undefined,
+  errorMeasure: DataCubeComponent | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {

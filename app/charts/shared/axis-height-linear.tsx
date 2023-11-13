@@ -17,7 +17,6 @@ import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -62,9 +61,7 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject width={axisTitleWidth} height={axisLabelFontSize * 2}>
-          <OpenMetadataPanelWrapper
-            dim={state.yMeasure as DimensionMetadataFragment}
-          >
+          <OpenMetadataPanelWrapper dim={state.yMeasure}>
             <span style={{ fontSize: axisLabelFontSize }}>
               {state.yAxisLabel}
             </span>

@@ -30,9 +30,12 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
+import {
+  DataCubeComponent,
+  DataCubeDimension,
+  Observation,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
@@ -217,7 +220,7 @@ export const usePlottableData = (
 };
 
 export const useDimensionWithAbbreviations = (
-  dimension: DimensionMetadataFragment | undefined,
+  dimension: DataCubeDimension | undefined,
   {
     observations,
     field,
@@ -469,9 +472,7 @@ export const normalizeData = (
 const SlugRe = /\W+/g;
 export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
 
-export const getLabelWithUnit = (
-  dimension: DimensionMetadataFragment
-): string => {
+export const getLabelWithUnit = (dimension: DataCubeComponent): string => {
   return dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;

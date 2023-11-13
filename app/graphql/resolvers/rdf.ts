@@ -4,7 +4,11 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
-import { DimensionValue } from "@/domain/data";
+import {
+  DataCubeDimension,
+  DataCubeMeasure,
+  DimensionValue,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
@@ -14,7 +18,7 @@ import {
   Resolvers,
   SearchCubeResultOrder,
 } from "@/graphql/resolver-types";
-import { resolveComponentType } from "@/graphql/resolvers";
+import { resolveDimensionType, resolveMeasureType } from "@/graphql/resolvers";
 import { defaultLocale } from "@/locales/locales";
 import { parseIri } from "@/rdf/parse";
 import {
@@ -158,19 +162,19 @@ export const dataCubesComponents: NonNullable<
     )
   ).filter(truthy);
 
-  const dimensions = await getCubesDimensions(cubes, {
+  const rawComponents = await getCubesDimensions(cubes, {
     locale,
     sparqlClient,
     filters,
     cache,
   });
 
-  return await Promise.all(
-    dimensions.map(async (dimension) => {
-      const { cube, data } = dimension;
-
-      return {
-        __typename: resolveComponentType(dimension),
+  const dimensions: DataCubeDimension[] = [];
+  const measures: DataCubeMeasure[] = [];
+  await Promise.all(
+    rawComponents.map(async (component) => {
+      const { cube, data } = component;
+      const baseComponent = {
         cubeIri: parseIri(cube),
         iri: data.iri,
         label: data.name,
@@ -181,11 +185,33 @@ export const dataCubesComponents: NonNullable<
         order: data.order,
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
-        values: await loaders.dimensionValues.load(dimension),
+        values: await loaders.dimensionValues.load(component),
         related: data.related,
       };
+
+      if (data.isMeasureDimension) {
+        const result = {
+          __typename: resolveMeasureType(component),
+          isCurrency: data.isCurrency,
+          isDecimal: data.isDecimal,
+          currencyExponent: data.currencyExponent,
+          resolution: data.resolution,
+          ...baseComponent,
+        } as DataCubeMeasure;
+
+        measures.push(result);
+      } else {
+        const result = {
+          __typename: resolveDimensionType(component),
+          ...baseComponent,
+        } as DataCubeDimension;
+
+        dimensions.push(result);
+      }
     })
   );
+
+  return { dimensions, measures };
 };
 
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =

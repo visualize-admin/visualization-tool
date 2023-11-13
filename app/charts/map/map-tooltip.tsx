@@ -55,9 +55,15 @@ export const MapTooltip = () => {
 
   const { getFormattedError: formatSymbolError } = symbolLayer || {};
   const formatters = useChartFormatters({
-    dimensions: [],
+    dimensions: [
+      areaLayer?.colors.type === "continuous"
+        ? null
+        : areaLayer?.colors.component,
+    ].filter(truthy),
     measures: [
-      areaLayer?.colors.component,
+      areaLayer?.colors.type === "continuous"
+        ? areaLayer?.colors.component
+        : null,
       symbolLayer?.measureDimension,
     ].filter(truthy),
   });
