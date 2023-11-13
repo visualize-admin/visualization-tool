@@ -26,8 +26,8 @@ import { RequestQueryMeta } from "./query-meta";
 
 export const MAX_BATCH_SIZE = 500;
 
-export const getRawCube = async (sourceUrl: string, iri: string) => {
-  const source = createSource({ endpointUrl: sourceUrl });
+export const getRawCube = async (sparqlClient: ParsingClient, iri: string) => {
+  const source = createSource(sparqlClient);
   const cube = new ExtendedCube({
     parent: source,
     term: rdf.namedNode(iri),
@@ -48,11 +48,11 @@ export const getRawCube = async (sourceUrl: string, iri: string) => {
 //   60_000
 // );
 
-const createCubeLoader = (sourceUrl: string) => {
+const createCubeLoader = (sparqlClient: ParsingClient) => {
   return (cubeIris: readonly string[]) => {
     return Promise.all(
       cubeIris.map(async (iri) => {
-        return getRawCube(sourceUrl, iri);
+        return getRawCube(sparqlClient, iri);
       })
     );
   };
@@ -62,11 +62,10 @@ const createLoaders = async (
   locale: string,
   sparqlClient: ParsingClient,
   geoSparqlClient: ParsingClient,
-  sourceUrl: string,
   cache: LRUCache | undefined
 ) => {
   return {
-    cube: new DataLoader(createCubeLoader(sourceUrl)),
+    cube: new DataLoader(createCubeLoader(sparqlClient)),
     dimensionValues: new DataLoader(
       createCubeDimensionValuesLoader(sparqlClient, cache),
       {
@@ -181,7 +180,6 @@ const createContextContent = async ({
     locale,
     sparqlClient,
     geoSparqlClient,
-    sourceUrl,
     contextCache
   );
 

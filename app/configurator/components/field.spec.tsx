@@ -2,6 +2,9 @@ import { fireEvent, render } from "@testing-library/react";
 
 import { TimeInput } from "@/configurator/components/field";
 import { getD3TimeFormatLocale } from "@/locales/locales";
+import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
+
+RDFCubeViewQueryMock;
 
 describe("TimeInput", () => {
   const expectedValue = "2020-05-24";

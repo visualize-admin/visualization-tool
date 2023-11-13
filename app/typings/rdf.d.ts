@@ -114,14 +114,20 @@ declare module "rdf-cube-view-query" {
   }
 
   export type SourceOptions = NodeInit & {
-    endpointUrl: string;
     sourceGraph?: string | DefaultGraphExt;
-    user?: string;
-    password?: string;
     queryOperation?: "get" | "postUrlencoded" | "postDirect";
     queryPrefix?: string;
     term?: Term;
-  };
+  } & (
+      | {
+          endpointUrl: string;
+          user?: string;
+          password?: string;
+        }
+      | {
+          client?: ParsingClient;
+        }
+    );
   export class Source extends Node {
     constructor(options: SourceOptions);
     async cube(term: Term | string): Promise<Cube | null>;

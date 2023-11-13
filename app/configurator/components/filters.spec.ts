@@ -1,7 +1,10 @@
 import { TemporalDimension, TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
+import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import { getTimeFilterOptions } from "./filters";
+
+RDFCubeViewQueryMock;
 
 describe("TimeFilter", () => {
   const dimension = {
