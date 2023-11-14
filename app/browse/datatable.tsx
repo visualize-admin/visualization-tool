@@ -268,7 +268,7 @@ export const DataSetTable = ({
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      filters: [{ iri: dataSetIri, componentIris }],
+      filters: [{ iri: dataSetIri, componentIris, filters }],
     },
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({

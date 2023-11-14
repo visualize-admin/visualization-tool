@@ -300,13 +300,26 @@ const useFilterReorder = ({
   });
 
   useEffect(() => {
-    executeMetadataQuery({
-      variables,
-    });
+    executeMetadataQuery({ variables });
     exectueComponentsQuery({
-      variables,
+      variables: {
+        sourceType: state.dataSource.type,
+        sourceUrl: state.dataSource.url,
+        locale,
+        filters: [{ iri: chartConfig.dataSet, filters: variables.filters }],
+        // @ts-ignore This is to make urql requery
+        filterKeys: variables.filterKeys,
+      },
     });
-  }, [variables, executeMetadataQuery, exectueComponentsQuery]);
+  }, [
+    variables,
+    executeMetadataQuery,
+    exectueComponentsQuery,
+    state.dataSource.type,
+    state.dataSource.url,
+    locale,
+    chartConfig.dataSet,
+  ]);
 
   const metadata = metadataData?.dataCubeByIri;
   const dimensions = componentsData?.dataCubesComponents?.dimensions;

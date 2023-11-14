@@ -351,11 +351,9 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           </ControlSectionContent>
         </ControlSection>
       )}
-
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
-
       {fieldDimension &&
         encoding.field === "segment" &&
         (hasSubOptions || hasColorPalette) && (
@@ -368,22 +366,18 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
             hasSubOptions={hasSubOptions}
           />
         )}
-
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
-
       {encoding.options?.calculation && get(fields, "segment") && (
         <ChartFieldCalculation
           {...encoding.options.calculation.getDisabledState?.(chartConfig)}
         />
       )}
-
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
         <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
       )}
-
       {encoding.sorting && isDataCubeDimensionSortable(component) && (
         <ChartFieldSorting
           chartConfig={chartConfig}
@@ -391,7 +385,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           encodingSortingOptions={encoding.sorting}
         />
       )}
-
       {encoding.options?.size && component && (
         <ChartFieldSize
           field={field}
@@ -401,7 +394,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           measures={measures}
         />
       )}
-
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
           chartConfig={chartConfig}
@@ -416,7 +408,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           }
         />
       )}
-
       {encoding.options?.showStandardError && hasStandardError && (
         <ControlSection collapse>
           <SubsectionTitle iconName="eye">
@@ -434,7 +425,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           </ControlSectionContent>
         </ControlSection>
       )}
-
       <ChartFieldMultiFilter
         chartConfig={chartConfig}
         component={component}
@@ -1205,7 +1195,6 @@ const ChartFieldMultiFilter = ({
         </legend>
         {isDataCubeTemporalDimension(component) ? (
           <TimeFilter
-            key={component.iri}
             dimension={component}
             disableInteractiveFilters={encoding.disableInteractiveFilters}
           />
@@ -1213,7 +1202,6 @@ const ChartFieldMultiFilter = ({
           component &&
           !isDataCubeMeasure(component) && (
             <DimensionValuesMultiFilter
-              key={component.iri}
               dimension={component}
               dataSetIri={chartConfig.dataSet}
               field={field}
