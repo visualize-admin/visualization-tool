@@ -7,6 +7,7 @@ import { Filters } from "@/configurator";
 import {
   DataCubeDimension,
   DataCubeMeasure,
+  DataCubeTemporalDimension,
   DimensionValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -191,6 +192,15 @@ export const dataCubesComponents: NonNullable<
         cache,
         filters.find((d) => d.iri === component.cube.term?.value)?.filters
       );
+      const values: DimensionValue[] = await dimensionValuesLoader.load(
+        component
+      );
+      values.sort((a, b) =>
+        ascending(
+          a.position ?? a.value ?? undefined,
+          b.position ?? b.value ?? undefined
+        )
+      );
       const baseComponent = {
         cubeIri: parseIri(cube),
         iri: data.iri,
@@ -202,28 +212,49 @@ export const dataCubesComponents: NonNullable<
         order: data.order,
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
-        values: await dimensionValuesLoader.load(component),
+        values,
         related: data.related,
       };
 
       if (data.isMeasureDimension) {
-        const result = {
+        const result: DataCubeMeasure = {
           __typename: resolveMeasureType(component),
           isCurrency: data.isCurrency,
           isDecimal: data.isDecimal,
           currencyExponent: data.currencyExponent,
           resolution: data.resolution,
           ...baseComponent,
-        } as DataCubeMeasure;
+        };
 
         measures.push(result);
       } else {
-        const result = {
-          __typename: resolveDimensionType(component),
-          ...baseComponent,
-        } as DataCubeDimension;
+        const dimensionType = resolveDimensionType(component);
 
-        dimensions.push(result);
+        switch (dimensionType) {
+          case "TemporalDimension": {
+            if (!data.timeFormat || !data.timeUnit) {
+              throw new Error(
+                `Temporal dimension ${data.iri} is missing timeFormat or timeUnit!`
+              );
+            }
+
+            const dimension: DataCubeTemporalDimension = {
+              __typename: dimensionType,
+              timeFormat: data.timeFormat,
+              timeUnit: data.timeUnit,
+              ...baseComponent,
+            };
+            dimensions.push(dimension);
+            break;
+          }
+          default: {
+            const dimension: DataCubeDimension = {
+              __typename: dimensionType,
+              ...baseComponent,
+            };
+            dimensions.push(dimension);
+          }
+        }
       }
     })
   );
