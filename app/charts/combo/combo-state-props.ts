@@ -1,10 +1,10 @@
 import { ascending } from "d3";
 
 import { TemporalValueGetter } from "@/charts/shared/chart-state";
-import { DataCubeMeasure, Observation } from "@/domain/data";
+import { Measure, Observation } from "@/domain/data";
 
 export type BaseYGetter = {
-  dimension: DataCubeMeasure;
+  dimension: Measure;
   iri: string;
   label: string;
   color: string;

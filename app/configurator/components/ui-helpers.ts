@@ -12,10 +12,10 @@ import { getTimeInterval } from "@/intervals";
 
 import { TableColumn, TableFields } from "../../config-types";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
+  Component,
+  Dimension,
   DimensionValue,
+  Measure,
   Observation,
 } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
@@ -102,8 +102,8 @@ export const useErrorMeasure = (
     dimensions,
     measures,
   }: {
-    dimensions: DataCubeDimension[];
-    measures: DataCubeMeasure[];
+    dimensions: Dimension[];
+    measures: Measure[];
   }
 ) => {
   return useMemo(() => {
@@ -111,7 +111,7 @@ export const useErrorMeasure = (
   }, [componentIri, dimensions, measures]);
 };
 
-export const useErrorVariable = (errorMeasure?: DataCubeComponent) => {
+export const useErrorVariable = (errorMeasure?: Component) => {
   return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
@@ -122,7 +122,7 @@ export const useErrorVariable = (errorMeasure?: DataCubeComponent) => {
 };
 
 export const useErrorRange = (
-  errorMeasure: DataCubeComponent | undefined,
+  errorMeasure: Component | undefined,
   valueGetter: (d: Observation) => number | null
 ) => {
   return useMemo(() => {
@@ -256,7 +256,7 @@ export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
   }, [fields]);
 };
 
-export const canUseAbbreviations = (d?: DataCubeComponent): boolean => {
+export const canUseAbbreviations = (d?: Component): boolean => {
   if (!d) {
     return false;
   }

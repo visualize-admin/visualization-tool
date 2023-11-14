@@ -7,8 +7,8 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator";
 import {
-  DataCubeComponent,
-  isDataCubeStandardErrorDimension,
+  Component,
+  isStandardErrorDimension,
   Observation,
 } from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
@@ -17,7 +17,7 @@ import { TransitionStore } from "@/stores/transition";
  * It's important to animate them correctly when using d3.
  */
 export const useRenderingKeyVariable = (
-  dimensions: DataCubeComponent[],
+  dimensions: Component[],
   filters: Filters,
   interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined
@@ -46,7 +46,7 @@ export const useRenderingKeyVariable = (
     }
 
     return dimensions
-      .filter((d) => !isDataCubeStandardErrorDimension(d))
+      .filter((d) => !isStandardErrorDimension(d))
       .map((d) => d.iri)
       .filter((d) => !keysToRemove.includes(d));
   }, [dimensions, filters, interactiveFiltersConfig, animationField]);

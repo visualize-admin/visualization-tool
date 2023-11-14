@@ -28,10 +28,10 @@ import { MotionBox } from "@/components/presence";
 import { BackButton, DataSource } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 import {
-  DataCubeComponent,
-  DataCubeTemporalDimension,
+  Component,
   DimensionValue,
-  isDataCubeStandardErrorDimension,
+  isStandardErrorDimension,
+  TemporalDimension,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import { Icon } from "@/icons";
@@ -49,14 +49,14 @@ type MetadataPanelSection = "general" | "data";
 type MetadataPanelState = {
   open: boolean;
   activeSection: MetadataPanelSection;
-  selectedDimension: DataCubeComponent | undefined;
+  selectedDimension: Component | undefined;
   actions: {
     setOpen: (d: boolean) => void;
     toggle: () => void;
     setActiveSection: (d: MetadataPanelSection) => void;
-    setSelectedDimension: (d: DataCubeComponent) => void;
+    setSelectedDimension: (d: Component) => void;
     clearSelectedDimension: () => void;
-    openDimension: (d: DataCubeComponent) => void;
+    openDimension: (d: Component) => void;
     reset: () => void;
   };
 };
@@ -76,13 +76,13 @@ export const createMetadataPanelStore = () =>
       setActiveSection: (d: MetadataPanelSection) => {
         set({ activeSection: d });
       },
-      setSelectedDimension: (d: DataCubeComponent) => {
+      setSelectedDimension: (d: Component) => {
         set({ selectedDimension: d });
       },
       clearSelectedDimension: () => {
         set({ selectedDimension: undefined });
       },
-      openDimension: (d: DataCubeComponent) => {
+      openDimension: (d: Component) => {
         set({ open: true, activeSection: "data", selectedDimension: d });
       },
       reset: () => {
@@ -240,7 +240,7 @@ const animationProps: Transition = {
 export const OpenMetadataPanelWrapper = ({
   dim,
   children,
-}: React.PropsWithChildren<{ dim: DataCubeComponent }>) => {
+}: React.PropsWithChildren<{ dim: Component }>) => {
   const classes = useOtherStyles();
   const { openDimension } = useMetadataPanelStoreActions();
   const handleClick = useEvent((e: React.MouseEvent) => {
@@ -268,7 +268,7 @@ export const OpenMetadataPanelWrapper = ({
 type MetadataPanelProps = {
   datasetIri: string;
   dataSource: DataSource;
-  dimensions: DataCubeComponent[];
+  dimensions: Component[];
   container?: HTMLDivElement | null;
   top?: number;
 };
@@ -421,7 +421,7 @@ const TabPanelGeneral = ({
   );
 };
 
-const TabPanelData = ({ dimensions }: { dimensions: DataCubeComponent[] }) => {
+const TabPanelData = ({ dimensions }: { dimensions: Component[] }) => {
   const classes = useOtherStyles();
   const selectedDimension = useMetadataPanelStore(
     (state) => state.selectedDimension
@@ -524,7 +524,7 @@ const TabPanelDataDimension = ({
   dim,
   expanded,
 }: {
-  dim: DataCubeComponent;
+  dim: Component;
   expanded: boolean;
 }) => {
   const classes = useOtherStyles();
@@ -606,7 +606,7 @@ const TabPanelDataDimension = ({
   );
 };
 
-const DimensionValues = ({ dim }: { dim: DataCubeComponent }) => {
+const DimensionValues = ({ dim }: { dim: Component }) => {
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dim);
     return orderBy(
@@ -615,7 +615,7 @@ const DimensionValues = ({ dim }: { dim: DataCubeComponent }) => {
     ) as DimensionValue[];
   }, [dim]);
 
-  if (isDataCubeStandardErrorDimension(dim)) {
+  if (isStandardErrorDimension(dim)) {
     return <DimensionValuesNumeric values={sortedValues} />;
   }
 
@@ -678,7 +678,7 @@ const DimensionValuesTemporal = ({
   dim,
   values,
 }: {
-  dim: DataCubeTemporalDimension;
+  dim: TemporalDimension;
   values: DimensionValue[];
 }) => {
   const formatters = useDimensionFormatters([dim]);

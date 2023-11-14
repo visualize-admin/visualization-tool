@@ -55,15 +55,15 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
+  Component,
+  Dimension,
   GeoData,
   GeoShapes,
+  Measure,
   Observation,
   ObservationValue,
-  findRelatedDataCubeErrorDimension,
-  isDataCubeGeoShapesDimension,
+  findRelatedErrorDimension,
+  isGeoShapesDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
@@ -96,11 +96,11 @@ export type MapState = CommonChartState &
       | {
           data: Observation[];
           dataDomain: [number, number];
-          measureDimension?: DataCubeMeasure;
+          measureDimension?: Measure;
           measureLabel: string;
           getLabel: (d: Observation) => string;
           getValue: (d: Observation) => number | null;
-          errorDimension?: DataCubeComponent;
+          errorDimension?: Component;
           getFormattedError: null | ((d: Observation) => string);
           radiusScale: ScalePower<number, number>;
           colors: SymbolLayerColors;
@@ -251,7 +251,7 @@ type AreaLayerColors =
   | {
       type: "categorical";
       palette: string;
-      component: DataCubeDimension;
+      component: Dimension;
       domain: string[];
       getValue: (d: Observation) => string;
       getColor: (d: Observation) => number[];
@@ -260,7 +260,7 @@ type AreaLayerColors =
   | {
       type: "continuous";
       palette: string;
-      component: DataCubeMeasure;
+      component: Measure;
       domain: [number, number];
       // Needed for the legend.
       scale:
@@ -333,8 +333,8 @@ const getFixedColors = (color: FixedColorField) => {
 
 const getCategoricalColors = (
   color: CategoricalColorField,
-  dimensions: DataCubeDimension[],
-  measures: DataCubeMeasure[]
+  dimensions: Dimension[],
+  measures: Measure[]
 ) => {
   const component = [...dimensions, ...measures].find(
     (d) => d.iri === color.componentIri
@@ -383,13 +383,13 @@ const getCategoricalColors = (
 const getNumericalColors = (
   color: NumericalColorField,
   data: Observation[],
-  dimensions: DataCubeDimension[],
-  measures: DataCubeMeasure[],
+  dimensions: Dimension[],
+  measures: Measure[],
   { formatNumber }: { formatNumber: ReturnType<typeof useFormatNumber> }
 ) => {
   const component = measures.find(
     (d) => d.iri === color.componentIri
-  ) as DataCubeMeasure;
+  ) as Measure;
   const domain = extent(
     data.map((d) => d[color.componentIri]),
     (d) => +d!
@@ -402,7 +402,7 @@ const getNumericalColors = (
     data,
     dataDomain: domain,
   });
-  const errorDimension = findRelatedDataCubeErrorDimension(
+  const errorDimension = findRelatedErrorDimension(
     color.componentIri,
     dimensions
   );
@@ -449,8 +449,8 @@ const useColors = ({
 }: {
   color?: MapSymbolLayer["color"];
   data: Observation[];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const formatNumber = useFormatNumber();
 
@@ -497,7 +497,7 @@ const usePreparedData = ({
   geoDimensionIri: string;
   getLabel: (d: Observation) => string;
   data: Observation[];
-  dimensions: DataCubeDimension[];
+  dimensions: Dimension[];
   features: GeoData;
 }) => {
   return useMemo(() => {
@@ -508,7 +508,7 @@ const usePreparedData = ({
     const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
 
     if (
-      isDataCubeGeoShapesDimension(dimension) &&
+      isGeoShapesDimension(dimension) &&
       features.areaLayer?.shapes?.features
     ) {
       const hierarchyLabels = features.areaLayer.shapes.features.map(
@@ -540,8 +540,8 @@ const useLayerState = ({
   measureIri: string | undefined;
   data: Observation[];
   features: GeoData;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const formatNumber = useFormatNumber();
 
@@ -550,10 +550,7 @@ const useLayerState = ({
 
   const measureDimension = measures.find((d) => d.iri === measureIri);
 
-  const errorDimension = findRelatedDataCubeErrorDimension(
-    measureIri,
-    dimensions
-  );
+  const errorDimension = findRelatedErrorDimension(measureIri, dimensions);
   const errorMeasure = useErrorMeasure(measureIri, {
     dimensions,
     measures,

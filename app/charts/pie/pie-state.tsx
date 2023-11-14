@@ -28,7 +28,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { Observer, useWidth } from "@/charts/shared/use-width";
 import { PieConfig } from "@/configurator";
-import { DataCubeDimension, Observation } from "@/domain/data";
+import { Dimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
@@ -63,7 +63,7 @@ const usePieState = (
     getSegmentLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
-  const segmentDimension = _segmentDimension as DataCubeDimension;
+  const segmentDimension = _segmentDimension as Dimension;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
 

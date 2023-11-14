@@ -22,11 +22,11 @@ import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource } from "@/config-types";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
+  Component,
+  Dimension,
+  Measure,
   Observation,
-  isDataCubeNumericalMeasure,
+  isNumericalMeasure,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {
@@ -39,7 +39,7 @@ import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
 type ComponentLabelProps = {
-  component: DataCubeComponent;
+  component: Component;
   tooltipProps?: Omit<TooltipProps, "title" | "children">;
   linkToMetadataPanel: boolean;
 };
@@ -72,11 +72,11 @@ export const PreviewTable = ({
   linkToMetadataPanel,
 }: {
   title: string;
-  headers: DataCubeComponent[];
+  headers: Component[];
   observations: Observation[];
   linkToMetadataPanel: boolean;
 }) => {
-  const [sortBy, setSortBy] = useState<DataCubeComponent>();
+  const [sortBy, setSortBy] = useState<Component>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
   const formatters = useDimensionFormatters(headers);
   const sortedObservations = useMemo(() => {
@@ -87,7 +87,7 @@ export const PreviewTable = ({
     const compare = sortDirection === "asc" ? ascending : descending;
     const valuesIndex = uniqueMapBy(sortBy.values, (x) => x.label);
     const convert =
-      isDataCubeNumericalMeasure(sortBy) || sortBy.isNumerical
+      isNumericalMeasure(sortBy) || sortBy.isNumerical
         ? (d: string) => +d
         : (d: string) => {
             const value = valuesIndex.get(d);
@@ -142,9 +142,7 @@ export const PreviewTable = ({
                     }
                   }}
                   sx={{
-                    textAlign: isDataCubeNumericalMeasure(header)
-                      ? "right"
-                      : "left",
+                    textAlign: isNumericalMeasure(header) ? "right" : "left",
                     borderBottom: "none",
                     whiteSpace: "nowrap",
                   }}
@@ -184,7 +182,7 @@ export const PreviewTable = ({
                       key={header.iri}
                       component="td"
                       sx={{
-                        textAlign: isDataCubeNumericalMeasure(header)
+                        textAlign: isNumericalMeasure(header)
                           ? "right"
                           : "left",
                       }}
@@ -220,8 +218,8 @@ export const DataSetPreviewTable = ({
   observations,
 }: {
   title: string;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   observations: Observation[] | undefined;
 }) => {
   const headers = useMemo(() => {
@@ -306,7 +304,7 @@ export const DataSetTable = ({
   );
 };
 
-export const getSortedColumns = (components: DataCubeComponent[]) => {
+export const getSortedColumns = (components: Component[]) => {
   return [...components].sort((a, b) => {
     return ascending(a.order ?? Infinity, b.order ?? Infinity);
   });

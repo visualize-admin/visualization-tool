@@ -39,11 +39,7 @@ import {
   moveSortingOptions,
   removeSortingOption,
 } from "@/configurator/table/table-config-state";
-import {
-  DataCubeDimension,
-  DataCubeMeasure,
-  isDataCubeNumericalMeasure,
-} from "@/domain/data";
+import { Dimension, isNumericalMeasure, Measure } from "@/domain/data";
 import { DataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
@@ -110,8 +106,8 @@ const TableSortingOptionItem = ({
   sortingOrder,
 }: {
   metadata: DataCubeMetadataQuery["dataCubeByIri"];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   index: number;
   chartConfig: TableConfig;
 } & TableSortingOption) => {
@@ -162,7 +158,7 @@ const TableSortingOptionItem = ({
     });
   });
 
-  const sortingType = isDataCubeNumericalMeasure(component)
+  const sortingType = isNumericalMeasure(component)
     ? "byMeasure"
     : "byDimensionLabel";
 
@@ -218,8 +214,8 @@ const AddTableSortingOption = ({
   chartConfig,
 }: {
   metadata: DataCubeMetadataQuery["dataCubeByIri"];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   chartConfig: TableConfig;
 }) => {
   const [, dispatch] = useConfiguratorState();
@@ -316,8 +312,8 @@ const ChangeTableSortingOption = ({
   index,
 }: {
   metadata: DataCubeMetadataQuery["dataCubeByIri"];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   chartConfig: TableConfig;
   index: number;
 }) => {
@@ -393,8 +389,8 @@ export const TableSortingOptions = ({
 }: {
   state: ConfiguratorStateConfiguringChart;
   metadata: DataCubeMetadataQuery["dataCubeByIri"];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const [, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);

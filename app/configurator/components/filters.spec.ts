@@ -1,4 +1,4 @@
-import { DataCubeTemporalDimension } from "@/domain/data";
+import { TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
@@ -12,7 +12,7 @@ describe("TimeFilter", () => {
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
     values: [{ value: "2020" }, { value: "ABC" }],
-  } as DataCubeTemporalDimension;
+  } as TemporalDimension;
   const formatLocale = getD3TimeFormatLocale("de");
   const timeFormatUnit = (date: Date | string, _: TimeUnit) => {
     return date.toString();

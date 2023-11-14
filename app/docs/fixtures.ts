@@ -1,4 +1,4 @@
-import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
+import { Dimension, Measure } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/versioning";
 
@@ -152,7 +152,7 @@ export const fields: ColumnFields = {
   },
 };
 
-export const dimensions: DataCubeDimension[] = [
+export const dimensions: Dimension[] = [
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
@@ -187,7 +187,7 @@ export const dimensions: DataCubeDimension[] = [
   },
 ];
 
-export const measures: DataCubeMeasure[] = [
+export const measures: Measure[] = [
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",

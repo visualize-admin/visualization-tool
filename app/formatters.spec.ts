@@ -4,7 +4,7 @@ import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
 } from "./configurator/components/ui-helpers";
-import { DataCubeComponent } from "./domain/data";
+import { Component } from "./domain/data";
 import {
   useDimensionFormatters,
   useFormatFullDateAuto,
@@ -44,7 +44,7 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-yearly",
           timeFormat: "%Y",
@@ -52,12 +52,12 @@ describe("useDimensionFormatters", () => {
           isNumerical: false,
           isKeyDimension: false,
           __typename: "TemporalDimension",
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-number",
           isNumerical: true,
           isKeyDimension: false,
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-currency",
           isNumerical: true,
@@ -65,7 +65,7 @@ describe("useDimensionFormatters", () => {
           isCurrency: true,
           currencyExponent: 1,
           __typename: "NumericalMeasure",
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-currency-int",
           isNumerical: true,
@@ -74,7 +74,7 @@ describe("useDimensionFormatters", () => {
           currencyExponent: 1,
           resolution: 0,
           __typename: "NumericalMeasure",
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-decimal",
           isNumerical: true,
@@ -82,7 +82,7 @@ describe("useDimensionFormatters", () => {
           isDecimal: true,
           currencyExponent: 1,
           __typename: "NumericalMeasure",
-        } as DataCubeComponent,
+        } as Component,
         {
           iri: "iri-decimal-resolution",
           isNumerical: true,
@@ -91,7 +91,7 @@ describe("useDimensionFormatters", () => {
           currencyExponent: 1,
           resolution: 2,
           __typename: "NumericalMeasure",
-        } as DataCubeComponent,
+        } as Component,
       ])
     );
     return { formatters };

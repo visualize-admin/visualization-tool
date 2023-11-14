@@ -39,15 +39,15 @@ import {
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
+  Component,
+  Dimension,
+  Measure,
   Observation,
-  canDataCubeDimensionBeMultiFiltered,
-  isDataCubeNumericalMeasure,
-  isDataCubeOrdinalMeasure,
-  isDataCubeTemporalDimension,
-  isDataCubeTemporalOrdinalDimension,
+  canDimensionBeMultiFiltered,
+  isNumericalMeasure,
+  isOrdinalMeasure,
+  isTemporalDimension,
+  isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteName, getPalette } from "@/palettes";
 
@@ -68,8 +68,8 @@ type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
   value: V,
   options: {
     chartConfig: T;
-    dimensions: DataCubeDimension[];
-    measures: DataCubeMeasure[];
+    dimensions: Dimension[];
+    measures: Measure[];
     field: EncodingFieldType;
   }
 ) => void;
@@ -78,7 +78,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   field: "chartSubType";
   getValues: (
     chartConfig: T,
-    dimensions: DataCubeComponent[]
+    dimensions: Component[]
   ) => {
     value: ChartSubType;
     disabled: boolean;
@@ -178,10 +178,7 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
       `${basePath}.color.palette`
     );
 
-    if (
-      canDataCubeDimensionBeMultiFiltered(component) ||
-      isDataCubeOrdinalMeasure(component)
-    ) {
+    if (canDimensionBeMultiFiltered(component) || isOrdinalMeasure(component)) {
       const palette = getDefaultCategoricalPaletteName(component, colorPalette);
       newField = {
         type: "categorical",
@@ -192,7 +189,7 @@ const onColorComponentIriChange: OnEncodingOptionChange<string, MapConfig> = (
           dimensionValues: component.values,
         }),
       };
-    } else if (isDataCubeNumericalMeasure(component)) {
+    } else if (isNumericalMeasure(component)) {
       newField = {
         type: "numerical",
         componentIri: iri,
@@ -238,8 +235,8 @@ type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
   iri: string,
   options: {
     chartConfig: T;
-    dimensions: DataCubeDimension[];
-    measures: DataCubeMeasure[];
+    dimensions: Dimension[];
+    measures: Measure[];
     initializing: boolean;
     selectedValues: any[];
     field: EncodingFieldType;
@@ -267,7 +264,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
   onChange?: OnEncodingChange<T>;
   getDisabledState?: (
     chartConfig: T,
-    components: DataCubeComponent[],
+    components: Component[],
     observations: Observation[]
   ) => {
     disabled: boolean;
@@ -389,9 +386,7 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     warnMessage?: string;
   } => {
     const temporalDimensions = components.filter((d) => {
-      return (
-        isDataCubeTemporalDimension(d) || isDataCubeTemporalOrdinalDimension(d)
-      );
+      return isTemporalDimension(d) || isTemporalOrdinalDimension(d);
     });
     const noTemporalDimensions = temporalDimensions.length === 0;
 
@@ -464,7 +459,7 @@ const isMissingDataPresent = (chartConfig: AreaConfig, data: Observation[]) => {
   return checkForMissingValuesInSegments(grouped, segments);
 };
 
-export const disableStacked = (d?: DataCubeComponent): boolean => {
+export const disableStacked = (d?: Component): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
@@ -657,7 +652,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (iri, { chartConfig, dimensions }) => {
           const component = dimensions.find((d) => d.iri === iri);
 
-          if (!isDataCubeTemporalDimension(component)) {
+          if (!isTemporalDimension(component)) {
             setWith(
               chartConfig,
               "interactiveFiltersConfig.timeRange.active",

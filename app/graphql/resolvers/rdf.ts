@@ -5,10 +5,10 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters } from "@/configurator";
 import {
-  DataCubeDimension,
-  DataCubeMeasure,
-  DataCubeTemporalDimension,
+  Dimension,
   DimensionValue,
+  Measure,
+  TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
@@ -182,8 +182,8 @@ export const dataCubesComponents: NonNullable<
     cache,
   });
 
-  const dimensions: DataCubeDimension[] = [];
-  const measures: DataCubeMeasure[] = [];
+  const dimensions: Dimension[] = [];
+  const measures: Measure[] = [];
 
   await Promise.all(
     rawComponents.map(async (component) => {
@@ -222,7 +222,7 @@ export const dataCubesComponents: NonNullable<
       };
 
       if (data.isMeasureDimension) {
-        const result: DataCubeMeasure = {
+        const result: Measure = {
           __typename: resolveMeasureType(component),
           isCurrency: data.isCurrency,
           isDecimal: data.isDecimal,
@@ -256,7 +256,7 @@ export const dataCubesComponents: NonNullable<
               );
             }
 
-            const dimension: DataCubeTemporalDimension = {
+            const dimension: TemporalDimension = {
               __typename: dimensionType,
               timeFormat: data.timeFormat,
               timeUnit: data.timeUnit,
@@ -266,7 +266,7 @@ export const dataCubesComponents: NonNullable<
             break;
           }
           default: {
-            const dimension: DataCubeDimension = {
+            const dimension: Dimension = {
               __typename: dimensionType,
               ...baseDimension,
             };

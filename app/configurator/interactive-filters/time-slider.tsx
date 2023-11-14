@@ -9,9 +9,9 @@ import { Slider as GenericSlider } from "@/components/form";
 import { AnimationField, Filters, SortingField } from "@/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import {
-  DataCubeDimension,
-  isDataCubeTemporalDimension,
-  isDataCubeTemporalOrdinalDimension,
+  Dimension,
+  isTemporalDimension,
+  isTemporalOrdinalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
@@ -43,7 +43,7 @@ const useTimeline = () => {
 
 type TimeSliderProps = {
   filters: Filters;
-  dimensions: DataCubeDimension[];
+  dimensions: Dimension[];
 } & AnimationField;
 
 export const TimeSlider = (props: TimeSliderProps) => {
@@ -59,9 +59,9 @@ export const TimeSlider = (props: TimeSliderProps) => {
   const dimension = React.useMemo(() => {
     return dimensions.find((d) => d.iri === componentIri);
   }, [componentIri, dimensions]);
-  const hasTimeUnit = isDataCubeTemporalDimension(dimension);
+  const hasTimeUnit = isTemporalDimension(dimension);
 
-  if (!(hasTimeUnit || isDataCubeTemporalOrdinalDimension(dimension))) {
+  if (!(hasTimeUnit || isTemporalOrdinalDimension(dimension))) {
     throw new Error("You can only use TimeSlider with temporal dimensions!");
   }
 

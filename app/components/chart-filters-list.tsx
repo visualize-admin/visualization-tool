@@ -8,10 +8,7 @@ import {
 import Flex from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { ChartConfig, DataSource, getAnimationField } from "@/configurator";
-import {
-  isDataCubeTemporalDimension,
-  isDataCubeTemporalOrdinalDimension,
-} from "@/domain/data";
+import { isTemporalDimension, isTemporalOrdinalDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -61,7 +58,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
         return [];
       }
 
-      const value = isDataCubeTemporalDimension(dimension)
+      const value = isTemporalDimension(dimension)
         ? {
             value: f.value,
             label: timeFormatUnit(f.value, dimension.timeUnit),
@@ -77,10 +74,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
       );
 
       if (timeSlider.value) {
-        if (
-          timeSlider.type === "interval" &&
-          isDataCubeTemporalDimension(dimension)
-        ) {
+        if (timeSlider.type === "interval" && isTemporalDimension(dimension)) {
           namedFilters.push({
             dimension,
             value: {
@@ -93,7 +87,7 @@ export const ChartFiltersList = (props: ChartFiltersListProps) => {
         if (
           timeSlider.type === "ordinal" &&
           timeSlider.value &&
-          isDataCubeTemporalOrdinalDimension(dimension)
+          isTemporalOrdinalDimension(dimension)
         ) {
           namedFilters.push({
             dimension,

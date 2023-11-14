@@ -68,15 +68,15 @@ import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
-  getDataCubeDimensionsByDimensionType,
-  isDataCubeDimensionSortable,
-  isDataCubeMeasure,
-  isDataCubeNumericalMeasure,
-  isDataCubeStandardErrorDimension,
-  isDataCubeTemporalDimension,
+  Component,
+  Dimension,
+  getDimensionsByDimensionType,
+  isDimensionSortable,
+  isMeasure,
+  isNumericalMeasure,
+  isStandardErrorDimension,
+  isTemporalDimension,
+  Measure,
   Observation,
 } from "@/domain/data";
 import {
@@ -162,8 +162,8 @@ export const ChartOptionsSelector = ({
 
 type ActiveFieldSwitchProps = {
   chartConfig: ChartConfig;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   observations: Observation[];
 };
 
@@ -215,9 +215,9 @@ type EncodingOptionsPanelProps = {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
-  component: DataCubeComponent | undefined;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  component: Component | undefined;
+  dimensions: Dimension[];
+  measures: Measure[];
   observations: Observation[];
 };
 
@@ -272,7 +272,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
   );
 
   const options = useMemo(() => {
-    return getDataCubeDimensionsByDimensionType({
+    return getDimensionsByDimensionType({
       dimensionTypes: encoding.componentTypes,
       dimensions,
       measures,
@@ -282,7 +282,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       disabled:
         ((encoding.exclusive === undefined || encoding.exclusive === true) &&
           otherFieldsIris.includes(d.iri)) ||
-        isDataCubeStandardErrorDimension(d),
+        isStandardErrorDimension(d),
     }));
   }, [
     dimensions,
@@ -378,7 +378,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {field === "baseLayer" && (
         <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
       )}
-      {encoding.sorting && isDataCubeDimensionSortable(component) && (
+      {encoding.sorting && isDimensionSortable(component) && (
         <ChartFieldSorting
           chartConfig={chartConfig}
           field={field}
@@ -446,9 +446,9 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
 type ChartLayoutOptionsProps = {
   encoding: EncodingSpec;
-  component: DataCubeComponent | undefined;
+  component: Component | undefined;
   chartConfig: ChartConfig;
-  components: DataCubeComponent[];
+  components: Component[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
 };
@@ -496,7 +496,7 @@ const ChartFieldAbbreviations = ({
 }: {
   field: EncodingFieldType;
   path?: string;
-  dimension: DataCubeComponent | undefined;
+  dimension: Component | undefined;
 }) => {
   const disabled = useMemo(() => {
     return !canUseAbbreviations(dimension);
@@ -515,7 +515,7 @@ const ChartFieldAbbreviations = ({
 
 type ChartComboYFieldProps<T extends ComboChartConfig> = {
   chartConfig: T;
-  measures: DataCubeMeasure[];
+  measures: Measure[];
 };
 
 const ChartComboYField = (props: ChartComboYFieldProps<ComboChartConfig>) => {
@@ -569,7 +569,7 @@ const ChartComboLineSingleYField = (
   const { y } = fields;
 
   const numericalMeasures = React.useMemo(() => {
-    return measures.filter(isDataCubeNumericalMeasure);
+    return measures.filter(isNumericalMeasure);
   }, [measures]);
 
   const unit = React.useMemo(() => {
@@ -756,16 +756,16 @@ const ChartComboLineDualYField = (
   const { y } = fields;
 
   const numericalMeasures = React.useMemo(() => {
-    return measures.filter(isDataCubeNumericalMeasure);
+    return measures.filter(isNumericalMeasure);
   }, [measures]);
 
   const { leftAxisMeasure, rightAxisMeasure } = React.useMemo(() => {
     const leftAxisMeasure = numericalMeasures.find(
       (m) => m.iri === y.leftAxisComponentIri
-    ) as DataCubeMeasure;
+    ) as Measure;
     const rightAxisMeasure = numericalMeasures.find(
       (m) => m.iri === y.rightAxisComponentIri
-    ) as DataCubeMeasure;
+    ) as Measure;
 
     return {
       leftAxisMeasure,
@@ -871,16 +871,16 @@ const ChartComboLineColumnYField = (
   const { y } = fields;
 
   const numericalMeasures = React.useMemo(() => {
-    return measures.filter(isDataCubeNumericalMeasure);
+    return measures.filter(isNumericalMeasure);
   }, [measures]);
 
   const { lineMeasure, columnMeasure } = React.useMemo(() => {
     const lineMeasure = numericalMeasures.find(
       (m) => m.iri === y.lineComponentIri
-    ) as DataCubeMeasure;
+    ) as Measure;
     const columnMeasure = numericalMeasures.find(
       (m) => m.iri === y.columnComponentIri
-    ) as DataCubeMeasure;
+    ) as Measure;
 
     return {
       lineMeasure,
@@ -985,7 +985,7 @@ const ChartComboLineColumnYField = (
 
 type ComboChartYColorSectionProps = {
   values: { iri: string; symbol: LegendSymbol }[];
-  measures: DataCubeMeasure[];
+  measures: Measure[];
 };
 
 const ComboChartYColorSection = (props: ComboChartYColorSectionProps) => {
@@ -1009,7 +1009,7 @@ const ComboChartYColorSection = (props: ComboChartYColorSectionProps) => {
                 value: iri,
                 label: iri,
               })),
-            } as any as DataCubeComponent
+            } as any as Component
           }
         />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}>
@@ -1163,11 +1163,11 @@ const ChartFieldMultiFilter = ({
   measures,
 }: {
   chartConfig: ChartConfig;
-  component: DataCubeComponent | undefined;
+  component: Component | undefined;
   encoding: EncodingSpec;
   field: string;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   const colorComponentIri = get(
     chartConfig,
@@ -1193,14 +1193,14 @@ const ChartFieldMultiFilter = ({
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
         </legend>
-        {isDataCubeTemporalDimension(component) ? (
+        {isTemporalDimension(component) ? (
           <TimeFilter
             dimension={component}
             disableInteractiveFilters={encoding.disableInteractiveFilters}
           />
         ) : (
           component &&
-          !isDataCubeMeasure(component) && (
+          !isMeasure(component) && (
             <DimensionValuesMultiFilter
               dimension={component}
               dataSetIri={chartConfig.dataSet}
@@ -1220,7 +1220,7 @@ const ChartFieldMultiFilter = ({
 type ChartFieldOptionsProps = {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
-  components: DataCubeComponent[];
+  components: Component[];
   disabled?: boolean;
 };
 
@@ -1461,12 +1461,12 @@ const ChartFieldSize = ({
 }: {
   field: EncodingFieldType;
   componentTypes: ComponentType[];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   optional: boolean;
 }) => {
   const measuresOptions = useMemo(() => {
-    return getDataCubeDimensionsByDimensionType({
+    return getDimensionsByDimensionType({
       dimensionTypes: componentTypes,
       dimensions,
       measures,
@@ -1501,10 +1501,10 @@ const ChartFieldSize = ({
 type ChartFieldColorComponentProps = {
   chartConfig: ChartConfig;
   encoding: EncodingSpec;
-  component: DataCubeComponent;
+  component: Component;
   componentTypes: ComponentType[];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   optional: boolean;
   enableUseAbbreviations: boolean;
 };
@@ -1523,7 +1523,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
   const field = encoding.field;
   const nbOptions = component.values.length;
   const measuresOptions = useMemo(() => {
-    return getDataCubeDimensionsByDimensionType({
+    return getDimensionsByDimensionType({
       dimensionTypes: componentTypes,
       dimensions,
       measures,
@@ -1615,7 +1615,7 @@ const ChartFieldColorComponent = (props: ChartFieldColorComponentProps) => {
           colorComponentIri &&
           component.iri !== colorComponentIri &&
           colorComponent &&
-          !isDataCubeMeasure(colorComponent) ? (
+          !isMeasure(colorComponent) ? (
             <DimensionValuesMultiFilter
               key={component.iri}
               dataSetIri={chartConfig.dataSet}

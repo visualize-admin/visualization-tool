@@ -12,7 +12,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { ColumnConfig } from "@/configurator";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
-import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
+import { Dimension, Measure } from "@/domain/data";
 import { InteractiveFiltersProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/versioning";
 
@@ -215,7 +215,7 @@ const columnMeasures = [
     ],
     __typename: "StandardErrorDimension",
   },
-] as DataCubeMeasure[];
+] as Measure[];
 
 const columnDimensions = [
   {
@@ -509,7 +509,7 @@ const columnDimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as unknown as DataCubeDimension[];
+] as unknown as Dimension[];
 
 const columnObservations = [
   {

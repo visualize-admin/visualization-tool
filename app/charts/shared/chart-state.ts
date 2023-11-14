@@ -38,17 +38,17 @@ import {
   useErrorVariable,
 } from "@/configurator/components/ui-helpers";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeGeoCoordinatesDimension,
-  DataCubeGeoShapesDimension,
-  DataCubeMeasure,
-  DataCubeNumericalMeasure,
+  Component,
+  Dimension,
   DimensionValue,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+  Measure,
+  NumericalMeasure,
   Observation,
   ObservationValue,
-  isDataCubeNumericalMeasure,
-  isDataCubeTemporalDimension,
+  isNumericalMeasure,
+  isTemporalDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { TemporalDimension, TimeUnit } from "@/graphql/resolver-types";
@@ -120,7 +120,7 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
 };
 
 export type BandXVariables = {
-  xDimension: DataCubeDimension;
+  xDimension: Dimension;
   getX: StringValueGetter;
   getXLabel: (d: string) => string;
   getXAbbreviationOrLabel: (d: Observation) => string;
@@ -143,7 +143,7 @@ export const useBandXVariables = (
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
-  const xTimeUnit = isDataCubeTemporalDimension(xDimension)
+  const xTimeUnit = isTemporalDimension(xDimension)
     ? xDimension.timeUnit
     : undefined;
 
@@ -183,7 +183,7 @@ export const useTemporalXVariables = (
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
-  if (!isDataCubeTemporalDimension(xDimension)) {
+  if (!isTemporalDimension(xDimension)) {
     throw Error(`Dimension <${x.componentIri}> is not temporal!`);
   }
 
@@ -198,7 +198,7 @@ export const useTemporalXVariables = (
 };
 
 export type NumericalXVariables = {
-  xMeasure: DataCubeNumericalMeasure;
+  xMeasure: NumericalMeasure;
   getX: NumericalValueGetter;
   xAxisLabel: string;
 };
@@ -212,7 +212,7 @@ export const useNumericalXVariables = (
     throw Error(`No dimension <${x.componentIri}> in cube!`);
   }
 
-  if (!isDataCubeNumericalMeasure(xMeasure)) {
+  if (!isNumericalMeasure(xMeasure)) {
     throw Error(`Measure <${x.componentIri}> is not numerical!`);
   }
 
@@ -227,7 +227,7 @@ export const useNumericalXVariables = (
 };
 
 export type NumericalYVariables = {
-  yMeasure: DataCubeNumericalMeasure;
+  yMeasure: NumericalMeasure;
   getY: NumericalValueGetter;
   yAxisLabel: string;
 };
@@ -241,7 +241,7 @@ export const useNumericalYVariables = (
     throw Error(`No dimension <${y.componentIri}> in cube!`);
   }
 
-  if (!isDataCubeNumericalMeasure(yMeasure)) {
+  if (!isNumericalMeasure(yMeasure)) {
     throw Error(`Measure <${y.componentIri}> is not numerical!`);
   }
 
@@ -257,7 +257,7 @@ export const useNumericalYVariables = (
 
 export type NumericalYErrorVariables = {
   showYStandardError: boolean;
-  yErrorMeasure: DataCubeComponent | undefined;
+  yErrorMeasure: Component | undefined;
   getYError: ((d: Observation) => ObservationValue) | null;
   getYErrorRange: null | ((d: Observation) => [number, number]);
 };
@@ -270,8 +270,8 @@ export const useNumericalYErrorVariables = (
     measures,
   }: {
     numericalYVariables: NumericalYVariables;
-    dimensions: DataCubeDimension[];
-    measures: DataCubeMeasure[];
+    dimensions: Dimension[];
+    measures: Measure[];
   }
 ): NumericalYErrorVariables => {
   const showYStandardError = get(y, ["showStandardError"], true);
@@ -291,7 +291,7 @@ export const useNumericalYErrorVariables = (
 };
 
 export type SegmentVariables = {
-  segmentDimension: DataCubeDimension | undefined;
+  segmentDimension: Dimension | undefined;
   segmentsByAbbreviationOrLabel: Map<string, DimensionValue>;
   getSegment: StringValueGetter;
   getSegmentAbbreviationOrLabel: StringValueGetter;
@@ -329,14 +329,14 @@ export const useSegmentVariables = (
 };
 
 export type AreaLayerVariables = {
-  areaLayerDimension: DataCubeGeoShapesDimension | undefined;
+  areaLayerDimension: GeoShapesDimension | undefined;
   getArea: StringValueGetter;
 };
 
 export type SymbolLayerVariables = {
   symbolLayerDimension:
-    | DataCubeGeoShapesDimension
-    | DataCubeGeoCoordinatesDimension
+    | GeoShapesDimension
+    | GeoCoordinatesDimension
     | undefined;
   getSymbol: StringValueGetter;
 };

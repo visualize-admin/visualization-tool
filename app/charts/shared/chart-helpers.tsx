@@ -30,11 +30,7 @@ import {
 } from "@/configurator";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  DataCubeComponent,
-  DataCubeDimension,
-  Observation,
-} from "@/domain/data";
+import { Component, Dimension, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
   InteractiveFiltersState,
@@ -220,7 +216,7 @@ export const usePlottableData = (
 };
 
 export const useDimensionWithAbbreviations = (
-  dimension: DataCubeDimension | undefined,
+  dimension: Dimension | undefined,
   {
     observations,
     field,
@@ -472,7 +468,7 @@ export const normalizeData = (
 const SlugRe = /\W+/g;
 export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
 
-export const getLabelWithUnit = (dimension: DataCubeComponent): string => {
+export const getLabelWithUnit = (dimension: Component): string => {
   return dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;

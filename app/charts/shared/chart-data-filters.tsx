@@ -29,10 +29,10 @@ import {
 } from "@/configurator/components/field-date-picker";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  DataCubeDimension,
-  DataCubeTemporalDimension,
+  Dimension,
   HierarchyValue,
-  isDataCubeTemporalDimension,
+  isTemporalDimension,
+  TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import {
@@ -283,7 +283,7 @@ const DataFilter = (props: DataFilterProps) => {
         " > div": { width: "100%" },
       }}
     >
-      {isDataCubeTemporalDimension(dimension) ? (
+      {isTemporalDimension(dimension) ? (
         <DataFilterTemporalDimension
           value={value as string}
           dimension={dimension}
@@ -313,7 +313,7 @@ const DataFilter = (props: DataFilterProps) => {
 };
 
 type DataFilterGenericDimensionProps = {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
   options?: Array<{ label: string; value: string }>;
@@ -362,7 +362,7 @@ const DataFilterGenericDimension = (props: DataFilterGenericDimensionProps) => {
 };
 
 type DataFilterHierarchyDimensionProps = {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
@@ -430,7 +430,7 @@ const DataFilterTemporalDimension = ({
   onChange,
   disabled,
 }: {
-  dimension: DataCubeTemporalDimension;
+  dimension: TemporalDimension;
   value: string;
   onChange: (
     e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>

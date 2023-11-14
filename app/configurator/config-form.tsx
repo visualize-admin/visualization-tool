@@ -24,11 +24,11 @@ import {
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
+  Component,
+  Dimension,
   HierarchyValue,
-  isDataCubeMeasure,
+  Measure,
+  isMeasure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { bfs } from "@/utils/bfs";
@@ -87,7 +87,7 @@ export const useChartFieldField = ({
   components,
 }: {
   field: EncodingFieldType;
-  components: DataCubeComponent[];
+  components: Component[];
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
@@ -96,9 +96,8 @@ export const useChartFieldField = ({
       const dimensionIri = e.target.value as string;
       const dimension = components.find(
         (c) => c.iri === dimensionIri
-      ) as DataCubeComponent;
-      const hierarchy =
-        (isDataCubeMeasure(dimension) ? [] : dimension.hierarchy) ?? [];
+      ) as Component;
+      const hierarchy = (isMeasure(dimension) ? [] : dimension.hierarchy) ?? [];
 
       /**
        * When there are multiple hierarchies, we only want to select leaves from
@@ -379,8 +378,8 @@ export const useActiveFieldField = ({
 export const useChartType = (
   chartKey: string,
   type: "add" | "edit" = "edit",
-  dimensions: DataCubeDimension[],
-  measures: DataCubeMeasure[]
+  dimensions: Dimension[],
+  measures: Measure[]
 ): {
   value: ChartType;
   onChange: (chartType: ChartType) => void;
@@ -537,7 +536,7 @@ export const MultiFilterContextProvider = ({
   children,
   getValueColor,
 }: {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   children: React.ReactNode;
   colorConfigPath?: string;
   getValueColor: (value: string) => string;

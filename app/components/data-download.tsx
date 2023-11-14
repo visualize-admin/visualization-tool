@@ -31,7 +31,7 @@ import { useClient } from "urql";
 import { getSortedColumns } from "@/browse/datatable";
 import Flex from "@/components/flex";
 import { DataSource, QueryFilters, SortingField } from "@/config-types";
-import { DataCubeComponent, Observation } from "@/domain/data";
+import { Component, Observation } from "@/domain/data";
 import {
   dateFormatterFromDimension,
   getFormatFullDateAuto,
@@ -91,7 +91,7 @@ export const DataDownloadStateProvider = ({
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
 
-const makeColumnLabel = (dim: DataCubeComponent) => {
+const makeColumnLabel = (dim: Component) => {
   return `${dim.label}${dim.unit ? ` (${dim.unit})` : ""}`;
 };
 
@@ -100,7 +100,7 @@ const prepareData = ({
   observations,
   dimensionParsers,
 }: {
-  components: DataCubeComponent[];
+  components: Component[];
   observations: Observation[];
   dimensionParsers: DimensionParsers;
 }) => {
@@ -469,7 +469,7 @@ type DimensionParsers = {
 };
 
 const getDimensionParsers = (
-  components: DataCubeComponent[],
+  components: Component[],
   { locale }: { locale: Locale }
 ): DimensionParsers => {
   return Object.fromEntries(

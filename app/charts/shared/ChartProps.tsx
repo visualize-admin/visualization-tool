@@ -1,20 +1,17 @@
 import { ChartConfig } from "@/configurator";
-import { DataCubeDimension, DataCubeMeasure, Observation } from "@/domain/data";
+import { Dimension, Measure, Observation } from "@/domain/data";
 
-export type ComponentsByIri = Record<
-  string,
-  DataCubeDimension | DataCubeMeasure
->;
+export type ComponentsByIri = Record<string, Dimension | Measure>;
 
-export type DimensionsByIri = Record<string, DataCubeDimension>;
+export type DimensionsByIri = Record<string, Dimension>;
 
-export type MeasuresByIri = Record<string, DataCubeMeasure>;
+export type MeasuresByIri = Record<string, Measure>;
 
 export type BaseChartProps = {
   observations: Observation[];
-  dimensions: DataCubeDimension[];
+  dimensions: Dimension[];
   dimensionsByIri: DimensionsByIri;
-  measures: DataCubeMeasure[];
+  measures: Measure[];
   measuresByIri: MeasuresByIri;
 };
 

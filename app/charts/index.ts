@@ -55,23 +55,22 @@ import {
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeGeoCoordinatesDimension,
-  DataCubeGeoShapesDimension,
-  DataCubeMeasure,
-  DataCubeNumericalMeasure,
-  getDataCubeCategoricalDimensions,
-  getDataCubeGeoDimensions,
-  getDataCubeTemporalDimensions,
+  Component,
+  Dimension,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+  getCategoricalDimensions,
+  getGeoDimensions,
+  getTemporalDimensions,
   HierarchyValue,
-  isDataCubeGeoDimension,
-  isDataCubeGeoShapesDimension,
-  isDataCubeNumericalMeasure,
-  isDataCubeOrdinalMeasure,
-  isDataCubeTemporalDimension,
+  isGeoDimension,
+  isGeoShapesDimension,
+  isNumericalMeasure,
+  isOrdinalMeasure,
+  isTemporalDimension,
+  Measure,
+  NumericalMeasure,
 } from "@/domain/data";
-import { NumericalMeasure } from "@/graphql/query-hooks";
 import {
   DEFAULT_CATEGORICAL_PALETTE_NAME,
   getDefaultCategoricalPaletteName,
@@ -137,7 +136,7 @@ export const chartTypesOrder: { [k in ChartType]: number } = {
  * @param preferredType
  */
 export const findPreferredDimension = (
-  dimensions: DataCubeComponent[],
+  dimensions: Component[],
   preferredType?: DimensionType
 ) => {
   const dim =
@@ -197,7 +196,7 @@ export const DEFAULT_SORTING: SortingOption = {
 /**
  * Finds bottomost layer for the first hierarchy
  */
-const findBottommostLayers = (dimension: DataCubeDimension) => {
+const findBottommostLayers = (dimension: Dimension) => {
   const leaves = [] as HierarchyValue[];
   let hasSeenMultiHierarchyNode = false;
   bfs(dimension?.hierarchy as HierarchyValue[], (node) => {
@@ -217,7 +216,7 @@ const findBottommostLayers = (dimension: DataCubeDimension) => {
   return leaves;
 };
 
-const makeInitialFiltersForArea = (dimension: DataCubeDimension) => {
+const makeInitialFiltersForArea = (dimension: Dimension) => {
   const filters = {} as ChartConfig["filters"];
 
   // Setting the filters so that bottommost areas are shown first
@@ -245,22 +244,22 @@ export const initializeMapLayerField = ({
   chartConfig: MapConfig;
   field: EncodingFieldType;
   componentIri: string;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   if (field === "areaLayer") {
     chartConfig.fields.areaLayer = getInitialAreaLayer({
       component: dimensions
-        .filter(isDataCubeGeoShapesDimension)
+        .filter(isGeoShapesDimension)
         .find((d) => d.iri === componentIri)!,
       measure: measures[0],
     });
   } else if (field === "symbolLayer") {
     chartConfig.fields.symbolLayer = getInitialSymbolLayer({
       component: dimensions
-        .filter(isDataCubeGeoDimension)
+        .filter(isGeoDimension)
         .find((d) => d.iri === componentIri)!,
-      measure: measures.find(isDataCubeNumericalMeasure),
+      measure: measures.find(isNumericalMeasure),
     });
   }
 };
@@ -269,14 +268,14 @@ export const getInitialAreaLayer = ({
   component,
   measure,
 }: {
-  component: DataCubeGeoShapesDimension;
-  measure: DataCubeMeasure;
+  component: GeoShapesDimension;
+  measure: Measure;
 }): MapAreaLayer => {
   const palette = getDefaultCategoricalPaletteName(measure);
 
   return {
     componentIri: component.iri,
-    color: isDataCubeNumericalMeasure(measure)
+    color: isNumericalMeasure(measure)
       ? {
           type: "numerical",
           componentIri: measure.iri,
@@ -300,8 +299,8 @@ export const getInitialSymbolLayer = ({
   component,
   measure,
 }: {
-  component: DataCubeGeoShapesDimension | DataCubeGeoCoordinatesDimension;
-  measure: DataCubeNumericalMeasure | undefined;
+  component: GeoShapesDimension | GeoCoordinatesDimension;
+  measure: NumericalMeasure | undefined;
 }): MapSymbolLayer => {
   return {
     componentIri: component.iri,
@@ -329,8 +328,8 @@ type GetInitialConfigOptions = {
   key?: string;
   dataSet: string;
   chartType: ChartType;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 };
 
 export const getInitialConfig = (
@@ -350,8 +349,8 @@ export const getInitialConfig = (
     dataSet,
     activeField: undefined,
   };
-  const numericalMeasures = measures.filter(isDataCubeNumericalMeasure);
-  const temporalDimensions = getDataCubeTemporalDimensions(dimensions);
+  const numericalMeasures = measures.filter(isNumericalMeasure);
+  const temporalDimensions = getTemporalDimensions(dimensions);
 
   switch (chartType) {
     case "area":
@@ -371,7 +370,7 @@ export const getInitialConfig = (
       };
     case "column":
       const columnXComponentIri = findPreferredDimension(
-        sortBy(dimensions, (d) => (isDataCubeGeoDimension(d) ? 1 : -1)),
+        sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
         "TemporalDimension"
       ).iri;
 
@@ -406,10 +405,8 @@ export const getInitialConfig = (
         },
       };
     case "map":
-      const geoDimensions = getDataCubeGeoDimensions(dimensions);
-      const geoShapesDimensions = geoDimensions.filter(
-        isDataCubeGeoShapesDimension
-      );
+      const geoDimensions = getGeoDimensions(dimensions);
+      const geoShapesDimensions = geoDimensions.filter(isGeoShapesDimension);
       const areaDimension = geoShapesDimensions[0];
       const showAreaLayer = geoShapesDimensions.length > 0;
       const showSymbolLayer = !showAreaLayer;
@@ -445,8 +442,8 @@ export const getInitialConfig = (
       };
     case "pie":
       const pieSegmentComponent =
-        getDataCubeCategoricalDimensions(dimensions)[0] ??
-        getDataCubeGeoDimensions(dimensions)[0];
+        getCategoricalDimensions(dimensions)[0] ??
+        getGeoDimensions(dimensions)[0];
       const piePalette = getDefaultCategoricalPaletteName(pieSegmentComponent);
 
       return {
@@ -469,8 +466,8 @@ export const getInitialConfig = (
       };
     case "scatterplot":
       const scatterplotSegmentComponent =
-        getDataCubeCategoricalDimensions(dimensions)[0] ||
-        getDataCubeGeoDimensions(dimensions)[0];
+        getCategoricalDimensions(dimensions)[0] ||
+        getGeoDimensions(dimensions)[0];
       const scatterplotPalette = getDefaultCategoricalPaletteName(
         scatterplotSegmentComponent
       );
@@ -663,8 +660,8 @@ export const getChartConfigAdjustedToChartType = ({
 }: {
   chartConfig: ChartConfig;
   newChartType: ChartType;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): ChartConfig => {
   const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
@@ -709,8 +706,8 @@ const getAdjustedChartConfig = ({
   pathOverrides: ChartConfigPathOverrides;
   oldChartConfig: ChartConfig;
   newChartConfig: ChartConfig;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object. Table fields have an [iri: Config] structure,
@@ -963,7 +960,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isDataCubeTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -1035,7 +1032,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isDataCubeTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -1119,7 +1116,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
         componentIri: ({ oldValue, newChartConfig, measures }) => {
-          const numericalMeasures = measures.filter(isDataCubeNumericalMeasure);
+          const numericalMeasures = measures.filter(isNumericalMeasure);
 
           // If there is only one numerical measure then x & y are already filled correctly.
           if (numericalMeasures.length > 1) {
@@ -1320,7 +1317,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isDataCubeTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -1340,7 +1337,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           measures,
         }) => {
           const numericalMeasures = measures.filter(
-            (d) => isDataCubeNumericalMeasure(d) && d.unit
+            (d) => isNumericalMeasure(d) && d.unit
           );
           const { unit } =
             numericalMeasures.find((d) => d.iri === oldValue) ??
@@ -1383,7 +1380,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isDataCubeTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -1396,7 +1393,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: ({ newChartConfig, oldChartConfig, measures }) => {
-        const numericalMeasures = measures.filter(isDataCubeNumericalMeasure);
+        const numericalMeasures = measures.filter(isNumericalMeasure);
         const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
         let leftMeasure = numericalMeasures.find(
           (d) => d.iri === numericalMeasureIris[0]
@@ -1482,7 +1479,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           const ok = dimensions.find(
-            (d) => isDataCubeTemporalDimension(d) && d.iri === oldValue
+            (d) => isTemporalDimension(d) && d.iri === oldValue
           );
 
           if (ok) {
@@ -1495,7 +1492,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
       },
       y: ({ newChartConfig, oldChartConfig, measures }) => {
-        const numericalMeasures = measures.filter(isDataCubeNumericalMeasure);
+        const numericalMeasures = measures.filter(isNumericalMeasure);
         const numericalMeasureIris = numericalMeasures.map((d) => d.iri);
         let leftMeasure = numericalMeasures.find(
           (d) => d.iri === numericalMeasureIris[0]
@@ -1886,14 +1883,14 @@ export const getPossibleChartTypes = ({
   dimensions,
   measures,
 }: {
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): ChartType[] => {
-  const numericalMeasures = measures.filter(isDataCubeNumericalMeasure);
-  const ordinalMeasures = measures.filter(isDataCubeOrdinalMeasure);
-  const categoricalDimensions = getDataCubeCategoricalDimensions(dimensions);
-  const geoDimensions = getDataCubeGeoDimensions(dimensions);
-  const temporalDimensions = getDataCubeTemporalDimensions(dimensions);
+  const numericalMeasures = measures.filter(isNumericalMeasure);
+  const ordinalMeasures = measures.filter(isOrdinalMeasure);
+  const categoricalDimensions = getCategoricalDimensions(dimensions);
+  const geoDimensions = getGeoDimensions(dimensions);
+  const temporalDimensions = getTemporalDimensions(dimensions);
 
   const categoricalEnabled: RegularChartType[] = ["column", "pie"];
   const geoEnabled: RegularChartType[] = ["column", "map", "pie"];
@@ -1987,8 +1984,8 @@ const convertTableFieldsToSegmentField = ({
   measures,
 }: {
   fields: TableFields;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }): GenericSegmentField | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
@@ -2008,7 +2005,7 @@ const convertTableFieldsToSegmentField = ({
   const { componentIri } = component;
   const actualComponent = [...dimensions, ...measures].find(
     (d) => d.iri === componentIri
-  ) as DataCubeComponent;
+  ) as Component;
   const palette = getDefaultCategoricalPaletteName(actualComponent);
 
   return {

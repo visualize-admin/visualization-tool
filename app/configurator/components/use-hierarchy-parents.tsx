@@ -1,7 +1,7 @@
 import { groups } from "d3-array";
 import { useMemo } from "react";
 
-import { DataCubeDimension, HierarchyValue } from "@/domain/data";
+import { Dimension, HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
 export type HierarchyParents = [
@@ -22,7 +22,7 @@ export const groupByParents = (hierarchy: HierarchyValue[]) => {
 const useHierarchyParents = ({
   dimension,
 }: {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
 }): HierarchyParents | undefined => {
   return useMemo(() => {
     if (!dimension.hierarchy) {

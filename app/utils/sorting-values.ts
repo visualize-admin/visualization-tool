@@ -1,10 +1,10 @@
 import { FilterValue, SortingField } from "@/configurator";
 import {
-  DataCubeComponent,
+  Component,
   DimensionValue,
-  isDataCubeMeasure,
-  isDataCubeNumericalMeasure,
-  isDataCubeTemporalDimension,
+  isMeasure,
+  isNumericalMeasure,
+  isTemporalDimension,
 } from "@/domain/data";
 
 import { bfs } from "./bfs";
@@ -29,7 +29,7 @@ export const maybeInt = (value?: string | number): number | string => {
 };
 
 export const makeDimensionValueSorters = (
-  component?: DataCubeComponent,
+  component?: Component,
   options: {
     dimensionFilter?: FilterValue;
     sorting?:
@@ -51,8 +51,8 @@ export const makeDimensionValueSorters = (
   }
 
   if (
-    isDataCubeNumericalMeasure(component) ||
-    isDataCubeTemporalDimension(component) ||
+    isNumericalMeasure(component) ||
+    isTemporalDimension(component) ||
     component?.isNumerical
   ) {
     return [
@@ -86,7 +86,7 @@ export const makeDimensionValueSorters = (
     values = values.filter((dv) => filterValues[dv.value]);
   }
 
-  const allHierarchyValues = isDataCubeMeasure(component)
+  const allHierarchyValues = isMeasure(component)
     ? []
     : bfs(component.hierarchy ?? [], (node) => node);
 

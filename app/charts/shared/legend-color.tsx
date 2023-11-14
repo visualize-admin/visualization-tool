@@ -18,12 +18,7 @@ import {
   isSegmentInConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
-import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
-  Observation,
-} from "@/domain/data";
+import { Component, Dimension, Measure, Observation } from "@/domain/data";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -119,7 +114,7 @@ const useLegendGroups = ({
   values,
 }: {
   chartConfig: ChartConfig;
-  segmentDimension?: DataCubeDimension;
+  segmentDimension?: Dimension;
   title?: string;
   values: string[];
 }) => {
@@ -156,13 +151,11 @@ const useLegendGroups = ({
 
 type LegendColorProps = {
   chartConfig: ChartConfig;
-  segmentDimension?: DataCubeDimension;
+  segmentDimension?: Dimension;
   symbol: LegendSymbol;
   // If the legend is based on measures, this function can be used to get the
   // corresponding measure to open the metadata panel.
-  getLegendItemDimension?: (
-    dimensionLabel: string
-  ) => DataCubeMeasure | undefined;
+  getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
 };
 
@@ -198,7 +191,7 @@ export const MapLegendColor = memo(function LegendColor({
   useAbbreviations,
   chartConfig,
 }: {
-  component: DataCubeComponent;
+  component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
@@ -250,7 +243,7 @@ type LegendColorContentProps = {
   groups: ReturnType<typeof useLegendGroups>;
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
-  getItemDimension?: (dimensionLabel: string) => DataCubeMeasure | undefined;
+  getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
@@ -348,7 +341,7 @@ const LegendColorContent = (props: LegendColorContentProps) => {
 type LegendItemProps = {
   item: string;
   color: string;
-  dimension?: DataCubeMeasure;
+  dimension?: Measure;
   symbol: LegendSymbol;
   interactive?: boolean;
   onToggle?: CheckboxProps["onChange"];

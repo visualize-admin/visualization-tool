@@ -14,11 +14,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveFieldField } from "@/configurator/config-form";
-import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
-} from "@/domain/data";
+import { Component, Dimension, Measure } from "@/domain/data";
 
 const useStyles = makeStyles((theme: Theme) => ({
   filterRow: {
@@ -57,8 +53,8 @@ type Props = {
   id: string;
   title: ReactNode;
   items: TableColumn[];
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
   onUp: (idx: number) => void;
@@ -167,7 +163,7 @@ const DraggableTabField = ({
   upperLabel,
   disabled,
 }: {
-  component: DataCubeComponent;
+  component: Component;
   value: string;
   disabled?: boolean;
   isDragging: boolean;

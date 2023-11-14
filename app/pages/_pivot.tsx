@@ -17,9 +17,8 @@ import { Inspector } from "react-inspector";
 import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
-import { DataCubeDimension, HierarchyValue } from "@/domain/data";
+import { Dimension, HierarchyValue } from "@/domain/data";
 import {
-  Dimension,
   Measure,
   useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
@@ -160,9 +159,8 @@ const PivotTable = ({ dataset }: { dataset: typeof datasets[string] }) => {
   const [activeMeasures, setActiveMeasures] = useState<
     Record<Measure["iri"], boolean>
   >({});
-  const [pivotDimension, setPivotDimension] = useState<DataCubeDimension>();
-  const [hierarchyDimension, setHierarchyDimension] =
-    useState<DataCubeDimension>();
+  const [pivotDimension, setPivotDimension] = useState<Dimension>();
+  const [hierarchyDimension, setHierarchyDimension] = useState<Dimension>();
   const [ignoredDimensions, setIgnoredDimensions] = useState<
     Record<Dimension["iri"], boolean>
   >({});

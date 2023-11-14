@@ -12,7 +12,7 @@ import {
 } from "@/configurator";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { DataCubeComponent } from "@/domain/data";
+import { Component } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import SvgIcEdit from "@/icons/components/IcEdit";
 import SvgIcExclamation from "@/icons/components/IcExclamation";
@@ -20,7 +20,7 @@ import useEvent from "@/utils/use-event";
 
 type ControlTabProps = {
   chartConfig: ChartConfig;
-  component?: DataCubeComponent;
+  component?: Component;
   value: string;
   onClick: (x: string) => void;
   labelId: string | null;
@@ -235,7 +235,7 @@ export const DraggableTab = ({
   disabled,
   iconName,
 }: {
-  component: DataCubeComponent;
+  component: Component;
   disabled?: boolean;
   onClick: (x: string) => void;
   value: string;

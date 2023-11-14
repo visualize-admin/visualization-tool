@@ -1,5 +1,5 @@
 import { ColumnConfig, TableFields } from "@/configurator";
-import { DataCubeDimension, DataCubeMeasure } from "@/domain/data";
+import { Dimension, Measure } from "@/domain/data";
 import { RDFCubeViewQueryMock } from "@/test/cube-view-query-mock";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -19,9 +19,8 @@ describe("initial config", () => {
       chartType: "table",
       dataSet: "https://environment.ld.admin.ch/foen/nfi",
       dimensions: forestAreaData.data.dataCubeByIri
-        .dimensions as any as DataCubeDimension[],
-      measures: forestAreaData.data.dataCubeByIri
-        .measures as any as DataCubeMeasure[],
+        .dimensions as any as Dimension[],
+      measures: forestAreaData.data.dataCubeByIri.measures as any as Measure[],
     });
 
     expect(
@@ -47,9 +46,9 @@ describe("possible chart types", () => {
     const expectedChartTypes = ["area", "column", "line", "pie", "table"];
     const possibleChartTypes = getPossibleChartTypes({
       dimensions: bathingWaterData.data.dataCubeByIri
-        .dimensions as any as DataCubeDimension[],
+        .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri
-        .measures as any as DataCubeMeasure[],
+        .measures as any as Measure[],
     }).sort();
 
     expect(possibleChartTypes).toEqual(expectedChartTypes);
@@ -148,9 +147,8 @@ describe("chart type switch", () => {
       chartConfig,
       newChartType: "line",
       dimensions: bathingWaterData.data.dataCubeByIri
-        .dimensions as any as DataCubeDimension[],
-      measures: bathingWaterData.data.dataCubeByIri
-        .measures as DataCubeMeasure[],
+        .dimensions as any as Dimension[],
+      measures: bathingWaterData.data.dataCubeByIri.measures as Measure[],
     });
 
     expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(

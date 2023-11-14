@@ -18,15 +18,14 @@ import {
 } from "@/charts/shared/chart-state";
 import { MapConfig } from "@/configurator";
 import {
+  Dimension,
   GeoData,
   GeoPoint,
   GeoShapes,
-  isDataCubeGeoDimension,
-  isDataCubeGeoShapesDimension,
   isGeoCoordinatesDimension,
+  isGeoDimension,
   isGeoShapesDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment } from "@/graphql/query-hooks";
 import { GeoCoordinates } from "@/rdf/query-geo-coordinates";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -49,7 +48,7 @@ export const useMapStateVariables = (
     (d) => d.iri === areaLayer?.componentIri
   );
 
-  if (areaLayerDimension && !isDataCubeGeoShapesDimension(areaLayerDimension)) {
+  if (areaLayerDimension && !isGeoShapesDimension(areaLayerDimension)) {
     throw Error(
       `Dimension <${areaLayerDimension.iri}> is not geo shapes dimension!`
     );
@@ -65,7 +64,7 @@ export const useMapStateVariables = (
   );
 
   // Symbol layer dimension can be either GeoShapes or GeoCoordinates dimension.
-  if (symbolLayerDimension && !isDataCubeGeoDimension(symbolLayerDimension)) {
+  if (symbolLayerDimension && !isGeoDimension(symbolLayerDimension)) {
     throw Error(
       `Dimension <${symbolLayerDimension.iri}> is not geo dimension!`
     );
@@ -124,7 +123,7 @@ export const useMapStateData = (
   const symbolLayer = React.useMemo(() => {
     if (
       isGeoCoordinatesDimension(
-        symbolLayerDimension as DimensionMetadataFragment | undefined
+        symbolLayerDimension as Dimension | undefined
       ) &&
       coordinates
     ) {
@@ -155,9 +154,7 @@ export const useMapStateData = (
         points,
       };
     } else if (
-      isGeoShapesDimension(
-        symbolLayerDimension as DimensionMetadataFragment | undefined
-      ) &&
+      isGeoShapesDimension(symbolLayerDimension as Dimension | undefined) &&
       shapes
     ) {
       const { topology } = shapes;

@@ -70,11 +70,11 @@ import {
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeTemporalDimension,
+  Component,
+  Dimension,
   HierarchyValue,
   ObservationValue,
+  TemporalDimension,
 } from "@/domain/data";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
@@ -220,7 +220,7 @@ const MultiFilterContent = ({
   tree,
 }: {
   field: string;
-  colorComponent?: DataCubeComponent;
+  colorComponent?: Component;
   tree: HierarchyValue[];
 }) => {
   const [config, dispatch] = useConfiguratorState(isConfiguring);
@@ -852,9 +852,9 @@ export const DimensionValuesMultiFilter = ({
   field = "segment",
 }: {
   dataSetIri: string;
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   colorConfigPath?: string;
-  colorComponent?: DataCubeComponent;
+  colorComponent?: Component;
   field?: string;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
@@ -889,7 +889,7 @@ export const DimensionValuesMultiFilter = ({
 };
 
 type TimeFilterProps = {
-  dimension: DataCubeTemporalDimension;
+  dimension: TemporalDimension;
   disableInteractiveFilters?: boolean;
 };
 
@@ -1093,7 +1093,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
 };
 
 type GetTimeFilterOptionsProps = {
-  dimension: DataCubeTemporalDimension | null;
+  dimension: TemporalDimension | null;
   formatLocale: ReturnType<typeof useTimeFormatLocale>;
   timeFormatUnit: ReturnType<typeof useTimeFormatUnit>;
 };
@@ -1173,7 +1173,7 @@ export const InteractiveTimeRangeToggle = (
 export const DimensionValuesSingleFilter = ({
   dimension,
 }: {
-  dimension: DataCubeComponent;
+  dimension: Component;
 }) => {
   const locale = useLocale();
   const sortedDimensionValues = useMemo(() => {

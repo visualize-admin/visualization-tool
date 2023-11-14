@@ -52,12 +52,12 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { ParsedConfig } from "@/db/config";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
+  Component,
   DataCubesComponents,
+  Dimension,
   DimensionValue,
-  isDataCubeGeoDimension,
-  isDataCubeMeasure,
+  isGeoDimension,
+  isMeasure,
 } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { client } from "@/graphql/client";
@@ -444,7 +444,7 @@ export const moveFilterField = produce(
 );
 
 export const deriveFiltersFromFields = produce(
-  (chartConfig: ChartConfig, components: DataCubeComponent[]) => {
+  (chartConfig: ChartConfig, components: Component[]) => {
     const { chartType, fields, filters } = chartConfig;
 
     if (chartType === "table") {
@@ -456,7 +456,7 @@ export const deriveFiltersFromFields = produce(
       const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
       components.forEach((component) => {
-        if (isDataCubeMeasure(component)) {
+        if (isMeasure(component)) {
           return;
         }
 
@@ -474,11 +474,11 @@ export const deriveFiltersFromFields = produce(
       // Apply hierarchical dimensions first
       const sortedComponents = sortBy(
         components,
-        (d) => (isDataCubeGeoDimension(d) ? -1 : 1),
-        (d) => (isDataCubeMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
+        (d) => (isGeoDimension(d) ? -1 : 1),
+        (d) => (isMeasure(d) ? 1 : d.hierarchy ? -1 : 1)
       );
       sortedComponents.forEach((component) => {
-        if (isDataCubeMeasure(component)) {
+        if (isMeasure(component)) {
           return;
         }
 
@@ -501,7 +501,7 @@ export const applyTableDimensionToFilters = ({
   isGrouped,
 }: {
   filters: Filters;
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
@@ -550,7 +550,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];

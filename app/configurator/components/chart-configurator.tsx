@@ -67,10 +67,10 @@ import {
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
-  DataCubeDimension,
-  DataCubeMeasure,
-  isDataCubeStandardErrorDimension,
-  isDataCubeTemporalDimension,
+  Dimension,
+  isStandardErrorDimension,
+  isTemporalDimension,
+  Measure,
 } from "@/domain/data";
 import {
   DataCubeMetadataQuery,
@@ -86,7 +86,7 @@ import { useLocale } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
 type DataFilterSelectGenericProps = {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   index: number;
   disabled?: boolean;
   onRemove: () => void;
@@ -121,7 +121,7 @@ const DataFilterSelectGeneric = (props: DataFilterSelectGenericProps) => {
     isOptional: !dimension.isKeyDimension,
   };
 
-  if (isDataCubeTemporalDimension(dimension)) {
+  if (isTemporalDimension(dimension)) {
     if (dimension.timeUnit === "Day") {
       return <DataFilterSelectDay {...sharedProps} dimension={dimension} />;
     } else if (dimension.timeUnit === "Month") {
@@ -351,7 +351,7 @@ const useFilterReorder = ({
     });
   });
 
-  const handleAddDimensionFilter = useEvent((dimension: DataCubeDimension) => {
+  const handleAddDimensionFilter = useEvent((dimension: Dimension) => {
     onAddDimensionFilter?.();
     const filterValue = dimension.values[0];
     dispatch({
@@ -363,16 +363,14 @@ const useFilterReorder = ({
     });
   });
 
-  const handleRemoveDimensionFilter = useEvent(
-    (dimension: DataCubeDimension) => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
-        value: {
-          dimensionIri: dimension.iri,
-        },
-      });
-    }
-  );
+  const handleRemoveDimensionFilter = useEvent((dimension: Dimension) => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_REMOVE_SINGLE",
+      value: {
+        dimensionIri: dimension.iri,
+      },
+    });
+  });
 
   const handleDragEnd: OnDragEndResponder = useEvent((result) => {
     const sourceIndex = result.source?.index;
@@ -409,7 +407,7 @@ const useFilterReorder = ({
       (dim) =>
         !mappedFiltersIris.has(dim.iri) &&
         keysOrder[dim.iri] === undefined &&
-        !isDataCubeStandardErrorDimension(dim)
+        !isStandardErrorDimension(dim)
     );
 
     return {
@@ -765,8 +763,8 @@ type ChartFieldsProps = {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 };
 
 const ChartFields = (props: ChartFieldsProps) => {

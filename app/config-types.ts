@@ -3,11 +3,7 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
-import {
-  DataCubeDimension,
-  DataCubeMeasure,
-  ObservationValue,
-} from "@/domain/data";
+import { Dimension, Measure, ObservationValue } from "@/domain/data";
 
 const DimensionType = t.union([
   t.literal("NominalDimension"),
@@ -243,6 +239,20 @@ const SortingField = t.partial({
   }),
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
+
+// const Cube = t.type({
+//   iri: t.string,
+//   filters: Filters,
+// });
+// export type Cube = t.TypeOf<typeof Cube>;
+
+// const GenericChartConfig = t.type({
+//   key: t.string,
+//   version: t.string,
+//   meta: Meta,
+//   cubes: t.array(Cube),
+//   activeField: t.union([t.string, t.undefined]),
+// });
 
 const GenericChartConfig = t.type({
   key: t.string,
@@ -901,8 +911,8 @@ export type FieldAdjuster<
   oldValue: OldValueType;
   oldChartConfig: ChartConfig;
   newChartConfig: NewChartConfigType;
-  dimensions: DataCubeDimension[];
-  measures: DataCubeMeasure[];
+  dimensions: Dimension[];
+  measures: Measure[];
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {

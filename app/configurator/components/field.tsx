@@ -63,10 +63,10 @@ import {
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeTemporalDimension,
+  Component,
+  Dimension,
   HierarchyValue,
+  TemporalDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTimeFormatLocale } from "@/formatters";
@@ -91,7 +91,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 
 type ControlTabFieldProps = {
   chartConfig: ChartConfig;
-  component?: DataCubeComponent;
+  component?: Component;
   value: string;
   labelId: string | null;
   disabled?: boolean;
@@ -155,7 +155,7 @@ export const DataFilterSelect = ({
   onOpen,
   loading,
 }: {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   label: React.ReactNode;
   id: string;
   disabled?: boolean;
@@ -256,7 +256,7 @@ export const DataFilterSelectDay = ({
   isOptional,
   controls,
 }: {
-  dimension: DataCubeTemporalDimension;
+  dimension: TemporalDimension;
   label: React.ReactNode;
   disabled?: boolean;
   isOptional?: boolean;
@@ -350,7 +350,7 @@ export const DataFilterSelectTime = ({
   isOptional,
   controls,
 }: {
-  dimension: DataCubeDimension;
+  dimension: Dimension;
   label: React.ReactNode;
   from: string;
   to: string;
@@ -765,7 +765,7 @@ export const ChartFieldField = ({
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  components: DataCubeComponent[];
+  components: Component[];
 }) => {
   const props = useChartFieldField({ field, components });
   const noneLabel = t({

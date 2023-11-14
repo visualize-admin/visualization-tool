@@ -22,7 +22,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { DataCubeComponent, isDataCubeNumericalMeasure } from "@/domain/data";
+import { Component, isNumericalMeasure } from "@/domain/data";
 import {
   DEFAULT_CATEGORICAL_PALETTE_NAME,
   categoricalPalettes,
@@ -50,7 +50,7 @@ type Props = {
   field: string;
   disabled?: boolean;
   colorConfigPath?: string;
-  component?: DataCubeComponent;
+  component?: Component;
 };
 
 export const ColorPalette = ({
@@ -70,7 +70,7 @@ export const ColorPalette = ({
         )
       : null;
 
-  const palettes = isDataCubeNumericalMeasure(component)
+  const palettes = isNumericalMeasure(component)
     ? divergingSteppedPalettes
     : defaultPalette
     ? [defaultPalette, ...categoricalPalettes]
@@ -204,7 +204,7 @@ const ColorPaletteControls = ({
 }: {
   field: string;
   colorConfigPath?: string;
-  component: DataCubeComponent;
+  component: Component;
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();

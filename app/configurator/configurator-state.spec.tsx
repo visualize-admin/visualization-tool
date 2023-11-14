@@ -27,12 +27,7 @@ import {
   moveFilterField,
   updateColorMapping,
 } from "@/configurator/configurator-state";
-import {
-  DataCubeComponent,
-  DataCubeDimension,
-  DataCubeMeasure,
-  DataCubeNominalDimension,
-} from "@/domain/data";
+import { Component, Dimension, Measure, NominalDimension } from "@/domain/data";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/dev/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/dev/chartConfig-table-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
@@ -216,7 +211,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as any as DataCubeNominalDimension;
+  } as any as NominalDimension;
 
   const keyDimensionWithHierarchy = {
     __typename: "NominalDimension",
@@ -248,7 +243,7 @@ describe("applyDimensionToFilters", () => {
         children: [],
       },
     ],
-  } as any as DataCubeNominalDimension;
+  } as any as NominalDimension;
 
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
@@ -260,7 +255,7 @@ describe("applyDimensionToFilters", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  } as any as DataCubeNominalDimension;
+  } as any as NominalDimension;
 
   describe("applyNonTableDimensionToFilters", () => {
     it("should remove single value filter when a keyDimension is used as a field", () => {
@@ -528,14 +523,14 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
       getChartConfigAdjustedToChartType({
         chartConfig: oldConfig,
         newChartType,
-        dimensions: dataSetMetadata.dimensions as any as DataCubeDimension[],
-        measures: dataSetMetadata.measures as any as DataCubeMeasure[],
+        dimensions: dataSetMetadata.dimensions as any as Dimension[],
+        measures: dataSetMetadata.measures as any as Measure[],
       })
     );
     deriveFiltersFromFields(newConfig, [
       ...dataSetMetadata.dimensions,
       ...dataSetMetadata.measures,
-    ] as any as DataCubeComponent[]);
+    ] as any as Component[]);
 
     return current(newConfig);
   };

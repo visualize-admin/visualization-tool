@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { memo, useMemo } from "react";
 
 import VisuallyHidden from "@/components/visually-hidden";
-import { DataCubeDimension, DataCubeMeasure, Observation } from "@/domain/data";
+import { Dimension, Measure, Observation } from "@/domain/data";
 
 export const A11yTable = memo(
   ({
@@ -12,8 +12,8 @@ export const A11yTable = memo(
     observations,
   }: {
     title: string;
-    dimensions: DataCubeDimension[];
-    measures: DataCubeMeasure[];
+    dimensions: Dimension[];
+    measures: Measure[];
     observations: Observation[];
   }) => {
     const headers = useMemo(() => {

@@ -35,11 +35,11 @@ import {
 
 import { hasDimensionColors } from "./charts/shared/colors";
 import { DivergingPaletteType, SequentialPaletteType } from "./config-types";
-import { DataCubeComponent } from "./domain/data";
+import { Component } from "./domain/data";
 
 // Colors
 export const getDefaultCategoricalPaletteName = (
-  d?: DataCubeComponent,
+  d?: Component,
   previousPaletteName?: string
 ): string => {
   const hasColors = hasDimensionColors(d);

@@ -43,7 +43,7 @@ import {
   mkNumber,
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
-import { DataCubeComponent, Observation } from "@/domain/data";
+import { Component, Observation } from "@/domain/data";
 import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -52,7 +52,7 @@ import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import { ChartProps } from "../shared/ChartProps";
 
 export type MKColumnMeta<T> = {
-  dim: DataCubeComponent;
+  dim: Component;
   iri: string;
   slugifiedIri: string;
   description?: string;
