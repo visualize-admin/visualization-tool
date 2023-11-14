@@ -19,7 +19,7 @@ import {
   isNumericalMeasure,
   isTemporalDimension,
 } from "@/domain/data";
-import { DimensionMetadataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
 import { parseDate } from "./configurator/components/ui-helpers";
@@ -29,13 +29,13 @@ const DIMENSION_VALUE_UNDEFINED = "https://cube.link/Undefined";
 
 export type DateFormatter = (d: string | Date | null) => string;
 
-const isNamedNodeDimension = (d: DimensionMetadataFragment) => {
+const isNamedNodeDimension = (d: Component) => {
   const first = d.values?.[0];
   return first && first.label !== first.value;
 };
 
 const isDataCubeNamedNodeDimension = (d: Component) => {
-  return isNamedNodeDimension(d as DimensionMetadataFragment);
+  return isNamedNodeDimension(d as Component);
 };
 
 const namedNodeFormatter = (d: Component) => {

@@ -67,10 +67,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
-import {
-  DimensionMetadataFragment,
-  GeoCoordinates,
-} from "@/graphql/query-hooks";
+import { GeoCoordinates } from "@/graphql/query-hooks";
 import { getColorInterpolator } from "@/palettes";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -338,7 +335,7 @@ const getCategoricalColors = (
 ) => {
   const component = [...dimensions, ...measures].find(
     (d) => d.iri === color.componentIri
-  ) as DimensionMetadataFragment;
+  ) as Component;
   const valuesByLabel = keyBy(component.values, (d) => d.label);
   const valuesByAbbreviationOrLabel = keyBy(
     component.values,
