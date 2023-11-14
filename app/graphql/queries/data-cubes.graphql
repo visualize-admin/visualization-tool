@@ -1,35 +1,3 @@
-fragment dimensionMetadata on Dimension {
-  iri
-  label
-  description
-  isNumerical
-  isKeyDimension
-  dataType
-  scaleType
-  order
-  values(
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    filters: $filters
-    disableLoad: $disableValuesLoad
-  )
-  unit
-  related {
-    iri
-    type
-  }
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
-  }
-  ... on NumericalMeasure {
-    isCurrency
-    currencyExponent
-    resolution
-    isDecimal
-  }
-}
-
 query SearchCubes(
   $sourceType: String!
   $sourceUrl: String!
