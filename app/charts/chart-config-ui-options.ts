@@ -463,7 +463,7 @@ export const disableStacked = (d?: Component): boolean => {
   return d?.scaleType !== "Ratio";
 };
 
-const defaultSegmentOnChange: OnEncodingChange<
+export const defaultSegmentOnChange: OnEncodingChange<
   | AreaConfig
   | ColumnConfig
   | LineConfig
@@ -486,7 +486,6 @@ const defaultSegmentOnChange: OnEncodingChange<
     palette,
     dimensionValues: component ? component.values : selectedValues,
   });
-  const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
 
   if (initializing) {
     chartConfig.fields.segment = {
@@ -503,7 +502,10 @@ const defaultSegmentOnChange: OnEncodingChange<
     chartConfig.fields.segment.colorMapping = colorMapping;
   }
 
-  chartConfig.filters[iri] = multiFilter;
+  if (selectedValues.length) {
+    const multiFilter = makeMultiFilter(selectedValues.map((d) => d.value));
+    chartConfig.filters[iri] = multiFilter;
+  }
 };
 
 const onMapFieldChange: OnEncodingChange<MapConfig> = (
