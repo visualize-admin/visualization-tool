@@ -305,7 +305,7 @@ export const getInitialSymbolLayer = ({
 }): MapSymbolLayer => {
   return {
     componentIri: component.iri,
-    measureIri: measure?.iri || FIELD_VALUE_NONE,
+    measureIri: measure?.iri ?? FIELD_VALUE_NONE,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
