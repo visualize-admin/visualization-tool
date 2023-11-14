@@ -9,15 +9,15 @@ import { DataSource } from "@/configurator";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
-  ComponentsDocument,
-  ComponentsQuery,
-  ComponentsQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataQuery,
   DataCubeMetadataQueryVariables,
   DataCubePreviewDocument,
   DataCubePreviewQuery,
   DataCubePreviewQueryVariables,
+  DataCubesComponentsDocument,
+  DataCubesComponentsQuery,
+  DataCubesComponentsQueryVariables,
 } from "../graphql/query-hooks";
 
 config();
@@ -80,20 +80,22 @@ const showCubeComponents = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query<ComponentsQuery, ComponentsQueryVariables>(ComponentsDocument, {
-      iri,
-      sourceType,
-      sourceUrl,
-      locale,
-      latest,
-    })
+    .query<DataCubesComponentsQuery, DataCubesComponentsQueryVariables>(
+      DataCubesComponentsDocument,
+      {
+        sourceType,
+        sourceUrl,
+        locale,
+        filters: [{ iri, latest }],
+      }
+    )
     .toPromise();
 
   if (res.error) {
     throw new Error(res.error.message);
   }
 
-  report(res.data?.dataCubeByIri);
+  report(res.data?.dataCubesComponents);
 };
 
 const previewCube = async ({

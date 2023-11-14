@@ -161,7 +161,7 @@ export const DataFilterSelect = ({
   disabled?: boolean;
   isOptional?: boolean;
   controls?: React.ReactNode;
-  hierarchy?: HierarchyValue[];
+  hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
   loading?: boolean;
 }) => {

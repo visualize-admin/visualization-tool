@@ -3,21 +3,43 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
-import { ObservationValue } from "@/domain/data";
-import { DataCubeMetadata } from "@/graphql/types";
+import {
+  DataCubeDimension,
+  DataCubeMeasure,
+  ObservationValue,
+} from "@/domain/data";
 
-const ComponentType = t.union([
-  t.literal("NumericalMeasure"),
-  t.literal("OrdinalMeasure"),
-  t.literal("GeoCoordinatesDimension"),
-  t.literal("GeoShapesDimension"),
+const DimensionType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
   t.literal("TemporalDimension"),
   t.literal("TemporalOrdinalDimension"),
+  t.literal("GeoCoordinatesDimension"),
+  t.literal("GeoShapesDimension"),
   t.literal("StandardErrorDimension"),
 ]);
+export type DimensionType = t.TypeOf<typeof DimensionType>;
+export const dimensionTypes: DimensionType[] = [
+  "NominalDimension",
+  "OrdinalDimension",
+  "TemporalDimension",
+  "TemporalOrdinalDimension",
+  "GeoCoordinatesDimension",
+  "GeoShapesDimension",
+  "StandardErrorDimension",
+];
 
+const MeasureType = t.union([
+  t.literal("NumericalMeasure"),
+  t.literal("OrdinalMeasure"),
+]);
+export type MeasureType = t.TypeOf<typeof MeasureType>;
+export const measureTypes: MeasureType[] = [
+  "NumericalMeasure",
+  "OrdinalMeasure",
+];
+
+const ComponentType = t.union([DimensionType, MeasureType]);
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
@@ -879,8 +901,8 @@ export type FieldAdjuster<
   oldValue: OldValueType;
   oldChartConfig: ChartConfig;
   newChartConfig: NewChartConfigType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
+  dimensions: DataCubeDimension[];
+  measures: DataCubeMeasure[];
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
