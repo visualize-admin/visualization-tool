@@ -74,7 +74,7 @@ type BasicDataCubeComponent = {
 };
 
 type BasicDataCubeDimension = BasicDataCubeComponent & {
-  hierarchy?: HierarchyValue[];
+  hierarchy?: HierarchyValue[] | null;
 };
 
 export type DataCubeDimension =

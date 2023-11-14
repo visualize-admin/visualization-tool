@@ -605,53 +605,6 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, dateModified?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
-export type ComponentsQueryVariables = Exact<{
-  iri: Scalars['String'];
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['String'];
-  locale: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Scalars['Filters']>;
-  componentIris?: Maybe<Array<Scalars['String']> | Scalars['String']>;
-  disableValuesLoad?: Maybe<Scalars['Boolean']>;
-}>;
-
-
-export type ComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensions: Array<(
-      { __typename: 'GeoCoordinatesDimension' }
-      & DimensionMetadata_GeoCoordinatesDimension_Fragment
-    ) | (
-      { __typename: 'GeoShapesDimension' }
-      & DimensionMetadata_GeoShapesDimension_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetadata_NominalDimension_Fragment
-    ) | (
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetadata_OrdinalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    ) | (
-      { __typename: 'StandardErrorDimension' }
-      & DimensionMetadata_StandardErrorDimension_Fragment
-    ) | (
-      { __typename: 'TemporalDimension' }
-      & DimensionMetadata_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'TemporalOrdinalDimension' }
-      & DimensionMetadata_TemporalOrdinalDimension_Fragment
-    )>, measures: Array<(
-      { __typename: 'NumericalMeasure' }
-      & DimensionMetadata_NumericalMeasure_Fragment
-    ) | (
-      { __typename: 'OrdinalMeasure' }
-      & DimensionMetadata_OrdinalMeasure_Fragment
-    )> }> };
-
 export type DataCubesComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -827,39 +780,6 @@ export const DataCubeMetadataDocument = gql`
 
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
-};
-export const ComponentsDocument = gql`
-    query Components($iri: String!, $sourceType: String!, $sourceUrl: String!, $locale: String!, $latest: Boolean, $filters: Filters, $componentIris: [String!], $disableValuesLoad: Boolean = false) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-    disableValuesLoad: $disableValuesLoad
-  ) {
-    dimensions(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-    measures(
-      sourceType: $sourceType
-      sourceUrl: $sourceUrl
-      componentIris: $componentIris
-      disableValuesLoad: $disableValuesLoad
-    ) {
-      ...dimensionMetadata
-    }
-  }
-}
-    ${DimensionMetadataFragmentDoc}`;
-
-export function useComponentsQuery(options: Omit<Urql.UseQueryArgs<ComponentsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<ComponentsQuery>({ query: ComponentsDocument, ...options });
 };
 export const DataCubesComponentsDocument = gql`
     query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {

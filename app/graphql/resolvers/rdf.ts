@@ -147,7 +147,9 @@ export const possibleFilters: NonNullable<QueryResolvers["possibleFilters"]> =
 export const dataCubesComponents: NonNullable<
   QueryResolvers["dataCubesComponents"]
 > = async (_, { locale, filters }, { setup }, info) => {
-  const { loaders, sparqlClient, cache } = await setup(info);
+  const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
+    info
+  );
 
   const cubes = (
     await Promise.all(
@@ -186,11 +188,14 @@ export const dataCubesComponents: NonNullable<
   await Promise.all(
     rawComponents.map(async (component) => {
       const { cube, data } = component;
+      const cubeFilters = filters.find(
+        (d) => d.iri === component.cube.term?.value
+      );
       const dimensionValuesLoader = getDimensionValuesLoader(
         sparqlClient,
         loaders,
         cache,
-        filters.find((d) => d.iri === component.cube.term?.value)?.filters
+        cubeFilters?.filters
       );
       const values: DimensionValue[] = await dimensionValuesLoader.load(
         component
@@ -229,6 +234,19 @@ export const dataCubesComponents: NonNullable<
         measures.push(result);
       } else {
         const dimensionType = resolveDimensionType(component);
+        const hierarchy = true // TODO: make this configurable
+          ? await queryHierarchy(
+              component,
+              locale,
+              sparqlClient,
+              sparqlClientStream,
+              cache
+            )
+          : null;
+        const baseDimension = {
+          ...baseComponent,
+          hierarchy,
+        };
 
         switch (dimensionType) {
           case "TemporalDimension": {
@@ -242,7 +260,7 @@ export const dataCubesComponents: NonNullable<
               __typename: dimensionType,
               timeFormat: data.timeFormat,
               timeUnit: data.timeUnit,
-              ...baseComponent,
+              ...baseDimension,
             };
             dimensions.push(dimension);
             break;
@@ -250,7 +268,7 @@ export const dataCubesComponents: NonNullable<
           default: {
             const dimension: DataCubeDimension = {
               __typename: dimensionType,
-              ...baseComponent,
+              ...baseDimension,
             };
             dimensions.push(dimension);
           }
