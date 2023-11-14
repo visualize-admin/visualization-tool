@@ -40,25 +40,26 @@ export const ChartAreasVisualization = ({
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {
-    iri: dataSetIri,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      iri: dataSetIri,
+    },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonQueryVariables,
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       ...commonQueryVariables,
+      iri: dataSetIri,
       componentIris,
       filters: queryFilters,
     },

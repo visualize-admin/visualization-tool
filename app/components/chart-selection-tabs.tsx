@@ -256,18 +256,20 @@ const PublishChartButton = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
-  const variables = {
-    iri: chartConfig.dataSet,
+  const commonQueryVariables = {
     sourceType: state.dataSource.type,
     sourceUrl: state.dataSource.url,
     locale,
   };
-  const [{ data: metadata }] = useDataCubeMetadataQuery({ variables });
+  const [{ data: metadata }] = useDataCubeMetadataQuery({
+    variables: {
+      ...commonQueryVariables,
+      iri: chartConfig.dataSet,
+    },
+  });
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      locale,
+      ...commonQueryVariables,
       filters: [{ iri: chartConfig.dataSet }],
     },
   });

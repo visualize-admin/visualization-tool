@@ -133,21 +133,20 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
   const commonQueryVariables = {
-    iri: chartConfig.dataSet,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
-
   const [{ data: metadata }] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      iri: chartConfig.dataSet,
+    },
   });
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
   const [{ data: components }] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonQueryVariables,
       filters: [{ iri: chartConfig.dataSet, componentIris }],
     },
   });

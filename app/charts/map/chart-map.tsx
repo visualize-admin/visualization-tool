@@ -42,25 +42,26 @@ export const ChartMapVisualization = ({
   const areaDimensionIri = chartConfig.fields.areaLayer?.componentIri || "";
   const symbolDimensionIri = chartConfig.fields.symbolLayer?.componentIri || "";
   const commonQueryVariables = {
-    iri: dataSetIri,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
   const [metadataQuery] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      iri: dataSetIri,
+    },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonQueryVariables,
       filters: [{ iri: dataSetIri, componentIris }],
     },
   });
   const [observationsQuery] = useDataCubeObservationsQuery({
     variables: {
       ...commonQueryVariables,
+      iri: dataSetIri,
       componentIris,
       filters: queryFilters,
     },

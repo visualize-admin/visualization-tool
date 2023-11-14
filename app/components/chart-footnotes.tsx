@@ -78,7 +78,6 @@ export const ChartFootnotes = ({
   const [{ data }] = useDataCubeMetadataQuery({
     variables: commonQueryVariables,
   });
-
   // Data for data download
   const filters = useQueryFilters({ chartConfig });
   const componentIris = extractChartConfigComponentIris(chartConfig);

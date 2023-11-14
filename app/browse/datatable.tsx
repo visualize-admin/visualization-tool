@@ -253,25 +253,26 @@ export const DataSetTable = ({
   const componentIris = extractChartConfigComponentIris(chartConfig);
   const filters = useQueryFilters({ chartConfig });
   const commonQueryVariables = {
-    iri: dataSetIri,
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
     locale,
   };
   const [{ data: metadataData }] = useDataCubeMetadataQuery({
-    variables: commonQueryVariables,
+    variables: {
+      ...commonQueryVariables,
+      iri: dataSetIri,
+    },
   });
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
+      ...commonQueryVariables,
       filters: [{ iri: dataSetIri, componentIris, filters }],
     },
   });
   const [{ data: observationsData }] = useDataCubeObservationsQuery({
     variables: {
       ...commonQueryVariables,
+      iri: dataSetIri,
       componentIris,
       filters,
     },
