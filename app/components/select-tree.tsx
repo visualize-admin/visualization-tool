@@ -20,7 +20,6 @@ import {
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import useId from "@mui/utils/useId";
 import clsx from "clsx";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
