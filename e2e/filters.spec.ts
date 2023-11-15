@@ -22,29 +22,28 @@ describe("Filters", () => {
 
     const texts = await labels.allTextContents();
 
-    console.log(texts);
     // Hierarchical dimensions should come first.
-    expect(texts[0]).toEqual("1. Region");
-    expect(texts[1]).toEqual("2. tree status");
+    expect(texts[0]).toEqual("1. Region ");
+    expect(texts[1]).toEqual("2. tree status ");
 
     const productionRegionFilter =
-      selectors.edition.dataFilterInput("1. Region");
+      selectors.edition.dataFilterInput("1. Region ");
 
     const productionRegionFilterValue = await productionRegionFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
     expect(productionRegionFilterValue).toEqual(
-      "https://ld.admin.ch/country/CHE"
+      "Switzerland"
     );
 
     const treeStatusFilter =
-      selectors.edition.dataFilterInput("2. tree status");
+      selectors.edition.dataFilterInput("2. tree status ");
     const treeStatusFilterValue = await treeStatusFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();
 
     expect(treeStatusFilterValue).toEqual(
-      "https://environment.ld.admin.ch/foen/nfi/ClassificationUnit/Total"
+      "Total"
     );
   });
 
