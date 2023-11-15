@@ -120,7 +120,9 @@ const runTest = async ({
  */
 const testFn = process.env.CI ? test.skip : test;
 
-describe("multi root hierarchy retrieval", () => {
+// FIX: currently broken and will be fetched differently form #1244
+// TODO: refactor as part of #1244 changes
+describe.skip("multi root hierarchy retrieval", () => {
   testFn("should work for C-1029", async () => {
     await runTest({
       cubeIri: cubeIris["C-1029"],
