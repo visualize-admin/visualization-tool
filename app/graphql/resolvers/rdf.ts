@@ -13,6 +13,7 @@ import {
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
 import {
+  DataCubeFilter,
   DataCubeResolvers,
   DimensionResolvers,
   QueryResolvers,
@@ -150,6 +151,8 @@ export const dataCubesComponents: NonNullable<
   const { loaders, sparqlClient, sparqlClientStream, cache } = await setup(
     info
   );
+  // If the cube was updated, we need to also update the filter with the correct iri.
+  const filtersWithCorrectIri: DataCubeFilter[] = [];
 
   const cubes = (
     await Promise.all(
@@ -165,10 +168,16 @@ export const dataCubesComponents: NonNullable<
           const latestCube = await getLatestCube(cube);
           await latestCube.fetchShape();
 
+          filtersWithCorrectIri.push({
+            ...filter,
+            iri: latestCube.term?.value!,
+          });
+
           return latestCube;
         }
 
         await cube.fetchShape();
+        filtersWithCorrectIri.push(filter);
 
         return cube;
       })
@@ -178,7 +187,7 @@ export const dataCubesComponents: NonNullable<
   const rawComponents = await getCubesDimensions(cubes, {
     locale,
     sparqlClient,
-    filters,
+    filters: filtersWithCorrectIri,
     cache,
   });
 
@@ -188,7 +197,7 @@ export const dataCubesComponents: NonNullable<
   await Promise.all(
     rawComponents.map(async (component) => {
       const { cube, data } = component;
-      const cubeFilters = filters.find(
+      const cubeFilters = filtersWithCorrectIri.find(
         (d) => d.iri === component.cube.term?.value
       );
       const dimensionValuesLoader = getDimensionValuesLoader(
