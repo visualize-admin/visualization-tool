@@ -40,7 +40,6 @@ import {
   removeSortingOption,
 } from "@/configurator/table/table-config-state";
 import { Dimension, isNumericalMeasure, Measure } from "@/domain/data";
-import { DataCubeMetadataQuery } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 
@@ -97,7 +96,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
 }));
 
 const TableSortingOptionItem = ({
-  metadata,
   dimensions,
   measures,
   componentIri,
@@ -105,7 +103,6 @@ const TableSortingOptionItem = ({
   chartConfig,
   sortingOrder,
 }: {
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
   index: number;
@@ -118,17 +115,12 @@ const TableSortingOptionItem = ({
   );
 
   const onRemove = useEvent(() => {
-    if (!metadata) {
-      return;
-    }
-
     dispatch({
       type: "CHART_CONFIG_REPLACED",
       value: {
         chartConfig: removeSortingOption(chartConfig, {
           index,
         }),
-        dataCubeMetadata: metadata,
         dataCubesComponents: {
           dimensions,
           measures,
@@ -138,10 +130,6 @@ const TableSortingOptionItem = ({
   });
 
   const onChangeSortingOrder = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (!metadata) {
-      return;
-    }
-
     dispatch({
       type: "CHART_CONFIG_REPLACED",
       value: {
@@ -149,7 +137,6 @@ const TableSortingOptionItem = ({
           index,
           sortingOrder: e.currentTarget.value as "asc" | "desc",
         }),
-        dataCubeMetadata: metadata,
         dataCubesComponents: {
           dimensions,
           measures,
@@ -167,7 +154,6 @@ const TableSortingOptionItem = ({
       <Typography variant="body1" className={classes.selectWrapper}>
         <ChangeTableSortingOption
           index={index}
-          metadata={metadata}
           dimensions={dimensions}
           measures={measures}
           chartConfig={chartConfig}
@@ -208,12 +194,10 @@ const TableSortingOptionItem = ({
 };
 
 const AddTableSortingOption = ({
-  metadata,
   dimensions,
   measures,
   chartConfig,
 }: {
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
   chartConfig: TableConfig;
@@ -222,10 +206,6 @@ const AddTableSortingOption = ({
 
   const onChange = useCallback(
     (e: SelectChangeEvent<unknown>) => {
-      if (!metadata) {
-        return;
-      }
-
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
         ({ iri }) => iri === value
@@ -240,7 +220,6 @@ const AddTableSortingOption = ({
               componentType: component.__typename,
               sortingOrder: "asc",
             }),
-            dataCubeMetadata: metadata,
             dataCubesComponents: {
               dimensions,
               measures,
@@ -249,7 +228,7 @@ const AddTableSortingOption = ({
         });
       }
     },
-    [chartConfig, dimensions, dispatch, measures, metadata]
+    [chartConfig, dimensions, dispatch, measures]
   );
 
   const columns = useOrderedTableColumns(chartConfig.fields);
@@ -305,13 +284,11 @@ const AddTableSortingOption = ({
 };
 
 const ChangeTableSortingOption = ({
-  metadata,
   dimensions,
   measures,
   chartConfig,
   index,
 }: {
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
   chartConfig: TableConfig;
@@ -321,10 +298,6 @@ const ChangeTableSortingOption = ({
 
   const onChange = useCallback(
     (e: SelectChangeEvent<unknown>) => {
-      if (!metadata) {
-        return;
-      }
-
       const { value } = e.target;
       const component = [...dimensions, ...measures].find(
         ({ iri }) => iri === value
@@ -342,7 +315,6 @@ const ChangeTableSortingOption = ({
                 sortingOrder: "asc",
               },
             }),
-            dataCubeMetadata: metadata,
             dataCubesComponents: {
               dimensions,
               measures,
@@ -351,7 +323,7 @@ const ChangeTableSortingOption = ({
         });
       }
     },
-    [chartConfig, dimensions, dispatch, index, measures, metadata]
+    [chartConfig, dimensions, dispatch, index, measures]
   );
 
   const columns = useOrderedTableColumns(chartConfig.fields);
@@ -383,12 +355,10 @@ const ChangeTableSortingOption = ({
 
 export const TableSortingOptions = ({
   state,
-  metadata,
   dimensions,
   measures,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
@@ -399,7 +369,7 @@ export const TableSortingOptions = ({
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
-      if (!destination || chartConfig.chartType !== "table" || !metadata) {
+      if (!destination || chartConfig.chartType !== "table") {
         return;
       }
 
@@ -410,7 +380,6 @@ export const TableSortingOptions = ({
             source,
             destination,
           }),
-          dataCubeMetadata: metadata,
           dataCubesComponents: {
             dimensions,
             measures,
@@ -418,7 +387,7 @@ export const TableSortingOptions = ({
         },
       });
     },
-    [chartConfig, dimensions, dispatch, measures, metadata]
+    [chartConfig, dimensions, dispatch, measures]
   );
 
   if (!activeField || chartConfig.chartType !== "table") {
@@ -465,7 +434,6 @@ export const TableSortingOptions = ({
                               <TableSortingOptionItem
                                 {...option}
                                 index={i}
-                                metadata={metadata}
                                 dimensions={dimensions}
                                 measures={measures}
                                 chartConfig={chartConfig}
@@ -502,7 +470,6 @@ export const TableSortingOptions = ({
                   }}
                 >
                   <AddTableSortingOption
-                    metadata={metadata}
                     dimensions={dimensions}
                     measures={measures}
                     chartConfig={chartConfig}

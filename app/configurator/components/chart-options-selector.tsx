@@ -80,7 +80,6 @@ import {
   Observation,
 } from "@/domain/data";
 import {
-  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
 } from "@/graphql/query-hooks";
@@ -103,9 +102,6 @@ export const ChartOptionsSelector = ({
     sourceUrl: dataSource.url,
     locale,
   };
-  const [{ data: metadataData }] = useDataCubeMetadataQuery({
-    variables: commonVariables,
-  });
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
     variables: {
       sourceType: dataSource.type,
@@ -121,12 +117,11 @@ export const ChartOptionsSelector = ({
     },
   });
 
-  const metadata = metadataData?.dataCubeByIri;
   const dimensions = componentsData?.dataCubesComponents.dimensions;
   const measures = componentsData?.dataCubesComponents.measures;
   const observations = observationsData?.dataCubeByIri?.observations.data;
 
-  return metadata && dimensions && measures && observations ? (
+  return dimensions && measures && observations ? (
     <Box
       sx={{
         // we need these overflow parameters to allow iOS scrolling
@@ -138,7 +133,6 @@ export const ChartOptionsSelector = ({
         isTableConfig(chartConfig) ? (
           <TableColumnOptions
             state={state}
-            metadata={metadata}
             dimensions={dimensions}
             measures={measures}
           />

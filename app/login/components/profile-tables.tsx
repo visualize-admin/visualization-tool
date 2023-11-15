@@ -27,7 +27,7 @@ import useDisclosure from "@/components/use-disclosure";
 import { ParsedConfig } from "@/db/config";
 import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { useDataCubesMetadataQuery } from "@/graphql/query-hooks";
 import { Icon, IconName } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
@@ -172,14 +172,14 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
   );
   const dataSet = dataSets.length === 1 ? dataSets[0] : null;
   const locale = useLocale();
-  const [{ data, fetching }] = useDataCubeMetadataQuery(
+  const [{ data, fetching }] = useDataCubesMetadataQuery(
     dataSet
       ? {
           variables: {
-            iri: dataSet,
             sourceType: dataSource.type,
             sourceUrl: dataSource.url,
             locale,
+            filters: [{ iri: dataSet }],
           },
         }
       : {
@@ -280,7 +280,7 @@ const ProfileVisualizationsRow = (props: ProfileVisualizationsRowProps) => {
           >
             <Link target="_blank" color="primary">
               <Typography variant="body2" noWrap>
-                {data?.dataCubeByIri?.title ?? ""}
+                {data?.dataCubesMetadata[0]?.title ?? ""}
               </Typography>
             </Link>
           </NextLink>

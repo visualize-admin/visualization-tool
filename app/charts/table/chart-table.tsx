@@ -5,9 +5,9 @@ import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { DataSource, TableConfig } from "@/configurator";
 import {
-  useDataCubeMetadataQuery,
   useDataCubeObservationsQuery,
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -30,10 +30,10 @@ export const ChartTableVisualization = ({
     sourceUrl: dataSource.url,
     locale,
   };
-  const [metadataQuery] = useDataCubeMetadataQuery({
+  const [metadataQuery] = useDataCubesMetadataQuery({
     variables: {
       ...commonQueryVariables,
-      iri: dataSetIri,
+      filters: [{ iri: dataSetIri }],
     },
   });
   const [componentsQuery] = useDataCubesComponentsQuery({

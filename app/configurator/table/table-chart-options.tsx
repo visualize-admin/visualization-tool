@@ -51,7 +51,6 @@ import {
   isTemporalDimension,
   Measure,
 } from "@/domain/data";
-import { DataCubeMetadataQuery } from "@/graphql/query-hooks";
 import {
   getDefaultCategoricalPalette,
   getDefaultCategoricalPaletteName,
@@ -61,13 +60,11 @@ import {
 const useTableColumnGroupHiddenField = ({
   path,
   field,
-  metadata,
   dimensions,
   measures,
 }: {
   path: "isGroup" | "isHidden";
   field: string;
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
 }): FieldProps => {
@@ -75,7 +72,7 @@ const useTableColumnGroupHiddenField = ({
   const chartConfig = getChartConfig(state);
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (!isTableConfig(chartConfig) || !metadata) {
+      if (!isTableConfig(chartConfig)) {
         return;
       }
 
@@ -89,7 +86,6 @@ const useTableColumnGroupHiddenField = ({
         type: "CHART_CONFIG_REPLACED",
         value: {
           chartConfig: newChartConfig,
-          dataCubeMetadata: metadata,
           dataCubesComponents: {
             dimensions,
             measures,
@@ -97,7 +93,7 @@ const useTableColumnGroupHiddenField = ({
         },
       });
     },
-    [chartConfig, path, field, dispatch, metadata, dimensions, measures]
+    [chartConfig, path, field, dispatch, dimensions, measures]
   );
   const stateValue = get(chartConfig, `fields["${field}"].${path}`, "");
   const checked = stateValue ? stateValue : false;
@@ -115,7 +111,6 @@ const ChartOptionGroupHiddenField = ({
   path,
   defaultChecked,
   disabled = false,
-  metadata,
   dimensions,
   measures,
 }: {
@@ -124,14 +119,12 @@ const ChartOptionGroupHiddenField = ({
   path: "isGroup" | "isHidden";
   defaultChecked?: boolean;
   disabled?: boolean;
-  metadata: DataCubeMetadataQuery["dataCubeByIri"];
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
   const fieldProps = useTableColumnGroupHiddenField({
     field,
     path,
-    metadata,
     dimensions,
     measures,
   });
@@ -148,12 +141,10 @@ const ChartOptionGroupHiddenField = ({
 
 export const TableColumnOptions = ({
   state,
-  metadata,
   dimensions,
   measures,
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metadata: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
   dimensions: Dimension[];
   measures: Measure[];
 }) => {
@@ -177,7 +168,6 @@ export const TableColumnOptions = ({
     return (
       <TableSortingOptions
         state={state}
-        metadata={metadata}
         dimensions={dimensions}
         measures={measures}
       />
@@ -257,7 +247,6 @@ export const TableColumnOptions = ({
               })}
               field={activeField}
               path="isGroup"
-              metadata={metadata}
               dimensions={dimensions}
               measures={measures}
             />
@@ -269,7 +258,6 @@ export const TableColumnOptions = ({
             })}
             field={activeField}
             path="isHidden"
-            metadata={metadata}
             dimensions={dimensions}
             measures={measures}
           />
@@ -359,7 +347,7 @@ export const TableColumnOptions = ({
                 key={component.iri}
                 field={component.iri}
                 dimension={component}
-                dataSetIri={metadata.iri}
+                dataSetIri={chartConfig.dataSet}
                 colorComponent={component}
                 colorConfigPath="columnStyle"
               />

@@ -35,8 +35,8 @@ import {
   useIsTrustedDataSource,
 } from "@/domain/datasource";
 import {
-  useDataCubeMetadataQuery,
   useDataCubesComponentsQuery,
+  useDataCubesMetadataQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
@@ -137,10 +137,12 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     sourceUrl: dataSource.url,
     locale,
   };
-  const [{ data: metadata }] = useDataCubeMetadataQuery({
+  const [{ data: metadata }] = useDataCubesMetadataQuery({
     variables: {
-      ...commonQueryVariables,
-      iri: chartConfig.dataSet,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      filters: [{ iri: chartConfig.dataSet }],
     },
   });
   const componentIris = extractChartConfigsComponentIris(state.chartConfigs);
@@ -169,8 +171,9 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
     <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
       <Box className={classes.root} ref={rootRef}>
         <ChartErrorBoundary resetKeys={[chartConfig]}>
-          {metadata?.dataCubeByIri?.publicationStatus ===
-            DataCubePublicationStatus.Draft && (
+          {metadata?.dataCubesMetadata.some(
+            (d) => d.publicationStatus === DataCubePublicationStatus.Draft
+          ) && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
                 <Trans id="dataset.publicationStatus.draft.warning">
@@ -181,7 +184,7 @@ const ChartPublishedInner = (props: ChartPublishInnerProps) => {
               </HintRed>
             </Box>
           )}
-          {metadata?.dataCubeByIri?.expires && (
+          {metadata?.dataCubesMetadata.some((d) => d.expires) && (
             <Box sx={{ mb: 4 }}>
               <HintRed iconName="datasetError" iconSize={64}>
                 <Trans id="dataset.publicationStatus.expires.warning">

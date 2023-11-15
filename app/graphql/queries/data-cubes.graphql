@@ -50,45 +50,6 @@ query DataCubePreview(
   }
 }
 
-query DataCubeMetadata(
-  $iri: String!
-  $sourceType: String!
-  $sourceUrl: String!
-  $locale: String!
-  $latest: Boolean
-) {
-  dataCubeByIri(
-    iri: $iri
-    sourceType: $sourceType
-    sourceUrl: $sourceUrl
-    locale: $locale
-    latest: $latest
-  ) {
-    iri
-    identifier
-    title
-    description
-    publisher
-    version
-    workExamples
-    contactName
-    contactEmail
-    landingPage
-    expires
-    datePublished
-    dateModified
-    publicationStatus
-    themes {
-      iri
-      label
-    }
-    creator {
-      iri
-      label
-    }
-  }
-}
-
 query DataCubesMetadata(
   $sourceType: String!
   $sourceUrl: String!

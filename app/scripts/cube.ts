@@ -9,15 +9,15 @@ import { DataSource } from "@/configurator";
 
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
-  DataCubeMetadataDocument,
-  DataCubeMetadataQuery,
-  DataCubeMetadataQueryVariables,
   DataCubePreviewDocument,
   DataCubePreviewQuery,
   DataCubePreviewQueryVariables,
   DataCubesComponentsDocument,
   DataCubesComponentsQuery,
   DataCubesComponentsQueryVariables,
+  DataCubesMetadataDocument,
+  DataCubesMetadataQuery,
+  DataCubesMetadataQueryVariables,
 } from "../graphql/query-hooks";
 
 config();
@@ -44,14 +44,13 @@ const showCubeInfo = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const res = await client
-    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
-      DataCubeMetadataDocument,
+    .query<DataCubesMetadataQuery, DataCubesMetadataQueryVariables>(
+      DataCubesMetadataDocument,
       {
-        iri,
         sourceType,
         sourceUrl,
         locale,
-        latest,
+        filters: [{ iri, latest }],
       }
     )
     .toPromise();
@@ -60,7 +59,7 @@ const showCubeInfo = async ({
     throw new Error(res.error.message);
   }
 
-  const cube = res.data?.dataCubeByIri;
+  const cube = res.data?.dataCubesMetadata[0];
 
   if (cube?.iri !== iri) {
     console.warn(
@@ -108,14 +107,13 @@ const previewCube = async ({
   report,
 }: Args<CubeQueryOptions>) => {
   const { data: info, error } = await client
-    .query<DataCubeMetadataQuery, DataCubeMetadataQueryVariables>(
-      DataCubeMetadataDocument,
+    .query<DataCubesMetadataQuery, DataCubesMetadataQueryVariables>(
+      DataCubesMetadataDocument,
       {
-        iri,
         sourceType,
         sourceUrl,
         locale,
-        latest,
+        filters: [{ iri, latest }],
       }
     )
     .toPromise();
@@ -124,7 +122,7 @@ const previewCube = async ({
     throw new Error(error.message);
   }
 
-  if (!info || !info["dataCubeByIri"]) {
+  if (!info || !info.dataCubesMetadata[0]) {
     throw new Error(`Could not find datacube ${iri}`);
   }
 
