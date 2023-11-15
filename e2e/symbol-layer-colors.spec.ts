@@ -18,7 +18,7 @@ test("Selecting SymbolLayer colors> should be possible to select geo dimension a
 
   await selectors.chart.loaded();
 
-  await within(selectors.edition.controlSectionBySubtitle("Segmentation"))
+  await within(selectors.edition.controlSectionBySubtitle("Color"))
     .getByText("None")
     .click();
 
