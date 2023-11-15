@@ -129,6 +129,12 @@ export const dataCubesComponents: NonNullable<
   return { dimensions: [], measures: [] };
 };
 
+export const dataCubesMetadata: NonNullable<
+  QueryResolvers["dataCubesMetadata"]
+> = async () => {
+  return [];
+};
+
 export const dataCubeByIri: NonNullable<QueryResolvers["dataCubeByIri"]> =
   async (_, { iri }) => {
     const result = await fetchSQL({ path: `cubes/${iri}` });

@@ -23,6 +23,7 @@ generates:
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
         DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeMetadata: "../domain/data#DataCubeMetadata"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -41,6 +42,7 @@ generates:
         GeoShape: "../domain/data#GeoShape"
         SearchCube: "../domain/data#SearchCube"
         DataCubesComponents: "../domain/data#DataCubesComponents"
+        DataCubeMetadata: "../domain/data#DataCubeMetadata"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

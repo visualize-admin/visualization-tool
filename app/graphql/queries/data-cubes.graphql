@@ -89,6 +89,20 @@ query DataCubeMetadata(
   }
 }
 
+query DataCubesMetadata(
+  $sourceType: String!
+  $sourceUrl: String!
+  $locale: String!
+  $filters: [DataCubeFilter!]!
+) {
+  dataCubesMetadata(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+
 query DataCubesComponents(
   $sourceType: String!
   $sourceUrl: String!

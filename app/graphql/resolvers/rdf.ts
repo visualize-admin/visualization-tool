@@ -289,6 +289,28 @@ export const dataCubesComponents: NonNullable<
   return { dimensions, measures };
 };
 
+export const dataCubesMetadata: NonNullable<
+  QueryResolvers["dataCubesMetadata"]
+> = async (_, { locale, filters }, { setup }, info) => {
+  const { loaders } = await setup(info);
+
+  return await Promise.all(
+    filters.map(async (filter) => {
+      const { iri, latest = true } = filter;
+      const rawCube = await loaders.cube.load(iri);
+
+      if (!rawCube) {
+        throw new Error("Cube not found");
+      }
+
+      const cube = latest ? await getLatestCube(rawCube) : rawCube;
+      await cube.fetchShape();
+
+      return parseCube({ cube, locale: locale ?? defaultLocale }).data;
+    })
+  );
+};
+
 export const dataCubeDimensions: NonNullable<DataCubeResolvers["dimensions"]> =
   async ({ cube, locale }, { componentIris }, { setup }, info) => {
     const { sparqlClient, cache } = await setup(info);

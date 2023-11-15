@@ -1,3 +1,4 @@
+import { DataCubeMetadata } from '../domain/data';
 import { DataCubesComponents } from '../domain/data';
 import { DimensionValue } from '../domain/data';
 import { QueryFilters } from '../configurator';
@@ -19,6 +20,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DataCubeMetadata: DataCubeMetadata;
   DataCubesComponents: DataCubesComponents;
   DimensionValue: DimensionValue;
   FilterValue: any;
@@ -94,6 +96,7 @@ export type DataCubeFilter = {
   filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
 };
+
 
 export type DataCubeOrganization = {
   __typename: 'DataCubeOrganization';
@@ -366,6 +369,7 @@ export type OrdinalMeasureHierarchyArgs = {
 export type Query = {
   __typename: 'Query';
   dataCubesComponents: Scalars['DataCubesComponents'];
+  dataCubesMetadata: Array<Scalars['DataCubeMetadata']>;
   dataCubeByIri?: Maybe<DataCube>;
   possibleFilters: Array<ObservationFilter>;
   searchCubes: Array<SearchCubeResult>;
@@ -373,6 +377,14 @@ export type Query = {
 
 
 export type QueryDataCubesComponentsArgs = {
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeFilter>;
+};
+
+
+export type QueryDataCubesMetadataArgs = {
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
   locale: Scalars['String'];
@@ -585,6 +597,16 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, identifier?: Maybe<string>, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, workExamples?: Maybe<Array<Maybe<string>>>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, dateModified?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
+export type DataCubesMetadataQueryVariables = Exact<{
+  sourceType: Scalars['String'];
+  sourceUrl: Scalars['String'];
+  locale: Scalars['String'];
+  filters: Array<DataCubeFilter> | DataCubeFilter;
+}>;
+
+
+export type DataCubesMetadataQuery = { __typename: 'Query', dataCubesMetadata: Array<DataCubeMetadata> };
+
 export type DataCubesComponentsQueryVariables = Exact<{
   sourceType: Scalars['String'];
   sourceUrl: Scalars['String'];
@@ -728,6 +750,20 @@ export const DataCubeMetadataDocument = gql`
 
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
+};
+export const DataCubesMetadataDocument = gql`
+    query DataCubesMetadata($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {
+  dataCubesMetadata(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    filters: $filters
+  )
+}
+    `;
+
+export function useDataCubesMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubesMetadataQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesMetadataQuery>({ query: DataCubesMetadataDocument, ...options });
 };
 export const DataCubesComponentsDocument = gql`
     query DataCubesComponents($sourceType: String!, $sourceUrl: String!, $locale: String!, $filters: [DataCubeFilter!]!) {

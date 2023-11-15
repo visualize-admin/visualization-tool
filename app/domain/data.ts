@@ -2,7 +2,9 @@ import { Literal, NamedNode, Term } from "rdf-js";
 
 import { ComponentType } from "@/config-types";
 import {
+  DataCubeOrganization,
   DataCubePublicationStatus,
+  DataCubeTheme,
   RelatedDimension,
   ScaleType,
   TimeUnit,
@@ -43,6 +45,29 @@ export type Observation = Record<string, ObservationValue>;
 export type DataCubesComponents = {
   dimensions: Dimension[];
   measures: Measure[];
+};
+
+export type DataCubeMetadata = {
+  iri: string;
+  identifier: string;
+  title: string;
+  description: string;
+  version?: string;
+  datePublished?: string;
+  dateModified?: string;
+  publicationStatus: DataCubePublicationStatus;
+  themes?: DataCubeTheme[];
+  creator?: DataCubeOrganization;
+  versionHistory?: string;
+  contactPoint?: {
+    name?: string;
+    email?: string;
+  };
+  publisher?: string;
+  landingPage?: string;
+  expires?: string;
+  keywords?: string[];
+  workExamples?: string[];
 };
 
 export type Component = Dimension | Measure;
