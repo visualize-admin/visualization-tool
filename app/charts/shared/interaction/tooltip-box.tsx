@@ -69,6 +69,30 @@ const usePosition = () => {
   return [box, handleRef] as const;
 };
 
+/**
+ * Responsible for folding the container size into a single value based on breakpoints.
+ * After accepting the container width, it accepts functions each breakpoint to return the generic value.
+ */
+const foldContainerSize =
+  <T,>(containerWidth: number) =>
+  ({
+    xs,
+    md,
+    lg,
+  }: {
+    xs: (width: number) => T;
+    md?: (width: number) => T;
+    lg?: (width: number) => T;
+  }) => {
+    if (lg && containerWidth >= 900) {
+      return lg(containerWidth);
+    }
+    if (md && containerWidth >= 600) {
+      return md(containerWidth);
+    }
+    return xs(containerWidth);
+  };
+
 export const getCenteredTooltipPlacement = (props: {
   chartWidth: number;
   xAnchor: number;
@@ -82,7 +106,10 @@ export const getCenteredTooltipPlacement = (props: {
         y: "top",
       }
     : {
-        x: xAnchor < chartWidth * 0.25 ? "right" : "left",
+        x: foldContainerSize<Xplacement>(chartWidth)({
+          xs: (w) => (xAnchor < w * 0.5 ? "right" : "left"),
+          md: (w) => (xAnchor < w * 0.25 ? "right" : "left"),
+        }),
         y: "middle",
       };
 };
