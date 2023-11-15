@@ -1,6 +1,11 @@
 import {
-  getHierarchy,
+  PropertyShape,
+  ShapePatterns,
+  sparql,
+} from "@hydrofoil/shape-to-query";
+import {
   HierarchyNode,
+  getHierarchy,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
 import orderBy from "lodash/orderBy";
@@ -104,6 +109,21 @@ const findHierarchiesForDimension = (
   return [];
 };
 
+class PropertyShapeEx extends PropertyShape {
+  nodeConstraintPatterns({
+    constructClause,
+    whereClause,
+  }: ShapePatterns): ShapePatterns {
+    return {
+      constructClause,
+      whereClause: sparql`
+        #pragma group.joins
+        ${whereClause}
+      `,
+    };
+  }
+}
+
 export const queryHierarchy = async (
   rdimension: ResolvedDimension,
   locale: string,
@@ -140,6 +160,10 @@ export const queryHierarchy = async (
             ns.schema.position,
             [ns.schema.alternateName, { language: locale }],
           ],
+          // See https://gitlab.ldbar.ch/bafu/visualize/-/issues/548#note_13760.
+          shapeToQueryOptions: {
+            PropertyShape: PropertyShapeEx,
+          },
           // @ts-ignore
         }).execute(sparqlClientStream, rdf)) || [],
       hierarchyName: getName(
